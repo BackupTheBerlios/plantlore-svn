@@ -49,12 +49,15 @@ public class AppCoreView implements Observer
     private JMenuBar menuBar = new JMenuBar();
     private JMenu
             fileMenu = new JMenu(L10n.getString("File")),
+            dataMenu = new JMenu(L10n.getString("Data")),
             helpMenu = new JMenu(L10n.getString("Help"));    
     private JMenuItem settings = new JMenuItem(L10n.getString("Settings"));
     private JMenuItem print = new JMenuItem(L10n.getString("Print"));
     private JMenuItem exit = new JMenuItem(L10n.getString("Exit"));
     private JMenuItem helpContents = new JMenuItem(L10n.getString("helpContents"));
     private JMenuItem helpAbout = new JMenuItem(L10n.getString("helpAbout"));
+    private JMenuItem dataAuthors = new JMenuItem(L10n.getString("authorMgr"));
+    private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr"));    
     
     private JLabel statusLabel;
     
@@ -113,12 +116,17 @@ public class AppCoreView implements Observer
         fileMenu.addSeparator();
         fileMenu.add(exit);
         
+        dataMenu.setMnemonic(KeyEvent.VK_D);
+        dataMenu.add(dataAuthors);
+        dataMenu.add(dataPublications);        
+
         helpMenu.setMnemonic(KeyEvent.VK_H);
         helpMenu.add(helpContents);
         helpMenu.addSeparator();
         helpMenu.add(helpAbout);
         
         menuBar.add(fileMenu);
+        menuBar.add(dataMenu);
         menuBar.add(helpMenu);
     }
 
@@ -231,4 +239,16 @@ public class AppCoreView implements Observer
     public void addWindowListener(WindowAdapter wa) {
         frame.addWindowListener(wa);
     }
+
+    public void addDataAuthorsListener(ActionListener a1) {
+        dataAuthors.addActionListener(a1);
+    }
+    
+    public void addDataPublicationsListener(ActionListener al) {
+        dataPublications.addActionListener(al);
+    }    
+    
+    protected JFrame getFrame() {
+        return this.frame;
+    }     
 }

@@ -301,20 +301,20 @@ public class FirebirdDBLayer implements DBLayer {
     private Object getUserRow(ResultSet rs) throws DBLayerException {
         UserRecord ur = new UserRecord();
         try {
-            ur.setID(rs.getInt(0));
-            ur.setLogin(rs.getString(1));
-            ur.setFirstName(rs.getString(2));
-            ur.setSurname(rs.getString(3));
-            ur.setEmail(rs.getString(4));
-            ur.setAddress(rs.getString(5));
-            ur.setWhenCreated(rs.getDate(6));
-            ur.setWhenDropped(rs.getDate(7));
+            ur.setID(rs.getInt(1));
+            ur.setLogin(rs.getString(2));
+            ur.setFirstName(rs.getString(3));
+            ur.setSurname(rs.getString(4));
+            ur.setEmail(rs.getString(5));
+            ur.setAddress(rs.getString(6));
+            ur.setWhenCreated(rs.getDate(7));
+            ur.setWhenDropped(rs.getDate(8));
             // CRIGHT from table TUSER should be here, but we don't need it
-            ur.setNote(rs.getString(9));
+            ur.setNote(rs.getString(10));
             // CID from table TRIGHT should be here, but we don't need it
-            ur.setExportRight(rs.getInt(11));
-            ur.setImportRight(rs.getInt(12));
-            ur.setRole(rs.getString(13));
+            ur.setExportRight(rs.getInt(12));
+            ur.setImportRight(rs.getInt(13));
+            ur.setRole(rs.getString(14));
         } catch (SQLException e) {
             logger.fatal("Database error occured");
             throw new DBLayerException("Database error occured");
@@ -335,9 +335,9 @@ public class FirebirdDBLayer implements DBLayer {
         AuthorRecord ar = new AuthorRecord();
         
         try {
-            ar.setID(rs.getInt(0));
-            ar.setFirstName(rs.getString(1));
-            ar.setSurname(rs.getString(2));
+            ar.setID(rs.getInt(1));
+            ar.setFirstName(rs.getString(2));
+            ar.setSurname(rs.getString(3));
             // CWHOLENAME from table TAUTHORS should be here, but we don't need it (TODO: Really?)
             ar.setOrganization(rs.getString(4));
             ar.setRole(rs.getString(5));
@@ -393,11 +393,11 @@ public class FirebirdDBLayer implements DBLayer {
     private Object getPublicationRow(ResultSet rs) throws DBLayerException {
         PublicationRecord pr = new PublicationRecord();
         try {
-            pr.setID(rs.getInt(0));
-            pr.setCollectionName(rs.getString(1));
-            pr.setPublicationYear(rs.getInt(2));
-            pr.setJournalName(rs.getString(3));
-            pr.setJournalAuthor(rs.getString(4));
+            pr.setID(rs.getInt(1));
+            pr.setCollectionName(rs.getString(2));
+            pr.setPublicationYear(rs.getInt(3));
+            pr.setJournalName(rs.getString(4));
+            pr.setJournalAuthor(rs.getString(5));
         } catch (SQLException e) {
             logger.fatal("Database error occured");
             throw new DBLayerException("Database error occured");

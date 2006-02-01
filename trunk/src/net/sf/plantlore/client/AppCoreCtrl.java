@@ -18,6 +18,9 @@ import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.client.dblayer.PlantRecord;
 import net.sf.plantlore.client.dblayer.QueryResult;
 import net.sf.plantlore.client.dblayer.SelectQuery;
+import net.sf.plantlore.client.authors.AuthorManager;
+import net.sf.plantlore.client.authors.AuthorManagerCtrl;
+import net.sf.plantlore.client.authors.AuthorManagerView;
 import org.apache.log4j.Logger;
 
 /**
@@ -46,6 +49,8 @@ public class AppCoreCtrl
         view.addExitListener(new ExitListener());
         view.addHelpContentsListener(new HelpContentsListener());
         view.addHelpAboutListener(new HelpAboutListener());
+        view.addDataAuthorsListener(new DataAuthorsListener());
+        view.addDataPublicationsListener(new DataPublicationsListener());
     }
     
     /** Handles click to menu item Settings.
@@ -137,5 +142,19 @@ public class AppCoreCtrl
             
         }
     }
-    
+
+    class DataAuthorsListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            AuthorManager authModel = new AuthorManager(model.getDatabase());
+            AuthorManagerView authView = new AuthorManagerView(authModel, view.getFrame());
+            AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
+            authView.show();
+        }
+    }    
+
+    class DataPublicationsListener implements ActionListener {
+        public void actionPerformed(ActionEvent actionEvent) {
+            // Open publication manager - not implemented yet
+        }
+    }    
 }
