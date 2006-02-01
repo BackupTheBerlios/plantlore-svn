@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.Authors" table="TAuthors">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      
+      <property column="CFIRSTNAME"
+                length="30"
+                name="firstName"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CSURNAME"
+                length="30"
+                name="surname"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CWHOLENAME"
+                length="50"
+                name="wholeName"
+                not-null="false"                
+                type="java.lang.String"/>
+      <property column="CORGANIZATION"
+                length="50"
+                name="organization"
+                not-null="false"                
+                type="java.lang.String"/>
+      <property column="CROLE"
+                length="50"
+                name="role"
+                not-null="false"                
+                type="java.lang.String"/>    
+      <property column="CADDRESS"
+                length="255"
+                name="address"
+                not-null="false"                
+                type="java.lang.String"/>                  
+      <property column="CEMAIL"
+				length="100"
+                name="email"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <property column="CURL"
+				length="100"
+                name="URL"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <property column="CNOTE"
+                length="256"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/>                                         
+   </class>
+</hibernate-mapping>

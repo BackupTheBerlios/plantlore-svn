@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.Right" table="TRIGHT">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CADMINISTRATOR"                
+                name="administrator"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CEDITALL"                
+                name="editAll"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CEDITOWEN"                
+                name="editOwen"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CEDITGROUP"    
+                length = "255"            
+                name="editGroup"
+                not-null="false"
+                type="java.lang.String"/>                                                
+      <property column="CEXPORT"                
+                name="userExport"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CIMPORT"                
+                name="userImport"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CROLE"
+                length="20"
+                name="role"
+                not-null="false"
+                type="java.lang.String"/>                                               
+   </class>
+</hibernate-mapping>

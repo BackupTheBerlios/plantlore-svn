@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+   <session-factory>
+
+      <!-- Database connection settings -->
+      <property name="show_sql">true</property>
+      <property name="hibernate.dialect">
+         org.hibernate.dialect.FirebirdDialect
+      </property>
+      <property name="hibernate.connection.driver_class">
+         org.firebirdsql.jdbc.FBDriver 
+      </property>
+      <property name="hibernate.connection.url">
+         jdbc:firebirdsql:localhost:c:/Program Files/Firebird/Firebird_1_5/Database/hibrenateTest/plantloreHIB.fdb
+      </property>
+      <property name="hibernate.connection.username">
+         SYSDBA
+      </property>
+      <property name="hibernate.connection.password">
+         masterkey
+      </property>
+
+      <!-- Mapping files -->
+      <mapping file="User.hbm.xml"/>
+      <mapping file="Right.hbm.xml"/>
+      <mapping file="Villages.hbm.xml"/> 
+      <mapping file="Authors.hbm.xml"/>
+      <mapping file="AuthorsOccurrences.hbm.xml"/>
+      <mapping file="Habitats.hbm.xml"/>
+      <mapping file="Occurrences.hbm.xml"/>
+      <mapping file="Phytochoria.hbm.xml"/>
+      <mapping file="Territories.hbm.xml"/>
+      <mapping file="Publications.hbm.xml"/>
+      <mapping file="Plants.hbm.xml"/>
+      <mapping file="Metadata.hbm.xml"/>
+      <mapping file="History.hbm.xml"/>
+      <mapping file="HistoryChange.hbm.xml"/> 
+      <mapping file="HistoryColumn.hbm.xml"/>
+
+   </session-factory>
+</hibernate-configuration>

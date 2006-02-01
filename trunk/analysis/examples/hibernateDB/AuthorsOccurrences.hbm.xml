@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.AuthorsOccurrences" table="TAUTHORSOCCURRENCES">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CAUTHORID"                
+                name="authorId"
+                not-null="true"
+                type="java.lang.Integer"/>
+      <property column="COCCURRENCEID"                
+                name="occurrenceId"
+                not-null="true"
+                type="java.lang.Integer"/>                                              
+   </class>
+</hibernate-mapping>

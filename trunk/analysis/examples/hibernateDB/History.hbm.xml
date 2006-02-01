@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.History" table="THISTORY">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CCOLUMNID"                
+                name="columnId"
+                not-null="true"
+                type="java.lang.Integer"/>
+      <property column="CCHANGEID"              
+                name="changeId"
+                not-null="true"
+                type="java.lang.Integer"/>
+      <property column="COLDVALUE"
+                length="4096"
+                name="oldValue"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CNEWVALUE"
+                length="4096"
+                name="newValue"
+                not-null="false"                
+                type="java.lang.String"/>                                              
+   </class>
+</hibernate-mapping>

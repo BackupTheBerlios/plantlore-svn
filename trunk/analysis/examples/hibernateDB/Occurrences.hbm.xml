@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.Occurrences" table="TOCCURRENCES">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CUNITIDDB"
+                length="30"
+                name="unitIdDb"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CUNITVALUE"
+                length="30"
+                name="unitValue"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CHABITATID"                
+                name="habitatId"
+                not-null="true"
+                type="java.lang.Integer"/>
+      <property column="CPLANTID"              
+                name="plantId"
+                not-null="true"                
+                type="java.lang.Integer"/>
+      <property column="CYEARCOLLECTED"               
+                name="yearCollected"
+                not-null="true"                
+                type="java.lang.Integer"/>          
+      <property column="CMONTHCOLLECTED"
+                name="monthCollected"
+                not-null="false"                
+                type="java.lang.Integer"/>   
+      <property column="CDAYCOLLECTED"
+                name="dayCollected"
+                not-null="false"                
+                type="java.lang.Integer"/>
+      <property column="CTIMECOLLECTED"
+                name="timeCollected"
+                not-null="false"                
+                type="java.util.Date"/> 
+      <property column="CDATESOURCE"
+				        length="50"
+                name="dateSource"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <property column="CPUBLICATIONSID"               
+                name="publicationsId"
+                not-null="false"                
+                type="java.lang.Integer"/> 
+      <property column="CHERBARIUM"
+				        length="20"
+                name="herbarium"
+                not-null="false"                
+                type="java.lang.String"/>                 
+      <property column="CCREATEWHEN"              
+                name="createWhen"
+                not-null="true"                
+                type="java.util.Date"/>
+      <property column="CCREATEWHO"               
+                name="createWho"
+                not-null="true"                
+                type="java.lang.Integer"/>          
+      <property column="CUPDATEWHEN"
+                name="updateWhen"
+                not-null="true"                
+                type="java.util.Date"/>   
+      <property column="CUPDATEWHO"
+                name="updateWho"
+                not-null="true"                
+                type="java.lang.Integer"/>       
+      <property column="CNOTE"
+                length="4096"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <property column="CMETADATAID"
+                name="metadataId"
+                not-null="true"                
+                type="java.lang.Integer"/>                                      
+   </class>
+</hibernate-mapping>

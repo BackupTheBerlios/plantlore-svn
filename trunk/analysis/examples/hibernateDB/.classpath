@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry sourcepath="C:/Program Files/hibernate-3.1/hibernate3.jar" kind="lib" path="C:/Program Files/hibernate-3.1/hibernate3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/ant-1.6.5.jar"/>
+	<classpathentry sourcepath="C:/Program Files/hibernate-3.1/lib/cglib-2.1.2.jar" kind="lib" path="C:/Program Files/hibernate-3.1/lib/cglib-2.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/commons-collections-2.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/jdbc2_0-stdext.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/jta.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/log4j-1.2.11.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/xerces-2.6.2.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/hibernate/firebirdsql-full.jar"/>
+	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/ant-antlr-1.6.5.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/antlr-2.7.5H3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/asm.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/hibernate-3.1/lib/asm-attrs.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

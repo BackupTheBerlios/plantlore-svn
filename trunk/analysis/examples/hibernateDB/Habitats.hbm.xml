@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.Habitats" table="THABITATS">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      
+      <property column="CTERRITORYID"                
+                name="territoryId"
+                not-null="true"
+                type="java.lang.Integer"/>
+      <property column="CPHYTOCHORIAID"              
+                name="phytochoriaId"
+                not-null="true"                
+                type="java.lang.Integer"/>
+      <property column="CQUADRANT" 
+				length="10"              
+                name="quadrant"
+                not-null="false"                
+                type="java.lang.String"/>          
+      <property column="CDESCRIPTION"
+                length="255"
+                name="description"
+                not-null="false"                
+                type="java.lang.String"/>   
+      <property column="CNEARESTVILLAGEID"
+                name="nearestVillageId"
+                not-null="true"                
+                type="java.lang.Integer"/>
+      <property column="CCOUNTRY"
+				length="30"
+                name="country"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <property column="CALTITUDE"				
+                name="altitude"
+                not-null="false"                
+                type="java.lang.Double"/> 
+      <property column="CLATITUDE"           
+                name="latitude"
+                not-null="false"
+                type="java.lang.Double"/>
+      <property column="CLONGITUDE"           
+                name="longitude"
+                not-null="false"
+                type="java.lang.Double"/>                                       
+      <property column="CNOTE"
+                length="4096"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/>                                           
+   </class>
+</hibernate-mapping>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.Plants" table="TPLANTS">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CSURVEYTAXID"
+                length="20"                
+                name="surveyTaxId"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CGENUS"
+                length="100"
+                name="genus"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CSCIENTIFICNAMEAUTHOR"
+                length="256"
+                name="scientificNameAuthor"
+                not-null="true"
+                type="java.lang.String"/>                
+      <property column="CADOPTEDNAME"
+                length="30"
+                name="adoptedName"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CCZECHNAME"
+                length="30"
+                name="czechName"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CPUBLISHABLENAME"
+                length="30"
+                name="publishableName"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CSYNONYMS"
+                length="256"
+                name="synonyms"
+                not-null="false"                
+                type="java.lang.String"/>      
+      <property column="CNOTE"
+                length="265"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/>                                         
+   </class>
+</hibernate-mapping>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="hibernatetest.User" table="TUSER">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CLOGIN"
+                length="60"
+                name="login"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CFIRSTNAME"
+                length="60"
+                name="name"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CSURNAME"
+                length="90"
+                name="surname"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CCONTACT"
+                length="50"
+                name="contact"
+                not-null="false"                
+                type="java.lang.String"/>
+      <property column="CWHENCREATE"
+                name="whenCreate"
+                not-null="true"                
+                type="java.util.Date"/>                
+   </class>
+</hibernate-mapping>

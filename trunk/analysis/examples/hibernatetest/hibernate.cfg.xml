@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+   <session-factory>
+
+      <!-- Database connection settings -->
+      <property name="show_sql">true</property>
+      <property name="hibernate.dialect">
+         org.hibernate.dialect.FirebirdDialect
+      </property>
+      <property name="hibernate.connection.driver_class">
+         org.firebirdsql.jdbc.FBDriver 
+      </property>
+      <property name="hibernate.connection.url">
+         jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb
+      </property>
+      <property name="hibernate.connection.username">
+         sysdba
+      </property>
+      <property name="hibernate.connection.password">
+         masterkey
+      </property>
+
+      <!-- Mapping files -->
+      <mapping file="User.hbm.xml"/>
+   </session-factory>
+</hibernate-configuration>
