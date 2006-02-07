@@ -8,6 +8,10 @@
 package net.sf.plantlore.client;
 
 import java.io.IOException;
+
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -34,6 +38,12 @@ public class Plantlore {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+    	
+    	// Set beautiful system look & feel.
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
+        catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
+
+    	
         BasicConfigurator.configure();
         Logger.getRootLogger().info("Plantlore client started");
         Plantlore plantlore = new Plantlore();
