@@ -16,7 +16,7 @@ import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
-/**
+/** The main class of Plantlore. This is where all begins.
  *
  * @author Jakub
  */

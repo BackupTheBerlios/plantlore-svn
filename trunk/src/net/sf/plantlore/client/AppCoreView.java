@@ -37,6 +37,11 @@ import net.sf.plantlore.l10n.L10n;
 
 /** Application core view
  *
+ * Creates the main application window and its contents like data overview, menu,
+ * toolbars, etc.
+ * Listeners of the components are set by the <code>AppCoreCtrl</code> class.
+ * Sets itself as observer of AppCore.
+ *
  * @author Jakub
  */
 public class AppCoreView implements Observer
@@ -79,6 +84,9 @@ public class AppCoreView implements Observer
     {
     }
 
+    /** Calls all the constructing init methods.
+     *
+     */
     public void init()
     {
         initFrame();
@@ -131,6 +139,9 @@ public class AppCoreView implements Observer
     }
 
 
+    /** Constructs the main toolbar.
+     *
+     */
     private void initMainToolBar()
     {
         mainToolBar = new JToolBar();
@@ -147,6 +158,9 @@ public class AppCoreView implements Observer
         sbm.add(searchButton, "Search for records");
     }
     
+    /** Constructs the main status bar and initializes the <code>sbm StatusBarManager</code> appropriately.
+     *
+     */
     private void initStatusBar() 
     {
         JPanel panel = new JPanel();
@@ -159,6 +173,9 @@ public class AppCoreView implements Observer
         sbm.setDefaultText(L10n.getString("statusReady"));
     }
     
+    /** Constructs the data overview and adds it to the <code>mainPane</code>.
+     *
+     */
     private void initOverview()
     {
         overview = new JTable(new OverviewTableModel());
@@ -193,6 +210,9 @@ public class AppCoreView implements Observer
         sbm.add(recordsPerPage, "Number of records per page");
     }
     
+    /** Returns the main window <code>StatusBarManager</code>.
+     *
+     */
     public StatusBarManager getSBM() 
     {
         return sbm;
@@ -236,18 +256,30 @@ public class AppCoreView implements Observer
         helpAbout.addActionListener(al);
     }
 
+    /** Adds a listener to the main window frame.
+     *
+     */
     public void addWindowListener(WindowAdapter wa) {
         frame.addWindowListener(wa);
     }
 
+    /** Adds a listener to the Author manager menu item.
+     *
+     */
     public void addDataAuthorsListener(ActionListener a1) {
         dataAuthors.addActionListener(a1);
     }
     
+    /** Adds a listener to the Publication manager menu item.
+     *
+     */
     public void addDataPublicationsListener(ActionListener al) {
         dataPublications.addActionListener(al);
     }    
     
+    /** Returns the frame of the main window.
+     *
+     */
     protected JFrame getFrame() {
         return this.frame;
     }     

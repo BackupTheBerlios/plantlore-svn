@@ -15,7 +15,10 @@ import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import org.apache.log4j.Logger;
 
-/**
+/** Looks after the Plantlore localization.
+ *
+ * Gets proper text strings from the resources according to the default or set
+ * locale. Tries to take the locale from the stored Preferences.
  *
  * @author Jakub
  */

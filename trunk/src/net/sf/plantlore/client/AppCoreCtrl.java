@@ -23,7 +23,9 @@ import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
 import org.apache.log4j.Logger;
 
-/**
+/** Application core controller.
+ *
+ * Creates and sets listeners for components in <code>AppCoreView</code>.
  *
  * @author Jakub
  */

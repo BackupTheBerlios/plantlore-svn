@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JComponent;
 
-/**
+/** The purpose of ComponentAdjust is to ease manual creation of swing dialogs.
+ * You can add your components to an instance of this class and then adjust their
+ * width by calling setMaxWidth() method.
  *
  * @author Jakub
  */
@@ -35,15 +37,27 @@ public class ComponentAdjust
         list = new ArrayList();
     }
     
+    /** Adds a JComponent to the internal list of components.
+     *
+     * You can then adjust the components properties by calling one of the
+     * set methods of this class.
+     *
+     */
     public void add(JComponent c) {
         list.add(c);
         computed = false;
     }
     
+    /** Clears the list of added components.
+     *
+     */
     public void clear() {
         list.clear();
     }
     
+    /** Computes minimum, maximum and average widht and height of stored components.
+     *
+     */
     private void compute() {
         JComponent c;
         Dimension d;
@@ -68,6 +82,10 @@ public class ComponentAdjust
         computed = true;
     }//compute()
     
+    /** Sets the preferred width of all stored components to the maximum width
+     * of these components.
+     *
+     */
     public void setMaxWidth() {
         JComponent c;
         if (!computed)

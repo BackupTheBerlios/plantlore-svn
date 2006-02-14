@@ -9,7 +9,7 @@ package net.sf.plantlore.client;
 
 import javax.swing.table.AbstractTableModel;
 
-/**
+/** Implements a table model for the main data overview.
  *
  * @author Jakub
  */

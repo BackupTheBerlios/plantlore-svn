@@ -13,6 +13,9 @@ import org.apache.log4j.Logger;
 
 /** Model for the Settings MVC
  *
+ * Processes all Preferences set in Plantlore.
+ * Loads them and stores them as well.
+ *
  * @author Jakub
  */
 public class Settings
