@@ -15,12 +15,15 @@ import java.util.prefs.Preferences;
 import net.sf.plantlore.client.dblayer.DBLayer;
 import net.sf.plantlore.client.dblayer.DBLayerException;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
-import net.sf.plantlore.client.dblayer.PlantRecord;
-import net.sf.plantlore.client.dblayer.QueryResult;
-import net.sf.plantlore.client.dblayer.SelectQuery;
+import net.sf.plantlore.common.record.PlantRecord;
+import net.sf.plantlore.client.dblayer.result.QueryResult;
+import net.sf.plantlore.client.dblayer.result.Result;
+import net.sf.plantlore.client.dblayer.query.SelectQuery;
+import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
+import net.sf.plantlore.client.dblayer.DBMapping;
 import org.apache.log4j.Logger;
 
 /** Application core controller.
@@ -87,11 +90,11 @@ public class AppCoreCtrl
                 System.out.println("Exception while initializing DBLayer: "+ex.getMessage());
                 ex.printStackTrace();
             }
-            SelectQuery sq = new SelectQuery();
+            Query sq = new SelectQuery();
             try
             {
-                sq.setType("PLANT");
-                QueryResult qr = dbl.executeQuery(sq);
+                sq.setType(DBMapping.PLANTRECORD);
+                Result qr = dbl.executeQuery(sq);
                 System.out.println("There are "+qr.getNumRows()+" plants in the db.");
                 PlantRecord p = (PlantRecord) dbl.next(qr);
                 do {
