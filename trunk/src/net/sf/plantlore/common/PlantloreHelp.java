@@ -24,6 +24,10 @@ public class PlantloreHelp {
     // File containing Java Help settings
     private static final String HELPFILE = "jhelpset.hs";
     
+    // Constants with help for author manager section
+    public static final String AUTHOR_MANAGER_GENERAL = "";
+    public static final String AUTHOR_MANAGER_ADD = "";
+    
     /** Creates a new instance of PlantloreHelp */
     public PlantloreHelp() {
         
