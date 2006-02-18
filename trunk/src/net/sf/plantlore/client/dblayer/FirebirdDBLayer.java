@@ -15,6 +15,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
+import net.sf.plantlore.client.dblayer.result.*;
+import net.sf.plantlore.client.dblayer.query.*;
+import net.sf.plantlore.common.record.AuthorRecord;
+import net.sf.plantlore.common.record.PlantRecord;
+import net.sf.plantlore.common.record.PublicationRecord;
+import net.sf.plantlore.common.record.UserRecord;
+
 
 /**
  * Implementation of Firebird database connection, sending queries and retrieving results from the
@@ -85,6 +92,16 @@ public class FirebirdDBLayer implements DBLayer {
             throw new DBLayerException("Unable to connect to the DB server");
         }
     }
+
+    
+    public Result executeQuery(Query query) throws DBLayerException {
+    	if(query instanceof SelectQuery) return execute((SelectQuery)query);
+    	if(query instanceof InsertQuery) return execute((InsertQuery)query);
+    	if(query instanceof UpdateQuery) return execute((UpdateQuery)query);
+    	if(query instanceof DeleteQuery) return execute((DeleteQuery)query);
+    	
+    	throw new DBLayerException("Unknown query type.");
+    }    
     
     /**
      *  Executes SQL SELECT query.
@@ -93,7 +110,7 @@ public class FirebirdDBLayer implements DBLayer {
      *  @return result of the query execution
      *  @throws DBLayerException when execution of the query fails
      */
-    public QueryResult executeQuery(SelectQuery query) throws DBLayerException {
+    public Result execute(SelectQuery query) throws DBLayerException {
         ResultSet rs;
         Statement st;
         int numrows, key;
@@ -126,7 +143,7 @@ public class FirebirdDBLayer implements DBLayer {
      *  @return result of the query execution
      *  @throws DBLayerException when execution of the query fails
      */
-    public QueryResult executeQuery(InsertQuery query) throws DBLayerException {
+    public Result execute(InsertQuery query) throws DBLayerException {
         Statement st;
         int numrows;
         
@@ -150,7 +167,7 @@ public class FirebirdDBLayer implements DBLayer {
      *  @return result of the query execution
      *  @throws DBLayerException when execution of the query fails
      */
-    public QueryResult executeQuery(UpdateQuery query) throws DBLayerException {
+    public Result execute(UpdateQuery query) throws DBLayerException {
         Statement st;
         int numrows;
         
@@ -174,7 +191,7 @@ public class FirebirdDBLayer implements DBLayer {
      *  @return result of the query execution
      *  @throws DBLayerException when execution of the query fails
      */
-    public QueryResult executeQuery(DeleteQuery query) throws DBLayerException {
+    public Result execute(DeleteQuery query) throws DBLayerException {
         Statement st;
         int numrows;
         
@@ -193,7 +210,10 @@ public class FirebirdDBLayer implements DBLayer {
     
     /**
      *  Retrieves selected rows from the given result. Returns data from the ResultSet identified by the given
-     *  QueryResult object. Retrieves an interval of rows including rows on positions "from" and "to".
+     *  QueryResult object. Retrieves an interval of rows including rows on positions "from" and "to". Value of 
+     *  "to" must be greater or equal to the value of "from", "from" must be greater than zero and "to" must be 
+     *  less than or equal to the number of rows in the result set. In case any of the conditions is not met, 
+     *  exception is thrown
      *  Results are returned as an array of objects (type <code>Object[]</code>). To use the results, you
      *  have to cast it to the correct type of data holder objects.
      *
@@ -204,23 +224,32 @@ public class FirebirdDBLayer implements DBLayer {
      *  @throws         In case illegal or invalid arguments (range from - to) are provided
      *  @see            next()
      */
-    public Object[] more(QueryResult QRes, int from, int to) throws DBLayerException {
+    public Object[] more(Result QRes, int from, int to) throws DBLayerException {
         // Check validity of arguments
         if (from>to) {
             logger.error("Cannot read rows from "+from+" to "+to+" because from > to");
             throw new DBLayerException("Cannot read rows from "+from+" to "+to+" because from > to");
         }
+        if (from < 1) {
+            logger.error("Cannot read rows starting at the given index: "+from);
+            throw new DBLayerException("Cannot read rows starting at the given index: "+from);            
+        }
         // Get the ResultSet object from the result
         ResultSet rs = (ResultSet)results.get(QRes.getResultID());
         int numRows = QRes.getNumRows();
         // Check whether we have enough rows in the result
-        if (to >= numRows) {
+        if (to > numRows) {
             logger.error("Result doesn't have enough rows. Number of rows: "+numRows);
             throw new DBLayerException("Result doesn't have enough rows. Number of rows: "+numRows);
         }
-        // Move ResultSet to the first row we want to read
+        // Move ResultSet to the first row we want to read. In case we want to read the first row,
+        // move the pointer before the first row, else move it to the given position
         try {
-            rs.absolute(from);
+            if (from > 1) {
+                rs.absolute(from-1);
+            } else {
+                rs.beforeFirst();
+            }
         } catch (SQLException e) {
             logger.error("Cannot move ResultSet to the given row: "+from);
             throw new DBLayerException("Cannot move ResultSet to the given row: "+from);
@@ -243,7 +272,7 @@ public class FirebirdDBLayer implements DBLayer {
      *                  are no more rows in the result.
      *  @throws DBLayerException in case database error occured
      */
-    public Object next(QueryResult QRes) throws DBLayerException {
+    public Object next(Result QRes) throws DBLayerException {
         ResultSet rs = (ResultSet)results.get(QRes.getResultID());
         
         // In case no more rows are available, return null
@@ -257,18 +286,20 @@ public class FirebirdDBLayer implements DBLayer {
         }
         
         // Read data from the result according to the type of the result
-        String type = QRes.getType();
-        if (type.equals("USER")) {
-            return getUserRow(rs);
-        } else if (type.equals("AUTHOR")) {
-            return getAuthorRow(rs);
-        } else if (type.equals("PLANT")) {
-            return getPlantRow(rs);
-        } else if (type.equals("PUBLICATION")) {
-            return getPublicationRow(rs);
-        } else {
-            // TODO: If given type is not defined, raise exception
-            return null;
+        int type = QRes.getType();
+        switch (type) {
+            case DBMapping.USERRECORD:          
+                return getUserRow(rs);
+            case DBMapping.AUTHORRECORD:        
+                return getAuthorRow(rs);
+            case DBMapping.PLANTRECORD:
+                return getPlantRow(rs);                
+            case DBMapping.PUBLICATIONRECORD:
+                return getPublicationRow(rs);                
+            case DBMapping.OCCURENCERECORD:
+                return getOccurenceRow(rs);                                
+            default:
+                return null;
         }
     }
     
@@ -280,7 +311,7 @@ public class FirebirdDBLayer implements DBLayer {
      *  @param QRes identifier of the result we want to close
      *  @throws DBLayerException in case close operation on the connection failed
      */
-    public void close(QueryResult QRes) throws DBLayerException {
+    public void close(Result QRes) throws DBLayerException {
         try {
             conn.close();
         } catch (SQLException e) {
@@ -404,5 +435,10 @@ public class FirebirdDBLayer implements DBLayer {
         }
         
         return pr;
+    }
+    
+    private Object getOccurenceRow(ResultSet rs) throws DBLayerException {
+        // TODO: IMPLEMENT
+        return null;
     }
 }
