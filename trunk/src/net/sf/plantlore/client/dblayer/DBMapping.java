@@ -26,10 +26,16 @@ public class DBMapping {
     private Hashtable PUBLICATION;
     private Hashtable METADATA;
     private Hashtable HABITAT;
-    private Hashtable OCCURRENCE;
+    private Hashtable OCCURRENCE;                
     
-    /** List of available types / entities*/
-    private HashSet TYPES;
+    public static final int USERRECORD = 1;
+    public static final int AUTHORRECORD = 2;
+    public static final int PLANTRECORD = 3;
+    public static final int PUBLICATIONRECORD = 4;
+    public static final int METADATARECORD = 5;
+    public static final int HABITATRECORD = 6;    
+    public static final int OCCURENCERECORD = 7;        
+    
     /** List of tables for available entities*/
     private String AUTHOR_TABLES = "TAUTHORS";
     private String USER_TABLES = "TUSER, TRIGHT";
@@ -53,49 +59,35 @@ public class DBMapping {
         initMetadata();
         initHabitat();
         initOccurrence();
-        initTypes();
     }
-    
-    /**
-     *  Method for checking whether given type is in the list of avaliable types
-     *
-     *  @param type String representation of the type (entity)
-     *  @return <code>true</code> if the given type is in the list of available types, <code>false</code> otherwise
-     */
-    public boolean checkType(String type) {
-        if (TYPES.contains(type)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
+        
     /**
      *  Return list of the tables involved for the given type.
      *
-     *  @param type String representation of the type (entity)
+     *  @param type type of the record (entity)
      *  @return String representation of the tables, multiple tables are separated with a comma. Every table comes with an
      *          alias equal to the table name
      *  @throws DBLayerException in case no table is defined for the given type
      */
-    public String getTableName(String type) throws DBLayerException {
-        if (type.equals("USER")) {
-            return this.USER_TABLES;
-        } else if (type.equals("AUTHOR")) {
-            return this.AUTHOR_TABLES;
-        } else if (type.equals("PLANT")) {
-            return this.PLANT_TABLES;
-        } else if (type.equals("PUBLICATION")) {
-            return this.PUBLICATION_TABLES;
-        } else if (type.equals("METADATA")) {
-            return this.METADATA_TABLES;
-        } else if (type.equals("HABITAT")) {
-            return this.HABITAT_TABLES;
-        } else if (type.equals("OCCURRENCE")) {
-            return this.OCCURENCE_TABLES;
-        } else {
-            logger.error("No table defined for type '"+type+"'");
-            throw new DBLayerException("No table defined for type '"+type+"'");
+    public String getTableName(int type) throws DBLayerException {
+        switch (type) {
+            case USERRECORD:
+                return this.USER_TABLES;                
+            case AUTHORRECORD:
+                return this.AUTHOR_TABLES;                
+            case PLANTRECORD:
+                return this.PLANT_TABLES;                
+            case PUBLICATIONRECORD:
+                return this.PUBLICATION_TABLES;                
+            case METADATARECORD:
+                return this.METADATA_TABLES;                
+            case HABITATRECORD:
+                return this.HABITAT_TABLES;                
+            case OCCURENCERECORD:
+                return this.OCCURENCE_TABLES;                            
+            default:
+                logger.error("No table defined for type "+type);
+                throw new DBLayerException("No table defined for type "+type);                
         }
     }
     
@@ -103,33 +95,42 @@ public class DBMapping {
      *  Get the name of the database column represented by the given key in the mapping.
      *
      *  @param key  Key to look for in the mapping
-     *  @param type String representation of the type (entity)
+     *  @param type type of the record (entity)
      *  @throws DBLayerException in case that wrong type is given or the specified key could not be found
      */
-    public String getFieldName(String key, String type) throws DBLayerException {
+    public String getFieldName(String key, int type) throws DBLayerException {
         String value;
-        
-        if (type.equals("USER")) {
-            value = getUserField(key);
-        } else if (type.equals("AUTHOR")) {
-            value = getAuthorField(key);
-        } else if (type.equals("PLANT")) {
-            value = getPlantField(key);
-        } else if (type.equals("PUBLICATION")) {
-            value = getPublicationField(key);
-        } else if (type.equals("METADATA")) {
-            value = getMetadataField(key);
-        } else if (type.equals("HABITAT")) {
-            value = getHabitatField(key);
-        } else if (type.equals("OCCURRENCE")) {
-            value = getOccurrenceField(key);
-        } else {
-            logger.error("No fields defined for type '"+type+"'");
-            throw new DBLayerException("No fields defined for type '"+type+"'");
+
+        switch (type) {
+            case USERRECORD:
+                value = getUserField(key);
+                break;
+            case AUTHORRECORD:
+                value = getAuthorField(key);
+                break;
+            case PLANTRECORD:
+                value = getPlantField(key);
+                break;
+            case PUBLICATIONRECORD:
+                value = getPublicationField(key);
+                break;
+            case METADATARECORD:
+                value = getMetadataField(key);
+                break;
+            case HABITATRECORD:
+                value = getHabitatField(key);
+                break;
+            case OCCURENCERECORD:
+                value = getOccurrenceField(key);
+                break;
+            default:            
+                logger.error("No fields defined for type "+type);
+                throw new DBLayerException("No fields defined for type "+type);
         }
+
         if (value == null) {
-            logger.error("Key '"+key+"' not found in DB mapping for type '"+type+"'");
-            throw new DBLayerException("Key '"+key+"' not found in DB mapping for type '"+type+"'");
+            logger.error("Key '"+key+"' not found in DB mapping for type "+type);
+            throw new DBLayerException("Key '"+key+"' not found in DB mapping for type "+type);
         }
         return value;
     }
@@ -346,22 +347,6 @@ public class DBMapping {
         OCCURRENCE.put("createdwho","TOCCURRENCES.CCREATEWHO");
         OCCURRENCE.put("updatedwhen","TOCCURRENCES.CUPDATEWHEN");
         OCCURRENCE.put("updatedwho","TOCCURRENCES.CUPDATEWHO");
-        OCCURRENCE.put("note","TOCCURRENCES.CNOTE");
-        
-        
-    }
-    
-    /**
-     *  Initialization of the mapping of types.
-     */
-    private void initTypes() {
-        TYPES = new HashSet();
-        TYPES.add("USER");
-        TYPES.add("AUTHOR");
-        TYPES.add("PLANT");
-        TYPES.add("PUBLICATION");
-        TYPES.add("METADATA");
-        TYPES.add("HABITAT");
-        TYPES.add("OCCURRENCE");
-    }
+        OCCURRENCE.put("note","TOCCURRENCES.CNOTE");                
+    }    
 }
