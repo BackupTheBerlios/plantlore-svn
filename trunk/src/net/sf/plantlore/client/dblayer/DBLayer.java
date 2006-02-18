@@ -7,7 +7,9 @@
 
 package net.sf.plantlore.client.dblayer;
 
-import java.sql.SQLException;
+import java.rmi.Remote;
+import net.sf.plantlore.client.dblayer.query.Query;
+import net.sf.plantlore.client.dblayer.result.Result;
 
 /**
  * Interface for database access.
@@ -15,30 +17,21 @@ import java.sql.SQLException;
  * @author Tomas Kovarik
  * @version 0.1, Jan 14, 2006
  */
-public interface DBLayer {
+public interface DBLayer extends Remote {
     
     /** Initialize database connection */
     void initialize() throws DBLayerException;
     
-    /** Execute SELECT query */
-    QueryResult executeQuery(SelectQuery query) throws DBLayerException;
-    
-    /** Execute INSERT query */
-    QueryResult executeQuery(InsertQuery query) throws DBLayerException;
-    
-    /** Execute UPDATE query */
-    QueryResult executeQuery(UpdateQuery query) throws DBLayerException;
-    
-    /** Execute DELETE query */
-    QueryResult executeQuery(DeleteQuery query) throws DBLayerException;
-    
+    /** Execute query */
+    Result executeQuery(Query query) throws DBLayerException;
+       
     /** Retrieve an interval of rows from the result */
-    public Object[] more(QueryResult QRes, int from, int to) throws DBLayerException;
+    public Object[] more(Result QRes, int from, int to) throws DBLayerException;
     
     /** Retrieve next row from the result */
-    public Object next(QueryResult QRes) throws DBLayerException;
+    public Object next(Result QRes) throws DBLayerException;
     
     /** Close the result */
-    public void close(QueryResult QRes) throws DBLayerException;
+    public void close(Result QRes) throws DBLayerException;
     
 }
