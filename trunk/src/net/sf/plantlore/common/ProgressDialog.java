@@ -56,6 +56,7 @@ public class ProgressDialog {
                 
         progress.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         progress.setSize(320,40);                
+        progress.setLocationRelativeTo(null);        
         
         container = progress.getContentPane();
         container.setLayout(new GridBagLayout());        
