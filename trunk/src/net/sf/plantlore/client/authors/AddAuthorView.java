@@ -12,6 +12,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
+import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JButton;
@@ -25,14 +26,22 @@ import javax.swing.JTextArea;
 /**
  *
  * @author Tomas Kovarik
+ * @version 0.1, 4.2. 2006
  */
 public class AddAuthorView implements Observer {
-
+    /** Model of the Author manager MVC */
     private AuthorManager model;    
+    /** Dialog window */
     private JDialog addAuthDialog;
+    /** Content pane of the addAuthDialog */
     private Container container;    
     
-    /** Creates a new instance of AddAuthorView */
+    /** 
+     *  Creates a new instance of AddAuthorView 
+     *
+     *  @param authModel Model of the Author manger MVC
+     *  @param owner parent of this dialog window
+     */
     public AddAuthorView(AuthorManager authModel, JDialog owner) {
         this.model = authModel;
         this.model.addObserver(this); 
@@ -41,16 +50,21 @@ public class AddAuthorView implements Observer {
         addAuthDialog = new JDialog(owner, "Add New Author", true);
         addAuthDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addAuthDialog.setSize(320,240);
-
+        addAuthDialog.setLocationRelativeTo(owner);        
         container = addAuthDialog.getContentPane();
         container.setLayout(new GridBagLayout());
+        // Initialize components on the form
         initComponents();        
         
     }
 
+    /**
+     *  Initialize components on the form.
+     */
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
         
+        // Labels
         nameLabel = new JLabel();
         surnameLabel = new JLabel();
         organizationLabel = new JLabel();
@@ -62,6 +76,7 @@ public class AddAuthorView implements Observer {
         noteLabel = new JLabel();
         requiredLabel = new JLabel();
         
+        // Text fields
         nameField = new JFormattedTextField();
         surnameField = new JFormattedTextField();
         organizationField = new JFormattedTextField();
@@ -70,14 +85,18 @@ public class AddAuthorView implements Observer {
         emailField = new JFormattedTextField();
         urlField = new JFormattedTextField();
         
+        // Text areas
         addressScrollPane = new JScrollPane();
         addressArea = new JTextArea();
         noteScrollPane = new JScrollPane();
         noteArea = new JTextArea();
-                
+        
+        // Buttons
         saveBtn = new JButton();
         closeBtn = new JButton();
         helpBtn = new JButton();
+        
+        // ------------------------- LABELS ------------------------
         
         // Add label with the first name
         nameLabel.setText("First name: ");
@@ -170,6 +189,8 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;        
         container.add(requiredLabel, gridBagConstraints);                        
         
+        // ------------------------- FIELDS ------------------------        
+        
         // Add field for name
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -178,6 +199,7 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        nameField.setValue("");
         container.add(nameField, gridBagConstraints);
 
         // Add field for surname
@@ -188,6 +210,7 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        surnameField.setValue("");        
         container.add(surnameField, gridBagConstraints);
 
         // Add field for organization
@@ -198,6 +221,7 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        organizationField.setValue("");        
         container.add(organizationField, gridBagConstraints);
         
         // Add field for role
@@ -208,6 +232,7 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        roleField.setValue("");        
         container.add(roleField, gridBagConstraints);
                
         // Add field for phone
@@ -218,6 +243,7 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        phoneField.setValue("");        
         container.add(phoneField, gridBagConstraints);
 
         // Add field for email
@@ -228,6 +254,7 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        emailField.setValue("");        
         container.add(emailField, gridBagConstraints);
 
         // Add field for url
@@ -238,7 +265,10 @@ public class AddAuthorView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;        
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        urlField.setValue("");        
         container.add(urlField, gridBagConstraints);        
+        
+        // ------------------------- TEXT AREAS ------------------------        
         
         // Add ScrollPane for the address
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -270,6 +300,8 @@ public class AddAuthorView implements Observer {
         
         noteScrollPane.add(noteArea);                
         noteScrollPane.setViewportView(noteArea);                        
+        
+        // ------------------------- BUTTONS ------------------------        
         
         // Add "Save Author" button
         saveBtn.setText("Save Author");
@@ -308,6 +340,12 @@ public class AddAuthorView implements Observer {
         container.add(helpBtn, gridBagConstraints);                
     }
     
+    /**
+     *  Check whether given compulsory field is blank. If it is, display appropriate message and give this field focus.
+     *
+     *  @param field string identifier of the field. possible values are: <i>name, surname, organization, role, address, phone, email, url, note</i>
+     *  @return true if the field is non-empty, false otherwise
+     */
     public boolean checkNonEmpty(String field) {
         if (field.equals("name") && (nameField.getText().length() == 0)) {
             JOptionPane.showMessageDialog(addAuthDialog, "Name of the author is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
@@ -357,65 +395,100 @@ public class AddAuthorView implements Observer {
         return true;
     }
     
+    /**
+     *  Set the size and visibility of this dialog
+     */
     public void show() {
         addAuthDialog.setSize(400,450);        
         addAuthDialog.setVisible(true);
     }               
 
+    /**
+     *  Enable/disable this dialog
+     *
+     *  @param enabled specifies whether dialog should be enabled or disabled
+     */
     public void setDialogEnabled(boolean enabled) {
         addAuthDialog.setEnabled(enabled);
     }
     
+    /**
+     *  Return instance of this dialog
+     */
     public JDialog getDialog() {
         return this.addAuthDialog;
     }
     
+    /**
+     *  Update contents of the fields on the form according to the data in the model. This method is called when model notifies its observers.
+     */
     public void update(Observable o, Object arg) {
-        
+        // Load form fields with data from the model
+        this.nameField.setValue(model.getFirstName());
+        this.surnameField.setValue(model.getSurname());
+        this.organizationField.setValue(model.getOrganization());
+        this.roleField.setValue(model.getRole());
+        this.addressArea.setText(model.getAddress());
+        this.phoneField.setValue(model.getPhoneNumber());
+        this.emailField.setValue(model.getEmail());
+        this.urlField.setValue(model.getUrl());
+        this.noteArea.setText(model.getNote());
     }
     
+    /**
+     *  Add ActionListener for the <b>close</b> button
+     */
     public void closeBtnAddActionListener(ActionListener al) {
         closeBtn.addActionListener(al);
     }
     
+    /**
+     *  Add ActionListener for the <b>help</b> button
+     */
     public void helpBtnAddActionListener(ActionListener al) {
         helpBtn.addActionListener(al);
     }
-    
+
+    /**
+     *  Add ActionListener for the <b>save</b> button
+     */    
     public void saveBtnAddActionListener(ActionListener al) {
         saveBtn.addActionListener(al);
     }    
         
-    void firstNameAddFocusListener(FocusListener fl) {
-        nameField.addFocusListener(fl);
+    /**
+     *  Add PropertyChangeListener for the <b>first name</b> field
+     */
+    void firstNameAddPropertyChangeListener(PropertyChangeListener pcl) {
+        nameField.addPropertyChangeListener(pcl);
     }
     
-    void surnameAddFocusListener(FocusListener fl) {
-        surnameField.addFocusListener(fl);
+    void surnameAddPropertyChangeListener(PropertyChangeListener pcl) {
+        surnameField.addPropertyChangeListener(pcl);
     }    
     
-    void organizationAddFocusListener(FocusListener fl) {
-        organizationField.addFocusListener(fl);
+    void organizationAddPropertyChangeListener(PropertyChangeListener pcl) {
+        organizationField.addPropertyChangeListener(pcl);
     }    
     
-    void roleAddFocusListener(FocusListener fl) {
-        roleField.addFocusListener(fl);
+    void roleAddPropertyChangeListener(PropertyChangeListener pcl) {
+        roleField.addPropertyChangeListener(pcl);
     }    
     
     void addressAddFocusListener(FocusListener fl) {
         addressArea.addFocusListener(fl);
     }    
 
-    void phoneNumberAddFocusListener(FocusListener fl) {
-        phoneField.addFocusListener(fl);
+    void phoneNumberAddPropertyChangeListener(PropertyChangeListener pcl) {
+        phoneField.addPropertyChangeListener(pcl);
     }
     
-    void emailAddFocusListener(FocusListener fl) {
-        emailField.addFocusListener(fl);
+    void emailAddPropertyChangeListener(PropertyChangeListener pcl) {
+        emailField.addPropertyChangeListener(pcl);
     }    
     
-    void urlAddFocusListener(FocusListener fl) {
-        urlField.addFocusListener(fl);
+    void urlAddPropertyChangeListener(PropertyChangeListener pcl) {
+        urlField.addPropertyChangeListener(pcl);
     }    
     
     void noteAddFocusListener(FocusListener fl) {
@@ -427,19 +500,20 @@ public class AddAuthorView implements Observer {
     }
     
     public String getFirstName() {
-        return nameField.getText();        
+        System.out.println("Getting first name: "+nameField.getValue());
+        return (String)nameField.getValue();                
     }
     
     public String getSurname() {
-        return surnameField.getText();        
+        return (String)surnameField.getValue();        
     }
     
     public String getOrganization() {
-        return organizationField.getText();        
+        return (String)organizationField.getValue();        
     }
     
     public String getRole() {
-        return roleField.getText();        
+        return (String)roleField.getValue();        
     }
     
     public String getAddress() {
@@ -447,15 +521,15 @@ public class AddAuthorView implements Observer {
     }    
     
     public String getPhoneNumber() {
-        return phoneField.getText();        
+        return (String)phoneField.getValue();        
     }    
     
     public String getEmail() {
-        return emailField.getText();        
+        return (String)emailField.getValue();        
     }    
     
     public String getUrl() {
-        return urlField.getText();        
+        return (String)urlField.getValue();        
     }    
     
     public String getNote() {

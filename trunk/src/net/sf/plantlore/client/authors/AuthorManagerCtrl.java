@@ -9,6 +9,8 @@ package net.sf.plantlore.client.authors;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import net.sf.plantlore.common.*;
@@ -47,6 +49,7 @@ public class AuthorManagerCtrl {
         view.addBtnAddActionListener(new AddAuthorButtonListener());
         view.searchBtnAddActionlistener(new SearchAuthorButtonListener());
         view.deleteBtnAddActionListener(new DeleteAuthorButtonListener());
+        view.editBtnAddActionListener(new EditAuthorButtonListener());
         view.previousBtnAddActionListener(new PreviousButtonListener());
         view.nextBtnAddActionListener(new NextButtonListener());        
         // Add PropertyChange listeners to fields in search box
@@ -56,6 +59,8 @@ public class AuthorManagerCtrl {
         view.emailAddPropertyChangeListener(new EmailFieldPropertyChangeListener());                
         // Add PropertyChange listener for the field with number of records to show
         view.rowsAddPropertyChangeListener(new RowsPropertyChangeListener());
+        view.sortAddFocusListener(new SortComboFocusListener());
+        view.sortDirectionAddFocusListener(new SortDirectionRadioFocusListener());
         // Create a timer for search operation
         timerSearch = new Timer(TIMER_FREQUENCY, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -66,9 +71,12 @@ public class AuthorManagerCtrl {
                     view.setDialogEnabled(true);    // Enable view dialog                
                     // Check for errors which might have occured. If none occured, tell model to process the result
                     if (model.processErrors() == false) {
-                        // Display first n rows (n = model.getDisplayRows())
-                        model.processResults(1, model.getDisplayRows());
-                        model.setCurrentFirstRow(1);
+                        if (model.getResult().getNumRows() == 0) {
+                            view.showSearchInfoMessage();
+                        }
+                        model.setCurrentFirstRow(1);                                                    
+                        // Display first n rows (n = model.getDisplayRows())                        
+                        model.processResults(1, model.getDisplayRows());                        
                     }
                 }
             }
@@ -83,8 +91,19 @@ public class AuthorManagerCtrl {
                     view.setDialogEnabled(true);    // Enable view dialog                
                     // Check for errors which might have occured. If none occured, tell model to process the result
                     if (model.processErrors() == false) {
-                        // Update table with authors - remove deleted author
-                        model.removeAuthorRecord();
+                        // Update curent first row so that it is not greater than number of rows in the result
+                        // (this happens in case the last record in the list has been deleted and it was set as 
+                        // the current first row)
+                        if (model.getCurrentFirstRow() > model.getResult().getNumRows()) {                           
+                            int row = model.getCurrentFirstRow()-model.getDisplayRows();
+                            if (row < 1) {
+                                model.setCurrentFirstRow(1);                                
+                            } else {
+                                model.setCurrentFirstRow(row);                                                                
+                            }
+                        }
+                        // Update table with authors - remove deleted author                        
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
                     }
                 }
             }
@@ -107,7 +126,7 @@ public class AuthorManagerCtrl {
     class HelpButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Display help viewer            
-            PlantloreHelp.showHelp("Main.AuthorManager");            
+            PlantloreHelp.showHelp(PlantloreHelp.AUTHOR_MANAGER_ADD);            
         }
     }
     
@@ -129,7 +148,16 @@ public class AuthorManagerCtrl {
      */    
     class EditAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // Not implmeneted yet
+            int index = view.getSelectedAuthor();
+            if (index == -1) {
+                view.selectRowMsg();
+                return;
+            }             
+            AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame());
+            AddAuthorCtrl addAuthCtrl = new AddAuthorCtrl(model, addAuthView);            
+            model.setAuthorIndex(index);
+            model.loadAuthor();
+            addAuthView.show();
         }
     }
     
@@ -183,7 +211,7 @@ public class AuthorManagerCtrl {
             }
         }
     }        
-    
+            
     class PreviousButtonListener implements ActionListener {    
         public void actionPerformed(ActionEvent e) {
             // Call processResults only if we don't see the first page (should not happen, button should be disabled)
@@ -196,12 +224,43 @@ public class AuthorManagerCtrl {
     
     class NextButtonListener implements ActionListener {    
         public void actionPerformed(ActionEvent e) {
-            // Call processResults only if we don't see the last page (should not happen, button should be desabled)
-            if (model.getCurrentFirstRow()+view.getDisplayRows()<model.getResult().getNumRows()) {
+            // Call processResults only if we don't see the last page (should not happen, button should be disabled)
+            logger.debug("current first row: "+model.getCurrentFirstRow());
+            logger.debug("num rows in the result: "+model.getResult().getNumRows());            
+            logger.debug("display rows: "+view.getDisplayRows());
+            if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResult().getNumRows()) {
                 model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());                                
             }
         }
     }    
+    
+    /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
+     *  stores value of the field to model.
+     */
+    class SortComboFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setSortField(view.getSortField());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty
+        }
+    }    
+    
+    /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
+     *  stores value of the field to model.
+     */
+    class SortDirectionRadioFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setSortDirection(view.getSortDirection());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty
+        }
+    }                
     
     /**
      *  PropertyChange listener for the <strong>name field</strong> at the search panel. After losing focus automaticaly 
@@ -209,7 +268,8 @@ public class AuthorManagerCtrl {
      */
     class NameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setFirstName(view.getName());
+            model.setSearchName(view.getName());
+            System.out.println("Name set: "+view.getName());
         }        
     }
 
@@ -219,7 +279,7 @@ public class AuthorManagerCtrl {
      */    
     class OrganizationFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setOrganization(view.getOrganization());
+            model.setSearchOrganization(view.getOrganization());
         }        
     }    
 
@@ -229,7 +289,7 @@ public class AuthorManagerCtrl {
      */    
     class RoleFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setRole(view.getRole());
+            model.setSearchRole(view.getRole());
         }        
     }    
 
@@ -239,7 +299,7 @@ public class AuthorManagerCtrl {
      */        
     class EmailFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setEmail(view.getEmail());
+            model.setSearchEmail(view.getEmail());
         }        
     }        
     
@@ -258,9 +318,11 @@ public class AuthorManagerCtrl {
             }
             // Set new value in the model
             model.setDisplayRows(view.getDisplayRows());
+            logger.debug("New display rows: "+view.getDisplayRows());
             // If neccessary reload search results
             if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResult().getNumRows())) {
                 model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
+                logger.debug("Search results reloaded. First row: "+model.getCurrentFirstRow()+"; Display rows: "+view.getDisplayRows());
             }
         }        
     }            

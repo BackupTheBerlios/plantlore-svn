@@ -1,5 +1,5 @@
-/*
- * AuthorManagerView.java
+
+/* AuthorManagerView.java
  *
  * Created on 15. leden 2006, 2:04
  *
@@ -8,6 +8,7 @@
 package net.sf.plantlore.client.authors;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.Observer;
 import java.util.Observable; 
@@ -16,16 +17,21 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import net.sf.plantlore.client.dblayer.AuthorRecord;
+import net.sf.plantlore.common.record.AuthorRecord;
 
 /**
  *
@@ -49,6 +55,7 @@ public class AuthorManagerView implements Observer {
         // Create new modal dialog
         authDialog = new JDialog(owner, "Author Manager", true);
         authDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        authDialog.setLocationRelativeTo(null);
         authDialog.setSize(320,240);
 
         container = authDialog.getContentPane();
@@ -61,16 +68,19 @@ public class AuthorManagerView implements Observer {
                 
         listPanel = new JPanel();
         searchPanel = new JPanel();
+        sortPanel = new JPanel();
         closeBtn = new JButton();
         helpBtn = new JButton();
         nameLabel = new JLabel();
         organizationLabel = new JLabel();
         roleLabel = new JLabel();
         emailLabel = new JLabel();
+        sortLabel = new JLabel();
         nameField = new JFormattedTextField();
         organizationField = new JFormattedTextField();
         roleField = new JFormattedTextField();
         emailField = new JFormattedTextField();
+        sortCombo = new JComboBox();
         listTable = new JTable();
         listScrollPane = new JScrollPane();
         addBtn = new JButton();
@@ -81,9 +91,21 @@ public class AuthorManagerView implements Observer {
         searchBtn = new JButton();
         totalRowsDescLabel = new JLabel();
         totalRowsLabel = new JLabel();
+        currentRowsLabel = new JLabel();
+        displayedLabel = new JLabel();
         displayRowsLabel = new JLabel();
         rowsField = new JFormattedTextField();        
-                        
+        ascRadio = new JRadioButton();
+        descRadio = new JRadioButton();
+        sortButtonGroup = new ButtonGroup();
+        
+        String[] sortFields = {"Name", "Organization", "Role", "Email", "Phone number", "URL"};
+        sortCombo.setModel(new DefaultComboBoxModel(sortFields));
+        
+        sortButtonGroup.add(ascRadio);
+        sortButtonGroup.add(descRadio);
+        sortButtonGroup.setSelected(ascRadio.getModel(), true);
+        
         listPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(" List of authors "));
         listPanel.setLayout(new java.awt.GridBagLayout());        
         
@@ -110,6 +132,20 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;                
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         container.add(searchPanel, gridBagConstraints);        
+        
+        sortPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(" Sorting "));
+        sortPanel.setLayout(new java.awt.GridBagLayout());        
+        
+        // Add panel with sorting criteria
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.insets = new java.awt.Insets(-5, 5, 5, 5);                
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;        
+        gridBagConstraints.fill = GridBagConstraints.BOTH;   
+        searchPanel.add(sortPanel, gridBagConstraints);
+        
         
         // Add close button
         closeBtn.setText("Close");
@@ -152,7 +188,7 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 7, 5);
-        searchPanel.add(roleLabel, gridBagConstraints);
+        searchPanel.add(roleLabel, gridBagConstraints);        
 
         emailLabel.setText("Email:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -161,6 +197,14 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 5);
         searchPanel.add(emailLabel, gridBagConstraints);        
+                
+        sortLabel.setText("Sort by:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        sortPanel.add(sortLabel, gridBagConstraints);                
         
         // Add fields to the search panel        
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -168,7 +212,7 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.7;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         nameField.setValue("");
         searchPanel.add(nameField, gridBagConstraints);
@@ -178,6 +222,7 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.7;        
         organizationField.setValue("");        
         searchPanel.add(organizationField, gridBagConstraints);
 
@@ -187,6 +232,7 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
+        gridBagConstraints.weightx = 0.3;        
         roleField.setValue("");        
         searchPanel.add(roleField, gridBagConstraints);
 
@@ -195,18 +241,44 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         emailField.setValue("");        
         searchPanel.add(emailField, gridBagConstraints);
+
+        // Add ComboBox with the list of fields for sorting
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        sortCombo.setPreferredSize(new Dimension(150,20));
+        sortPanel.add(sortCombo, gridBagConstraints);        
         
+        // Add RadioButtons for ascending / descending sort
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 0);
+        ascRadio.setText("Ascending");
+        sortPanel.add(ascRadio, gridBagConstraints);        
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 0);
+        descRadio.setText("Descending");
+        sortPanel.add(descRadio, gridBagConstraints);        
+       
         // Add search button to the search panel
         searchBtn.setText("Search Authors");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 5);
         searchPanel.add(searchBtn, gridBagConstraints);        
         
         // Add ScrollPane for the listTable        
@@ -223,14 +295,6 @@ public class AuthorManagerView implements Observer {
         listScrollPane.setPreferredSize(new java.awt.Dimension(500, 100));                        
         listPanel.add(listScrollPane, gridBagConstraints);                        
         
-        // Add table to listScrollPane
-/*        listTable.setModel(new DefaultTableModel(
-            new Object [][] { },
-            new String [] {
-                "Name", "Organization", "Role", "Phone number", "Email", "URL"
-            }
-        ));        
- */
         listScrollPane.add(listTable);                
         listScrollPane.setViewportView(listTable);        
         
@@ -313,6 +377,23 @@ public class AuthorManagerView implements Observer {
         gridBagConstraints.insets = new java.awt.Insets(0, 150, 0, 5);
         listPanel.add(totalRowsLabel, gridBagConstraints);                        
         
+        // Add labels showing number of rows in the result
+        currentRowsLabel.setText("Currently displayed:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 5);
+        listPanel.add(currentRowsLabel, gridBagConstraints);                
+
+        displayedLabel.setText("---");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 135, 0, 5);
+        listPanel.add(displayedLabel, gridBagConstraints);                        
+        
         // Add label and text field with the number of rows to display
         displayRowsLabel.setText("Rows to display:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -330,7 +411,7 @@ public class AuthorManagerView implements Observer {
         rowsField.setMinimumSize(new java.awt.Dimension(50, 20));        
         rowsField.setPreferredSize(new java.awt.Dimension(50, 20));                
         rowsField.setValue(model.getDisplayRows());
-        listPanel.add(rowsField, gridBagConstraints);                
+        listPanel.add(rowsField, gridBagConstraints);                         
         
         authDialog.pack();
     }
@@ -370,7 +451,7 @@ public class AuthorManagerView implements Observer {
     public void update(Observable obs, Object obj) {       
         // Check whether we have some kind of error to display
         if (model.isError()) {
-            showErrorMessage(model.getErrorMessage());
+//            showErrorMessage(model.getErrorMessage());            
             return;
         } else {
             displayResults(model.getData());
@@ -397,12 +478,14 @@ public class AuthorManagerView implements Observer {
         } else {
             previousBtn.setEnabled(false);
         }
-        // set the status of the "Next" button        
+        // Set the status of the "Next" button        
         if (model.getResult().getNumRows() >= (model.getDisplayRows()+model.getCurrentFirstRow())) {
             nextBtn.setEnabled(true);
         } else {
             nextBtn.setEnabled(false);            
         }
+        int to = Math.min(model.getCurrentFirstRow()+model.getDisplayRows()-1, model.getResult().getNumRows());
+        displayedLabel.setText(model.getCurrentFirstRow()+" - "+to);
     }
     
     public void closeBtnAddActionListener(ActionListener al) {
@@ -439,7 +522,7 @@ public class AuthorManagerView implements Observer {
     
     
     public void show() {
-        authDialog.setSize(750,600);
+        authDialog.setSize(800,600);
         authDialog.setLocationRelativeTo(null);
         authDialog.setVisible(true);
     }
@@ -453,7 +536,6 @@ public class AuthorManagerView implements Observer {
     }
     
     public String getName() {
-        System.out.println("Name: "+nameField.getValue());
         return (String)nameField.getValue();
     }
 
@@ -477,6 +559,34 @@ public class AuthorManagerView implements Observer {
         this.rowsField.setValue(value);
     }    
     
+    public int getSortField() {        
+        int field;
+        switch (this.sortCombo.getSelectedIndex()) {
+            case 0: field = AuthorManager.SORT_NAME;
+                    break;
+            case 1: field = AuthorManager.SORT_ORGANIZATION;
+                    break;
+            case 2: field = AuthorManager.SORT_ROLE;
+                    break;
+            case 3: field = AuthorManager.SORT_EMAIL;
+                    break;
+            case 4: field = AuthorManager.SORT_PHONE;
+                    break;
+            case 5: field = AuthorManager.SORT_URL;
+                    break;                    
+            default:field = AuthorManager.SORT_NAME;
+        }
+        return field;
+    }
+    
+    public int getSortDirection() {
+        if (this.sortButtonGroup.isSelected(this.ascRadio.getModel()) == true) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+    
     void nameAddPropertyChangeListener(PropertyChangeListener pcl) {
         nameField.addPropertyChangeListener(pcl);
     }
@@ -497,6 +607,15 @@ public class AuthorManagerView implements Observer {
         rowsField.addPropertyChangeListener(pcl);
     }        
 
+    void sortAddFocusListener(FocusListener fl) {
+        sortCombo.addFocusListener(fl);
+    }
+    
+    void sortDirectionAddFocusListener(FocusListener fl) {
+        ascRadio.addFocusListener(fl);
+        descRadio.addFocusListener(fl);
+    }
+    
     public boolean confirmDelete() {
         // JOptionPane results: 0 = Yes, 1 = No
         int res = JOptionPane.showConfirmDialog(this.authDialog, "Do you really want to delete selected author?", 
@@ -515,16 +634,23 @@ public class AuthorManagerView implements Observer {
         JOptionPane.showMessageDialog(this.authDialog, "Please select at least one author from the list",
                                       "Select author", JOptionPane.WARNING_MESSAGE);        
     }
+
+    public void showSearchInfoMessage() {
+        JOptionPane.showMessageDialog(this.authDialog, "No authors with the given attributes were found. Please modify search criteria.",
+                                      "No search results", JOptionPane.INFORMATION_MESSAGE);                
+    }
     
     // Swing components on the form
     JPanel listPanel;
     JPanel searchPanel;
+    JPanel sortPanel;
     JButton closeBtn;
     JButton helpBtn;
     JLabel nameLabel;
     JLabel organizationLabel;
     JLabel roleLabel;
     JLabel emailLabel;
+    JLabel sortLabel;
     JFormattedTextField nameField;
     JFormattedTextField organizationField;    
     JFormattedTextField roleField;
@@ -539,6 +665,12 @@ public class AuthorManagerView implements Observer {
     JLabel totalRowsDescLabel;
     JLabel totalRowsLabel;
     JLabel displayRowsLabel;
+    JLabel currentRowsLabel;
+    JLabel displayedLabel;
     JFormattedTextField rowsField;            
-    JScrollPane listScrollPane;
+    JScrollPane listScrollPane;    
+    JComboBox sortCombo;
+    JRadioButton ascRadio;
+    JRadioButton descRadio;
+    ButtonGroup sortButtonGroup;
 }

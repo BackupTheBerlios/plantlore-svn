@@ -11,8 +11,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import net.sf.plantlore.common.PlantloreHelp;
 import javax.swing.Timer;
+import net.sf.plantlore.client.authors.AuthorManagerCtrl.RoleFieldPropertyChangeListener;
 import net.sf.plantlore.common.ProgressDialog;
 
 /**
@@ -20,37 +23,52 @@ import net.sf.plantlore.common.ProgressDialog;
  * @author Tomas Kovarik
  */
 public class AddAuthorCtrl {
-    
-    AuthorManager model;
-    AddAuthorView view;
+    /** Model of the Author manager MVC */
+    private AuthorManager model;
+    /** View for adding authors in Autho mManager */
+    private AddAuthorView view;
+    /** Timer used to check for the end of long running tasks */
     private Timer timer;
+    /** Instance of progress dialog */
     private ProgressDialog progress;
     
-    /** Creates a new instance of AddAuthorCtrl */
+    /** 
+     *  Creates a new instance of AddAuthorCtrl 
+     *
+     *  @param addModel Model of the Author manager MVC
+     *  @param addView View for adding authors in Author manager
+     */
     public AddAuthorCtrl(AuthorManager addModel, AddAuthorView addView) {
+        // Save instance of view and model
         this.model = addModel;
         this.view = addView;
+        // Add listeners for buttons and fields
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.helpBtnAddActionListener(new HelpButtonListener());
         view.saveBtnAddActionListener(new SaveAuthorButtonListener());        
-        view.firstNameAddFocusListener(new FirstNameFieldFocusListener());
-        view.surnameAddFocusListener(new SurnameFieldFocusListener());
-        view.organizationAddFocusListener(new OrganizationFieldFocusListener());
-        view.roleAddFocusListener(new RoleFieldFocusListener());
+        view.firstNameAddPropertyChangeListener(new FirstNameFieldPropertyChangeListener());
+        view.surnameAddPropertyChangeListener(new SurnameFieldPropertyChangeListener());
+        view.organizationAddPropertyChangeListener(new OrganizationFieldPropertyChangeListener());
+        view.roleAddPropertyChangeListener(new RoleFieldPropertyChangeListener());
         view.addressAddFocusListener(new AddressAreaFocusListener());
-        view.phoneNumberAddFocusListener(new PhoneFieldFocusListener());
-        view.emailAddFocusListener(new EmailFieldFocusListener());
-        view.urlAddFocusListener(new UrlFieldFocusListener());
-        view.noteAddFocusListener(new NoteAreaFocusListener());        
-        
-        // Create a timer
+        view.phoneNumberAddPropertyChangeListener(new PhoneFieldPropertyChangeListener());
+        view.emailAddPropertyChangeListener(new EmailFieldPropertyChangeListener());
+        view.urlAddPropertyChangeListener(new UrlFieldPropertyChangeListener());
+        view.noteAddFocusListener(new NoteAreaFocusListener());                
+        // Create a timer to check for the end of long running task
         timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 if (model.isOperationDone() == true) {
                     timer.stop();
-                    System.out.println("closing progressbar...");
+                    // Close progress bar dialog
                     progress.close();
                     view.setDialogEnabled(true);                    
+                    if (model.processErrors() == false) {    
+                        if (model.isResultAvailable()) {   
+                            System.out.println("current first row: "+model.getCurrentFirstRow());
+                            model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());                        
+                        }
+                    }
                 }
             }
         });        
@@ -72,12 +90,13 @@ public class AddAuthorCtrl {
     class HelpButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Display help viewer            
-            PlantloreHelp.showHelp("Main.AuthorManager");            
+            PlantloreHelp.showHelp(PlantloreHelp.AUTHOR_MANAGER_GENERAL);            
         }
     }
     
     /**
-     * ActionListener class controlling the <b>Save author</b> button on the form.
+     * ActionListener class controlling the <b>Save author</b> button on the form. Checks whether all the required fields 
+     * have been set and calls model to save the data when the button is clicked.
      */    
     class SaveAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {            
@@ -86,60 +105,59 @@ public class AddAuthorCtrl {
                 view.checkNonEmpty("organization") && view.checkNonEmpty("role") &&
                 view.checkNonEmpty("address") && view.checkNonEmpty("phone") &&
                 view.checkNonEmpty("email") && view.checkNonEmpty("url")) {
-                
+                // Save the author data
                 model.saveAuthor();                
-
+                // Disable the dialog while saving author
                 view.setDialogEnabled(false);                                
                 timer.start();                
                 // Display dialog with progress bar
                 progress = new ProgressDialog(view.getDialog(), true);
                 progress.show();
-                
+                // Close the add dialog when save finished
                 view.close();
             }
         }
     }        
 
-    class FirstNameFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>first name</b> field in the model with data from the form.
+     */
+    class FirstNameFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setFirstName(view.getFirstName());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }
     
-    class SurnameFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>surname</b> field in the model with data from the form.
+     */
+    class SurnameFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setSurname(view.getSurname());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }
     
-    class OrganizationFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>organization</b> field in the model with data from the form.
+     */
+    class OrganizationFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setOrganization(view.getOrganization());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }    
     
-    class RoleFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>role</b> field in the model with data from the form.
+     */
+    class RoleFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setRole(view.getRole());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }    
-    
+
+    /**
+     *  FocusListener class for updating <b>address</b> field in the model with data from the form.
+     */    
     class AddressAreaFocusListener implements FocusListener {
         public void focusLost(FocusEvent e) {
             model.setAddress(view.getAddress());
@@ -150,36 +168,36 @@ public class AddAuthorCtrl {
         }
     }        
     
-    class PhoneFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>phone number</b> field in the model with data from the form.
+     */
+    class PhoneFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setPhoneNumber(view.getPhoneNumber());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }        
     
-    class EmailFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>email</b> field in the model with data from the form.
+     */
+    class EmailFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setEmail(view.getEmail());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }        
     
-    class UrlFieldFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
+    /**
+     *  PropertyChangeListener class for updating <b>URL</b> field in the model with data from the form.
+     */
+    class UrlFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             model.setUrl(view.getUrl());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
     }            
 
+    /**
+     *  FocusListener class for updating <b>note</b> field in the model with data from the form.
+     */
     class NoteAreaFocusListener implements FocusListener {
         public void focusLost(FocusEvent e) {
             model.setNote(view.getNote());
