@@ -26,7 +26,8 @@ public class DBMapping {
     private Hashtable PUBLICATION;
     private Hashtable METADATA;
     private Hashtable HABITAT;
-    private Hashtable OCCURRENCE;                
+    private Hashtable OCCURRENCE;  
+    private Hashtable HISTORY;
     
     public static final int USERRECORD = 1;
     public static final int AUTHORRECORD = 2;
@@ -34,7 +35,8 @@ public class DBMapping {
     public static final int PUBLICATIONRECORD = 4;
     public static final int METADATARECORD = 5;
     public static final int HABITATRECORD = 6;    
-    public static final int OCCURENCERECORD = 7;        
+    public static final int OCCURENCERECORD = 7;  
+    public static final int HISTORYRECORD = 8;
     
     /** List of tables for available entities*/
     private String AUTHOR_TABLES = "TAUTHORS";
@@ -44,6 +46,8 @@ public class DBMapping {
     private String METADATA_TABLES = "TMETADATA";
     private String HABITAT_TABLES = "THABITATS, TVILLAGES, TPHYTOCHORIA, TTERRITORIES";
     private String OCCURENCE_TABLES = "TOCCURRENCES, TMETADATA, TPLANTS, TPUBLICATIONS, THABITATS, TUSER";
+    private String HISTORY_TABLES = "THISTORY JOIN THISTORYCOLUMN JOIN THISTORYCHANGE ON (THISTORY.ccolumnid = THISTORYCOLUMN.cid) ON (THISTORY.cchangeid = THISTORYCHANGE.cid) ";
+    
     /** Instance of a logger */
     private Logger logger;
     
@@ -59,6 +63,7 @@ public class DBMapping {
         initMetadata();
         initHabitat();
         initOccurrence();
+        initHistory();
     }
         
     /**
@@ -84,7 +89,9 @@ public class DBMapping {
             case HABITATRECORD:
                 return this.HABITAT_TABLES;                
             case OCCURENCERECORD:
-                return this.OCCURENCE_TABLES;                            
+                return this.OCCURENCE_TABLES;  
+            case HISTORYRECORD:
+                return this.HISTORY_TABLES;
             default:
                 logger.error("No table defined for type "+type);
                 throw new DBLayerException("No table defined for type "+type);                
@@ -123,6 +130,9 @@ public class DBMapping {
             case OCCURENCERECORD:
                 value = getOccurrenceField(key);
                 break;
+            case HISTORYRECORD:
+            	value = getHistoryField(key);
+            	break;
             default:            
                 logger.error("No fields defined for type "+type);
                 throw new DBLayerException("No fields defined for type "+type);
@@ -233,6 +243,21 @@ public class DBMapping {
         }
     }
 
+    /**
+     *  Get a specified field from history mapping.
+     *
+     *  @param key  String key representing a database column
+     *  @return     name of the database column. If the given key is not found <code>null</code> is returned
+     */
+    private String getHistoryField(String key) {       
+    	if (HISTORY.containsKey(key)) {
+    		System.out.println((String)HISTORY.get(key));
+            return (String)HISTORY.get(key);
+        } else {        	
+            return null;
+        }
+    }    
+    
     /**
      *  Initialization of the mapping of Users.
      */
@@ -349,4 +374,18 @@ public class DBMapping {
         OCCURRENCE.put("updatedwho","TOCCURRENCES.CUPDATEWHO");
         OCCURRENCE.put("note","TOCCURRENCES.CNOTE");                
     }    
+    
+    private void initHistory() {
+    	HISTORY = new Hashtable(10);
+    	HISTORY.put("cid","THISOTRY.CID");
+    	HISTORY.put("oldValue","THISTORY.COLDVALUE");
+    	HISTORY.put("newValue","THISTORY.CNEWVALUE");
+    	HISTORY.put("tableName","THISTORYCOLUMN.CTABLENAME");
+    	HISTORY.put("columnName","THISTORYCOLUMN.CCOLUMNNAME");
+    	HISTORY.put("occurrenceId","THISTORYCHANGE.COCCURRENCEID");
+    	HISTORY.put("recordId","THISTORYCHANGE.CRECORDID");
+    	HISTORY.put("operation","THISTORYCHANGE.COPEREATION");
+    	HISTORY.put("when","THISTORYCHANGE.CWHEN");
+    	HISTORY.put("who","THISTORYCHANGE.CWHO");    	
+    }
 }

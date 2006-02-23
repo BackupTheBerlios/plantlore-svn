@@ -24,6 +24,10 @@ import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
 import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.client.history.History;
+import net.sf.plantlore.client.history.HistoryCtrl;
+import net.sf.plantlore.client.history.HistoryView;
+
 import org.apache.log4j.Logger;
 
 /** Application core controller.
@@ -42,6 +46,10 @@ public class AppCoreCtrl
     SettingsCtrl settingsCtrl;
     Preferences prefs;
     
+    History historyModel;
+    HistoryView historyView;
+    HistoryCtrl historyCtrl;
+    
     /** Creates a new instance of AppCoreCtrl */
     public AppCoreCtrl(AppCore model, AppCoreView view)
     {
@@ -56,6 +64,7 @@ public class AppCoreCtrl
         view.addHelpAboutListener(new HelpAboutListener());
         view.addDataAuthorsListener(new DataAuthorsListener());
         view.addDataPublicationsListener(new DataPublicationsListener());
+        view.addDataHistoryListener(new DataHistoryListener());
     }
     
     /** Handles click to menu item Settings.
@@ -160,6 +169,20 @@ public class AppCoreCtrl
     class DataPublicationsListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
             // Open publication manager - not implemented yet
+        }
+    }   
+    
+    class DataHistoryListener implements ActionListener {
+    	public void actionPerformed(ActionEvent actionEvent)
+        {
+            System.out.println("Undo selected");
+            //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
+            //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
+            //jmeno rosliny, jmeno autora a lokaci a idOccurrences
+            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
+            historyView = new HistoryView(historyModel);
+            historyCtrl = new HistoryCtrl(historyModel, historyView);
+            historyView.setVisible(true);
         }
     }    
 }

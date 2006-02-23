@@ -63,6 +63,7 @@ public class AppCoreView implements Observer
     private JMenuItem helpAbout = new JMenuItem(L10n.getString("helpAbout"));
     private JMenuItem dataAuthors = new JMenuItem(L10n.getString("authorMgr"));
     private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr"));    
+    private JMenuItem dataHistory = new JMenuItem(L10n.getString("History"));
     
     private JLabel statusLabel;
     
@@ -126,7 +127,8 @@ public class AppCoreView implements Observer
         
         dataMenu.setMnemonic(KeyEvent.VK_D);
         dataMenu.add(dataAuthors);
-        dataMenu.add(dataPublications);        
+        dataMenu.add(dataPublications);   
+        dataMenu.add(dataHistory); 
 
         helpMenu.setMnemonic(KeyEvent.VK_H);
         helpMenu.add(helpContents);
@@ -276,6 +278,13 @@ public class AppCoreView implements Observer
     public void addDataPublicationsListener(ActionListener al) {
         dataPublications.addActionListener(al);
     }    
+    
+    /** Adds a listener to the HistoryData menu item.
+    *
+    */
+    public void addDataHistoryListener(ActionListener al) {
+        dataHistory.addActionListener(al);
+    }
     
     /** Returns the frame of the main window.
      *
