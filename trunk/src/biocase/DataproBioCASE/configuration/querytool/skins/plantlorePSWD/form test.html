@@ -1,0 +1,70 @@
+<html><head>
+<meta http-equiv="Content-Language" content="it">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="Title" content="">
+<meta name="Robots" content="">
+<meta name="Designer" content="">
+<meta name="owner" content="">
+<meta name="Copyright" content="">
+<meta name="Author" content="">
+<meta name="Abstract" content="">
+<meta name="description" content="">
+<meta name="keywords" content="">
+
+<title>Nálezová databáze Jihočeské pobočky ČBS</title>
+<link rel="stylesheet" type="text/css" href="plantlore/styly.css">
+</head>
+
+
+<body>
+   
+  <div>
+      <h1>Nálezová databáze Jihočeské pobočky ČBS</h1>
+      <br><br>
+  </div> 
+      <form action="grouping.cgi" method="post" name="query">
+        <input type="hidden" name="dsa" value="<!--VAR:dsa-->">
+        <input type="hidden" name="schema" value="<!--VAR:schema-->">
+        <input type="hidden" name="wrapper_url" value="<!--VAR:wrapper_url-->">
+    	  <input type="hidden" name="groupby" value="Scientific_Name"/>
+    
+        <table>
+    	<!-- block conceptlist start -->
+          <TR>
+            <Th><!--VAR:label_display-->:</Th>
+            <TD><!--VAR:copOptions--></TD>
+            <TD><input name="con<!--VAR:label-->" size=50></TD>
+          </TR>
+    	<!-- block conceptlist end -->
+          <tr>
+            <th> <div align="right"></div></th>
+            <TD>&nbsp;</TD>
+            <td><input type="image" alt="search" src="../resources/images/button_search.gif" name="boton" width="55" height="17" border=0></td>
+          </tr>
+        </table>
+         <br>
+        <p class="label"><img src="../resources/images/star.gif" width="12" height="13"> Group result by:<br>
+            <select name="groupby">
+    		<!--VAR:groupby_options-->
+            </select>
+        </p>
+      </form>
+     <form action="main.cgi" method="post" name="select_schema">
+        <input name="dsa" type="hidden" value="<!--VAR:dsa-->">
+        <input type="hidden" name="wrapper_url" value="<!--VAR:wrapper_url-->">
+        <p class="label"><img src="../resources/images/star.gif" width="12" height="13"> Other available data standards:<br>
+          <select name="schema" onChange="Javascript:select_schema.submit()">
+    		<!--VAR:schema_options-->
+          </select>
+      </p>
+      </form>
+    
+      <!--VAR:debug-->
+    
+    </div> 
+    <div id="Footer"> <img src="../resources/images/biocase_powered.gif" alt="powered by Biocase" width="112" height="34" border="0"></div>
+
+</body>
+</html>
+
