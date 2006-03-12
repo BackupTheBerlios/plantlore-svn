@@ -9,9 +9,11 @@ package net.sf.plantlore.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.prefs.Preferences;
+import javax.swing.AbstractAction;
 import net.sf.plantlore.client.dblayer.DBLayer;
 import net.sf.plantlore.client.dblayer.DBLayerException;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
@@ -27,6 +29,7 @@ import net.sf.plantlore.client.dblayer.DBMapping;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
+import net.sf.plantlore.l10n.L10n;
 
 import org.apache.log4j.Logger;
 
@@ -57,11 +60,14 @@ public class AppCoreCtrl
         this.model = model;
         this.view = view;
         prefs = Preferences.userNodeForPackage(AppCoreView.class);
-        view.addSettingsListener(new SettingsListener());
-        view.addPrintListener(new PrintListener());
+        view.setSettingsAction(new SettingsAction());
+        view.setPrintAction(new PrintAction());
         view.addExitListener(new ExitListener());
-        view.addHelpContentsListener(new HelpContentsListener());
-        view.addHelpAboutListener(new HelpAboutListener());
+        view.setHelpContentsAction(new HelpContentsAction());
+        view.setHelpAboutAction(new HelpAboutAction());
+        view.setExportAction(new ExportAction());
+        view.setImportAction(new ImportAction());
+        view.setSearchAction(new SearchAction());
         view.addDataAuthorsListener(new DataAuthorsListener());
         view.addDataPublicationsListener(new DataPublicationsListener());
         view.addDataHistoryListener(new DataHistoryListener());
@@ -70,7 +76,12 @@ public class AppCoreCtrl
     /** Handles click to menu item Settings.
      *
      */
-    class SettingsListener implements ActionListener {
+    class SettingsAction extends AbstractAction {
+        public SettingsAction() {
+            putValue(NAME, L10n.getString("Settings"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("SettingsTooltip"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Settings"));            
+        }
         public void actionPerformed(ActionEvent actionEvent)
         {
             logger.info("Settings selected");
@@ -86,7 +97,12 @@ public class AppCoreCtrl
         }
     }
     
-    class PrintListener implements ActionListener {
+    class PrintAction extends AbstractAction {
+        public PrintAction() {
+            putValue(NAME, L10n.getString("Print"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("PrintTooltip"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Print"));                        
+        }
         public void actionPerformed(ActionEvent actionEvent)
         {
             System.out.println("Print selected");
@@ -134,20 +150,66 @@ public class AppCoreCtrl
             System.exit(0);
         }
     }
-    
-    class HelpContentsListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+
+    class HelpContentsAction extends AbstractAction {
+        public HelpContentsAction() {
+            putValue(NAME, L10n.getString("helpContents"));
+            putValue(SHORT_DESCRIPTION, "Help contents");
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("helpContents"));
+        }
+        public void actionPerformed(ActionEvent actionEvent) {
             System.out.println("Help contents selected");
         }
     }
-    
-    class HelpAboutListener implements ActionListener {
+        
+    class HelpAboutAction extends AbstractAction {
+        public HelpAboutAction() {
+            putValue(NAME, L10n.getString("helpAbout"));
+            putValue(SHORT_DESCRIPTION, "Help about tooltip");
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("helpAbout"));
+        }
         public void actionPerformed(ActionEvent actionEvent)
         {
             System.out.println("Help about selected");
         }
     }
+    
+    class ImportAction extends AbstractAction {
+        public ImportAction() {
+            putValue(NAME, L10n.getString("dataImport"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("dataImportTooltip"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("dataImport"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Import pressed");
+        }
+    }
+    
+    class ExportAction extends AbstractAction {
+        public ExportAction() {
+            putValue(NAME, L10n.getString("dataExport"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("dataExportTooltip"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("dataExport"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Export pressed");
+        }
+    }
+
+    class SearchAction extends AbstractAction {
+        public SearchAction() {
+            putValue(NAME, L10n.getString("dataSearch"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("dataSearchTooltip"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("dataSearch"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Search pressed");
+        }
+    }
+    
     
     class AppWindowListener extends WindowAdapter {
         public void windowClosing(WindowEvent e)
@@ -179,7 +241,7 @@ public class AppCoreCtrl
             //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
-            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
+            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha vchod", 1);
             historyView = new HistoryView(historyModel);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
             historyView.setVisible(true);

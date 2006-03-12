@@ -17,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -55,7 +56,7 @@ public class AppCoreView implements Observer
     private JMenu
             fileMenu = new JMenu(L10n.getString("File")),
             dataMenu = new JMenu(L10n.getString("Data")),
-            helpMenu = new JMenu(L10n.getString("Help"));    
+            helpMenu = new JMenu(L10n.getString("Help")); 
     private JMenuItem settings = new JMenuItem(L10n.getString("Settings"));
     private JMenuItem print = new JMenuItem(L10n.getString("Print"));
     private JMenuItem exit = new JMenuItem(L10n.getString("Exit"));
@@ -64,6 +65,14 @@ public class AppCoreView implements Observer
     private JMenuItem dataAuthors = new JMenuItem(L10n.getString("authorMgr"));
     private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr"));    
     private JMenuItem dataHistory = new JMenuItem(L10n.getString("History"));
+    private JMenuItem dataImport = new JMenuItem(L10n.getString("dataImport"));
+    private JMenuItem dataExport = new JMenuItem(L10n.getString("dataExport"));
+    private JMenuItem dataSearch = new JMenuItem(L10n.getString("dataSearch"));
+    
+    private JButton 
+            importButton = new JButton(),
+            exportButton = new JButton(), 
+            searchButton = new JButton();
     
     private JLabel statusLabel;
     
@@ -119,18 +128,21 @@ public class AppCoreView implements Observer
      */
     private void initMenu()
     {
-        fileMenu.setMnemonic(KeyEvent.VK_F);
+        fileMenu.setMnemonic(L10n.getMnemonic("File"));
         fileMenu.add(settings);
         fileMenu.add(print);
         fileMenu.addSeparator();
         fileMenu.add(exit);
         
-        dataMenu.setMnemonic(KeyEvent.VK_D);
+        dataMenu.setMnemonic(L10n.getMnemonic("Data"));
         dataMenu.add(dataAuthors);
         dataMenu.add(dataPublications);   
+        dataMenu.add(dataImport);
+        dataMenu.add(dataExport);
+        dataMenu.add(dataSearch);
         dataMenu.add(dataHistory); 
 
-        helpMenu.setMnemonic(KeyEvent.VK_H);
+        helpMenu.setMnemonic(L10n.getMnemonic("Help"));
         helpMenu.add(helpContents);
         helpMenu.addSeparator();
         helpMenu.add(helpAbout);
@@ -147,11 +159,8 @@ public class AppCoreView implements Observer
     private void initMainToolBar()
     {
         mainToolBar = new JToolBar();
-        JButton importButton = new JButton("Import");
         mainToolBar.add(importButton);
-        JButton exportButton = new JButton("Export");
         mainToolBar.add(exportButton);
-        JButton searchButton = new JButton("Search");
         mainToolBar.add(searchButton);
         container.add(mainToolBar, BorderLayout.NORTH);
         
@@ -227,17 +236,17 @@ public class AppCoreView implements Observer
         frame.setVisible(visible);
     }
 
-    /** Adds listener to the settings menu item.
+    /** Sets an action to the settings menu item.
      *
      */
-    public void addSettingsListener(ActionListener al) {
-        settings.addActionListener(al);
+    public void setSettingsAction(AbstractAction a) {
+        settings.setAction(a);
     }
-    /** Adds listener to the print menu item.
+    /** Sets an action to the print menu item.
      *
      */
-    public void addPrintListener(ActionListener al) {
-        print.addActionListener(al);
+    public void setPrintAction(AbstractAction a) {
+        print.setAction(a);
     }
     /** Adds listener to the exit menu item.
      *
@@ -248,14 +257,38 @@ public class AppCoreView implements Observer
     /** Adds listener to the HelpContents menu item.
      *
      */
-    public void addHelpContentsListener(ActionListener al) {
-        helpContents.addActionListener(al);
+    public void setHelpContentsAction(AbstractAction a) {
+        helpContents.setAction(a);
     }
     /** Adds listener to the HelpAbout menu item.
      *
      */
-    public void addHelpAboutListener(ActionListener al) {
-        helpAbout.addActionListener(al);
+    public void setHelpAboutAction(AbstractAction a) {
+        helpAbout.setAction(a);
+    }
+    
+    /** Sets an action to the Data->Search menu item and to the Search toolbar button.
+     *
+     */
+    public void setSearchAction(AbstractAction a) {
+        dataSearch.setAction(a);
+        searchButton.setAction(a);
+    }
+
+    /** Sets an action to the Data->import menu item and to the Import toolbar button.
+     *
+     */
+    public void setImportAction(AbstractAction a) {
+        dataImport.setAction(a);
+        importButton.setAction(a);
+    }
+
+    /** Sets an action to the Data->export menu item and to the Export toolbar button.
+     *
+     */
+    public void setExportAction(AbstractAction a) {
+        dataExport.setAction(a);
+        exportButton.setAction(a);
     }
 
     /** Adds a listener to the main window frame.

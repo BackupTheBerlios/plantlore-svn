@@ -30,7 +30,7 @@ public class AppCore extends Observable
     {
         prefs = Preferences.userNodeForPackage(this.getClass());
         
-        database = new FirebirdDBLayer("localhost", "3050", "c:/Kovo/DatabaseTest/database/plantlore.fdb", "SYSDBA", "masterkey");
+        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
         try {
             database.initialize();
         } catch (DBLayerException e) {

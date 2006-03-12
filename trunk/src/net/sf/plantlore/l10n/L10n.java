@@ -76,11 +76,37 @@ public class L10n
     
     /** Gets string for the given key
      *
+     * Removes the first ampersand sign (&) because it is assumed that it is an indiaction of a mnemonic.
+     *
      * @param key Key of the required value
      * @trhows NullPointerException in case that <code>load()</code> wasn't called first or it failed.
      */
     public static String getString(String key) {
-        return resource.getString(key);
+        StringBuffer sb = new StringBuffer(resource.getString(key));
+        int i = sb.indexOf("&");
+        if (i>=0)
+            sb.deleteCharAt(i);
+        return sb.toString();
     }
     
+    /** Returns mnemonic for the given key.
+     *
+     * If the mnemonic wasn't set in the string for the key then returns -1.
+     *
+     * @param key Key of the required value
+     * @trhows NullPointerException in case that <code>load()</code> wasn't called first or it failed.
+     */
+    public static int getMnemonic(String key) {
+        StringBuffer sb = new StringBuffer(resource.getString(key));
+        int i = sb.indexOf("&");
+        if (i < 0)
+            return -1;
+        if (i+1 == sb.length())
+            return -1;
+        Character c = sb.charAt(i+1);
+        if (i>=0)
+            sb.deleteCharAt(i);
+        
+        return c.toUpperCase(c);
+    }
 }
