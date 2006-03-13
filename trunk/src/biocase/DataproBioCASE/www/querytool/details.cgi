@@ -38,60 +38,63 @@ tmpl.load('Content', os.path.join(templateDir, 'details.html'))
 
 
 try:
-   # get the schema object being used
-   schemaObj = prefs.schemas[schema]
+    # get the schema object being used
+    schemaObj = prefs.schemas[schema]
 
-   # which detail do we need to create?
-   detail = form['detail'].value
-   detailObj = schemaObj.details[detail]
+    # which detail do we need to create?
+    detail = form['detail'].value
+    detailObj = schemaObj.details[detail]
+
+    debug + "PREFS DETAILS OBJ: %s"%unicode(str(detailObj), errors='replace')
+    
+    # build a new filter object from form values of the record identifiers
+    filterObj = AndClass()
+    for para, recID in detailObj.recID.items():
+        # create an equals cop for every recID
+        conObj = Concept(label=para, path=recID.path)
+        cop = EqualsClass(conObj, form.getfirst(para, None))
+        filterObj.addOperand(cop)
+    debug + "FILTER OBJ: %s"%unicode(str(filterObj), errors='replace')
+    
+    # generate the protocol
+    QG = QueryGenerator()
+    protocolXML = QG.getSearchProtocol(reqNS=schemaObj.NS, respNS=schemaObj.NS, count=False, filterObj=filterObj, destination=wrapper_url)
+    debug + "QUERY PROTOCOL CREATED:\n%s"%(protocolXML)
+    
+    # query the wrapper
+    QD = QueryDispatcher(debug)
+    recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
+    content = QD.getContent()
+    diagnostics = QD.getDiagnostics()
+    
+    if content is None:
+        # no wrapper results found
+        debug + "NO CONTENT ROOT FOUND."
+        stylesheetResult = detailObj.notAvailableMessage
+        debug.display = True
+    else:
+        debug + "CONTENT ROOT %s"%content.name
+        # apply stylesheet
+        stylesheetResult = transformXML(docDOM=content, xslLoc=os.path.join(templateDir, detailObj.stylesheet), debug=debug)
+    
+    # update template
+    tmpl['dsa'] = dsa
+    tmpl['id'] = MD5Passwd
+    tmpl['login'] = login
+    tmpl['schema'] = schema
+    tmpl['filter'] = str(filterObj)
+    tmpl['filter_display'] = str(filterObj).replace('_', ' ')
+    tmpl['XSL'] = stylesheetResult
+    if wrapper_url is not None:
+        tmpl['wrapper_url'] = wrapper_url
+    
+    #
+    # print HTML !
+    #
+    printOverHTTP( tmpl, debug, diagnostics )
+    
 except:
-   tmpl.load('Content', os.path.join(templateDir, 'error.html')) 
-   printOverHTTP( tmpl, debug, diagnostics )
-   sys.exit()
-
-debug + "PREFS DETAILS OBJ: %s"%unicode(str(detailObj), errors='replace')
-
-# build a new filter object from form values of the record identifiers
-filterObj = AndClass()
-for para, recID in detailObj.recID.items():
-    # create an equals cop for every recID
-    conObj = Concept(label=para, path=recID.path)
-    cop = EqualsClass(conObj, form.getfirst(para, None))
-    filterObj.addOperand(cop)
-debug + "FILTER OBJ: %s"%unicode(str(filterObj), errors='replace')
-
-# generate the protocol
-QG = QueryGenerator()
-protocolXML = QG.getSearchProtocol(reqNS=schemaObj.NS, respNS=schemaObj.NS, count=False, filterObj=filterObj, destination=wrapper_url)
-debug + "QUERY PROTOCOL CREATED:\n%s"%(protocolXML)
-
-# query the wrapper
-QD = QueryDispatcher(debug)
-recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
-content = QD.getContent()
-diagnostics = QD.getDiagnostics()
-
-if content is None:
-    # no wrapper results found
-    debug + "NO CONTENT ROOT FOUND."
-    stylesheetResult = detailObj.notAvailableMessage
-    debug.display = True
-else:
-    debug + "CONTENT ROOT %s"%content.name
-    # apply stylesheet
-    stylesheetResult = transformXML(docDOM=content, xslLoc=os.path.join(templateDir, detailObj.stylesheet), debug=debug)
-
-# update template
-tmpl['dsa'] = dsa
-tmpl['id'] = MD5Passwd
-tmpl['schema'] = schema
-tmpl['filter'] = str(filterObj)
-tmpl['filter_display'] = str(filterObj).replace('_', ' ')
-tmpl['XSL'] = stylesheetResult
-if wrapper_url is not None:
-    tmpl['wrapper_url'] = wrapper_url
-
-#
-# print HTML !
-#
-printOverHTTP( tmpl, debug, diagnostics )
+    tmpl.load('Content', os.path.join(templateDir, 'error.html')) 
+    printOverHTTP( tmpl, debug, diagnostics )
+    sys.exit()
+    

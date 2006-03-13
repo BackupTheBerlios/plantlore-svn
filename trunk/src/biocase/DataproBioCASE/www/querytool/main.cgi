@@ -43,6 +43,7 @@ else:
     tmpl['wrapper_url'] = wrapper_url
     tmpl['dsa'] = dsa
     tmpl['id'] = MD5Passwd
+    tmpl['login'] = login
     tmpl['schema'] = schema
     # get the relevant form fields from preferences
     concepts = []

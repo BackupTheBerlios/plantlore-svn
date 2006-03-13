@@ -34,53 +34,56 @@ tmpl = PageMacro('Content', PageMacro.DELMODE)
 tmpl.load('Content', os.path.join(templateDir, 'grouping.html'))
 
 try:
-   # get the schema object being used
-   schemaObj = prefs.schemas[schema]
+    # get the schema object being used
+    schemaObj = prefs.schemas[schema]
+
+    # build a new filter object from form values
+    filterObj = createFilter(form, schemaObj)
+    debug + "FILTER OBJ: %s"%str(filterObj)
+    
+    # generate the protocol
+    QG = QueryGenerator()
+    groupConcept = form['groupby'].value
+    protocolXML = QG.getScanProtocol(concept=schemaObj.concepts[groupConcept].path, NS=schemaObj.NS, filterObj=filterObj)
+    debug + "QUERY PROTOCOL CREATED:\n%s"%escapeHtml(protocolXML)
+    
+    # update template
+    tmpl['dsa'] = dsa
+    tmpl['id'] = MD5Passwd
+    tmpl['login'] = login
+    tmpl['schema'] = schema
+    tmpl['limit'] = str(schemaObj.limit)
+    if filterObj is not None:
+        tmpl['filter'] = str(filterObj)
+    tmpl['filter_display'] = escapeHtml( str(filterObj).replace('_', ' ') )
+    tmpl['groupingCon'] = groupConcept
+    tmpl['groupby_options'] = getDropDownOptionHtml(vals=['---None---']+schemaObj.form, default='---None---')
+    if wrapper_url is not None:
+        tmpl['wrapper_url'] = wrapper_url
+    
+    # query the wrapper
+    QD = QueryDispatcher(debug)
+    recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
+    if recStatus is None:
+    	# wrapper results:
+    	tmpl['hits'] = "0"
+    	debug.display = True
+    else:
+    	valuelist = QD.getScanValues()
+    	diagnostics = QD.getDiagnostics()
+    
+    	# wrapper results:
+    	tmpl['hits'] = str(recStatus.count)
+    	valueTemplateList = [{'val':v} for v in valuelist]
+    	tmpl.expand('Content', 'grouplist', valueTemplateList)
+    
+    #
+    # print HTML !
+    #
+    printOverHTTP( tmpl, debug, diagnostics )
 except:
-   tmpl.load('Content', os.path.join(templateDir, 'error.html')) 
-   printOverHTTP( tmpl, debug, diagnostics )
-   sys.exit()
+    tmpl.load('Content', os.path.join(templateDir, 'error.html')) 
+    printOverHTTP( tmpl, debug, diagnostics )
+    sys.exit()
 
-# build a new filter object from form values
-filterObj = createFilter(form, schemaObj)
-debug + "FILTER OBJ: %s"%str(filterObj)
-
-# generate the protocol
-QG = QueryGenerator()
-groupConcept = form['groupby'].value
-protocolXML = QG.getScanProtocol(concept=schemaObj.concepts[groupConcept].path, NS=schemaObj.NS, filterObj=filterObj)
-debug + "QUERY PROTOCOL CREATED:\n%s"%escapeHtml(protocolXML)
-
-# update template
-tmpl['dsa'] = dsa
-tmpl['id'] = MD5Passwd
-tmpl['schema'] = schema
-tmpl['limit'] = str(schemaObj.limit)
-if filterObj is not None:
-    tmpl['filter'] = str(filterObj)
-tmpl['filter_display'] = escapeHtml( str(filterObj).replace('_', ' ') )
-tmpl['groupingCon'] = groupConcept
-tmpl['groupby_options'] = getDropDownOptionHtml(vals=['---None---']+schemaObj.form, default='---None---')
-if wrapper_url is not None:
-    tmpl['wrapper_url'] = wrapper_url
-
-# query the wrapper
-QD = QueryDispatcher(debug)
-recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
-if recStatus is None:
-	# wrapper results:
-	tmpl['hits'] = "0"
-	debug.display = True
-else:
-	valuelist = QD.getScanValues()
-	diagnostics = QD.getDiagnostics()
-
-	# wrapper results:
-	tmpl['hits'] = str(recStatus.count)
-	valueTemplateList = [{'val':v} for v in valuelist]
-	tmpl.expand('Content', 'grouplist', valueTemplateList)
-
-#
-# print HTML !
-#
-printOverHTTP( tmpl, debug, diagnostics )
+    
