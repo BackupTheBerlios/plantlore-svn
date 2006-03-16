@@ -1,5 +1,5 @@
 /*
- * UserRecord.java
+ * User.java
  *
  * Created on 16. leden 2006, 2:32
  *
@@ -11,25 +11,24 @@ package net.sf.plantlore.common.record;
  *  Data holder object containing information about a user
  *
  *  @author Tomas Kovarik
- *  @version 0.1, Jan 16, 2006
+ *  @version 0.1, Mar 15, 2006
  */
-public class UserRecord {
+public class User {
     /** Parameters of the user */
     private int id;
     private String login;
     private String firstName;
     private String surname;
+    private String wholeName;
     private String email;
     private String address;
     private java.util.Date whenCreated;
     private java.util.Date whenDropped;
+    private Right right;
     private String note;
-    private int exportRight;
-    private int importRight;
-    private String role;
     
     /** Creates a new instance of UserRecord */
-    public UserRecord() {
+    public User() {
         
     }
     
@@ -38,16 +37,16 @@ public class UserRecord {
      *   @return id of the user
      *   @see setID
      */
-    public int getID() {
+    public int getId() {
         return this.id;
     }
     
     /**
      *   Set user id
-     *   @param id   id of the user
+     *   @param id id of the user
      *   @see getID
      */
-    public void setID(int id) {
+    public void setId(int id) {
         this.id = id;
     }
     
@@ -106,6 +105,24 @@ public class UserRecord {
     }
     
     /**
+     *   Get whole name of the user
+     *   @return string containing whole name of the user
+     *   @see setWholeName
+     */
+    public String getWholeName() {
+        return this.wholeName;
+    }
+    
+    /**
+     *   Set whole name of the user
+     *   @param wholeName string containing whole name of the user
+     *   @see getWholeName
+     */
+    public void setWholeName(String wholeName) {
+        this.wholeName = wholeName;
+    }
+    
+    /**
      *   Get email of the user
      *   @return string containing email of the user
      *   @see setEmail
@@ -116,7 +133,7 @@ public class UserRecord {
     
     /**
      *   Set email of the user
-     *   @param contact string containing email of the user
+     *   @param email string containing email of the user
      *   @see getEmail
      */
     public void setEmail(String email) {
@@ -134,7 +151,7 @@ public class UserRecord {
     
     /**
      *   Set address of the user
-     *   @param contact string containing address of the user
+     *   @param address string containing address of the user
      *   @see getAddress
      */
     public void setAddress(String address) {
@@ -160,7 +177,7 @@ public class UserRecord {
     }
     
     /**
-     *   Get date when the user was droped
+     *   Get date when the user was dropped
      *   @return date when the user was deleted from the system
      *   @see setWhenDropped
      */
@@ -169,12 +186,30 @@ public class UserRecord {
     }
     
     /**
-     *   Set date when the user was droped
+     *   Set date when the user was dropped
      *   @param whenDropped date when the user was deleted from the system
      *   @see getWhenDropped
      */
     public void setWhenDropped(java.util.Date whenDropped) {
         this.whenDropped = whenDropped;
+    }
+
+    /**
+     *   Get record with the rights of the user
+     *   @return record with the rights of the user
+     *   @see setRight
+     */
+    public Right getRight() {
+        return this.right;
+    }
+    
+    /**
+     *   Set record with the rights of the user
+     *   @param right record with the rights of the user
+     *   @see getRight
+     */
+    public void setRight(Right right) {
+        this.right = right;
     }
     
     /**
@@ -193,59 +228,5 @@ public class UserRecord {
      */
     public void setNote(String note) {
         this.note = note;
-    }
-    
-    /**
-     *  Get the information about the export right of the user
-     *  @return information about the export right of the user
-     *  @see setExportRight
-     */
-    public int getExportRight() {
-        return this.exportRight;
-    }
-    
-    /**
-     *   Set the information about the export right of the user
-     *   @param exportRight information about the export right of the user
-     *   @see getExportRight
-     */
-    public void setExportRight(int exportRight) {
-        this.exportRight = exportRight;
-    }
-    
-    /**
-     *  Get the information about the import right of the user
-     *  @return information about the import right of the user
-     *  @see setImportRight
-     */
-    public int getImportRight() {
-        return this.importRight;
-    }
-    
-    /**
-     *   Set the information about the imoprt right of the user
-     *   @param importRight information about the import right of the user
-     *   @see getImportRight
-     */
-    public void setImportRight(int importRight) {
-        this.importRight = importRight;
-    }
-    
-    /**
-     *  Get role of the user
-     *  @return String representation of the role of the user
-     *  @see setRole
-     */
-    public String getRole() {
-        return this.role;
-    }
-    
-    /**
-     *   Set the role of the user
-     *   @param role String representation of the role of the user
-     *   @see getRole
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
+    }   
 }

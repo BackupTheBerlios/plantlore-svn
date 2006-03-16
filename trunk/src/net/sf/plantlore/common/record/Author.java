@@ -1,23 +1,28 @@
 /*
- * AuthorRecord.java
+ * Author.java
  *
  * Created on 16. leden 2006, 2:32
- *
  */
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
- *  Data holder object containing information about an author
+ *  Data holder object representing TAUTHORS table in the DB. This object is used as a data holder
+ *  for Hibernate operations on the server side. On the side of the client, it represents an author
+ *  we are currently working with. It is being sent from client to server and back when executing
+ *  database queries.
  *
  *  @author Tomas Kovarik
- *  @version 0.1, Jan 16, 2006
+ *  @version 0.1, Mar 14, 2006
  */
-public class AuthorRecord {
-    /** Parameters of the author */
+public class Author implements Serializable {
+    /** Parameters of the author. For detailed explanation see data model documentation. */
     private int id;
     private String firstName;
     private String surname;
+    private String wholeName;
     private String organization;
     private String role;
     private String address;
@@ -27,7 +32,7 @@ public class AuthorRecord {
     private String note;
     
     /** Creates a new instance of AuthorRecord */
-    public AuthorRecord() {
+    public Author() {
         
     }
     
@@ -84,6 +89,24 @@ public class AuthorRecord {
     public void setSurname(String surname) {
         this.surname = surname;
     }
+
+    /**
+     *   Get whole name of the author
+     *   @return string containing whole name of the author
+     *   @see setWholeName
+     */
+    public String getWholeName() {
+        return this.wholeName;
+    }
+    
+    /**
+     *   Set wholeName of the author
+     *   @param wholeName string containing whole name of the author
+     *   @see getWholeName
+     */
+    public void setWholeName(String wholeName) {
+        this.wholeName = wholeName;
+    }    
     
     /**
      *   Set organization the author belongs to
