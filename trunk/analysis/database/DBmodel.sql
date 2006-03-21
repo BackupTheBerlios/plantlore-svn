@@ -22,9 +22,7 @@ CREATE GENERATOR GEN_TVILLAGES;
 
 /* Table: TAUTHORS, Owner: SYSDBA */
 CREATE TABLE TAUTHORS (
-    CID               INTEGER NOT NULL,
-    CFIRSTNAME        VARCHAR(20) NOT NULL,
-    CSURNAME          VARCHAR(30) NOT NULL,
+    CID               INTEGER NOT NULL,    
     CWHOLENAME        VARCHAR(50),
     CORGANIZATION     VARCHAR(50),
     CTELEPHONENUMBER  VARCHAR(20),
@@ -265,7 +263,6 @@ GRANT defaultAdmin TO SYSDBA;
 /* View: TAUTHORREVISION */
 CREATE VIEW TAUTHORREVISION(
     CID,
-    CAUTHORID,
     COCCURRENCEID,
     CWHOLENAME,
     CEMAIL,
@@ -275,22 +272,21 @@ CREATE VIEW TAUTHORREVISION(
     CMONTH,
     CYEAR)
 AS
-select AO.CID, AO.CAUTHORID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.cresultrevisition, O.cdaycollected, O.cmonthcollected, O.cyearcollected
+select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.cresultrevisition, O.cdaycollected, O.cmonthcollected, O.cyearcollected
 from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO JOIN toccurrences O  ON (A.CID = AO.cauthorid) ON (AO.coccurrenceid = O.cid)
 WHERE AO.crole = 'revision'
 ;
 
 /* View: TAUTHORCOLLECT */
 CREATE VIEW TAUTHORCOLLECT(
-    CID,
-    CAUTHORID,
+    CID,    
     COCCURRENCEID,
     CWHOLENAME,
     CORGANIZATION,
     CEMAIL,
     CADDRESS)
 AS
-select AO.CID, AO.CAUTHORID, AO.coccurrenceid, A.CORGANIZATION, A.CWHOLENAME, A.CEMAIL, A.CADDRESS
+select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CORGANIZATION, A.CEMAIL, A.CADDRESS
 from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
 WHERE AO.crole = 'collect'
 ;
@@ -298,13 +294,12 @@ WHERE AO.crole = 'collect'
 /* View: TAUTHORIDENTIFY */
 CREATE VIEW TAUTHORIDENTIFY(
     CID,
-    CAUTHORID,
     COCCURRENCEID,
     CWHOLENAME,
     CEMAIL,
     CADDRESS)
 AS
-select AO.CID, AO.CAUTHORID, AO.coccurrenceid, A.CWHOLENAME, A.CEMAIL, A.CADDRESS
+select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CEMAIL, A.CADDRESS
 from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
 WHERE AO.crole = 'identify'
 ;
