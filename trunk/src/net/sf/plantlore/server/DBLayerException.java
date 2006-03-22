@@ -5,7 +5,7 @@
  *
  */
 
-package net.sf.plantlore.client.dblayer;
+package net.sf.plantlore.server;
 
 /**
  *  Exception for the DBLayer package (on the client side)
