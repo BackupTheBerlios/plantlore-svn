@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.Metadata" table="TMETADATA">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CTECHNICALCONTACTNAME"
+                length="50"
+                name="technicalContactName"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CTECHNICALCONTACTEMAIL"
+                length="100"
+                name="technicalContactEmail"
+                not-null="false"                
+                type="java.lang.String"/>                
+      <property column="CTECHNICALCONTACTADDRESS"
+                length="255"
+                name="technicalContactAddress"
+                not-null="false"                
+                type="java.lang.String"/>                                      
+      <property column="CCONTENTCONTACTNAME"
+                length="50"
+                name="contentContactName"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CCONTENTCONTACTADDRESS"
+                length="255"
+                name="contentContactAddress"
+                not-null="false"                
+                type="java.lang.String"/>  
+      <property column="CCONTENTCONTACTEMAIL"
+                length="100"
+                name="contentContactEmail"
+                not-null="false"                
+                type="java.lang.String"/>                  
+      <property column="CDATASETTITLE"
+                length="50"
+                name="dataSetTitle"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CDATASETDETAILS"
+                length="255"
+                name="dataSetDetails"
+                not-null="false"                
+                type="java.lang.String"/>                  
+      <property column="CSOURCEINSTITUTIONID"
+                length="50"
+                name="sourceInstitutionId"
+                not-null="true"                
+                type="java.lang.String"/>
+      <property column="CSOURCEID"
+                length="50"
+                name="sourceId"
+                not-null="true"                
+                type="java.lang.String"/>  
+      <property column="COWNERORGANIZATIONABBREV"
+                length="50"
+                name="ownerOrganizationAbbrev"
+                not-null="false"                
+                type="java.lang.String"/>          
+      <property column="CDATECREATE"
+                name="dateCreate"
+                not-null="true"                
+                type="java.util.Date"/>   
+      <property column="CDATEMODIFIED"
+                name="dateModified"
+                not-null="true"                
+                type="java.util.Date"/>       
+      <property column="CRECORDBASIS"
+                length="15"
+                name="recordBasis"
+                not-null="false"                
+                type="java.lang.String"/>                                                                  
+      <property column="CBIOTOPETEXT"
+                length="50"
+                name="biotopeText"
+                not-null="false"                
+                type="java.lang.String"/>
+      <property column="CVERSIONPLANTSFILE"
+                name="versionPlantsFile"
+                not-null="false"                
+                type="java.lang.Integer"/>                
+   </class>
+</hibernate-mapping>

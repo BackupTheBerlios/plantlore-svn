@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.User" table="TUSER">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CLOGIN"
+                length="20"
+                name="login"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CFIRSTNAME"
+                length="20"
+                name="firstName"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CSURNAME"
+                length="30"
+                name="surname"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CWHOLENAME"
+                length="50"
+                name="wholeName"
+                not-null="false"
+                type="java.lang.String"/>                
+      <property column="CEMAIL"      
+                length="50"
+                name="email"
+                not-null="false"                
+                type="java.lang.String"/>
+      <property column="CADDRESS"
+                length="255"
+                name="address"
+                not-null="false"                
+                type="java.lang.String"/>          
+      <property column="CCREATEWHEN"
+                name="whenCreated"
+                not-null="true"                
+                type="java.util.Date"/>   
+      <property column="CDROPWHEN"
+                name="whenDropped"
+                not-null="false"                
+                type="java.util.Date"/> 
+      <many-to-one name="right" 
+                   class="net.sf.plantlore.common.record.Right" 
+                   column="CRIGHTID"/>
+      <property column="CNOTE"
+                length="4096"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/>                                         
+   </class>
+</hibernate-mapping>

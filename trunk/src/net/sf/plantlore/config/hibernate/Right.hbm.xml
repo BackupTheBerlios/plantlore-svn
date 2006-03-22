@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.Right" table="TRIGHT">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CADMINISTRATOR"                
+                name="administrator"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CEDITALL"                
+                name="editAll"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CEDITOWN"                
+                name="editOwn"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CEDITGROUP"    
+                length = "255"            
+                name="editGroup"
+                not-null="false"
+                type="java.lang.String"/>                                                
+      <property column="CSEECOLUMNS"    
+                length = "4096"
+                name="seeColumns"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CADD"    
+                name="add"
+                not-null="false"
+                type="java.lang.Integer"/>
+   </class>
+</hibernate-mapping>

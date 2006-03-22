@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.Occurrence" table="TOCCURRENCES">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CUNITIDDB"
+                length="30"
+                name="unitIdDb"
+                not-null="true"
+                type="java.lang.String"/>
+      <property column="CUNITVALUE"
+                length="30"
+                name="unitValue"
+                not-null="true"
+                type="java.lang.String"/>
+      <many-to-one name="habitat" 
+                   class="net.sf.plantlore.common.record.Habitat" 
+                   column="CHABITATID"/>                
+      <many-to-one name="plant" 
+                   class="net.sf.plantlore.common.record.Plant" 
+                   column="CPLANTID"/>                
+      <property column="CYEARCOLLECTED"               
+                name="yearCollected"
+                not-null="true"                
+                type="java.lang.Integer"/>          
+      <property column="CMONTHCOLLECTED"
+                name="monthCollected"
+                not-null="false"                
+                type="java.lang.Integer"/>   
+      <property column="CDAYCOLLECTED"
+                name="dayCollected"
+                not-null="false"                
+                type="java.lang.Integer"/>
+      <property column="CTIMECOLLECTED"
+                name="timeCollected"
+                not-null="false"                
+                type="java.util.Date"/>
+      <property column="CISODATETIMEBEGIN"
+                name="isoDateTimeBegin"
+                not-null="false"                
+                type="java.util.Date"/>                
+      <property column="CDATESOURCE"
+	        length="50"
+                name="dateSource"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <many-to-one name="publication" 
+                   class="net.sf.plantlore.common.record.Publication" 
+                   column="CPUBLICATIONID"/>                
+      <property column="CHERBARIUM"
+		length="20"
+                name="herbarium"
+                not-null="false"                
+                type="java.lang.String"/>                 
+      <property column="CCREATEWHEN"              
+                name="createdWhen"
+                not-null="true"                
+                type="java.util.Date"/>
+      <many-to-one name="createdWho" 
+                   class="net.sf.plantlore.common.record.User" 
+                   column="CCREATEWHO"/>
+      <property column="CUPDATEWHEN"
+                name="updatedWhen"
+                not-null="true"                
+                type="java.util.Date"/>   
+      <many-to-one name="updatedWho" 
+                   class="net.sf.plantlore.common.record.User" 
+                   column="CUPDATEWHO"/>                      
+      <property column="CNOTE"
+                length="4096"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <many-to-one name="metadata" 
+                   class="net.sf.plantlore.common.record.Metadata" 
+                   column="CMETADATAID"/>                      
+      <property column="CDELETE"
+                name="deleted"
+                not-null="false"                
+                type="java.lang.Integer"/>   
+                                   
+   </class>
+</hibernate-mapping>

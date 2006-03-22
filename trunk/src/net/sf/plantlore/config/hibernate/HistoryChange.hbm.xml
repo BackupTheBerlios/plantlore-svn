@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.HistoryChange" table="THISTORYCHANGE">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <many-to-one name="occurrence" 
+                   class="net.sf.plantlore.common.record.Occurrence" 
+                   column="COCCURRENCEID"/>      
+      <property column="CRECORDID"                
+                name="recordId"
+                not-null="true"
+                type="java.lang.Integer"/>
+      <property column="COPERATION"
+                length="20"
+                name="operation"
+                not-null="true"
+                type="java.lang.String"/>                
+      <property column="CWHEN"
+                name="when"
+                not-null="true"                
+                type="java.util.Date"/>         
+      <many-to-one name="who" 
+                   class="net.sf.plantlore.common.record.User" 
+                   column="CWHO"/>
+   </class>
+</hibernate-mapping>

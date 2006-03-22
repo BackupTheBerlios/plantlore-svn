@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.Publication" table="TPUBLICATIONS">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CCOLLECTIONNAME"
+                length="30"
+                name="collectionName"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CCOLLECTIONYEARPUBLICATION"          
+                name="collectionYearPublication"
+                not-null="false"
+                type="java.lang.Integer"/>
+      <property column="CJOURNALNAME"
+                length="100"
+                name="journalName"
+                not-null="false"
+                type="java.lang.String"/>
+      <property column="CJOURNALAUTHORNAME"
+                length="30"
+                name="journalAuthorName"
+                not-null="false"                
+                type="java.lang.String"/>                                        
+      <property column="CURL"
+                length="100"
+                name="url"
+                not-null="false"                
+                type="java.lang.String"/>         
+      <property column="CREFERENCEDETAIL"
+                length="20"
+                name="referenceDetail"
+                not-null="false"                
+                type="java.lang.String"/>                                         
+      <property column="CREFERENCECITATION"
+                length="255"
+                name="referenceCitation"
+                not-null="true"                
+                type="java.lang.String"/>                                                         
+   </class>
+</hibernate-mapping>

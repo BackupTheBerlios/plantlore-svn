@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.Habitat" table="THABITATS">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+      
+      <many-to-one name="territory" 
+                   class="net.sf.plantlore.common.record.Territory" 
+                   column="CTERRITORYID"/>
+      <many-to-one name="phytochorion" 
+                   class="net.sf.plantlore.common.record.Phytochorion" 
+                   column="CPHYTOCHORIAID"/>                   
+      <property column="CQUADRANT" 
+        	length="10"              
+                name="quadrant"
+                not-null="false"                
+                type="java.lang.String"/>          
+      <property column="CDESCRIPTION"
+                length="255"
+                name="description"
+                not-null="false"                
+                type="java.lang.String"/>   
+      <many-to-one name="nearestVillage" 
+                   class="net.sf.plantlore.common.record.Village" 
+                   column="CNEARESTVILLAGEID"/>                   
+      <property column="CCOUNTRY"
+		length="30"
+                name="country"
+                not-null="false"                
+                type="java.lang.String"/> 
+      <property column="CALTITUDE"				
+                name="altitude"
+                not-null="false"                
+                type="java.lang.Double"/> 
+      <property column="CLATITUDE"           
+                name="latitude"
+                not-null="false"
+                type="java.lang.Double"/>
+      <property column="CLONGITUDE"           
+                name="longitude"
+                not-null="false"
+                type="java.lang.Double"/>                                       
+      <property column="CNOTE"
+                length="4096"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/>                                           
+      <property column="CDELETE"
+                name="deleted"
+                not-null="false"
+                type="java.lang.Integer"/>                                                       
+   </class>
+</hibernate-mapping>
