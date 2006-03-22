@@ -41,7 +41,7 @@ public class Author implements Serializable {
      *   @param id unique id of the author
      *   @see getID
      */
-    public void setID(int id) {
+    public void setId(int id) {
         this.id = id;
     }
     
@@ -50,7 +50,7 @@ public class Author implements Serializable {
      *   @return int unique id of the user
      *   @see setID
      */
-    public int getID() {
+    public int getId() {
         return this.id;
     }
     

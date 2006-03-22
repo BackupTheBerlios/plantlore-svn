@@ -35,9 +35,9 @@ public class Occurrence {
     private String dateSource;
     private Publication publication;
     private String herbarium;
-    private java.util.Date createWhen;
+    private java.util.Date createdWhen;
     private User createdWho;
-    private java.util.Date updateWhen;
+    private java.util.Date updatedWhen;
     private User updatedWho;
     private Metadata metadata;
     private int deleted;
@@ -213,18 +213,18 @@ public class Occurrence {
     /**
      *   Get time/date when the plant was collected
      *   @return time/date when the plant was collected
-     *   @see setISODateTimeBegin
+     *   @see setIsoDateTimeBegin
      */
-    public java.util.Date getISODateTimeBegin() {
+    public java.util.Date getIsoDateTimeBegin() {
         return this.isoDateTimeBegin;
     }
     
     /**
      *   Set time/date when the plant was collected
      *   @param isoDateTimeBegin time/date when the plant was collected
-     *   @see getISODateTimeBegin
+     *   @see getIsoDateTimeBegin
      */
-    public void setISODateTimeBegin(java.util.Date isoDateTimeBegin) {
+    public void setIsoDateTimeBegin(java.util.Date isoDateTimeBegin) {
         this.isoDateTimeBegin = isoDateTimeBegin;
     }
     
@@ -260,7 +260,7 @@ public class Occurrence {
      *   @param publication associated publication record
      *   @see getPublication
      */
-    public void setPublicationsId(Publication publication) {
+    public void setPublication(Publication publication) {
         this.publication = publication;
     }
     
@@ -285,73 +285,73 @@ public class Occurrence {
     /**
      *   Get date and time when the occurrence record was inserted into database
      *   @return date and time when the occurrence record was inserted into database
-     *   @see setCreateWhen
+     *   @see setCreatedWhen
      */
-    public java.util.Date getCreateWhen() {
-        return this.createWhen;
+    public java.util.Date getCreatedWhen() {
+        return this.createdWhen;
     }
     
     /**
      *   Set date and time when the occurrence record was inserted into database
-     *   @param createWhen date and time when the occurrence record was inserted into database
-     *   @see getCreateWhen
+     *   @param createdWhen date and time when the occurrence record was inserted into database
+     *   @see getCreatedWhen
      */
-    public void setCreateWhen(java.util.Date createWhen) {
-        this.createWhen = createWhen;
+    public void setCreatedWhen(java.util.Date createdWhen) {
+        this.createdWhen = createdWhen;
     }
     
     /**
      *   Get date and time when the occurrence record was last updated
      *   @return date and time when the occurrence record was last updated
-     *   @see setUpdateWhen
+     *   @see setUpdatedWhen
      */
-    public java.util.Date getUpdateWhen() {
-        return this.updateWhen;
+    public java.util.Date getUpdatedWhen() {
+        return this.updatedWhen;
     }
     
     /**
      *   Set date and time when the occurrence record was last updated
-     *   @param updateWhen date and time when the occurrence record was last updated
-     *   @see getUpdateWhen
+     *   @param updatedWhen date and time when the occurrence record was last updated
+     *   @see getUpdatedWhen
      */
-    public void setUpdateWhen(java.util.Date updateWhen) {
-        this.updateWhen = updateWhen;
+    public void setUpdatedWhen(java.util.Date updatedWhen) {
+        this.updatedWhen = updatedWhen;
     }
     
     /**
      *   Get associated User record with the user who created the record
      *   @return associated User record with the user who created the record
-     *   @see setCreateWho
+     *   @see setCreatedWho
      */
-    public User getCreateWho() {
-        return this.createWho;
+    public User getCreatedWho() {
+        return this.createdWho;
     }
     
     /**
      *   Set associated User record with the user who created the record
-     *   @param createWho associated User record with the user who created the record
-     *   @see getCreateWho
+     *   @param createdWho associated User record with the user who created the record
+     *   @see getCreatedWho
      */
-    public void setCreateWho(User createWho) {
-        this.createWho = createWho;
+    public void setCreatedWho(User createdWho) {
+        this.createdWho = createdWho;
     }
     
     /**
      *   Get associated User record with the user who last updated the record
      *   @return associated User record with the user who last updated the record
-     *   @see setUpdateWho
+     *   @see setUpdatedWho
      */
-    public User getUpdateWho() {
-        return this.updateWho;
+    public User getUpdatedWho() {
+        return this.updatedWho;
     }
     
     /**
      *   Set associated User record with the user who last updated the record
-     *   @param updateWho associated User record with the user who last updated the record
-     *   @see getUpdateWho
+     *   @param updatedWho associated User record with the user who last updated the record
+     *   @see getUpdatedWho
      */
-    public void setUpdateWho(User updateWho) {
-        this.updateWho = updateWho;
+    public void setUpdatedWho(User updatedWho) {
+        this.updatedWho = updatedWho;
     }
     
     /**

@@ -70,7 +70,7 @@ public class Habitat {
      *   @param territory associated Territory record
      *   @see getTerritory
      */
-    public void setTerritoryId(Territory territory) {
+    public void setTerritory(Territory territory) {
         this.territory = territory;
     }
     

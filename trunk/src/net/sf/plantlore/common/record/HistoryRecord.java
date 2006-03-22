@@ -11,7 +11,7 @@ import java.io.Serializable;
  *  @author Lada Oberreiterova
  *  @author Tomas Kovarik
  */
-public class History implements Serializable {
+public class HistoryRecord implements Serializable {
     /** Parameters of the author. For detailed explanation see data model documentation. */
     private int id;
     private HistoryColumn historyColumn;
@@ -20,7 +20,7 @@ public class History implements Serializable {
     private String newValue;
     
     /** Creates a new instance of HistoryRecord */
-    public History() {
+    public HistoryRecord() {
         
     }
     
