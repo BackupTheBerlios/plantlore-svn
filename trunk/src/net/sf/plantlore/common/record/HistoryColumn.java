@@ -22,7 +22,12 @@ public class HistoryColumn implements Serializable {
     private int id;    
     private String tableName;
     private String columnName;
-    
+
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String TABLENAME = "tableName";    
+    public static final String COLUMNNAME = "columnName";
+
     /**
      *   Default constructor to create new class HistoryColumn
      */

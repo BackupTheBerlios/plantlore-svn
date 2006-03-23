@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing TAUTHORSOCCURENCES table in the DB. This object is used as a 
  *  data holder for Hibernate operations on the server side. On the side of the client, it 
@@ -16,14 +18,21 @@ package net.sf.plantlore.common.record;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class AuthorOccurrence {
+public class AuthorOccurrence implements Serializable {
     /** Parameters of AuthorOccurence */
     private int id;
-    private int author;
-    private int occurrence;
+    private Author author;
+    private Occurrence occurrence;
     private String role;
     private String resultRevision;
         
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String AUTHOR = "author";    
+    public static final String OCCURRENCE = "occurrence";
+    public static final String ROLE = "role";
+    public static final String RESULTREVISION = "resultRevision";
+    
     /**
      *   Default constructor to create new class AuthorOccurrences
      */
@@ -54,7 +63,7 @@ public class AuthorOccurrence {
      *   @return associated Author object
      *   @see setAuthor
      */
-    public int getAuthor() {
+    public Author getAuthor() {
         return this.author;
     }
     
@@ -63,7 +72,7 @@ public class AuthorOccurrence {
      *   @param author associated Author object
      *   @see getAuthor
      */
-    public void setAuthor(int author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
     
@@ -72,7 +81,7 @@ public class AuthorOccurrence {
      *   @return associated Occurrence object
      *   @see setOccurrence
      */
-    public int getOccurrence() {
+    public Occurrence getOccurrence() {
         return this.occurrence;
     }
     
@@ -81,7 +90,7 @@ public class AuthorOccurrence {
      *   @param occurence associated Occurrence object
      *   @see getOccurrence
      */
-    public void setOccurrence(int occurrence) {
+    public void setOccurrence(Occurrence occurrence) {
         this.occurrence = occurrence;
     }
     

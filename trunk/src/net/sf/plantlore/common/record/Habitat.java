@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing THABITATS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a habitat
@@ -16,7 +18,7 @@ package net.sf.plantlore.common.record;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Habitat {   
+public class Habitat implements Serializable {   
     /** Parameters of the Habitat */
     private int id;
     private Territory territory;
@@ -30,6 +32,20 @@ public class Habitat {
     private double longitude;
     private int deleted;
     private String note;
+    
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String TERRITORY = "territory";    
+    public static final String PHYTOCHORION = "phytochorion";
+    public static final String NEARESTVILLAGE = "nearestVillage";
+    public static final String QUADRANT = "quadrant";
+    public static final String DESCRIPTION = "description";        
+    public static final String COUNTRY = "country";
+    public static final String ALTITUDE = "altitude";
+    public static final String LATITUDE = "latitude";    
+    public static final String LONGITUDE = "longitude";    
+    public static final String DELETED = "deleted";    
+    public static final String NOTE = "note";
     
     /**
      * Default constructor to create new class Habitat

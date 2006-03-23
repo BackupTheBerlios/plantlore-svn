@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing TPHYTOCHORIA table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a phytochorion
@@ -16,11 +18,16 @@ package net.sf.plantlore.common.record;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Phytochorion {
+public class Phytochorion implements Serializable {
     /** Parameters of phytochorion */
     private int id;
     private String code;
     private String name;
+    
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String CODE = "code";    
+    public static final String NAME = "name";
     
     /**
      *   Default constructor to create new class Phytochoria

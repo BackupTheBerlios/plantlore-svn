@@ -19,6 +19,13 @@ public class HistoryRecord implements Serializable {
     private String oldValue;
     private String newValue;
     
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String HISTORYCOLUMN = "historyColumn";    
+    public static final String HISTORYCHANGE = "historyChange";
+    public static final String OLDVALUE = "oldValue";    
+    public static final String NEWVALUE = "newValue";
+
     /** Creates a new instance of HistoryRecord */
     public HistoryRecord() {
         

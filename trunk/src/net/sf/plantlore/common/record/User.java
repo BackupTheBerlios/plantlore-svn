@@ -7,13 +7,15 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object containing information about a user
  *
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 15, 2006
  */
-public class User {
+public class User implements Serializable {
     /** Parameters of the user */
     private int id;
     private String login;
@@ -26,7 +28,20 @@ public class User {
     private java.util.Date whenDropped;
     private Right right;
     private String note;
-    
+
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String LOGIN = "login";    
+    public static final String FIRSTNAME = "firstName";    
+    public static final String SURNAME = "surname";    
+    public static final String WHOLENAME = "wholeName";    
+    public static final String EMAIL = "email";    
+    public static final String ADDRESS = "address";    
+    public static final String WHENCREATED = "whenCreated";    
+    public static final String WHENDROPPED = "whenDropped";    
+    public static final String RIGHT = "right";    
+    public static final String NOTE = "note";    
+        
     /** Creates a new instance of UserRecord */
     public User() {
         

@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing TPUBLICATIONS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a publication
@@ -16,7 +18,7 @@ package net.sf.plantlore.common.record;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 15, 2006
  */
-public class Publication {
+public class Publication implements Serializable {
     /** Parameters of the publication */    
     private int id;
     private String collectionName;
@@ -28,6 +30,18 @@ public class Publication {
     private String url;
     private int deleted;
     private String note;
+
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String COLLECTIONNAME = "collectionName";    
+    public static final String COLLECTIONYEARPUBLICATION = "collectionYearPublication";    
+    public static final String JOURNALNAME = "journalName";    
+    public static final String JOURNALAUTHORNAME = "journalAuthorName";    
+    public static final String REFERENCECITATION = "referenceCitation";    
+    public static final String REFERENCEDETAIL = "referenceDetail";    
+    public static final String URL = "url";    
+    public static final String DELETED = "deleted";            
+    public static final String NOTE = "note";
     
     /** Creates a new instance of PublicationRecord */
     public Publication() {

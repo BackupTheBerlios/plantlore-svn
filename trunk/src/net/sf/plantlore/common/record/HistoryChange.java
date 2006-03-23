@@ -33,6 +33,14 @@ public class HistoryChange implements Serializable {
     private java.util.Date when;
     private User who;
     
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String OCCURRENCE = "occurrence";    
+    public static final String RECORDID = "recordId";
+    public static final String OPERATION = "operation";
+    public static final String WHEN = "when";
+    public static final String WHO = "who";    
+    
     /**
      *   Default constructor to create new class HistoryChange
      */

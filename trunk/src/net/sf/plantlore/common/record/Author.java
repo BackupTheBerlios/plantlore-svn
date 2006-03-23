@@ -31,6 +31,19 @@ public class Author implements Serializable {
     private String url;
     private String note;
     
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String FIRSTNAME = "firstName";    
+    public static final String SURNAME = "surname";
+    public static final String WHOLENAME= "wholeName";
+    public static final String ORGANIZATION = "organization";
+    public static final String ROLE = "role";    
+    public static final String ADDRESS = "address";
+    public static final String PHONENUMBER = "phoneNumber";
+    public static final String EMAIL = "email";    
+    public static final String URL = "url";
+    public static final String NOTE = "note";    
+    
     /** Creates a new instance of AuthorRecord */
     public Author() {
         

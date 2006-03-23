@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing TMETADATA table in the DB. This object is used as a data
  *  holder for Hibernate operations on the server side. On the side of the client, it represents
@@ -16,7 +18,7 @@ package net.sf.plantlore.common.record;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Metadata {
+public class Metadata implements Serializable {
     /** Parameters of Metadata */
     private int id;
     private String technicalContactName;
@@ -35,6 +37,24 @@ public class Metadata {
     private String recordBasis;
     private String biotopeText;
     private int versionPlantsFile;
+    
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String TECHNICALCONTACTNAME = "technicalContactName";    
+    public static final String TECHNICALCONTACTADDRESS = "technicalContactAddress";
+    public static final String TECHNICALCONTACTEMAIL = "technicalContactEmail";    
+    public static final String CONTENTCONTACTNAME = "contentContactName";    
+    public static final String CONTENTCONTACTADDRESS = "contentContactAddress";    
+    public static final String CONTENTCONTACTEMAIL = "contentContactEmail";
+    public static final String DATASETTITLE = "dataSetTitle";    
+    public static final String DATASETDETAILS = "dataSetDetails";    
+    public static final String SOURCEINSTITUTIONID = "sourceInstitutionId";    
+    public static final String OWNERORGANIZATIONABBREV = "ownerOrganizationAbbrev";
+    public static final String DATECREATE = "dateCreate";    
+    public static final String DATEMODIFIED = "dateModified";    
+    public static final String RECORDBASIS = "recordBasis";
+    public static final String BIOTOPETEXT = "biotopeText";    
+    public static final String VERSIONPLANTSFILE = "versionPlantsFile";
     
     /**
      *   Default constructor to create new class Metadata

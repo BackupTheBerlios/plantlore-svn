@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing TRIGHT table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a right
@@ -16,7 +18,7 @@ package net.sf.plantlore.common.record;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Right {
+public class Right implements Serializable {
     /** Parameters of the Right record */
     private int id;   
     private int administrator;
@@ -25,6 +27,15 @@ public class Right {
     private String editGroup;
     private String seeColumns;
     private int add;    
+
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String ADMINISTRATOR = "administrator";    
+    public static final String EDITALL = "editAll";    
+    public static final String EDITOWN = "editOwn";    
+    public static final String EDITGROUP = "editGroup";    
+    public static final String SEECOLUMNS = "seeColumns";    
+    public static final String ADD = "add";    
     
     /**
      *   Default constructor to create new class Right

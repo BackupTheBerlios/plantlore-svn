@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,7 +21,7 @@ import java.util.Date;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 14, 2006
  */
-public class Occurrence {
+public class Occurrence implements Serializable {
     /** Parameters of the occurrence. For detailed explanation see data model documentation. */
     private int id;
     private String unitIdDb;
@@ -42,7 +43,29 @@ public class Occurrence {
     private Metadata metadata;
     private int deleted;
     private String note;
-        
+
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String UNITIDDB = "unitIdDb";    
+    public static final String UNITVALUE = "unitValue";
+    public static final String HABITAT = "habitat";    
+    public static final String PLANT = "plant";    
+    public static final String YEARCOLLECTED = "yearCollected";    
+    public static final String MONTHCOLLECTED = "monthCollected";    
+    public static final String DAYCOLLECTED = "dayCollected";    
+    public static final String TIMECOLLECTED = "timeCollected";
+    public static final String ISODATETIMEBEGIN = "isoDateTimeBegin";    
+    public static final String DATESOURCE = "dateSource";    
+    public static final String PUBLICATION = "publication";    
+    public static final String HERBARIUM = "herbarium";    
+    public static final String CREATEDWHEN = "createdWhen";    
+    public static final String CREATEDWHO = "createdWho";
+    public static final String UPDATEDWHEN = "updatedWhen";    
+    public static final String UPDATEDWHO = "updatedWho";    
+    public static final String METADATA = "metadata";    
+    public static final String DELETED = "deleted";
+    public static final String NOTE = "note";        
+    
     /** Creates a new instance of OccurrenceRecord */
     public Occurrence() {
         

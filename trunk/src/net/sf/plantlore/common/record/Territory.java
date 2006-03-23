@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.io.Serializable;
+
 /**
  *  Data holder object representing TTERRITORIES table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a territory
@@ -16,10 +18,14 @@ package net.sf.plantlore.common.record;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Territory {
+public class Territory implements Serializable {
     /** Parameters of the territory */
     private int id;    
     private String name;
+    
+    /** Constants with column mapping (used for building select queries) */
+    public static final String ID = "id";
+    public static final String NAME = "name";    
     
     /**
      *   Default constructor to create new class Territory
