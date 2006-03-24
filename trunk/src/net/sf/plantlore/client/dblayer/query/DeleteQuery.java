@@ -8,8 +8,7 @@
 package net.sf.plantlore.client.dblayer.query;
 
 import java.util.ArrayList;
-import net.sf.plantlore.client.dblayer.DBLayerException;
-import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.server.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,8 +22,6 @@ public class DeleteQuery implements Query {
     private int type;
     /** List of triples for the WHERE part of the query */
     private ArrayList whereList;
-    /** Instance of DBMapping object */
-    private DBMapping dbmap;
     /** Instance of a logger */
     private Logger logger;
     
@@ -33,7 +30,7 @@ public class DeleteQuery implements Query {
      */
     public DeleteQuery() {
         whereList = new ArrayList();
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
@@ -47,7 +44,7 @@ public class DeleteQuery implements Query {
     public DeleteQuery(int type, ArrayList where) throws DBLayerException {
         this.whereList = where;
         setType(type);
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
@@ -98,6 +95,7 @@ public class DeleteQuery implements Query {
         // Initialize StringBuffers
         sql = new StringBuffer();
         where = new StringBuffer();
+/*        
         // Get the name of the table from which we want to delete records
         from = dbmap.getTableName(this.type);
         // Construct the WHERE clasue
@@ -118,7 +116,7 @@ public class DeleteQuery implements Query {
         sql.append(from);
         sql.append(" WHERE ");
         sql.append(where);
-        
+*/        
         logger.debug(sql.toString());
         return sql.toString();
     }

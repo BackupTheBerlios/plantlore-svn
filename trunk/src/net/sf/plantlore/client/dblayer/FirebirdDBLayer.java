@@ -14,13 +14,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
+import net.sf.plantlore.server.DBLayerException;
 import org.apache.log4j.Logger;
 import net.sf.plantlore.client.dblayer.result.*;
 import net.sf.plantlore.client.dblayer.query.*;
-import net.sf.plantlore.common.record.AuthorRecord;
-import net.sf.plantlore.common.record.PlantRecord;
-import net.sf.plantlore.common.record.PublicationRecord;
-import net.sf.plantlore.common.record.UserRecord;
+import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.Plant;
+import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.User;
 
 
 /**
@@ -33,7 +34,7 @@ import net.sf.plantlore.common.record.UserRecord;
  * @author Tomas Kovarik
  * @version 0.1, 14.1. 2006
  */
-public class FirebirdDBLayer implements DBLayer {
+public class FirebirdDBLayer {
     /** Instance of a logger */
     private Logger logger;
     /** Address of the database server */
@@ -71,7 +72,7 @@ public class FirebirdDBLayer implements DBLayer {
         // Initialize ResultSet pool
         this.results = new Hashtable();
     }
-    
+  
     /**
      * Opens the database connection using parameters specified when creating DBLayer object.
      *
@@ -101,6 +102,10 @@ public class FirebirdDBLayer implements DBLayer {
     	if(query instanceof DeleteQuery) return execute((DeleteQuery)query);
     	
     	throw new DBLayerException("Unknown query type.");
+    }    
+    
+    public Result executeQuery(InsertQuery query) throws DBLayerException {
+        return null;
     }    
     
     /**
@@ -147,7 +152,7 @@ public class FirebirdDBLayer implements DBLayer {
         Statement st;
         int numrows;
         
-        String sql = query.toSQL();
+/*        String sql = query.toSQL();
         try {
             // Execute query using DB connection
             st = this.conn.createStatement();
@@ -158,6 +163,8 @@ public class FirebirdDBLayer implements DBLayer {
         }
         // Return query results
         return new QueryResult(0, numrows, 1, query.getType());
+ */
+        return null;
     }
     
     /**
@@ -288,7 +295,7 @@ public class FirebirdDBLayer implements DBLayer {
         // Read data from the result according to the type of the result
         int type = QRes.getType();
         switch (type) {
-            case DBMapping.USERRECORD:          
+/*            case DBMapping.USERRECORD:          
                 return getUserRow(rs);
             case DBMapping.AUTHORRECORD:        
                 return getAuthorRow(rs);
@@ -298,6 +305,7 @@ public class FirebirdDBLayer implements DBLayer {
                 return getPublicationRow(rs);                
             case DBMapping.OCCURENCERECORD:
                 return getOccurenceRow(rs);                                
+ */
             default:
                 return null;
         }
@@ -330,7 +338,8 @@ public class FirebirdDBLayer implements DBLayer {
      *  @see        class UserRecord
      */
     private Object getUserRow(ResultSet rs) throws DBLayerException {
-        UserRecord ur = new UserRecord();
+        User ur = new User();
+/*        
         try {
             ur.setID(rs.getInt(1));
             ur.setLogin(rs.getString(2));
@@ -350,8 +359,9 @@ public class FirebirdDBLayer implements DBLayer {
             logger.fatal("Database error occured");
             throw new DBLayerException("Database error occured");
         }
+ */
         return ur;
-    }
+     }
     
     /**
      *  Read information about the author from the ResultSet and store them into <code>AuthorRecord</code> object
@@ -363,10 +373,10 @@ public class FirebirdDBLayer implements DBLayer {
      *  @see        class AuthorRecord
      */
     private Object getAuthorRow(ResultSet rs) throws DBLayerException {
-        AuthorRecord ar = new AuthorRecord();
+        Author ar = new Author();
         
         try {
-            ar.setID(rs.getInt(1));
+            ar.setId(rs.getInt(1));
             ar.setFirstName(rs.getString(2));
             ar.setSurname(rs.getString(3));
             // CWHOLENAME from table TAUTHORS should be here, but we don't need it (TODO: Really?)
@@ -395,7 +405,8 @@ public class FirebirdDBLayer implements DBLayer {
      *  @see        class PlantRecord
      */
     private Object getPlantRow(ResultSet rs) throws DBLayerException {
-        PlantRecord pr = new PlantRecord();
+        Plant pr = new Plant();
+/*        
         try {
             pr.setID(rs.getInt(1));
             pr.setAdoptedName(rs.getString(2));
@@ -407,7 +418,7 @@ public class FirebirdDBLayer implements DBLayer {
             logger.fatal("Database error occured");
             throw new DBLayerException("Database error occured");
         }
-        
+*/        
         return pr;
     }
     
@@ -422,7 +433,8 @@ public class FirebirdDBLayer implements DBLayer {
      *  @see        class PublicationRecord
      */
     private Object getPublicationRow(ResultSet rs) throws DBLayerException {
-        PublicationRecord pr = new PublicationRecord();
+        Publication pr = new Publication();
+/*        
         try {
             pr.setID(rs.getInt(1));
             pr.setCollectionName(rs.getString(2));
@@ -433,7 +445,7 @@ public class FirebirdDBLayer implements DBLayer {
             logger.fatal("Database error occured");
             throw new DBLayerException("Database error occured");
         }
-        
+*/        
         return pr;
     }
     

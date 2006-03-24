@@ -26,7 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.JScrollPane;
 
 import net.sf.plantlore.common.ComponentAdjust;
-import net.sf.plantlore.common.record.OccurenceRecord;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
 
 /**

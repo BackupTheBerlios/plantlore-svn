@@ -7,9 +7,9 @@
 
 package net.sf.plantlore.client.dblayer.query;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import net.sf.plantlore.client.dblayer.DBLayerException;
-import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.server.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -18,22 +18,19 @@ import org.apache.log4j.Logger;
  * @author Tomas Kovarik
  * @versionm 0.1, Jan 15, 2006
  */
-public class InsertQuery implements Query {
+public class InsertQuery implements Serializable {
     /** Type of data we are working with. For the list of types see DBmapping class */
     private int type;
-    // Array of tuples containing the data we want to insert
-    private ArrayList data;
-    /** Instance of DBMapping object */
-    private DBMapping dbmap;
+    
+    private Object holder;
     /** Instance of a logger */
     private Logger logger;
     
     /**
-     * Create a new instance of InsertQuery. Initializes empty <code>data</code> array.
+     * Create a new instance of InsertQuery.
      */
     public InsertQuery() {
-        data = new ArrayList();
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
@@ -44,22 +41,19 @@ public class InsertQuery implements Query {
      *  @param data     List of tuples containing values to insert
      *  @throws DBLayetException in case the given type was not found in the DBMapping class
      */
-    public InsertQuery(int type, ArrayList insertData) throws DBLayerException {
-        this.data = insertData;
+    public InsertQuery(int type, Object _holder) throws DBLayerException {
+        holder = _holder;
         setType(type);
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
-    /**
-     *  Add an item (tuple) to the list of values which will be inserted
-     *
-     *  @param field    name of the field (column)
-     *  @param value    value of the field (column)
-     */
-    public void addData(String field, String value) {
-        String[] tuple = {new String(field), new String(value) };
-        data.add(tuple);
+    public void setData(Object _holder) {
+        holder = _holder;
+    }
+
+    public Object getData() {
+        return holder;
     }
     
     /**
@@ -86,7 +80,7 @@ public class InsertQuery implements Query {
      *  @return String with the SQL query constructed from the data stored in the object
      *  @throws DBLayerException in case some part of the SQL query cannot be constructed
      */
-    public String toSQL() throws DBLayerException {
+/*    public String toSQL() throws DBLayerException {
         StringBuffer sql;
         StringBuffer insertFields;
         StringBuffer insertData;
@@ -128,8 +122,5 @@ public class InsertQuery implements Query {
         logger.debug(sql.toString());
         return sql.toString();
     }
-    
-    public void addOrderby(String field, String direction) { }        
-    
-    public void addWhere(String field, String operator, String value) { }
+*/    
 }

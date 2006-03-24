@@ -8,8 +8,7 @@
 package net.sf.plantlore.client.dblayer.query;
 
 import java.util.ArrayList;
-import net.sf.plantlore.client.dblayer.DBLayerException;
-import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.server.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -25,8 +24,6 @@ public class UpdateQuery implements Query {
     private ArrayList whereList;
     // Array of tuples containing the data we want to insert
     private ArrayList data;
-    /** Instance of DBMapping object */
-    private DBMapping dbmap;
     /** Instance of a logger */
     private Logger logger;
     
@@ -36,7 +33,7 @@ public class UpdateQuery implements Query {
     public UpdateQuery() {
         whereList = new ArrayList();
         data = new ArrayList();
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         
     }
@@ -53,7 +50,7 @@ public class UpdateQuery implements Query {
         this.whereList = where;
         this.data = updateData;
         setType(type);
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
@@ -116,6 +113,7 @@ public class UpdateQuery implements Query {
         // Initialize StringBuffers
         where = new StringBuffer();
         sql = new StringBuffer();
+/*        
         update = new StringBuffer();
         // Get the name of the table we want to update
         table = dbmap.getTableName(this.type);
@@ -150,7 +148,7 @@ public class UpdateQuery implements Query {
         sql.append(update);
         sql.append(" ");
         sql.append(where);
-        
+*/        
         logger.debug(sql.toString());
         return sql.toString();
     }

@@ -14,10 +14,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
-import net.sf.plantlore.client.dblayer.DBLayer;
-import net.sf.plantlore.client.dblayer.DBLayerException;
+import net.sf.plantlore.server.DBLayer;
+import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
-import net.sf.plantlore.common.record.PlantRecord;
+import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.client.dblayer.result.QueryResult;
 import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.client.dblayer.query.SelectQuery;
@@ -25,11 +25,11 @@ import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
-import net.sf.plantlore.client.dblayer.DBMapping;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
 import net.sf.plantlore.l10n.L10n;
+import net.sf.plantlore.server.HibernateDBLayer;
 
 import org.apache.log4j.Logger;
 
@@ -106,7 +106,7 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent)
         {
             System.out.println("Print selected");
-            DBLayer dbl = new FirebirdDBLayer("localhost","3050","/mnt/data/temp/plantloreHIB.fdb","sysdba","augmentin");
+            DBLayer dbl = new HibernateDBLayer();
             try
             {
                 dbl.initialize();
@@ -115,13 +115,14 @@ public class AppCoreCtrl
                 System.out.println("Exception while initializing DBLayer: "+ex.getMessage());
                 ex.printStackTrace();
             }
+            /*
             Query sq = new SelectQuery();
             try
             {
                 sq.setType(DBMapping.PLANTRECORD);
                 Result qr = dbl.executeQuery(sq);
                 System.out.println("There are "+qr.getNumRows()+" plants in the db.");
-                PlantRecord p = (PlantRecord) dbl.next(qr);
+                Plant p = (Plant) dbl.next(qr);
                 do {
                     System.out.println("-----------------");
                 System.out.println("Plant is "+p.getPublishableName());
@@ -129,13 +130,14 @@ public class AppCoreCtrl
                 System.out.println("Abbrev. "+p.getAbbreviation());
                 System.out.println("Adopted name "+p.getAdoptedName());
                 System.out.println("Note "+p.getNote());
-                p = (PlantRecord) dbl.next(qr);
+                p = (Plant) dbl.next(qr);
                 } while (p!=null);
             } catch (DBLayerException ex)
             {
                 System.out.println("Msg: "+ex.getMessage());
                 ex.printStackTrace();
             }
+            */
         }
     }
     

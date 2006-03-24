@@ -11,9 +11,10 @@ import java.util.Observable;
 import java.util.prefs.Preferences;
 
 // Imports for temporary db access
-import net.sf.plantlore.client.dblayer.DBLayer;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
-import net.sf.plantlore.client.dblayer.DBLayerException;
+import net.sf.plantlore.server.DBLayer;
+import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.server.HibernateDBLayer;
 
 /** Application core model
  *
@@ -30,7 +31,8 @@ public class AppCore extends Observable
     {
         prefs = Preferences.userNodeForPackage(this.getClass());
         
-        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
+//        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
+        database = new HibernateDBLayer();
         try {
             database.initialize();
         } catch (DBLayerException e) {

@@ -4,9 +4,8 @@
 package net.sf.plantlore.client.history;
 
 import java.util.Observable;
-import net.sf.plantlore.client.dblayer.DBLayer;
-import net.sf.plantlore.client.dblayer.DBLayerException;
-import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.server.DBLayer;
+import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.client.dblayer.query.SelectQuery;
 import net.sf.plantlore.client.dblayer.result.Result;
@@ -86,7 +85,7 @@ public class History extends Observable {
     public void searchHistoryData(Integer idOccurrence)
     {
     	String idOcc = new String();
-    	
+/*    	
     	 // Create new Select query
         Query query = new SelectQuery();
         query.setType(DBMapping.HISTORYRECORD);
@@ -106,6 +105,7 @@ public class History extends Observable {
         	logger.debug("Searching history ends successfully");
             saveResult(result);                
         }      
+ */
     }
     
     /**
@@ -116,7 +116,7 @@ public class History extends Observable {
     	this.resultHistory = result;
     	int from = 0;
     	int to = result.getNumRows();
-    	
+/*    	
     	logger.debug("Retrieving query results.");
         try {
             // Retrieve selected row interval
@@ -130,7 +130,7 @@ public class History extends Observable {
             // Log and set error in case of an exception
             logger.error("Processing search results failed: "+e.toString());            
         }
-    	
+  */  	
     }
     
     public Object[][] getData() {

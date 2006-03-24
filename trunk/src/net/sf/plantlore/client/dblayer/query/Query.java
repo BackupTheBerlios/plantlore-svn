@@ -2,7 +2,7 @@ package net.sf.plantlore.client.dblayer.query;
 
 import java.io.Serializable;
 
-import net.sf.plantlore.client.dblayer.DBLayerException;
+import net.sf.plantlore.server.DBLayerException;
 
 public interface Query extends Serializable {
 	

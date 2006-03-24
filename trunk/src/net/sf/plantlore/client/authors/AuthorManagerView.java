@@ -31,7 +31,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import net.sf.plantlore.common.record.AuthorRecord;
+import net.sf.plantlore.common.record.Author;
 
 /**
  *
@@ -462,12 +462,12 @@ public class AuthorManagerView implements Observer {
         this.tableData = new String[results.size()][];
         for (int i=0;i<results.size();i++) {            
             this.tableData[i] = new String[6];
-            this.tableData[i][0] = ((AuthorRecord)results.get(i)).getFirstName()+" "+((AuthorRecord)results.get(i)).getSurname();
-            this.tableData[i][1] = ((AuthorRecord)results.get(i)).getOrganization();
-            this.tableData[i][2] = ((AuthorRecord)results.get(i)).getRole();
-            this.tableData[i][3] = ((AuthorRecord)results.get(i)).getPhoneNumber();
-            this.tableData[i][4] = ((AuthorRecord)results.get(i)).getEmail();
-            this.tableData[i][5] = ((AuthorRecord)results.get(i)).getUrl();
+            this.tableData[i][0] = ((Author)results.get(i)).getFirstName()+" "+((Author)results.get(i)).getSurname();
+            this.tableData[i][1] = ((Author)results.get(i)).getOrganization();
+            this.tableData[i][2] = ((Author)results.get(i)).getRole();
+            this.tableData[i][3] = ((Author)results.get(i)).getPhoneNumber();
+            this.tableData[i][4] = ((Author)results.get(i)).getEmail();
+            this.tableData[i][5] = ((Author)results.get(i)).getUrl();
         }
         listTable.setModel(new DefaultTableModel(this.tableData, this.columnNames));       
         // Set total number of rows in the result

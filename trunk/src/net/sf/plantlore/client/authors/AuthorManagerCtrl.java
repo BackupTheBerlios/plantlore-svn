@@ -71,9 +71,9 @@ public class AuthorManagerCtrl {
                     view.setDialogEnabled(true);    // Enable view dialog                
                     // Check for errors which might have occured. If none occured, tell model to process the result
                     if (model.processErrors() == false) {
-                        if (model.getResult().getNumRows() == 0) {
+//                        if (model.getResult().getNumRows() == 0) {
                             view.showSearchInfoMessage();
-                        }
+//                        }
                         model.setCurrentFirstRow(1);                                                    
                         // Display first n rows (n = model.getDisplayRows())                        
                         model.processResults(1, model.getDisplayRows());                        

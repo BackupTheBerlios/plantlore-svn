@@ -9,16 +9,17 @@ package net.sf.plantlore.client.authors;
 
 import java.util.ArrayList;
 import java.util.Observable;
-import net.sf.plantlore.common.record.AuthorRecord;
-import net.sf.plantlore.client.dblayer.DBLayer;
-import net.sf.plantlore.client.dblayer.DBLayerException;
-import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.server.DBLayer;
+import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.query.DeleteQuery;
 import net.sf.plantlore.client.dblayer.query.InsertQuery;
 import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.client.dblayer.result.Result;
-import net.sf.plantlore.client.dblayer.query.SelectQuery;
+import net.sf.plantlore.server.SelectQuery;
 import net.sf.plantlore.common.SwingWorker;
+import net.sf.plantlore.common.record.Author;
 import org.apache.log4j.Logger;
 
 /**
@@ -104,26 +105,21 @@ public class AuthorManager extends Observable {
             public Object construct() {
                 // The operation is not finished yet
                 done = false;
-                // Create new Insert query
-                InsertQuery query = new InsertQuery();
-                // Set type of data we want to insert
-                query.setType(DBMapping.AUTHORRECORD);
-                // Fill query with information about the author
-                query.addData("id", "gen_id(GEN_TAUTHORS, 1)");
-                query.addData("firstname", firstName);
-                query.addData("surname", surname);        
-                query.addData("organization", organization);                
-                query.addData("role", role);
-                query.addData("address", address);        
-                query.addData("phonenumber", phoneNumber);                
-                query.addData("email", email);                
-                query.addData("url", url);                        
-                query.addData("note", note);                        
-                Result QRes = null;
+                Author author = new Author();
+                author.setFirstName(firstName);
+                author.setSurname(surname);
+                author.setOrganization(organization);
+                author.setRole(role);
+                author.setAddress(address);
+                author.setPhoneNumber(phoneNumber);
+                author.setEmail(email);
+                author.setUrl(url);
+                author.setNote(note);
                 // Execute query
+                int rowId;
                 try {
                     // Execute query
-                    QRes = database.executeQuery(query);        
+                    rowId = database.executeInsert(author);
                 } catch (DBLayerException e) {
                     // Log and set an error
                     logger.error("Saving author failed. Unable to execute insert query");
@@ -137,7 +133,7 @@ public class AuthorManager extends Observable {
                     searchAuthor();
                 }
                 done = true;
-                return QRes;
+                return rowId;
             }
         };
         worker.start();
@@ -151,30 +147,23 @@ public class AuthorManager extends Observable {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // Operation not finished yet
-                done = false;
-                // Create new Delete query
-                DeleteQuery query = new DeleteQuery();
-                // Set type of data we want to delete
-                query.setType(DBMapping.AUTHORRECORD);
-                // Set criteria - which authors to delete
-                query.addWhere("id", "=", ((AuthorRecord)data.get(getAuthorIndex())).getID()+"");
-                Result qRes = null;
+                done = false;                
                 try {
                     // Execute query
-                    qRes = database.executeQuery(query);                            
+                    database.executeDelete((Author)data.get(getAuthorIndex()));                            
                 } catch (DBLayerException e) {
                     // Log and set an error
                     logger.error("Deleting author failed. Unable to execute delete query.");
                     setError(e);
                     // Set operation state to finished                    
                     done = true;       
-                    return qRes;                                        
+                    return null;
                 }
                 // Execute author search - required in order to display up-to-date data in the table of authors
                 searchAuthor();                
                 // Set operation state to finished
                 done = true;       
-                return qRes;                    
+                return null;
             }        
         };
         worker.start();            
@@ -194,21 +183,18 @@ public class AuthorManager extends Observable {
                 // Operation not finished yet
                 done = false;                
                 // Create new Select query
-                Query query = new SelectQuery();
-                query.setType(DBMapping.AUTHORRECORD);
-                // Set search criteria
+                SelectQuery query = database.createQuery(Author.class);
                 if (searchName != null)
-                    query.addWhere("firstname", "LIKE", "%"+searchName+"%");
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "firstName", null, "%"+searchName+"%", null);
                 if (searchOrganization != null) 
-                    query.addWhere("organization", "LIKE", "%"+searchOrganization+"%");
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "organization", null, "%"+searchOrganization+"%", null);
                 if (searchRole != null)
-                    query.addWhere("role", "LIKE", "%"+searchRole+"%");
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "role", null, "%"+searchRole+"%", null);
                 if (searchEmail != null) 
-                    query.addWhere("email", "LKE", "%"+searchEmail+"%");
-                
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "email", null, "%"+searchEmail+"%", null);                
                 String field;
                 switch (sortField) {
-                    case 1: field = "firstname";
+                    case 1: field = "firstName";
                             break;
                     case 2: field = "organization";
                             break;
@@ -220,19 +206,18 @@ public class AuthorManager extends Observable {
                             break;                            
                     case 6: field = "url";
                             break;          
-                    default:field = "firstname";
+                    default:field = "firstName";
                 }
                 
                 if (sortDirection == 0) {
-                    query.addOrderby(field, "ASC");                
+                    query.addOrder(PlantloreConstants.DIRECT_ASC, field);
                 } else {
-                    query.addOrderby(field, "DESC");                                    
-                }                                                                        
-                
+                    query.addOrder(PlantloreConstants.DIRECT_DESC, field);                    
+                }                
                 Result qRes = null;
                 try {
-                    // Execute query
-                    qRes = database.executeQuery(query);        
+                    // Execute query                    
+                    database.executeQuery(query);        
                 } catch (DBLayerException e) {
                     // Log and set an error                   
                     logger.error("Searching authors failed. Unable to execute search query.");
@@ -244,7 +229,7 @@ public class AuthorManager extends Observable {
                     // Save the results
                     setResult(qRes);
                     return qRes;                    
-                }      
+                } 
             }
         };
         worker.start();
@@ -273,23 +258,24 @@ public class AuthorManager extends Observable {
      */
     public void processResults(int from, int count) {
         if (this.queryResult != null) {
-            logger.debug("Rows in the result: "+this.queryResult.getNumRows());
+//            logger.debug("Rows in the result: "+this.queryResult.getNumRows());
             logger.debug("Max available rows: "+(from+count-1));
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
-            int to = Math.min(this.queryResult.getNumRows(), from+count-1);
+//            int to = Math.min(this.queryResult.getNumRows(), from+count-1);
+            int to = from+count-1;
             if (to == 0) {
                 this.data = new ArrayList();                
             } else {
-                logger.debug("Retrieving query results: "+from+" - "+to);
+                logger.debug("Retrieving query results: "+from+" - "+to);                
                 try {
                     // Retrieve selected row interval
-                    Object[] objArray = database.more(this.queryResult, from, to);                
+                    Object[] objArray = database.more(from, to);                
                     logger.debug("Results retrieved. Count: "+objArray.length);
                     // Create storage for the results
                     this.data = new ArrayList(objArray.length);
                     // Cast the results to the AuthorRecord objects
                     for (int i=0;i<objArray.length;i++) {
-                        this.data.add((AuthorRecord)objArray[i]);
+                        this.data.add((Author)objArray[i]);
                     }
                 } catch (DBLayerException e) {
                     // Log and set error in case of an exception
@@ -315,7 +301,7 @@ public class AuthorManager extends Observable {
      *  Notify observers about this change. This is used to load a form when editing authors.
      */
     public void loadAuthor() {
-        AuthorRecord selectedAuth = (AuthorRecord)data.get(this.getAuthorIndex());
+        Author selectedAuth = (Author)data.get(this.getAuthorIndex());
         this.setFirstName(selectedAuth.getFirstName());
         this.setSurname(selectedAuth.getSurname());
         this.setOrganization(selectedAuth.getOrganization());

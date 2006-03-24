@@ -113,7 +113,7 @@ public class AppCoreView implements Observer
     {
         frame = new JFrame(L10n.getString("plantlore"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(640,480);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(false);
         frame.setJMenuBar(menuBar);
         container = frame.getContentPane();

@@ -8,8 +8,7 @@
 package net.sf.plantlore.client.dblayer.query;
 
 import java.util.ArrayList;
-import net.sf.plantlore.client.dblayer.DBLayerException;
-import net.sf.plantlore.client.dblayer.DBMapping;
+import net.sf.plantlore.server.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -26,8 +25,6 @@ public class SelectQuery implements Query {
     /** List of tuples for the ORDER BY part of the query */
     private ArrayList orderbyList;
     /** Instance of DBMapping object */
-    private DBMapping dbmap;
-    /** Instance of a logger */
     private Logger logger;
     
     /**
@@ -36,7 +33,7 @@ public class SelectQuery implements Query {
     public SelectQuery() {
         this.whereList = new ArrayList();
         this.orderbyList = new ArrayList();
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
@@ -53,7 +50,7 @@ public class SelectQuery implements Query {
         this.whereList = where;
         this.orderbyList = orderby;
         setType(type);
-        dbmap = new DBMapping();
+        // dbmap = new DBMapping();
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     }
     
@@ -112,10 +109,11 @@ public class SelectQuery implements Query {
         String fieldName;
         String[] triple;
         String[] tuple;
-        
+
         // Initialize StringBuffers
         where = new StringBuffer();
         sql = new StringBuffer();
+/*        
         orderby = new StringBuffer();
         // Get the table names we will be working with
         from = dbmap.getTableName(this.type);
@@ -155,9 +153,10 @@ public class SelectQuery implements Query {
             sql.append(" ");
             sql.append(orderby);
         }
-        
+*/        
         logger.debug(sql.toString());
         return sql.toString();
+
     }
     
     public void addData(String field, String value) { }
