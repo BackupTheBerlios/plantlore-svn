@@ -45,7 +45,9 @@ public class HibernateDBLayer implements DBLayer {
     private DetachedCriteria query;
     /** Results of a select query */
     private ScrollableResults results;
-        
+    /** Pool of select queries */        
+    private Hashtable queries;
+            
     /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer() {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -248,184 +250,28 @@ public class HibernateDBLayer implements DBLayer {
      *  Start building select query.
      *
      *  @param classname entity we want to select from the database (given holder object class)
-     */
-    public void createQuery(Class classname) {
-        query = DetachedCriteria.forClass(classname);
-    }
-    
-    /**
-     *  Add restriction to the constructed query. Restrictions are parts of the where condition.
-     *  
-     *  @param type type of the restriction (see constants defined in PlantloreConstants)
-     *  @param firstPropertyName argument of restrictions working with one property (table column)
-     *  @param secondPropertyName argument of restrictions wirking with two properties
-     *  @param value value for restrictions containg values
-     *  @param values collection of values for restrictions working with more values (RESTR_IN)
-     */
-    public void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values) {
-        switch (type) {
-            case PlantloreConstants.RESTR_BETWEEN:
-                query.add(Restrictions.like(firstPropertyName, value));
-                break;
-            case PlantloreConstants.RESTR_EQ:
-                query.add(Restrictions.eq(firstPropertyName, value));
-                break;
-            case PlantloreConstants.RESTR_EQ_PROPERTY:
-                query.add(Restrictions.eqProperty(firstPropertyName, secondPropertyName));                
-                break;
-            case PlantloreConstants.RESTR_GE:
-                query.add(Restrictions.ge(firstPropertyName, value));                
-                break;
-            case PlantloreConstants.RESTR_GE_PROPERTY:
-                query.add(Restrictions.geProperty(firstPropertyName, secondPropertyName));                
-                break;
-            case PlantloreConstants.RESTR_GT:
-                query.add(Restrictions.gt(firstPropertyName, value));                                
-                break;
-            case PlantloreConstants.RESTR_GT_PROPERTY:
-                query.add(Restrictions.gtProperty(firstPropertyName, secondPropertyName));
-                break;
-            case PlantloreConstants.RESTR_ILIKE:
-                query.add(Restrictions.ilike(firstPropertyName, value));
-                break;
-            case PlantloreConstants.RESTR_IN:
-                query.add(Restrictions.in(firstPropertyName, values));                                                
-                break;
-            case PlantloreConstants.RESTR_IS_EMPTY:
-                query.add(Restrictions.isEmpty(firstPropertyName));
-                break;
-            case PlantloreConstants.RESTR_IS_NOT_EMPTY:
-                query.add(Restrictions.isNotEmpty(firstPropertyName));                
-                break;
-            case PlantloreConstants.RESTR_IS_NULL:
-                query.add(Restrictions.isNull(firstPropertyName));                                
-                break;
-            case PlantloreConstants.RESTR_IS_NOT_NULL:
-                query.add(Restrictions.isNotNull(firstPropertyName));                                
-                break;
-            case PlantloreConstants.RESTR_LE:
-                query.add(Restrictions.le(firstPropertyName, value));                
-                break;
-            case PlantloreConstants.RESTR_LE_PROPERTY:
-                query.add(Restrictions.leProperty(firstPropertyName, secondPropertyName));                
-                break;                
-            case PlantloreConstants.RESTR_LIKE:
-                query.add(Restrictions.like(firstPropertyName, value));                
-                break;
-            case PlantloreConstants.RESTR_LT:
-                query.add(Restrictions.lt(firstPropertyName, value));                                
-                break;
-            case PlantloreConstants.RESTR_LT_PROPERTY:
-                query.add(Restrictions.ltProperty(firstPropertyName, secondPropertyName));
-                break;
-            case PlantloreConstants.RESTR_NE:
-                query.add(Restrictions.ne(firstPropertyName, value));                
-                break;
-            case PlantloreConstants.RESTR_NE_PROPERTY:
-                query.add(Restrictions.neProperty(firstPropertyName, secondPropertyName));
-                break;
-            default:
-                
-        }
-    }
-    
-    /**
-     *  Add projection to constructed query. Projections are columns we want to select
-     *  
-     *  @param type type of projection (not only columns, but also aggregate and other functions)
-     *  @param propertyName name of the column for the projection
-     *  @see PlantloreConstants
-     */
-    public void addProjection(int type, String propertyName) {
-        switch (type) {
-            case PlantloreConstants.PROJ_AVG:
-                query.setProjection(Projections.avg(propertyName));
-                break;
-            case PlantloreConstants.PROJ_COUNT:
-                query.setProjection(Projections.count(propertyName));
-                break;
-            case PlantloreConstants.PROJ_COUNT_DISTINCT:
-                query.setProjection(Projections.countDistinct(propertyName));
-                break;
-            case PlantloreConstants.PROJ_GROUP:
-                query.setProjection(Projections.groupProperty(propertyName));
-                break;
-            case PlantloreConstants.PROJ_MAX:
-                query.setProjection(Projections.max(propertyName));
-                break;
-            case PlantloreConstants.PROJ_MIN:
-                query.setProjection(Projections.min(propertyName));
-                break;
-            case PlantloreConstants.PROJ_PROPERTY:
-                query.setProjection(Projections.property(propertyName));
-                break;
-            case PlantloreConstants.PROJ_ROW_COUNT:
-                query.setProjection(Projections.rowCount());
-                break;
-            case PlantloreConstants.PROJ_SUM:
-                query.setProjection(Projections.sum(propertyName));
-                break;
-            default:
-                
-        }
-    }
-    
-    /**
-     *  Set method of fetching the results.
-     *  
-     *  @param associationPath
-     *  @param mode 
-     */
-    public void setFetchMode(String associationPath, int mode) {
-        switch (mode) {
-            case PlantloreConstants.FETCH_SELECT:
-                query.setFetchMode(associationPath, FetchMode.SELECT);
-                break;
-            case PlantloreConstants.FETCH_JOIN:
-                query.setFetchMode(associationPath, FetchMode.JOIN);             
-                break;
-            default:
-                query.setFetchMode(associationPath, FetchMode.DEFAULT);                
-        }
-    }
-    
-    /**
-     *  Add orderby clause to the constructed query.
+     *  @return an instance of <code>SelectQuery</code> used for building a query by client
      *
-     *  @param direction direction of ordering (ASC or DESC)
-     *  @param propertyName property we want to use for ordering the results
+     *  TODO: This has to be updated by ERIK to work with RMI
      */
-    public void addOrder(int direction, String propertyName) {
-        switch (direction) {
-            case PlantloreConstants.DIRECT_ASC: query.addOrder(Order.asc(propertyName));                    
-                                break;
-            case PlantloreConstants.DIRECT_DESC:query.addOrder(Order.desc(propertyName));
-                                break;
-            default: query.addOrder(Order.asc(propertyName));
-        }        
-    }
-    
-    /**
-     *  Add association to the query. Association means that given associated record (from a 
-     *  different table) should be loaded as well.
-     *
-     *  @param associationPath path of associated entities
-     */
-    public void addAssociation(String associationPath) {
-        query.createCriteria(associationPath);
-    }
+    public SelectQuery createQuery(Class classname) {
+        SelectQuery query = new SelectQuery(session.createCriteria(classname));
+        queries.put(1, query);
+        return query;
+    }    
     
     /**
      *  Execute constructed SELECT query. Only executes query, for retrieving results use next() and more()
      *
+     *  @param query query we want to execute
      *  @throws DBLayerException when selecting records from the database fails
      */
-    public void executeQuery() throws DBLayerException {
+    public void executeQuery(SelectQuery query) throws DBLayerException {
         Transaction tx = null;        
         try {
             tx = session.beginTransaction();
             // Execute detached criteria query
-            query.getExecutableCriteria(session).scroll();
+            query.getCriteria().scroll();
             // Commit transaction
             tx.commit();                                      
         } catch (HibernateException e) {

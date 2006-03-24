@@ -35,18 +35,8 @@ public interface DBLayer extends Remote {
     
     public void close(Result QRes) throws DBLayerException;
     
-    public void createQuery(Class classname);
-    
-    public void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values);       
-    
-    public void addProjection(int type, String propertyName);    
-    
-    public void setFetchMode(String associationPath, int mode);    
-    
-    public void addOrder(int direction, String propertyName);
-    
-    public void addAssociation(String associationPath);
-    
-    public void executeQuery() throws DBLayerException;    
+    public SelectQuery createQuery(Class classname);
+
+    public void executeQuery(SelectQuery query) throws DBLayerException;    
         
 }
