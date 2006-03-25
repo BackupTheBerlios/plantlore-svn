@@ -43,14 +43,18 @@ public class HibernateDBLayer implements DBLayer {
     private Session session;
     /** Query object used for building SELECT queries */
     private DetachedCriteria query;
-    /** Results of a select query */
-    private ScrollableResults results;
     /** Pool of select queries */        
-    private Hashtable queries;
-            
+    private Hashtable results;
+    /** Maximum result ID used */
+    private int maxResultId;
+    
     /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer() {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());
+        logger = Logger.getLogger(this.getClass().getPackage().getName());        
+        // Initialize pool of select queries
+        results = new Hashtable();
+        // Initialize maximum result id
+        maxResultId = 0;
     }    
     
     /**
@@ -80,7 +84,7 @@ public class HibernateDBLayer implements DBLayer {
         } catch (HibernateException e) {
             logger.fatal("Cannot create Hibernate session. Details: "+e.getMessage());
             throw new DBLayerException("Cannot create Hibernate session. Details: "+e.getMessage());                        
-        }            
+        }        
     }    
     
     /**
@@ -171,7 +175,7 @@ public class HibernateDBLayer implements DBLayer {
      *          array as well (in case associated entities are fetched)
      *  @throws DBLayerException
      */
-    public Object[] more(int from, int to) throws DBLayerException {    
+    public Object[] more(int resultId, int from, int to) throws DBLayerException {    
         // Check validity of arguments
         if (from>to) {
             logger.error("Cannot read rows from "+from+" to "+to+" because from > to");
@@ -181,13 +185,15 @@ public class HibernateDBLayer implements DBLayer {
             logger.error("Cannot read rows starting at the given index: "+from);
             throw new DBLayerException("Cannot read rows starting at the given index: "+from);            
         }
+        // Get results for the given resultId
+        ScrollableResults res = (ScrollableResults)results.get(resultId);
         // Move ResultSet to the first row we want to read. In case we want to read the first row,
         // move the pointer before the first row, else move it to the given position
         try {
             if (from > 1) {
-                results.setRowNumber(from-1);
+                res.setRowNumber(from-1);
             } else {
-                results.beforeFirst();
+                res.beforeFirst();
             }
         } catch (HibernateException e) {
             logger.error("Cannot move to the given row of results: "+from);
@@ -198,8 +204,8 @@ public class HibernateDBLayer implements DBLayer {
         // Read all the selected rows
         try {
             for (int i=0; i<=(to-from); i++) {
-                if (results.next()) {
-                    data[i] = results.get();
+                if (res.next()) {
+                    data[i] = res.get();
                 } else {
                     logger.error("Result doesn't have enough rows");
                     throw new DBLayerException("Result doesn't have enough rows");                
@@ -219,17 +225,29 @@ public class HibernateDBLayer implements DBLayer {
      *          associated entities were fetched.
      *  @throws DBLayerException when loading the results fails
      */
-    public Object[] next() throws DBLayerException {
+    public Object[] next(int resultId) throws DBLayerException {
+        // Get results for the given resultId
+        ScrollableResults res = (ScrollableResults)results.get(resultId);
         // In case no more rows are available, return null
         try {
-            if (!results.next()) {
+            if (!res.next()) {
                 return null;
             }
         } catch (HibernateException e) {
             logger.fatal("Database error occured");
             throw new DBLayerException("Database error occured");
         }        
-        return results.get();        
+        return res.get();        
+    }
+    
+    public int getNumRows(int resultId) {
+        // Get results for the given resultId
+        ScrollableResults res = (ScrollableResults)results.get(resultId);        
+        int currentRow = res.getRowNumber();
+        res.afterLast();
+        int numRows = res.getRowNumber();
+        res.setRowNumber(currentRow);
+        return numRows;
     }
     
     /**
@@ -256,7 +274,6 @@ public class HibernateDBLayer implements DBLayer {
      */
     public SelectQuery createQuery(Class classname) {
         SelectQuery query = new SelectQuery(session.createCriteria(classname));
-        queries.put(1, query);
         return query;
     }    
     
@@ -266,12 +283,13 @@ public class HibernateDBLayer implements DBLayer {
      *  @param query query we want to execute
      *  @throws DBLayerException when selecting records from the database fails
      */
-    public void executeQuery(SelectQuery query) throws DBLayerException {
+    public int executeQuery(SelectQuery query) throws DBLayerException {
         Transaction tx = null;        
+        ScrollableResults res;
         try {
             tx = session.beginTransaction();
             // Execute detached criteria query
-            query.getCriteria().scroll();
+            res = query.getCriteria().scroll();
             // Commit transaction
             tx.commit();                                      
         } catch (HibernateException e) {
@@ -281,5 +299,9 @@ public class HibernateDBLayer implements DBLayer {
             logger.fatal("Selecting records from the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Selecting records from the database failed. Details: "+e.getMessage());
         }
+        // Update current maximum result id and save the results
+        maxResultId++;
+        results.put(maxResultId, res);
+        return maxResultId;
     }
 }

@@ -29,14 +29,16 @@ public interface DBLayer extends Remote {
         
     public void executeUpdate(Object data) throws DBLayerException;
     
-    public Object[] more(int from, int to) throws DBLayerException;
+    public Object[] more(int resultId, int from, int to) throws DBLayerException;
     
-    public Object[] next() throws DBLayerException;
-    
+    public Object[] next(int resultId) throws DBLayerException;
+
+    public int getNumRows(int resultId);
+        
     public void close(Result QRes) throws DBLayerException;
     
     public SelectQuery createQuery(Class classname);
 
-    public void executeQuery(SelectQuery query) throws DBLayerException;    
+    public int executeQuery(SelectQuery query) throws DBLayerException;    
         
 }
