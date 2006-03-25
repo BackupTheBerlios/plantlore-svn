@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.client;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -25,6 +26,7 @@ public class Plantlore {
     AppCoreView view;
     AppCoreCtrl ctrl;
     Logger logger;
+    private static SplashScreen splashScreen;    
     
     /**
      * Creates a new instance of Plantlore
@@ -38,37 +40,48 @@ public class Plantlore {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    	
-    	// Set beautiful system look & feel.
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
-        catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
-
-    	
+        
+        // Set beautiful system look & feel.
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
+        
+        
         BasicConfigurator.configure();
         Logger.getRootLogger().info("Plantlore client started");
         Plantlore plantlore = new Plantlore();
-        try
-        {
+        try {
             L10n.load();
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
         plantlore.run();
     }
-
+    
     /** Constructs the main MVC
      *
      */
-    private void run()
-    {
+    private void run() {
         logger.info("Constructing AppCore MVC");
+        splashScreen = new SplashScreen("resources/splashscreen.gif");
+        splashScreen.splash();
         model = new AppCore();
         view = new AppCoreView(model);
         ctrl = new AppCoreCtrl(model, view);
         view.init();
         view.setVisible(true);
+        EventQueue.invokeLater( new SplashScreenCloser() );
         logger.info("AppCore MVC constructed. Plantlore client should be visible now.");
     }
     
+    /**
+     * Removes the splash screen.
+     *
+     * Invoke this <code>Runnable</code> using
+     * <code>EventQueue.invokeLater</code>, in order to remove the splash screen
+     * in a thread-safe manner.
+     */
+    private static final class SplashScreenCloser implements Runnable {
+        public void run(){
+            splashScreen.dispose();
+        }
+    }
 }
