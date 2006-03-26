@@ -64,7 +64,7 @@ public class AuthorManager extends Observable {
     /** Flag telling whether a long running operation has already finished */
     private boolean done;
     /** Result of the search query */
-    private Result queryResult;
+    private int resultId = 0;
     /** Constant with default number of rows to display */
     private static final int DEFAULT_DISPLAY_ROWS = 10;    
     /** Actual number of rows to display */
@@ -213,11 +213,11 @@ public class AuthorManager extends Observable {
                     query.addOrder(PlantloreConstants.DIRECT_ASC, field);
                 } else {
                     query.addOrder(PlantloreConstants.DIRECT_DESC, field);                    
-                }                
-                Result qRes = null;
+                }   
+                int resultId = 0;
                 try {
                     // Execute query                    
-                    database.executeQuery(query);        
+                    resultId = database.executeQuery(query);        
                 } catch (DBLayerException e) {
                     // Log and set an error                   
                     logger.error("Searching authors failed. Unable to execute search query.");
@@ -227,8 +227,8 @@ public class AuthorManager extends Observable {
                     // Set operation state to finished
                     done = true;                    
                     // Save the results
-                    setResult(qRes);
-                    return qRes;                    
+                    setResult(resultId);
+                    return resultId;                    
                 } 
             }
         };
@@ -257,25 +257,25 @@ public class AuthorManager extends Observable {
      *  @param count number of rows to retrieve 
      */
     public void processResults(int from, int count) {
-        if (this.queryResult != null) {
-//            logger.debug("Rows in the result: "+this.queryResult.getNumRows());
+        if (this.resultId != 0) {
+            logger.debug("Rows in the result: "+getResultRows());
             logger.debug("Max available rows: "+(from+count-1));
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
-//            int to = Math.min(this.queryResult.getNumRows(), from+count-1);
-            int to = from+count-1;
+            int to = Math.min(getResultRows(), from+count-1);
             if (to == 0) {
                 this.data = new ArrayList();                
             } else {
                 logger.debug("Retrieving query results: "+from+" - "+to);                
                 try {
                     // Retrieve selected row interval
-                    Object[] objArray = database.more(from, to);                
+                    Object[] objArray = database.more(resultId, from, to);                
                     logger.debug("Results retrieved. Count: "+objArray.length);
                     // Create storage for the results
                     this.data = new ArrayList(objArray.length);
                     // Cast the results to the AuthorRecord objects
                     for (int i=0;i<objArray.length;i++) {
-                        this.data.add((Author)objArray[i]);
+                        Object[] objAuth = (Object[])objArray[i];
+                        this.data.add((Author)objAuth[0]);
                     }
                 } catch (DBLayerException e) {
                     // Log and set error in case of an exception
@@ -319,18 +319,26 @@ public class AuthorManager extends Observable {
      *  Set result of a database operation. This is used only for search operations.
      *  @param qRes <code>QueryResult</code> object with the details about the result of a database operation
      */
-    public void setResult(Result qRes) {
-        this.queryResult = qRes;
+    public void setResult(int resultId) {
+        this.resultId = resultId;
     }
     
     /**
      *  Get results of last database operation. This is used only for search operations.
      *  @return <code>QueryResult</code> object with the details about the result of last database operation
      */
-    public Result getResult() {
-        return this.queryResult;
+    public int getResult() {
+        return this.resultId;
     }
-        
+       
+    public int getResultRows() {
+        if (resultId != 0) {
+            return database.getNumRows(resultId);
+        } else {
+            return 0;
+        }
+    }
+    
     /**
      *  Set an error flag (message).
      *  @param msg  message explaining the error which occured
@@ -428,7 +436,7 @@ public class AuthorManager extends Observable {
      *  @return true if search query result is available
      */
     public boolean isResultAvailable() {
-        if (this.queryResult != null) {
+        if (this.resultId!= 0) {
             return true;
         }
         return false;

@@ -471,7 +471,7 @@ public class AuthorManagerView implements Observer {
         }
         listTable.setModel(new DefaultTableModel(this.tableData, this.columnNames));       
         // Set total number of rows in the result
-        totalRowsLabel.setText(model.getResult().getNumRows()+"");
+        totalRowsLabel.setText(model.getResultRows()+"");
         // Set the status of "Previous" button
         if (model.getCurrentFirstRow() > 1) {
             previousBtn.setEnabled(true);
@@ -479,12 +479,12 @@ public class AuthorManagerView implements Observer {
             previousBtn.setEnabled(false);
         }
         // Set the status of the "Next" button        
-        if (model.getResult().getNumRows() >= (model.getDisplayRows()+model.getCurrentFirstRow())) {
+        if (model.getResultRows() >= (model.getDisplayRows()+model.getCurrentFirstRow())) {
             nextBtn.setEnabled(true);
         } else {
             nextBtn.setEnabled(false);            
         }
-        int to = Math.min(model.getCurrentFirstRow()+model.getDisplayRows()-1, model.getResult().getNumRows());
+        int to = Math.min(model.getCurrentFirstRow()+model.getDisplayRows()-1, model.getResultRows());
         displayedLabel.setText(model.getCurrentFirstRow()+" - "+to);
     }
     

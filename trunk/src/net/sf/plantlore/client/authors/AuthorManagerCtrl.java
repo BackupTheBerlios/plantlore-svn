@@ -71,9 +71,9 @@ public class AuthorManagerCtrl {
                     view.setDialogEnabled(true);    // Enable view dialog                
                     // Check for errors which might have occured. If none occured, tell model to process the result
                     if (model.processErrors() == false) {
-//                        if (model.getResult().getNumRows() == 0) {
+                        if (model.getResultRows() == 0) {
                             view.showSearchInfoMessage();
-//                        }
+                        }
                         model.setCurrentFirstRow(1);                                                    
                         // Display first n rows (n = model.getDisplayRows())                        
                         model.processResults(1, model.getDisplayRows());                        
@@ -94,7 +94,7 @@ public class AuthorManagerCtrl {
                         // Update curent first row so that it is not greater than number of rows in the result
                         // (this happens in case the last record in the list has been deleted and it was set as 
                         // the current first row)
-                        if (model.getCurrentFirstRow() > model.getResult().getNumRows()) {                           
+                        if (model.getCurrentFirstRow() > model.getResultRows()) {                           
                             int row = model.getCurrentFirstRow()-model.getDisplayRows();
                             if (row < 1) {
                                 model.setCurrentFirstRow(1);                                
@@ -226,10 +226,10 @@ public class AuthorManagerCtrl {
         public void actionPerformed(ActionEvent e) {
             // Call processResults only if we don't see the last page (should not happen, button should be disabled)
             logger.debug("current first row: "+model.getCurrentFirstRow());
-            logger.debug("num rows in the result: "+model.getResult().getNumRows());            
+            logger.debug("num rows in the result: "+model.getResultRows());            
             logger.debug("display rows: "+view.getDisplayRows());
-            if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResult().getNumRows()) {
-                model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());                                
+            if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResultRows()) {
+                model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());
             }
         }
     }    
@@ -320,7 +320,7 @@ public class AuthorManagerCtrl {
             model.setDisplayRows(view.getDisplayRows());
             logger.debug("New display rows: "+view.getDisplayRows());
             // If neccessary reload search results
-            if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResult().getNumRows())) {
+            if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
                 model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
                 logger.debug("Search results reloaded. First row: "+model.getCurrentFirstRow()+"; Display rows: "+view.getDisplayRows());
             }
