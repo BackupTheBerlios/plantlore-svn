@@ -12,7 +12,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.server.DBLayerException;
-import net.sf.plantlore.server.SelectQuery;
 
 /**
  * Interface for database access.

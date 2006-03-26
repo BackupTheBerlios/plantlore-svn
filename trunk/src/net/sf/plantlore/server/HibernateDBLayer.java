@@ -18,6 +18,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.SelectQuery;
 
 import org.hibernate.Transaction;
 
@@ -271,7 +272,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  TODO: This has to be updated by ERIK to work with RMI
      */
     public SelectQuery createQuery(Class classname) {
-        SelectQuery query = new SelectQuery(session.createCriteria(classname));
+        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname));
         // TODO Tady se objekt query zaregistruje a exportuje pro remote usage.
         
         
