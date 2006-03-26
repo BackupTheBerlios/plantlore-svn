@@ -8,6 +8,7 @@
 package net.sf.plantlore.client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -18,6 +19,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -29,8 +31,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.BevelBorder;
+import javax.swing.table.TableColumn;
 import net.sf.plantlore.common.ComponentAdjust;
 import net.sf.plantlore.common.StatusBarManager;
 
@@ -72,7 +76,13 @@ public class AppCoreView implements Observer
     private JButton 
             importButton = new JButton(),
             exportButton = new JButton(), 
-            searchButton = new JButton();
+            searchButton = new JButton(),
+            addButton = new JButton(),
+            editButton = new JButton(),
+            deleteButton = new JButton(),
+            selectAll = new JButton(),
+            selectNone = new JButton(),
+            invertSelected  = new JButton();
     
     private JLabel statusLabel;
     
@@ -92,8 +102,10 @@ public class AppCoreView implements Observer
 
     public void update(Observable observable, Object object)
     {
+        frame.repaint();
+        overview.repaint();
     }
-
+    
     /** Calls all the constructing init methods.
      *
      */
@@ -104,6 +116,7 @@ public class AppCoreView implements Observer
         initMenu();
         initOverview();
         initMainToolBar();
+        frame.pack();
     }
 
     /** Constructs the main Plantlore JFrame.
@@ -159,13 +172,12 @@ public class AppCoreView implements Observer
     private void initMainToolBar()
     {
         mainToolBar = new JToolBar();
-        mainToolBar.add(importButton);
-        mainToolBar.add(exportButton);
+        mainToolBar.add(addButton);
+        mainToolBar.add(editButton);
+        mainToolBar.add(deleteButton);
         mainToolBar.add(searchButton);
         container.add(mainToolBar, BorderLayout.NORTH);
         
-        sbm.add(importButton, "Import some records");
-        sbm.add(exportButton, "Export some records");
         sbm.add(searchButton, "Search for records");
     }
     
@@ -189,9 +201,19 @@ public class AppCoreView implements Observer
      */
     private void initOverview()
     {
-        overview = new JTable(new OverviewTableModel());
-        overview.setPreferredScrollableViewportSize(new Dimension(600,70));
-        JScrollPane sp = new JScrollPane(overview);
+        OverviewTableModel otm = model.getTableModel();
+        overview = new JTable(otm);
+        TableColumn tc;
+        for (int i = 0; i < 23; i++) {
+            tc = overview.getColumnModel().getColumn(i);
+            tc.setPreferredWidth(otm.getColumnName(i).length()*10);
+        }
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BorderLayout());
+        JScrollPane sp = new JScrollPane(tablePanel);
+        tablePanel.add(overview.getTableHeader(), BorderLayout.PAGE_START);
+        tablePanel.add(overview, BorderLayout.CENTER);
+        sp.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*25));
         mainPane.add(sp, BorderLayout.CENTER);
         
         pageToolBar = new JToolBar();
@@ -199,21 +221,35 @@ public class AppCoreView implements Observer
         recordsPerPage = new JFormattedTextField();
         recordsPerPage.setValue(new Integer(prefs.getInt("recordsPerPage", 10)));
         JButton next = new JButton(L10n.getString("nextButton"));
-        pageToolBar.add(prev);
-        pageToolBar.add(recordsPerPage);
-        pageToolBar.add(next);
-//        pageToolBar.setPreferredSize(new Dimension(150, pageToolBar.getPreferredSize().height));
         recordsPerPage.setPreferredSize(new Dimension(50, recordsPerPage.getPreferredSize().height));
         recordsPerPage.setHorizontalAlignment(JTextField.CENTER);
         pageToolBar.setFloatable(false);
         pageToolBar.setRollover(true);
 
+        JToolBar selectToolBar = new JToolBar();
+        JButton refresh = new JButton("Refresh");
+        pageToolBar.add(selectAll);
+        pageToolBar.add(selectNone);
+        pageToolBar.add(invertSelected);
+        pageToolBar.addSeparator();        
+        pageToolBar.add(invertSelected);
+        pageToolBar.addSeparator();        
+        pageToolBar.add(prev);
+        pageToolBar.add(recordsPerPage);
+        pageToolBar.add(next);
+        
         JPanel toolBarPane = new JPanel(new FlowLayout());
+//        toolBarPane.add(selectToolBar);
         toolBarPane.add(pageToolBar);
         mainPane.add(toolBarPane, BorderLayout.SOUTH);
         ComponentAdjust ca = new ComponentAdjust();
         ca.add(prev);
         ca.add(next);
+        ca.setMaxWidth();
+        ca.clear();
+        ca.add(selectAll);
+        ca.add(selectNone);
+        ca.add(invertSelected);
         ca.setMaxWidth();
         
         sbm.add(prev, "Previous page");
@@ -266,6 +302,28 @@ public class AppCoreView implements Observer
     public void setHelpAboutAction(AbstractAction a) {
         helpAbout.setAction(a);
     }
+
+    /** Sets an action to the addButton.
+     *
+     */
+    public void setAddAction(AbstractAction a) {
+        addButton.setAction(a);
+    }
+    
+    /** Sets an action to the editButton.
+     *
+     */
+    public void setEditAction(AbstractAction a) {
+        editButton.setAction(a);
+    }
+    
+    /** Sets an action to the deleteButton.
+     *
+     */
+    public void setDeleteAction(AbstractAction a) {
+        deleteButton.setAction(a);
+    }
+    
     
     /** Sets an action to the Data->Search menu item and to the Search toolbar button.
      *
@@ -273,6 +331,27 @@ public class AppCoreView implements Observer
     public void setSearchAction(AbstractAction a) {
         dataSearch.setAction(a);
         searchButton.setAction(a);
+    }
+
+    /** Sets an action to the selectAll button.
+     *
+     */
+    public void setSelectAllAction(AbstractAction a) {
+        selectAll.setAction(a);
+    }
+
+    /** Sets an action to the selectAll button.
+     *
+     */
+    public void setSelectNoneAction(AbstractAction a) {
+        selectNone.setAction(a);
+    }
+
+    /** Sets an action to the selectAll button.
+     *
+     */
+    public void setInvertSelectedAction(AbstractAction a) {
+        invertSelected.setAction(a);
     }
 
     /** Sets an action to the Data->import menu item and to the Import toolbar button.

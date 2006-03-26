@@ -25,7 +25,8 @@ public class AppCore extends Observable
 {
     private Preferences prefs;
     private int recordsPerPage;
-    private DBLayer database;    
+    private DBLayer database;  
+    private OverviewTableModel tableModel;
 
     /** Creates a new instance of AppCore */
     public AppCore()
@@ -42,6 +43,7 @@ public class AppCore extends Observable
         	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
         }
         
+        tableModel = new OverviewTableModel(database);
     }
     
     /*********************************************************
@@ -59,4 +61,33 @@ public class AppCore extends Observable
     public DBLayer getDatabase() {
         return this.database;
     }    
+    
+    public OverviewTableModel getTableModel() {
+        return this.tableModel;
+    }
+    
+    /** 
+     * TODO: make methods of OverviewTableModel call setChanged() of this observable.
+     * and then remove from appCore methods duplicating those from OverviewTableModel
+     */
+    public void setModelChanged() {
+        setChanged();
+    }
+    
+    public void selectAll() {
+        tableModel.selectAll();
+        setChanged();
+        notifyObservers();
+    }
+
+    public void selectNone() {
+        tableModel.selectNone();
+        setChanged();
+        notifyObservers();
+    }
+    public void invertSelected() {
+        tableModel.invertSelected();
+        setChanged();
+        notifyObservers();
+    }
 }

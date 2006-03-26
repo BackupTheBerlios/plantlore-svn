@@ -53,6 +53,7 @@ public class ComponentAdjust
      */
     public void clear() {
         list.clear();
+        computed = false;
     }
     
     /** Computes minimum, maximum and average widht and height of stored components.

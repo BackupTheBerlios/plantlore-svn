@@ -72,6 +72,12 @@ public class AppCoreCtrl
         view.addDataAuthorsListener(new DataAuthorsListener());
         view.addDataPublicationsListener(new DataPublicationsListener());
         view.addDataHistoryListener(new DataHistoryListener());
+        view.setAddAction(new AddAction());
+        view.setEditAction(new EditAction());
+        view.setDeleteAction(new DeleteAction());
+        view.setSelectAllAction(new SelectAllAction());
+        view.setSelectNoneAction(new SelectNoneAction());
+        view.setInvertSelectedAction(new InvertSelectedAction());
     }
     
     /** Handles click to menu item Settings.
@@ -200,6 +206,78 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             System.out.println("Export pressed");
+        }
+    }
+
+    class AddAction extends AbstractAction {
+        public AddAction() {
+            putValue(NAME, L10n.getString("recordAdd"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("recordAddTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("recordAdd"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Add pressed");
+        }
+    }
+    
+    class EditAction extends AbstractAction {
+        public EditAction() {
+            putValue(NAME, L10n.getString("recordEdit"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("recordEditTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("recordEdit"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Edit pressed");
+        }
+    }
+    
+    class DeleteAction extends AbstractAction {
+        public DeleteAction() {
+            putValue(NAME, L10n.getString("recordDelete"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("recordDeleteTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("recordDelete"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Delete pressed");
+        }
+    }
+
+    class SelectAllAction extends AbstractAction {
+        public SelectAllAction() {
+            putValue(NAME, L10n.getString("selectAll"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("selectAllTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("selectAll"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.selectAll();
+        }
+    }
+
+    class SelectNoneAction extends AbstractAction {
+        public SelectNoneAction() {
+            putValue(NAME, L10n.getString("selectNone"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("selectNoneTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("selectNone"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.selectNone();
+        }
+    }
+    
+    class InvertSelectedAction extends AbstractAction {
+        public InvertSelectedAction() {
+            putValue(NAME, L10n.getString("invertSelected"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("invertSelectedTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("invertSelected"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.invertSelected();
         }
     }
 
