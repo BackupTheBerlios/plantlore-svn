@@ -110,8 +110,6 @@ public class HibernateDBLayer implements DBLayer {
             }
             logger.fatal("Saving record into the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Saving record into the database failed. Details: "+e.getMessage());
-        } finally {
-            session.close();
         }
         return recordId;
     }
@@ -136,9 +134,7 @@ public class HibernateDBLayer implements DBLayer {
             }
             logger.fatal("Deleting record from the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Deleting record from the database failed. Details: "+e.getMessage());
-        } finally {
-            session.close();
-        }        
+        }
     }
     
     /**
@@ -161,8 +157,6 @@ public class HibernateDBLayer implements DBLayer {
             }
             logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Updating record in the database failed. Details: "+e.getMessage());
-        } finally {
-            session.close();
         }                
     }
     
