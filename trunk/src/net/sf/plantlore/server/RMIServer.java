@@ -11,20 +11,16 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 import net.sf.plantlore.server.tools.*;
 
 /**
- * The "starter" class. This class is capable of binding a particular implementation
- * of the RemoteDBLayer interface to the rmiregistry. 
+ *  
  * <br/>
  *  The server is terminated
  *  <=> 
- *  All remote objects that has been exported are unexported.
+ *  All remote objects that have been exported are unexported.
  *  
- * TODO: Použít při oznamování chyb Logger. Chyby by se měly zobrazovat lokalizovaně - použít odpovídající property file.
- * 
- * 
  * @see RemoteDBLayerFactory, RMIDBLayerFactory
  * @author Erik Kratochvíl
  * @since 2006-03-11
- * @version 0.9 Under construction
+ * @version 1.0
  */
 public class RMIServer extends UnicastRemoteObject implements Server<ConnectionInfo> {
 	

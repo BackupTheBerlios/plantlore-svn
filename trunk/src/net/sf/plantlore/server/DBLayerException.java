@@ -9,6 +9,8 @@ package net.sf.plantlore.server;
 
 /**
  *  Exception for the DBLayer package (on the client side)
+ *  
+ *  FIXME: presunout nejspis do middleware package...
  *
  *  @author Tomas Kovarik
  *  @version 0.1, Jan 16, 2006

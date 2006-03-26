@@ -8,6 +8,9 @@
 package net.sf.plantlore.server;
 
 import java.io.File;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
@@ -27,7 +30,7 @@ import org.hibernate.Transaction;
  *  Implementation of DBLayer using Hibernate OR mapping to access the database.
  *
  *  @author Tomáš Kovařík (database parts), Erik Kratochvíl (rmi parts)
- *  @version far from ready
+ *  @version far from ready!
  */
 public class HibernateDBLayer implements DBLayer, Unreferenced {
     /** Instance of a logger */
@@ -41,6 +44,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     /** Maximum result ID used */
     private int maxResultId;
     
+    
+    private Hashtable<SelectQuery, SelectQuery> queries;
+    
+    
     /** Creates a new instance of HibernateDBLayer.
      * 
      *  @param undertaker The object that is responsible for cleanup if the client crashes. 
@@ -53,10 +60,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer() {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
-        // Initialize pool of select queries, initial capacity = 8
+        // Initialize pool of result sets, initial capacity = 8
         results = new Hashtable<Integer, ScrollableResults>(8); 
         // Initialize maximum result id
         maxResultId = 0;
+        
+        // Table of all living queries, initial capacity = 8
+        queries = new Hashtable<SelectQuery, SelectQuery>(8); 
     }    
     
     /**
@@ -269,14 +279,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @param classname entity we want to select from the database (given holder object class)
      *  @return an instance of <code>SelectQuery</code> used for building a query by client
      *
-     *  TODO: This has to be updated by ERIK to work with RMI
      */
-    public SelectQuery createQuery(Class classname) {
-        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname));
-        // TODO Tady se objekt query zaregistruje a exportuje pro remote usage.
+    public SelectQuery createQuery(Class classname) throws RemoteException {
+        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname)), 
+        	stub = query;
         
+        if(undertaker != null)
+        	stub = (SelectQuery) UnicastRemoteObject.exportObject(query); 
         
-        return query;
+        queries.put(stub, query);
+        
+        return stub;
     }    
     
     /**
@@ -286,12 +299,26 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when selecting records from the database fails
      */
     public int executeQuery(SelectQuery query) throws DBLayerException {
+    	
+    	SelectQuery selectQuery = queries.remove(query);
+    	if(selectQuery == null) return -1;
+    	
+    	if(undertaker != null) 
+    		try { UnicastRemoteObject.unexportObject(selectQuery, true); }
+    		catch(NoSuchObjectException e) {}
+    	
+    	assert(selectQuery instanceof SelectQueryImplementation);
+    	SelectQueryImplementation sq = (SelectQueryImplementation) selectQuery;
+    	
+    	
         Transaction tx = null;        
         ScrollableResults res;
+        
+        
         try {
             tx = session.beginTransaction();
             // Execute detached criteria query
-            res = query.getCriteria().scroll();
+            res = sq.getCriteria().scroll(); // retrieve Criteria from SelectQuery
             // Commit transaction
             tx.commit();                                      
         } catch (HibernateException e) {
@@ -302,21 +329,67 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw new DBLayerException("Selecting records from the database failed. Details: "+e.getMessage());
         }
         // Update current maximum result id and save the results
-        maxResultId++;
+        maxResultId++; 
+        /* FIXME: NIKDE NENI maxResultId-- nebo tak neco, to je ficura nebo BUG?
+         * Si predstav, ze hypoteticky by nekdo drzel resultid = 0 dlouho, a mezitim 
+         * by se nekomu povedlo vykonat ty 4miliardy dotazu (nemusi to bejt uplne
+         * za vlasy pritazeny, kdyz budou v db statisice zaznamu) a dostal by se  s tim
+         * resultid zase na nulu. ale resultid = 0 uz v hashtable je, takze by to vratilo
+         * spatne...
+         */
         results.put(maxResultId, res);
         return maxResultId;
     }
     
-    
-    
+    /**
+     * This method is intended for final cleanup. <b>Do not call this method yourself!
+     * The proper way for you to get rid of a DBLayer is to call DBLayer.destroy() method!</b>
+     * <br/>
+     * Terminate all processes running in this DBLayer,
+     * disconnect from the database and 
+     * destroy all objects created by this DBLayer.
+     * <br/>
+     * <b>After this the DBLayer will not be capable of carrying out its duties.</b>
+     * <br/>
+     * This method is supposed to be used by the DBLayerFactory exclusively.
+     * 
+     * FIXME Think of a better mechanism that will hide it from users yet keep it accessible to the DBLF.
+     */
+    public void shutdown() /* throws RemoteException */ {
+    	
+    	if(undertaker != null) 
+    		for(SelectQuery sq : queries.values()) 
+    			try { UnicastRemoteObject.unexportObject(sq, true); }
+    			catch(NoSuchObjectException e) {}
+    	queries.clear();
+    	
+    	//kovo by mel asi nejak poukoncovat otevreny vysledky
+    	//for each unfinished (unclosed) result do close(result)  
+    	
+    }
     
     
     
     //===============================================================
     // What happens to unreferenced objects? They get buried by the untertaker!
     
-	private Undertaker undertaker = null;
-	public void unreferenced() { if(undertaker != null) undertaker.bury(this); }
+    /** 
+     * The object that is responsible for destroying the database in case all remote references
+     * have been lost. This can happen if the client crashes or doesn't destroy its remote
+     * DBLayers properly. 
+     */
+	private Undertaker undertaker = null; // sort of a callback here
+	
+	/**
+	 * Make sure this instance of DBLayer will be a subject of a proper cleanup.<br/>
+	 * This method is called by the RMI mechanism if all remote references of this
+	 * object have been lost.
+	 * 
+	 * @see java.rmi.dgc.leaseValue
+	 */
+	public void unreferenced() { 
+		if(undertaker != null) undertaker.bury(this); 
+	}
 	//===============================================================
 	      
 }

@@ -23,14 +23,15 @@ import org.hibernate.criterion.Restrictions;
  * @author Tomáš Kovařík, Erik Kratochvíl
  */
 public class SelectQueryImplementation implements SelectQuery {
-    Criteria criteria;
+	
+    private Criteria criteria;
     
     /** Creates a new instance of Selectcriteria */
     public SelectQueryImplementation(Criteria criteria) {
         this.criteria = criteria;
     }
     
-    public Criteria getCriteria() {
+    Criteria getCriteria() {
         return this.criteria;
     }
     
