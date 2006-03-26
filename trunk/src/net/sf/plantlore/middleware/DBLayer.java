@@ -41,6 +41,8 @@ public interface DBLayer extends Remote, Serializable {
     
     public SelectQuery createQuery(Class classname) throws RemoteException;
 
-    public int executeQuery(SelectQuery query) throws DBLayerException, RemoteException;    
+    public int executeQuery(SelectQuery query) throws DBLayerException, RemoteException;
+    
+    public void shutdown() throws RemoteException;
         
 }

@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
  * Interface for obtaining the (possibly remote) DBLayer object.
  * 
  * @author Erik Kratocvhíl
- * @version 1.0
+ * @version 1.0 final
  * @since The beginning of time.
  */
 public interface DBLayerFactory {
