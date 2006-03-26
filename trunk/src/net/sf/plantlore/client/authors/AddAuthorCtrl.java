@@ -46,8 +46,7 @@ public class AddAuthorCtrl {
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.helpBtnAddActionListener(new HelpButtonListener());
         view.saveBtnAddActionListener(new SaveAuthorButtonListener());        
-        view.firstNameAddPropertyChangeListener(new FirstNameFieldPropertyChangeListener());
-        view.surnameAddPropertyChangeListener(new SurnameFieldPropertyChangeListener());
+        view.nameAddPropertyChangeListener(new NameFieldPropertyChangeListener());
         view.organizationAddPropertyChangeListener(new OrganizationFieldPropertyChangeListener());
         view.roleAddPropertyChangeListener(new RoleFieldPropertyChangeListener());
         view.addressAddFocusListener(new AddressAreaFocusListener());
@@ -101,7 +100,7 @@ public class AddAuthorCtrl {
     class SaveAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {            
             // Check whether all the required fields are present
-            if (view.checkNonEmpty("name") && view.checkNonEmpty("surname") &&
+            if (view.checkNonEmpty("name") &&
                 view.checkNonEmpty("organization") && view.checkNonEmpty("role") &&
                 view.checkNonEmpty("address") && view.checkNonEmpty("phone") &&
                 view.checkNonEmpty("email") && view.checkNonEmpty("url")) {
@@ -120,20 +119,11 @@ public class AddAuthorCtrl {
     }        
 
     /**
-     *  PropertyChangeListener class for updating <b>first name</b> field in the model with data from the form.
+     *  PropertyChangeListener class for updating <b>Name</b> field in the model with data from the form.
      */
-    class FirstNameFieldPropertyChangeListener implements PropertyChangeListener {
+    class NameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setFirstName(view.getFirstName());
-        }        
-    }
-    
-    /**
-     *  PropertyChangeListener class for updating <b>surname</b> field in the model with data from the form.
-     */
-    class SurnameFieldPropertyChangeListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent e) {
-            model.setSurname(view.getSurname());
+            model.setName(view.getName());
         }        
     }
     

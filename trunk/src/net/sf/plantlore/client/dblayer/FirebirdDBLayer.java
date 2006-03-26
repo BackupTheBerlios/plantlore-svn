@@ -377,9 +377,7 @@ public class FirebirdDBLayer {
         
         try {
             ar.setId(rs.getInt(1));
-            ar.setFirstName(rs.getString(2));
-            ar.setSurname(rs.getString(3));
-            // CWHOLENAME from table TAUTHORS should be here, but we don't need it (TODO: Really?)
+            ar.setWholeName(rs.getString(2));
             ar.setOrganization(rs.getString(4));
             ar.setRole(rs.getString(5));
             ar.setAddress(rs.getString(6));

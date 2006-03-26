@@ -462,7 +462,7 @@ public class AuthorManagerView implements Observer {
         this.tableData = new String[results.size()][];
         for (int i=0;i<results.size();i++) {            
             this.tableData[i] = new String[6];
-            this.tableData[i][0] = ((Author)results.get(i)).getFirstName()+" "+((Author)results.get(i)).getSurname();
+            this.tableData[i][0] = ((Author)results.get(i)).getWholeName();
             this.tableData[i][1] = ((Author)results.get(i)).getOrganization();
             this.tableData[i][2] = ((Author)results.get(i)).getRole();
             this.tableData[i][3] = ((Author)results.get(i)).getPhoneNumber();

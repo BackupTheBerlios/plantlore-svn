@@ -20,8 +20,6 @@ import java.io.Serializable;
 public class Author implements Serializable {
     /** Parameters of the author. For detailed explanation see data model documentation. */
     private int id;
-    private String firstName;
-    private String surname;
     private String wholeName;
     private String organization;
     private String role;
@@ -33,8 +31,6 @@ public class Author implements Serializable {
     
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
-    public static final String FIRSTNAME = "firstName";    
-    public static final String SURNAME = "surname";
     public static final String WHOLENAME= "wholeName";
     public static final String ORGANIZATION = "organization";
     public static final String ROLE = "role";    
@@ -67,42 +63,6 @@ public class Author implements Serializable {
         return this.id;
     }
     
-    /**
-     *   Get first name of the author
-     *   @return string containing the first name of the author
-     *   @see setFirstName
-     */
-    public String getFirstName() {
-        return this.firstName;
-    }
-    
-    /**
-     *   Set first name of the author
-     *   @param firstName string containing the first name of the author
-     *   @see getFirstName
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    
-    /**
-     *   Get surname of the author
-     *   @return string containing surname of the author
-     *   @see setSurname
-     */
-    public String getSurname() {
-        return this.surname;
-    }
-    
-    /**
-     *   Set surname of the author
-     *   @param surname string containing surname of the author
-     *   @see getSurname
-     */
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
     /**
      *   Get whole name of the author
      *   @return string containing whole name of the author

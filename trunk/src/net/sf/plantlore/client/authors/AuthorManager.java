@@ -37,9 +37,7 @@ public class AuthorManager extends Observable {
     /** Instance of a database management object */
     private DBLayer database;
     /** First name of the author */
-    private String firstName;
-    /** Sutname of the author */
-    private String surname;
+    private String name;
     /** Organization of the author */
     private String organization;
     /** Role of the author */
@@ -107,8 +105,7 @@ public class AuthorManager extends Observable {
                 // The operation is not finished yet
                 done = false;
                 Author author = new Author();
-                author.setFirstName(firstName);
-                author.setSurname(surname);
+                author.setWholeName(name);
                 author.setOrganization(organization);
                 author.setRole(role);
                 author.setAddress(address);
@@ -131,7 +128,7 @@ public class AuthorManager extends Observable {
                 } catch(RemoteException e) {
                 	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
-                logger.info("Author "+firstName+" "+surname+" saved successfuly.");
+                logger.info("Author "+name+" saved successfuly.");
                 if (isResultAvailable()) {                
                     searchAuthor();
                 }
@@ -196,28 +193,28 @@ public class AuthorManager extends Observable {
                 	return null;
                 }
                 if (searchName != null)
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "firstName", null, "%"+searchName+"%", null);
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.WHOLENAME, null, "%"+searchName+"%", null);
                 if (searchOrganization != null) 
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "organization", null, "%"+searchOrganization+"%", null);
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ORGANIZATION, null, "%"+searchOrganization+"%", null);
                 if (searchRole != null)
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "role", null, "%"+searchRole+"%", null);
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ROLE, null, "%"+searchRole+"%", null);
                 if (searchEmail != null) 
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, "email", null, "%"+searchEmail+"%", null);                
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.EMAIL, null, "%"+searchEmail+"%", null);                
                 String field;
                 switch (sortField) {
-                    case 1: field = "firstName";
+                    case 1: field = Author.WHOLENAME;
                             break;
-                    case 2: field = "organization";
+                    case 2: field = Author.ORGANIZATION;
                             break;
-                    case 3: field = "role";
+                    case 3: field = Author.ROLE;
                             break;
-                    case 4: field = "email";
+                    case 4: field = Author.EMAIL;
                             break;
-                    case 5: field = "phone";
+                    case 5: field = Author.PHONENUMBER;
                             break;                            
-                    case 6: field = "url";
+                    case 6: field = Author.URL;
                             break;          
-                    default:field = "firstName";
+                    default:field = Author.WHOLENAME;
                 }
                 
                 if (sortDirection == 0) {
@@ -319,8 +316,7 @@ public class AuthorManager extends Observable {
      */
     public void loadAuthor() {
         Author selectedAuth = (Author)data.get(this.getAuthorIndex());
-        this.setFirstName(selectedAuth.getFirstName());
-        this.setSurname(selectedAuth.getSurname());
+        this.setName(selectedAuth.getWholeName());
         this.setOrganization(selectedAuth.getOrganization());
         this.setRole(selectedAuth.getRole());
         this.setAddress(selectedAuth.getAddress());
@@ -510,35 +506,19 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Get first name of the author.
-     *  @return string with the first name of the author
+     *  Get name of the author.
+     *  @return string with the name of the author
      */
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
     /**
-     *  Set first name of the author.
-     *  @param firstName first name of the author
+     *  Set name of the author.
+     *  @param name name of the author
      */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     *  Get surname of the author.
-     *  @return string with the surname of the author
-     */
-    public String getSurname() {
-        return surname;
-    }
-
-    /**
-     *  Set surname of the author.
-     *  @param surname surname of the author
-     */
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
