@@ -8,61 +8,64 @@
 package net.sf.plantlore.server;
 
 import java.io.File;
-import java.util.Collection;
+import java.rmi.server.Unreferenced;
 import java.util.Hashtable;
-import java.util.Iterator;
 import org.apache.log4j.Logger;
-import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import net.sf.plantlore.client.dblayer.query.*;
 import net.sf.plantlore.client.dblayer.result.Result;
-import net.sf.plantlore.common.record.*;
+import net.sf.plantlore.middleware.DBLayer;
+
 import org.hibernate.Transaction;
-import java.util.List;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import net.sf.plantlore.common.PlantloreConstants;
+
 
 /**
  *  Implementation of DBLayer using Hibernate OR mapping to access the database.
  *
- *  @author Tomas Kovarik
+ *  @author Tomáš Kovařík (database parts), Erik Kratochvíl (rmi parts)
+ *  @version far from ready
  */
-public class HibernateDBLayer implements DBLayer {
+public class HibernateDBLayer implements DBLayer, Unreferenced {
     /** Instance of a logger */
     private Logger logger;
     /** Configuration file for Hibernate */
     private File configFile;   
     /** Hibernate session */
     private Session session;
-    /** Query object used for building SELECT queries */
-    private DetachedCriteria query;
     /** Pool of select queries */        
-    private Hashtable results;
+    private Hashtable<Integer, ScrollableResults> results;
     /** Maximum result ID used */
     private int maxResultId;
+    
+    /** Creates a new instance of HibernateDBLayer.
+     * 
+     *  @param undertaker The object that is responsible for cleanup if the client crashes. 
+     */
+    public HibernateDBLayer(Undertaker undertaker) {
+    	this();
+    	this.undertaker = undertaker; 
+    }
     
     /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer() {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
-        // Initialize pool of select queries
-        results = new Hashtable();
+        // Initialize pool of select queries, initial capacity = 8
+        results = new Hashtable<Integer, ScrollableResults>(8); 
         // Initialize maximum result id
         maxResultId = 0;
     }    
     
     /**
      *  Initialize database connection. Fire up Hibernate and open a session.
-     *
+     *  
+     *  FIXME prepracovat initialize tak, aby pouzival zaslane informace & nacitala prava!
+     *  
      *  @throws DBLayerException when the hibernate or database connection cannot be initialized
      */
-    public void initialize() throws DBLayerException {
+    public void initialize(String dbID, String user, String password) throws DBLayerException {
         Configuration cfg;
         // File containing Hibernate configuration
         configFile = new File("hibernate.cfg.xml");        
@@ -73,6 +76,7 @@ public class HibernateDBLayer implements DBLayer {
             logger.fatal("Cannot load Hibernate configuration. Details: "+e.getMessage());
             throw new DBLayerException("Cannot load Hibernate configuration. Details: "+e.getMessage());            
         }
+        
         cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
         cfg.setProperty("hibernate.connection.username", "sysdba");
         cfg.setProperty("hibernate.connection.password", "masterkey");        
@@ -180,7 +184,7 @@ public class HibernateDBLayer implements DBLayer {
             throw new DBLayerException("Cannot read rows starting at the given index: "+from);            
         }
         // Get results for the given resultId
-        ScrollableResults res = (ScrollableResults)results.get(resultId);
+        ScrollableResults res = results.get(resultId);
         // Move ResultSet to the first row we want to read. In case we want to read the first row,
         // move the pointer before the first row, else move it to the given position
         try {
@@ -221,7 +225,7 @@ public class HibernateDBLayer implements DBLayer {
      */
     public Object[] next(int resultId) throws DBLayerException {
         // Get results for the given resultId
-        ScrollableResults res = (ScrollableResults)results.get(resultId);
+        ScrollableResults res = results.get(resultId);
         // In case no more rows are available, return null
         try {
             if (!res.next()) {
@@ -236,7 +240,7 @@ public class HibernateDBLayer implements DBLayer {
     
     public int getNumRows(int resultId) {
         // Get results for the given resultId
-        ScrollableResults res = (ScrollableResults)results.get(resultId);        
+        ScrollableResults res = results.get(resultId);        
         int currentRow = res.getRowNumber();
         res.afterLast();
         int numRows = res.getRowNumber();
@@ -268,6 +272,9 @@ public class HibernateDBLayer implements DBLayer {
      */
     public SelectQuery createQuery(Class classname) {
         SelectQuery query = new SelectQuery(session.createCriteria(classname));
+        // TODO Tady se objekt query zaregistruje a exportuje pro remote usage.
+        
+        
         return query;
     }    
     
@@ -298,4 +305,17 @@ public class HibernateDBLayer implements DBLayer {
         results.put(maxResultId, res);
         return maxResultId;
     }
+    
+    
+    
+    
+    
+    
+    //===============================================================
+    // What happens to unreferenced objects? They get buried by the untertaker!
+    
+	private Undertaker undertaker = null;
+	public void unreferenced() { if(undertaker != null) undertaker.bury(this); }
+	//===============================================================
+	      
 }

@@ -8,6 +8,7 @@
 package net.sf.plantlore.server;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 import java.util.Collection;
 import net.sf.plantlore.common.PlantloreConstants;
 import org.hibernate.Criteria;
@@ -18,9 +19,9 @@ import org.hibernate.criterion.Restrictions;
 
 /**
  *
- * @author Tomas Kovarik
+ * @author Tomáš Kovařík, Erik Kratochvíl
  */
-public class SelectQuery implements Serializable {
+public class SelectQuery implements Serializable, Remote {
     Criteria criteria;
     
     /** Creates a new instance of Selectcriteria */

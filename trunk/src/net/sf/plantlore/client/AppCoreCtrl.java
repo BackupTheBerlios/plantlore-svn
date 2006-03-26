@@ -12,9 +12,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.rmi.RemoteException;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
-import net.sf.plantlore.server.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.common.record.Plant;
@@ -29,6 +29,7 @@ import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
 import net.sf.plantlore.l10n.L10n;
+import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.HibernateDBLayer;
 
 import org.apache.log4j.Logger;
@@ -109,11 +110,13 @@ public class AppCoreCtrl
             DBLayer dbl = new HibernateDBLayer();
             try
             {
-                dbl.initialize();
+                dbl.initialize(null, null, null); // FIXME inicializace DB na dvou mistech?? zjistit proc
             } catch (DBLayerException ex)
             {
                 System.out.println("Exception while initializing DBLayer: "+ex.getMessage());
                 ex.printStackTrace();
+            } catch(RemoteException e) {
+            	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
             }
             /*
             Query sq = new SelectQuery();

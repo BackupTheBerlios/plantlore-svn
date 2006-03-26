@@ -19,17 +19,19 @@ public class ConnectionInfo {
 	
 	private RemoteDBLayerFactory remoteFactory = null;
 	private DBLayer database = null;
+	private DBLayer stub = null;
 	private String clientHost = null;
 	
 	/**
 	 * Create a new record holding the information about the client's connection.
 	 * 
 	 * @param remoteFactory	The RemoteDBLayerFactory that created the remote object.
-	 * @param db	Either the remote object or the remote reference (stub) of that object.
+	 * @param db	 The remote object.
+	 * @param stub The remote reference (stub) of that object.
 	 * @param client		Host name of the computer where client dwells.
 	 */
-	public ConnectionInfo(RemoteDBLayerFactory remoteFactory, DBLayer db, String client) {
-		this.remoteFactory = remoteFactory; this.database = db; this.clientHost = client;
+	public ConnectionInfo(RemoteDBLayerFactory remoteFactory, DBLayer db, DBLayer stub, String client) {
+		this.remoteFactory = remoteFactory; this.database = db; this.stub = stub; this.clientHost = client;
 	}
 
 	/** The name of the host where the client is hiding. */
@@ -42,9 +44,12 @@ public class ConnectionInfo {
 	 * If it is null, the object is local. */
 	public RemoteDBLayerFactory getRemoteFactory() { return remoteFactory; }
 	
+	/** Stub. */
+	public DBLayer getStub() { return stub; }
+	
 	@Override
 	public String toString() {
-		return database + ((remoteFactory == null) ? " (remote object)" : " (stub)" );
+		return database + " @ " + clientHost;
 	}
 
 }

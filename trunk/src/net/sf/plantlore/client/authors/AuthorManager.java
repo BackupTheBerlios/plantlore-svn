@@ -7,11 +7,12 @@
 
 package net.sf.plantlore.client.authors;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
-import net.sf.plantlore.server.DBLayer;
+import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.query.DeleteQuery;
 import net.sf.plantlore.client.dblayer.query.InsertQuery;
@@ -116,7 +117,7 @@ public class AuthorManager extends Observable {
                 author.setUrl(url);
                 author.setNote(note);
                 // Execute query
-                int rowId;
+                int rowId = -1;
                 try {
                     // Execute query
                     rowId = database.executeInsert(author);
@@ -127,13 +128,15 @@ public class AuthorManager extends Observable {
                     // Set operation state to finished
                     done = true;
                     return null;
-                }         
+                } catch(RemoteException e) {
+                	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                }
                 logger.info("Author "+firstName+" "+surname+" saved successfuly.");
                 if (isResultAvailable()) {                
                     searchAuthor();
                 }
                 done = true;
-                return rowId;
+                return rowId; // FIXME: Proc vracim rowId typu int, kdyz navratova hodnota je Object?
             }
         };
         worker.start();
@@ -158,6 +161,8 @@ public class AuthorManager extends Observable {
                     // Set operation state to finished                    
                     done = true;       
                     return null;
+                } catch(RemoteException e) {
+                	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
                 // Execute author search - required in order to display up-to-date data in the table of authors
                 searchAuthor();                
@@ -183,7 +188,13 @@ public class AuthorManager extends Observable {
                 // Operation not finished yet
                 done = false;                
                 // Create new Select query
-                SelectQuery query = database.createQuery(Author.class);
+                SelectQuery query;
+                try {
+                	query = database.createQuery(Author.class);
+                } catch(RemoteException e) {
+                	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                	return null;
+                }
                 if (searchName != null)
                     query.addRestriction(PlantloreConstants.RESTR_LIKE, "firstName", null, "%"+searchName+"%", null);
                 if (searchOrganization != null) 
@@ -268,7 +279,13 @@ public class AuthorManager extends Observable {
                 logger.debug("Retrieving query results: "+from+" - "+to);                
                 try {
                     // Retrieve selected row interval
-                    Object[] objArray = database.more(resultId, from, to);                
+                	Object[] objArray;
+                	try {
+                		objArray = database.more(resultId, from, to);
+                	} catch(RemoteException e) {
+                    	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                    	return;
+                    }
                     logger.debug("Results retrieved. Count: "+objArray.length);
                     // Create storage for the results
                     this.data = new ArrayList(objArray.length);
@@ -332,11 +349,13 @@ public class AuthorManager extends Observable {
     }
        
     public int getResultRows() {
-        if (resultId != 0) {
-            return database.getNumRows(resultId);
-        } else {
-            return 0;
+    	int result = 0;
+        if (resultId != 0) try {
+        	result = database.getNumRows(resultId);
+        } catch(RemoteException e) {
+        	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
         }
+        return result;
     }
     
     /**

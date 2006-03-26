@@ -7,12 +7,13 @@
 
 package net.sf.plantlore.client;
 
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.prefs.Preferences;
 
 // Imports for temporary db access
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
-import net.sf.plantlore.server.DBLayer;
+import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 
@@ -34,10 +35,12 @@ public class AppCore extends Observable
 //        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
         database = new HibernateDBLayer();
         try {
-            database.initialize();
+            database.initialize(null, null, null); // FIXME sem prijdou samosebou rozumne hodnoty
         } catch (DBLayerException e) {
             System.out.println("Error initializing database: "+e.toString());
-        }                                                                                           
+        } catch(RemoteException e) {
+        	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+        }
         
     }
     

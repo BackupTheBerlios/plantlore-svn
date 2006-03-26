@@ -4,7 +4,8 @@
 package net.sf.plantlore.client.history;
 
 import java.util.Observable;
-import net.sf.plantlore.server.DBLayer;
+
+import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.client.dblayer.query.SelectQuery;

@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 public interface RemoteDBLayerFactory extends Remote {
 	
 	/** The name the Remote Factory will be bound to. */
-	static final String RemoteFactoryID = "PlantloreRemoteDBLayerFactoryID";
+	static final String ID = "PlantloreRemoteDBLayerFactoryID";
 	
 	/** 
 	 * Create a new DBLayer on the server and return a remote reference of that object. 
