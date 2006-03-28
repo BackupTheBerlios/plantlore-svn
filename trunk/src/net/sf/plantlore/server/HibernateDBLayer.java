@@ -87,8 +87,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             logger.fatal("Cannot load Hibernate configuration. Details: "+e.getMessage());
             throw new DBLayerException("Cannot load Hibernate configuration. Details: "+e.getMessage());            
         }
-        
-        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
+
+        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb");
+        //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreDBdata.fdb");
         cfg.setProperty("hibernate.connection.username", "sysdba");
         cfg.setProperty("hibernate.connection.password", "masterkey");        
@@ -251,12 +252,18 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
     
     public int getNumRows(int resultId) {
+        int numRows;
+                
         // Get results for the given resultId
         ScrollableResults res = results.get(resultId);        
-        int currentRow = res.getRowNumber();
+        int currentRow = res.getRowNumber();        
         res.afterLast();
-        int numRows = res.getRowNumber();
-        res.setRowNumber(currentRow);
+        if (res.getRowNumber() != currentRow) {
+            numRows = res.getRowNumber();
+            res.setRowNumber(currentRow);
+        } else {
+            numRows = 0;
+        }
         return numRows;
     }
     
