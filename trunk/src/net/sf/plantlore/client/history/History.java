@@ -13,6 +13,7 @@ import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.HistoryRecord;
 import net.sf.plantlore.common.record.HistoryChange;
@@ -50,6 +51,8 @@ public class History extends Observable {
     private ArrayList editHistoryDataList;
    
     //**************Informations about HistoryRecord*************//
+    /** */
+    private Occurrence tmpOccurrence;
     /** Name of the table where value was changed*/
 	private String tableName;  
 	/** Name of the column where value was changed*/
@@ -97,16 +100,19 @@ public class History extends Observable {
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
        this.database = database;	
        
-       setOccurrenceId(0);
-       setOccurrenceId(idOcc);
+       tmpOccurrence = new Occurrence();
+       tmpOccurrence.setId(idOcc);
+       
+       //setOccurrenceId(0);
+       //setOccurrenceId(idOcc);
        setNamePlant(namePlant);
        setNameAuthor(nameAuthor);
        setLocation(location);
 	   
        //Searching for information about data entries concerned with specified occurrence
-       searchInsertInfo(occurrenceId);
+       searchInsertInfo();
 	   //Searching for information about data editing concerned with specified occurrence
-	   searchEditHistory(occurrenceId);
+	   searchEditHistory();
 	   //Process results of a search "edit" query 
 	   processEditResult(1,displayRows);
     }	
@@ -115,8 +121,8 @@ public class History extends Observable {
      *  Searches for information about data entries concerned with specified occurrence.
      *  @param idOccurrence Unique value identified occurrence
      */
-    public void searchInsertInfo(Integer occurrenceId) {
-     
+    public void searchInsertInfo() {
+            
        // Create new Select query
        SelectQuery query = null;
        try {
@@ -124,11 +130,9 @@ public class History extends Observable {
        } catch(RemoteException e) {
        	    System.err.println("RemoteException- searchInsertInfo(), createQuery");       	  
        }
-       if (occurrenceId > 0 ) {
-           //query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OCCURRENCE, null, occurrenceId, null);      
-           //query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OPERATION, null, this.INSERT, null);     
-    	   query.addRestriction(PlantloreConstants.RESTR_LIKE, HistoryChange.OPERATION, null, this.EDIT.toString(), null);
-       }
+       
+    	query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OCCURRENCE, null, tmpOccurrence, null);
+    	query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OPERATION, null, this.EDIT, null);
        
        int resultIdInsert = 0;
        try {
@@ -156,9 +160,9 @@ public class History extends Observable {
      * @param idOccurrence Unique value identified occurrence
      */
      
-    public void searchEditHistory(Integer occurrenceId)
+    public void searchEditHistory()
     {  
-    	
+    	    	
         //Create new Select query
         SelectQuery query = null;
         try {
@@ -166,11 +170,10 @@ public class History extends Observable {
         } catch(RemoteException e) {
         	    System.err.println("RemoteException- searchEditHistory(), createQuery");       	  
         }
-        if (occurrenceId > 0) {
-            //query.addRestriction(PlantloreConstants.RESTR_LIKE, HistoryChange.OCCURRENCE, null, occurrenceId.toString(), null);      
-            query.addRestriction(PlantloreConstants.RESTR_LIKE, HistoryChange.OPERATION, null, this.EDIT.toString(), null);
-            //query.addOrder(PlantloreConstants.DIRECT_DESC, HistoryChange.WHEN); 
-        }
+       
+    	query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OCCURRENCE, null, tmpOccurrence, null);
+        query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OPERATION, null, this.EDIT, null);
+        //query.addOrder(PlantloreConstants.DIRECT_DESC, HistoryChange.WHEN);        
     	
         int resultIdEdit = 0;
         try {
@@ -200,10 +203,10 @@ public class History extends Observable {
      */
     public void setInsertResult(int resultIdInsert) {
    	    	
-    	//if (getResultRows() > 1) {
+    	if (getResultRows() > 1) {
     		// Log an error                   
-        //    logger.error("Too many results for inserting query.");  
-    	//}
+            logger.error("Too many results for inserting query.");  
+    	}
             	
     	logger.debug("Retrieving query results."); 
     	Object[] objectHistory = null;
@@ -216,8 +219,8 @@ public class History extends Observable {
              	logger.debug("RemoteException- setInsertResult, more");
              	return;
              }           	
-            this.when = ((HistoryChange)objectHistory[1]).getWhen();
-            this.nameUser = ((HistoryChange)objectHistory[0]).WHO;
+            //this.when = ((HistoryChange)objectHistory[0]).getWhen();
+            //this.nameUser = ((HistoryChange)objectHistory[0]).WHO;
            
         } catch (DBLayerException e) {
             // Log and set error in case of an exception
@@ -235,12 +238,11 @@ public class History extends Observable {
     public void processEditResult(int from, int count) {
     	
     	if (this.resultId != 0) {
-            //logger.debug("Rows in the result: "+getResultRows());
+            logger.debug("Rows in the result: "+getResultRows());
             logger.debug("Max available rows: "+(from+count-1));
            
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
-            //int to = Math.min(getResultRows(), from+count-1);
-            int to = 2;
+            int to = Math.min(getResultRows(), from+count-1);           
             if (to == 0) {
                 this.editHistoryDataList = new ArrayList();                
             } else {
@@ -267,7 +269,7 @@ public class History extends Observable {
                     // Log an error in case of an exception
                     logger.error("Processing search results failed: "+e.toString());            
                 } finally { 
-                	logger.debug("Sets 'edut' data ends successfully");
+                	logger.debug("Sets 'edit' data ends successfully");
                 	//Update current first displayed row (only if data retrieval was successful)
                     setCurrentFirstRow(from);                    
                 }               
@@ -282,6 +284,7 @@ public class History extends Observable {
     public Object[][] getData() {
     	
     	//int count = editHistoryDataList.size();
+    	
     	int count = 2;
         editHistoryData = new Object[count][6];
     	for (int i=0; i < count; i++) {
