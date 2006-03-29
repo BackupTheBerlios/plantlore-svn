@@ -52,7 +52,7 @@
                 type="java.lang.String"/> 
       <many-to-one name="publication" 
                    class="net.sf.plantlore.common.record.Publication" 
-                   column="CPUBLICATIONID"/>                
+                   column="CPUBLICATIONSID"/>                
       <property column="CHERBARIUM"
 		length="20"
                 name="herbarium"
