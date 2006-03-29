@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.AbstractAction;
@@ -13,6 +14,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JRadioButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -34,9 +37,12 @@ import net.sf.plantlore.l10n.L10n;
  * @author Lada
  *
  */
-public class HistoryView extends JDialog implements Observer {
+public class HistoryView implements Observer {
 
-	private History model;
+	//Dialog
+	private JDialog historyDialog;
+	//History model
+	private History model;	
 	//Panels
     private JPanel buttonsPane;
     private JPanel infoRecordPanel;
@@ -53,6 +59,11 @@ public class HistoryView extends JDialog implements Observer {
     private JLabel locationValueLabel;
     private JLabel dateValueLabel;
     private JLabel insertWhoValueLabel;
+    private JLabel displayRowsText;    
+    private JLabel countResultText;
+    private JLabel countResutl;
+    //JFormattedTextField
+    private JFormattedTextField displayRows;
     //JTable
     private JTable tableEditList;
     private DefaultTableModel tableModel;
@@ -69,15 +80,19 @@ public class HistoryView extends JDialog implements Observer {
     private JButton okButton;
     private JButton cancelButton;
     private JButton helpButton;
-    
+    //data
+    private Object[][] data;
     
     /** Creates a new instance of HistoryView */
-    public HistoryView(History model)
-    {
-        this.model = model;
+    public HistoryView(History model, JFrame owner)
+    {    	
+        this.model = model; 
+        historyDialog = new JDialog(owner, "History", true);
+        historyDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        historyDialog.setVisible(false);
         init();
     }
-
+    
     public void update(Observable observable, Object object)
     {
     } 
@@ -88,18 +103,13 @@ public class HistoryView extends JDialog implements Observer {
      *
      */
     private void init()
-    {
-    	//Set properties of this dialog
-    	setTitle(L10n.getString("History"));
-    	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);    	
-        setSize(700,600);
-        setVisible(false);
+    {    
         
         //initialization of the subPanel
         initButtonsPane();
         
         //Layout (JDialog)
-        setLayout(new GridBagLayout());
+        historyDialog.setLayout(new GridBagLayout());
         GridBagConstraints gbConstraints;       
         gbConstraints = new GridBagConstraints();
             
@@ -115,7 +125,7 @@ public class HistoryView extends JDialog implements Observer {
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gbConstraints.anchor = GridBagConstraints.NORTH;
         gbConstraints.fill = GridBagConstraints.BOTH;  
-        add(infoRecordPanel, gbConstraints);
+        historyDialog.add(infoRecordPanel, gbConstraints);
          
         //Add panel with information about record created
         infoInsertPanel = new JPanel();
@@ -129,7 +139,7 @@ public class HistoryView extends JDialog implements Observer {
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gbConstraints.anchor = GridBagConstraints.NORTH;
         gbConstraints.fill = GridBagConstraints.BOTH;  
-        add(infoInsertPanel, gbConstraints);
+        historyDialog.add(infoInsertPanel, gbConstraints);
         
         //Add panel with list of changes
         infoEditPanel = new JPanel();
@@ -143,7 +153,7 @@ public class HistoryView extends JDialog implements Observer {
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gbConstraints.anchor = GridBagConstraints.NORTH;
         gbConstraints.fill = GridBagConstraints.BOTH;  
-        add(infoEditPanel, gbConstraints);
+        historyDialog.add(infoEditPanel, gbConstraints);
         
         //Add panel with ok, cancle and help buttons
         gbConstraints.gridy = 3;
@@ -152,7 +162,7 @@ public class HistoryView extends JDialog implements Observer {
         gbConstraints.weightx = 1.0;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         gbConstraints.anchor = GridBagConstraints.SOUTHEAST;
-        add(buttonsPane, gbConstraints);
+        historyDialog.add(buttonsPane, gbConstraints);
        
         // Add labels to the infoRecordPanel panel
         nameLabel = new JLabel();
@@ -227,7 +237,8 @@ public class HistoryView extends JDialog implements Observer {
         infoInsertPanel.add(dateLabel, gbConstraints);    
         
         dateValueLabel = new JLabel();
-        dateValueLabel.setText("getCreateWhen()");        
+        //dateValueLabel.setText(model.getWhen().toString());        
+        dateValueLabel.setText("model.getWhen().toString()");
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
         gbConstraints.gridy = 0;       
@@ -247,7 +258,7 @@ public class HistoryView extends JDialog implements Observer {
         infoInsertPanel.add(insertWhoLabel, gbConstraints);
         
         insertWhoValueLabel = new JLabel();
-        insertWhoValueLabel.setText("getCreateWho()");   
+        insertWhoValueLabel.setText(model.getNameUser());   
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
         gbConstraints.gridy = 1;
@@ -260,17 +271,17 @@ public class HistoryView extends JDialog implements Observer {
         //!!!pro velke mnozstvi dat je lepsi pouzit AbstractTableModel, ktera umoznuje postupne nacitani do pameti
         // defaultTableModel vytvari odkazy na vsechny zapouzdrene informace
         
-        Object[][] data = model.getData();
-          
+        data = model.getData();
+        
         tableEditList = new JTable(new HistoryTableModel(data));
-        TableColumnModel tcm = tableEditList.getColumnModel();
-        TableColumn tc = tcm.getColumn(HistoryTableModel.MARK);
-        tc.setCellEditor(new MyCheckBoxEditor());
+        //nejsou potreba :-)
+        //TableColumnModel tcm = tableEditList.getColumnModel();
+        //TableColumn tc = tcm.getColumn(HistoryTableModel.MARK);        
+        //tc.setCellEditor(new MyCheckBoxEditor());
         tableEditList.setPreferredScrollableViewportSize(new java.awt.Dimension(500, 100)); 
         tableEditList.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        jsp = new JScrollPane(tableEditList);                     
-
-        
+        jsp = new JScrollPane(tableEditList);     
+                
         gbConstraints = new java.awt.GridBagConstraints();
         gbConstraints.gridx = 0;
         gbConstraints.gridy = 0;
@@ -278,7 +289,7 @@ public class HistoryView extends JDialog implements Observer {
         gbConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gbConstraints.weightx = 1;        
         gbConstraints.weighty = 0.7;  
-        gbConstraints.gridheight = 6;
+        gbConstraints.gridheight = 7;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jsp.setMinimumSize(new java.awt.Dimension(500, 100));        
         jsp.setPreferredSize(new java.awt.Dimension(500, 100));        
@@ -287,31 +298,13 @@ public class HistoryView extends JDialog implements Observer {
         jsp.setViewportView(tableEditList); 
         
         //Add buttons to the infoEditPanel panel       
-        previousButton = new JButton("Previous");
-        gbConstraints = new GridBagConstraints();
-        gbConstraints.gridx = 1;
-        gbConstraints.gridy = 4;   
-        gbConstraints.weighty = 0.1; 
-        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        previousButton.setMinimumSize(new java.awt.Dimension(110, 25));        
-        previousButton.setPreferredSize(new java.awt.Dimension(110, 25));
-        infoEditPanel.add(previousButton, gbConstraints);
         
-        nextButton = new JButton("Next");
-        gbConstraints = new GridBagConstraints();
-        gbConstraints.gridx = 1;
-        gbConstraints.gridy = 5;         
-        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        nextButton.setMinimumSize(new java.awt.Dimension(110, 25));        
-        nextButton.setPreferredSize(new java.awt.Dimension(110, 25));
-        infoEditPanel.add(nextButton, gbConstraints);
                 
         selectAllButton = new JButton("Select all");
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 0;        
+        gbConstraints.gridy = 0;       
+        gbConstraints.gridwidth = 2;
         gbConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         selectAllButton.setMinimumSize(new java.awt.Dimension(110, 25));        
@@ -321,46 +314,111 @@ public class HistoryView extends JDialog implements Observer {
         unselectAllButton = new JButton("Unselect all");
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 1;        
+        gbConstraints.gridy = 1;       
+        gbConstraints.gridwidth = 2;
         gbConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         unselectAllButton.setMinimumSize(new java.awt.Dimension(110, 25));        
         unselectAllButton.setPreferredSize(new java.awt.Dimension(110, 25));
         infoEditPanel.add(unselectAllButton, gbConstraints);
         
-        undoSelectedButton = new JButton("Undo selected secord");
+        undoSelectedButton = new JButton("Undo selected");
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 2;        
+        gbConstraints.gridy = 2;     
+        gbConstraints.gridwidth = 2;
         gbConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         undoSelectedButton.setMinimumSize(new java.awt.Dimension(110, 25));        
         undoSelectedButton.setPreferredSize(new java.awt.Dimension(110, 25));
         infoEditPanel.add(undoSelectedButton, gbConstraints);
         
-        undoToButton = new JButton("Undo to selected record");
+        countResultText = new JLabel();
+        countResultText.setText("Total results:"); 
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 3;        
-        gbConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gbConstraints.gridy = 3;   
+        gbConstraints.weighty = 0.1;         
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        undoToButton.setMinimumSize(new java.awt.Dimension(110, 25));        
-        undoToButton.setPreferredSize(new java.awt.Dimension(110, 25));
-        infoEditPanel.add(undoToButton, gbConstraints);
+        infoEditPanel.add(countResultText, gbConstraints);
+                
+        Integer countRes = model.getResultRows();
+        countResutl = new JLabel();
+        countResutl.setText(countRes.toString()); 
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 2;
+        gbConstraints.gridy = 3;       
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
+        infoEditPanel.add(countResutl, gbConstraints);
         
-    }   
+        displayRowsText = new JLabel();
+        displayRowsText.setText("Rows to display:"); 
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 1;
+        gbConstraints.gridy = 4;       
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        infoEditPanel.add(displayRowsText, gbConstraints);
+        
+        displayRows = new JFormattedTextField();
+        displayRows.setValue(model.getDisplayRows());
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 2;
+        gbConstraints.gridy = 4;           
+        gbConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        infoEditPanel.add(displayRows, gbConstraints);
+        
+        previousButton = new JButton("Previous");
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 1;
+        gbConstraints.gridy = 5;            
+        gbConstraints.gridwidth = 2;
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        previousButton.setMinimumSize(new java.awt.Dimension(110, 25));        
+        previousButton.setPreferredSize(new java.awt.Dimension(110, 25));
+        infoEditPanel.add(previousButton, gbConstraints);
+        
+        nextButton = new JButton("Next");
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 1;
+        gbConstraints.gridy = 6;  
+        gbConstraints.gridwidth = 2;
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        nextButton.setMinimumSize(new java.awt.Dimension(110, 25));        
+        nextButton.setPreferredSize(new java.awt.Dimension(110, 25));
+        infoEditPanel.add(nextButton, gbConstraints);
+        
+    }     
+ 
+
+    public void close() {
+        historyDialog.dispose();
+    }
     
-    //editace bunky v tabulce
-    public class MyCheckBoxEditor extends DefaultCellEditor {
-        public MyCheckBoxEditor() {
-            super(new JCheckBox());
-        }               
+    public void show() {
+        historyDialog.setSize(800,600);
+        historyDialog.setLocationRelativeTo(null);
+        historyDialog.setVisible(true);
     }
     
     public JTable getTable()
     {
     	return this.tableEditList;
     }
+    
+    public Integer getDisplayRows() {
+        return (Integer)displayRows.getValue();
+    }
+    
+    public void setDisplayRows(int value) {
+        this.displayRows.setValue(value);
+    }  
     
     /** 
     *  Constructs the buttons pane.
@@ -388,15 +446,7 @@ public class HistoryView extends JDialog implements Observer {
        buttonsPane.add(helpButton);
    }
    
-   
-   /** Adds a listener to the whole window events.
-   *
-   */
-  public void addListener(WindowListener wl) 
-  {
-      addWindowListener(wl);
-  }  
-  
+
   public void addOkButtonListener(ActionListener al) {
      okButton.addActionListener(al);     
   }  
@@ -429,7 +479,7 @@ public class HistoryView extends JDialog implements Observer {
       undoSelectedButton.addActionListener(al);
   }
   
-  public void addUndoToButtonListener(ActionListener al) {
-      undoToButton.addActionListener(al);
-  }
+  void rowSetPropertyChangeListener(PropertyChangeListener pcl) {
+	  displayRows.addPropertyChangeListener(pcl);
+  }  
 }
