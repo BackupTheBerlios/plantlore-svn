@@ -324,10 +324,10 @@ public class AppCoreCtrl
             //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
-            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha vchod", 1);
-            historyView = new HistoryView(historyModel);
+            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
+            historyView = new HistoryView(historyModel, view.getFrame());
             historyCtrl = new HistoryCtrl(historyModel, historyView);
-            historyView.setVisible(true);
+            historyView.show();  
         }
     }    
 }

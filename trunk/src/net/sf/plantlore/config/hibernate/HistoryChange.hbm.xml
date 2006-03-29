@@ -11,20 +11,19 @@
 
       <many-to-one name="occurrence" 
                    class="net.sf.plantlore.common.record.Occurrence" 
-                   column="COCCURRENCEID"/>      
+                   column="COCCURRENCEID"/>           
       <property column="CRECORDID"                
                 name="recordId"
                 not-null="true"
                 type="java.lang.Integer"/>
-      <property column="COPERATION"
-                length="20"
+      <property column="COPERATION"               
                 name="operation"
                 not-null="true"
-                type="java.lang.String"/>                
+                type="java.lang.Integer"/>                
       <property column="CWHEN"
                 name="when"
                 not-null="true"                
-                type="java.util.Date"/>         
+                type="java.util.Date"/>          
       <many-to-one name="who" 
                    class="net.sf.plantlore.common.record.User" 
                    column="CWHO"/>
