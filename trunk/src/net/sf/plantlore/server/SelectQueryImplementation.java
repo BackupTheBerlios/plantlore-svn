@@ -19,20 +19,43 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 /**
+ * Implemetation of SelectQuery using Hibernate OR Mapping for database querying. Creates Hibernate
+ * "criteria query" and sets projections, restrictions and order by clause. Also allows selecting
+ * data from joined tables. For detailed explanation refer to Plantlore documentation and Hibernate 
+ * reference manual.
+ *
+ *  FIXME: Malo by to hadzat DBLayerException...
  *
  * @author Tomáš Kovařík, Erik Kratochvíl
  */
 public class SelectQueryImplementation implements SelectQuery {
-	
+    // Hibernate criteria used in criteria query
     private Criteria criteria;
     
-    /** Creates a new instance of Selectcriteria */
+    /** Creates a new instance of SelectQueryImplementation */
     public SelectQueryImplementation(Criteria criteria) {
         this.criteria = criteria;
     }
     
+    /**
+     *  Return instance of Hibernate criteria object representing this query
+     *
+     *  @return insatnce of Hibernate criteria object representing this query
+     */
     Criteria getCriteria() {
         return this.criteria;
+    }
+    
+    /** 
+     *  Create alias for joining tables. Alias can be defined for a foreign key parameter and can be
+     *  used to add restrictions on the table referenced by the foreign key. For thorough explanation
+     *  see documentation.
+     *
+     *  @param propertyName name of the column for which we want to create an alias (foreign key column)
+     *  @param aliasName name of the new alias
+     */
+    public void createAlias(String propertyName, String aliasName) {
+        criteria.createAlias(propertyName, aliasName);
     }
     
     /**
