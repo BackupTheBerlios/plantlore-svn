@@ -41,7 +41,7 @@ public class Occurrence implements Serializable {
     private java.util.Date updatedWhen;
     private User updatedWho;
     private Metadata metadata;
-    private int deleted;
+    private Integer deleted;
     private String note;
 
     /** Constants with column mapping (used for building select queries) */
@@ -409,7 +409,7 @@ public class Occurrence implements Serializable {
      *   @param deleted flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see getDeleted
      */
-    public void setDeleted(int deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }   
     
