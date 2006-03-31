@@ -20,17 +20,17 @@ import java.io.Serializable;
  */
 public class Habitat implements Serializable {   
     /** Parameters of the Habitat */
-    private int id;
+    private Integer id;
     private Territory territory;
     private Phytochorion phytochorion;    
     private Village nearestVillage;    
     private String quadrant;
     private String description;
     private String country;
-    private double altitude;
-    private double latitude;
-    private double longitude;
-    private int deleted;
+    private Double altitude;
+    private Double latitude;
+    private Double longitude;
+    private Integer deleted;
     private String note;
     
     /** Constants with column mapping (used for building select queries) */
@@ -59,7 +59,7 @@ public class Habitat implements Serializable {
      *   @return id of the habitat
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     
@@ -68,7 +68,7 @@ public class Habitat implements Serializable {
      *   @param id id of the habitat
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     
@@ -186,7 +186,7 @@ public class Habitat implements Serializable {
      *   @return altitude
      *   @see setAltitude
      */
-    public double getAltitude() {
+    public Double getAltitude() {
         return this.altitude;
     }
     
@@ -195,7 +195,7 @@ public class Habitat implements Serializable {
      *   @param altitude
      *   @see getAltitude
      */
-    public void setAltitude(double altitude) {
+    public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
     
@@ -204,7 +204,7 @@ public class Habitat implements Serializable {
      *   @return latitude
      *   @see setLatitude
      */
-    public double getLatitude() {
+    public Double getLatitude() {
         return this.latitude;
     }
     
@@ -213,7 +213,7 @@ public class Habitat implements Serializable {
      *   @param latitude
      *   @see getLatitude
      */
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
     
@@ -222,7 +222,7 @@ public class Habitat implements Serializable {
      *   @return longitude
      *   @see setLongitude
      */
-    public double getLongitude() {
+    public Double getLongitude() {
         return this.longitude;
     }
     
@@ -231,7 +231,7 @@ public class Habitat implements Serializable {
      *   @param longitude
      *   @see getLongitude
      */
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
  
@@ -240,7 +240,7 @@ public class Habitat implements Serializable {
      *   @return flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see setDeleted
      */
-    public int getDeleted() {
+    public Integer getDeleted() {
         return this.deleted;
     }
     
@@ -249,7 +249,7 @@ public class Habitat implements Serializable {
      *   @param deleted flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see getDeleted
      */
-    public void setDeleted(int deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }   
     

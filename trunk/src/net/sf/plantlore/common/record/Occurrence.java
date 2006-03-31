@@ -23,14 +23,14 @@ import java.util.Date;
  */
 public class Occurrence implements Serializable {
     /** Parameters of the occurrence. For detailed explanation see data model documentation. */
-    private int id;
+    private Integer id;
     private String unitIdDb;
     private String unitValue;
     private Habitat habitat;
     private Plant plant;
-    private int yearCollected;
-    private int monthCollected;
-    private int dayCollected;
+    private Integer yearCollected;
+    private Integer monthCollected;
+    private Integer dayCollected;
     private java.util.Date timeCollected;
     private java.util.Date isoDateTimeBegin;
     private String dateSource;
@@ -76,7 +76,7 @@ public class Occurrence implements Serializable {
      *   @return id of the occurrence
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     
@@ -85,7 +85,7 @@ public class Occurrence implements Serializable {
      *   @param id id of the occurrence
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     
@@ -166,7 +166,7 @@ public class Occurrence implements Serializable {
      *   @return year when plant was collected
      *   @see setYearCollected
      */
-    public int getYearCollected() {
+    public Integer getYearCollected() {
         return this.yearCollected;
     }
     
@@ -175,7 +175,7 @@ public class Occurrence implements Serializable {
      *   @param yearCollected year when plant was collected
      *   @see getYearCollected
      */
-    public void setYearCollected(int yearCollected) {
+    public void setYearCollected(Integer yearCollected) {
         this.yearCollected = yearCollected;
     }
     
@@ -184,7 +184,7 @@ public class Occurrence implements Serializable {
      *   @return month when plant was collected
      *   @see setMonthCollected
      */
-    public int getMonthCollected() {
+    public Integer getMonthCollected() {
         return this.monthCollected;
     }
     
@@ -193,7 +193,7 @@ public class Occurrence implements Serializable {
      *   @param monthCollected year when plant was collected
      *   @see getMonthCollected
      */
-    public void setMonthCollected(int monthCollected) {
+    public void setMonthCollected(Integer monthCollected) {
         this.monthCollected = monthCollected;
     }
     
@@ -202,7 +202,7 @@ public class Occurrence implements Serializable {
      *   @return day when plant was collected
      *   @see setDayCollected
      */
-    public int getDayCollected() {
+    public Integer getDayCollected() {
         return this.dayCollected;
     }
     
@@ -211,7 +211,7 @@ public class Occurrence implements Serializable {
      *   @param dayCollected year when plant was collected
      *   @see getDayCollected
      */
-    public void setDayCollected(int dayCollected) {
+    public void setDayCollected(Integer dayCollected) {
         this.dayCollected = dayCollected;
     }
     
@@ -400,7 +400,7 @@ public class Occurrence implements Serializable {
      *   @return flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see setDeleted
      */
-    public int getDeleted() {
+    public Integer getDeleted() {
         return this.deleted;
     }
     

@@ -20,7 +20,7 @@ import java.io.Serializable;
  */
 public class Plant implements Serializable {
     /** Parameters of the plant */    
-    private int id;
+    private Integer id;
     private String surveyTaxId;
     private String taxon;
     private String genus;
@@ -51,7 +51,7 @@ public class Plant implements Serializable {
      *   @return id of the plant
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }    
     
@@ -60,7 +60,7 @@ public class Plant implements Serializable {
      *   @param id   id of the plant
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

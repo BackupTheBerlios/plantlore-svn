@@ -20,7 +20,7 @@ import java.io.Serializable;
  */
 public class Metadata implements Serializable {
     /** Parameters of Metadata */
-    private int id;
+    private Integer id;
     private String technicalContactName;
     private String technicalContactAddress;
     private String technicalContactEmail;
@@ -36,7 +36,7 @@ public class Metadata implements Serializable {
     private java.util.Date dateModified;
     private String recordBasis;
     private String biotopeText;
-    private int versionPlantsFile;
+    private Integer versionPlantsFile;
     
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
@@ -67,7 +67,7 @@ public class Metadata implements Serializable {
      *   @return id of the metadata
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     
@@ -76,7 +76,7 @@ public class Metadata implements Serializable {
      *   @param id id of the metadata
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     
@@ -355,7 +355,7 @@ public class Metadata implements Serializable {
      *   @return version of the file with plant names used
      *   @see setVersionPlantsFile
      */
-    public int getVersionPlantsFile() {
+    public Integer getVersionPlantsFile() {
         return this.versionPlantsFile;
     }
     
@@ -364,7 +364,7 @@ public class Metadata implements Serializable {
      *   @param versionPlantsFile version of the file with plant names used
      *   @see getVersionPlantsFile
      */
-    public void setVersionPlantsFile(int versionPlantsFile) {
+    public void setVersionPlantsFile(Integer versionPlantsFile) {
         this.versionPlantsFile = versionPlantsFile;
     }    
 }
