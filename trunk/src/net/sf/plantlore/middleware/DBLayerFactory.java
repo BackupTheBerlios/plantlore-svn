@@ -27,7 +27,7 @@ public interface DBLayerFactory {
 	 * @throws RemoteException		If the RMI encounters a problem.
 	 * @throws NotBoundException	If the server is not running on the specified port.
 	 */
-	DBLayer create(String host, short port) throws RemoteException, NotBoundException;
+	DBLayer create(String host, int port) throws RemoteException, NotBoundException;
 	
 	/** 
 	 * Destroy the DBLayer. This is a special measure, 

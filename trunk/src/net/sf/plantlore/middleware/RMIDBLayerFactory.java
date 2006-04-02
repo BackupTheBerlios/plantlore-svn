@@ -83,7 +83,7 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	 * @return A stub of the remote object that lives on the server and mediates the connection
 	 * with the remote database.
 	 */
-	public synchronized DBLayer create(String host, short port) throws RemoteException, NotBoundException {
+	public synchronized DBLayer create(String host, int port) throws RemoteException, NotBoundException {
 		// Connect to the remote server and obtain the RemoteDBLayerFactory
 		Registry registry = LocateRegistry.getRegistry(host, port);
 		RemoteDBLayerFactory remoteFactory = (RemoteDBLayerFactory) registry.lookup(RemoteDBLayerFactory.ID);

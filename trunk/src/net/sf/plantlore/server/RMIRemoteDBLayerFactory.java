@@ -32,7 +32,7 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * 
  * @author Erik Kratochvíl
  * @since 2006-03-13
- * @version 1.0  
+ * @version 1.0  final
  */
 public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	implements RemoteDBLayerFactory, Undertaker {
@@ -54,7 +54,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	
 	/** Keep information about all connected clients. */
 	private Hashtable<DBLayer, ConnectionInfo> client = 
-		new Hashtable<DBLayer, ConnectionInfo>(maxConnectionsTotal);
+		new Hashtable<DBLayer, ConnectionInfo>(2*maxConnectionsTotal);
 	
 	/** 
 	 * Create a new RMIDBLayerFactory.
@@ -140,7 +140,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		// Unexport the object even if there is an action in progress.
 		UnicastRemoteObject.unexportObject(db, true);
 		
-		logger.info("The database layer " + db + " has been disconnected and destroyed.");
+		logger.info("The database layer " + db + " was disconnected and destroyed.");
 	}
 
 	/**
@@ -151,6 +151,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * @throws RemoteException If the RMI encounters an error.
 	 */	
 	public synchronized void destroy(DBLayer stub) throws RemoteException {
+		if(stub == null) return;
 		ConnectionInfo info = client.remove(stub);
 		if(info != null) disconnect(info.getDatabase());
 		else try {

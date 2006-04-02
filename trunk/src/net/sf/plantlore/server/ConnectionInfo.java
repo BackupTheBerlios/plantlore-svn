@@ -1,21 +1,24 @@
 package net.sf.plantlore.server;
 
+import java.io.Serializable;
+
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
 /**
- *  Information about the client connected to a server:
+ *  Information the particular connection:
  *  <ul>
- *  <li><code>database</code> = the DBLayer object/stub that mediates the connection to the database</li> 
+ *  <li><code>database</code> = the DBLayer object that mediates the connection to the database</li>
+ *   <li><code>stub</code> = the stub of the DBLayer object that mediates the connection to the database</li>
  *  <li><code>remote factory</code> = null if the object is created locally or reference of the factory that created the <code>database</code></li>
  *  <li><code>client host</code> = identification of the computer for which the <code>database</code> was created</li>
  *  </ul>
  * 
  * @author Erik Kratochvíl
  * @since 2006-03-13
- * @version 1.0
+ * @version 1.0 final
  */
-public class ConnectionInfo {
+public class ConnectionInfo implements Serializable {
 	
 	private RemoteDBLayerFactory remoteFactory = null;
 	private DBLayer database = null;

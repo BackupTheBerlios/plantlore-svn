@@ -7,6 +7,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 import net.sf.plantlore.server.tools.*;
 
@@ -30,6 +32,8 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	private RMIRemoteDBLayerFactory remoteFactory = null;
 	private int port = DEFAULT_PORT;
 	private Guard guard = null;
+	
+	private Logger logger;
 
 	/** Create a new instance of RMIServer running on the default port. */
 	public RMIServer() throws RemoteException, AlreadyBoundException {
@@ -39,6 +43,9 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	/** Create a new instance of RMIServer running on the specified port. */
 	public RMIServer(int port) throws RemoteException, AlreadyBoundException { 
 		this.port = port;
+		
+		logger = Logger.getLogger(this.getClass().getPackage().getName());
+		
 		// Control object that will return the server after the client passed a valid certif. information
 		guard = new RMIServerControl(this);
 		RMI.bind(port, guard, Guard.ID);
@@ -53,14 +60,14 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	 * @param client The client to be kicked.
 	 */
 	public synchronized void disconnect(ConnectionInfo client) {
-		try { remoteFactory.destroy(client.getStub()); } catch(RemoteException e) {}
+		try { remoteFactory.destroy(client.getStub()); } 
+		catch(RemoteException e) { logger.warn(e); }
 	}
 	
 	/** 
 	 * Bind a new RemoteDBLayerFactory to the rmiregistry on the specified <code>port</code>. 
 	 * If the rmiregistry is not currently running on that port, it will be created. 
 	 * 
-	 * @return The RemoteDBLayerFactory.
 	 * @throws AlreadyBoundException If another RemoteDBLayerFactory is already bound to the rmiregistry. 
 	 */
 	public synchronized void start() throws AlreadyBoundException {
@@ -73,16 +80,17 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 			if(remoteFactory == null) remoteFactory = new RMIRemoteDBLayerFactory();
 			// Bind the factory to the rmiregistry. 
 			registry.bind(RemoteDBLayerFactory.ID, remoteFactory);
+			
+			logger.info("The RemoteDBLayerFactory has been bound to the rmiregistry.");
 		}
-		catch(RemoteException e) { System.err.println(e); } // FIXME: use logger
+		catch(RemoteException e) { logger.error(e); }
 	}
 	
 	/** 
 	 * Unbind the RemoteDBLayerFactory from the rmiregistry on the specified <code>port</code>. 
 	 * The rmiregistry on the specified port is <b>not</b> stopped, because some other programs may be still
-	 * using it!
-	 * 
-	 * FIXME: Krom toho stejně neumím rmiregistry ukončit pomocí javy.
+	 * using it!<br/>
+	 * This will terminate the server completely.
 	 * 
 	 * @param harsh		Be harsh and disconnect every client connected to the server.
 	 */
@@ -92,21 +100,30 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 			// 1. Unbind the RemoteDBLayerFactory from the rmiregistry 
 			// -> noone can obtain the stub of the remote factory anymore
 			RMI.unbind(port, RemoteDBLayerFactory.ID);
+			logger.debug("The RemoteDBLayerFactory was unbound from the rmiregistry.");
 			
 			// 2. Unexport the remote factory -> noone can make a remote call anymore
 			RMI.unexport(remoteFactory);
+			logger.debug("The RemoteDBLayerFactory was unexported. It cannot accept remote calls now.");
 			
 			// 3. Disconnect all users from the server.
-			if(harsh) remoteFactory.disconnectAll();
+			if(harsh) {
+				remoteFactory.disconnectAll();
+				logger.info("All clients were disconnected.");
+			}
 
 			// 4. Disconnect this object from the RMI ->
 			UnicastRemoteObject.unexportObject(this, true);
+			logger.info("The RMIServer now stops accepting remote calls.");
 			
 			// 5. Disconnect the control guard and unexport it
 			RMI.unbind(port, Guard.ID);
 			RMI.unexport(guard);
+			logger.debug("The ServerProxy is now unavailable.");
+			
+			logger.info("The Server terminates. Bye.");
 		}
-		catch(Exception e) { System.err.println(e); } // FIXME: use logger
+		catch(Exception e) { logger.error(e); }
 	}
 	
 	
