@@ -33,7 +33,7 @@ public class Occurrence implements Serializable {
     private Integer dayCollected;
     private java.util.Date timeCollected;
     private java.util.Date isoDateTimeBegin;
-    private String dateSource;
+    private String dataSource;
     private Publication publication;
     private String herbarium;
     private java.util.Date createdWhen;
@@ -55,7 +55,7 @@ public class Occurrence implements Serializable {
     public static final String DAYCOLLECTED = "dayCollected";    
     public static final String TIMECOLLECTED = "timeCollected";
     public static final String ISODATETIMEBEGIN = "isoDateTimeBegin";    
-    public static final String DATESOURCE = "dateSource";    
+    public static final String DATESOURCE = "dataSource";    
     public static final String PUBLICATION = "publication";    
     public static final String HERBARIUM = "herbarium";    
     public static final String CREATEDWHEN = "createdWhen";    
@@ -252,21 +252,21 @@ public class Occurrence implements Serializable {
     }
     
     /**
-     *   Get dateSource
-     *   @return dateSource
-     *   @see setDateSource
+     *   Get dataSource
+     *   @return dataSource
+     *   @see setDataSource
      */
-    public String getDateSource() {
-        return this.dateSource;
+    public String getDataSource() {
+        return this.dataSource;
     }
     
     /**
-     *   Set dateSource
-     *   @param dateSource
-     *   @see getNote
+     *   Set dataSource
+     *   @param dataSource
+     *   @see getDataSource
      */
-    public void setDateSource(String dateSource) {
-        this.dateSource = dateSource;
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }        
     
     /**

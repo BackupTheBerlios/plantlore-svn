@@ -23,12 +23,13 @@ public class HistoryChange implements Serializable {
     public static final int HISTORYCHANGE_INSERT = 1;
     public static final int HISTORYCHANGE_EDIT = 2;
     public static final int HISTORYCHANGE_DELETE = 3;
-    public static final int HISTORYCHANGE_INSERTEDIT = 4;    
+    //public static final int HISTORYCHANGE_INSERTEDIT = 4;    
     
     /** Parameters of the HistoryChange. For detailed explanation see data model documentation. */
     private int id;
     private Occurrence occurrence;
-    private int recordId;    
+    private int recordId;
+    private int oldRecordId;
     private int operation;   
     private java.util.Date when;
     private User who;
@@ -37,6 +38,7 @@ public class HistoryChange implements Serializable {
     public static final String ID = "id";
     public static final String OCCURRENCE = "occurrence";    
     public static final String RECORDID = "recordId";
+    public static final String OLDRECORDID = "oldRecordId";
     public static final String OPERATION = "operation";
     public static final String WHEN = "when";
     public static final String WHO = "who";    
@@ -102,6 +104,26 @@ public class HistoryChange implements Serializable {
         this.recordId = recordId;
     }
 
+    /**
+     *   Get old identifier of the record before his changed. 
+     *   This is defined only in case if the identifier was changed.
+     *   @return identifier of the record before his changed. 
+     *   @see setOldRecordId
+     */
+    public int getOldRecordId() {
+        return this.oldRecordId;
+    }
+    
+    /**
+     *  Set old identifier of the record before his changed. 
+     *  This is defined only in case if the identifier was changed.
+     *  @param oldRecordId string containing identifier of the record before his changed.
+     *  @see getOldRecordId
+     */
+    public void setOldRecordId(int oldRecordId) {
+        this.oldRecordId = oldRecordId;
+    }    
+    
     /**
      *   Get operation which was used. See constants defined for different operations.
      *

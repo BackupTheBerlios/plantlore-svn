@@ -45,9 +45,9 @@
                 name="isoDateTimeBegin"
                 not-null="false"                
                 type="java.util.Date"/>                
-      <property column="CDATESOURCE"
+      <property column="CDATASOURCE"
 	        length="50"
-                name="dateSource"
+                name="dataSource"
                 not-null="false"                
                 type="java.lang.String"/> 
       <many-to-one name="publication" 
