@@ -15,6 +15,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
@@ -49,11 +51,11 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author Jakub
  */
-public class AppCoreView implements Observer
+public class AppCoreView extends JFrame implements Observer 
 {
     private Preferences prefs;
     private AppCore model;
-    private JFrame frame;
+    //private JFrame frame;
     private Container container;
     private JPanel mainPane;
     private JMenuBar menuBar = new JMenuBar();
@@ -82,14 +84,18 @@ public class AppCoreView implements Observer
             deleteButton = new JButton(),
             selectAll = new JButton(),
             selectNone = new JButton(),
-            invertSelected  = new JButton();
+            invertSelected  = new JButton(),
+            prevPage = new JButton(),
+            nextPage = new JButton();
     
     private JLabel statusLabel;
     
     private JTable overview;
     private JToolBar mainToolBar;
     private JToolBar pageToolBar;
-    private JFormattedTextField recordsPerPage;
+    private JFormattedTextField recordsPerPage = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    private JLabel pageStatus = new JLabel("-/-");
+    private JLabel recordsCount = new JLabel("-");
     private StatusBarManager sbm;
     
     /** Creates a new instance of AppCoreView */
@@ -102,8 +108,8 @@ public class AppCoreView implements Observer
 
     public void update(Observable observable, Object object)
     {
-        frame.repaint();
-        overview.repaint();
+        recordsCount.setText(""+model.getResultsCount());
+        pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
     }
     
     /** Calls all the constructing init methods.
@@ -116,7 +122,7 @@ public class AppCoreView implements Observer
         initMenu();
         initOverview();
         initMainToolBar();
-        frame.pack();
+        this.pack();
     }
 
     /** Constructs the main Plantlore JFrame.
@@ -124,12 +130,12 @@ public class AppCoreView implements Observer
      */
     public void initFrame() 
     {
-        frame = new JFrame(L10n.getString("plantlore"));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        frame.setVisible(false);
-        frame.setJMenuBar(menuBar);
-        container = frame.getContentPane();
+//        frame = new JFrame(L10n.getString("plantlore"));
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        this.setVisible(false);
+        this.setJMenuBar(menuBar);
+        container = this.getContentPane();
         container.setLayout(new BorderLayout());
         mainPane = new JPanel();
         mainPane.setLayout(new BorderLayout());
@@ -204,9 +210,9 @@ public class AppCoreView implements Observer
         OverviewTableModel otm = model.getTableModel();
         overview = new JTable(otm);
         TableColumn tc;
-        for (int i = 0; i < 23; i++) {
+        for (int i = 0; i < otm.getColumnCount(); i++) {
             tc = overview.getColumnModel().getColumn(i);
-            tc.setPreferredWidth(otm.getColumnName(i).length()*10);
+            tc.setPreferredWidth(otm.getColumnSize(i));
         }
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
@@ -217,11 +223,8 @@ public class AppCoreView implements Observer
         mainPane.add(sp, BorderLayout.CENTER);
         
         pageToolBar = new JToolBar();
-        JButton prev = new JButton(L10n.getString("prevButton"));
-        recordsPerPage = new JFormattedTextField();
-        recordsPerPage.setValue(new Integer(prefs.getInt("recordsPerPage", 10)));
-        JButton next = new JButton(L10n.getString("nextButton"));
-        recordsPerPage.setPreferredSize(new Dimension(50, recordsPerPage.getPreferredSize().height));
+        recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));
+        recordsPerPage.setPreferredSize(new Dimension(40, 10));
         recordsPerPage.setHorizontalAlignment(JTextField.CENTER);
         pageToolBar.setFloatable(false);
         pageToolBar.setRollover(true);
@@ -234,17 +237,27 @@ public class AppCoreView implements Observer
         pageToolBar.addSeparator();        
         pageToolBar.add(invertSelected);
         pageToolBar.addSeparator();        
-        pageToolBar.add(prev);
+        pageToolBar.add(prevPage);
         pageToolBar.add(recordsPerPage);
-        pageToolBar.add(next);
+        pageToolBar.add(nextPage);
         
+        recordsCount.setToolTipText(L10n.getString("overviewRecordsCountTT"));
+        pageStatus.setToolTipText(L10n.getString("overviewPageStatusTT"));
+        JPanel controlPane = new JPanel(new BorderLayout());
+        JPanel topControlPane = new JPanel(new FlowLayout());
         JPanel toolBarPane = new JPanel(new FlowLayout());
 //        toolBarPane.add(selectToolBar);
         toolBarPane.add(pageToolBar);
-        mainPane.add(toolBarPane, BorderLayout.SOUTH);
+        topControlPane.add(new JLabel(L10n.getString("overviewRecordsCount")));
+        topControlPane.add(recordsCount);
+        topControlPane.add(new JLabel(L10n.getString("overviewPageStatus")));
+        topControlPane.add(pageStatus);
+        controlPane.add(topControlPane, BorderLayout.NORTH);
+        controlPane.add(toolBarPane, BorderLayout.SOUTH);
+        mainPane.add(controlPane, BorderLayout.SOUTH);
         ComponentAdjust ca = new ComponentAdjust();
-        ca.add(prev);
-        ca.add(next);
+        ca.add(prevPage);
+        ca.add(nextPage);
         ca.setMaxWidth();
         ca.clear();
         ca.add(selectAll);
@@ -252,8 +265,8 @@ public class AppCoreView implements Observer
         ca.add(invertSelected);
         ca.setMaxWidth();
         
-        sbm.add(prev, "Previous page");
-        sbm.add(next, "Next page");
+        sbm.add(prevPage, "Previous page");
+        sbm.add(nextPage, "Next page");
         sbm.add(recordsPerPage, "Number of records per page");
     }
     
@@ -265,13 +278,6 @@ public class AppCoreView implements Observer
         return sbm;
     }
     
-    /** Hides and shows the main Plantlore window.
-     *
-     */
-    public void setVisible(boolean visible) {
-        frame.setVisible(visible);
-    }
-
     /** Sets an action to the settings menu item.
      *
      */
@@ -370,12 +376,26 @@ public class AppCoreView implements Observer
         exportButton.setAction(a);
     }
 
+    /** Sets an action to the previous page button.
+     *
+     */
+    public void setPrevPageAction(AbstractAction a) {
+        prevPage.setAction(a);
+    }
+
+    /** Sets an action to the next page button.
+     *
+     */
+    public void setNextPageAction(AbstractAction a) {
+        nextPage.setAction(a);
+    }
+
     /** Adds a listener to the main window frame.
      *
      */
-    public void addWindowListener(WindowAdapter wa) {
-        frame.addWindowListener(wa);
-    }
+    /*public void addWindowListener(WindowAdapter wa) {
+        this.addWindowListener(wa);
+    }*/
 
     /** Adds a listener to the Author manager menu item.
      *
@@ -398,10 +418,15 @@ public class AppCoreView implements Observer
         dataHistory.addActionListener(al);
     }
     
+    public void setRecordsPerPageListener(PropertyChangeListener p)
+    {
+        recordsPerPage.addPropertyChangeListener(p);
+    }
+    
     /** Returns the frame of the main window.
      *
      */
-    protected JFrame getFrame() {
+/*    protected JFrame getFrame() {
         return this.frame;
-    }     
+    }     */
 }

@@ -12,9 +12,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.Integer;
 import java.rmi.RemoteException;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
+import javax.swing.JFormattedTextField;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.common.record.Plant;
@@ -68,16 +72,24 @@ public class AppCoreCtrl
         view.setHelpAboutAction(new HelpAboutAction());
         view.setExportAction(new ExportAction());
         view.setImportAction(new ImportAction());
-        view.setSearchAction(new SearchAction());
+        
         view.addDataAuthorsListener(new DataAuthorsListener());
         view.addDataPublicationsListener(new DataPublicationsListener());
         view.addDataHistoryListener(new DataHistoryListener());
+        
+        view.setSearchAction(new SearchAction());
         view.setAddAction(new AddAction());
         view.setEditAction(new EditAction());
         view.setDeleteAction(new DeleteAction());
+
         view.setSelectAllAction(new SelectAllAction());
         view.setSelectNoneAction(new SelectNoneAction());
         view.setInvertSelectedAction(new InvertSelectedAction());
+        view.setNextPageAction(new NextPageAction());
+        view.setPrevPageAction(new PreviousPageAction());
+
+        view.addWindowListener(new AppWindowListener());
+        view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
     }
     
     /** Handles click to menu item Settings.
@@ -158,6 +170,7 @@ public class AppCoreCtrl
     class ExitListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent)
         {
+            model.savePreferences();
             System.exit(0);
         }
     }
@@ -293,19 +306,41 @@ public class AppCoreCtrl
         }
     }
     
+    class PreviousPageAction extends AbstractAction {
+        public PreviousPageAction() {
+            putValue(NAME, L10n.getString("prevButton"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("prevButtonTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("prevButton"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.prevPage();
+        }
+    }
     
+    class NextPageAction extends AbstractAction {
+        public NextPageAction() {
+            putValue(NAME, L10n.getString("nextButton"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("nextButtonTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("nextButton"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            model.nextPage();
+        }
+    }
+
     class AppWindowListener extends WindowAdapter {
         public void windowClosing(WindowEvent e)
         {
-            logger.info("Saving main window preferences.");
-            
+            model.savePreferences();
         }
     }
 
     class DataAuthorsListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
             AuthorManager authModel = new AuthorManager(model.getDatabase());
-            AuthorManagerView authView = new AuthorManagerView(authModel, view.getFrame());
+            AuthorManagerView authView = new AuthorManagerView(authModel, view);
             AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
             authView.show();
         }
@@ -325,9 +360,25 @@ public class AppCoreCtrl
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
             historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
-            historyView = new HistoryView(historyModel, view.getFrame());
+            historyView = new HistoryView(historyModel, view);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
             historyView.show();  
         }
     }    
+    
+    class RecordsPerPagePropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
+            JFormattedTextField tf = (JFormattedTextField)e.getSource();
+            if (e != null && e.getPropertyName().equals("value")) 
+            {
+                int i = ((Number)tf.getValue()).intValue(); 
+                if (i < 1)
+                {
+                    tf.setValue(e.getOldValue());
+                } else {
+                    model.setRecordsPerPage(i);                    
+                }
+            }
+        }  
+    }
 }

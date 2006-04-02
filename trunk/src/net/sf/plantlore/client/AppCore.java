@@ -16,6 +16,7 @@ import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
+import org.apache.log4j.Logger;
 
 /** Application core model
  *
@@ -24,13 +25,16 @@ import net.sf.plantlore.server.HibernateDBLayer;
 public class AppCore extends Observable
 {
     private Preferences prefs;
-    private int recordsPerPage;
+    private int recordsPerPage = 30;
+    private int currentPage = 1;
     private DBLayer database;  
     private OverviewTableModel tableModel;
+    private Logger logger;
 
     /** Creates a new instance of AppCore */
     public AppCore()
     {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());        
         prefs = Preferences.userNodeForPackage(this.getClass());
         
 //        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
@@ -43,7 +47,21 @@ public class AppCore extends Observable
         	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
         }
         
-        tableModel = new OverviewTableModel(database);
+        
+        
+        //FIXME:
+        try {
+            
+            tableModel = new OverviewTableModel(database, prefs.getInt("recordsPerPage", 30));
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
+        logger.debug("tableModel created");
+        setChanged();
+        notifyObservers();
+        logger.debug("AppCore observers notified");
     }
     
     /*********************************************************
@@ -65,29 +83,80 @@ public class AppCore extends Observable
     public OverviewTableModel getTableModel() {
         return this.tableModel;
     }
-    
-    /** 
-     * TODO: make methods of OverviewTableModel call setChanged() of this observable.
-     * and then remove from appCore methods duplicating those from OverviewTableModel
-     */
-    public void setModelChanged() {
-        setChanged();
-    }
-    
+        
     public void selectAll() {
         tableModel.selectAll();
-        setChanged();
-        notifyObservers();
+        //setChanged();
+        //notifyObservers();
     }
 
     public void selectNone() {
         tableModel.selectNone();
-        setChanged();
-        notifyObservers();
+        //setChanged();
+        //notifyObservers();
     }
     public void invertSelected() {
         tableModel.invertSelected();
+        //setChanged();
+        //notifyObservers();
+    }
+
+    public int getRecordsPerPage() {
+        return tableModel.getPageSize();
+    }
+
+    public void setRecordsPerPage(int recordsPerPage) {
+        tableModel.setPageSize(recordsPerPage);
+        setChanged();
+        notifyObservers();        
+    }
+
+    public void nextPage() {
+        //FIXME:
+        try {
+            tableModel.nextPage();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
+        setChanged();
+        notifyObservers();        
+    }
+    
+    public void prevPage() {
+        //FIXME:
+        try {
+            tableModel.prevPage();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
         setChanged();
         notifyObservers();
+    }
+
+    public int getCurrentPage() {
+        return tableModel.getCurrentPage();
+    }
+
+    public void setCurrentPage(int currentPage) {
+        tableModel.setCurrentPage(currentPage);
+        setChanged();
+        notifyObservers();
+    }
+    
+    public int getResultsCount() {
+        return tableModel.getResultsCount();
+    }
+    
+    public int getPagesCount() {
+        return tableModel.getPagesCount();
+    }
+    
+    public void savePreferences() {
+        logger.info("Saving main window preferences.");
+        prefs.putInt("recordsPerPage", recordsPerPage);
     }
 }

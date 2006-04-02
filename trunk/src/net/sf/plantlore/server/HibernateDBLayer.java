@@ -88,9 +88,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw new DBLayerException("Cannot load Hibernate configuration. Details: "+e.getMessage());            
         }
 
-        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb");
+        //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb");
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
-        //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreDBdata.fdb");
+        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdata.fdb");
         cfg.setProperty("hibernate.connection.username", "sysdba");
         cfg.setProperty("hibernate.connection.password", "masterkey");        
         try {
@@ -215,9 +215,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Read all the selected rows
         try {
             for (int i=0; i<=(to-from); i++) {
+                logger.debug("About to get result number "+i);
                 if (res.next()) {
                     data[i] = res.get();
                 } else {
+                    logger.debug("res.get() would return: "+res.get());
                     logger.error("Result doesn't have enough rows");
                     throw new DBLayerException("Result doesn't have enough rows");                
                 }                
