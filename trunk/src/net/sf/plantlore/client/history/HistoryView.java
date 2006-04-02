@@ -62,6 +62,9 @@ public class HistoryView implements Observer {
     private JLabel displayRowsText;    
     private JLabel countResultText;
     private JLabel countResutl;
+    private JLabel currentRowsInfoText;
+    private JLabel currentRowsInfo;
+    
     //JFormattedTextField
     private JFormattedTextField displayRows;
     //JTable
@@ -236,9 +239,8 @@ public class HistoryView implements Observer {
         gbConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         infoInsertPanel.add(dateLabel, gbConstraints);    
         
-        dateValueLabel = new JLabel();
-        //dateValueLabel.setText(model.getWhen().toString());        
-        dateValueLabel.setText("model.getWhen().toString()");
+        dateValueLabel = new JLabel();        
+        dateValueLabel.setText(model.getWhen().toString());
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
         gbConstraints.gridy = 0;       
@@ -288,8 +290,8 @@ public class HistoryView implements Observer {
         gbConstraints.anchor = java.awt.GridBagConstraints.CENTER;
         gbConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gbConstraints.weightx = 1;        
-        gbConstraints.weighty = 0.7;  
-        gbConstraints.gridheight = 7;
+        gbConstraints.weighty = 0.65;  
+        gbConstraints.gridheight = 8;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jsp.setMinimumSize(new java.awt.Dimension(500, 100));        
         jsp.setPreferredSize(new java.awt.Dimension(500, 100));        
@@ -340,7 +342,7 @@ public class HistoryView implements Observer {
         gbConstraints.gridy = 3;   
         gbConstraints.weighty = 0.1;         
         gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gbConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         infoEditPanel.add(countResultText, gbConstraints);
                 
         Integer countRes = model.getResultRows();
@@ -353,11 +355,29 @@ public class HistoryView implements Observer {
         gbConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
         infoEditPanel.add(countResutl, gbConstraints);
         
+        currentRowsInfoText = new JLabel();
+        currentRowsInfoText.setText("Displayed:"); 
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 1;
+        gbConstraints.gridy = 4;                  
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        infoEditPanel.add(currentRowsInfoText, gbConstraints);
+                        
+        currentRowsInfo = new JLabel();
+        currentRowsInfo.setText(model.getCurrentDisplayRows()); 
+        gbConstraints = new GridBagConstraints();
+        gbConstraints.gridx = 2;
+        gbConstraints.gridy = 4;       
+        gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gbConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
+        infoEditPanel.add(currentRowsInfo, gbConstraints);
+        
         displayRowsText = new JLabel();
         displayRowsText.setText("Rows to display:"); 
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 4;       
+        gbConstraints.gridy = 5;       
         gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         infoEditPanel.add(displayRowsText, gbConstraints);
@@ -366,7 +386,7 @@ public class HistoryView implements Observer {
         displayRows.setValue(model.getDisplayRows());
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 2;
-        gbConstraints.gridy = 4;           
+        gbConstraints.gridy = 5;           
         gbConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gbConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
@@ -375,7 +395,7 @@ public class HistoryView implements Observer {
         previousButton = new JButton("Previous");
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 5;            
+        gbConstraints.gridy = 6;            
         gbConstraints.gridwidth = 2;
         gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -386,7 +406,7 @@ public class HistoryView implements Observer {
         nextButton = new JButton("Next");
         gbConstraints = new GridBagConstraints();
         gbConstraints.gridx = 1;
-        gbConstraints.gridy = 6;  
+        gbConstraints.gridy = 7;  
         gbConstraints.gridwidth = 2;
         gbConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gbConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -410,6 +430,12 @@ public class HistoryView implements Observer {
     public JTable getTable()
     {
     	return this.tableEditList;
+    }
+    
+    /** */
+    public void setCurrentRowsInfo(String displayedRows)
+    {
+    	this.currentRowsInfo.setText(displayedRows);
     }
     
     public Integer getDisplayRows() {
