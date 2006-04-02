@@ -9,6 +9,10 @@ package net.sf.plantlore.client;
 
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -16,6 +20,7 @@ import javax.swing.UIManager;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /** The main class of Plantlore. This is where all begins.
  *
@@ -26,13 +31,28 @@ public class Plantlore {
     AppCoreView view;
     AppCoreCtrl ctrl;
     Logger logger;
-    private static SplashScreen splashScreen;    
+    private static SplashScreen splashScreen;   
+    private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
     
     /**
      * Creates a new instance of Plantlore
      */
     public Plantlore() {
+        //Load log4j settings
+        ClassLoader cl = this.getClass().getClassLoader();
+        InputStream is = cl.getResourceAsStream(LOGGER_PROPS);
+        Properties props = new Properties();
+        //FIXME:
+        try {
+            props.load(is);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        //maybe CHANGE to configureAndWatch()
+        PropertyConfigurator.configure(props);
+
         logger = Logger.getLogger(this.getClass().getPackage().getName());
+        logger.info("Plantlore client is starting up...");
     }
     
     /** The main() method for Plantlore client
@@ -45,8 +65,7 @@ public class Plantlore {
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
         
         
-        BasicConfigurator.configure();
-        Logger.getRootLogger().info("Plantlore client started");
+        //BasicConfigurator.configure();
         Plantlore plantlore = new Plantlore();
         try {
             L10n.load();
