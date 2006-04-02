@@ -19,7 +19,7 @@
                 name="role"
                 not-null="false"
                 type="java.lang.String"/>
-      <property column="CRESULTREVISITION"
+      <property column="CRESULTREVISION"
                 length="30"
                 name="resultRevision"
                 not-null="false"
