@@ -14,23 +14,15 @@
       <many-to-one name="occurrence" 
                    class="net.sf.plantlore.common.record.Occurrence" 
                    column="COCCURRENCEID"/>      
-      <property column="CAUTHORID"                
-                name="authorId"
-                not-null="true"
-                type="java.lang.Integer"/>
-      <property column="COCCURRENCEID"                
-                name="occurrenceId"
-                not-null="true"
-                type="java.lang.Integer"/>                                              
       <property column="CROLE"
                 length="20"
                 name="role"
                 not-null="false"
                 type="java.lang.String"/>
-      <property column="CRESULTREVISION"
+      <property column="CRESULTREVISITION"
                 length="30"
                 name="resultRevision"
-                not-null="flase"
+                not-null="false"
                 type="java.lang.String"/>                
    </class>
 </hibernate-mapping>

@@ -15,6 +15,7 @@
       </property>
       <!-- Mapping files -->
       <mapping file="Authors.hbm.xml"/>
+      <mapping file="AuthorsOccurrences.hbm.xml"/>
       <mapping file="Habitats.hbm.xml"/>
       <mapping file="History.hbm.xml"/>
       <mapping file="HistoryChange.hbm.xml"/>
