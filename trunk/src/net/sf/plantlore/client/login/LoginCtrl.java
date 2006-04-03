@@ -55,7 +55,7 @@ public class LoginCtrl {
 			public void actionPerformed(ActionEvent arg0) {
 				if(model.getSelected() == null) return; // Must select somethin'								
 				AuthView a = new AuthView(model);
-				/*AuthCtrl c = */new AuthCtrl(model, a);
+				AuthCtrl c = new AuthCtrl(model, a);
 				a.setVisible(true);
 			}
 		});

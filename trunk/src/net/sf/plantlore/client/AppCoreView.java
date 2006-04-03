@@ -36,7 +36,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import net.sf.plantlore.common.ComponentAdjust;
 import net.sf.plantlore.common.StatusBarManager;
@@ -92,7 +94,7 @@ public class AppCoreView extends JFrame implements Observer
     
     private JLabel statusLabel;
     
-    private JTable overview;
+    private JTable overview = new JTable();
     private JToolBar mainToolBar;
     private JToolBar pageToolBar;
     private JFormattedTextField recordsPerPage = new JFormattedTextField(NumberFormat.getIntegerInstance());
@@ -211,7 +213,8 @@ public class AppCoreView extends JFrame implements Observer
     private void initOverview()
     {
         OverviewTableModel otm = model.getTableModel();
-        overview = new JTable(otm);
+        overview.setModel(otm);
+        overview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         TableColumn tc;
         for (int i = 0; i < otm.getColumnCount(); i++) {
             tc = overview.getColumnModel().getColumn(i);
@@ -434,6 +437,11 @@ public class AppCoreView extends JFrame implements Observer
     public void setRecordsPerPageListener(PropertyChangeListener p)
     {
         recordsPerPage.addPropertyChangeListener(p);
+    }
+    
+    public void setSelectedRowListener(ListSelectionListener l)
+    {
+        overview.getSelectionModel().addListSelectionListener(l);
     }
     
     /** Returns the frame of the main window.

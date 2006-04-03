@@ -31,6 +31,8 @@ public class AppCore extends Observable
     private OverviewTableModel tableModel;
     private Logger logger;
 
+    private int selectedRow;
+
     /** Creates a new instance of AppCore */
     public AppCore()
     {
@@ -154,6 +156,12 @@ public class AppCore extends Observable
     
     public int getPagesCount() {
         return tableModel.getPagesCount();
+    }
+    
+    public void setSelectedRow(int i) 
+    {
+        selectedRow = i;
+        logger.debug("Selected row #"+i);
     }
     
     public void savePreferences() {

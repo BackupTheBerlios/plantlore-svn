@@ -19,6 +19,9 @@ import java.rmi.RemoteException;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JFormattedTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.common.record.Plant;
@@ -95,20 +98,13 @@ public class AppCoreCtrl
         view.setInvertSelectedAction(new InvertSelectedAction());
         view.setNextPageAction(new NextPageAction());
         view.setPrevPageAction(new PreviousPageAction());
+        view.setSelectedRowListener(new OverviewSelectionListener());
 
         view.addWindowListener(new AppWindowListener());
         view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
         
         // TODO: Comb the code here KR@TER
-        view.setLoginAction(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				// Reuse the existing dialogs, hide'em when they're no longer needed.
-				if(loginModel == null) loginModel = new Login(new RMIDBLayerFactory());
-				if(loginView == null) loginView = new LoginView(loginModel);
-				if(loginCtrl == null) loginCtrl = new LoginCtrl(loginModel, loginView);
-				loginView.setVisible(true);				
-			}
-        });
+        view.setLoginAction(new LoginAction());
     }
     
     /** Handles click to menu item Settings.
@@ -399,5 +395,37 @@ public class AppCoreCtrl
                 }
             }
         }  
+    }
+    
+    class OverviewSelectionListener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent e) {
+            //Ignore extra messages.
+            if (e.getValueIsAdjusting()) return;
+            
+            ListSelectionModel lsm =
+                    (ListSelectionModel)e.getSource();
+            if (lsm.isSelectionEmpty()) {
+                //no rows are selected
+            } else {
+                int selectedRow = lsm.getMinSelectionIndex();
+                model.setSelectedRow(selectedRow);
+                //selectedRow is selected
+            }
+        }
+    }
+    
+    class LoginAction extends AbstractAction {
+        public LoginAction() {
+            putValue(NAME, L10n.getString("Login"));
+            //putValue(SHORT_DESCRIPTION, L10n.getString("nextButtonTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Login"));                        
+        }
+        public void actionPerformed(ActionEvent arg0) {
+                // Reuse the existing dialogs, hide'em when they're no longer needed.
+                if(loginModel == null) loginModel = new Login(new RMIDBLayerFactory());
+                if(loginView == null) loginView = new LoginView(loginModel);
+                if(loginCtrl == null) loginCtrl = new LoginCtrl(loginModel, loginView);
+                loginView.setVisible(true);				
+        }
     }
 }
