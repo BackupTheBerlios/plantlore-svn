@@ -17,7 +17,7 @@ public class DBInfo {
 	protected String alias;
 	protected String host;
 	protected String db;
-	protected String[] user;	
+	protected String[] users;	
 	protected int port;
 	
 	/**
@@ -30,30 +30,30 @@ public class DBInfo {
 	 * @param users The list of user names used lately.
 	 */
 	public DBInfo(String alias, String host, int port, String db, String[] users) {
-		this.alias = alias; this.host = host; this.port = (port <= 0) ? 1099 : port; this.db = db; this.user = users;
+		this.alias = alias; this.host = host; this.port = (port <= 0) ? 1099 : port; this.db = db; this.users = users;
 	}
 	
-	/**
-	 * Add a new user name into the list of users. The least used username will be lost.
-	 * The list of users will start with the newly added username. 
-	 * 
-	 * @param name The name to be added.
-	 */
-	public void addUser(String name) {
-		for(int i = 1; i < user.length; i++) user[i] = user[i - 1];
-		user[0] = name;
-	}
-	
+
 	/**
 	 * Pick a user. The selected name will be moved to the start of the list.
 	 * The selected user will be at the top of the list next time.
 	 * 
-	 * @param id	The chosen user.
+	 * @param name	The chosen user.
 	 */
-	public void selectUser(int id) {
-		String name = user[id];
-		for(int i = id; i > 0; i--) user[i] = user[i - 1];
-		user[0] = name;
+	public void promoteUser(String name) {
+		int id = users.length - 1;
+		for(int i = 0; i < users.length && users[i] != null; i++) 
+			if(users[i].equals(name)) id = i; 
+		for(int i = id; i > 0; i--) users[i] = users[i - 1];
+		users[0] = name;
+	}
+	
+	/**
+	 * How the DBInfo should appear to the User in the list of databases.
+	 */
+	@Override
+	public String toString() {
+		return alias;
 	}
 		
 }

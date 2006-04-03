@@ -28,11 +28,10 @@ public class Login extends Observable {
 	private Vector<DBInfo> dbinfo = new Vector<DBInfo>(10);
 	private DBInfo selected = null;
 	
-	private String  file = System.getProperty("user.home") + "/.plantlore/db.info.xml";
+	//private String  file = System.getProperty("user.home") + "/.plantlore/db.info.xml";
 	
 	private DBLayerFactory factory = null;
-	private DBLayer dblayer = null;
-	
+	private DBLayer dblayer;
 	
 	public Login(DBLayerFactory factory) {
 		this.factory = factory;
@@ -43,7 +42,7 @@ public class Login extends Observable {
 	protected void load() {
 		// TODO: JAKUB: nacist z XML souboru se jmenem `file` informace o databazich (triplety) do kolekce dbinfo.
 		
-		this.hasChanged(); this.notifyObservers();
+		this.setChanged(); this.notifyObservers();
 	}
 	
 	protected void save() {
@@ -52,26 +51,27 @@ public class Login extends Observable {
 	
 	
 	public void createRecord(String alias, String host, int port, String db) {
+		System.out.println("Creating record " + alias);
 		DBInfo r = new DBInfo(alias, host, port, db, new String[5]);
 		dbinfo.add(r);
 		save();
-		this.hasChanged(); this.notifyObservers();
+		setChanged(); notifyObservers();
 	}
 	
-	public void deleteRecord(DBInfo info) {
-		dbinfo.remove(info);
+	public void deleteSelected() {
+		dbinfo.remove(selected);
 		save();
-		this.hasChanged(); this.notifyObservers();
+		this.setChanged(); this.notifyObservers();
 	}
 	
-	public void updateSelectedRecord(DBInfo info) {
-		int index = dbinfo.indexOf(selected);
-		dbinfo.setElementAt(info, index); // info.clone()?
-		selected = info; 
-		this.hasChanged(); this.notifyObservers();
+	public void updateSelectedRecord(String alias, String host, int port, String db) {
+		selected.alias = alias;
+		selected.host = host;
+		selected.port = port;
+		selected.db = db;
+		this.setChanged(); this.notifyObservers();
 	}
 	
-	/** Subject to change.. */
 	public DBInfo[] getRecords() {
 		// Well, this sucks! The ugliest way to do things... is to have a Cloneable interface and don't use it.
 		// Seeing is believing: http://java.sun.com/j2se/1.5.0/docs/api/java/util/Collection.html#toArray(T[])
@@ -79,18 +79,26 @@ public class Login extends Observable {
 	}
 	
 	public void setSelected(int index) {
-		selected = dbinfo.elementAt(index);		
+		if(index >= 0) selected = dbinfo.elementAt(index); else selected = null;		
+	}
+	
+	public DBInfo getSelected() {
+		return selected;
 	}
 	
 	public DBLayer connectToSelected(String name, String password) throws NotBoundException, RemoteException, DBLayerException {
-		DBLayer dblayer = factory.create(selected.host, selected.port);
+		if(selected == null) return null;
+		dblayer = factory.create(selected.host, selected.port);
 		dblayer.initialize(name, password, selected.db);
+		selected.promoteUser(name);
 		return dblayer;
 	}
 	
-	public DBLayer getDBLayer() {
-		return dblayer;
-	}
+	public DBLayer getDBLayer() { return dblayer; }
 	
 	
+	
+	
+
+
 }

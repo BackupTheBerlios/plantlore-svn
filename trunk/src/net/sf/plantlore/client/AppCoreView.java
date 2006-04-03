@@ -21,6 +21,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -74,6 +75,7 @@ public class AppCoreView extends JFrame implements Observer
     private JMenuItem dataImport = new JMenuItem(L10n.getString("dataImport"));
     private JMenuItem dataExport = new JMenuItem(L10n.getString("dataExport"));
     private JMenuItem dataSearch = new JMenuItem(L10n.getString("dataSearch"));
+    private JMenuItem login = new JMenuItem(L10n.getString("Login"));
     
     private JButton 
             importButton = new JButton(),
@@ -148,6 +150,7 @@ public class AppCoreView extends JFrame implements Observer
     private void initMenu()
     {
         fileMenu.setMnemonic(L10n.getMnemonic("File"));
+        fileMenu.add(login);
         fileMenu.add(settings);
         fileMenu.add(print);
         fileMenu.addSeparator();
@@ -276,6 +279,16 @@ public class AppCoreView extends JFrame implements Observer
     public StatusBarManager getSBM() 
     {
         return sbm;
+    }
+    
+    
+    /**
+     * Set an action to the login menu item.
+     * 
+     * @param a The action that should be called when clicked on this menuitem.
+     */
+    public void setLoginAction(Action a) {
+    	login.setAction(a);
     }
     
     /** Sets an action to the settings menu item.

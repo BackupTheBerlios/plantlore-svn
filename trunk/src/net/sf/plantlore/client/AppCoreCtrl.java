@@ -32,9 +32,13 @@ import net.sf.plantlore.client.authors.AuthorManagerView;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
+import net.sf.plantlore.client.login.Login;
+import net.sf.plantlore.client.login.LoginCtrl;
+import net.sf.plantlore.client.login.LoginView;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.HibernateDBLayer;
+import net.sf.plantlore.middleware.RMIDBLayerFactory;
 
 import org.apache.log4j.Logger;
 
@@ -57,6 +61,10 @@ public class AppCoreCtrl
     History historyModel;
     HistoryView historyView;
     HistoryCtrl historyCtrl;
+    
+    Login loginModel;
+    LoginView loginView;
+    LoginCtrl loginCtrl;
     
     /** Creates a new instance of AppCoreCtrl */
     public AppCoreCtrl(AppCore model, AppCoreView view)
@@ -90,6 +98,17 @@ public class AppCoreCtrl
 
         view.addWindowListener(new AppWindowListener());
         view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
+        
+        // TODO: Comb the code here KR@TER
+        view.setLoginAction(new AbstractAction() {
+			public void actionPerformed(ActionEvent arg0) {
+				// Reuse the existing dialogs, hide'em when they're no longer needed.
+				if(loginModel == null) loginModel = new Login(new RMIDBLayerFactory());
+				if(loginView == null) loginView = new LoginView(loginModel);
+				if(loginCtrl == null) loginCtrl = new LoginCtrl(loginModel, loginView);
+				loginView.setVisible(true);				
+			}
+        });
     }
     
     /** Handles click to menu item Settings.

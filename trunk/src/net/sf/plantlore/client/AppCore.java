@@ -39,6 +39,7 @@ public class AppCore extends Observable
         
 //        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
         database = new HibernateDBLayer();
+      
         try {
             database.initialize(null, null, null); // FIXME sem prijdou samosebou rozumne hodnoty
         } catch (DBLayerException e) {
