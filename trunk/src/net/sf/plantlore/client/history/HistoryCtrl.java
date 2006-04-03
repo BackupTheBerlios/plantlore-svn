@@ -177,7 +177,11 @@ public class HistoryCtrl {
          		 markRows.add(row);         		          		          		
          	  }     
            }
-           model.updateOlderChanges(markRows);    	   
+           model.updateOlderChanges(markRows);  
+           view.getTable().setModel(new HistoryTableModel(model.getData()));
+           int from = model.getCurrentFirstRow();
+           int to = from + view.getTable().getRowCount() - 1;
+           view.setCurrentRowsInfo(from + "-" + to);
        }
    }
     
@@ -194,6 +198,10 @@ public class HistoryCtrl {
                view.setDisplayRows(oldValue);
                return;
            }
+           if (view.getDisplayRows() > model.getResultRows()){
+        	   view.setDisplayRows(model.getResultRows());
+           } 
+           
            // Set new value in the model
            model.setDisplayRows(view.getDisplayRows());
            logger.debug("New display rows: "+view.getDisplayRows());

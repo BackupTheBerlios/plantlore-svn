@@ -3,17 +3,20 @@ package net.sf.plantlore.client.history;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import net.sf.plantlore.client.dblayer.result.Result;
+import net.sf.plantlore.l10n.L10n;
 
 /** 
  * Implements a table model for the history data.
- * @author Lada
+ * @author Lada Oberreiterova
  */
 public class HistoryTableModel extends AbstractTableModel
 {
 	/** Names of the columns */
-    private String[] columnNames = {"Mark", "Date", "User", "Item", "Old value", "New value"};
+    private String[] columnNames;
     /** Data values displayed in the table*/
     private Object[][] data;
 
@@ -27,6 +30,7 @@ public class HistoryTableModel extends AbstractTableModel
     /** Creates a new instance of HistoryTableModel */
     public HistoryTableModel()
     {    	
+    	init();
     }
 
     /** 
@@ -36,8 +40,21 @@ public class HistoryTableModel extends AbstractTableModel
     public HistoryTableModel(Object[][] tableData)
     {
     	data = tableData;
+    	init();    	
+
     }    
    
+    private void init() {
+        columnNames = new String[6];        
+        columnNames[0] = L10n.getString("historyColX");        
+        columnNames[1] = L10n.getString("historyColDate");        
+        columnNames[2] = L10n.getString("historyColUser");        
+        columnNames[3] = L10n.getString("historyColItem");        
+        columnNames[4] = L10n.getString("historyColOldValue");       
+        columnNames[5] = L10n.getString("historyColNewValue");        
+    }
+    
+    
     /** 
      *  Allows to edit of the MARK cell.
      *  @param row index of row

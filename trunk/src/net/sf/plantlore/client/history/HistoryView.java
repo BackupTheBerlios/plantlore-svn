@@ -275,11 +275,17 @@ public class HistoryView implements Observer {
         
         data = model.getData();
         
-        tableEditList = new JTable(new HistoryTableModel(data));
-        //nejsou potreba :-)
-        //TableColumnModel tcm = tableEditList.getColumnModel();
-        //TableColumn tc = tcm.getColumn(HistoryTableModel.MARK);        
-        //tc.setCellEditor(new MyCheckBoxEditor());
+        tableEditList = new JTable(new HistoryTableModel(data));        
+        TableColumnModel tcm = tableEditList.getColumnModel();        
+        TableColumn tc;
+        for (int i = 0; i < tableEditList.getColumnCount(); i++) {
+            tc = tcm.getColumn(i);
+            if (i == 0) {
+                tc.setPreferredWidth(20); 
+            } else {
+                tc.setPreferredWidth(100);
+            }
+        }
         tableEditList.setPreferredScrollableViewportSize(new java.awt.Dimension(500, 100)); 
         tableEditList.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jsp = new JScrollPane(tableEditList);     
