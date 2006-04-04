@@ -8,11 +8,17 @@
 package net.sf.plantlore.client;
 
 import java.rmi.RemoteException;
+import java.util.Hashtable;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.Plant;
+import net.sf.plantlore.common.record.Territory;
+import net.sf.plantlore.common.record.Village;
 
 // Imports for temporary db access
 import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import org.apache.log4j.Logger;
@@ -29,6 +35,10 @@ public class AppCore extends Observable
     private DBLayer database;  
     private OverviewTableModel tableModel;
     private Logger logger;
+    private Hashtable<String, Integer> plants = null;
+    private Object[] authors = null;
+    private Object[] villages = null;
+    private Object[] territories = null;
 
     private int selectedRow;
 
@@ -166,5 +176,118 @@ public class AppCore extends Observable
     public void savePreferences() {
         logger.info("Saving main window preferences.");
         prefs.putInt("recordsPerPage", recordsPerPage);
+    }
+    
+    public Hashtable getPlants() {
+        if (plants == null)
+        {
+            SelectQuery sq;
+            int resultid;
+            int resultsCount;
+            Object[] records;
+            Plant p;
+            //FIXME:
+            try {
+                sq = database.createQuery(Plant.class);
+                resultid = database.executeQuery(sq);
+                resultsCount = database.getNumRows(resultid);
+                records = database.more(resultid, 1, resultsCount);
+                plants = new Hashtable<String, Integer>(resultsCount+1, 1);
+                for (int i = 1; i <= resultsCount; i++)
+                {
+                    p = (Plant)((Object[])records[i-1])[0];
+                    plants.put(p.getTaxon(), p.getId());
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }            
+            return plants;
+        } else
+            return plants;
+    }
+    public Object[] getAuthors() {
+        if (authors == null)
+        {
+            SelectQuery sq;
+            int resultid;
+            int resultsCount;
+            Object[] records;
+            //FIXME:
+            try {
+                sq = database.createQuery(Author.class);
+                resultid = database.executeQuery(sq);
+                resultsCount = database.getNumRows(resultid);
+                records = database.more(resultid, 1, resultsCount);
+                authors = new Object[resultsCount];
+                for (int i = 1; i <= resultsCount; i++)
+                {
+                    authors[i-1] = ((Author)((Object[])records[i-1])[0]).getWholeName();
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }            
+            return authors;
+        } else
+            return authors;
+    }
+    
+    public Object[] getVillages() {
+        if (villages == null)
+        {
+            SelectQuery sq;
+            int resultid;
+            int resultsCount;
+            Object[] records;
+            //FIXME:
+            try {
+                sq = database.createQuery(Village.class);
+                resultid = database.executeQuery(sq);
+                resultsCount = database.getNumRows(resultid);
+                records = database.more(resultid, 1, resultsCount);
+                villages = new Object[resultsCount];
+                for (int i = 1; i <= resultsCount; i++)
+                {
+                    villages[i-1] = ((Village)((Object[])records[i-1])[0]).getName();
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }            
+            return villages;
+        } else
+            return villages;
+    }
+
+    public Object[] getTerritories() {
+        if (territories == null)
+        {
+            SelectQuery sq;
+            int resultid;
+            int resultsCount;
+            Object[] records;
+            //FIXME:
+            try {
+                sq = database.createQuery(Territory.class);
+                resultid = database.executeQuery(sq);
+                resultsCount = database.getNumRows(resultid);
+                records = database.more(resultid, 1, resultsCount);
+                territories = new Object[resultsCount];
+                for (int i = 1; i <= resultsCount; i++)
+                {
+                    territories[i-1] = ((Territory)((Object[])records[i-1])[0]).getName();
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }            
+            return territories;
+        } else
+            return territories;
     }
 }

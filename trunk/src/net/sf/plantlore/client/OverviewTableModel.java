@@ -167,6 +167,22 @@ public class OverviewTableModel extends AbstractTableModel {
         }//i        
     }
     
+    public AuthorOccurrence getRecord(int row) {
+        AuthorOccurrence result = null;
+        Object[] resultObj, records;
+        //FIXME:
+        try {
+            records = db.more(getResultid(), from, from + row);
+            result = (AuthorOccurrence)((Object[])records[0])[0];
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
+        
+        return result;
+    }
+    
     public int getRowCount() {
         return data.length;
     }

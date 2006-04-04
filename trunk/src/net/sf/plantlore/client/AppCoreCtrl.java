@@ -22,6 +22,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.AuthorOccurrence;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.client.authors.AuthorManager;
@@ -252,7 +255,8 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("Edit pressed");
+            AddEditView addEdit = new AddEditView(view, true, model);
+            addEdit.setVisible(true);
         }
     }
     
@@ -349,15 +353,15 @@ public class AppCoreCtrl
 
     class DataAuthorsListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
-            try {
+            //try {
                 AuthorManager authModel = new AuthorManager(model.getDatabase());
                 AuthorManagerView authView = new AuthorManagerView(authModel, view);
                 AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
-                authModel.pokus();
+                //authModel.pokus();
                 authView.show();                
-            } catch(RemoteException e) {
-            	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-            }                
+            //} catch(RemoteException e) {
+            //	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+            //}                
         }
     }    
 
