@@ -19,7 +19,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 
@@ -90,7 +89,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb");
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
-        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdata.fdb");
+        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:C:/Kovo/PlantloreDevel/plantloreHIBdata.fdb");
+        //cfg.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/plantlore");
         cfg.setProperty("hibernate.connection.username", "sysdba");
         cfg.setProperty("hibernate.connection.password", "masterkey");        
         try {
@@ -274,7 +274,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *
      *  @throws DBLayerException when closing session fails
      */
-    public void close(Result QRes) throws DBLayerException {    
+    public void close() throws DBLayerException {    
         try {
             session.close();
         } catch (HibernateException e) {

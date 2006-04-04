@@ -6,7 +6,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.l10n.L10n;
 
 /** 

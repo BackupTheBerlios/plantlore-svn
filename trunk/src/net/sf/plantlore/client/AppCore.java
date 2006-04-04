@@ -12,7 +12,6 @@ import java.util.Observable;
 import java.util.prefs.Preferences;
 
 // Imports for temporary db access
-import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;

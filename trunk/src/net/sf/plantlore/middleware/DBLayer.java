@@ -10,7 +10,6 @@ package net.sf.plantlore.middleware;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import net.sf.plantlore.client.dblayer.result.Result;
 import net.sf.plantlore.server.DBLayerException;
 
 /**
@@ -37,7 +36,7 @@ public interface DBLayer extends Remote, Serializable {
 
     public int getNumRows(int resultId) throws RemoteException;
         
-    public void close(Result QRes) throws DBLayerException, RemoteException;
+    public void close() throws DBLayerException, RemoteException;
     
     public SelectQuery createQuery(Class classname) throws RemoteException;
 

@@ -23,12 +23,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.plantlore.server.DBLayerException;
-import net.sf.plantlore.client.dblayer.FirebirdDBLayer;
 import net.sf.plantlore.common.record.Plant;
-import net.sf.plantlore.client.dblayer.result.QueryResult;
-import net.sf.plantlore.client.dblayer.result.Result;
-import net.sf.plantlore.client.dblayer.query.SelectQuery;
-import net.sf.plantlore.client.dblayer.query.Query;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
@@ -354,10 +349,15 @@ public class AppCoreCtrl
 
     class DataAuthorsListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent) {
-            AuthorManager authModel = new AuthorManager(model.getDatabase());
-            AuthorManagerView authView = new AuthorManagerView(authModel, view);
-            AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
-            authView.show();
+            try {
+                AuthorManager authModel = new AuthorManager(model.getDatabase());
+                AuthorManagerView authView = new AuthorManagerView(authModel, view);
+                AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
+                authModel.pokus();
+                authView.show();                
+            } catch(RemoteException e) {
+            	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+            }                
         }
     }    
 
