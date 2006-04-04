@@ -178,7 +178,7 @@ public class AppCore extends Observable
         prefs.putInt("recordsPerPage", recordsPerPage);
     }
     
-    public Hashtable getPlants() {
+    public Hashtable<String, Integer> getPlants() {
         if (plants == null)
         {
             SelectQuery sq;

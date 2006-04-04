@@ -61,7 +61,7 @@ public class SettingsView extends JDialog implements Observer
     private JToggleButton other;
     
     /** This maps the buttons to their corresponding right side panels. */
-    private HashMap panels;
+    private HashMap<JToggleButton, JPanel> panels;
 
     private JButton okButton;
     private JButton cancelButton;
@@ -87,7 +87,7 @@ public class SettingsView extends JDialog implements Observer
     private void init()
     {
         initDialog();
-        panels = new HashMap();
+        panels = new HashMap<JToggleButton, JPanel>();
         panels.put(language, languagesPane);
         panels.put(other, otherPane);
     }

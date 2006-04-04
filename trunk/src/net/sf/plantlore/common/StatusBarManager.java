@@ -29,7 +29,7 @@ import javax.swing.JLabel;
 public class StatusBarManager implements MouseListener
 {
     private JLabel statusLabel;
-    private Map map;
+    private Map<Component, String> map;
     private String defaultText;
     
     /** Creates a new instance of StatusBarManager.
@@ -38,7 +38,7 @@ public class StatusBarManager implements MouseListener
     public StatusBarManager(JLabel status)
     {
         this.statusLabel = status;
-        map = new WeakHashMap();
+        map = new WeakHashMap<Component, String>();
         defaultText = "";
     }
 

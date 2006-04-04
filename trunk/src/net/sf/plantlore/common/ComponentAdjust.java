@@ -20,7 +20,7 @@ import javax.swing.JComponent;
  */
 public class ComponentAdjust
 {
-    ArrayList list;
+    ArrayList<JComponent> list;
     boolean computed = false;
     int 
             maxW = 0, 
@@ -34,7 +34,7 @@ public class ComponentAdjust
     /** Creates a new instance of ComponentAdjust */
     public ComponentAdjust()
     {
-        list = new ArrayList();
+        list = new ArrayList<JComponent>();
     }
     
     /** Adds a JComponent to the internal list of components.

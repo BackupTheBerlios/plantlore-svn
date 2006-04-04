@@ -57,7 +57,7 @@ public class History extends Observable {
     /** Data (results of a search query) displayed in the table */
     private Object[][] editHistoryData;
     /** List of data (results of a search query) displayed in the table */
-    private ArrayList editHistoryDataList;
+    private ArrayList<HistoryRecord> editHistoryDataList;
    
     //********************* ***************************************//    
     private Occurrence occurrence;
@@ -96,9 +96,9 @@ public class History extends Observable {
 	
 	 //********************************************************//
 	 /** Mapping of entities */
-     private Hashtable publicationHash;
-     private Hashtable habitatHash;
-     private Hashtable occurrenceHash;  
+     private Hashtable<String, Integer> publicationHash;
+     private Hashtable<String, Integer> habitatHash;
+     private Hashtable<String, Integer> occurrenceHash;  
     
     /**  
      *  Creates a new instance of History 
@@ -313,7 +313,7 @@ public class History extends Observable {
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
             int to = Math.min(currentRow, fromTable+count-1);           
             if (to == 0) {
-                this.editHistoryDataList = new ArrayList();                
+                this.editHistoryDataList = new ArrayList<HistoryRecord>();                
             } else {
                 logger.debug("Retrieving query results: 1 - "+to);
                 setCurrentDisplayRow(fromTable+ "-" + to);
@@ -330,7 +330,7 @@ public class History extends Observable {
                     int countResult = objectHistory.length;  
                     logger.debug("Results retrieved. Count: "+ countResult);
                     // Create storage for the results
-                    this.editHistoryDataList = new ArrayList();
+                    this.editHistoryDataList = new ArrayList<HistoryRecord>();
                     // Cast the results to the HistoryRecord objects
                     for (int i=0; i<countResult; i++ ) {                    							
 						Object[] objHis = (Object[])objectHistory[i];
@@ -546,7 +546,7 @@ public class History extends Observable {
     	// Index of firt row currently displayed
     	int indexFirstRow = getCurrentFirstRow();
     	//List of changed ITEM
-    	ArrayList changedList = new ArrayList();
+    	ArrayList<String> changedList = new ArrayList<String>();
     	//take from older record to younger record
     	for( int i=countMark-1; i >= 0; i--) {    	
     		logger.debug("Number of selected row: "+markResult.get(i));
@@ -1108,7 +1108,7 @@ public class History extends Observable {
     //**************************//
     
     private void initOccurrenceHash() {
-        occurrenceHash = new Hashtable(9); 
+        occurrenceHash = new Hashtable<String, Integer>(9); 
         occurrenceHash.put("plantId",1);
         occurrenceHash.put("yearCollected",2);
         occurrenceHash.put("monthCollected",3);
@@ -1133,7 +1133,7 @@ public class History extends Observable {
     }    
     
     private void initHabitatHash() {
-        habitatHash = new Hashtable(11);        
+        habitatHash = new Hashtable<String, Integer>(11);        
         habitatHash.put("quadrant",1);
         habitatHash.put("description",2);
         habitatHash.put("country",3);
@@ -1148,7 +1148,7 @@ public class History extends Observable {
     }
     
     private void initPublicationHash() {
-        publicationHash = new Hashtable(7);                       
+        publicationHash = new Hashtable<String, Integer>(7);                       
         publicationHash.put("collectionName",1);
         publicationHash.put("colletionYearPublication",2);
         publicationHash.put("journalName",3);
