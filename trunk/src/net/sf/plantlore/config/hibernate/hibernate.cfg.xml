@@ -15,7 +15,6 @@
       </property>
       <!-- Mapping files -->
       <mapping file="Authors.hbm.xml"/>
-      <mapping file="AuthorsOccurrences.hbm.xml"/>
       <mapping file="Habitats.hbm.xml"/>
       <mapping file="History.hbm.xml"/>
       <mapping file="HistoryChange.hbm.xml"/>
@@ -28,6 +27,7 @@
       <mapping file="Right.hbm.xml"/>
       <mapping file="Territories.hbm.xml"/>
       <mapping file="User.hbm.xml"/>
-      <mapping file="Villages.hbm.xml"/>   
+      <mapping file="Villages.hbm.xml"/>  
+      <mapping file="LastUpdate.hbm.xml"/> 
    </session-factory>
 </hibernate-configuration>
