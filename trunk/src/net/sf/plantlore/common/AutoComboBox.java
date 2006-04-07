@@ -1,5 +1,6 @@
 package net.sf.plantlore.common;
 
+
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -15,17 +16,31 @@ import javax.swing.text.PlainDocument;
 
 /**
  * AutoComboBox is an extension of the standard JComboBox.
+ * The AutoComboBox can run in two modes now
+ * <ul>
+ * <li><b>strict</b> ~
  * It prevents the User from entering an invalid or incomplete entry,
- * and ensures that something is always selected.
+ * and ensures that something is always selected.</li>
+ * <li><b>benevolent</b> ~ The User can enter anything (not just something
+ * that matches one of the choices in the list). The component acts as a 
+ * guide this time.</li>
+ * </ul>
  * <br/>
  * Heavily refined from the source code created by Stephane Crasnier. 
  * <br/>
- * I wish I wrote it myself from scratch :/
+ * The use of the benevolent behaviour is discouraged as it contradicts the sole purpose 
+ * of this component. If you want to allow the User 
+ * to leave this field blank, use a special
+ * record "------" or "not specified" instead.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @version 1.1
  * @since The beginning of time.
  */
 public class AutoComboBox extends JComboBox {
+	
+	protected boolean allowNew = false;
+	protected int capacity = 32;
 	
 
 	/**
@@ -42,6 +57,20 @@ public class AutoComboBox extends JComboBox {
 		editor.setDocument(a); editor.addKeyListener(a); editor.addFocusListener(a);
 	}
 	
+	/**
+	 * Specify whether the component should also accept strings that are not part of the list of choices.
+	 * 
+	 * @param strict  True (ie. be strict!) if new strings are not allowed.
+	 */
+	public void setStrict(boolean strict) { allowNew = !strict; }
+	
+	/**
+	 * Set the maximum number of characters the user can insert into the text field.
+	 * 
+	 * @param capacity The maximum number of characters the user can type.
+	 */
+	public void setCapacity(int capacity) { this.capacity = capacity; }
+	
 	
 	
 	private class AutoDocument extends PlainDocument implements KeyListener, FocusListener {
@@ -53,24 +82,30 @@ public class AutoComboBox extends JComboBox {
 		 * Select the first suitable choice beginnig with <code>prefix</code>.
 		 * 
 		 * @param prefix		The prefix of the string. 
-		 * @param partial	Display only partial string? 
+		 * @param popupl	Display the string only (no popup selection)? 
 		 */
-		synchronized private void setMatch(String prefix, boolean partial) {
+		synchronized private void setMatch(String prefix, boolean popup) {
 			if (!prevent) {
 				prevent = true;
-				setPopupVisible(partial); // make sure popup is/isn't visible
+				setPopupVisible(popup); // make sure popup is/isn't visible
 				try {
+					boolean noMatch = true;
 					if (prefix == null) prefix = getText(0, getLength());
 					// Find the first suitable choice and select it.
 					for(int i = 0; i < getItemCount(); i++) {
 						String item = (String) getItemAt(i); // test the i-th choice
 						if( prefix.length() <= item.length() && prefix.equalsIgnoreCase(item.substring(0, prefix.length())) ) {
 							setSelectedIndex(i); // CRAP! This method calls remove() & insertString()!!!
-							if(partial) item = item.substring(0, prefix.length()); // trim the string
+							if(popup) item = item.substring(0, prefix.length()); // trim the string
 							super.remove(0, getLength());
 							super.insertString(0, item, null); // rewrite the text
+							noMatch = false;
 							break;
 						}
+					}
+					if(allowNew && noMatch && prefix.length() < capacity) {
+						super.remove(0, getLength());
+						super.insertString(0, prefix, null);
 					}
 				} catch (BadLocationException e) {} 
 				finally { prevent = false; }
@@ -102,4 +137,6 @@ public class AutoComboBox extends JComboBox {
 		public void keyReleased(KeyEvent arg0) {}
 		public void focusGained(FocusEvent arg0) {}
 	}
+
+	
 }

@@ -1,10 +1,13 @@
 package net.sf.plantlore.common;
 
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.Position;
@@ -25,6 +28,7 @@ import javax.swing.text.Position;
 public class Assistant extends JScrollPane {
 
 	protected JList list;
+	private Point o;
 	
 	/**
 	 * Create the Assistant.
@@ -63,12 +67,28 @@ public class Assistant extends JScrollPane {
 
 	/** Display the Assistant on the designated coordinates. */
 	public void display(int x, int y) {
-		setLocation(x, y); setVisible(true);
+		setLocation(o.x + x, o.y + y); setVisible(true);
 	}
 
 	/** Display the Assistant on the designated coordinates if it is not already visible. */
 	public void display(Rectangle r) {
 		display(r.x, r.y);
+	}
+	
+	/** Re-adjust the offset of the Visual Assistant according to the position of the parent components. */
+	public void readjustOffset(Component c) {
+		o =  new Point(0, 0); 
+		while(c != null && !(c instanceof JRootPane)) {
+			Point p = c.getLocation();
+			o.translate(p.x, p.y);
+			c = c.getParent();			
+		}
+	}
+	
+	/** Adjust the offset of the Visual Assistant according to the position of the parent components. */
+	public void adjustOffset(Component c) {
+		if(o != null) return;
+		readjustOffset(c);
 	}
 
 	/** Set selected index and ensure it is visible. */

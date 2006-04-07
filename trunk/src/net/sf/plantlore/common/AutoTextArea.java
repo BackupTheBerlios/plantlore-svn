@@ -28,7 +28,8 @@ import javax.swing.text.Position;
  * 			<code>Page Up</code>, <code>Page Down</code> and
  * 			mouse clicks behave like when in <code>JTextArea</code>,
  * 		</li>
- * 		<li><code>Escape</code> and <code>Enter</code> are disabled,</li>
+ * 		<li><code>Escape</code> is disabled,</li>
+ * 		<li><code>Enter</code> creates a new line,</li>
  * 		<li><code>Tab</code> transfers the focus to the next component,</li>
  * 		<li><code>Delete</code>, <code>Backspace</code> and any
  * 			other key switch the <code>AutoTextArea</code> to the ASSISTANCE mode.</li>
@@ -65,17 +66,24 @@ import javax.swing.text.Position;
  * </dl> 
  * <br/>
  * The AutoTextArea assumes the list of choices is sorted according to the selected language
- * (the behaviour of the Assistant may appear confusing otherwise).
+ * (the behaviour of the Assistant may seem to be confusing otherwise).
+ * <br/>
+ * AutoTextArea <b>does now provide</b>
+ * <ul>
+ * <li>size restriction - "unlimited" number of records cannot be entered,</li>
+ * <li>smart assistant placement - the Visual Assistant now displays correctly even when placed within
+ *      several other components (panels).</li>
+ * </ul>
+ * 
  * <br/>
  * AutoTextArea <b>does not provide</b> 
  * <ul>
- * <li>size restriction - "unlimited" number of records can be entered,</li>
  * <li>duplicity checks - one record may be entered twice,</li> 
- * <li>scrolling - use JScrollPane with AutoTextArea explicitly,</li>
- * <li>smart assistant placement - the Visual Assistant may not be completely visible in some cases.</li>
+ * <li>scrolling - use JScrollPane with AutoTextArea explicitly.</li>
  * </ul>   
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @version 1.1
  */
 public class AutoTextArea extends JTextArea implements KeyListener, FocusListener, MouseListener {
 	
@@ -95,6 +103,9 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	/** The number of items skipped in the assistant when PAGE_DOWN/PAGE_UP is pressed. */
 	private int step = 10;
 	
+	/** The maximum number of lines that can be inserted into the text area. */
+	protected int capacity = 50;
+	
 
 	/*======================================================================
 	 	Keyboard behaviour
@@ -113,9 +124,13 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			case KeyEvent.VK_TAB: // transfer the focus to another component
 				if((e.getModifiers() & KeyEvent.SHIFT_DOWN_MASK) > 0) transferFocusBackward();
 				else transferFocus();				
-			case KeyEvent.VK_ENTER:
 			case KeyEvent.VK_ESCAPE:
 				e.consume(); // no further processing of this event
+				
+			case KeyEvent.VK_ENTER:
+				// Consume this event only if the number of records exceeds the set capacity.
+				if(capacity <= this.getLineCount()) e.consume(); 
+				
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_LEFT:
@@ -140,7 +155,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 		// Consume the event -> no further processing 
 		e.consume();
 		
-		boolean eoln = false;
+		boolean eoln = false; // does this line end with a newline \n?
 		String prefix = ""; // contents of the current line
 		try { prefix = getText(start, end - start); } catch(BadLocationException b) {}
 		if(prefix.endsWith("\n")) { end--; eoln = true; }
@@ -191,15 +206,18 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			case KeyEvent.VK_ENTER: // insert the current selection, switch to the FreeRoam
 				mode = Mode.FREE_ROAM;
 				assistant.setVisible(false);
+				String newline = (capacity <= this.getLineCount()) ? "" : "\n";
 				if(eoln) end++;
 				if(list.isSelectionEmpty()) replaceRange("", start, end);
-				else replaceRange(list.getSelectedValue() + "\n", start, end);
+				else replaceRange(list.getSelectedValue() + newline, start, end);
 				return;
 			}
 		}
 		
 		// Mode switchers - DEL, BACKSPACE, ANY_OTHER_KEY
 		mode = Mode.ASSISTANCE;
+		assistant.adjustOffset(this); // make sure the Visual assistant gets displayed on the correct spot
+		
 		if(!assistant.isVisible())
 			try {
 				// Place the assistant below the current line
@@ -304,6 +322,17 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 		assistant.getList().addMouseListener(this);
 		addKeyListener(this); addFocusListener(this);
 	}
+	
+	@Deprecated
+	public void adjustOffset() {
+		assistant.adjustOffset(this);
+	}
+	
+	/** Set the maximum number of records that can be inserted into this text area. */
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
 	
 	
 	
