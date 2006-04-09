@@ -14,6 +14,7 @@
          org.firebirdsql.jdbc.FBDriver 
       </property>
       <!-- Mapping files -->
+      <mapping file="AuthorsOccurrences.hbm.xml"/>
       <mapping file="Authors.hbm.xml"/>
       <mapping file="Habitats.hbm.xml"/>
       <mapping file="History.hbm.xml"/>
