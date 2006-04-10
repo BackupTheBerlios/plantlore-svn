@@ -8,6 +8,8 @@
 package net.sf.plantlore.client;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.AuthorOccurrence;
@@ -25,7 +27,7 @@ import org.apache.log4j.Logger;
  */
 public class OverviewTableModel extends AbstractTableModel {
     private Logger logger;
-    private static final int COLUMN_COUNT = 23;
+    private static final int COLUMN_COUNT = 24;
     private DBLayer db;
     private String[] columnNames;
     private int[] columnSizes;
@@ -34,6 +36,26 @@ public class OverviewTableModel extends AbstractTableModel {
     private int resultsCount = 0;
     private int pageSize = 30;
     private int currentPage = 1;
+    private ArrayList<Record> recordsArray = new ArrayList<Record>();
+    private HashMap<Integer, Record> resultsMap = new HashMap<Integer, Record>();
+    
+    class Record {
+        public Record(int id, boolean selected, int number) {
+            this.id = id;
+            this.selected = selected;
+            this.number = number;
+        }
+        public int id;
+        public boolean selected;
+        public int number;
+        
+        public boolean equals(Object o) {
+            if (!(o instanceof Record))
+                return false;
+            Record r = (Record)o;
+            return r.id == this.id;
+        }
+    }
     
     private Object[][] data = {
         {true, "Pampeliska", "neznamy", "Praha", new Integer(1995), "phy", "cechy", new Boolean(false), new Integer(10), new Integer(12), new Integer(-5), "","","","","","","","","","","",""},
@@ -72,50 +94,52 @@ public class OverviewTableModel extends AbstractTableModel {
         columnSizes = new int[COLUMN_COUNT];
         columnNames[0] = L10n.getString("overviewColX");
         columnSizes[0] = 30;
-        columnNames[1] = L10n.getString("overviewColName");
-        columnSizes[1] = 100;
-        columnNames[2] = L10n.getString("overviewColAuthor");
+        columnNames[1] = L10n.getString("overviewColResultNumber");
+        columnSizes[1] = 50;
+        columnNames[2] = L10n.getString("overviewColName");
         columnSizes[2] = 100;
-        columnNames[3] = L10n.getString("overviewColVillage");
+        columnNames[3] = L10n.getString("overviewColAuthor");
         columnSizes[3] = 100;
-        columnNames[4] = L10n.getString("overviewColPlace");
-        columnSizes[4] = 150;
-        columnNames[5] = L10n.getString("overviewColYear");
-        columnSizes[5] = 50;
-        columnNames[6] = L10n.getString("overviewColTerritory");
-        columnSizes[6] = 100;
-        columnNames[7] = L10n.getString("overviewColPhyt");
+        columnNames[4] = L10n.getString("overviewColVillage");
+        columnSizes[4] = 100;
+        columnNames[5] = L10n.getString("overviewColPlace");
+        columnSizes[5] = 150;
+        columnNames[6] = L10n.getString("overviewColYear");
+        columnSizes[6] = 50;
+        columnNames[7] = L10n.getString("overviewColTerritory");
         columnSizes[7] = 100;
-        columnNames[8] = L10n.getString("overviewColPhytCode");
-        columnSizes[8] = 50;
-        columnNames[9] = L10n.getString("overviewColCountry");
-        columnSizes[9] = 100;
-        columnNames[10] = L10n.getString("overviewColQuadrant");
-        columnSizes[10] = 50;
-        columnNames[11] = L10n.getString("overviewColOccNote");
-        columnSizes[11] = 150;
-        columnNames[12] = L10n.getString("overviewColLocNote");
+        columnNames[8] = L10n.getString("overviewColPhyt");
+        columnSizes[8] = 100;
+        columnNames[9] = L10n.getString("overviewColPhytCode");
+        columnSizes[9] = 50;
+        columnNames[10] = L10n.getString("overviewColCountry");
+        columnSizes[10] = 100;
+        columnNames[11] = L10n.getString("overviewColQuadrant");
+        columnSizes[11] = 50;
+        columnNames[12] = L10n.getString("overviewColOccNote");
         columnSizes[12] = 150;
-        columnNames[13] = L10n.getString("overviewColAltitude");
-        columnSizes[13] = 50;
-        columnNames[14] = L10n.getString("overviewColLongitude");
+        columnNames[13] = L10n.getString("overviewColLocNote");
+        columnSizes[13] = 150;
+        columnNames[14] = L10n.getString("overviewColAltitude");
         columnSizes[14] = 50;
-        columnNames[15] = L10n.getString("overviewColLatitude");
+        columnNames[15] = L10n.getString("overviewColLongitude");
         columnSizes[15] = 50;
-        columnNames[16] = L10n.getString("overviewColSource");
-        columnSizes[16] = 100;
-        columnNames[17] = L10n.getString("overviewColPublication");
+        columnNames[16] = L10n.getString("overviewColLatitude");
+        columnSizes[16] = 50;
+        columnNames[17] = L10n.getString("overviewColSource");
         columnSizes[17] = 100;
-        columnNames[18] = L10n.getString("overviewColHerbarium");
-        columnSizes[18] = 80;
-        columnNames[19] = L10n.getString("overviewColMetadata");
-        columnSizes[19] = 100;
-        columnNames[20] = L10n.getString("overviewColMonth");
-        columnSizes[20] = 50;
-        columnNames[21] = L10n.getString("overviewColDay");
+        columnNames[18] = L10n.getString("overviewColPublication");
+        columnSizes[18] = 100;
+        columnNames[19] = L10n.getString("overviewColHerbarium");
+        columnSizes[19] = 80;
+        columnNames[20] = L10n.getString("overviewColMetadata");
+        columnSizes[20] = 100;
+        columnNames[21] = L10n.getString("overviewColMonth");
         columnSizes[21] = 50;
-        columnNames[22] = L10n.getString("overviewColTime");
-        columnSizes[22] = 100;
+        columnNames[22] = L10n.getString("overviewColDay");
+        columnSizes[22] = 50;
+        columnNames[23] = L10n.getString("overviewColTime");
+        columnSizes[23] = 100;
     }
     
     /**
@@ -139,30 +163,37 @@ public class OverviewTableModel extends AbstractTableModel {
         for (int i = 1; i <= to - from + 1 ; i++) {
             resultObj = (Object[])records[i-1];
             result = (AuthorOccurrence)resultObj[0];
+            Record r = new Record(result.getId(), false, from + i - 1);
+            if (!recordsArray.contains(r))
+                recordsArray.add(r);
+            else 
+                r = recordsArray.get(from+i-2);
+                
             row = new Object[COLUMN_COUNT];
-            row[0] = false;
-            row[1] = result.getOccurrence().getPlant().getTaxon();
-            row[2] = result.getAuthor().getWholeName();
-            row[3] = result.getOccurrence().getHabitat().getNearestVillage().getName();
-            row[4] = result.getOccurrence().getHabitat().getDescription();
-            row[5] = result.getOccurrence().getYearCollected();
-            row[6] = result.getOccurrence().getHabitat().getTerritory().getName();
-            row[7] = result.getOccurrence().getHabitat().getPhytochorion().getName();
-            row[8] = result.getOccurrence().getHabitat().getPhytochorion().getCode();
-            row[9] = result.getOccurrence().getHabitat().getCountry();
-            row[10] = result.getOccurrence().getHabitat().getQuadrant();
-            row[11] = result.getOccurrence().getNote();
-            row[12] = result.getOccurrence().getHabitat().getNote();
-            row[13] = result.getOccurrence().getHabitat().getAltitude();
-            row[14] = result.getOccurrence().getHabitat().getLongitude();
-            row[15] = result.getOccurrence().getHabitat().getLatitude();
-            row[16] = result.getOccurrence().getDataSource();
-            row[17] = result.getOccurrence().getPublication().getCollectionName();
-            row[18] = result.getOccurrence().getHerbarium();
-            row[19] = result.getOccurrence().getMetadata().getDataSetTitle();
-            row[20] = result.getOccurrence().getMonthCollected();
-            row[21] = result.getOccurrence().getDayCollected();
-            row[22] = result.getOccurrence().getTimeCollected();
+            row[0] = r.selected;
+            row[1] = r.number;
+            row[2] = result.getOccurrence().getPlant().getTaxon();
+            row[3] = result.getAuthor().getWholeName();
+            row[4] = result.getOccurrence().getHabitat().getNearestVillage().getName();
+            row[5] = result.getOccurrence().getHabitat().getDescription();
+            row[6] = result.getOccurrence().getYearCollected();
+            row[7] = result.getOccurrence().getHabitat().getTerritory().getName();
+            row[8] = result.getOccurrence().getHabitat().getPhytochorion().getName();
+            row[9] = result.getOccurrence().getHabitat().getPhytochorion().getCode();
+            row[10] = result.getOccurrence().getHabitat().getCountry();
+            row[11] = result.getOccurrence().getHabitat().getQuadrant();
+            row[12] = result.getOccurrence().getNote();
+            row[13] = result.getOccurrence().getHabitat().getNote();
+            row[14] = result.getOccurrence().getHabitat().getAltitude();
+            row[15] = result.getOccurrence().getHabitat().getLongitude();
+            row[16] = result.getOccurrence().getHabitat().getLatitude();
+            row[17] = result.getOccurrence().getDataSource();
+            row[18] = result.getOccurrence().getPublication().getCollectionName();
+            row[19] = result.getOccurrence().getHerbarium();
+            row[20] = result.getOccurrence().getMetadata().getDataSetTitle();
+            row[21] = result.getOccurrence().getMonthCollected();
+            row[22] = result.getOccurrence().getDayCollected();
+            row[23] = result.getOccurrence().getTimeCollected();
             data[i-1] = row;
         }//i        
     }
@@ -205,6 +236,9 @@ public class OverviewTableModel extends AbstractTableModel {
     
     public void setValueAt(Object value, int row, int column) {
         data[row][column] = value;
+        if (column == 0)
+            //displayed number of record starts from 1 --> we have to subtract 1 coz ArrayList is indexed from 0
+            recordsArray.get((Integer)data[row][1]-1).selected = (Boolean)value;
         //repaint view - with new value
         this.fireTableCellUpdated(row, column);
     }
