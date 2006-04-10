@@ -97,7 +97,7 @@ public class HistoryCtrl {
                model.processEditResult(firstRow, model.getDisplayRows()); 
                if (model.getCurrentFirstRow() > 1){
                }
-               view.getTable().setModel(new HistoryTableModel(model.getData()));
+               view.getTable().setModel(new HistoryTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.getTable().getRowCount() - 1;
                view.setCurrentRowsInfo(from + "-" + to);
@@ -117,13 +117,17 @@ public class HistoryCtrl {
            logger.debug("current first row: "+model.getCurrentFirstRow());
            logger.debug("num rows in the result: "+ model.getResultRows());            
            logger.debug("display rows: "+ model.getDisplayRows());
-           logger.debug("num rows in table (view) "+ view.getTable().getRowCount());          
+           logger.debug("num rows in table (view) "+ view.getTable().getRowCount());              
            if (model.getCurrentFirstRow()+ view.getTable().getRowCount()<=model.getResultRows()) {
                model.processEditResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.getTable().getRowCount());
-               view.getTable().setModel(new HistoryTableModel(model.getData()));  
+               view.getTable().setModel(new HistoryTableModel(model));             
                int from = model.getCurrentFirstRow();
                int to = from + view.getTable().getRowCount() - 1;
-               view.setCurrentRowsInfo(from + "-" + to);
+               if (to <= 0){
+            	   view.setCurrentRowsInfo("0-0");
+               }else {
+            	   view.setCurrentRowsInfo(from + "-" + to);
+               }               
            }                       
        }
    }
@@ -134,13 +138,10 @@ public class HistoryCtrl {
     */
    class selectAllButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   logger.debug("selectAll");
-    	   int countRow = view.getTable().getRowCount();    	  
-           for (int row=0; row < countRow; row++)
-           {         	     	
-         	  view.getTable().setValueAt(true, row, 0);            	  
-           }       
+       {    	   
+    	   model.setSelectAll(true);
+    	   model.processEditResult(1,model.getResultRows());    	   
+    	   view.getTable().setModel(new HistoryTableModel(model));  
        }
    }
    
@@ -150,13 +151,10 @@ public class HistoryCtrl {
     */
    class unselectAllButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   logger.debug("unselectAll");
-    	   int countRow = view.getTable().getRowCount();    	   
-           for (int row=0; row < countRow; row++)
-           {        	        	  
-         	  view.getTable().setValueAt(false, row, 0);          	  
-           }           
+       {    
+    	   ArrayList<Object[]> markItem = new ArrayList();    	   
+    	   model.setMarkItem(markItem); 
+    	   view.getTable().setModel(new HistoryTableModel(model));
        }
    }
    
@@ -166,22 +164,32 @@ public class HistoryCtrl {
     */
    class undoSelectedButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   int countRow = view.getTable().getRowCount(); 
-    	   //list with number of selected rows
-    	   ArrayList markRows = new ArrayList();
-           for (int row=0; row < countRow; row++)
-           {           	  
-         	  if (view.getTable().getValueAt(row, 0).equals(true)) {
-         		 System.out.println("undo "+ row); 
-         		 markRows.add(row);         		          		          		
-         	  }     
-           }
-           model.updateOlderChanges(markRows);  
-           view.getTable().setModel(new HistoryTableModel(model.getData()));
-           int from = model.getCurrentFirstRow();
-           int to = from + view.getTable().getRowCount() - 1;
-           view.setCurrentRowsInfo(from + "-" + to);
+       {    	   
+           model.updateOlderChanges();            
+           int okCancle = view.messageUndo(model.getMessageUndo());
+           logger.debug("button "+okCancle);
+           if (okCancle == 0){
+        	   //Button OK was press
+        	   logger.debug("Button OK was press.");
+        	   model.commitUpdate();
+        	   model.deleteHistoryRecords();
+        	   model.searchEditHistory();
+        	   model.processEditResult(1,model.getDisplayRows());
+        	   view.getTable().setModel(new HistoryTableModel(model));
+        	   int resultRows = model.getResultRows();
+        	   if (resultRows == 0) {
+        		   view.setCurrentRowsInfo("0-0"); 
+        	   } else {
+        		   int from = model.getCurrentFirstRow();
+                   int to = from + view.getTable().getRowCount() - 1;               
+                   view.setCurrentRowsInfo(from + "-" + to);    
+        	   }               
+               view.setCountResutl(resultRows);
+           } else {
+        	   //Button Cancle was press
+        	   //neco jako rollback - bude se volat nebo to bude zarizeno tim, ze se nezavola executeUpdate??
+        	   logger.debug("Button Cancle was press.");
+           }           
        }
    }
     
@@ -192,7 +200,7 @@ public class HistoryCtrl {
    class rowSetDisplayChangeListener implements PropertyChangeListener {
 	   public void propertyChange(PropertyChangeEvent e) {
            // Save old value
-           int oldValue = model.getDisplayRows();
+           int oldValue = model.getDisplayRows();           
            // Check whether new value > 0
            if (view.getDisplayRows() < 1) {
                view.setDisplayRows(oldValue);
@@ -208,7 +216,7 @@ public class HistoryCtrl {
            // If neccessary reload search results
            if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
                model.processEditResult(model.getCurrentFirstRow(), view.getDisplayRows());
-               view.getTable().setModel(new HistoryTableModel(model.getData()));
+               view.getTable().setModel(new HistoryTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.getTable().getRowCount() - 1;
                view.setCurrentRowsInfo(from + "-" + to);               

@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -270,12 +271,7 @@ public class HistoryView implements Observer {
         infoInsertPanel.add(insertWhoValueLabel, gbConstraints);              
         
         // Add table to the infoEditPanel panel    
-        //!!!pro velke mnozstvi dat je lepsi pouzit AbstractTableModel, ktera umoznuje postupne nacitani do pameti
-        // defaultTableModel vytvari odkazy na vsechny zapouzdrene informace
-        
-        data = model.getData();
-        
-        tableEditList = new JTable(new HistoryTableModel(data));        
+        tableEditList = new JTable(new HistoryTableModel(model));        
         TableColumnModel tcm = tableEditList.getColumnModel();        
         TableColumn tc;
         for (int i = 0; i < tableEditList.getColumnCount(); i++) {
@@ -422,6 +418,10 @@ public class HistoryView implements Observer {
         
     }     
  
+    public int messageUndo(String message) {
+    	int okCancle = JOptionPane.showConfirmDialog(historyDialog, message, "Information about change", JOptionPane.OK_CANCEL_OPTION);
+    	return okCancle;
+    }
 
     public void close() {
         historyDialog.dispose();
@@ -436,6 +436,11 @@ public class HistoryView implements Observer {
     public JTable getTable()
     {
     	return this.tableEditList;
+    }
+    
+    public void setCountResutl(Integer resultRows)
+    {
+    	this.countResutl.setText(resultRows.toString());
     }
     
     /** */

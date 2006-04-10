@@ -1,11 +1,18 @@
 package net.sf.plantlore.client.history;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.apache.log4j.Logger;
+
+import net.sf.plantlore.common.record.HistoryRecord;
 import net.sf.plantlore.l10n.L10n;
 
 /** 
@@ -14,6 +21,14 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class HistoryTableModel extends AbstractTableModel
 {
+	//Logger
+	private Logger logger;
+	// History model
+	private History model; 
+	private ArrayList<HistoryRecord> editHistoryDataList;
+    private HashSet markListId;
+    private ArrayList<Object[]> markItem;
+	
 	/** Names of the columns */
     private String[] columnNames;
     /** Data values displayed in the table*/
@@ -26,24 +41,20 @@ public class HistoryTableModel extends AbstractTableModel
     public final static int OLD_VALUE = 4;
     public final static int NEW_VALUE = 5;
     
-    /** Creates a new instance of HistoryTableModel */
-    public HistoryTableModel()
-    {    	
-    	init();
-    }
 
     /** 
      *  Creates a new instance of HistoryTableModel with the specified data values  
-     *  @param tableData data values 
+     *  @param model
      */
-    public HistoryTableModel(Object[][] tableData)
+    public HistoryTableModel(History model)
     {
-    	data = tableData;
-    	init();    	
-
-    }    
+    	logger = Logger.getLogger(this.getClass().getPackage().getName());
+    	this.model = model;        
+    	initColumns();    	
+    	initData();    	
+    }  
    
-    private void init() {
+    private void initColumns() {
         columnNames = new String[6];        
         columnNames[0] = L10n.getString("historyColX");        
         columnNames[1] = L10n.getString("historyColDate");        
@@ -51,8 +62,162 @@ public class HistoryTableModel extends AbstractTableModel
         columnNames[3] = L10n.getString("historyColItem");        
         columnNames[4] = L10n.getString("historyColOldValue");       
         columnNames[5] = L10n.getString("historyColNewValue");        
+    }       
+    
+    /**
+     * Load data for dislaying 
+     */
+    public void initData() {
+    	
+    	logger.debug("Init data.");
+    	
+    	editHistoryDataList = model.getEditHistoryDataList();
+    	if (editHistoryDataList.size()==0 ){
+    		this.data = new Object[0][];
+    		return;
+    	}
+    	markItem = model.getMarkItem();    	
+    	int firstRow = model.getCurrentFirstRow();
+    	int countResult = Math.min(editHistoryDataList.size(), firstRow+ model.getDisplayRows()-1);
+    	int countRow = countResult - firstRow + 1;
+    	boolean mark = false;
+    	int ii = 0;  
+    	//If was use button "sellect all" we must init list of mark item
+    	boolean selectAll = model.getSelectAll();
+    	if (selectAll) {
+    		initMarkAllItem();
+    		mark = true;    		
+    	}
+    	//loud data for view
+        Object[][] editHistoryData = new Object[countRow][6];   
+    	for (int i=firstRow-1; i < countResult; i++) {  
+    		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());    		
+    		if (! selectAll){     			
+    			mark = isMark(item, i);
+    		}
+    		editHistoryData[ii][0] = new Boolean(mark);    		
+    	    editHistoryData[ii][1] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
+    	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
+    	    editHistoryData[ii][3] = item;
+    	    editHistoryData[ii][4] = ((HistoryRecord)editHistoryDataList.get(i)).getOldValue();
+    	    editHistoryData[ii][5] = ((HistoryRecord)editHistoryDataList.get(i)).getNewValue();
+    	    ii++;
+    	}      	
+    	model.setSelectAll(false);
+    	this.data = editHistoryData;    	
+    }    
+    
+    /**
+     * Check marking row
+     * @param item
+     * @return
+     */
+    public boolean isMark(String item, int itemId) {    	
+    	int count = markItem.size();       	
+    	for( int i=0; i < count; i++){
+    		Object[] itemList = (Object[])(markItem.get(i));
+    		String itemFromList = (String)itemList[0];
+    		Integer maxId = (Integer)itemList[1];
+    		logger.debug("IsMark - itemFromList: "+itemFromList + ", item: "+ item + ", maxId: "+ maxId + ", itemId: "+ itemId);
+    		if (item.equals(itemFromList)) {
+    			if (itemId <= maxId) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+ 
+    /**
+     * 
+     * @param row
+     * @param value
+     */
+    public void updateMarkList(String item, int row, boolean value) {    	    	    	
+    	int itemId = row + model.getCurrentFirstRow() - 1;
+    	boolean contains = false;    	
+    	int count = markItem.size();
+    	logger.debug("Update markListItem. Count item: "+count);
+    	//ArrayList<Object[]> tmpMarkItem = markItem;
+    	for( int i=0; i < count; i++){
+    		Object[] itemList = (Object[])(markItem.get(i));
+    		String itemFromList = (String)itemList[0];
+    		Integer maxId = (Integer)itemList[1];    
+    		logger.debug("MarkItem update - item: "+ itemFromList + ", maxId: " + maxId);
+    		if (value) {    		    			    			
+    			if (item.equals(itemFromList)) { 
+    				contains = true;
+					if (itemId > maxId) {
+						//Set max id of mark item
+						itemList[1] = itemId;
+					   	markItem.set(i, itemList);
+					}
+				}
+		    } else {
+		    	if (item.equals(itemFromList)) {
+		    		contains = true;
+		    		if (itemId <= maxId){
+		    			//search smaller id of mark item
+		    			int newId = searchSmaller(item, itemId);
+		    			if (newId != -1) {
+		    				itemList[1] = newId;
+			    			markItem.set(i,itemList);
+			    			logger.debug("Unmark - new itemId is "+ itemList[1].toString());
+		    			} else {
+		    				markItem.remove(i);
+			    			logger.debug("Unmark - remote record has id: "+ itemId);
+			    			return;
+		    			}
+		    	    }else {		    		
+		    			markItem.remove(i);
+		    			logger.debug("Unmark - remote record has id: "+ itemId);
+		    			return;
+		    		}
+		    	}				 
+			}      	
+    	}
+    	if (! contains) {
+    		Object [] itemList = new Object[2];    		
+			itemList[0] = item;
+			itemList[1] = itemId;
+			markItem.add(itemList);
+		}       	
+    }
+ 
+    /**
+     * 
+     *
+     */
+    public void initMarkAllItem() {    	
+    	editHistoryDataList = model.getEditHistoryDataList();    	
+    	int countResult = editHistoryDataList.size();    	
+    	for (int i=0; i < countResult; i++) {      		    		    	
+    		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());
+    		updateMarkList(item, i, true);
+    	} 
+    	model.setMarkItem(markItem);
+    	updateMarkListId();
+    	logger.debug("All records were selected.");    	
     }
     
+    /**
+     * 
+     *
+     */
+    public void updateMarkListId() {
+    	markListId = new HashSet();
+    	editHistoryDataList = model.getEditHistoryDataList();
+    	markItem = model.getMarkItem();
+    	int countResult = editHistoryDataList.size();    	
+    	for (int i=0; i < countResult; i++) {  
+    		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());    		    		
+    		if (isMark(item, i)){
+    			markListId.add(i);
+    		}
+    	}        	
+    	model.setMarkListId(markListId);
+    	logger.debug("List ID of selected record: "+ markListId.toString());
+    }
     
     /** 
      *  Allows to edit of the MARK cell.
@@ -76,37 +241,36 @@ public class HistoryTableModel extends AbstractTableModel
      * @param column index of column
      */
     public void setValueAt(Object value, int row, int column)
-    {
+    {    	
         data[row][column] = value;
-        if (column == 0) {
-        	if ((Boolean)value){        	    
-        	    selectYounger(row, column);        	    
-        	} else {        		
-        		selectOlder(row, column);
-        	}
-        }
-        //repaint view - with new value
-        this.fireTableCellUpdated(row, column);
+        if (column == 0) {       
+        	 String item = (String)getValueAt(row, 3);
+        	 updateMarkList(item, row, (Boolean)value);         	 
+       	     model.setMarkItem(markItem); 
+        	 //update data
+        	 initData();
+        	 //Update list of selected record
+        	 updateMarkListId();
+        	 //update view
+        	 this.fireTableDataChanged();
+        }        
     }
 
-    public void selectYounger(int row, int column){
-    	String item = (String)getValueAt(row, 3);
-    	for(int i=0; i < row; i++) {
-    		if (item.equals(getValueAt(i,3))) {
-    			setValueAt(true,i,0);
-    			System.out.print("oznaceno " +i + " \n" );
-    		}
+    /**
+     * 
+     * @param item
+     * @param itemId
+     * @return
+     */
+    public int searchSmaller(String item, int itemId) {    	
+    	int itemNewId = -1;
+    	int firstRow = model.getCurrentFirstRow();
+    	for( int i=itemId-firstRow; i >=0 ; i--){
+    		if (getValueAt(i,3).equals(item)){
+    			return i+firstRow-1;
+    		}    		
     	}
-    }
-    
-    public void selectOlder(int row, int column){
-    	String item = (String)getValueAt(row, 3);
-    	for(int i=row+1; i < data.length; i++) {
-    		if (item.equals(getValueAt(i,3))) {
-    			setValueAt(false,i,0);
-    			System.out.print("odznaceno " +i + " \n" );
-    		}
-    	}
+    	return -1;
     }
     
     /**

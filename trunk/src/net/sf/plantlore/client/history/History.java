@@ -4,10 +4,16 @@
 package net.sf.plantlore.client.history;
 
 import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Observable;
+import java.util.Set;
 
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
@@ -43,7 +49,7 @@ public class History extends Observable {
     /** Instance of a database management object */
     private DBLayer database;   
     /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 2;    
+    private static final int DEFAULT_DISPLAY_ROWS = 6;    
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;   
     /** Index of the first record shown in the table */
@@ -54,12 +60,23 @@ public class History extends Observable {
     //*******Informations about searching Result from database*****//
     /** Result of the search query */
     private int resultId = 0;
-    /** Data (results of a search query) displayed in the table */
-    private Object[][] editHistoryData;
     /** List of data (results of a search query) displayed in the table */
-    private ArrayList<HistoryRecord> editHistoryDataList;
+    private ArrayList<HistoryRecord> editHistoryDataList = new ArrayList();    
+    //seznam id vsech oznacenych polozek
+    private HashSet markListId = new HashSet();
+    //Seznam Item + maxIdItem (nejstarsi oznacene id pro dany Item=sloupec)
+    private ArrayList<Object[]> markItem = new ArrayList();
+    //Informuje o tom, zda byla zvolena volba "SelectAll"
+    private boolean selectAll;
+    //Informuje o tom zda exituje pro dany nalez vazba 1:1 mezi tabulkami tHabitats a tOccurrences
+    private boolean relationship;
+    //Informuje o tom zda doslo k editaci polozky z tabulky tHabitat
+    private boolean editHabitat;
+    //zprava pro uzivatele
+    private String messageUndo;
    
-    //********************* ***************************************//    
+    
+    //*********************Record of history ***************************************//    
     private Occurrence occurrence;
 	private HistoryRecord historyRecord;
 	private HistoryChange historyChange;
@@ -76,7 +93,7 @@ public class History extends Observable {
 	/**Unique value identified record before changed */
 	private int oldRecordId;
 	/** Operation whitch was used*/   
-	private String operation;
+	private int operation;
 	/** Date and time when the reccord was changed*/
 	private java.util.Date when = new Date();	
 	/** Old value of attribute*/    
@@ -85,7 +102,7 @@ public class History extends Observable {
 	private String newValue;
    /** Name of user who did changed*/
 	private String nameUser;
-
+	
 	//**************Informations about occurrences***************//
 	/** Name of plant for specified occurrenc*/
 	private String namePlant;
@@ -96,9 +113,9 @@ public class History extends Observable {
 	
 	 //********************************************************//
 	 /** Mapping of entities */
-     private Hashtable<String, Integer> publicationHash;
-     private Hashtable<String, Integer> habitatHash;
-     private Hashtable<String, Integer> occurrenceHash;  
+	private Hashtable<String, Integer> publicationHash;
+	private Hashtable<String, Integer> habitatHash;
+	private Hashtable<String, Integer> occurrenceHash;  
     
     /**  
      *  Creates a new instance of History 
@@ -110,7 +127,7 @@ public class History extends Observable {
     public History(DBLayer database, String namePlant, String nameAuthor, String location, int idOcc)
     {
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
-       this.database = database;	
+       this.database = database;       
        
  /*
   *  v konstruktoru se bude predavat reference na OCCURRENCE pro ktery je vyvolana
@@ -173,7 +190,8 @@ public class History extends Observable {
  *     ...musit to byt retezec autoru - muze jich byt vice
  *     ...v historii se editace autoru zaznamenavat nebude 
  */       
-              	   
+        
+       
        //Searching for information about data entries concerned with specified occurrence
        searchInsertInfo();
 	   //Searching for information about data editing concerned with specified occurrence
@@ -183,8 +201,7 @@ public class History extends Observable {
     }	
 
     /**
-     *  Searches for information about data entries concerned with specified occurrence.
-     *  @param idOccurrence Unique value identified occurrence
+     *  Searches for information about data entries concerned with specified occurrence.   
      */
     public void searchInsertInfo() {
             
@@ -204,13 +221,11 @@ public class History extends Observable {
            resultIdInsert = database.executeQuery(query);        
        } catch (DBLayerException e) {
            // Log and set an error                   
-           logger.error("Searching history (inserting) failed. Unable to execute search query.");
-           //setError(e);
-           // setError("Searching history failed. Please contact your administrator.");
+           logger.error("Searching history data with condition 'operation = insert' failed. Unable to execute search query.");          
        } catch (RemoteException e) {		 
     	   System.err.println("RemoteException- searchInsertInfo(), executeQuery");
 	} finally {
-    	   logger.debug("Searching history (inserting) ends successfully");
+    	   logger.debug("Searching history data with condition 'operation = insert' ends successfully");
            // Save "insert" history data
            setInsertResult(resultIdInsert);                    
        }              
@@ -218,8 +233,7 @@ public class History extends Observable {
     
     
     /**     
-     * Searches for information about data editing concerned with specified occurrence.
-     * @param idOccurrence Unique value identified occurrence
+     * Searches for information about data editing concerned with specified occurrence. 
      */
      
     public void searchEditHistory()
@@ -236,8 +250,8 @@ public class History extends Observable {
 		}
         // Create aliases for table tHistoryChange.      
         query.createAlias("historyChange", "hc");        
-        // Add restriction to CUNITVALUE column of tOccurence table
-        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.operation", null, HistoryChange.HISTORYCHANGE_EDIT, null);
+        // Add restriction to COPERATION column of tJistoryChange table
+        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.operation", null, HistoryChange.HISTORYCHANGE_EDIT, null);        
         query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.occurrence", null, occurrence, null);    	
         query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");        
     	
@@ -247,19 +261,16 @@ public class History extends Observable {
             resultIdEdit = database.executeQuery(query);        
         } catch (DBLayerException e) {
             // Log and set an error                   
-            logger.error("Searching history (editing) failed. Unable to execute search query.");
-            //setError(e);
-            // setError("Searching history failed. Please contact your administrator.");
+            logger.error("Searching history data with condition 'operation = edit' failed. Unable to execute search query.");           
         } catch (RemoteException e) { 		   
-     	   System.err.println("RemoteException- searchInsertInfo(), executeQuery");
+     	   System.err.println("RemoteException- searchEditHistory(), executeQuery");
 	 	} finally {
-	 		logger.debug("Searching history (editing) ends successfully");
+	 		logger.debug("Searching history data with condition 'operation = edit' ends successfully");
         	// Save "edit" history data
             setEditResult(resultIdEdit);                  
 	 	}              
     }
     
-
     
     /**     
      * Sets information about data (date, name of user) entries concerned with specified occurrence 
@@ -267,9 +278,8 @@ public class History extends Observable {
      */
     public void setInsertResult(int resultIdInsert) {
    	    	
-    	if (getResultRows() > 1) {
-    		// Log an error                   
-            logger.error("Too many results for inserting query.");  
+    	if (getResultRows() > 1) {                
+            logger.error("Too many results for searching insert operation.");  
     	}
             	
     	logger.debug("Retrieving query results."); 
@@ -278,25 +288,20 @@ public class History extends Observable {
         	 // Retrieve selected row interval         	
          	try {
          		objectHistory = database.more(resultIdInsert, 1, 1);  
-         	} catch(RemoteException e) {
-             	System.err.println("RemoteException- setInsertResult, more");
+         	} catch(RemoteException e) {             	
              	logger.debug("RemoteException- setInsertResult, more");
              	return;
              }   
          	Object[] objHis = (Object[])objectHistory[0]; 
-         	//setWhen(((HistoryChange)objHis[0]).getWhen());
-         	//setNameUser(((HistoryChange)objHis[0]).getWho().getWholeName());
-         	
-            this.when = ((HistoryChange)objHis[0]).getWhen();
-            this.nameUser = ((HistoryChange)objHis[0]).getWho().getWholeName();
-           
-        } catch (DBLayerException e) {
-            // Log and set error in case of an exception
+         	setWhen(((HistoryChange)objHis[0]).getWhen());
+         	setNameUser(((HistoryChange)objHis[0]).getWho().getWholeName());         	
+        } catch (DBLayerException e) {         
             logger.error("Processing search (inserting) results failed: "+e.toString());            
         } finally { 
-        	logger.debug("Sets 'insert' data ends successfully. When= " + this.when + " ");        	
+        	logger.debug("Sets 'insert' data ends successfully.");        	
         }        
     }
+    
     
     /**
      * Process results of a search query. Retrieves results using the database management object (DBLayer) and stores them in the data field of the class. 
@@ -312,11 +317,13 @@ public class History extends Observable {
            
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
             int to = Math.min(currentRow, fromTable+count-1);           
-            if (to == 0) {
-                this.editHistoryDataList = new ArrayList<HistoryRecord>();                
+            if (to <= 0) {
+            	editHistoryDataList = new ArrayList<HistoryRecord>(); 
+            	setDisplayRows(0);
+            	setCurrentDisplayRows("0-0");
             } else {
                 logger.debug("Retrieving query results: 1 - "+to);
-                setCurrentDisplayRow(fromTable+ "-" + to);
+                setCurrentDisplayRows(fromTable+ "-" + to);
                 try {                	 
                      // Retrieve selected row interval 
                 	Object[] objectHistory;
@@ -336,8 +343,7 @@ public class History extends Observable {
 						Object[] objHis = (Object[])objectHistory[i];
                         this.editHistoryDataList.add((HistoryRecord)objHis[0]);
                     }                     
-                } catch (DBLayerException e) {
-                    // Log an error in case of an exception
+                } catch (DBLayerException e) {                  
                     logger.error("Processing search results failed: "+e.toString());            
                 } finally { 
                 	logger.debug("Sets 'edit' data ends successfully");
@@ -347,77 +353,14 @@ public class History extends Observable {
             }
         }         
     }
-    
-    /**
-     * z db vzdy ziskame vysledek od 1 do "to" - tato funkce nacte data pro zobrazeni 
-     * ve view (data, ktere v dane chvili uvidi uzivatel).  
-     * @return Object[][] with data values for displaying in the table
-     */
-    public Object[][] getData() {
-    	    	
-    	int countResult = editHistoryDataList.size();
-    	int firstRow = getCurrentFirstRow();
-    	int countRow = countResult - firstRow + 1;
-    	int ii = 0;    	
-        editHistoryData = new Object[countRow][6];
-    	for (int i=firstRow-1; i < countResult; i++) {    		
-    		editHistoryData[ii][0] = new Boolean(false);    		
-    	    editHistoryData[ii][1] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
-    	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
-    	    editHistoryData[ii][3] = L10n.getString((((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName()));
-    	    editHistoryData[ii][4] = ((HistoryRecord)editHistoryDataList.get(i)).getOldValue();
-    	    editHistoryData[ii][5] = ((HistoryRecord)editHistoryDataList.get(i)).getNewValue();
-    	    ii++;
-    	}  
-    	return this.editHistoryData;
-    	
-    }    
-    
-  
+       
+
     /**
      * 
      * @param id
      * @return
      */
-    public int searchHistoryChangeId(int id){
-    	SelectQuery query = null;
-        try {
-        	    query = database.createQuery(HistoryRecord.class);
-        } catch(RemoteException e) {
-        	    System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
-        }                    
-        // Create aliases for table tHistoryChange.      
-        query.createAlias("historyChange", "hc");        
-        // Add restriction to CUNITVALUE column of tOccurence table
-        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.id", null, id , null);
-        
-        int resultIdChange = 0;
-        try {                   
-        	resultIdChange = database.executeQuery(query);        
-        } catch (DBLayerException e) {                   
-            logger.error("Searching historyChangeId failed. Unable to execute search query.");
-        } catch (RemoteException e) {		 
-     	   System.err.println("RemoteException- searchHistoryChangeId(), executeQuery");
- 	    } finally {
-     	   logger.debug("Searching historyChangeId ends successfully.");
-        }         
- 	    
- 	    int countResult = 100;
- 	    try {
-			countResult = database.getNumRows(resultIdChange);
-			logger.debug("SearchHistoryChangeId - Number of result: "+countResult);
-		} catch (RemoteException e) {
-			System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
-		}		
-		return countResult;
-    }
-    
-    /**
-     * 
-     * @param id
-     * @return
-     */
-    public Object[] searchObject(String typeObject, int id, String oldRecordValue) { 
+    public Object[] searchObject(String typeObject, int id) { 
     	
     	SelectQuery query = null;
     	if (typeObject.equals("Habitat")){
@@ -433,35 +376,35 @@ public class History extends Observable {
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject() - Plant, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.TAXON, null, oldRecordValue , null);
-    	}else if (typeObject.equals("Village")){
+            query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.ID, null, id , null);
+    	} else if (typeObject.equals("Publication")){
+    		try {
+            	query = database.createQuery(Publication.class);	        		        	    
+            } catch(RemoteException e) {
+            	    System.err.println("RemoteException, searchObject() - Publication, createQuery");       	  
+            }            
+            query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
+    	} else if (typeObject.equals("Village")){
     		try {
             	query = database.createQuery(Village.class);	        		        	    
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject()- Village, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Village.NAME, null, oldRecordValue, null);
+            query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
     	}  else if  (typeObject.equals("Territory")){
     		try {
             	query = database.createQuery(Territory.class);	        		        	    
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject()- Territory, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.NAME, null, oldRecordValue , null); 
+            query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null); 
     	} else if (typeObject.equals("Phytochorion")){
     		try {
             	query = database.createQuery(Phytochorion.class);	        		        	    
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject()- Phytochorion, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.NAME, null, oldRecordValue , null);
-    	} else if (typeObject.equals("PhytochorionCode")){
-    		try {
-            	query = database.createQuery(Phytochorion.class);	        		        	    
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject()- Phytochorion code, createQuery");       	  
-            }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.CODE, null, oldRecordValue , null);
+            query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
     	} else {
     		logger.error("SearchObject() - Incorrect type of object.");
     	}
@@ -495,73 +438,41 @@ public class History extends Observable {
        }     	        
     }
     
+ 
     /**
-     * 
-     *
+     * UNDO - funce projde oznacene zaznamy a nastavi stare hodnoty
+     * Pokud dojde zmenou k ovlivneni vice nalezu, tak o tom informuje uzivatele
      */
-    public void deleteHistoryRecords() {
-    	try {
-			database.executeDelete(historyRecord);
-			logger.debug("Deleting historyRecord successfully.");
-		} catch (RemoteException e) {
-			logger.error("Deleting historyRecord - remoteException. "+e.toString());
-		} catch (DBLayerException e) {
-			logger.error("Deleting historyRecord failed. "+e.toString());
-		}
-		int countResult = searchHistoryChangeId(historyRecord.getHistoryChange().getId());
-		if (countResult == 1) {
-			//samzat zaznam z tabulky tHistoryChange - muzeme protoze neexistuji dalsi FK z tHistory.cChngeId
-			try {
-				database.executeDelete(historyChange);
-				logger.debug("Deleting historyChange successfully.");
-			} catch (RemoteException e) {
-				logger.error("Deleting historyChange - remoteException. "+e.toString());
-			} catch (DBLayerException e) {
-				logger.error("Deleting historyChange failed. "+e.toString());
-			}
-		} else {
-			logger.debug("Exist other record in the table tHistory, whitch has the same value of attribute cChangeId.");
-		}
-    }
-    
-    /**
-     * Tato funkce bude menit hodnoty v DB (DELETE v historii, zmena v jakekoliv 
-     * tabulce pro kterou se zaznamenava historie) - UNDO
-     * 
-     * bude volana z CTR po stisku klavesy
-     * jako parametr dostane seznam oznacenych zmen, ktere se maji vratit
-     * 
-     * jde o update database :-)
-     */
-    public void updateOlderChanges(ArrayList markResult)
+    public void updateOlderChanges()
     {    	
     	    	
     	//Inicalization of hashTable
     	initOccurrenceHash();
-    	initHabitatHash();
-    	initPublicationHash();   
-    	    	
-    	//number of selected rows
-    	int countMark = markResult.size();
-    	// Index of firt row currently displayed
-    	int indexFirstRow = getCurrentFirstRow();
-    	//List of changed ITEM
-    	ArrayList<String> changedList = new ArrayList<String>();
-    	//take from older record to younger record
-    	for( int i=countMark-1; i >= 0; i--) {    	
-    		logger.debug("Number of selected row: "+markResult.get(i));
-    		historyRecord = (HistoryRecord)editHistoryDataList.get((Integer)markResult.get(i)+ getCurrentFirstRow()-1);    		
+    	initHabitatHash();    	  
+        	
+    	//number of result
+    	int countResult = getEditResult();
+    	// Pomocne hodnoty pro zjisteni zda zmena ovlivni vice nalezu
+    	relationship = false;
+    	editHabitat = false;
+    	
+    	//take from younger record to older record
+    	for( int i=0; i < countResult; i++) {
+    		if (! markListId.contains(i)) {
+    			continue;
+    		}
+    		
+    		//init history data about edit of record
+    		historyRecord = (HistoryRecord)editHistoryDataList.get(i);    		
     		historyChange = historyRecord.getHistoryChange();
     		tableName = historyRecord.getHistoryColumn().getTableName();
-    		columnName = historyRecord.getHistoryColumn().getColumnName();
-    		// oldRecordId je defautne nastaveno v databazi na hodnotu 0 !!!    			
+    		columnName = historyRecord.getHistoryColumn().getColumnName();    		    			
 			oldRecordId = historyChange.getOldRecordId();
 			recordId = historyChange.getRecordId();
-			occurrenceId = historyChange.getOccurrence().getId();
+			occurrenceId = historyChange.getOccurrence().getId();		   
+			operation = historyChange.getOperation();
 			oldValue = historyRecord.getOldValue();
-			
-			this.editHistoryDataList.remove((Integer)markResult.get(i)+ getCurrentFirstRow()-1);
-			
+						
     		if (tableName.equals("Occurrence")){  
     			if (occurrenceId != recordId){
     				logger.error("Inccorect information in history tables --> occurrenceId != recordId ... Incorrect identifier of Occurrence.");
@@ -574,113 +485,97 @@ public class History extends Observable {
     	        } else {
     	             columnConstant = 0;
     	        }        	    			
-    			    			
+    			  
+    			//init Calendar    		
+    			Calendar isoDateTime = new GregorianCalendar();
+    			
     			logger.debug("ColumnConstant: "+ columnConstant);
     			logger.debug("ColumnName: "+ columnName);
     			logger.debug("OldValue: "+ oldValue);    			     			
     			
     			switch (columnConstant) {
 	                case 1: //Taxon  
-	                	//test, zda byla nastavena hodnota pro update pro Taxon 
-	                	// pokud ano, tak se jedna o mladsi zmenu, ktera bude jen smazana z tabulek historie
-	                	if ( ! changedList.contains("taxon") ){
-	                		changedList.add("taxon");		                		
-                			Object[] object = searchObject("Plant",0,"oldValue");
+	                	if (oldRecordId > 0 ) {
+		                	//Select record Plant where id = oldRocordId 
+		                	Object[] object = searchObject("Plant",oldRecordId);
 		                	Plant plant = (Plant)object[0];
+		                	//Set old value to attribute plantID
 		                	occurrence.setPlant(plant);
-		                	logger.debug("Set selected value for update of attribute Taxon.");	                		
-	                	} else {
-	                		logger.debug("Later edit of Taxon. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();	                			                		                			                
+		                	logger.debug("Set selected value for update of attribute Taxon.");	
+		    			}else {
+		    				logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
+		    			}
 	                    break;
 	                case 2: //Year	
-	                	if (! changedList.contains("year")) {
-	                		changedList.add("year");	                		
-		                	occurrence.setYearCollected(Integer.parseInt(oldValue));
-		                	logger.debug("Set selected value for update of attribute Year.");
-		                	//Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
-	                		Date time = occurrence.getTimeCollected();
-	                		Date isoDateTime = new Date();
-	                		isoDateTime.setDate(occurrence.getDayCollected());
-	                		isoDateTime.setMonth(occurrence.getMonthCollected());
-	                		isoDateTime.setYear(Integer.parseInt(oldValue));	                		
-	                		//occurrence.setIsoDateTimeBegin(isoDateTime);
-	                		
-	                	} else {
-	                		logger.debug("Later edit of Year. ");	                		
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();             	
+                	    //Set old value to attribute Year          		
+	                	occurrence.setYearCollected(Integer.parseInt(oldValue));
+	                	logger.debug("Set selected value for update of attribute Year.");
+	                	//Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	                		
+                		isoDateTime.setTime(occurrence.getTimeCollected());
+                		isoDateTime.set(Integer.parseInt(oldValue),occurrence.getMonthCollected(),occurrence.getDayCollected());
+                		occurrence.setIsoDateTimeBegin(isoDateTime.getTime());	                	              	            	
 	                	break;
 	                case 3: //Month 
-	                	if (! changedList.contains("month")) {
-	                		changedList.add("month");	                		
-	                		occurrence.setMonthCollected(Integer.parseInt(oldValue));
-	                		logger.debug("Set selected value for update of attribute Month.");
-	                	} else {
-	                		logger.debug("Later edit of Month. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+	                	// Set old value to attribute Month 
+                		occurrence.setMonthCollected(Integer.parseInt(oldValue));
+                		logger.debug("Set selected value for update of attribute Month.");
+                		// Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
+                		isoDateTime.setTime(occurrence.getTimeCollected());
+                		isoDateTime.set(occurrence.getYearCollected(), Integer.parseInt(oldValue), occurrence.getDayCollected());
+                		occurrence.setIsoDateTimeBegin(isoDateTime.getTime());              		
 	                    break;
 	                case 4: //Day	                	
-	                	if (! changedList.contains("day")) {
-	                		changedList.add("day");	                		
-		                	occurrence.setDayCollected(Integer.parseInt(oldValue));
-		                	logger.debug("Set selected value for update of attribute Day.");
-	                	} else {
-	                		logger.debug("Later edit of Day. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+                		// Set old value to attribute Day            		
+	                	occurrence.setDayCollected(Integer.parseInt(oldValue));
+	                	logger.debug("Set selected value for update of attribute Day.");
+	                	// Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
+	                	isoDateTime.setTime(occurrence.getTimeCollected());
+                		isoDateTime.set(occurrence.getYearCollected(), occurrence.getMonthCollected(), Integer.parseInt(oldValue));
+                		occurrence.setIsoDateTimeBegin(isoDateTime.getTime());
 	                	break;
-	                case 5: //Time 	                	
-	                	if (! changedList.contains("time")) {
-	                		changedList.add("time");
-	                		//hodnota se bude muset rozdelit na hodiny:minuty:sekundy a pak se ulozit pomoci get a set metod pro Date
-		                	//occurrence.setTimeCollected(Integer.parseInt(oldValue));
-	                		logger.debug("Set selected value for update of attribute Time.");
-	                	} else {
-	                		logger.debug("Later edit of Time. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+	                case 5: //Time 	                		                	
+                		// Set old value to attribute Time   
+	                	Date time = new Date();
+	                	SimpleDateFormat df = new SimpleDateFormat( "HH:mm:ss.S" );
+	                	try {
+							time = df.parse( oldValue );
+						} catch (ParseException e) {
+							logger.error("Parse time failed. "+ e);
+						}
+						occurrence.setTimeCollected(time);
+                		logger.debug("Set selected value for update of attribute Time.");
+                		// Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
+	                	isoDateTime.setTime(time);
+                		isoDateTime.set(occurrence.getYearCollected(), occurrence.getMonthCollected(), occurrence.getDayCollected());
+                		occurrence.setIsoDateTimeBegin(isoDateTime.getTime());
 	                    break;
 	                case 6: //Source	                	
-	                	if (! changedList.contains("source")) {
-	                		changedList.add("source");
-		                	occurrence.setDataSource(oldValue);
-		                	logger.debug("Set selected value for update of attribute DataSource.");
-	                	} else {
-	                		logger.debug("Later edit of DataSource. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+	                	// Set old value to attribute Source 
+	                	occurrence.setDataSource(oldValue);
+	                	logger.debug("Set selected value for update of attribute DataSource.");		                	            	
 	                	break;
 	                case 7: //Herbarium
-	                	if (! changedList.contains("hebarium")){
-	                		changedList.add("herbarium");
-	                		occurrence.setHerbarium(oldValue);
-	                		logger.debug("Set selected value for update of attribute Herbarium.");
-	                	} else {
-	                		logger.debug("Later edit of Herbarium. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+	                	// Set old value to attribute Herbarium
+                		occurrence.setHerbarium(oldValue);
+                		logger.debug("Set selected value for update of attribute Herbarium.");	                		          
 	                    break;
 	                case 8: //Note occurrence	
-	                	if (! changedList.contains("noteOccurrence")) {
-	                		changedList.add("noteOccurrence");
-	                		occurrence.setNote(oldValue);
-	                		logger.debug("Set selected value for update of attribute NoteOccurrence.");
-	                	} else {
-	                		logger.debug("Later edit of NoteOccurrence. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+	                	// Set old value to attribute Note occurence	                	
+                		occurrence.setNote(oldValue);
+                		logger.debug("Set selected value for update of attribute NoteOccurrence.");	                		        	
 	                	break;
+	                case 9: //Publication  
+	                	//Select record Publication where id = oldRocordId 
+	                	if (oldRecordId > 0){
+		                	Object[] objectPubl = searchObject("Publication",oldRecordId);
+		                	Publication publication = (Publication)objectPubl[0];
+		                	//Set old value to attribute publicationID
+		                	occurrence.setPublication(publication);
+		                	logger.debug("Set selected value for update of attribute Publication.");
+		    			}else {
+		    				logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
+		    			}
+	                    break;
 	                default:            
 	                    logger.error("No column defined for name "+ columnName);	                   
     			}  	
@@ -689,12 +584,15 @@ public class History extends Observable {
     			
     			// Get a specified number of columnName from habitat mapping.
     			int columnConstant;
-    			if (occurrenceHash.containsKey(columnName)) {
-    				 columnConstant = (Integer)occurrenceHash.get(columnName); 
+    			if (habitatHash.containsKey(columnName)) {
+    				 columnConstant = (Integer)habitatHash.get(columnName); 
     	        } else {
     	             columnConstant = 0;
     	        }        	    			
-    			    			
+    			  
+    			//informuje o tom, ze byla editovana tabulka tHabitat 
+    			editHabitat = true;
+    			
     			logger.debug("ColumnConstant: "+ columnConstant);
     			logger.debug("ColumnName: "+ columnName);
     			logger.debug("OldValue: "+ oldValue);  
@@ -702,413 +600,236 @@ public class History extends Observable {
     			
     			// Save new value for the column        		
      			switch (columnConstant) {
- 	                case 1:  //Quadrant    
- 	                	if (! changedList.contains("quadrant")) {
-	                		changedList.add("quadrant");
-	                		if (oldRecordId != 0 ){
-		                		/*
-		                		 * Zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-		                		 * Do occurrence.cHabitatId ulozit nacteny objekt Habitat
-		                		 * Zjistit, zda na aktulani objkt Habitat existuji jeste nejake FK z tOccurrence.cHabitatID
-		                		 * pokud neexistuji, tak ho smazem ...Pozor na to,ze smazane zaznamy jsou oznaceny jeko cDelete=1 !!!
-		                		 */
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Qudrant.");
-		                	}else {		                	
-			                	occurrence.getHabitat().setQuadrant(oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute Quadrant.");
-	                	} else {
-	                		logger.debug("Later edit of Quadrant. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();	                	              		               
+ 	                case 1:  //Quadrant     	                	
+                		/* pokud doslo ke zmene vazeb mezi tHabitats a tOccurrences z 1:N na 1:1, tak v tOccurrences.cHabitatId
+                		 * bude jiz vzdy ulozeno id nove insertovany zaznamu do tHabitats a nikdy uz nedojde k jeho zmene, tzn.
+                		 * vazba mezi tabulkami pro dany nalez jiz bude na vzdy 1:1 
+                		 */ 	                		  
+                		occurrence.getHabitat().setQuadrant(oldValue);		                	
+	                	logger.debug("Set selected value for update of attribute Quadrant.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {
+	                		// existuji dva edity EDIT (ovlivni jeden nalez) a EDITGROUP (ovlivni vice nalezu)
+	                		// potrebujeme zjistit, zda pro dany nalez je vazeba mezi tHabitats a tOccurrences vzdy 1:N
+	                		// nebo zda editaci nalezu vznikla vazvba 1:1
+	                		relationship = true;
+	                	} 	                	
  	                    break;
- 	                case 2: //Place description
- 	                	if (! changedList.contains("description")) {
-	                		changedList.add("description");
-	                		if (oldRecordId != 0 ){
-		                		//Zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Description.");
-		                	}else {		                	
-			                	occurrence.getHabitat().setDescription(oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute Description Habitat.");
-	                	} else {
-	                		logger.debug("Later edit of Description Habitat. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 2: //Place description 	                	 	                			                		 
+                		occurrence.getHabitat().setDescription(oldValue);		                	
+	                	logger.debug("Set selected value for update of attribute Description.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	              	
  	                	break;
- 	                case 3:  //Country
- 	                	if (! changedList.contains("country")) {
-	                		changedList.add("country");
-	                		if (oldRecordId != 0 ){
-		                		//menou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Country.");
-		                	}else {		                	
-			                	occurrence.getHabitat().setCountry(oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute Country.");
-	                	} else {
-	                		logger.debug("Later edit of Country. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 3:  //Country 	                	 	                			                		 
+                		occurrence.getHabitat().setCountry(oldValue);		                	
+	                	logger.debug("Set selected value for update of attribute Country.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
  	                    break;
- 	                case 4: //Altitude
- 	                	if (! changedList.contains("altitude")) {
-	                		changedList.add("altitude");
-	                		if (oldRecordId != 0 ){
-		                		//menou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Altitude.");
-		                	}else {		                	
-			                	occurrence.getHabitat().setAltitude(Double.parseDouble(oldValue));
-		                	}
-	                		logger.debug("Set selected value for update of attribute Altitude.");
-	                	} else {
-	                		logger.debug("Later edit of Altitude. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 4: //Altitude 	                	                			                		 
+                		occurrence.getHabitat().setAltitude(Double.parseDouble(oldValue));		                	
+	                	logger.debug("Set selected value for update of attribute Altitude.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
  	                	break;
- 	                case 5:  //Latitude  
- 	                	if (! changedList.contains("latitude")) {
-	                		changedList.add("latitude");
-	                		if (oldRecordId != 0 ){
-		                		//menou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Latitude.");
-		                	}else {		                	
-			                	occurrence.getHabitat().setLatitude(Double.parseDouble(oldValue));
-		                	}
-	                		logger.debug("Set selected value for update of attribute Latitude.");
-	                	} else {
-	                		logger.debug("Later edit of Latitude. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 5:  //Latitude   	                		                			                		  
+                		occurrence.getHabitat().setLatitude(Double.parseDouble(oldValue));		                	
+	                	logger.debug("Set selected value for update of attribute Latitude.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
  	                    break;
- 	                case 6: //Longitude
- 	                	if (! changedList.contains("longitude")) {
-	                		changedList.add("longitude");
-	                		if (oldRecordId != 0 ){
-		                		//menou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Longitude.");
-		                	}else {		                	
-			                	occurrence.getHabitat().setLongitude(Double.parseDouble(oldValue));
-		                	}
-	                		logger.debug("Set selected value for update of attribute Longitude.");
-	                	} else {
-	                		logger.debug("Later edit of Longitude. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 6: //Longitude 	                		                			                		
+                		occurrence.getHabitat().setLongitude(Double.parseDouble(oldValue));		                	
+	                	logger.debug("Set selected value for update of attribute Longitude.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
  	                	break;
- 	                case 7: //Nearest bigger seat  	
- 	                	if (! changedList.contains("nameVillage")) {
-	                		changedList.add("nameVillage");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);	   
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Village.");
-		                	}else {		                	
-		                		// Nacteni Village pro nasledny update tHabitat.cNearestVillageId
-	                			Object[] object = searchObject("Village",0,oldValue);
-	                			Village village = (Village) object[0];
-			                	occurrence.getHabitat().setNearestVillage(village);
-			                	logger.debug("Set selected value for update of attribute NearesVillage.");
-		                	}	                		
-	                	} else {
-	                		logger.debug("Later edit of Village. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 7: //Nearest bigger seat   	                	 	                			                		 
+                		//Nacteni Village pro nasledny update tHabitat.cNearestVillageId
+            			if (oldRecordId != 0){
+            				Object[] objectVill = searchObject("Village",oldRecordId);
+                			Village village = (Village)objectVill[0];
+    	                	occurrence.getHabitat().setNearestVillage(village);
+    	                	logger.debug("Set selected value for update of attribute NearesVillage.");
+            			} else {
+            				logger.error("UNDO - Incorrect oldRecordId for Village.");
+            			}
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
  	                    break;
- 	                case 8: //Phytochorion or hytochorion code 	                	
- 	                	if (! changedList.contains("phytochorion")) {
-	                		changedList.add("phytochorion");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);	 	    
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Phytochorion.");
-		                	}else {		                	
-		                		// Nacteni Phytochorion pro nasledny update tHabitat.cPhytochorionId
-	                			Object[] object = searchObject("Phytochorion",0,oldValue);
-	                			Phytochorion phytochorion = (Phytochorion) object[0];
-			                	occurrence.getHabitat().setPhytochorion(phytochorion);
-			                	logger.debug("Set selected value for update of attribute Phytochorion.");
-		                	}	                		
-	                	} else {
-	                		logger.debug("Later edit of Phytochorion. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
- 	                	break; 	
- 	               case 9: //Phytochorion code	                	
-	                	if (! changedList.contains("phytochorionCode")) {
-	                		changedList.add("phytochorionCode");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);	 	   
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute PhytochorionCode.");
-		                	}else {		                	
-		                		// Nacteni Phytochorion pro nasledny update tHabitat.cPhytochorionId
-	                			Object[] object = searchObject("PhytochorionCode",0,oldValue);
-	                			Phytochorion phytochorion = (Phytochorion) object[0];
-			                	occurrence.getHabitat().setPhytochorion(phytochorion);
-			                	logger.debug("Set selected value for update of attribute Phytochorion code.");
-		                	}	                		
-	                	} else {
-	                		logger.debug("Later edit of Phytochorion code. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                	break; 	     
-	                case 10:  //Territory        
-	                	if (! changedList.contains("nameTerritory")) {
-	                		changedList.add("nameTerritory");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);	 	
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute Territory.");
-		                	}else {		                	
-		                		// Nacteni Territory pro nasledny update tHabitat.cTerritory
-	                			Object[] object = searchObject("Territory",0,oldValue);
-	                			Territory territory = (Territory) object[0];
-			                	occurrence.getHabitat().setTerritory(territory);
-			                	logger.debug("Set selected value for update of attribute Territory.");
-		                	}	                		
-	                	} else {
-	                		logger.debug("Later edit of Territory. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+ 	                case 8: //Phytochorion or phytochorion code 	                	             			                		 
+                		// Nacteni Phytochorion pro nasledny update tHabitat.cPhytochorionId
+ 	                	if (oldRecordId != 0){
+	            			Object[] objectPhyt = searchObject("Phytochorion",oldRecordId);
+	            			Phytochorion phytochorion = (Phytochorion)objectPhyt[0];
+		                	occurrence.getHabitat().setPhytochorion(phytochorion);
+		                	logger.debug("Set selected value for update of attribute Phytochorion.");
+ 	                	}else {
+            				logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
+            			}
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
+ 	                    break; 	               
+	                case 9:  //Territory   	                	                			                		  
+                		// Nacteni Territory pro nasledny update tHabitat.cTerritory
+	                	if (oldRecordId != 0){
+	            			Object[] objectTerr = searchObject("Territory",oldRecordId);
+	            			Territory territory = (Territory)objectTerr[0];
+		                	occurrence.getHabitat().setTerritory(territory);
+		                	logger.debug("Set selected value for update of attribute Territory.");
+	                	}else {
+            				logger.error("UNDO - Incorrect oldRecordId for Territory.");
+            			}	
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	        	
 	                    break;
-	                case 11: //Note habitat
-	                	if (! changedList.contains("noteHabitat")) {
-	                		changedList.add("noteHabitat");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute NoteHabitat");
-		                	}else {		                	
-			                	occurrence.getHabitat().setNote(oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute NoteHabitat.");
-	                	} else {
-	                		logger.debug("Later edit of NoteHabitat. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
+	                case 10: //Note habitat	                		                			                		  
+                		occurrence.getHabitat().setNote(oldValue);		                	
+	                	logger.debug("Set selected value for update of attribute Note.");
+	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                		relationship = true;
+	                	} 	
 	                	break;
  	                default:            
  	                    logger.error("No column defined for name "+ columnName);	                   
-     			}  	
-    		} else if (tableName.equals("Publication")){
-    			
-    			// Get a specified number of columnName from publication mapping.
-    			int columnConstant;
-    			if (occurrenceHash.containsKey(columnName)) {
-    				 columnConstant = (Integer)occurrenceHash.get(columnName); 
-    	        } else {
-    	             columnConstant = 0;
-    	        }        	    			
-    			    			
-    			logger.debug("ColumnConstant: "+ columnConstant);
-    			logger.debug("ColumnName: "+ columnName);
-    			logger.debug("OldValue: "+ oldValue);  
-    			 			
-    			
-    			// Save new value for the column    			         		
-    			switch (columnConstant) {
-	                case 1: //Collection Name   
-	                	if (! changedList.contains("collectionName")) {
-	                		changedList.add("collectionName");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute CollectionName.");
-		                	}else {		                	
-			                	occurrence.getPublication().setCollectionName(oldValue);
-			                	//Update atribute isoDataTimeBegin (CollectionName + CollectionYearPublication + JournalName + JournalAuthor)
-			                	Integer publicationYear = occurrence.getPublication().getCollectionYearPublication();
-			                	String journalName = occurrence.getPublication().getJournalName();
-			                	String journalAuthor = occurrence.getPublication().getJournalAuthorName();
-			                	occurrence.getPublication().setReferenceCitation(oldValue+" "+publicationYear+" "+journalName+" "+journalAuthor);
-		                	}
-	                		logger.debug("Set selected value for update of attribute CollectionName .");
-	                	} else {
-	                		logger.debug("Later edit of CollectionName . ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                    break;
-	                case 2: //Year of publication
-	                	if (! changedList.contains("colletionYearPublication")) {
-	                		changedList.add("colletionYearPublication");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute CollectionYearPublication.");
-		                	}else {		                	
-			                	occurrence.getPublication().setCollectionYearPublication(Integer.parseInt(oldValue));
-			                	//Update atribute isoDataTimeBegin (CollectionName + CollectionYearPublication + JournalName + JournalAuthor)
-			                	String collectionName = occurrence.getPublication().getCollectionName();			                	
-			                	String journalName = occurrence.getPublication().getJournalName();
-			                	String journalAuthor = occurrence.getPublication().getJournalAuthorName();
-			                	occurrence.getPublication().setReferenceCitation(collectionName+" "+oldValue+" "+journalName+" "+journalAuthor);
-		                	}
-	                		logger.debug("Set selected value for update of Year of publication .");
-	                	} else {
-	                		logger.debug("Later edit of Year of publication. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                	break;
-	                case 3: //Journal  
-	                	if (! changedList.contains("journalName")) {
-	                		changedList.add("journalName");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute JournalName.");
-		                	}else {		                	
-			                	occurrence.getPublication().setJournalName(oldValue);
-			                	// Update atribute isoDataTimeBegin (CollectionName + CollectionYearPublication + JournalName + JournalAuthor)			                	
-			                	String collectionName = occurrence.getPublication().getCollectionName();
-			                	Integer publicationYear = occurrence.getPublication().getCollectionYearPublication();			                	
-			                	String journalAuthor = occurrence.getPublication().getJournalAuthorName();
-			                	occurrence.getPublication().setReferenceCitation(collectionName+" "+publicationYear+" "+oldValue+" "+journalAuthor);
-		                	}
-	                		logger.debug("Set selected value for update of attribute JournalName .");
-	                	} else {
-	                		logger.debug("Later edit of JournalName . ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                    break;
-	                case 4: //Author of journal
-	                	if (! changedList.contains("journalAuthor")) {
-	                		changedList.add("journalAuthor");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute JournalAuthor.");
-		                	}else {		                	
-			                	occurrence.getPublication().setJournalAuthorName(oldValue);
-			                	//Update atribute isoDataTimeBegin (CollectionName + CollectionYearPublication + JournalName + JournalAuthor)			                	
-			                	String collectionName = occurrence.getPublication().getCollectionName();
-			                	Integer publicationYear = occurrence.getPublication().getCollectionYearPublication();
-			                	String journalName = occurrence.getPublication().getJournalName();			                	
-			                	occurrence.getPublication().setReferenceCitation(collectionName+" "+publicationYear+" "+journalName+" "+oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute JournalAuthor .");
-	                	} else {
-	                		logger.debug("Later edit of JournalAuthor. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                	break;	                
-	                case 5: //Reference detail
-	                	if (! changedList.contains("referenceDetail")) {
-	                		changedList.add("referenceDetail");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute ReferenceDetail.");
-		                	}else {		                	
-			                	occurrence.getPublication().setReferenceDetail(oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute ReferenceDetail.");
-	                	} else {
-	                		logger.debug("Later edit of ReferenceDetail. ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                	break;
-	                case 6: //URL    
-	                	if (! changedList.contains("url")) {
-	                		changedList.add("url");
-	                		if (oldRecordId != 0 ){
-		                		//zmenou polozky doslo k insertu a prenastaveni occurrence.cHabitatId --> nutno nacist a ulozitHabitat s id = oldRecordId
-	                			Object[] object = searchObject("Habitat",oldRecordId,"");
-	                			Habitat habitatOld = (Habitat) object[0];
-			                	occurrence.setHabitat(habitatOld);
-			                	logger.debug("Change tOccurrence.cHabitatId. The change was created by attribute URLpublication.");
-		                	}else {		                	
-			                	occurrence.getPublication().setUrl(oldValue);
-		                	}
-	                		logger.debug("Set selected value for update of attribute URL (publication).");
-	                	} else {
-	                		logger.debug("Later edit of ReferenceDetail (publication). ");
-	                	}
-	                	//Delete record from tHistory and tHistoryChange
-	                	deleteHistoryRecords();
-	                    break;	                
-	                default:            
-	                    logger.error("No column defined for name "+ columnName);	                   
-    			}  	
+     			}  	    		
     		} else {
     			logger.equals("No table defined");
-    		}    			
-    		
+    		}    			    		
     	}
+ 
+    	//informovat uzivatele, co bude provedeno (viz seznam markLIstId, markItem) a dat mu volbu, zda ano ci ne... zde je nutne, aby fungovalo spravne 
+    	//executeUpdate, aby k update doslo az po jeho zavolani....!!!!
+    	//zavolat delete na vsechny vracene polozky Historiie - projit seznam s ID
+    	//v tabulce tOccurrences by se meli aktualizovat polozky cUpdateWhen a cUpdatewho na uzivatele a cas, ktery zavolal undo
+    	//zavolat znovu dotaz do db, aby se aktualizovaly vysledky ... createQuery, atd.
     	
-    	//projdem vysledky od 0 do zobrazeneho vysledku
-    	//pokud je tu informace o editaci polozky, ktere byla vracena starsi hodnota, tak se tato informace smaze 
-    	for( int i=0; i<indexFirstRow-1; i++) {
-    		String columnName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName();
-    		if (changedList.contains(columnName)){
-    			
-    		}
-    			
-    	}
-
+    	//vygenerovani zpravy pro uzivatele    	
+    	generateMessageUndo();
     }
+    
+    public void generateMessageUndo() {    	
+    	messageUndo = "Budou provedeny následující změny:\n";
+    	int count = markItem.size();
+    	for (int i=0; i<count; i++) {
+    		Object[] itemList = (Object[])(markItem.get(i));
+    		String item = (String)itemList[0];
+    		Integer maxId = (Integer)itemList[1];      		
+    		oldValue = ((HistoryRecord)editHistoryDataList.get(maxId)).getOldValue(); 
+    		messageUndo = messageUndo + item + " --> " + oldValue + "\n";
+    	}
+    	if (!relationship && editHabitat) {
+    		logger.debug(relationship);
+    		logger.debug(editHabitat);
+    		messageUndo = "\n" + messageUndo + "Tyto změny ovlivní více nálezů.\n";
+    	}
+    }
+    
+    public void commitUpdate() {
+    	try {
+			database.executeUpdate(occurrence);
+		} catch (RemoteException e) {
+			logger.error("CommitUpdate - RemoteException: "+e.toString());
+		} catch (DBLayerException e) {
+			logger.error("CommitUpdate - DBLayerException: "+e.toString());
+		}
+    }
+  
+    /**
+     * Projde oznacene zaznamy a postupne je smaze z tabulek historie.
+     * Pri mazani z tabulky tHistoryChange overi, zda na dany zaznam neni vice vazeb.
+     */
+    public void deleteHistoryRecords() {
+
+    	//count of selected record
+    	int count = editHistoryDataList.size();
+    	
+    	//take from younger record to older record
+    	for( int i=0; i < count; i++) {
+    		if (! markListId.contains(i)) {
+    			continue;
+    		}    		    		
+    		historyRecord = (HistoryRecord)editHistoryDataList.get(i);     	  	
+	    	try {
+				database.executeDelete(historyRecord);
+				logger.debug("Deleting historyRecord successfully. Number of result: "+i);
+			} catch (RemoteException e) {
+				logger.error("Deleting historyRecord - remoteException. "+e.toString());
+			} catch (DBLayerException e) {
+				logger.error("Deleting historyRecord failed. "+e.toString());
+			}
+			int countResult = searchHistoryChangeId(i);			
+			if (countResult == 1) {
+				//samzat zaznam z tabulky tHistoryChange - muzeme protoze neexistuji dalsi FK z tHistory.cChngeId
+				try {
+					database.executeDelete(historyChange);
+					logger.debug("Deleting historyChange successfully.");
+				} catch (RemoteException e) {
+					logger.error("Deleting historyChange - remoteException. "+e.toString());
+				} catch (DBLayerException e) {
+					logger.error("Deleting historyChange failed. "+e.toString());
+				}
+			} else {
+				logger.debug("Exist other record in the table tHistory, whitch has the same value of attribute cChangeId.");
+			}
+    	}
+    	//Clear list 
+    	markListId.clear();
+    	markItem.clear();
+    } 
+    
+    /**
+     * Zjisteni kolik zaznamu v tabulce tHistory je provazano s konkretnim zaznamem z tHistoryHange 
+     * @param id
+     * @return
+     */
+    public int searchHistoryChangeId(int id){
+    	HistoryChange historyChange = ((HistoryRecord)editHistoryDataList.get(id)).getHistoryChange();
+    	SelectQuery query = null;
+        try {
+        	    query = database.createQuery(HistoryRecord.class);
+        } catch(RemoteException e) {
+        	    System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
+        }        
+        // Add restriction to cChangeId column 
+        query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryRecord.HISTORYCHANGE, null, historyChange , null);
+        
+        int resultIdChange = 0;
+        try {                   
+        	resultIdChange = database.executeQuery(query);        
+        } catch (DBLayerException e) {                   
+            logger.error("Searching historyChangeId failed. Unable to execute search query.");
+        } catch (RemoteException e) {		 
+     	   System.err.println("RemoteException- searchHistoryChangeId(), executeQuery");
+ 	    } finally {
+     	   logger.debug("Searching historyChangeId ends successfully.");
+        }         
+ 	    
+ 	    int countResult = 100;
+ 	    try {
+			countResult = database.getNumRows(resultIdChange);
+			logger.debug("SearchHistoryChangeId - Number of result: "+countResult);
+		} catch (RemoteException e) {
+			System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
+		}		
+		return countResult;
+    }
+    
     
      //***************************//
     //****Init Hashtable*********//
     //**************************//
     
     private void initOccurrenceHash() {
-        occurrenceHash = new Hashtable<String, Integer>(9); 
+    	occurrenceHash = new Hashtable<String, Integer>(9); 
         occurrenceHash.put("plantId",1);
         occurrenceHash.put("yearCollected",2);
         occurrenceHash.put("monthCollected",3);
@@ -1117,23 +838,12 @@ public class History extends Observable {
         occurrenceHash.put("dataSource",6);
         occurrenceHash.put("herbarium",7);        
         occurrenceHash.put("noteOccurrence",8);
-        //isoDataTimeBegin je slozena s Year + Month + Day + Time ... mela by se zmenit vzdy, kdyz
-        // dojde ke zmene nektere z techto polozek ... jak to nejlepe zaridit???
-        //occurrenceHash.put("isoDataTimeBegin",9);
-        /*
-         * Jak se bude chovat cUpdateWhen, cUpdateWho v historii - asi se nastavi 
-         * cas vyvolani undo v historii a uzivatel, ktery to vyvolal
-         */
-        //occurrenceHash.put("cUpdateWhen",10);
-        //occurrenceHash.put("cUpdateWho",11);
-        /*
-         * Uvadet nejakou informaci z metadat - pripadne jakou
-         */
-        //occurrenceHash.put("metadataId",12);
+        occurrenceHash.put("publicationId",9);       
+        //occurrenceHash.put("metadataId",10);
     }    
     
     private void initHabitatHash() {
-        habitatHash = new Hashtable<String, Integer>(11);        
+    	habitatHash = new Hashtable<String, Integer>(11);         
         habitatHash.put("quadrant",1);
         habitatHash.put("description",2);
         habitatHash.put("country",3);
@@ -1142,34 +852,70 @@ public class History extends Observable {
         habitatHash.put("longitude",6);      
         habitatHash.put("nameVillage",7);      
         habitatHash.put("namePhytochorion",8);
-        habitatHash.put("code",9);
-        habitatHash.put("nameTerritory",10);
-        habitatHash.put("noteHabitat",11);
-    }
+        habitatHash.put("code",8);
+        habitatHash.put("nameTerritory",9);
+        habitatHash.put("noteHabitat",10);
+    }    
     
-    private void initPublicationHash() {
-        publicationHash = new Hashtable<String, Integer>(7);                       
-        publicationHash.put("collectionName",1);
-        publicationHash.put("colletionYearPublication",2);
-        publicationHash.put("journalName",3);
-        publicationHash.put("journalAuthorName",4);
-        //publicationHash.put("referenceCitation",7);
-        publicationHash.put("referenceDetail",5);
-        publicationHash.put("url",6);
-    }
-    
+   
     //****************************//
     //****Get and set metods*****//
     //**************************//
+    
+    /**
+     * @return true if all recorda were selected.
+     */
+    public boolean getSelectAll() {
+		  return this.selectAll;		  
+	   }
+
+    /**
+     * Set information if all records were selected. 
+     * @param selectAll
+     */
+	 public void setSelectAll(boolean selectAll) {
+		  this.selectAll = selectAll;		  
+	 } 
+    
+	 public HashSet getMarkListId() {
+		  return this.markListId;		  
+	   }
+
+	 public void setMarkListId(HashSet markListId) {
+		  this.markListId = markListId;		  
+	 } 
+	 
+    public ArrayList<Object[]> getMarkItem() {
+		  return this.markItem;		  
+	   }
+
+	 public void setMarkItem(ArrayList<Object[]> markItem) {
+		  this.markItem = markItem;		  
+	 } 
+    
+    public ArrayList<HistoryRecord> getEditHistoryDataList() {
+		  return this.editHistoryDataList;		  
+	   }
+
+	 public void setEditHistoryDataList(ArrayList<HistoryRecord> editHistoryDataList) {
+		  this.editHistoryDataList = editHistoryDataList;		  
+	 } 
     
      public String getCurrentDisplayRows() {
 		  return this.displayRow;		  
 	   }
 
-	 public void setCurrentDisplayRow(String displayRow) {
+	 public void setCurrentDisplayRows(String displayRow) {
 		  this.displayRow = displayRow;		  
 	 } 
      
+     public String getMessageUndo() {
+		  return this.messageUndo;		  
+	   }
+
+	 public void setMessageUndo(String messageUndo) {
+		  this.messageUndo = messageUndo;		  
+	 } 
     
     /**
      *  Set result of a database operation. This is used only for search operations.
@@ -1348,7 +1094,7 @@ public class History extends Observable {
 	*   Get operation whitch was used
 	*   @return operation whitch was used
 	*/
-	public String getOperation() {
+	public int getOperation() {
 	  return this.operation;
 	}
 
@@ -1356,7 +1102,7 @@ public class History extends Observable {
 	*   Set operation whitch was used
 	*   @param operation string containing operation whitch was used 
 	*/
-	public void setOperation(String operation) {
+	public void setOperation(int operation) {
 	  this.operation = operation;
 	}
 	 
