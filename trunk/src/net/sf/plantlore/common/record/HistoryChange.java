@@ -23,7 +23,7 @@ public class HistoryChange implements Serializable {
     public static final int HISTORYCHANGE_INSERT = 1;
     public static final int HISTORYCHANGE_EDIT = 2;
     public static final int HISTORYCHANGE_DELETE = 3;
-    //public static final int HISTORYCHANGE_INSERTEDIT = 4;    
+    public static final int HISTORYCHANGE_EDITGROUP = 4;    
     
     /** Parameters of the HistoryChange. For detailed explanation see data model documentation. */
     private int id;
