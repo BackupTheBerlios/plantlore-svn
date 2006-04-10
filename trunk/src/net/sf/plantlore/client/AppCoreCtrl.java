@@ -393,7 +393,11 @@ public class AppCoreCtrl
                 int i = ((Number)tf.getValue()).intValue(); 
                 if (i < 1)
                 {
-                    tf.setValue(e.getOldValue());
+                    Object obj = e.getOldValue();
+                    if (obj != null)
+                        tf.setValue(obj);
+                    else // either multiple properties changed or there was no previous value - the value should better be at least 1 anyway...
+                        tf.setValue(1);
                 } else {
                     model.setRecordsPerPage(i);                    
                 }
@@ -425,6 +429,7 @@ public class AppCoreCtrl
             putValue(MNEMONIC_KEY, L10n.getMnemonic("Login"));                        
         }
         public void actionPerformed(ActionEvent arg0) {
+                view.initOverview();
                 // Reuse the existing dialogs, hide'em when they're no longer needed.
                 if(loginModel == null) loginModel = new Login(new RMIDBLayerFactory());
                 if(loginView == null) loginView = new LoginView(loginModel);

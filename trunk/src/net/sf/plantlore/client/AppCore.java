@@ -61,18 +61,6 @@ public class AppCore extends Observable
         
         
         
-        //FIXME:
-        try {
-            
-            tableModel = new OverviewTableModel(database, prefs.getInt("recordsPerPage", 30));
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
-        logger.debug("tableModel created");
-        setChanged();
-        notifyObservers();
         logger.debug("AppCore observers notified");
     }
     
@@ -92,79 +80,132 @@ public class AppCore extends Observable
         return this.database;
     }    
     
+    /** Returns table model for the main Overview.
+     *
+     * Should be called only after the user logs in to a database.
+     *
+     * @return null if the database connection wasn't created yet or an exception was thrown while working with it...
+     * @return OverviewTableModel otherwise - creates a new one if it hasn't been created yet
+     */
     public OverviewTableModel getTableModel() {
-        return this.tableModel;
+        if (database != null)
+            if (tableModel == null) 
+            {
+            //FIXME:
+                try {
+                    tableModel = new OverviewTableModel(database, prefs.getInt("recordsPerPage", 30));
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                } catch (DBLayerException ex) {
+                    ex.printStackTrace();
+                }
+                logger.debug("tableModel created");
+                //FIXME: we should first return the model and *then* notifyObservers... :-/
+                setChanged();
+                notifyObservers();
+                return tableModel;
+            } else 
+                return tableModel;
+        else 
+            return null;
     }
         
     public void selectAll() {
-        tableModel.selectAll();
+        if (tableModel != null)
+            tableModel.selectAll();
         //setChanged();
         //notifyObservers();
     }
 
     public void selectNone() {
-        tableModel.selectNone();
+        if (tableModel != null)
+            tableModel.selectNone();
         //setChanged();
         //notifyObservers();
     }
     public void invertSelected() {
-        tableModel.invertSelected();
+        if (tableModel != null)
+            tableModel.invertSelected();
         //setChanged();
         //notifyObservers();
     }
 
     public int getRecordsPerPage() {
-        return tableModel.getPageSize();
+        if (tableModel != null)
+            return tableModel.getPageSize();
+        else 
+            return 0;
     }
 
     public void setRecordsPerPage(int recordsPerPage) {
-        tableModel.setPageSize(recordsPerPage);
-        setChanged();
-        notifyObservers();        
+        if (tableModel != null)
+        {
+            tableModel.setPageSize(recordsPerPage);
+            setChanged();
+            notifyObservers();        
+        }
     }
 
     public void nextPage() {
-        //FIXME:
-        try {
-            tableModel.nextPage();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
+        if (tableModel != null)
+        {
+            //FIXME:
+            try {
+                tableModel.nextPage();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }
+            setChanged();
+            notifyObservers();        
         }
-        setChanged();
-        notifyObservers();        
     }
     
     public void prevPage() {
-        //FIXME:
-        try {
-            tableModel.prevPage();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
+        if (tableModel != null)
+        {
+            //FIXME:
+            try {
+                tableModel.prevPage();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }
+            setChanged();
+            notifyObservers();
         }
-        setChanged();
-        notifyObservers();
     }
 
     public int getCurrentPage() {
-        return tableModel.getCurrentPage();
+        if (tableModel != null)
+            return tableModel.getCurrentPage();
+        else
+            return 0;
     }
 
     public void setCurrentPage(int currentPage) {
-        tableModel.setCurrentPage(currentPage);
-        setChanged();
-        notifyObservers();
+        if (tableModel != null)
+        {
+            tableModel.setCurrentPage(currentPage);
+            setChanged();
+            notifyObservers();
+        }
     }
     
     public int getResultsCount() {
-        return tableModel.getResultsCount();
+        if (tableModel != null)        
+            return tableModel.getResultsCount();
+        else
+            return 0;
     }
     
     public int getPagesCount() {
-        return tableModel.getPagesCount();
+        if (tableModel != null)
+            return tableModel.getPagesCount();
+        else
+            return 0;
     }
     
     public void setSelectedRow(int i) 

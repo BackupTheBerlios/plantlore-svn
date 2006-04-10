@@ -295,7 +295,7 @@ public class OverviewTableModel extends AbstractTableModel {
             from = 1;
         
         currentPage = from / pageSize + 1;
-        //FIXME: - taky musi umet prepocitat from a to
+        //FIXME: 
         try {
             loadData();
         } catch (RemoteException ex) {

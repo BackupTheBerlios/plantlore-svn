@@ -92,6 +92,7 @@ public class AppCoreView extends JFrame implements Observer
             prevPage = new JButton(),
             nextPage = new JButton();
     
+    private JScrollPane overviewScrollPane;
     private JLabel statusLabel;
     
     private JTable overview = new JTable();
@@ -124,7 +125,7 @@ public class AppCoreView extends JFrame implements Observer
         initFrame();
         initStatusBar();
         initMenu();
-        initOverview();
+        constructOverview();
         initMainToolBar();
         this.pack();
     }
@@ -210,23 +211,15 @@ public class AppCoreView extends JFrame implements Observer
     /** Constructs the data overview and adds it to the <code>mainPane</code>.
      *
      */
-    private void initOverview()
+    private void constructOverview()
     {
-        OverviewTableModel otm = model.getTableModel();
-        overview.setModel(otm);
         overview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        TableColumn tc;
-        for (int i = 0; i < otm.getColumnCount(); i++) {
-            tc = overview.getColumnModel().getColumn(i);
-            tc.setPreferredWidth(otm.getColumnSize(i));
-        }
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
-        JScrollPane sp = new JScrollPane(tablePanel);
+        overviewScrollPane = new JScrollPane(tablePanel);
         tablePanel.add(overview.getTableHeader(), BorderLayout.PAGE_START);
         tablePanel.add(overview, BorderLayout.CENTER);
-        sp.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*25));
-        mainPane.add(sp, BorderLayout.CENTER);
+        mainPane.add(overviewScrollPane, BorderLayout.CENTER);
         
         pageToolBar = new JToolBar();
         recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));
@@ -274,6 +267,24 @@ public class AppCoreView extends JFrame implements Observer
         sbm.add(prevPage, "Previous page");
         sbm.add(nextPage, "Next page");
         sbm.add(recordsPerPage, "Number of records per page");
+    }
+    
+    /** This method should be called right after the user logs into some database.
+     *
+     */
+    public void initOverview()
+    {
+        TableColumn tc;
+        OverviewTableModel otm = model.getTableModel();
+        //FIXME: what if otm == null ????????????
+        overview.setModel(otm);
+        overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*25));
+       
+        for (int i = 0; i < otm.getColumnCount(); i++) {
+            tc = overview.getColumnModel().getColumn(i);
+            tc.setPreferredWidth(otm.getColumnSize(i));
+        }
+        pack();
     }
     
     /** Returns the main window <code>StatusBarManager</code>.
