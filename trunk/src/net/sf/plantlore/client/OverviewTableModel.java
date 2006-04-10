@@ -167,7 +167,7 @@ public class OverviewTableModel extends AbstractTableModel {
             if (!recordsArray.contains(r))
                 recordsArray.add(r);
             else 
-                r = recordsArray.get(from+i-2);
+                r = recordsArray.get(from+i-2);//array starts from 0 whereas records are numbered from 1
                 
             row = new Object[COLUMN_COUNT];
             row[0] = r.selected;
@@ -291,6 +291,10 @@ public class OverviewTableModel extends AbstractTableModel {
         this.pageSize = pageSize;
         if (from + pageSize > resultsCount)
             from = resultsCount - pageSize + 1;
+        if (from < 1) //pageSize was bigger than the number of results
+            from = 1;
+        
+        currentPage = from / pageSize + 1;
         //FIXME: - taky musi umet prepocitat from a to
         try {
             loadData();
