@@ -434,7 +434,12 @@ public class AppCoreCtrl
                 if(loginModel == null) loginModel = new Login(new RMIDBLayerFactory());
                 if(loginView == null) loginView = new LoginView(loginModel);
                 if(loginCtrl == null) loginCtrl = new LoginCtrl(loginModel, loginView);
-                loginView.setVisible(true);				
+                loginView.setVisible(true);
+                
+                // Update the database layer reference in the AppCore
+                model.setDatabase(loginModel.getDBLayer());
+                
+                // Now, who else would like to know, that the new DBLayer has been set?
         }
     }
 }

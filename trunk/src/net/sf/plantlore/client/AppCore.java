@@ -67,6 +67,10 @@ public class AppCore extends Observable
         return this.database;
     }    
     
+    protected void setDatabase(DBLayer dblayer) {
+    	this.database = dblayer;
+    }
+    
     /** Returns table model for the main Overview.
      *
      * Should be called only after the user logs in to a database.
