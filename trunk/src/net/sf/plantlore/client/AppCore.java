@@ -48,19 +48,6 @@ public class AppCore extends Observable
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         prefs = Preferences.userNodeForPackage(this.getClass());
         
-//        database = new FirebirdDBLayer("localhost", "3050", "/mnt/data/temp/plantloreHIB.fdb", "sysdba", "masterkey");
-        database = new HibernateDBLayer();
-      
-        try {
-            database.initialize(null, null, null); // FIXME sem prijdou samosebou rozumne hodnoty
-        } catch (DBLayerException e) {
-            System.out.println("Error initializing database: "+e.toString());
-        } catch(RemoteException e) {
-        	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-        }
-        
-        
-        
         logger.debug("AppCore observers notified");
     }
     
