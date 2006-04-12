@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import javax.swing.JPanel;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 
 /**
@@ -41,7 +42,7 @@ public class AddEditView extends javax.swing.JDialog {
         convertCoordinatesGroup = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         AuthorLabel = new javax.swing.JLabel();
-        Object[] items = {"Ahoj", "Nazdar", "Jak se mas"};
+        Object [] items;
         AuthorComboBox = new AutoComboBox(model.getAuthors());
 
         TownLabel = new javax.swing.JLabel();
@@ -53,9 +54,11 @@ public class AddEditView extends javax.swing.JDialog {
         jScrollPane2 = new javax.swing.JScrollPane();
         descriptionArea = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
-        Hashtable<String, Integer> plants = model.getPlants();
-        String[] choices = new String[plants.size()];
-        plants.keySet().toArray(choices);
+        Pair<String, Integer>[] plants = model.getPlants();
+        String[] choices = new String[plants.length];
+        for (int i = 0; i < plants.length; i++)
+        choices[i] = plants[i].getFirst();
+
         taxonTextArea = new AutoTextArea(choices, this);
         jToggleButton1 = new javax.swing.JToggleButton();
         checklistButton = new javax.swing.JButton();

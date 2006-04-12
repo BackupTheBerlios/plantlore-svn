@@ -164,7 +164,7 @@ public class OverviewTableModel extends AbstractTableModel {
             resultObj = (Object[])records[i-1];
             result = (AuthorOccurrence)resultObj[0];
             Record r = new Record(result.getId(), false, from + i - 1);
-            if (!recordsArray.contains(r))
+            if (from + i - 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
                 recordsArray.add(r);
             else 
                 r = recordsArray.get(from+i-2);//array starts from 0 whereas records are numbered from 1

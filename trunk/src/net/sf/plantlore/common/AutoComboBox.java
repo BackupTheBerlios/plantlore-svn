@@ -114,7 +114,7 @@ public class AutoComboBox extends JComboBox {
 					if (prefix == null) prefix = getText(0, getLength());
 					// Find the first suitable choice and select it.
 					for(int i = 0; i < getItemCount(); i++) {
-						String item = (String) getItemAt(i); // test the i-th choice
+						String item = getItemAt(i).toString(); // test the i-th choice
 						if( prefix.length() <= item.length() && prefix.equalsIgnoreCase(item.substring(0, prefix.length())) ) {
 							setSelectedIndex(i); // CRAP! This method calls remove() & insertString()!!!
 							if(popup) item = item.substring(0, prefix.length()); // trim the string

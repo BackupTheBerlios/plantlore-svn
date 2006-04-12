@@ -11,6 +11,8 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Territory;
@@ -35,10 +37,10 @@ public class AppCore extends Observable
     private DBLayer database;  
     private OverviewTableModel tableModel;
     private Logger logger;
-    private Hashtable<String, Integer> plants = null;
-    private Object[] authors = null;
-    private Object[] villages = null;
-    private Object[] territories = null;
+    private Pair<String, Integer>[] plants = null;
+    private Pair<String, Integer>[] authors = null;
+    private Pair<String, Integer>[] villages = null;
+    private Pair<String, Integer>[] territories = null;
 
     private int selectedRow;
 
@@ -221,7 +223,7 @@ public class AppCore extends Observable
         prefs.putInt("recordsPerPage", recordsPerPage);
     }
     
-    public Hashtable<String, Integer> getPlants() {
+    public Pair<String, Integer>[] getPlants() {
         if (plants == null)
         {
             SelectQuery sq;
@@ -229,17 +231,19 @@ public class AppCore extends Observable
             int resultsCount;
             Object[] records;
             Plant p;
+            
             //FIXME:
             try {
                 sq = database.createQuery(Plant.class);
+                sq.addOrder(PlantloreConstants.DIRECT_ASC, Plant.TAXON);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 1, resultsCount);
-                plants = new Hashtable<String, Integer>(resultsCount+1, 1);
+                plants = new Pair[resultsCount];
                 for (int i = 1; i <= resultsCount; i++)
                 {
                     p = (Plant)((Object[])records[i-1])[0];
-                    plants.put(p.getTaxon(), p.getId());
+                    plants[i-1] = new Pair(p.getTaxon(), p.getId());
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -250,23 +254,26 @@ public class AppCore extends Observable
         } else
             return plants;
     }
-    public Object[] getAuthors() {
+    public Pair<String, Integer>[] getAuthors() {
         if (authors == null)
         {
             SelectQuery sq;
             int resultid;
             int resultsCount;
             Object[] records;
+            Author a;
             //FIXME:
             try {
                 sq = database.createQuery(Author.class);
+                sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 1, resultsCount);
-                authors = new Object[resultsCount];
+                authors = new Pair[resultsCount];
                 for (int i = 1; i <= resultsCount; i++)
                 {
-                    authors[i-1] = ((Author)((Object[])records[i-1])[0]).getWholeName();
+                    a = (Author)((Object[])records[i-1])[0];
+                    authors[i-1] = new Pair<String, Integer>(a.getWholeName(), a.getId());
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -278,23 +285,27 @@ public class AppCore extends Observable
             return authors;
     }
     
-    public Object[] getVillages() {
+    public Pair<String, Integer>[] getVillages() {
         if (villages == null)
         {
             SelectQuery sq;
             int resultid;
             int resultsCount;
             Object[] records;
+            Village v;
+            
             //FIXME:
             try {
                 sq = database.createQuery(Village.class);
+                sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 1, resultsCount);
-                villages = new Object[resultsCount];
+                villages = new Pair[resultsCount];
                 for (int i = 1; i <= resultsCount; i++)
                 {
-                    villages[i-1] = ((Village)((Object[])records[i-1])[0]).getName();
+                    v = (Village)((Object[])records[i-1])[0];
+                    villages[i-1] = new Pair<String, Integer>(v.getName(), v.getId());
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -306,23 +317,27 @@ public class AppCore extends Observable
             return villages;
     }
 
-    public Object[] getTerritories() {
+    public Pair<String, Integer>[] getTerritories() {
         if (territories == null)
         {
             SelectQuery sq;
             int resultid;
             int resultsCount;
             Object[] records;
+            Territory t;
+            
             //FIXME:
             try {
                 sq = database.createQuery(Territory.class);
+                sq.addOrder(PlantloreConstants.DIRECT_ASC, Territory.NAME);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 1, resultsCount);
-                territories = new Object[resultsCount];
+                territories = new Pair[resultsCount];
                 for (int i = 1; i <= resultsCount; i++)
                 {
-                    territories[i-1] = ((Territory)((Object[])records[i-1])[0]).getName();
+                    t = (Territory)((Object[])records[i-1])[0];
+                    territories[i-1] = new Pair<String,Integer>(t.getName(), t.getId());
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();

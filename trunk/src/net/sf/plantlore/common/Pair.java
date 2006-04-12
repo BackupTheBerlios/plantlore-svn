@@ -85,10 +85,10 @@ public class Pair<A, B> {
             return "["+a+","+b+"]";
 
         if (a instanceof String)
-            return (String) a; //heh :)
+            return (String) a; 
 
         if (b instanceof String)
-            return (String) b; //hmm:)
+            return (String) b; 
         
         return "["+a+","+b+"]";
     }

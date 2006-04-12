@@ -125,7 +125,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getAuthors());&#xa;"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Object[] items = {&quot;Ahoj&quot;, &quot;Nazdar&quot;, &quot;Jak se mas&quot;};"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Object [] items;"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="TownLabel">
@@ -189,7 +189,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoTextArea(choices, this);"/>
-                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Hashtable&lt;String, Integer&gt; plants = model.getPlants();&#xa;String[] choices = new String[plants.size()];&#xa;plants.keySet().toArray(choices);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Pair&lt;String, Integer&gt;[] plants = model.getPlants();&#xa;String[] choices = new String[plants.length];&#xa;for (int i = 0; i &lt; plants.length; i++) &#xa;    choices[i] = plants[i].getFirst();&#xa;&#xa;"/>
               </AuxValues>
             </Component>
           </SubComponents>
