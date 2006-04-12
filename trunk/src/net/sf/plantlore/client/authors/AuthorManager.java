@@ -278,7 +278,9 @@ public class AuthorManager extends Observable {
                     // Retrieve selected row interval
                 	Object[] objArray;
                 	try {
-                		objArray = database.more(resultId, from, to);
+                            // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
+                            // from-1 and to-1 just temporary
+                            objArray = database.more(resultId, from-1, to-1);
                 	} catch(RemoteException e) {
                     	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                     	return;
