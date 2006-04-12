@@ -14,25 +14,45 @@ public class ItemCtrl {
 	private Mode mode = Mode.ADD;
 	
 	
-	public void setMode(Mode m) { this.mode = m; }
+	// Switch between the ADD/EDIT behaviour
+	public void setMode(Mode m) { 
+		this.mode = m;
+		switch(m) {
+		case ADD:
+			view.setTitle("ADD");
+			view.alias.setText(""); 
+			view.host.setText("");
+			view.db.setText("");
+			break;
+		case EDIT:
+			view.setTitle("EDIT");
+			break;
+		}
+	}
 	
 	
 	public ItemCtrl(Login login, ItemView itemview) {
 		this.model = login; this.view = itemview;
-		
-		view.nextAddActionListener(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				int t = view.getHost().indexOf(':');
-				if(mode == Mode.ADD)
-					if(t < 0) model.createRecord(view.getAlias(), view.getHost(), 1099, view.getDB());
-					else model.createRecord(view.getAlias(), view.getHost().substring(0, t - 1), Integer.parseInt(view.getHost().substring(t)), view.getDB());
-				else if(mode == Mode.EDIT)
-					if(t < 0) model.updateSelectedRecord(view.getAlias(), view.getHost(), 1099, view.getDB());
-					else model.updateSelectedRecord(view.getAlias(), view.getHost().substring(0, t - 1), Integer.parseInt(view.getHost().substring(t)), view.getDB());
-				view.setVisible(false);
+		view.next.addActionListener(new Next());
+	}
+	
+	class Next extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
+			int t = view.host.getText().indexOf(':');
+			int port = (t < 0) ? 1099 : Integer.parseInt(view.host.getText().substring(t));
+			String host = (t < 0) ? view.host.getText() : view.host.getText().substring(0, t - 1);
+			String alias = view.alias.getText(), db = view.db.getText();
+			
+			switch(mode) {
+			case ADD:
+				model.createRecord(alias, host, port, db);
+				break;
+			case EDIT:
+				model.updateSelectedRecord(alias, host, port, db);
+				break;
 			}
-		});
-		
+			view.setVisible(false);
+		}
 	}
 
 }

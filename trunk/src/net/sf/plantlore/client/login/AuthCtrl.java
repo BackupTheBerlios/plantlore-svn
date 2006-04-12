@@ -11,19 +11,17 @@ public class AuthCtrl {
 	
 	public AuthCtrl(Login login, AuthView authview) {
 		this.model = login; this.view = authview;
-		
-		view.nextAddActionListener(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("hiding");
-				try {
-					model.connectToSelected(view.getUserName(), view.getPassword());
-				} catch(Exception e) {
-					System.err.println("The connection to the database couldn't be established!\n" + e);
-				}
-				
-				view.setVisible(false);
-			}
-		});
+		view.next.addActionListener(new Next());
+	}
+	
+	class Next extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
+			try {
+				model.connectToSelected(view.user.getSelectedItem().toString(), new String(view.password.getPassword()));
+			} catch(Exception e) { System.err.println("The connection to the database couldn't be established!\n" + e); }
+			finally { view.password.setText(""); }
+			view.setVisible(false);
+		}
 	}
 
 }

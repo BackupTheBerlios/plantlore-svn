@@ -12,54 +12,61 @@ public class LoginCtrl {
 	private Login model;
 	private LoginView view;
 	
+	private ItemView itemView;
+	private ItemCtrl itemCtrl;
+	private AuthView authView;
+	
+	
 	
 	public LoginCtrl(Login login, LoginView loginview) {
 		this.view = loginview; this.model = login;
+		// Create Item Add/Edit dialog.
+		itemView = new ItemView(model);
+		itemCtrl = new ItemCtrl(model, itemView);
+		// Create Authorization dialog.
+		authView = new AuthView(model);
+		new AuthCtrl(model, authView);
 		
-		view.listAddListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				model.setSelected(e.getFirstIndex());
-			}
-		});
 		
-		view.addAddActionListener(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				ItemView i = new ItemView(model);
-				i.setTitle("Add");
-				ItemCtrl c = new ItemCtrl(model, i);
-				c.setMode(ItemCtrl.Mode.ADD);
-				i.setVisible(true);
-				System.out.println("Adding dialog opened.");
-			}
-		});
-		
-		view.editAddActionListener(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				if(model.getSelected() == null) return;
-				ItemView i = new ItemView(model);
-				i.setTitle("Edit");
-				i.fillWithSelected();
-				ItemCtrl c = new ItemCtrl(model, i);
-				c.setMode(ItemCtrl.Mode.EDIT);
-				i.setVisible(true);
-			}
-		});
-				
-		view.removeAddActionListener(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				model.deleteSelected();				
-			}
-		});
-		
-		view.nextAddActionListener(new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				if(model.getSelected() == null) return; // Must select somethin'								
-				AuthView a = new AuthView(model);
-				AuthCtrl c = new AuthCtrl(model, a);
-				a.setVisible(true);
-			}
-		});
-		
+		view.choice.addListSelectionListener(new ChoiceChanged());
+		view.add.addActionListener(new AddRecord());
+		view.edit.addActionListener(new EditRecord());
+		view.remove.addActionListener(new RemoveRecord());
+		view.next.addActionListener(new Next());
+	}
+	
+	class ChoiceChanged implements ListSelectionListener {
+		public void valueChanged(ListSelectionEvent e) {
+			model.setSelected(e.getFirstIndex());
+		}	
+	}
+	
+	class AddRecord extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
+			itemCtrl.setMode(ItemCtrl.Mode.ADD);
+			itemView.setVisible(true);
+		}
+	}
+	
+	class  RemoveRecord extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
+			model.deleteSelectedRecord();
+		}
+	}
+	
+	class EditRecord extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
+			if(model.getSelected() == null) return;
+			itemCtrl.setMode(ItemCtrl.Mode.EDIT);
+			itemView.setVisible(true);
+		}
+	}
+	
+	class Next extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
+			if(model.getSelected() != null)
+				authView.setVisible(true);
+		}
 	}
 
 }

@@ -16,6 +16,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.Integer;
 import java.rmi.RemoteException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JFormattedTextField;
@@ -52,8 +54,11 @@ import org.apache.log4j.Logger;
 public class AppCoreCtrl
 {
     Logger logger;
+    //--------------SUPPLIED MODELS AND VIEWS-----------------
     AppCore model;
     AppCoreView view;
+    
+    //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
     Settings settingsModel;
     SettingsView settingsView;
     SettingsCtrl settingsCtrl;
@@ -429,17 +434,34 @@ public class AppCoreCtrl
             putValue(MNEMONIC_KEY, L10n.getMnemonic("Login"));                        
         }
         public void actionPerformed(ActionEvent arg0) {
-                view.initOverview();
                 // Reuse the existing dialogs, hide'em when they're no longer needed.
-                if(loginModel == null) loginModel = new Login(new RMIDBLayerFactory());
+                if(loginModel == null) {
+                	loginModel = new Login(new RMIDBLayerFactory());
+                	loginModel.addObserver(new DatabaseChange());
+                }
                 if(loginView == null) loginView = new LoginView(loginModel);
                 if(loginCtrl == null) loginCtrl = new LoginCtrl(loginModel, loginView);
                 loginView.setVisible(true);
-                
-                // Update the database layer reference in the AppCore
-                model.setDatabase(loginModel.getDBLayer());
-                
-                // Now, who else would like to know, that the new DBLayer has been set?
+                /*-------------------------------------------------------------------------------------
+                 * The problem here is that the dialog is opened - but another thread
+                 * takes care of its execution. That's why the code below will be executed
+                 * immediately after the dialog becomes visible. Clearly, the database layer
+                 * is not created at this time!
+                 *-------------------------------------------------------------------------------------*/
         }
     }
+    
+    // Update all information about the database layer and inform everyone who has to be informed 
+    class DatabaseChange implements Observer {
+    	public void update(Observable targer, Object parameter) {
+    		if(parameter != null && parameter instanceof DBLayer) {
+    			System.out.println("[!] DBLayer retrieval.");
+    			DBLayer dblayer = loginModel.getDBLayer();
+    			model.setDatabase(dblayer);
+    			view.initOverview();
+    		}
+    	}
+    }
+    
+    
 }
