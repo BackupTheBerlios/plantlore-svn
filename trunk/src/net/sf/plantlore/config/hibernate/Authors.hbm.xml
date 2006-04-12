@@ -44,6 +44,10 @@
                 name="Url"
                 not-null="false"                
                 type="java.lang.String"/> 
+      <property column="CDELETE"
+                name="deleted"
+                not-null="false"                
+                type="java.lang.Integer"/>   
       <property column="CNOTE"
                 length="256"
                 name="note"

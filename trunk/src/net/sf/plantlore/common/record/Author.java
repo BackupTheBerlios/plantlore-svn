@@ -27,6 +27,7 @@ public class Author implements Serializable {
     private String phoneNumber;
     private String email;
     private String url;
+    private Integer deleted;    
     private String note;
     
     /** Constants with column mapping (used for building select queries) */
@@ -39,6 +40,7 @@ public class Author implements Serializable {
     public static final String EMAIL = "email";    
     public static final String URL = "url";
     public static final String NOTE = "note";    
+    public static final String DELETED = "deleted";
     
     /** Creates a new instance of AuthorRecord */
     public Author() {
@@ -188,6 +190,24 @@ public class Author implements Serializable {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    /**
+     *   Get flag telling whether the record has been deleted
+     *   @return flag telling whether the record has been deleted. Value 1 means deleted.
+     *   @see setDeleted
+     */
+    public Integer getDeleted() {
+        return this.deleted;
+    }
+    
+    /**
+     *   Set flag telling whether the record has been deleted
+     *   @param deleted flag telling whether the record has been deleted. Value 1 means deleted.
+     *   @see getDeleted
+     */
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }       
     
     /**
      *   Get note about the author

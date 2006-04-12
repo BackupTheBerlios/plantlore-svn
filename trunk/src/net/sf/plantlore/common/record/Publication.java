@@ -28,7 +28,7 @@ public class Publication implements Serializable {
     private String referenceCitation;
     private String referenceDetail;
     private String url;
-    private int deleted;
+    private Integer deleted;
     private String note;
 
     /** Constants with column mapping (used for building select queries) */
@@ -196,7 +196,7 @@ public class Publication implements Serializable {
      *   @return flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see setDeleted
      */
-    public int getDeleted() {
+    public Integer getDeleted() {
         return this.deleted;
     }
     
@@ -205,7 +205,7 @@ public class Publication implements Serializable {
      *   @param deleted flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see getDeleted
      */
-    public void setDeleted(int deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }   
     

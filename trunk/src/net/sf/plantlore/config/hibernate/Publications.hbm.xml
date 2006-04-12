@@ -42,6 +42,10 @@
                 length="255"
                 name="referenceCitation"
                 not-null="true"                
-                type="java.lang.String"/>                                                         
+                type="java.lang.String"/>   
+      <property column="CDELETE"
+                name="deleted"
+                not-null="false"                
+                type="java.lang.Integer"/>                                                         
    </class>
 </hibernate-mapping>
