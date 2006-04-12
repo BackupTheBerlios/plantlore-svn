@@ -17,10 +17,18 @@ public class AuthCtrl {
 	class Next extends AbstractAction {
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				model.connectToSelected(view.user.getSelectedItem().toString(), new String(view.password.getPassword()));
-			} catch(Exception e) { System.err.println("The connection to the database couldn't be established!\n" + e); }
+				// Go very carefully here!
+				String user = (view.user.getSelectedItem() != null) ? view.user.getSelectedItem().toString() : null;
+				if(user != null) {
+					model.connectToSelected(user, new String(view.password.getPassword()));
+					view.setVisible(false);
+				}
+				else ; // TODO: fire something must be selected info!
+			} 
+			catch(Exception e) { 
+				System.err.println("The connection to the database couldn't be established!\n" + e); 
+			}
 			finally { view.password.setText(""); }
-			view.setVisible(false);
 		}
 	}
 

@@ -11,6 +11,8 @@ import java.util.Observer;
 
 import javax.swing.JDialog;
 
+import net.sf.plantlore.middleware.DBLayer;
+
 /**
  *
  * @author  yaa
@@ -96,8 +98,11 @@ public class LoginView extends javax.swing.JFrame implements Observer {
     
     
     
-    public void update(Observable arg0, Object arg1) {
-		choice.setListData(model.getRecords());		
+    public void update(Observable source, Object parameter) {
+    	if(parameter == null)
+    		choice.setListData(model.getRecords());
+    	else if(parameter != null && parameter instanceof DBLayer)
+    		this.setVisible(false); // the database layer has been created, we are no longer neccessary
 	}
     
     
