@@ -11,6 +11,8 @@ import java.util.Observer;
 
 import javax.swing.JDialog;
 
+import net.sf.plantlore.common.AutoComboBox;
+
 /**
  *
  * @author  yaa
@@ -37,7 +39,7 @@ public class AuthView extends javax.swing.JFrame implements Observer {
     private void initComponents() {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        user = new javax.swing.JComboBox();
+        user = new AutoComboBox();
         password = new javax.swing.JPasswordField();
         next = new javax.swing.JButton();
 
@@ -45,7 +47,9 @@ public class AuthView extends javax.swing.JFrame implements Observer {
         jLabel1.setText("Username:");
 
         jLabel2.setText("Password:");
-
+        
+        user.setStrict(false);
+        
         next.setText("Authorize");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
@@ -91,11 +95,9 @@ public class AuthView extends javax.swing.JFrame implements Observer {
     public void update(Observable arg0, Object arg1) {
 		DBInfo selected = model.getSelected();
 		if(selected == null) return;
+		System.out.println("selected = " + selected);
 		user.removeAllItems();
-		String[] u = selected.users;
-		int i = 0;
-		for (; i < u.length && u[i] != null; i++)	user.addItem(u[i]);
-		if (i > 0)	user.setSelectedIndex(0);
+		user.addItems(selected.users);
 	}
     
     
@@ -104,7 +106,7 @@ public class AuthView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JLabel jLabel1;
     protected javax.swing.JLabel jLabel2;
     protected javax.swing.JPasswordField password;
-    protected javax.swing.JComboBox user;
+    protected AutoComboBox user;
     // End of variables declaration//GEN-END:variables
 
 	

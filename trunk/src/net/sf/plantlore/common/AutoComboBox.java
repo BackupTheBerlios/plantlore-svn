@@ -34,7 +34,7 @@ import javax.swing.text.PlainDocument;
  * record "------" or "not specified" instead.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @version 1.1
+ * @version 1.2
  * @since The beginning of time.
  */
 public class AutoComboBox extends JComboBox {
@@ -42,6 +42,10 @@ public class AutoComboBox extends JComboBox {
 	protected boolean allowNew = false;
 	protected int capacity = 32;
 	
+	
+	public AutoComboBox() {
+		this(new String[] { null });		
+	}
 
 	/**
 	 * Create the AutoComboBox with given array of choices.
@@ -49,12 +53,13 @@ public class AutoComboBox extends JComboBox {
 	 * @param choices	<b>Sorted</b> list of available choices (items).
 	 */
 	public AutoComboBox(Object[] choices) {
-		super(choices); // base class constructor
 		setEditable(true);
+
+		addItems(choices);
 		
 		JTextField editor = (JTextField)getEditor().getEditorComponent();
 		AutoDocument a = new AutoDocument(); // change the model ~~> AutoDocument 
-		editor.setDocument(a); editor.addKeyListener(a); editor.addFocusListener(a);
+		editor.setDocument(a); editor.addKeyListener(a); editor.addFocusListener(a);;
 	}
 	
 	/**
@@ -70,6 +75,13 @@ public class AutoComboBox extends JComboBox {
 	 * @param capacity The maximum number of characters the user can type.
 	 */
 	public void setCapacity(int capacity) { this.capacity = capacity; }
+	
+		
+	public void addItems(Object[] items) {
+		for(Object item : items)
+			if(item != null) 
+				this.addItem(item);
+	}
 	
 	
 	
@@ -87,7 +99,16 @@ public class AutoComboBox extends JComboBox {
 		synchronized private void setMatch(String prefix, boolean popup) {
 			if (!prevent) {
 				prevent = true;
-				setPopupVisible(popup); // make sure popup is/isn't visible
+				/*----------------------------------------------------------------
+				 * Another amazing example of hyperactivity of this component.
+				 * When someone calls addItem(), that item gets automatically selected.
+				 * This means insertString() and setMatch() are called.
+				 * 
+				 * The problem is, that this method is likely to show the popup
+				 * part of the ComboBox; if the AutoComboBox is not currently
+				 * visible on the screen, that call will throw an exception.
+				 *----------------------------------------------------------------*/
+				if(isShowing()) setPopupVisible(popup); // make sure popup is/isn't visible
 				try {
 					boolean noMatch = true;
 					if (prefix == null) prefix = getText(0, getLength());
