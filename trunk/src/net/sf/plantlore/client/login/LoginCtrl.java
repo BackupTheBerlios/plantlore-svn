@@ -37,7 +37,7 @@ public class LoginCtrl {
 	
 	class ChoiceChanged implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
-			model.setSelected(e.getFirstIndex());
+			model.setSelected( view.choice.getSelectedIndex() );
 		}	
 	}
 	

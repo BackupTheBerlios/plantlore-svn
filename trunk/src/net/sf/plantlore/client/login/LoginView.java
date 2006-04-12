@@ -101,8 +101,12 @@ public class LoginView extends javax.swing.JFrame implements Observer {
     
     
     public void update(Observable source, Object parameter) {
-    	if(parameter == null)
+    	if(parameter == null) {
+    		// Every item of the list will - after being added to the list - cause an valueChange event,
+    		// because every time an item is inserted to the list, it is also selected!
     		choice.setListData(model.getRecords());
+    		
+    	}
     	else if(parameter != null && parameter instanceof DBLayer)
     		this.setVisible(false); // the database layer has been created, we are no longer neccessary
 	}

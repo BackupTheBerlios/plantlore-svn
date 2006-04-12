@@ -133,8 +133,9 @@ public class Login extends Observable {
 	 */
 	public void setSelected(int index) {
 		if(index >= 0) selected = dbinfo.elementAt(index); else selected = null;
-		logger.debug("Another record has been selected " + selected);
-		this.setChanged(); this.notifyObservers();
+		logger.debug("Selected database is " + selected);
+		this.setChanged(); 
+		this.notifyObservers("[!] recursion won't be tolerated");
 	}
 	
 	/**

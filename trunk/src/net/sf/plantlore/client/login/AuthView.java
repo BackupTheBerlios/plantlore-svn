@@ -95,7 +95,7 @@ public class AuthView extends javax.swing.JFrame implements Observer {
     public void update(Observable arg0, Object arg1) {
 		DBInfo selected = model.getSelected();
 		if(selected == null) return;
-		System.out.println("selected = " + selected);
+		System.out.println("AuthView [98] :: selected record is " + selected);
 		user.removeAllItems();
 		user.addItems(selected.users);
 	}
