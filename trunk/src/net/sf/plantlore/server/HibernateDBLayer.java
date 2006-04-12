@@ -90,10 +90,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb");
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
         //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdata.fdb");
-        cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/data/plantloreHIBdata.fdb");
+        cfg.setProperty("hibernate.connection.url", dbID);
         //cfg.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/plantlore");
-        cfg.setProperty("hibernate.connection.username", "sysdba");
-        cfg.setProperty("hibernate.connection.password", "masterkey");        
+        cfg.setProperty("hibernate.connection.username", user);
+        cfg.setProperty("hibernate.connection.password", password);        
         try {
             // Build session factory
             SessionFactory sessionFactory = cfg.buildSessionFactory();

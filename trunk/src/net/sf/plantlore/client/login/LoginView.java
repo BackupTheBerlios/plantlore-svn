@@ -28,6 +28,8 @@ public class LoginView extends javax.swing.JFrame implements Observer {
         initComponents();
         setLocationRelativeTo(null); // center of the screen
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        // See what's new.
+        update(null, null);
     }
     
     /** This method is called from within the constructor to

@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.DBLayerFactory;
 import net.sf.plantlore.server.DBLayerException;
@@ -19,7 +21,7 @@ import net.sf.plantlore.server.DBLayerException;
  * 
  * 
  * @author Erik Kratochvíl, Jakub Kotowski
- * @version 0.5
+ * @version 0.9
  */
 public class Login extends Observable {
 	
@@ -32,6 +34,7 @@ public class Login extends Observable {
 	
 	private DBLayerFactory factory = null;
 	private DBLayer dblayer;
+	private Logger logger;
 	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
@@ -41,6 +44,8 @@ public class Login extends Observable {
 	 */
 	public Login(DBLayerFactory factory) {
 		this.factory = factory;
+		logger = Logger.getLogger(this.getClass().getPackage().getName());
+		load();
 	}
 	
 	
@@ -50,6 +55,9 @@ public class Login extends Observable {
 	 */
 	protected void load() {
 		// TODO: JAKUB: nacist z XML souboru se jmenem `file` informace o databazich (triplety) do kolekce dbinfo.
+		dbinfo.add(new DBInfo("# Testovací databáze #", "", -1,
+				"jdbc:firebirdsql:natalka.kolej.mff.cuni.cz/3050:/mnt/data/temp/plantloreHIBdata.fdb", 
+				new String[] { "sysdba", null, null, null, null }));
 		
 		this.setChanged(); this.notifyObservers();
 	}
@@ -117,7 +125,8 @@ public class Login extends Observable {
 	 * @param index	The index of the selected record. Zero means first. Negative means nothing gets selected.
 	 */
 	public void setSelected(int index) {
-		if(index >= 0) selected = dbinfo.elementAt(index); else selected = null;		
+		if(index >= 0) selected = dbinfo.elementAt(index); else selected = null;	
+		this.setChanged(); this.notifyObservers();
 	}
 	
 	/**
@@ -131,12 +140,16 @@ public class Login extends Observable {
 	public DBLayer connectToSelected(String name, String password) throws NotBoundException, RemoteException, DBLayerException {
 		if(selected == null) return null;
 		dblayer = factory.create(selected.host, selected.port);
-		dblayer.initialize(name, password, selected.db);
+		dblayer.initialize(selected.db,name, password);
 		selected.promoteUser(name);
 		save();
 		// Everything went fine.
 		this.setChanged(); this.notifyObservers(dblayer);
 		return dblayer;
+	}
+	
+	public void reconnect() {
+		
 	}
 	
 	/**

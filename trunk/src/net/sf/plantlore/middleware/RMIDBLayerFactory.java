@@ -68,6 +68,7 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 		
 		return db;
 	}
+	
 
 	/**
 	 * Create a new DBLayer.
@@ -84,6 +85,12 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	 * with the remote database.
 	 */
 	public synchronized DBLayer create(String host, int port) throws RemoteException, NotBoundException {
+		// Some exceptional cases are handled specially.
+		if(host == null || host.equals("") || host.equalsIgnoreCase("localhost"))
+			return create();
+		
+		System.out.println("GOING RMI");
+		
 		// Connect to the remote server and obtain the RemoteDBLayerFactory
 		Registry registry = LocateRegistry.getRegistry(host, port);
 		RemoteDBLayerFactory remoteFactory = (RemoteDBLayerFactory) registry.lookup(RemoteDBLayerFactory.ID);

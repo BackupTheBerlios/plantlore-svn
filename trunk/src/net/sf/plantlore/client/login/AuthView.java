@@ -92,7 +92,7 @@ public class AuthView extends javax.swing.JFrame implements Observer {
 		DBInfo selected = model.getSelected();
 		if(selected == null) return;
 		user.removeAllItems();
-		String[] u = model.getSelected().users;
+		String[] u = selected.users;
 		int i = 0;
 		for (; i < u.length && u[i] != null; i++)	user.addItem(u[i]);
 		if (i > 0)	user.setSelectedIndex(0);
