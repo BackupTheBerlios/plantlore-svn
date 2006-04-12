@@ -192,8 +192,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (from>to) {
             logger.error("Cannot read rows from "+from+" to "+to+" because from > to");
             throw new DBLayerException("Cannot read rows from "+from+" to "+to+" because from > to");
-        }
-        if (from < 1) {
+        } 
+        if (from < 0) {
             logger.error("Cannot read rows starting at the given index: "+from);
             throw new DBLayerException("Cannot read rows starting at the given index: "+from);            
         }
