@@ -3,13 +3,12 @@
  *
  * Created on 12. duben 2006, 17:08
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 
 package net.sf.plantlore.common;
 
-/**
+/** Class to hold pairs of objects.
+ *
  *
  * @author Jakub
  */
@@ -17,7 +16,11 @@ public class Pair<A, B> {
     private A a;
     private B b;
     
-    /** Creates a new instance of Pair */
+    /** Creates a new instance of Pair 
+     *
+     * Pair() constructor (without arguments) is not provided deliberately!
+     * It would only cause problems in my opinion.
+     */
     public Pair(A a, B b) {
         this.a = a;
         this.b = b;
