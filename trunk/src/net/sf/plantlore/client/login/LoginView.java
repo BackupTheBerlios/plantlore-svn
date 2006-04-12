@@ -101,9 +101,12 @@ public class LoginView extends javax.swing.JFrame implements Observer {
     
     
     public void update(Observable source, Object parameter) {
+    	// Ignore setSelected() event
     	if(parameter == null) {
-    		// Every item of the list will - after being added to the list - cause an valueChange event,
-    		// because every time an item is inserted to the list, it is also selected!
+    		// Every item of the list will - after being added to the list - 
+    		// cause a ListSelectionEvent (valueChange) event!
+    		// This is probably because every time an item is inserted 
+    		// into the list, it is also selected!
     		choice.setListData(model.getRecords());
     		
     	}

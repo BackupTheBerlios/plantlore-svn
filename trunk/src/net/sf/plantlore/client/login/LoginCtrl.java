@@ -37,6 +37,12 @@ public class LoginCtrl {
 	
 	class ChoiceChanged implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
+			/*----------------------------------------------------------
+			 *  Well here is some nasty behaviour of the Swing
+			 *  framework: for some unknown reason 
+			 *  the ListSelectionEvent is sent twice every time 
+			 *  you select something in the list. Why?
+			 *----------------------------------------------------------*/
 			model.setSelected( view.choice.getSelectedIndex() );
 		}	
 	}

@@ -135,6 +135,18 @@ public class Login extends Observable {
 		if(index >= 0) selected = dbinfo.elementAt(index); else selected = null;
 		logger.debug("Selected database is " + selected);
 		this.setChanged(); 
+		/*------------------------------------------------------------
+		 * This here is a particularly mystique code.
+		 * The reason why a parameter is used here is simple:
+		 * 1. you select something in the choice list in the LoginView ->
+		 * 2. ListSelectionEvent is fired ->
+		 * 3. model.setSelected(..) is called in the handler ->
+		 * 4. notifyObservers(..) is called here ->
+		 * 5. loginView.update() gets involved ->
+		 * 6. without proper recognition of events setList(data)
+		 *    would be called which will in turn trigger 
+		 *    ListSelectionEvent -> 2.
+		 *------------------------------------------------------------*/
 		this.notifyObservers("[!] recursion won't be tolerated");
 	}
 	
