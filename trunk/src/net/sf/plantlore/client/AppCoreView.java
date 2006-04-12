@@ -278,6 +278,8 @@ public class AppCoreView extends JFrame implements Observer
         OverviewTableModel otm = model.getTableModel();
         //FIXME: what if otm == null ????????????
         overview.setModel(otm);
+        
+        // Comment to established db connection automatically without the login procedure        
         overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*25));
        
         for (int i = 0; i < otm.getColumnCount(); i++) {

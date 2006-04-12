@@ -108,6 +108,10 @@ public class AppCoreCtrl
         
         // TODO: Comb the code here KR@TER
         view.setLoginAction(new LoginAction());
+        
+        // This is here in order to skip login procedure and connect to the database automatically
+        // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
+        // view.initOverview();
     }
     
     /** Handles click to menu item Settings.
@@ -383,7 +387,7 @@ public class AppCoreCtrl
             //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
-            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
+            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha vĂ˝chod", 1);
             historyView = new HistoryView(historyModel, view);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
             historyView.show();  

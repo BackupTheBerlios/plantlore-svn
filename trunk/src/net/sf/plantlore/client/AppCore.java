@@ -48,6 +48,17 @@ public class AppCore extends Observable
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         prefs = Preferences.userNodeForPackage(this.getClass());
         
+        // This is here in order to skip login procedure and connect to the database automatically
+        // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
+/*        
+        this.database = new HibernateDBLayer();
+        try {        
+            database.initialize("jdbc:firebirdsql:localhost/3050:c:/Temp/Plantlore/plantloreHIBdata.fdb","sysdba","masterkey");
+        } catch (Exception e) {
+            
+        }
+        // --- End of temporary code
+*/        
         logger.debug("AppCore observers notified");
     }
     
