@@ -24,6 +24,7 @@ CREATE TABLE TAUTHORS (
     CEMAIL            VARCHAR(100),
     CURL              VARCHAR(255),
     CNOTE             VARCHAR(4096),
+    CDELETE           SMALLINT DEFAULT 0,
 PRIMARY KEY (CID));
 
 /* Table: TAUTHORSOCCURRENCES, Owner: SYSDBA */
@@ -48,7 +49,7 @@ CREATE TABLE THABITATS (
     CLATITUDE          DOUBLE PRECISION,
     CLONGITUDE         DOUBLE PRECISION,
     CNOTE              VARCHAR(4096),
-    CDELETE            SMALLINT,
+    CDELETE            SMALLINT DEFAULT 0,
 PRIMARY KEY (CID));
 
 /* Table: THISTORY, Owner: SYSDBA */
@@ -120,7 +121,7 @@ CREATE TABLE TOCCURRENCES (
     CUPDATEWHO         INTEGER NOT NULL,
     CNOTE              VARCHAR(4096),
     CMETADATAID        INTEGER NOT NULL,
-    CDELETE            SMALLINT,
+    CDELETE            SMALLINT DEFAULT 0,
 PRIMARY KEY (CID));
 
 /* Table: TPHYTOCHORIA, Owner: SYSDBA */
@@ -155,7 +156,7 @@ CREATE TABLE TPUBLICATIONS (
     CREFERENCEDETAIL            VARCHAR(20),
     CURL                        VARCHAR(100),
     CNOTE                       VARCHAR(4096),
-    CDELETE                     SMALLINT,
+    CDELETE                     SMALLINT DEFAULT 0,
 PRIMARY KEY (CID));
 
 /* Table: TRIGHT, Owner: SYSDBA */
