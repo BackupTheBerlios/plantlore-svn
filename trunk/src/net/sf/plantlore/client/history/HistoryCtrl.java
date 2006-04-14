@@ -34,19 +34,19 @@ public class HistoryCtrl {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = model;
         this.view = view;
-                     
-        view.addOkButtonListener(new okButtonListener());
-        view.addCancelButtonListener(new cancelButtonListener());
-        view.addHelpButtonListener(new helpButtonListener());
-        view.addPreviousButtonListener(new previousButtonListener());
-        view.addNextButtonListener(new nextButtonListener());
-        view.addSelectAllButtonListener(new selectAllButtonListener());
-        view.addUnselectAllButtonListener(new unselectAllButtonListener());
-        view.addUndoSelectedButtonListener(new undoSelectedButtonListener());
-        view.rowSetPropertyChangeListener(new rowSetDisplayChangeListener());
+             
+        view.okButton.addActionListener(new okButtonListener());
+        view.closeButton.addActionListener(new closeButtonListener());
+        view.helpButton.addActionListener(new helpButtonListener());
+        view.previousButton.addActionListener(new previousButtonListener());
+        view.nextButton.addActionListener(new nextButtonListener());
+        view.selectAllButton.addActionListener(new selectAllButtonListener());
+        view.unselectAllButton.addActionListener(new unselectAllButtonListener());
+        view.undoButton.addActionListener(new undoSelectedButtonListener());
+        view.toDisplayValueTextField.addPropertyChangeListener(new rowSetDisplayChangeListener());        
     }
     
-    /** 
+        /** 
     * On Ok makes the model store() the preferences and hides the view.
     * 
     */
@@ -61,7 +61,7 @@ public class HistoryCtrl {
     * On Cancel just hides the view.
     *
     */
-   class cancelButtonListener implements ActionListener {
+   class closeButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
     	   view.close();
@@ -223,4 +223,5 @@ public class HistoryCtrl {
            }
        }        	   
    }
+  
 }
