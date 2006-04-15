@@ -358,7 +358,13 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
     
     /**Rows to display */
     public Integer getDisplayRows() {
-        return Integer.parseInt(toDisplayValueTextField.getText());
+         Integer countRows;
+        try {
+            countRows = Integer.parseInt(toDisplayValueTextField.getText());
+        }catch (NumberFormatException e){            
+            countRows = 0;
+        }
+        return countRows;
     }
     
     /**Rows to display*/

@@ -24,6 +24,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.plantlore.client.history.WholeHistory;
+import net.sf.plantlore.client.history.WholeHistoryCtrl;
+import net.sf.plantlore.client.history.WholeHistoryView;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -64,9 +67,15 @@ public class AppCoreCtrl
     SettingsCtrl settingsCtrl;
     Preferences prefs;
     
+    // History of one occurrence
     History historyModel;
     HistoryView historyView;
     HistoryCtrl historyCtrl;
+    
+    //History of "database" 
+    WholeHistory wholeHistoryModel;
+    WholeHistoryView wholeHistoryView;
+    WholeHistoryCtrl wholeHistoryCtrl;
     
     Login loginModel;
     LoginView loginView;
@@ -90,6 +99,7 @@ public class AppCoreCtrl
         view.addDataAuthorsListener(new DataAuthorsListener());
         view.addDataPublicationsListener(new DataPublicationsListener());
         view.addDataHistoryListener(new DataHistoryListener());
+        view.addDataWholeHistoryListener(new DataWholeHistoryListener());
         
         view.setSearchAction(new SearchAction());
         view.setAddAction(new AddAction());
@@ -387,10 +397,23 @@ public class AppCoreCtrl
             //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
+            
             historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
             historyView = new HistoryView(historyModel, view, true);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
-            historyView.setVisible(true);  
+            historyView.setVisible(true);                         
+        }
+    }    
+    
+        class DataWholeHistoryListener implements ActionListener {
+    	public void actionPerformed(ActionEvent actionEvent)
+        {
+            System.out.println("Whole history - Undo selected");
+            
+            wholeHistoryModel = new WholeHistory(model.getDatabase());
+            wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view, true);
+            wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel, wholeHistoryView);
+            wholeHistoryView.setVisible(true); 
         }
     }    
     

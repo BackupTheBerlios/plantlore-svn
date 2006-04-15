@@ -21,15 +21,15 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class HistoryTableModel extends AbstractTableModel
 {
-	//Logger
-	private Logger logger;
-	// History model
-	private History model; 
-	private ArrayList<HistoryRecord> editHistoryDataList;
+    //Logger
+    private Logger logger;
+    // History model
+    private History model; 
+    private ArrayList<HistoryRecord> editHistoryDataList;
     private HashSet markListId;
     private ArrayList<Object[]> markItem;
 	
-	/** Names of the columns */
+    /** Names of the columns */
     private String[] columnNames;
     /** Data values displayed in the table*/
     private Object[][] data;

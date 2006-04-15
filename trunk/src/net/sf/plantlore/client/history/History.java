@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class History extends Observable {
 
-	/** Instance of a logger */
+    /** Instance of a logger */
     private Logger logger;   
     /** Exception with details about an error */
     private DBLayerException error = null;
