@@ -64,7 +64,7 @@ public class WholeHistoryTableModel extends AbstractTableModel {
     	
     	logger.debug("WholeHistory - Init data.");
     	
-    	editHistoryDataList = model.getEditHistoryDataList();
+    	editHistoryDataList = model.getHistoryDataList();
     	if (editHistoryDataList.size()==0 ){
     		this.data = new Object[0][];
     		return;

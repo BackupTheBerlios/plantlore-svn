@@ -170,10 +170,27 @@ public class WholeHistoryCtrl {
                view.messageUndoSelection();
            } else {
                logger.debug("Undo to date - id of selected row: "+ view.tableHistoryList.getSelectedRow());
+               int toResult = view.tableHistoryList.getSelectedRow() + model.getCurrentFirstRow();
+               model.clearEditObjectList();
+               model.undoToDate(toResult);
                int okCancle = view.messageUndo("model.getMessageUndo()");      
                if (okCancle == 0){
-                       //Button OK was press
-                       logger.debug("Button OK was press.");                       
+                   //Button OK was press
+                   logger.debug("Button OK was press.");    
+                   model.commitUpdate();
+                   model.deleteHistory(toResult);
+		    	   model.searchWholeHistoryData();        	
+		    	   model.processResult(1,model.getDisplayRows());
+		    	   view.tableHistoryList.setModel(new WholeHistoryTableModel(model));
+		    	   Integer resultRows = model.getResultRows();
+	        	   if (resultRows == 0) {
+	        		   view.displayedValueLabel.setText("0-0"); 
+	        	   } else {
+	        		   int from = model.getCurrentFirstRow();
+	                   int to = from + view.tableHistoryList.getRowCount() - 1;               
+	                   view.displayedValueLabel.setText(from + "-" + to);    
+	        	   }               
+	                   view.totalResultValueLabel.setText(resultRows.toString());
                } else {
                        //Button Cancle was press
                        //neco jako rollback - bude se volat nebo to bude zarizeno tim, ze se nezavola executeUpdate??

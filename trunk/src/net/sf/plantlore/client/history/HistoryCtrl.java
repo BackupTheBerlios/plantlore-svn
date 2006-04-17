@@ -94,7 +94,7 @@ public class HistoryCtrl {
            logger.debug("display rows: "+ view.getTable().getRowCount());      
            if (model.getCurrentFirstRow() > 1) {
                int firstRow = Math.max(model.getCurrentFirstRow()- model.getDisplayRows(), 1);
-               model.processEditResult(firstRow, model.getDisplayRows()); 
+               model.processResult(firstRow, model.getDisplayRows()); 
                if (model.getCurrentFirstRow() > 1){
                }
                view.getTable().setModel(new HistoryTableModel(model));
@@ -119,7 +119,7 @@ public class HistoryCtrl {
            logger.debug("display rows: "+ model.getDisplayRows());
            logger.debug("num rows in table (view) "+ view.getTable().getRowCount());              
            if (model.getCurrentFirstRow()+ view.getTable().getRowCount()<=model.getResultRows()) {
-               model.processEditResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.getTable().getRowCount());
+               model.processResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.getTable().getRowCount());
                view.getTable().setModel(new HistoryTableModel(model));             
                int from = model.getCurrentFirstRow();
                int to = from + view.getTable().getRowCount() - 1;
@@ -140,7 +140,7 @@ public class HistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {    	   
     	   model.setSelectAll(true);
-    	   model.processEditResult(1,model.getResultRows());    	   
+    	   model.processResult(1,model.getResultRows());    	   
     	   view.getTable().setModel(new HistoryTableModel(model));  
        }
    }
@@ -174,7 +174,7 @@ public class HistoryCtrl {
         	   model.commitUpdate();
         	   model.deleteHistoryRecords();
         	   model.searchEditHistory();
-        	   model.processEditResult(1,model.getDisplayRows());
+        	   model.processResult(1,model.getDisplayRows());
         	   view.getTable().setModel(new HistoryTableModel(model));
         	   int resultRows = model.getResultRows();
         	   if (resultRows == 0) {
@@ -184,7 +184,7 @@ public class HistoryCtrl {
                    int to = from + view.getTable().getRowCount() - 1;               
                    view.setCurrentRowsInfo(from + "-" + to);    
         	   }               
-               view.setCountResutl(resultRows);
+                   view.setCountResutl(resultRows);
            } else {
         	   //Button Cancle was press
         	   //neco jako rollback - bude se volat nebo to bude zarizeno tim, ze se nezavola executeUpdate??
@@ -215,7 +215,7 @@ public class HistoryCtrl {
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
            if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
-               model.processEditResult(model.getCurrentFirstRow(), view.getDisplayRows());
+               model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
                view.getTable().setModel(new HistoryTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.getTable().getRowCount() - 1;

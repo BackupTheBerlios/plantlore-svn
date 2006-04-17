@@ -74,48 +74,49 @@ public class History extends Observable {
     private boolean editHabitat;
     //zprava pro uzivatele
     private String messageUndo;
-   
+    //zaznamenani ITEM, jejichz zmena ovlibni vice polozek
+   private ArrayList<String> itemAffectMore = new ArrayList();
     
     //*********************Record of history ***************************************//    
     private Occurrence occurrence;
-	private HistoryRecord historyRecord;
-	private HistoryChange historyChange;
+    private HistoryRecord historyRecord;
+    private HistoryChange historyChange;
 	
     //	**************Informations about HistoryRecord*************//	
-	/** Name of the table where value was changed*/
-	private String tableName;  
-	/** Name of the column where value was changed*/
-	private String columnName;
-	/** Unique value identified occurrence */	
-	private Integer occurrenceId;
-	/**Unique value identified record in table where value was changed */
-	private int recordId;
-	/**Unique value identified record before changed */
-	private int oldRecordId;
-	/** Operation whitch was used*/   
-	private int operation;
-	/** Date and time when the reccord was changed*/
-	private java.util.Date when = new Date();	
-	/** Old value of attribute*/    
-	private String oldValue;
-	/** New value of attribute*/
-	private String newValue;
-   /** Name of user who did changed*/
-	private String nameUser;
+    /** Name of the table where value was changed*/
+    private String tableName;  
+    /** Name of the column where value was changed*/
+    private String columnName;
+    /** Unique value identified occurrence */	
+    private Integer occurrenceId;
+    /**Unique value identified record in table where value was changed */
+    private int recordId;
+    /**Unique value identified record before changed */
+    private int oldRecordId;
+    /** Operation whitch was used*/   
+    private int operation;
+    /** Date and time when the reccord was changed*/
+    private java.util.Date when = new Date();	
+    /** Old value of attribute*/    
+    private String oldValue;
+    /** New value of attribute*/
+    private String newValue;
+    /** Name of user who did changed*/
+    private String nameUser;
 	
-	//**************Informations about occurrences***************//
-	/** Name of plant for specified occurrenc*/
-	private String namePlant;
-	/** Name of author for specified occurrenc*/
-	private String nameAuthor;
-	/** Informaciton about location for specified occurrenc*/
-	private String location;
-	
-	 //********************************************************//
-	 /** Mapping of entities */
-	private Hashtable<String, Integer> publicationHash;
-	private Hashtable<String, Integer> habitatHash;
-	private Hashtable<String, Integer> occurrenceHash;  
+    //**************Informations about occurrences***************//
+    /** Name of plant for specified occurrenc*/
+    private String namePlant;
+    /** Name of author for specified occurrenc*/
+    private String nameAuthor;
+    /** Informaciton about location for specified occurrenc*/
+    private String location;
+
+     //********************************************************//
+     /** Mapping of entities */
+    private Hashtable<String, Integer> publicationHash;
+    private Hashtable<String, Integer> habitatHash;
+    private Hashtable<String, Integer> occurrenceHash;  
     
     /**  
      *  Creates a new instance of History 
@@ -197,7 +198,7 @@ public class History extends Observable {
 	   //Searching for information about data editing concerned with specified occurrence
 	   searchEditHistory();
 	   //Process results of a search "edit" query 
-	   processEditResult(1,displayRows);
+	   processResult(1,displayRows);
     }	
 
     /**
@@ -308,7 +309,7 @@ public class History extends Observable {
      * @param fromTable number of the first row to show in table. Number of the first row to retraieve is 1.
      * @param count number of rows to retrieve 
      */
-    public void processEditResult(int fromTable, int count) {
+    public void processResult(int fromTable, int count) {
     	
     	if (this.resultId != 0) {
     		int currentRow = getResultRows();
@@ -330,8 +331,8 @@ public class History extends Observable {
                  	try {
                  		objectHistory = database.more(this.resultId, 1, to);  
                  	} catch(RemoteException e) {
-                     	System.err.println("RemoteException- processEditResult, more");
-                     	logger.debug("RemoteException- processEditResult, more");
+                     	System.err.println("RemoteException- processResult, more");
+                     	logger.debug("RemoteException- processResult, more");
                      	return;
                      }                   
                     int countResult = objectHistory.length;  
@@ -467,24 +468,24 @@ public class History extends Observable {
     		historyChange = historyRecord.getHistoryChange();
     		tableName = historyRecord.getHistoryColumn().getTableName();
     		columnName = historyRecord.getHistoryColumn().getColumnName();    		    			
-			oldRecordId = historyChange.getOldRecordId();
-			recordId = historyChange.getRecordId();
-			occurrenceId = historyChange.getOccurrence().getId();		   
-			operation = historyChange.getOperation();
-			oldValue = historyRecord.getOldValue();
+            oldRecordId = historyChange.getOldRecordId();
+            recordId = historyChange.getRecordId();
+            occurrenceId = historyChange.getOccurrence().getId();		   
+            operation = historyChange.getOperation();
+            oldValue = historyRecord.getOldValue();
 						
     		if (tableName.equals("Occurrence")){  
     			if (occurrenceId != recordId){
     				logger.error("Inccorect information in history tables --> occurrenceId != recordId ... Incorrect identifier of Occurrence.");
     			}
     			
-    			//Get a specified number of columnName from occurrence mapping.
-    			int columnConstant;
-    			if (occurrenceHash.containsKey(columnName)) {
-    				 columnConstant = (Integer)occurrenceHash.get(columnName); 
-    	        } else {
-    	             columnConstant = 0;
-    	        }        	    			
+                        //Get a specified number of columnName from occurrence mapping.
+                        int columnConstant;
+                        if (occurrenceHash.containsKey(columnName)) {
+                                 columnConstant = (Integer)occurrenceHash.get(columnName); 
+                        } else {
+                             columnConstant = 0;
+                        }        	    			
     			  
     			//init Calendar    		
     			Calendar isoDateTime = new GregorianCalendar();
@@ -496,15 +497,15 @@ public class History extends Observable {
     			switch (columnConstant) {
 	                case 1: //Taxon  
 	                	if (oldRecordId > 0 ) {
-		                	//Select record Plant where id = oldRocordId 
-		                	Object[] object = searchObject("Plant",oldRecordId);
-		                	Plant plant = (Plant)object[0];
-		                	//Set old value to attribute plantID
-		                	occurrence.setPlant(plant);
-		                	logger.debug("Set selected value for update of attribute Taxon.");	
-		    			}else {
-		    				logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
-		    			}
+                                    //Select record Plant where id = oldRocordId 
+                                    Object[] object = searchObject("Plant",oldRecordId);
+                                    Plant plant = (Plant)object[0];
+                                    //Set old value to attribute plantID
+                                    occurrence.setPlant(plant);
+                                    logger.debug("Set selected value for update of attribute Taxon.");	
+                                    }else {
+                                            logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
+                                    }
 	                    break;
 	                case 2: //Year	
                 	    //Set old value to attribute Year          		
@@ -582,16 +583,16 @@ public class History extends Observable {
     		} else if (tableName.equals("Habitat") || tableName.equals("Village")
     				   || tableName.equals("Territory") || tableName.equals("Phytochorion")){
     			
-    			// Get a specified number of columnName from habitat mapping.
-    			int columnConstant;
-    			if (habitatHash.containsKey(columnName)) {
-    				 columnConstant = (Integer)habitatHash.get(columnName); 
+                // Get a specified number of columnName from habitat mapping.
+                int columnConstant;
+                if (habitatHash.containsKey(columnName)) {
+                         columnConstant = (Integer)habitatHash.get(columnName); 
     	        } else {
     	             columnConstant = 0;
     	        }        	    			
     			  
     			//informuje o tom, ze byla editovana tabulka tHabitat 
-    			editHabitat = true;
+    			editHabitat = true;                       
     			
     			logger.debug("ColumnConstant: "+ columnConstant);
     			logger.debug("ColumnName: "+ columnName);
@@ -611,42 +612,42 @@ public class History extends Observable {
 	                		// existuji dva edity EDIT (ovlivni jeden nalez) a EDITGROUP (ovlivni vice nalezu)
 	                		// potrebujeme zjistit, zda pro dany nalez je vazeba mezi tHabitats a tOccurrences vzdy 1:N
 	                		// nebo zda editaci nalezu vznikla vazvba 1:1
-	                		relationship = true;
+	                		relationship = true;                                                                            
 	                	} 	                	
  	                    break;
  	                case 2: //Place description 	                	 	                			                		 
                 		occurrence.getHabitat().setDescription(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Description.");
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                         
 	                	} 	              	
  	                	break;
  	                case 3:  //Country 	                	 	                			                		 
                 		occurrence.getHabitat().setCountry(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Country.");
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                          
 	                	} 	
  	                    break;
  	                case 4: //Altitude 	                	                			                		 
                 		occurrence.getHabitat().setAltitude(Double.parseDouble(oldValue));		                	
 	                	logger.debug("Set selected value for update of attribute Altitude.");
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                          
 	                	} 	
  	                	break;
  	                case 5:  //Latitude   	                		                			                		  
                 		occurrence.getHabitat().setLatitude(Double.parseDouble(oldValue));		                	
 	                	logger.debug("Set selected value for update of attribute Latitude.");
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                        
 	                	} 	
  	                    break;
  	                case 6: //Longitude 	                		                			                		
                 		occurrence.getHabitat().setLongitude(Double.parseDouble(oldValue));		                	
 	                	logger.debug("Set selected value for update of attribute Longitude.");
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                         
 	                	} 	
  	                	break;
  	                case 7: //Nearest bigger seat   	                	 	                			                		 
@@ -660,7 +661,7 @@ public class History extends Observable {
             				logger.error("UNDO - Incorrect oldRecordId for Village.");
             			}
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                        
 	                	} 	
  	                    break;
  	                case 8: //Phytochorion or phytochorion code 	                	             			                		 
@@ -674,7 +675,7 @@ public class History extends Observable {
             				logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
             			}
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                        
 	                	} 	
  	                    break; 	               
 	                case 9:  //Territory   	                	                			                		  
@@ -688,21 +689,21 @@ public class History extends Observable {
             				logger.error("UNDO - Incorrect oldRecordId for Territory.");
             			}	
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                      
 	                	} 	        	
 	                    break;
 	                case 10: //Note habitat	                		                			                		  
                 		occurrence.getHabitat().setNote(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Note.");
 	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
-	                		relationship = true;
+	                		relationship = true;                                        
 	                	} 	
 	                	break;
  	                default:            
  	                    logger.error("No column defined for name "+ columnName);	                   
      			}  	    		
     		} else {
-    			logger.equals("No table defined");
+    			logger.error("No table defined");
     		}    			    		
     	}
  
@@ -717,7 +718,7 @@ public class History extends Observable {
     }
     
     public void generateMessageUndo() {    	
-    	messageUndo = "Budou provedeny následující změny:\n";
+    	messageUndo = "Budou provedeny následující změny:\n";      
     	int count = markItem.size();
     	for (int i=0; i<count; i++) {
     		Object[] itemList = (Object[])(markItem.get(i));
@@ -757,7 +758,9 @@ public class History extends Observable {
     		if (! markListId.contains(i)) {
     			continue;
     		}    		    		
-    		historyRecord = (HistoryRecord)editHistoryDataList.get(i);     	  	
+    		historyRecord = (HistoryRecord)editHistoryDataList.get(i); 
+    		historyChange = historyRecord.getHistoryChange();    		
+        	
 	    	try {
 				database.executeDelete(historyRecord);
 				logger.debug("Deleting historyRecord successfully. Number of result: "+i);
@@ -766,9 +769,10 @@ public class History extends Observable {
 			} catch (DBLayerException e) {
 				logger.error("Deleting historyRecord failed. "+e.toString());
 			}
-			int countResult = searchHistoryChangeId(i);			
-			if (countResult == 1) {
+			int countResult = searchHistoryChangeId(historyChange.getId());			
+			if (countResult == 0) {
 				//samzat zaznam z tabulky tHistoryChange - muzeme protoze neexistuji dalsi FK z tHistory.cChngeId
+				//pokud po smazani zaznamu z tHistory jsme nasli alespon jeden zaznam, ktery ma stejny FK na zaznam z tChangeHistory
 				try {
 					database.executeDelete(historyChange);
 					logger.debug("Deleting historyChange successfully.");
@@ -792,15 +796,17 @@ public class History extends Observable {
      * @return
      */
     public int searchHistoryChangeId(int id){
-    	HistoryChange historyChange = ((HistoryRecord)editHistoryDataList.get(id)).getHistoryChange();
+    	
     	SelectQuery query = null;
         try {
         	    query = database.createQuery(HistoryRecord.class);
         } catch(RemoteException e) {
         	    System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
-        }        
+        }     
+        // Create aliases for table tHistoryChange.      
+        query.createAlias("historyChange", "hc");  
         // Add restriction to cChangeId column 
-        query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryRecord.HISTORYCHANGE, null, historyChange , null);
+        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.id", null, id , null);
         
         int resultIdChange = 0;
         try {                   
