@@ -2,6 +2,7 @@ package net.sf.plantlore.middleware;
 
 import java.io.Serializable;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Collection;
 
 import net.sf.plantlore.common.PlantloreConstants;
@@ -28,7 +29,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param propertyName name of the column for which we want to create an alias (foreign key column)
      *  @param aliasName name of the new alias
      */    
-    void createAlias(String propertyName, String aliasName);
+    void createAlias(String propertyName, String aliasName)  throws RemoteException;
     
     /**
      *  Add restriction to the constructed criteria. Restrictions are parts of the where condition.
@@ -39,7 +40,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param value value for restrictions containg values
      *  @param values collection of values for restrictions working with more values (RESTR_IN)
      */
-    void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values);
+    void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values)  throws RemoteException;
     
     /**
      *  Add projection to constructed criteria. Projections are columns we want to select
@@ -48,7 +49,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param propertyName name of the column for the projection
      *  @see PlantloreConstants
      */
-    void addProjection(int type, String propertyName);
+    void addProjection(int type, String propertyName)  throws RemoteException;
     
     /**
      *  Set method of fetching the results.
@@ -56,7 +57,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param associationPath
      *  @param mode
      */
-    void setFetchMode(String associationPath, int mode);
+    void setFetchMode(String associationPath, int mode)  throws RemoteException;
     
     /**
      *  Add orderby clause to the constructed criteria.
@@ -64,7 +65,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param direction direction of ordering (ASC or DESC)
      *  @param propertyName property we want to use for ordering the results
      */
-    void addOrder(int direction, String propertyName);
+    void addOrder(int direction, String propertyName)  throws RemoteException;
     
     /**
      *  Add association to the criteria. Association means that given associated record (from a
@@ -72,6 +73,6 @@ public interface SelectQuery extends Serializable, Remote {
      *
      *  @param associationPath path of associated entities
      */
-    void addAssociation(String associationPath);
+    void addAssociation(String associationPath)  throws RemoteException;
     
 }

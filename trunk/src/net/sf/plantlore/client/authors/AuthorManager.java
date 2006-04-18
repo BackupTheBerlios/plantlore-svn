@@ -187,66 +187,89 @@ public class AuthorManager extends Observable {
                 // Create new Select query
                 SelectQuery query;
                 try {
-                	query = database.createQuery(Author.class);
-                } catch(RemoteException e) {
-                	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                	return null;
-                }
-                if (searchName != null)
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.WHOLENAME, null, "%"+searchName+"%", null);
-                if (searchOrganization != null) 
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ORGANIZATION, null, "%"+searchOrganization+"%", null);
-                if (searchRole != null)
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ROLE, null, "%"+searchRole+"%", null);
-                if (searchEmail != null) 
-                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.EMAIL, null, "%"+searchEmail+"%", null);                
-                String field;
-                switch (sortField) {
-                    case 1: field = Author.WHOLENAME;
-                            break;
-                    case 2: field = Author.ORGANIZATION;
-                            break;
-                    case 3: field = Author.ROLE;
-                            break;
-                    case 4: field = Author.EMAIL;
-                            break;
-                    case 5: field = Author.PHONENUMBER;
-                            break;                            
-                    case 6: field = Author.URL;
-                            break;          
-                    default:field = Author.WHOLENAME;
-                }
-                
-                if (sortDirection == 0) {
-                    query.addOrder(PlantloreConstants.DIRECT_ASC, field);
-                } else {
-                    query.addOrder(PlantloreConstants.DIRECT_DESC, field);                    
-                }   
-                int resultId = 0;
-                try {
-                    // Execute query                    
-                    resultId = database.executeQuery(query);        
-                } catch (DBLayerException e) {
-                    // Log and set an error                   
-                    logger.error("Searching authors failed. Unable to execute search query.");
-                    setError(e);
-                    // setError("Searching authors failed. Please contact your administrator.");
-                } finally {
-                    // Set operation state to finished
-                    done = true;                    
-                    // Save the results
-                    setResult(resultId);
-                    return resultId;                    
-                } 
+					query = database.createQuery(Author.class);
+
+					if (searchName != null)
+						query.addRestriction(PlantloreConstants.RESTR_LIKE,
+								Author.WHOLENAME, null, "%" + searchName + "%",
+								null);
+					if (searchOrganization != null)
+						query.addRestriction(PlantloreConstants.RESTR_LIKE,
+								Author.ORGANIZATION, null, "%"
+										+ searchOrganization + "%", null);
+					if (searchRole != null)
+						query
+								.addRestriction(PlantloreConstants.RESTR_LIKE,
+										Author.ROLE, null, "%" + searchRole
+												+ "%", null);
+					if (searchEmail != null)
+						query.addRestriction(PlantloreConstants.RESTR_LIKE,
+								Author.EMAIL, null, "%" + searchEmail + "%",
+								null);
+					String field;
+					switch (sortField) {
+					case 1:
+						field = Author.WHOLENAME;
+						break;
+					case 2:
+						field = Author.ORGANIZATION;
+						break;
+					case 3:
+						field = Author.ROLE;
+						break;
+					case 4:
+						field = Author.EMAIL;
+						break;
+					case 5:
+						field = Author.PHONENUMBER;
+						break;
+					case 6:
+						field = Author.URL;
+						break;
+					default:
+						field = Author.WHOLENAME;
+					}
+
+					if (sortDirection == 0) {
+						query.addOrder(PlantloreConstants.DIRECT_ASC, field);
+					} else {
+						query.addOrder(PlantloreConstants.DIRECT_DESC, field);
+					}
+					int resultId = 0;
+					try {
+						// Execute query
+						resultId = database.executeQuery(query);
+					} catch (DBLayerException e) {
+						// Log and set an error
+						logger
+								.error("Searching authors failed. Unable to execute search query.");
+						setError(e);
+						// setError("Searching authors failed. Please contact
+						// your administrator.");
+					} finally {
+						// Set operation state to finished
+						done = true;
+						// Save the results
+						setResult(resultId);
+						return resultId;
+					}
+				} catch (RemoteException e) {
+					System.err
+							.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+					return null;
+				}
             }
         };
         worker.start();
     }
 
     /**
-     *  Checks whether an error is set. If yes, notifies observers to display it. Finally unsets the error flag.
-     *  @return <code>true</code> if an error was set (and observers were notified), <code>false</code> otherwise
-     */
+	 * Checks whether an error is set. If yes, notifies observers to display it.
+	 * Finally unsets the error flag.
+	 * 
+	 * @return <code>true</code> if an error was set (and observers were
+	 *         notified), <code>false</code> otherwise
+	 */
     public boolean processErrors() {
         if (this.error != null) {
             setChanged();
@@ -258,12 +281,16 @@ public class AuthorManager extends Observable {
     }
 
     /**
-     *  Process results of a search query. Retrieves results using the database management object (DBLayer) and stores them in the data field
-     *  of the class. Notifies observers about the changes. Sets an error in case of an exception.
-     *
-     *  @param from number of the first row to retrieve.
-     *  @param count number of rows to retrieve 
-     */
+	 * Process results of a search query. Retrieves results using the database
+	 * management object (DBLayer) and stores them in the data field of the
+	 * class. Notifies observers about the changes. Sets an error in case of an
+	 * exception.
+	 * 
+	 * @param from
+	 *            number of the first row to retrieve.
+	 * @param count
+	 *            number of rows to retrieve
+	 */
     public void processResults(int from, int count) {
         if (this.resultId != 0) {
             logger.debug("Rows in the result: "+getResultRows());

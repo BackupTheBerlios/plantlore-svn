@@ -129,14 +129,15 @@ public class WholeHistory {
 
     	//  Select data from tHistory table
         try {
-		query = database.createQuery(HistoryRecord.class);
-        } catch (RemoteException e) {
+			query = database.createQuery(HistoryRecord.class);
+			// Create aliases for table tHistoryChange.
+			query.createAlias("historyChange", "hc");
+			// sort by date/time
+			query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
+		} catch (RemoteException e) {
                 System.err.println("RemoteException- searchWholeHistoryData(), createQuery");
         }
-        // Create aliases for table tHistoryChange.      
-        query.createAlias("historyChange", "hc");
-       //sort by date/time 	
-        query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");        
+                
     	
         int resultId = 0;
         try {
@@ -789,60 +790,68 @@ public class WholeHistory {
     	SelectQuery query = null;
     	if (typeObject.equals("Occurrence")){
             try {
-            	query = database.createQuery(Occurrence.class);	        		        	    
+            	query = database.createQuery(Occurrence.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject() - Occurrence, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, id , null);
+            
     	} else if (typeObject.equals("Habitat")){
             try {
-            	query = database.createQuery(Habitat.class);	        		        	    
+            	query = database.createQuery(Habitat.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject() - Habitat, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.ID, null, id , null);
+            
     	} else if (typeObject.equals("Plant")){
             try {
-            	query = database.createQuery(Plant.class);	        		        	    
+            	query = database.createQuery(Plant.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject() - Plant, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.ID, null, id , null);
+            
     	} else if (typeObject.equals("Author")){
             try {
-            	query = database.createQuery(Author.class);	        		        	    
+            	query = database.createQuery(Author.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Author.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject() - Author, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Author.ID, null, id , null);
+            
     	} else if (typeObject.equals("Publication")){
             try {
-            	query = database.createQuery(Publication.class);	        		        	    
+            	query = database.createQuery(Publication.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject() - Publication, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
+            
     	} else if (typeObject.equals("Village")){
             try {
-            	query = database.createQuery(Village.class);	        		        	    
+            	query = database.createQuery(Village.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject()- Village, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
+            
     	}  else if  (typeObject.equals("Territory")){
             try {
-            	query = database.createQuery(Territory.class);	        		        	    
+            	query = database.createQuery(Territory.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject()- Territory, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null); 
+             
     	} else if (typeObject.equals("Phytochorion")){
             try {
-            	query = database.createQuery(Phytochorion.class);	        		        	    
+            	query = database.createQuery(Phytochorion.class);
+            	query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
             } catch(RemoteException e) {
             	    System.err.println("RemoteException, searchObject()- Phytochorion, createQuery");       	  
             }            
-            query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
+            
     	} else {
     		logger.error("SearchObject() - Incorrect type of object.");
     	}
@@ -958,13 +967,14 @@ public class WholeHistory {
     	SelectQuery query = null;
         try {
         	    query = database.createQuery(HistoryRecord.class);
+        	    // Create aliases for table tHistoryChange.      
+                query.createAlias("historyChange", "hc");  
+                // Add restriction to cChangeId column 
+                query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.id", null, id , null);
         } catch(RemoteException e) {
         	    System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
         }        
-        // Create aliases for table tHistoryChange.      
-        query.createAlias("historyChange", "hc");  
-        // Add restriction to cChangeId column 
-        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.id", null, id , null);
+        
         
         int resultIdChange = 0;
         try {                   

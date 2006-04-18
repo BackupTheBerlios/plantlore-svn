@@ -89,13 +89,21 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 		if(host == null || host.equals("") || host.equalsIgnoreCase("localhost"))
 			return create();
 		
-		System.out.println("GOING RMI");
+		logger.debug("Creating a new DBLayer using the RMI:");
 		
 		// Connect to the remote server and obtain the RemoteDBLayerFactory
+		logger.debug("  # connecting to the remote registry @ " + host + ":" + port +" ...");
 		Registry registry = LocateRegistry.getRegistry(host, port);
+		logger.debug("    completed");
+		
+		logger.debug("  # obtaining the remote dblayer factory ...");
 		RemoteDBLayerFactory remoteFactory = (RemoteDBLayerFactory) registry.lookup(RemoteDBLayerFactory.ID);
+		logger.debug("    completed");
+		
 		// Get the stub from the remote factory and save the information about the connection
+		logger.debug("  # creating a new dblayer...");
 		DBLayer stub = remoteFactory.create();
+		logger.debug("  completed! :)");
 		ConnectionInfo info = new ConnectionInfo(remoteFactory, null, stub, "localhost -> " + host + ":" + port);
 		client.put(stub, info);
 		

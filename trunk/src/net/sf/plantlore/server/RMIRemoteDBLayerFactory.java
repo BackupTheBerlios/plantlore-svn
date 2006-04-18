@@ -103,15 +103,18 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		String clientHost = "unknown";
 		try { clientHost = RemoteServer.getClientHost(); } 
 		catch(Exception e) { logger.warn("Unable to retrieve the client's host name."); }
+		logger.debug("Someone from the " + clientHost + " contacted us.");
 		
 		// Connection policy
 		if( !allowConnection(clientHost) ) {
-			logger.info("Too many connections from " + clientHost + " (or the server is full)!");
+			logger.warn("Too many connections from " + clientHost + " (or the server is full)!");
 			return null;
 		}
 		
 		// Create a new DBLayer, export it, and keep the stub. Also set the Undertaker of this object.
+		logger.debug("  Creating a new HibernateDBLayer ...");
 		DBLayer database = new HibernateDBLayer(this);
+		logger.debug("   completed!");
 		DBLayer stub = (DBLayer) UnicastRemoteObject.exportObject(database);
 		
 		// Save the information about this connection.

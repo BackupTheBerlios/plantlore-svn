@@ -1,13 +1,17 @@
 package net.sf.plantlore.server;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 import net.sf.plantlore.server.tools.*;
@@ -29,6 +33,8 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	/** The default port where the rmiregistry listens. To that rmiregistry the RemoteDBLayerFactory will be bound to. */
 	public static final int DEFAULT_PORT = Registry.REGISTRY_PORT;
 	
+	private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
+	
 	private RMIRemoteDBLayerFactory remoteFactory = null;
 	private int port = DEFAULT_PORT;
 	private Guard guard = null;
@@ -41,7 +47,21 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	}
 	
 	/** Create a new instance of RMIServer running on the specified port. */
-	public RMIServer(int port) throws RemoteException, AlreadyBoundException { 
+	public RMIServer(int port) throws RemoteException, AlreadyBoundException {
+		// Load log4j settings
+        ClassLoader cl = this.getClass().getClassLoader();
+        InputStream is = cl.getResourceAsStream(LOGGER_PROPS);
+        Properties props = new Properties();
+        //FIXME:
+        try {
+            props.load(is);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        //maybe CHANGE to configureAndWatch()
+        PropertyConfigurator.configure(props);
+        
+        
 		this.port = port;
 		
 		logger = Logger.getLogger(this.getClass().getPackage().getName());

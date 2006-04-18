@@ -25,6 +25,8 @@ import org.hibernate.criterion.Restrictions;
  * reference manual.
  *
  *  FIXME: Malo by to hadzat DBLayerException...
+ *  
+ *  TODO: Nezapominat generovat stub! (rmic net.sf.plantlore.server.SelectQueryImplementation)
  *
  * @author Tomáš Kovařík, Erik Kratochvíl
  */

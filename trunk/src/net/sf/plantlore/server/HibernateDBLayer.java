@@ -27,6 +27,8 @@ import org.hibernate.Transaction;
 
 /**
  *  Implementation of DBLayer using Hibernate OR mapping to access the database.
+ *  
+ *  TODO: Nezapominat generovat stub! (rmic net.sf.plantlore.server.HibernateDBLayer)
  *
  *  @author Tomáš Kovařík (database parts), Erik Kratochvíl (rmi parts)
  *  @version far from ready!
@@ -53,19 +55,26 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      */
     public HibernateDBLayer(Undertaker undertaker) {
     	this();
-    	this.undertaker = undertaker; 
+    	this.undertaker = undertaker;
+    	logger.debug("      completely completed.");
     }
     
     /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer() {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());        
+        logger = Logger.getLogger(this.getClass().getPackage().getName());
+        
+        
+        logger.debug("      Constructing a new HibernateDBLayer ...");
+        
         // Initialize pool of result sets, initial capacity = 8
         results = new Hashtable<Integer, ScrollableResults>(8); 
         // Initialize maximum result id
         maxResultId = 0;
         
         // Table of all living queries, initial capacity = 8
-        queries = new Hashtable<SelectQuery, SelectQuery>(8); 
+        queries = new Hashtable<SelectQuery, SelectQuery>(8);
+        
+        logger.debug("      completed.");
     }    
     
     /**

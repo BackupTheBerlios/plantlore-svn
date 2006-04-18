@@ -47,7 +47,11 @@ public class Plantlore {
 		// Take the appropriate action.
 		try {
 			if (command.equalsIgnoreCase("start")) {
-				try { server = new RMIServer(port); } catch (Exception e) { System.err.println(e); server.stop(true); }
+				try { 
+					server = new RMIServer(port);
+					server.start();
+				} 
+				catch (Exception e) { System.err.println(e); server.stop(true); }
 			} 
 			else {
 				Registry registry = LocateRegistry.getRegistry(host, port);

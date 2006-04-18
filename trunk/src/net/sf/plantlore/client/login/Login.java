@@ -56,8 +56,8 @@ public class Login extends Observable {
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
 		// TODO: JAKUB: nacist z XML souboru se jmenem `file` informace o databazich (triplety) do kolekce dbinfo.
-		dbinfo.add(new DBInfo("# Testovací databáze #", "", -1,
-				"jdbc:firebirdsql:natalka.kolej.mff.cuni.cz/3050:/mnt/data/temp/plantloreHIBdata.fdb", 
+		dbinfo.add(new DBInfo("My Home Database", "data.kolej.mff.cuni.cz", -1,
+				"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
 				new String[] { "sysdba", null, null, null, null }));
 		
 		this.setChanged(); this.notifyObservers();
@@ -166,12 +166,14 @@ public class Login extends Observable {
 		selected.promoteUser(name);
 		
 		// Create a new database layer.
-		logger.info("Asking the DBLayerFactory for a new DBLayer @ " + selected.host + ":" + selected.port);
+		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selected.host + ":" + selected.port);
 		dblayer = factory.create(selected.host, selected.port);
+		
 		// Initialize the database layer.
-		logger.info("Initializing that DBLayer...");
+		logger.debug("Initializing that DBLayer (" + selected.db + ", " + name + ", " + password + "...");
 		dblayer.initialize(selected.db,name, password);
-		logger.info("DBLayer initialized.");
+		logger.debug("DBLayer initialized.");
+		
 		// Save the current state.
 		save();
 		// Everything went fine.
