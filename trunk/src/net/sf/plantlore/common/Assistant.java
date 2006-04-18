@@ -29,6 +29,7 @@ public class Assistant extends JScrollPane {
 
 	protected JList list;
 	private Point o;
+	private Component father;
 	
 	/**
 	 * Create the Assistant.
@@ -67,7 +68,9 @@ public class Assistant extends JScrollPane {
 
 	/** Display the Assistant on the designated coordinates. */
 	public void display(int x, int y) {
-		setLocation(o.x + x, o.y + y); setVisible(true);
+		adjustOffset(father); // determine the offset precisely
+		setLocation(o.x + x, o.y + y); 
+		setVisible(true);
 	}
 
 	/** Display the Assistant on the designated coordinates if it is not already visible. */
@@ -75,20 +78,25 @@ public class Assistant extends JScrollPane {
 		display(r.x, r.y);
 	}
 	
-	/** Re-adjust the offset of the Visual Assistant according to the position of the parent components. */
-	public void readjustOffset(Component c) {
+	/** Adjust the offset of the Visual Assistant according to the position of the parent components. */
+	public void adjustOffset(Component c) {
+		father = c;
 		o =  new Point(0, 0); 
 		while(c != null && !(c instanceof JRootPane)) {
 			Point p = c.getLocation();
 			o.translate(p.x, p.y);
+			/* The Visual Assistant must take an extra effort to determine the
+			 * offset where it should appear. A JScrollPane is a very special obstacle 
+			 * as it shows only a part of the decorated component. 
+			 * That's why we must subtract the view position of the viewport 
+			 * from the offset to obtain the correct result.
+			 */
+			if(c instanceof JScrollPane) {
+				Point q = ((JScrollPane)c).getViewport().getViewPosition();
+				p.translate(-q.x, -q.y);
+			}
 			c = c.getParent();			
 		}
-	}
-	
-	/** Adjust the offset of the Visual Assistant according to the position of the parent components. */
-	public void adjustOffset(Component c) {
-		if(o != null) return;
-		readjustOffset(c);
 	}
 
 	/** Set selected index and ensure it is visible. */
