@@ -101,6 +101,12 @@ public class AuthView extends javax.swing.JDialog implements Observer {
 		user.addItems(selected.users);
 		
 		setTitle("Connecting to " + selected.toString());
+		
+		//==TEMPORARY CODE=================================================
+					System.out.println("HYPERACTIVE-LOGIN");
+					password.setText("masterkey");
+					next.doClick(); // outrageous!
+		//================================================================
 	}
     
     
