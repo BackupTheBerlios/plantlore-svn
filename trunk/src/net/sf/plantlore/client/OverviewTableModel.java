@@ -168,8 +168,8 @@ public class OverviewTableModel extends AbstractTableModel {
                 recordsArray.add(r);
             else 
                 r = recordsArray.get(from+i-2);//array starts from 0 whereas records are numbered from 1
-                
-            row = new Object[COLUMN_COUNT];
+            
+            row = new Object[COLUMN_COUNT + 1]; //we'll store the record id in the last column
             row[0] = r.selected;
             row[1] = r.number;
             row[2] = result.getOccurrence().getPlant().getTaxon();
@@ -194,6 +194,7 @@ public class OverviewTableModel extends AbstractTableModel {
             row[21] = result.getOccurrence().getMonthCollected();
             row[22] = result.getOccurrence().getDayCollected();
             row[23] = result.getOccurrence().getTimeCollected();
+            row[24] = result; //won't  be displayed, because in getColumnCount we pretend not to have this column
             data[i-1] = row;
         }//i        
     }
@@ -212,6 +213,10 @@ public class OverviewTableModel extends AbstractTableModel {
         }
         
         return result;
+    }
+    
+    public Object[] getRow(int i) {
+        return data[i];
     }
     
     public int getRowCount() {

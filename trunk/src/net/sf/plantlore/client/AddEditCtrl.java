@@ -14,9 +14,13 @@ package net.sf.plantlore.client;
  * @author reimei
  */
 public class AddEditCtrl {
+    private boolean inEditMode = false;
+    private boolean inAddMode = true;
     
     /** Creates a new instance of AddEditCtrl */
-    public AddEditCtrl() {
+    public AddEditCtrl(boolean edit) {
+        this.inEditMode = edit;
+        this.inAddMode = ! edit;
     }
     
 }

@@ -79,6 +79,7 @@ public class Plantlore {
      *
      */
     private void run() {
+        try {
         logger.info("Constructing AppCore MVC");
         splashScreen = new SplashScreen("resources/splashscreen.gif");
         splashScreen.splash();
@@ -89,6 +90,9 @@ public class Plantlore {
         view.setVisible(true);
         EventQueue.invokeLater( new SplashScreenCloser() );
         logger.info("AppCore MVC constructed. Plantlore client should be visible now.");
+        } catch(RuntimeException e) {
+            new ExceptionDialog(view,"Some exception was thrown: "+e);
+        }
     }
     
     /**

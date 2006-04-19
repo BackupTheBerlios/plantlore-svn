@@ -96,7 +96,7 @@ public class AppCoreView extends JFrame implements Observer
     private JScrollPane overviewScrollPane;
     private JLabel statusLabel;
     
-    private JTable overview = new JTable();
+    protected JTable overview = new JTable();
     private JToolBar mainToolBar;
     private JToolBar pageToolBar;
     private JFormattedTextField recordsPerPage = new JFormattedTextField(NumberFormat.getIntegerInstance());
@@ -116,6 +116,8 @@ public class AppCoreView extends JFrame implements Observer
     {
         recordsCount.setText(""+model.getResultsCount());
         pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
+        //FIXME: change selection only if really required
+        overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
     }
     
     /** Calls all the constructing init methods.
@@ -224,7 +226,6 @@ public class AppCoreView extends JFrame implements Observer
         mainPane.add(overviewScrollPane, BorderLayout.CENTER);
         
         pageToolBar = new JToolBar();
-        recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));
         recordsPerPage.setPreferredSize(new Dimension(40, 10));
         recordsPerPage.setHorizontalAlignment(JTextField.CENTER);
         pageToolBar.setFloatable(false);
@@ -288,6 +289,7 @@ public class AppCoreView extends JFrame implements Observer
             tc = overview.getColumnModel().getColumn(i);
             tc.setPreferredWidth(otm.getColumnSize(i));
         }
+        recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));        
         pack();
     }
     

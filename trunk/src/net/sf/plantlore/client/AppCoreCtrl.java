@@ -263,7 +263,9 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("Add pressed");
+            AddEditView addEdit = new AddEditView(view, true, model, false);
+            addEdit.setTitle("Add a new occurrence");
+            addEdit.setVisible(true);
         }
     }
     
@@ -275,7 +277,8 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            AddEditView addEdit = new AddEditView(view, true, model);
+            AddEditView addEdit = new AddEditView(view, true, model, true);
+            addEdit.setTitle("Edit occurrence");
             addEdit.setVisible(true);
         }
     }
