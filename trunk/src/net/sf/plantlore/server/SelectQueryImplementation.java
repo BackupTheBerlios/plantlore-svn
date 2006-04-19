@@ -172,6 +172,8 @@ public class SelectQueryImplementation implements SelectQuery {
             case PlantloreConstants.PROJ_SUM:
                 criteria.setProjection(Projections.sum(propertyName));
                 break;
+            case PlantloreConstants.PROJ_DISTINCT:
+                criteria.setProjection(Projections.distinct(Projections.property(propertyName)));
             default:
                 
         }
