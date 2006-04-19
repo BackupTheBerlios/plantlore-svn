@@ -56,8 +56,8 @@ public class Login extends Observable {
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
 		// TODO: JAKUB: nacist z XML souboru se jmenem `file` informace o databazich (triplety) do kolekce dbinfo.
-		dbinfo.add(new DBInfo("My Home Database", "data.kolej.mff.cuni.cz", -1,
-				"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
+		dbinfo.add(new DBInfo("My Home Database", "localhost", -1,
+				"jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb", 
 				new String[] { "sysdba", null, null, null, null }));
 		
 		this.setChanged(); this.notifyObservers();

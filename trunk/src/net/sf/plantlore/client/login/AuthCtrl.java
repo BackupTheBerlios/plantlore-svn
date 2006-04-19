@@ -12,6 +12,7 @@ public class AuthCtrl {
 	public AuthCtrl(Login login, AuthView authview) {
 		this.model = login; this.view = authview;
 		view.next.addActionListener(new Next());
+
 	}
 	
 	class Next extends AbstractAction {

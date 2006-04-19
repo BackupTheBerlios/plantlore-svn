@@ -41,10 +41,17 @@ public class LoginCtrl {
 	
 	public void setVisible(boolean visible) {
 		JDialog dialog = view;
-		if( view.remember.isSelected() && !view.choice.isSelectionEmpty() ) 
+		if( view.remember.isSelected() && !view.choice.isSelectionEmpty() ) { 
 			dialog = authView;
+		}
 		
-		dialog.setVisible(visible);
+		//UNCOMMENT THIS:      dialog.setVisible(visible);
+		
+		//==TEMPORARY CODE=================================================
+		System.out.println("HYPERACTIVE-LOGIN");
+		authView.password.setText("masterkey");
+		authView.next.doClick(); // outrageous!
+		//================================================================
 	}
 	
 	
