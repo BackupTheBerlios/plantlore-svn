@@ -55,7 +55,7 @@ public class Occurrence implements Serializable {
     public static final String DAYCOLLECTED = "dayCollected";    
     public static final String TIMECOLLECTED = "timeCollected";
     public static final String ISODATETIMEBEGIN = "isoDateTimeBegin";    
-    public static final String DATESOURCE = "dataSource";    
+    public static final String DATASOURCE = "dataSource";    
     public static final String PUBLICATION = "publication";    
     public static final String HERBARIUM = "herbarium";    
     public static final String CREATEDWHEN = "createdWhen";    
