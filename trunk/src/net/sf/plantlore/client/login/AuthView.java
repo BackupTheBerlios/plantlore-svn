@@ -17,7 +17,7 @@ import net.sf.plantlore.common.AutoComboBox;
  *
  * @author  yaa
  */
-public class AuthView extends javax.swing.JFrame implements Observer {
+public class AuthView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
@@ -28,6 +28,7 @@ public class AuthView extends javax.swing.JFrame implements Observer {
         initComponents();
         setLocationRelativeTo(null); // center of the screen
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        setModal(true);
     }
     
     /** This method is called from within the constructor to
@@ -94,10 +95,12 @@ public class AuthView extends javax.swing.JFrame implements Observer {
     
     public void update(Observable arg0, Object arg1) {
 		DBInfo selected = model.getSelected();
-		if(selected == null) return;
-		System.out.println("AuthView [98] :: selected record is " + selected);
+		if(selected == null) return; // FIXME: DIALOG: SAMTIN MUST BE SELECTED
+		//System.out.println("AuthView [98] :: selected record is " + selected);
 		user.removeAllItems();
 		user.addItems(selected.users);
+		
+		setTitle("Connecting to " + selected.toString());
 	}
     
     

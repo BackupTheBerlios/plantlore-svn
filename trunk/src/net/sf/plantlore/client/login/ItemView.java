@@ -15,7 +15,7 @@ import javax.swing.JDialog;
  *
  * @author  yaa
  */
-public class ItemView extends javax.swing.JFrame implements Observer {
+public class ItemView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
@@ -27,6 +27,7 @@ public class ItemView extends javax.swing.JFrame implements Observer {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+		setModal(true);
     }
     
     /** This method is called from within the constructor to

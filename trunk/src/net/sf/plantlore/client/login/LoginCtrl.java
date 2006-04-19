@@ -3,6 +3,7 @@ package net.sf.plantlore.client.login;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -33,7 +34,19 @@ public class LoginCtrl {
 		view.edit.addActionListener(new EditRecord());
 		view.remove.addActionListener(new RemoveRecord());
 		view.next.addActionListener(new Next());
+		
+		view.choice.setSelectedIndex(0);
 	}
+	
+	
+	public void setVisible(boolean visible) {
+		JDialog dialog = view;
+		if( view.remember.isSelected() && !view.choice.isSelectionEmpty() ) 
+			dialog = authView;
+		
+		dialog.setVisible(visible);
+	}
+	
 	
 	class ChoiceChanged implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
@@ -42,6 +55,10 @@ public class LoginCtrl {
 			 *  framework: for some unknown reason 
 			 *  the ListSelectionEvent is sent twice every time 
 			 *  you select something in the list. Why?
+			 *  
+			 *  The reason will be simple: 
+			 *  mousePressed & mouseReleased 
+			 *  (instead of mouseClicked).  
 			 *----------------------------------------------------------*/
 			model.setSelected( view.choice.getSelectedIndex() );
 		}	

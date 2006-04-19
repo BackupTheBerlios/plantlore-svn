@@ -77,6 +77,7 @@ public class AppCoreCtrl
     WholeHistoryView wholeHistoryView;
     WholeHistoryCtrl wholeHistoryCtrl;
     
+    // Login
     Login loginModel;
     LoginView loginView;
     LoginCtrl loginCtrl;
@@ -468,13 +469,8 @@ public class AppCoreCtrl
                 }
                 if(loginView == null) loginView = new LoginView(loginModel);
                 if(loginCtrl == null) loginCtrl = new LoginCtrl(loginModel, loginView);
-                loginView.setVisible(true);
-                /*-------------------------------------------------------------------------------------
-                 * The problem here is that the dialog is opened - but another thread
-                 * takes care of its execution. That's why the code below will be executed
-                 * immediately after the dialog becomes visible. Clearly, the database layer
-                 * is not created at this time!
-                 *-------------------------------------------------------------------------------------*/
+                
+                loginCtrl.setVisible(true);
         }
     }
     

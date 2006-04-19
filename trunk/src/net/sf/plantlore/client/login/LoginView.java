@@ -17,7 +17,7 @@ import net.sf.plantlore.middleware.DBLayer;
  *
  * @author  yaa
  */
-public class LoginView extends javax.swing.JFrame implements Observer {
+public class LoginView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
@@ -28,6 +28,7 @@ public class LoginView extends javax.swing.JFrame implements Observer {
         initComponents();
         setLocationRelativeTo(null); // center of the screen
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        setModal(true);
         // See what's new.
         update(null, null);
     }
@@ -69,6 +70,7 @@ public class LoginView extends javax.swing.JFrame implements Observer {
         remember.setText("select automatically");
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        remember.setSelected(true);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -98,6 +100,15 @@ public class LoginView extends javax.swing.JFrame implements Observer {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    
+        
+    @Override
+    public void setVisible(boolean visible) {
+    	if(!visible) super.setVisible(false);
+    	else {
+    		
+    	}
+    }
     
     
     public void update(Observable source, Object parameter) {

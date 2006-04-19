@@ -164,6 +164,8 @@ public class Login extends Observable {
 			return null;
 		}
 		selected.promoteUser(name);
+		// Save the current state.
+		save();
 		
 		// Create a new database layer.
 		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selected.host + ":" + selected.port);
@@ -171,11 +173,19 @@ public class Login extends Observable {
 		
 		// Initialize the database layer.
 		logger.debug("Initializing that DBLayer (" + selected.db + ", " + name + ", " + password + "...");
-		dblayer.initialize(selected.db,name, password);
+		
+		try {
+			dblayer.initialize(selected.db,name, password);
+		} 
+		catch (DBLayerException exception) {
+			// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
+			logger.warn("The initialization of the DBLayer failed. Here's why: " + exception);
+			factory.destroy(dblayer);
+			throw exception; // rethrow that exception
+		}
+
 		logger.debug("DBLayer initialized.");
 		
-		// Save the current state.
-		save();
 		// Everything went fine.
 		this.setChanged(); this.notifyObservers(dblayer);
 		return dblayer;
