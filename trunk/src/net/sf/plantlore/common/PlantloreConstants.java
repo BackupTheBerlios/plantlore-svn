@@ -62,6 +62,7 @@ public class PlantloreConstants {
     public static final int PROJ_PROPERTY       = 46;       
     public static final int PROJ_ROW_COUNT      = 47;
     public static final int PROJ_SUM            = 48;
+    public static final int PROJ_DISTINCT       = 49;
     
     /** Constants for fetch mode of associated entities */
     public static final int FETCH_JOIN            = 50;
