@@ -3,9 +3,10 @@ package net.sf.plantlore.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+/*
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Collection;
+*/
 import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -56,7 +57,9 @@ public class Plantlore {
 		
 		new Plantlore().run();
 		
-		/*
+		/* ============================================================
+		 *  THIS HERE MAY COME IN HANDY...
+		 * ============================================================
 		int m = args.length, port = RMIServer.DEFAULT_PORT, id = -1;
 		String command = "start", host = null;
 		
@@ -103,7 +106,7 @@ public class Plantlore {
 					
 			}
 		} catch(Exception e) { System.err.println(e); }
-		*/
+		============================================================ */
 	}
 
 }

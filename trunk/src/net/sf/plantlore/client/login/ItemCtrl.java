@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import net.sf.plantlore.l10n.L10n;
+
 public class ItemCtrl {
 	
 	private Login model;
@@ -19,13 +21,13 @@ public class ItemCtrl {
 		this.mode = m;
 		switch(m) {
 		case ADD:
-			view.setTitle("ADD");
+			view.setTitle(L10n.getString("AddTitle"));
 			view.alias.setText(""); 
 			view.host.setText("");
 			view.db.setText("");
 			break;
 		case EDIT:
-			view.setTitle("EDIT");
+			view.setTitle(L10n.getString("EditTitle"));
 			break;
 		}
 	}

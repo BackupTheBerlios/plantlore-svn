@@ -1,5 +1,5 @@
 /*
- * AuthView2.java
+ * AuthView.java
  *
  * Created on 9. duben 2006, 18:04
  */
@@ -9,9 +9,8 @@ package net.sf.plantlore.client.login;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JDialog;
-
 import net.sf.plantlore.common.AutoComboBox;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -21,13 +20,12 @@ public class AuthView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
-    /** Creates new form AuthView2 */
+    /** Creates new form AuthView */
     public AuthView(Login model) {
     	this.model = model;
     	model.addObserver(this);
         initComponents();
         setLocationRelativeTo(null); // center of the screen
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         setModal(true);
     }
     
@@ -44,14 +42,14 @@ public class AuthView extends javax.swing.JDialog implements Observer {
         password = new javax.swing.JPasswordField();
         next = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        jLabel1.setText("Username:");
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        jLabel1.setText(L10n.getString("Username") + ":");
 
-        jLabel2.setText("Password:");
+        jLabel2.setText(L10n.getString("Password") + ":");
         
         user.setStrict(false);
         
-        next.setText("Authorize");
+        next.setText(L10n.getString("Authorize"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,15 +90,17 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     }// </editor-fold>//GEN-END:initComponents
     
     
-    
+    /**
+     * Reload the list of usernames according to the currently selected record.
+     */
     public void update(Observable arg0, Object arg1) {
 		DBInfo selected = model.getSelected();
-		if(selected == null) return; // FIXME: DIALOG: SAMTIN MUST BE SELECTED
-		//System.out.println("AuthView [98] :: selected record is " + selected);
+		if(selected == null) return;
+
 		user.removeAllItems();
 		user.addItems(selected.users);
 		
-		setTitle("Connecting to " + selected.toString());
+		setTitle(L10n.getString("ConnectingTo") + " " + selected.toString());
 	}
     
     

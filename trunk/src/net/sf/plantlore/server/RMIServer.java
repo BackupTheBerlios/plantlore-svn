@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collection;
 
 
 import org.apache.log4j.Logger;
@@ -27,7 +26,7 @@ import net.sf.plantlore.server.tools.*;
  * @since 2006-03-11
  * @version 1.0
  */
-public class RMIServer extends UnicastRemoteObject implements Server<ConnectionInfo> {
+public class RMIServer extends UnicastRemoteObject implements Server {
 	
 	/** The default port where the rmiregistry listens. To that rmiregistry the RemoteDBLayerFactory will be bound to. */
 	public static final int DEFAULT_PORT = Registry.REGISTRY_PORT;
@@ -57,7 +56,10 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	}
 	
 	/** Get the information about the connected clients. */
-	public synchronized Collection<ConnectionInfo> getClients() { return remoteFactory.getClients(); }
+	public synchronized ConnectionInfo[] getClients() {
+		if(remoteFactory == null) return null;
+		else return remoteFactory.getClients(); 
+	}
 
 	/**
 	 * Disconnect the selected client.

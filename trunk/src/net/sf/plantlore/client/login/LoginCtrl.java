@@ -4,8 +4,11 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import net.sf.plantlore.l10n.L10n;
 
 
 public class LoginCtrl {
@@ -35,6 +38,7 @@ public class LoginCtrl {
 		view.remove.addActionListener(new RemoveRecord());
 		view.next.addActionListener(new Next());
 		
+		// Select something.
 		view.choice.setSelectedIndex(0);
 	}
 	
@@ -45,13 +49,14 @@ public class LoginCtrl {
 			dialog = authView;
 		}
 		
-		//UNCOMMENT THIS:      dialog.setVisible(visible);
+		//UNCOMMENT THIS:      
+		//dialog.setVisible(visible);
 		
-		//==TEMPORARY CODE=================================================
-		System.out.println("HYPERACTIVE-LOGIN");
-		authView.password.setText("masterkey");
-		authView.next.doClick(); // outrageous!
-		//================================================================
+		// TEMPORARY CODE STARTS HERE
+			System.out.println("HYPERACTIVE-LOGIN");
+			authView.password.setText("masterkey");
+			authView.next.doClick(); 
+		// TEMPORARY CODE ENDS HERE
 	}
 	
 	
@@ -86,15 +91,26 @@ public class LoginCtrl {
 	
 	class EditRecord extends AbstractAction {
 		public void actionPerformed(ActionEvent arg0) {
-			if(model.getSelected() == null) return;
-			itemCtrl.setMode(ItemCtrl.Mode.EDIT);
-			itemView.setVisible(true);
+			if(model.getSelected() == null)
+				JOptionPane.showMessageDialog(view,
+						L10n.getString("warningEmptySelection"),
+					    L10n.getString("warningEmptySelectionTitle"),
+					    JOptionPane.WARNING_MESSAGE);
+			else {
+				itemCtrl.setMode(ItemCtrl.Mode.EDIT);
+				itemView.setVisible(true);
+			}
 		}
 	}
 	
 	class Next extends AbstractAction {
 		public void actionPerformed(ActionEvent arg0) {
-			if(model.getSelected() != null)
+			if(model.getSelected() == null)
+				JOptionPane.showMessageDialog(view,
+						L10n.getString("warningEmptySelection"),
+					    L10n.getString("warningEmptySelectionTitle"),
+					    JOptionPane.WARNING_MESSAGE);
+			else
 				authView.setVisible(true);
 		}
 	}

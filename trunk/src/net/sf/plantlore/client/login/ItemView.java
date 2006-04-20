@@ -1,5 +1,5 @@
 /*
- * ItemView2.java
+ * ItemView.java
  *
  * Created on 9. duben 2006, 17:55
  */
@@ -9,7 +9,8 @@ package net.sf.plantlore.client.login;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JDialog;
+
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -19,14 +20,13 @@ public class ItemView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
-    /** Creates new form ItemView2 */
+    /** Creates new form ItemView */
     public ItemView(Login model) {
 		this.model = model;
 		model.addObserver(this);
 		initComponents();
 		setResizable(false);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		setModal(true);
     }
     
@@ -45,14 +45,14 @@ public class ItemView extends javax.swing.JDialog implements Observer {
         db = new javax.swing.JTextField();
         next = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        jLabel1.setText("Alias:");
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        jLabel1.setText(L10n.getString("Alias") + ":");
 
-        jLabel2.setText("Hostname:");
+        jLabel2.setText(L10n.getString("Hostname") + ":");
 
-        jLabel3.setText("Database:");
+        jLabel3.setText(L10n.getString("Database") + ":");
 
-        next.setText("Change");
+        next.setText(L10n.getString("Change"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,7 +97,9 @@ public class ItemView extends javax.swing.JDialog implements Observer {
     }// </editor-fold>//GEN-END:initComponents
     
     
-    
+    /**
+     * Fill all fields with information obtained from the currently selected record.
+     */
     public void update(Observable arg0, Object arg1) {
 		DBInfo info = model.getSelected();
 		if(info == null) return;

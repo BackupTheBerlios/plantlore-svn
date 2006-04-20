@@ -5,7 +5,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Collection;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
@@ -16,8 +15,8 @@ import net.sf.plantlore.server.*;
 
 public class ServerMng extends Observable {
 	
-	private Server<ConnectionInfo> server;
-	private Collection<ConnectionInfo> clients;
+	private Server server;
+	private ConnectionInfo[] clients;
 	
 	public enum Mode { CREATE_NEW, CONNECT_EXISTING };
 	
@@ -52,11 +51,11 @@ public class ServerMng extends Observable {
 		if(server == null) return null;
 		if(refresh)
 			try {
-				clients = /*(Collection<ConnectionInfo>)*/server.getClients();
+				clients = server.getClients();
 				logger.debug("Clients connected to the server received.");
-				setChanged(); notifyObservers("PH");
+				setChanged(); notifyObservers("PHear me!");
 			} catch( RemoteException e) { logger.warn("Unable to obtain the list of connected users - network error?"); }
-		return clients.toArray(new ConnectionInfo[0]);
+		return clients;
 	}
 	
 	

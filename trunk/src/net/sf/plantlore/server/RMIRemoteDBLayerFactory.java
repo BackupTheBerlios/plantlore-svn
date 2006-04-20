@@ -6,7 +6,6 @@ import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -69,8 +68,10 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * 
 	 *  @return Collection holding information about currently connected clients.
 	 */
-	protected synchronized Collection<ConnectionInfo> getClients() { 
-		return new Vector<ConnectionInfo>(client.values()); 
+	protected synchronized ConnectionInfo[] getClients() {
+		Collection<ConnectionInfo> clients = client.values();
+		if(clients != null) return clients.toArray(new ConnectionInfo[0]);
+		else return null;
 	}
 	
 	/**

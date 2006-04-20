@@ -1,5 +1,5 @@
 /*
- * LoginView2.java
+ * LoginView.java
  *
  * Created on 9. duben 2006, 16:35
  */
@@ -9,8 +9,7 @@ package net.sf.plantlore.client.login;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JDialog;
-
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
 /**
@@ -21,13 +20,13 @@ public class LoginView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
-    /** Creates new form LoginView2 */
+    /** Creates new form LoginView */
     public LoginView(Login model) {
 		this.model = model;
 		model.addObserver(this);
         initComponents();
         setLocationRelativeTo(null); // center of the screen
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        
         setModal(true);
         // See what's new.
         update(null, null);
@@ -49,25 +48,25 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         choice = new javax.swing.JList();
         remember = new javax.swing.JCheckBox();
 
-        popup.setName("popup");
-        add.setText("Add");
+        
+        add.setText(L10n.getString("loginAdd"));
         popup.add(add);
 
-        edit.setText("Edit");
+        edit.setText(L10n.getString("loginEdit"));
         popup.add(edit);
 
-        remove.setText("Remove");
+        remove.setText(L10n.getString("loginRemove"));
         popup.add(remove);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        next.setText("Continue");
-        next.setName("next");
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        next.setText(L10n.getString("Continue"));
+        
 
         choice.setComponentPopupMenu(popup);
         choice.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(choice);
 
-        remember.setText("select automatically");
+        remember.setText(L10n.getString("AutoSelect"));
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
         remember.setSelected(true);
@@ -100,17 +99,11 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+ 
     
-        
-    @Override
-    public void setVisible(boolean visible) {
-    	if(!visible) super.setVisible(false);
-    	else {
-    		
-    	}
-    }
-    
-    
+    /**
+     * Update the list of records (in case there were some changes).
+     */
     public void update(Observable source, Object parameter) {
     	// Ignore setSelected() event
     	if(parameter == null) {
@@ -119,7 +112,6 @@ public class LoginView extends javax.swing.JDialog implements Observer {
     		// This is probably because every time an item is inserted 
     		// into the list, it is also selected!
     		choice.setListData(model.getRecords());
-    		
     	}
     	else if(parameter != null && parameter instanceof DBLayer)
     		this.setVisible(false); // the database layer has been created, we are no longer neccessary

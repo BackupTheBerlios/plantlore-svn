@@ -2,8 +2,8 @@ package net.sf.plantlore.client.login;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -12,22 +12,30 @@ import net.sf.plantlore.middleware.DBLayerFactory;
 import net.sf.plantlore.server.DBLayerException;
 
 /**
- * 
- * Preliminary usage: <br/>
+ * Login is responsible for the following:
  * <ul>
- * <li>Login login = new Login(new RMIDBLayerFactory());</li>
- * <li>login.connectToSelected(...)</li>
+ * <li><b>management of the list of databases</b> - 
+ * 			adding, editing, removing records from the list, and the persistent storage of that list,</li>
+ * <li><b>creating and initializing a new dblayer</b> - only one at a time is active,</li>
+ * <li><b>destroying the current dblayer (logout)</b> - so as to make another connection possible</li>
  * </ul>
  * 
  * 
- * @author Erik Kratochvíl, Jakub Kotowski
- * @version 0.9
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @version 1.0
  */
 public class Login extends Observable {
 	
+	/** The maximum number of usernames the System will store for each database record.*/
 	public static final int MAX_NAMES = 5;
 
-	private Vector<DBInfo> dbinfo = new Vector<DBInfo>(10);
+	/** 
+	 * The list of databases the User has accessed. This list is unique for every User
+	 * and is stored in his home directory. 
+	 */
+	private ArrayList<DBInfo> dbinfo = new ArrayList<DBInfo>(10);
+	
+	/** The currently selected record. Null means nothing is selected. */
 	private DBInfo selected = null;
 	
 	//private String  file = System.getProperty("user.home") + "/.plantlore/db.info.xml";
@@ -51,18 +59,26 @@ public class Login extends Observable {
 	
 	/**
 	 * Load saved information about the database connections.
-	 *
+	 * TODO: -IMPLEMENTATION MISSING-
 	 */
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
 		// TODO: JAKUB: nacist z XML souboru se jmenem `file` informace o databazich (triplety) do kolekce dbinfo.
-		dbinfo.add(new DBInfo("My Home Database", "localhost", -1,
-				"jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb", 
-				new String[] { "sysdba", null, null, null, null }));
+		
+
+		 // TEMPORARY CODE STARTS HERE
+				dbinfo.add(new DBInfo("My Home Database", "localhost", -1,
+							"jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb", 
+							new String[] { "sysdba", null, null, null, null }));
+		 // TEMPORARY CODE ENDS HERE
 		
 		this.setChanged(); this.notifyObservers();
 	}
 	
+	/**
+	 * Save the list of database connections for further usage.
+	 * TODO: -IMPLEMENTATION MISSING-
+	 */
 	protected void save() {
 		logger.debug("Saving the list of databases.");
 		// TODO: JAKUB: ulozit kolekci dbinfo zpatky do XML souboru se jmenem `file`.
@@ -72,7 +88,7 @@ public class Login extends Observable {
 
 	/**
 	 * Create a new record, add it to the list of connections and save that information for
-	 * future use.
+	 * the future use.
 	 * 
 	 * @param alias	Alias of the database.
 	 * @param host	Hostname of the computer where the server dwells.
@@ -80,7 +96,7 @@ public class Login extends Observable {
 	 * @param db		Identifier of the database to which the User wants to connect.
 	 */
 	public void createRecord(String alias, String host, int port, String db) {
-		DBInfo r = new DBInfo(alias, host, port, db, new String[5]);
+		DBInfo r = new DBInfo(alias, host, port, db, new String[MAX_NAMES]);
 		dbinfo.add(r);
 		logger.debug("New database record has been created " + r);
 		save();
@@ -88,10 +104,11 @@ public class Login extends Observable {
 	}
 	
 	/**
-	 * Delete the selected record.
+	 * Delete the selected record from the list.
 	 *
 	 */
 	public void deleteSelectedRecord() {
+		if(selected == null) return;
 		dbinfo.remove(selected);
 		logger.debug("The selected record has been removed " + selected);
 		selected = null;
@@ -108,20 +125,16 @@ public class Login extends Observable {
 	 * @param db		Identifier of the database to which the User wants to connect.
 	 */
 	public void updateSelectedRecord(String alias, String host, int port, String db) {
-		selected.alias = alias;
-		selected.host = host;
-		selected.port = port;
-		selected.db = db;
+		if(selected == null) return;
+		selected.alias = alias; selected.host = host; selected.port = port; selected.db = db;
 		logger.debug("The selected record has been updated " + selected);
 		this.setChanged(); this.notifyObservers();
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * @return the list of all records.
 	 */
 	public DBInfo[] getRecords() {
-		// Well, this sucks! The ugliest way to do things... is to have a Cloneable interface and don't use it.
 		// Seeing is believing: http://java.sun.com/j2se/1.5.0/docs/api/java/util/Collection.html#toArray(T[])
 		return dbinfo.toArray(new DBInfo[0]);
 	}
@@ -129,14 +142,16 @@ public class Login extends Observable {
 	/**
 	 * Set the selected record.
 	 * 
-	 * @param index	The index of the selected record. Zero means first. Negative means nothing gets selected.
+	 * @param index	The index of the selected record. Zero means first. 
+	 * Negative means nothing gets selected (deselect).
 	 */
 	public void setSelected(int index) {
-		if(index >= 0) selected = dbinfo.elementAt(index); else selected = null;
+		if(index >= 0) selected = dbinfo.get(index); 
+		else selected = null;
+		
 		logger.debug("Selected database is " + selected);
 		this.setChanged(); 
 		/*------------------------------------------------------------
-		 * This here is a particularly mystique code.
 		 * The reason why a parameter is used here is simple:
 		 * 1. you select something in the choice list in the LoginView ->
 		 * 2. ListSelectionEvent is fired ->
@@ -158,11 +173,33 @@ public class Login extends Observable {
 	}
 	
 	
+	/**
+	 * Connect to the selected database. 
+	 * First, a new database layer is created,
+	 * and second, that database layer is initialized.
+	 * <br/>
+	 * <b>Warning:</b>If there is a previously created DBLayer, 
+	 * it will be destroyed using the <code>logout()</code> method. 
+	 * 	  
+	 * @param name The account name (used to access the database).  
+	 * @param password The password to the account.
+	 * @return The created and initialized DBLayer.
+	 * @throws NotBoundException if the server is unreachable (most likely because it is not running). 
+	 * @throws RemoteException if the RMI encounters an error.  
+	 * @throws DBLayerException if the initialization of the DBLayer failed - most common reasons are:
+	 * 		wrong username or password, or incorrect database model (server and client have different versions).
+	 */
 	public DBLayer connectToSelected(String name, String password) throws NotBoundException, RemoteException, DBLayerException {
 		if(selected == null) {
 			logger.debug("The System cannot create a connection when nothing was selected!");
 			return null;
 		}
+		
+		try {
+			logout();
+		} catch (RemoteException e) { logger.info("Unable to disconnect from the server. " + e); }
+		
+		// The current username is moved to the top of the list of names :) Nice feature.
 		selected.promoteUser(name);
 		// Save the current state.
 		save();
@@ -173,15 +210,15 @@ public class Login extends Observable {
 		
 		// Initialize the database layer.
 		logger.debug("Initializing that DBLayer (" + selected.db + ", " + name + ", " + password + "...");
-		
 		try {
 			dblayer.initialize(selected.db,name, password);
 		} 
 		catch (DBLayerException exception) {
+			logger.warn("The initialization of the DBLayer failed! Here's why: " + exception);
 			// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
-			logger.warn("The initialization of the DBLayer failed. Here's why: " + exception);
+			// If it is not, the server's policy may not allow another connection from this client!
 			factory.destroy(dblayer);
-			throw exception; // rethrow that exception
+			throw exception; // rethrow that exception [so that the User also knows what happened]
 		}
 
 		logger.debug("DBLayer initialized.");
@@ -191,12 +228,25 @@ public class Login extends Observable {
 		return dblayer;
 	}
 	
-	public void reconnect() {
-		
-	}
 	
 	/**
-	 * @return The last DBLayer that was created.  
+	 * Disconnect from the current database. 
+	 * The database connection is lost, any operation in progress will cause an exception.
+	 * 
+	 * @throws RemoteException if the RMI encounters an error.
+	 */
+	public void logout() throws RemoteException {
+		if(dblayer != null) {
+			factory.destroy(dblayer);
+			dblayer = null;
+			logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
+			this.setChanged(); this.notifyObservers();
+		}
+	}
+	
+		
+	/**
+	 * @return The last DBLayer that has been created.  
 	 */	
 	public DBLayer getDBLayer() { 
 		return dblayer; 
