@@ -33,7 +33,7 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	/** The default port where the rmiregistry listens. To that rmiregistry the RemoteDBLayerFactory will be bound to. */
 	public static final int DEFAULT_PORT = Registry.REGISTRY_PORT;
 	
-	private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
+	
 	
 	private RMIRemoteDBLayerFactory remoteFactory = null;
 	private int port = DEFAULT_PORT;
@@ -42,32 +42,18 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 	private Logger logger;
 
 	/** Create a new instance of RMIServer running on the default port. */
-	public RMIServer() throws RemoteException, AlreadyBoundException {
-		this(DEFAULT_PORT);
+	public RMIServer(String password) throws RemoteException, AlreadyBoundException {
+		this(DEFAULT_PORT, password);
 	}
 	
 	/** Create a new instance of RMIServer running on the specified port. */
-	public RMIServer(int port) throws RemoteException, AlreadyBoundException {
-		// Load log4j settings
-        ClassLoader cl = this.getClass().getClassLoader();
-        InputStream is = cl.getResourceAsStream(LOGGER_PROPS);
-        Properties props = new Properties();
-        //FIXME:
-        try {
-            props.load(is);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        //maybe CHANGE to configureAndWatch()
-        PropertyConfigurator.configure(props);
-        
-        
+	public RMIServer(int port, String password) throws RemoteException, AlreadyBoundException {
 		this.port = port;
 		
 		logger = Logger.getLogger(this.getClass().getPackage().getName());
 		
 		// Control object that will return the server after the client passed a valid certif. information
-		guard = new RMIServerControl(this);
+		guard = new RMIServerControl(this, password);
 		RMI.bind(port, guard, Guard.ID);
 	}
 	
@@ -156,7 +142,7 @@ public class RMIServer extends UnicastRemoteObject implements Server<ConnectionI
 		String codebase = "file:/" + ((directory != null) ? directory : System.getProperty("user.dir")) + "/";
 		codebase = codebase.replaceAll(" ", "%20"); // to prevent the MalformedURLException
 		System.setProperty("java.rmi.server.codebase", codebase);
-		System.out.println("java.rmi.server.codebase = " + codebase);
+		//System.out.println("java.rmi.server.codebase = " + codebase);
 		
 		System.setProperty("java.rmi.dgc.leaseValue", "30000"); // 30 seconds, just for DEBUG.REASONS
 	}

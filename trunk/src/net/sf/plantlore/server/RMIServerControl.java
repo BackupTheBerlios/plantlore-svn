@@ -6,13 +6,15 @@ import java.rmi.server.UnicastRemoteObject;
 public class RMIServerControl extends UnicastRemoteObject implements Guard {
 	
 	private Server server;
+	private String password;
 
-	public RMIServerControl(Server server) throws RemoteException {
+	public RMIServerControl(Server server, String password) throws RemoteException {
 		this.server = server;
+		this.password = password;
 	}
 	
 	public Server certify(String authorizationInfo) throws RemoteException {
-		if(authorizationInfo.equals("poweroverwhelming")) return server;
+		if(authorizationInfo.equals(password)) return server;
 		return null;
 	}
 	

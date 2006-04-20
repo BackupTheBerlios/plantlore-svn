@@ -91,7 +91,7 @@ public class Plantlore {
         EventQueue.invokeLater( new SplashScreenCloser() );
         logger.info("AppCore MVC constructed. Plantlore client should be visible now.");
         } catch(RuntimeException e) {
-            new ExceptionDialog(view,"Some exception was thrown: "+e);
+            //new ExceptionDialog(view,"Some exception was thrown: "+e);
         }
     }
     

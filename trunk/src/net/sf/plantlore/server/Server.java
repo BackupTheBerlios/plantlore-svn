@@ -23,7 +23,7 @@ public interface Server<E> extends Remote, Serializable {
 	 * @return Currently connected clients.
 	 * @throws RemoteException	if the RMI encounters an error (network/server).
 	 */
-	Collection<? extends E>	getClients() throws RemoteException;
+	Collection</*? extends */E>	getClients() throws RemoteException;
 	
 	/**
 	 * "Kick" the specified client. The client is disconnected immediately.

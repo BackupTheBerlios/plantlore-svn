@@ -1,9 +1,16 @@
 package net.sf.plantlore.server;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Collection;
+import java.util.Properties;
+
+import org.apache.log4j.PropertyConfigurator;
+
+import net.sf.plantlore.server.manager.*;
 
 
 /**
@@ -15,10 +22,30 @@ import java.util.Collection;
  */
 public class Plantlore {
 	
-	// Probably some more sophisticated method for obtaining a password from the user :)
-	public static String getPassword() {
-		return "poweroverwhelming";
+	private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
+	
+	
+	public void run() {
+		// Load log4j settings
+        ClassLoader cl = this.getClass().getClassLoader();
+        InputStream is = cl.getResourceAsStream(LOGGER_PROPS);
+        Properties props = new Properties();
+        //FIXME:
+        try {
+            props.load(is);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        //maybe CHANGE to configureAndWatch()
+        PropertyConfigurator.configure(props);
+			
+		ServerMng model = new ServerMng();
+        ServerLoginView view = new ServerLoginView(model);
+        /*ServerMngChooseCtrl ctrl = */new ServerLoginCtrl(model, view);
+       	
+        view.setVisible(true);
 	}
+	
 
 	/**
 	 * 
@@ -27,6 +54,9 @@ public class Plantlore {
 	 */
 	public static void main(String[] args) {
 		
+		new Plantlore().run();
+		
+		/*
 		int m = args.length, port = RMIServer.DEFAULT_PORT, id = -1;
 		String command = "start", host = null;
 		
@@ -73,7 +103,7 @@ public class Plantlore {
 					
 			}
 		} catch(Exception e) { System.err.println(e); }
-		
+		*/
 	}
 
 }
