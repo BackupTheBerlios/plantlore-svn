@@ -44,13 +44,13 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * Maximum number of connections from one IP = maximum number of DBLayer objects 
 	 * that can be created for users from this IP address.
 	 */
-	private int maxConnectionsPerIP = 1;
+	private int maxConnectionsPerIP = 81; // TODO: Nacitat z nejakyho settings...
 	
 	/** 
 	 * Maximum number of clients = the total maximum number of DBLayer objects 
 	 * that can be created by this factory. 
 	 */
-	private int maxConnectionsTotal = 8;
+	private int maxConnectionsTotal = 81; // TODO: Nacitat z nejakyho settings...
 	
 	/** Keep information about all connected clients. */
 	private Hashtable<DBLayer, ConnectionInfo> client = 
@@ -98,7 +98,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * (too many connections from this IP or too many clients connected). 
 	 * @throws RemoteException If the RMI encounters an error.
 	 */
-	public synchronized DBLayer create() throws RemoteException {
+	public synchronized DBLayer create() throws RemoteException, DBLayerException {
 		// Apply the connection policy ~ see AllowConnection(host)
 		String clientHost = "unknown";
 		try { clientHost = RemoteServer.getClientHost(); } 
@@ -108,7 +108,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		// Connection policy
 		if( !allowConnection(clientHost) ) {
 			logger.warn("Too many connections from " + clientHost + " (or the server is full)!");
-			return null;
+			throw new DBLayerException("There are either too many connections or the server is already full!");
 		}
 		
 		// Create a new DBLayer, export it, and keep the stub. Also set the Undertaker of this object.
@@ -158,8 +158,8 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		ConnectionInfo info = client.remove(stub);
 		if(info != null) disconnect(info.getDatabase());
 		else try {
-			logger.warn(RemoteServer.getClientHost() + "attempts to destroy " +
-						"a database layer that has was not created by this factory!");
+			logger.warn(RemoteServer.getClientHost() + " attempts to destroy " +
+						"a database layer that has was not created by this factory OR attempts to destroy an already destroyed DBLayer!");
 		} catch(ServerNotActiveException e) {}
 	}
 	

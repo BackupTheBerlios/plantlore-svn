@@ -1,17 +1,16 @@
 package net.sf.plantlore.server;
 
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
-import java.util.Properties;
+
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+
 
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 import net.sf.plantlore.server.tools.*;

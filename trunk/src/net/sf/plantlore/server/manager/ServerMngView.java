@@ -9,6 +9,8 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.server.ConnectionInfo;
+
 /**
  *
  * @author  yaa
@@ -35,6 +37,7 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jToolBar1 = new javax.swing.JToolBar();
+        refresh = new javax.swing.JButton();
         kick = new javax.swing.JButton();
         startstop = new javax.swing.JButton();
         terminate = new javax.swing.JButton();
@@ -42,6 +45,9 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
         users = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        refresh.setText("Refresh");
+        jToolBar1.add(refresh);
+
         kick.setText("Kick users");
         jToolBar1.add(kick);
 
@@ -80,6 +86,7 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
     protected javax.swing.JButton kick;
+    protected javax.swing.JButton refresh;
     protected javax.swing.JButton startstop;
     protected javax.swing.JButton terminate;
     protected javax.swing.JList users;
@@ -88,8 +95,11 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
 
     
 	public void update(Observable source, Object parameter) {
-		if(parameter != null && parameter.toString().startsWith("PH"))
-			users.setListData(model.getConnectedUsers());
+		if(parameter != null && parameter.toString().startsWith("PH")){
+			ConnectionInfo[] clients = model.getConnectedUsers(false);
+			if(clients != null) users.setListData(clients);
+			else users.setListData(new String[] {null}); // empty selection. the setListData mustn't be null :/
+		}
 	}
     
 }

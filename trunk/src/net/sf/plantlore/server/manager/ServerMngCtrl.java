@@ -4,8 +4,7 @@ import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 
 import javax.swing.AbstractAction;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+
 
 import net.sf.plantlore.server.ConnectionInfo;
 
@@ -17,23 +16,22 @@ public class ServerMngCtrl {
 	public ServerMngCtrl(ServerMng model, ServerMngView view) {
 		this.model = model; this. view = view;
 		
-		view.users.addListSelectionListener(new SelectionChange());
 		view.kick.addActionListener(new KickUsers());
 		view.startstop.addActionListener(new StopServer());
 		view.terminate.addActionListener(new TerminateServer());
+		view.refresh.addActionListener(new Refresh());
 	}
 	
-	class SelectionChange implements ListSelectionListener {
-		public void valueChanged(ListSelectionEvent lse) {
-			ConnectionInfo[] selected = (ConnectionInfo[])view.users.getSelectedValues();
-			model.setSelectedClients(selected);			
-		}
-	}
 	
 	class KickUsers extends AbstractAction {
 		public void actionPerformed(ActionEvent ae) {
 			try {
-				model.kickSelectedClients();
+				Object[] bunch = view.users.getSelectedValues();
+				if(bunch == null || bunch.length == 0) return;
+
+				for(Object client : bunch)
+					if(client instanceof ConnectionInfo) model.kick((ConnectionInfo)client);
+
 			} catch(RemoteException re) { }
 		}
 	}
@@ -56,7 +54,7 @@ public class ServerMngCtrl {
 	
 	class Refresh extends AbstractAction {
 		public void actionPerformed(ActionEvent ae) {
-				model.getConnectedUsers();
+				model.getConnectedUsers(true);
 		}
 	}
 

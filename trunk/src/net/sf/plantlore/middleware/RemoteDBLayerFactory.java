@@ -3,6 +3,8 @@ package net.sf.plantlore.middleware;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import net.sf.plantlore.server.DBLayerException;
+
 /** 
  * Interface for obtaining remote references of the DBLayer objects running on some remote server.
  * 
@@ -27,7 +29,7 @@ public interface RemoteDBLayerFactory extends Remote {
 	 * @return The remote reference of the DBLayer (that lives on the server side).
 	 * @throws RemoteException If the RMI encounters a problem.
 	 */
-	DBLayer create() throws RemoteException;
+	DBLayer create() throws RemoteException, DBLayerException;
 	
 	/** 
 	 * Destroy the remote object, i.e. ensure some cleanup. 

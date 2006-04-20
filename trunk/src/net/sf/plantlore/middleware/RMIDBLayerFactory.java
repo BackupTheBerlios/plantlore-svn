@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 import net.sf.plantlore.server.ConnectionInfo;
+import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
@@ -84,7 +85,7 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	 * @return A stub of the remote object that lives on the server and mediates the connection
 	 * with the remote database.
 	 */
-	public synchronized DBLayer create(String host, int port) throws RemoteException, NotBoundException {
+	public synchronized DBLayer create(String host, int port) throws RemoteException, NotBoundException, DBLayerException {
 		// Some exceptional cases are handled specially.
 		if(host == null || host.equals("") || host.equalsIgnoreCase("localhost"))
 			return create();
@@ -92,18 +93,19 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 		logger.debug("Creating a new DBLayer using the RMI:");
 		
 		// Connect to the remote server and obtain the RemoteDBLayerFactory
-		logger.debug("  # connecting to the remote registry @ " + host + ":" + port +" ...");
+		logger.debug("  connecting to the remote registry @ " + host + ":" + port +" ...");
 		Registry registry = LocateRegistry.getRegistry(host, port);
-		logger.debug("    completed");
+		logger.debug("  completed");
 		
-		logger.debug("  # obtaining the remote dblayer factory ...");
+		logger.debug("  obtaining the remote dblayer factory ...");
 		RemoteDBLayerFactory remoteFactory = (RemoteDBLayerFactory) registry.lookup(RemoteDBLayerFactory.ID);
-		logger.debug("    completed");
+		logger.debug("  completed");
 		
 		// Get the stub from the remote factory and save the information about the connection
-		logger.debug("  # creating a new dblayer...");
-		DBLayer stub = remoteFactory.create();
+		logger.debug("  creating a new dblayer...");
+		DBLayer stub = remoteFactory.create(); // DBLayerException can spawn here (too many users!)
 		logger.debug("  completed! :)");
+		
 		ConnectionInfo info = new ConnectionInfo(remoteFactory, null, stub, "localhost -> " + host + ":" + port);
 		client.put(stub, info);
 		

@@ -5,7 +5,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 
@@ -18,7 +17,7 @@ import net.sf.plantlore.server.*;
 public class ServerMng extends Observable {
 	
 	private Server<ConnectionInfo> server;
-	private Collection<ConnectionInfo> clients, selected;
+	private Collection<ConnectionInfo> clients;
 	
 	public enum Mode { CREATE_NEW, CONNECT_EXISTING };
 	
@@ -49,32 +48,24 @@ public class ServerMng extends Observable {
 	}
 	
 	
-	public ConnectionInfo[] getConnectedUsers() {
+	public ConnectionInfo[] getConnectedUsers(boolean refresh) {
 		if(server == null) return null;
-		try {
-			clients = /*(Collection<ConnectionInfo>)*/server.getClients();
-			logger.debug("Clients connected to the server received.");
-			setChanged(); notifyObservers("PH");
-		} catch( RemoteException e) { logger.warn("Unable to obtain the list of connected users - network error?"); }
+		if(refresh)
+			try {
+				clients = /*(Collection<ConnectionInfo>)*/server.getClients();
+				logger.debug("Clients connected to the server received.");
+				setChanged(); notifyObservers("PH");
+			} catch( RemoteException e) { logger.warn("Unable to obtain the list of connected users - network error?"); }
 		return clients.toArray(new ConnectionInfo[0]);
 	}
 	
 	
-	public void setSelectedClients(ConnectionInfo[] selected) {
-		this.selected = new ArrayList<ConnectionInfo>(selected.length + 2);
-		for(ConnectionInfo client : selected) this.selected.add(client);
-		logger.debug("Selected clients stored.");
-	}
+	public void kick(ConnectionInfo client) throws RemoteException {
+		if(server == null || clients == null) return;
+		logger.info("Kicking " + client);
+		server.disconnect(client);
 	
-	
-	public void kickSelectedClients() throws RemoteException {
-		if(server == null) return;
-		for(ConnectionInfo client : selected) {
-			logger.info("Kicking " + client);
-			server.disconnect(client);
-		}
-		logger.debug("All selected clients have been kicked.");
-		getConnectedUsers();
+		getConnectedUsers(true);
 	}
 	
 	
