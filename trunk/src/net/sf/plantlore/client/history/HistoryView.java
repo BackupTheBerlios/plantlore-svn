@@ -8,6 +8,7 @@ package net.sf.plantlore.client.history;
 
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import net.sf.plantlore.l10n.L10n;
@@ -30,6 +31,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 
         super(parent, modal);
         this.model = model;
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
         getTable().setModel(new HistoryTableModel(model));
     }

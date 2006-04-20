@@ -5,15 +5,8 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-import net.sf.plantlore.client.Settings;
-import net.sf.plantlore.client.SettingsView;
-import net.sf.plantlore.common.*;
 
 
 import org.apache.log4j.Logger;
@@ -43,7 +36,7 @@ public class HistoryCtrl {
         view.selectAllButton.addActionListener(new selectAllButtonListener());
         view.unselectAllButton.addActionListener(new unselectAllButtonListener());
         view.undoButton.addActionListener(new undoSelectedButtonListener());
-        view.toDisplayValueTextField.addPropertyChangeListener(new rowSetDisplayChangeListener());        
+        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());           
     }
     
         /** 
@@ -197,8 +190,8 @@ public class HistoryCtrl {
    /**
     * 
     */
-   class rowSetDisplayChangeListener implements PropertyChangeListener {
-	   public void propertyChange(PropertyChangeEvent e) {
+    class rowSetDisplayChangeListener implements ActionListener {
+       public void actionPerformed(ActionEvent actionEvent) {
            // Save old value
            int oldValue = model.getDisplayRows();           
            // Check whether new value > 0

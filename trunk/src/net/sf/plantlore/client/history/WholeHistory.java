@@ -40,9 +40,7 @@ import org.apache.log4j.Logger;
 public class WholeHistory {
     
       /** Instance of a logger */
-    private Logger logger;   
-    /** Exception with details about an error */
-    private DBLayerException error = null;
+    private Logger logger;      
     /** Instance of a database management object */
     private DBLayer database;   
     /** Constant with default number of rows to display */
@@ -88,22 +86,19 @@ public class WholeHistory {
     /** Operation whitch was used*/   
     private int operation;
     /** Date and time when the reccord was changed*/
-    private java.util.Date when = new Date();	
+    //private java.util.Date when = new Date();	
     /** Old value of attribute*/    
     private String oldValue;
     /** New value of attribute*/
-    private String newValue;
+    //private String newValue;
    /** Name of user who did changed*/
-    private String nameUser;
+    //private String nameUser;
     
     //********************************************************//
     /** Mapping of entities */
     private Hashtable<String, Integer> publicationHash;
     private Hashtable<String, Integer> habitatHash;
     private Hashtable<String, Integer> occurrenceHash;  
-    private Hashtable<String, Integer> villageHash;
-    private Hashtable<String, Integer> territoryHash;
-    private Hashtable<String, Integer> phytochorionHash;
     private Hashtable<String, Integer> authorHash;
     
     
@@ -142,16 +137,14 @@ public class WholeHistory {
         int resultId = 0;
         try {
             // Execute query                    
-            resultId = database.executeQuery(query);        
+            resultId = database.executeQuery(query);
+            // Save "edit" history data
+            setResultId(resultId);    
         } catch (DBLayerException e) {                            
             logger.error("Searching whole history data failed. Unable to execute search query.");           
         } catch (RemoteException e) { 		   
      	   System.err.println("RemoteException- searchWholeHistoryData(), executeQuery");
-        } finally {
-                logger.debug("Searching whole history data ends successfully");
-                // Save "edit" history data
-                setResultId(resultId);                  
-        }              
+        }          
     }
     
    /**
@@ -193,14 +186,12 @@ public class WholeHistory {
                     for (int i=0; i<countResult; i++ ) {                    							
 						Object[] objHis = (Object[])objectHistory[i];
                         this.historyDataList.add((HistoryRecord)objHis[0]);
-                    }                     
+                    }           
+                    //Update current first displayed row (only if data retrieval was successful)
+                    setCurrentFirstRow(fromTable); 
                 } catch (DBLayerException e) {                  
                     logger.error("Processing search results failed: "+e.toString());            
-                } finally { 
-                    logger.debug("Sets 'edit' data ends successfully");
-                    //Update current first displayed row (only if data retrieval was successful)
-                    setCurrentFirstRow(fromTable);                    
-                }               
+                }             
             }
         }         
     }
@@ -235,11 +226,11 @@ public class WholeHistory {
                /** 
                 * Pri insertu a editu nedohledavam column --> prvne rozdelit podle operace a pro edit dale rozdelit podle column
                 */
-                if (operation == historyChange.HISTORYCHANGE_INSERT) {
+                if (operation == HistoryChange.HISTORYCHANGE_INSERT) {
                     undoInsertDelete(0);
-                } else if (operation == historyChange.HISTORYCHANGE_EDIT || operation == historyChange.HISTORYCHANGE_EDITGROUP) {
+                } else if (operation == HistoryChange.HISTORYCHANGE_EDIT || operation == HistoryChange.HISTORYCHANGE_EDITGROUP) {
                     undoEdit();
-                } else if (operation == historyChange.HISTORYCHANGE_DELETE) {
+                } else if (operation == HistoryChange.HISTORYCHANGE_DELETE) {
                     undoInsertDelete(1);
                 } else {
                     logger.error("Incorrect opreration code: "+ operation);
@@ -476,7 +467,7 @@ public class WholeHistory {
                  */ 	                		  
                 occurrence.getHabitat().setQuadrant(oldValue);		                	
                 logger.debug("Set selected value for update of attribute Quadrant.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {
                 // existuji dva edity EDIT (ovlivni jeden nalez) a EDITGROUP (ovlivni vice nalezu)
                 // potrebujeme zjistit, zda pro dany nalez je vazeba mezi tHabitats a tOccurrences vzdy 1:N
                 // nebo zda editaci nalezu vznikla vazvba 1:1
@@ -486,35 +477,35 @@ public class WholeHistory {
         case 2: //Place description 	                	 	                			                		 
                 occurrence.getHabitat().setDescription(oldValue);		                	
                 logger.debug("Set selected value for update of attribute Description.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	              	
                 break;
         case 3:  //Country 	                	 	                			                		 
                 occurrence.getHabitat().setCountry(oldValue);		                	
                 logger.debug("Set selected value for update of attribute Country.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
             break;
         case 4: //Altitude 	                	                			                		 
                 occurrence.getHabitat().setAltitude(Double.parseDouble(oldValue));		                	
                 logger.debug("Set selected value for update of attribute Altitude.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
                 break;
         case 5:  //Latitude   	                		                			                		  
                 occurrence.getHabitat().setLatitude(Double.parseDouble(oldValue));		                	
                 logger.debug("Set selected value for update of attribute Latitude.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
             break;
         case 6: //Longitude 	                		                			                		
                 occurrence.getHabitat().setLongitude(Double.parseDouble(oldValue));		                	
                 logger.debug("Set selected value for update of attribute Longitude.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
                 break;
@@ -528,7 +519,7 @@ public class WholeHistory {
                 } else {
                         logger.error("UNDO - Incorrect oldRecordId for Village.");
                 }
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
             break;
@@ -542,7 +533,7 @@ public class WholeHistory {
                 }else {
                         logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
                 }
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
             break; 	               
@@ -556,14 +547,14 @@ public class WholeHistory {
                 }else {
                         logger.error("UNDO - Incorrect oldRecordId for Territory.");
                 }	
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	        	
             break;
         case 10: //Note habitat	                		                			                		  
                 occurrence.getHabitat().setNote(oldValue);		                	
                 logger.debug("Set selected value for update of attribute Note.");
-                if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 //                        relationship = true;
                 } 	
                 break;
@@ -863,10 +854,7 @@ public class WholeHistory {
             logger.error("Searching " +typeObject+ " failed. Unable to execute search query.");
         } catch (RemoteException e) {		 
      	   System.err.println("RemoteException- executeQuery " +typeObject);
- 	} finally {
-     	   logger.debug("Searching " +typeObject+ " ends successfully");
-        }         
-
+ 	} 
        Object[] objects = null;
        Object[] object = null;
        try {
@@ -880,9 +868,9 @@ public class WholeHistory {
        } catch (DBLayerException e) {
            // Log and set error in case of an exception
            logger.error("Processing search " +typeObject+ " results failed: "+e.toString());            
-       } finally {     	    
-    	   return object; 	       	          	   
-       }     	        
+       }     	    
+        return object; 	       	          	   
+           	        
     }
     
     /**
@@ -962,8 +950,7 @@ public class WholeHistory {
      * @param id
      * @return
      */
-    public int searchHistoryChangeId(int id){
-    	HistoryChange historyChange = ((HistoryRecord)historyDataList.get(id)).getHistoryChange();
+    public int searchHistoryChangeId(int id){    	
     	SelectQuery query = null;
         try {
         	    query = database.createQuery(HistoryRecord.class);
@@ -983,10 +970,8 @@ public class WholeHistory {
             logger.error("Searching historyChangeId failed. Unable to execute search query.");
         } catch (RemoteException e) {		 
      	   System.err.println("RemoteException- searchHistoryChangeId(), executeQuery");
- 	    } finally {
-     	   logger.debug("Searching historyChangeId ends successfully.");
-        }         
- 	    
+ 	    } 
+        
  	    int countResult = 100;
  	    try {
 			countResult = database.getNumRows(resultIdChange);

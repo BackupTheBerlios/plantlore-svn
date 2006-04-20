@@ -11,11 +11,7 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import org.apache.log4j.Logger;
-
-
 
 
 /**
@@ -41,7 +37,8 @@ public class WholeHistoryCtrl {
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());     
         view.undoToDateButton.addActionListener(new undoToDateButtonListener());
-        view.toDisplayValueTextField.addPropertyChangeListener(new rowSetDisplayChangeListener());        
+        view.detailsButton.addActionListener(new detailsHistoryListener());
+        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());       
     }
     
             /** 
@@ -133,8 +130,8 @@ public class WholeHistoryCtrl {
       /**
     * 
     */
-   class rowSetDisplayChangeListener implements PropertyChangeListener {
-	   public void propertyChange(PropertyChangeEvent e) {
+     class rowSetDisplayChangeListener implements ActionListener {
+       public void actionPerformed(ActionEvent actionEvent) {
            // Save old value
            int oldValue = model.getDisplayRows();           
            // Check whether new value > 0
@@ -197,6 +194,23 @@ public class WholeHistoryCtrl {
                        logger.debug("Button Cancle was press.");
                } 
            }
+       }
+    }
+    
+    /**
+    *
+    */  
+    class detailsHistoryListener implements ActionListener {
+       public void actionPerformed(ActionEvent actionEvent)
+       {
+           if (view.tableHistoryList.getSelectedRow() < 0) {    
+               view.messageUndoSelection();
+           } else {
+               //zobrazi se detailni informace o vybranem zaznamu
+               DetailsHistoryView detailsView = new DetailsHistoryView(model, view, true);
+               detailsView.setVisible(true);
+               //jeste kontroler
+           }          
        }
     }
 }

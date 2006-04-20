@@ -13,9 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Observable;
-import java.util.Set;
 
-import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.DBLayerException;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -26,10 +24,8 @@ import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.HistoryRecord;
 import net.sf.plantlore.common.record.HistoryChange;
-import net.sf.plantlore.common.record.HistoryColumn;
 import net.sf.plantlore.common.record.Village;
 
 
@@ -74,8 +70,6 @@ public class History extends Observable {
     private boolean editHabitat;
     //zprava pro uzivatele
     private String messageUndo;
-    //zaznamenani ITEM, jejichz zmena ovlibni vice polozek
-   private ArrayList<String> itemAffectMore = new ArrayList();
     
     //*********************Record of history ***************************************//    
     private Occurrence occurrence;
@@ -114,7 +108,6 @@ public class History extends Observable {
 
      //********************************************************//
      /** Mapping of entities */
-    private Hashtable<String, Integer> publicationHash;
     private Hashtable<String, Integer> habitatHash;
     private Hashtable<String, Integer> occurrenceHash;  
     
@@ -153,10 +146,8 @@ public class History extends Observable {
            logger.error("Searching occurence failed.");          
        } catch (RemoteException e) {
     	   System.err.println("RemoteException- History(), executeQuery");
-	   } finally {
-	    	   logger.debug("Searching occurrence ends successfully");                           
-	       }   
-	   
+	   } 
+       
 	   Object[] objectOccurrence = null;
 	   Object[] objHis = null;
        try {
@@ -170,8 +161,6 @@ public class History extends Observable {
        } catch (DBLayerException e) {
            // Log and set error in case of an exception
            logger.error("Processing search occurrence results failed: "+e.toString());            
-       } finally { 
-       	   logger.debug("Sets occurrence data ends successfully.");        	
        } 
               
        occurrence = ((Occurrence)objHis[0]);
@@ -220,17 +209,15 @@ public class History extends Observable {
        int resultIdInsert = 0;
        try {
            // Execute query                    
-           resultIdInsert = database.executeQuery(query);        
+           resultIdInsert = database.executeQuery(query); 
+           // Save "insert" history data
+           setInsertResult(resultIdInsert);
        } catch (DBLayerException e) {
            // Log and set an error                   
            logger.error("Searching history data with condition 'operation = insert' failed. Unable to execute search query.");          
        } catch (RemoteException e) {		 
     	   System.err.println("RemoteException- searchInsertInfo(), executeQuery");
-	} finally {
-    	   logger.debug("Searching history data with condition 'operation = insert' ends successfully");
-           // Save "insert" history data
-           setInsertResult(resultIdInsert);                    
-       }              
+	    }             
     }
     
     
@@ -261,17 +248,15 @@ public class History extends Observable {
         int resultIdEdit = 0;
         try {
             // Execute query                    
-            resultIdEdit = database.executeQuery(query);        
+            resultIdEdit = database.executeQuery(query); 
+            // Save "edit" history data
+            setEditResult(resultIdEdit);
         } catch (DBLayerException e) {
             // Log and set an error                   
             logger.error("Searching history data with condition 'operation = edit' failed. Unable to execute search query.");           
         } catch (RemoteException e) { 		   
      	   System.err.println("RemoteException- searchEditHistory(), executeQuery");
-	 	} finally {
-	 		logger.debug("Searching history data with condition 'operation = edit' ends successfully");
-        	// Save "edit" history data
-            setEditResult(resultIdEdit);                  
-	 	}              
+	 	}           
     }
     
     
@@ -300,9 +285,7 @@ public class History extends Observable {
          	setNameUser(((HistoryChange)objHis[0]).getWho().getWholeName());         	
         } catch (DBLayerException e) {         
             logger.error("Processing search (inserting) results failed: "+e.toString());            
-        } finally { 
-        	logger.debug("Sets 'insert' data ends successfully.");        	
-        }        
+        }       
     }
     
     
@@ -345,14 +328,12 @@ public class History extends Observable {
                     for (int i=0; i<countResult; i++ ) {                    							
 						Object[] objHis = (Object[])objectHistory[i];
                         this.editHistoryDataList.add((HistoryRecord)objHis[0]);
-                    }                     
+                    }           
+                    //Update current first displayed row (only if data retrieval was successful)
+                    setCurrentFirstRow(fromTable); 
                 } catch (DBLayerException e) {                  
                     logger.error("Processing search results failed: "+e.toString());            
-                } finally { 
-                	logger.debug("Sets 'edit' data ends successfully");
-                	//Update current first displayed row (only if data retrieval was successful)
-                    setCurrentFirstRow(fromTable);                    
-                }               
+                }             
             }
         }         
     }
@@ -424,9 +405,7 @@ public class History extends Observable {
             logger.error("Searching " +typeObject+ " failed. Unable to execute search query.");
         } catch (RemoteException e) {		 
      	   System.err.println("RemoteException- executeQuery " +typeObject);
- 	    } finally {
-     	   logger.debug("Searching " +typeObject+ " ends successfully");
-        }         
+ 	    }        
 
  	   Object[] objects = null;
  	   Object[] object = null;
@@ -440,10 +419,9 @@ public class History extends Observable {
         	object = (Object[])objects[0];           
        } catch (DBLayerException e) {
            // Log and set error in case of an exception
-           logger.error("Processing search " +typeObject+ " results failed: "+e.toString());            
-       } finally {     	    
-    	   	return object; 	       	          	   
-       }     	        
+           logger.error("Processing search " +typeObject+ " results failed: "+e.toString());               
+       }     	    
+       return object; 	       	          	          	       
     }
     
  
@@ -615,7 +593,7 @@ public class History extends Observable {
                 		 */ 	                		  
                 		occurrence.getHabitat().setQuadrant(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Quadrant.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {
 	                		// existuji dva edity EDIT (ovlivni jeden nalez) a EDITGROUP (ovlivni vice nalezu)
 	                		// potrebujeme zjistit, zda pro dany nalez je vazeba mezi tHabitats a tOccurrences vzdy 1:N
 	                		// nebo zda editaci nalezu vznikla vazvba 1:1
@@ -625,35 +603,35 @@ public class History extends Observable {
  	                case 2: //Place description 	                	 	                			                		 
                 		occurrence.getHabitat().setDescription(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Description.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                         
 	                	} 	              	
  	                	break;
  	                case 3:  //Country 	                	 	                			                		 
                 		occurrence.getHabitat().setCountry(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Country.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                          
 	                	} 	
  	                    break;
  	                case 4: //Altitude 	                	                			                		 
                 		occurrence.getHabitat().setAltitude(Double.parseDouble(oldValue));		                	
 	                	logger.debug("Set selected value for update of attribute Altitude.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                          
 	                	} 	
  	                	break;
  	                case 5:  //Latitude   	                		                			                		  
                 		occurrence.getHabitat().setLatitude(Double.parseDouble(oldValue));		                	
 	                	logger.debug("Set selected value for update of attribute Latitude.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                        
 	                	} 	
  	                    break;
  	                case 6: //Longitude 	                		                			                		
                 		occurrence.getHabitat().setLongitude(Double.parseDouble(oldValue));		                	
 	                	logger.debug("Set selected value for update of attribute Longitude.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                         
 	                	} 	
  	                	break;
@@ -667,7 +645,7 @@ public class History extends Observable {
             			} else {
             				logger.error("UNDO - Incorrect oldRecordId for Village.");
             			}
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                        
 	                	} 	
  	                    break;
@@ -681,7 +659,7 @@ public class History extends Observable {
  	                	}else {
             				logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
             			}
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                        
 	                	} 	
  	                    break; 	               
@@ -695,14 +673,14 @@ public class History extends Observable {
 	                	}else {
             				logger.error("UNDO - Incorrect oldRecordId for Territory.");
             			}	
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                      
 	                	} 	        	
 	                    break;
 	                case 10: //Note habitat	                		                			                		  
                 		occurrence.getHabitat().setNote(oldValue);		                	
 	                	logger.debug("Set selected value for update of attribute Note.");
-	                	if (operation == historyChange.HISTORYCHANGE_EDIT) {	                		
+	                	if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
 	                		relationship = true;                                        
 	                	} 	
 	                	break;
@@ -823,9 +801,7 @@ public class History extends Observable {
             logger.error("Searching historyChangeId failed. Unable to execute search query.");
         } catch (RemoteException e) {		 
      	   System.err.println("RemoteException- searchHistoryChangeId(), executeQuery");
- 	    } finally {
-     	   logger.debug("Searching historyChangeId ends successfully.");
-        }         
+ 	    }        
  	    
  	    int countResult = 100;
  	    try {

@@ -2,13 +2,7 @@ package net.sf.plantlore.client.history;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import org.apache.log4j.Logger;
 
@@ -262,8 +256,7 @@ public class HistoryTableModel extends AbstractTableModel
      * @param itemId
      * @return
      */
-    public int searchSmaller(String item, int itemId) {    	
-    	int itemNewId = -1;
+    public int searchSmaller(String item, int itemId) {    	    	
     	int firstRow = model.getCurrentFirstRow();
     	for( int i=itemId-firstRow; i >=0 ; i--){
     		if (getValueAt(i,3).equals(item)){
