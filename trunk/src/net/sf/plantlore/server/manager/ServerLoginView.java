@@ -1,18 +1,14 @@
-/*
- * ServerLoginView.java
- *
- * Created on 20. duben 2006, 10:30
- */
-
 package net.sf.plantlore.server.manager;
 
-import javax.swing.JDialog;
+import net.sf.plantlore.l10n.L10n;
+
 
 /**
+ * The server connection/creation dialog.
  *
- * @author  yaa
+ * @author  Erik Kratochvíl (discontinuum@gmail.com)
  */
-public class ServerLoginView extends javax.swing.JDialog {
+public class ServerLoginView extends javax.swing.JFrame {
 	
 	ServerMng model;
     
@@ -21,8 +17,6 @@ public class ServerLoginView extends javax.swing.JDialog {
     	this.model = model;
         initComponents();
         setLocationRelativeTo(null); // center of the screen
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        setModal(true);
     }
     
     /** This method is called from within the constructor to
@@ -43,13 +37,13 @@ public class ServerLoginView extends javax.swing.JDialog {
         connectExisting = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jLabel1.setText("Host:port");
+        jLabel1.setText(L10n.getString("HostPort"));
 
-        jLabel2.setText("Password");
+        jLabel2.setText(L10n.getString("Password"));
 
         host.setText("localhost:1099");
 
-        next.setText("next");
+        next.setText("Next");
 
         imageHere.setBackground(new java.awt.Color(0, 0, 0));
         org.jdesktop.layout.GroupLayout imageHereLayout = new org.jdesktop.layout.GroupLayout(imageHere);

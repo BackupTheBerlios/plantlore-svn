@@ -69,7 +69,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         remember.setText(L10n.getString("AutoSelect"));
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        remember.setSelected(true);
+        //remember.setSelected(true);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

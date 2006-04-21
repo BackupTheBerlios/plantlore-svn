@@ -67,9 +67,17 @@ public class Login extends Observable {
 		
 
 		 // TEMPORARY CODE STARTS HERE
-				dbinfo.add(new DBInfo("My Home Database", "localhost", -1,
-							"jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb", 
+				dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
+						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdataUTF.fdb", 
+						new String[] { "sysdba", null, null, null, null }));
+		
+				dbinfo.add(new DBInfo("Local Database", "localhost", -1,
+							"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
 							new String[] { "sysdba", null, null, null, null }));
+				
+				dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
+						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
+						new String[] { "sysdba", null, null, null, null }));
 		 // TEMPORARY CODE ENDS HERE
 		
 		this.setChanged(); this.notifyObservers();

@@ -9,18 +9,20 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
+
 import net.sf.plantlore.server.ConnectionInfo;
 
 /**
+ * Server control dialog.
  *
- * @author  yaa
+ * @author  Erik Kratochvíl
  */
 public class ServerMngView extends javax.swing.JFrame implements Observer {
 	
 	private ServerMng model;
 	
-    
-    /** Creates new form ServerView2 */
+	
+    /** Creates new form ServerView */
     public ServerMngView(ServerMng model) {
     	this.model = model;
     	model.addObserver(this);
@@ -93,7 +95,9 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     // End of variables declaration//GEN-END:variables
 
 
-    
+    /**
+     * Reload the list of the connected clients.
+     */
 	public void update(Observable source, Object parameter) {
 		if(parameter != null && parameter.toString().startsWith("PH")){
 			ConnectionInfo[] clients = model.getConnectedUsers(false);

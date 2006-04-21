@@ -7,6 +7,6 @@ public interface Guard extends Remote {
 	
 	final static String ID = "PlantloreRMIServerGuard";
 
-	Server certify(String authorizationInfo) throws RemoteException;
+	Server certify(String authorizationInfo) throws RemoteException, CertificationException;
 	
 }

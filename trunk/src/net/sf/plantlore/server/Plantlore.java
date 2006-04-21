@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.manager.*;
 
 
@@ -39,6 +40,12 @@ public class Plantlore {
         }
         //maybe CHANGE to configureAndWatch()
         PropertyConfigurator.configure(props);
+        
+        try {
+            L10n.load();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 			
 		ServerMng model = new ServerMng();
         ServerLoginView view = new ServerLoginView(model);

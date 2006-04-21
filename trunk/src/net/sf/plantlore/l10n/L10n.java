@@ -8,9 +8,7 @@
 package net.sf.plantlore.l10n;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import org.apache.log4j.Logger;
@@ -107,6 +105,6 @@ public class L10n
         if (i>=0)
             sb.deleteCharAt(i);
         
-        return c.toUpperCase(c);
+        return Character.toUpperCase(c);
     }
 }

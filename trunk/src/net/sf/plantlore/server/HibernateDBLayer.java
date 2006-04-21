@@ -321,7 +321,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public int executeQuery(SelectQuery query) throws DBLayerException {
     	
     	SelectQuery selectQuery = queries.remove(query);
-    	if(selectQuery == null) return -1;
+    	if(selectQuery == null) throw new DBLayerException("You can only pass queries created by this DBLayer!");
     	
     	if(undertaker != null) 
     		try { UnicastRemoteObject.unexportObject(selectQuery, true); }
@@ -330,6 +330,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	assert(selectQuery instanceof SelectQueryImplementation);
     	SelectQueryImplementation sq = (SelectQueryImplementation) selectQuery;
     	
+    	if(sq == null) logger.fatal("Class cast failed. Why the fuck?!");
     	
         Transaction tx = null;        
         ScrollableResults res;

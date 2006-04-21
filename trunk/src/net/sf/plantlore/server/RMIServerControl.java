@@ -13,9 +13,10 @@ public class RMIServerControl extends UnicastRemoteObject implements Guard {
 		this.password = password;
 	}
 	
-	public Server certify(String authorizationInfo) throws RemoteException {
+	public Server certify(String authorizationInfo) throws RemoteException, CertificationException {
 		if(authorizationInfo.equals(password)) return server;
-		return null;
+		throw new CertificationException("Wrong password.");
+		//return null;
 	}
 	
 }
