@@ -24,7 +24,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import net.sf.plantlore.client.history.WholeHistory;
+import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.WholeHistoryCtrl;
 import net.sf.plantlore.client.history.WholeHistoryView;
 import net.sf.plantlore.common.record.Author;
@@ -35,7 +35,6 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
-import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
 import net.sf.plantlore.client.login.Login;
@@ -73,7 +72,7 @@ public class AppCoreCtrl
     HistoryCtrl historyCtrl;
     
     //History of "database" 
-    WholeHistory wholeHistoryModel;
+    History wholeHistoryModel;
     WholeHistoryView wholeHistoryView;
     WholeHistoryCtrl wholeHistoryCtrl;
     
@@ -401,7 +400,7 @@ public class AppCoreCtrl
             //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
-            
+                                   
             historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
             historyView = new HistoryView(historyModel, view, true);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
@@ -414,7 +413,7 @@ public class AppCoreCtrl
         {
             System.out.println("Whole history - Undo selected");
             
-            wholeHistoryModel = new WholeHistory(model.getDatabase());
+            wholeHistoryModel = new History(model.getDatabase());
             wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view, true);
             wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel, wholeHistoryView);
             wholeHistoryView.setVisible(true); 

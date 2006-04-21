@@ -24,7 +24,7 @@ public class WholeHistoryTableModel extends AbstractTableModel {
     //Logger
     private Logger logger;
     // History model
-    private WholeHistory model; 
+    private History model; 
     private ArrayList<HistoryRecord> editHistoryDataList;
     
     /** Names of the columns */
@@ -40,7 +40,7 @@ public class WholeHistoryTableModel extends AbstractTableModel {
     public final static int NEW_VALUE = 5;
     
     /** Creates a new instance of WholeHistoryTableModel */
-    public WholeHistoryTableModel(WholeHistory model) {
+    public WholeHistoryTableModel(History model) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     	this.model = model;        
     	initColumns();    	

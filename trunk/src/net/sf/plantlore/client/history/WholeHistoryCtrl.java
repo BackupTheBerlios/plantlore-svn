@@ -21,11 +21,11 @@ import org.apache.log4j.Logger;
 public class WholeHistoryCtrl {
    
     private Logger logger;
-    private WholeHistory model;
+    private History model;
     private WholeHistoryView view;
     
     /** Creates a new instance of WholeHistoryCtrl */
-    public WholeHistoryCtrl(WholeHistory model, WholeHistoryView view) {
+    public WholeHistoryCtrl(History model, WholeHistoryView view) {
       
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = model;
@@ -175,7 +175,7 @@ public class WholeHistoryCtrl {
                    //Button OK was press
                    logger.debug("Button OK was press.");    
                    model.commitUpdate();
-                   model.deleteHistory(toResult);
+                   model.deleteHistory(toResult, false);
 		    	   model.searchWholeHistoryData();        	
 		    	   model.processResult(1,model.getDisplayRows());
 		    	   view.tableHistoryList.setModel(new WholeHistoryTableModel(model));

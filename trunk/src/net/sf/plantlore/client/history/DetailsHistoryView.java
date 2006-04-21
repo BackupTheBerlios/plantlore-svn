@@ -18,7 +18,7 @@ public class DetailsHistoryView extends javax.swing.JDialog {
     /**
      * Creates new form DetailsHistoryView
      */
-    public DetailsHistoryView(WholeHistory model, javax.swing.JDialog parent, boolean modal) {
+    public DetailsHistoryView(History model, javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();        

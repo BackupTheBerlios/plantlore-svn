@@ -158,14 +158,14 @@ public class HistoryCtrl {
    class undoSelectedButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {    	   
-           model.updateOlderChanges();            
+           model.undoSelected();            
            int okCancle = view.messageUndo(model.getMessageUndo());
            logger.debug("button "+okCancle);
            if (okCancle == 0){
         	   //Button OK was press
         	   logger.debug("Button OK was press.");
         	   model.commitUpdate();
-        	   model.deleteHistoryRecords();
+        	   model.deleteHistory(model.getResultRows(), true);
         	   model.searchEditHistory();
         	   model.processResult(1,model.getDisplayRows());
         	   view.getTable().setModel(new HistoryTableModel(model));

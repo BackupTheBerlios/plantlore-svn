@@ -65,7 +65,7 @@ public class HistoryTableModel extends AbstractTableModel
     	
     	logger.debug("Init data.");
     	
-    	editHistoryDataList = model.getEditHistoryDataList();
+    	editHistoryDataList = model.getHistoryDataList();
     	if (editHistoryDataList.size()==0 ){
     		this.data = new Object[0][];
     		return;
@@ -183,7 +183,7 @@ public class HistoryTableModel extends AbstractTableModel
      *
      */
     public void initMarkAllItem() {    	
-    	editHistoryDataList = model.getEditHistoryDataList();    	
+    	editHistoryDataList = model.getHistoryDataList();    	
     	int countResult = editHistoryDataList.size();    	
     	for (int i=0; i < countResult; i++) {      		    		    	
     		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());
@@ -200,7 +200,7 @@ public class HistoryTableModel extends AbstractTableModel
      */
     public void updateMarkListId() {
     	markListId = new HashSet();
-    	editHistoryDataList = model.getEditHistoryDataList();
+    	editHistoryDataList = model.getHistoryDataList();
     	markItem = model.getMarkItem();
     	int countResult = editHistoryDataList.size();    	
     	for (int i=0; i < countResult; i++) {  

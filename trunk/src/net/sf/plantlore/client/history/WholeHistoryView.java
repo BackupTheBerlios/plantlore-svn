@@ -20,12 +20,12 @@ import net.sf.plantlore.l10n.L10n;
 public class WholeHistoryView extends javax.swing.JDialog implements Observer{
     
     //Whole History model
-    private WholeHistory model;  
+    private History model;  
     //data
     private Object[][] data;
     
     /** Creates new form WholeHistoryView */
-    public WholeHistoryView(WholeHistory model, java.awt.Frame parent, boolean modal) {
+    public WholeHistoryView(History model, java.awt.Frame parent, boolean modal) {
         
         super(parent, modal);
         this.model = model;
