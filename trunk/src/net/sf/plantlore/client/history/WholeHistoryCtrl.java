@@ -207,9 +207,15 @@ public class WholeHistoryCtrl {
                view.messageUndoSelection();
            } else {
                //zobrazi se detailni informace o vybranem zaznamu
-               DetailsHistoryView detailsView = new DetailsHistoryView(model, view, true);
-               detailsView.setVisible(true);
-               //jeste kontroler
+               int resultNumber = view.tableHistoryList.getSelectedRow() + model.getCurrentFirstRow()-1;
+                
+               logger.debug("Result number: "+ resultNumber);
+        
+               String detailsMessage = model.getDetailsMessage(resultNumber);
+               DetailsHistoryView detailsView = new DetailsHistoryView(view, true);
+               DetailsHistoryCtrl detailsCtrl = new DetailsHistoryCtrl(detailsView);
+               detailsView.setDetailsMessage(detailsMessage);
+               detailsView.setVisible(true);               
            }          
        }
     }

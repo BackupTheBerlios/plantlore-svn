@@ -1234,6 +1234,57 @@ public class History {
     	}
     }
     
+    /*
+     * Funkce ktera zjisti podrobne informace o polozce, ktera byla editovana
+     */
+    public String getDetailsMessage(int resultNumber) {
+        
+        //details about object
+        String detailsMessage = "";
+       
+        //data z historie pro konktetni radek tabulky
+        historyRecord = (HistoryRecord)historyDataList.get(resultNumber);    		
+        historyChange = historyRecord.getHistoryChange();
+        tableName = historyRecord.getHistoryColumn().getTableName();
+        recordId = historyChange.getRecordId();
+                
+        
+        //podle tableName najdeme podrobnosti o konkretnim objektu (autor, publikace, nalez,...)
+         if (tableName.equals("Occurrence") || tableName.equals("Habitat")){           
+              Occurrence occurrence = historyChange.getOccurrence();
+              //bud tu rovnou napsat kod nebo tu volat funkci a v ni napsat ten kot
+              //occurrenceMessage(); 
+              detailsMessage = "Details of Occurrences \n\n";
+              detailsMessage = detailsMessage + "Taxon: "+ occurrence.getPlant().getTaxon()+"\n";
+              detailsMessage = detailsMessage + "Author: ???";
+              
+        } else if (tableName.equals("Publication")) {
+              Object[] object = searchObject("Publication",recordId); 
+              Publication publication = (Publication)object[0];
+              detailsMessage = "Details of Publications \n\n";
+        } else if (tableName.equals("Author")) {
+              Object[] object = searchObject("Author",recordId);   
+              Author author = (Author)object[0];
+              detailsMessage = "Details of Author \n\n";
+        } else if (tableName.equals("Phytochorion")) {
+              Object[] object = searchObject("Phytochorion",recordId); 
+              Phytochorion  phytochorion = (Phytochorion)object[0];
+              detailsMessage = "Details of Phytochorion \n\n";
+        } else if (tableName.equals("Territory")) {
+              Object[] object = searchObject("Territory",recordId); 
+              Territory territory = (Territory)object[0];
+        } else if (tableName.equals("Village")) {
+              Object[] object = searchObject("Village",recordId);  
+              Village village = (Village)object[0];
+              detailsMessage = "Details of Village \n\n";
+        } else {
+            logger.error("No table defined");
+        }        
+        
+        logger.debug("detailsMessage: "+ detailsMessage);
+        return detailsMessage;
+    }
+    
      //***************************//
     //****Init Hashtable*********//
     //**************************//

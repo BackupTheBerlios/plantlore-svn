@@ -6,6 +6,8 @@
 
 package net.sf.plantlore.client.history;
 
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JDialog;
 import net.sf.plantlore.l10n.L10n;
 
@@ -13,15 +15,27 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  Lada
  */
-public class DetailsHistoryView extends javax.swing.JDialog {
+public class DetailsHistoryView extends javax.swing.JDialog implements Observer {
     
     /**
      * Creates new form DetailsHistoryView
      */
-    public DetailsHistoryView(History model, javax.swing.JDialog parent, boolean modal) {
+    public DetailsHistoryView(javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        initComponents();        
+        initComponents(); 
+        this.detailsTextArea.setEditable(false);
+    }
+    
+    public void update(Observable observable, Object object) {
+    } 
+    
+    public void setDetailsMessage(String detailsMessage) {
+        this.detailsTextArea.setText(detailsMessage);
+    }
+    
+    public void close() {
+        dispose();
     }
     
     /** This method is called from within the constructor to
@@ -43,7 +57,6 @@ public class DetailsHistoryView extends javax.swing.JDialog {
         detailsTextArea.setColumns(20);
         detailsTextArea.setFont(new java.awt.Font("Arial", 0, 12));
         detailsTextArea.setRows(5);
-        detailsTextArea.setText("testovaci nasazeni textu");
         jScrollPane2.setViewportView(detailsTextArea);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -102,7 +115,7 @@ public class DetailsHistoryView extends javax.swing.JDialog {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DetailsHistoryView(null,new javax.swing.JDialog(), true).setVisible(true);
+                new DetailsHistoryView(new javax.swing.JDialog(), true).setVisible(true);
             }
         });
     }
