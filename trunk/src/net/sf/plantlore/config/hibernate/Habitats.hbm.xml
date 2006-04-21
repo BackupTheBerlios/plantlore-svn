@@ -4,7 +4,7 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.Habitat" table="THABITATS" lazy="false">
+   <class name="net.sf.plantlore.common.record.Habitat" table="THABITATS">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
