@@ -15,12 +15,8 @@ import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.server.DBLayerException;
-//import net.sf.plantlore.client.dblayer.query.DeleteQuery;
-//import net.sf.plantlore.client.dblayer.query.InsertQuery;
-//import net.sf.plantlore.client.dblayer.query.Query;
-//import net.sf.plantlore.client.dblayer.result.Result;
+
 import net.sf.plantlore.common.SwingWorker;
-import net.sf.plantlore.common.record.Author;
 import org.apache.log4j.Logger;
 
 /**
@@ -251,8 +247,8 @@ public class AuthorManager extends Observable {
 						done = true;
 						// Save the results
 						setResult(resultId);
-						return resultId;
 					}
+					return resultId;
 				} catch (RemoteException e) {
 					System.err
 							.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
