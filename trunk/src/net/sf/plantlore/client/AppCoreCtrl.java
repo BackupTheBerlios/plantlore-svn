@@ -61,6 +61,10 @@ public class AppCoreCtrl
     AppCoreView view;
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
+    AddEdit addModel;
+    AddEdit editModel;
+    AddEditView addView;
+    AddEditView editView;
     Settings settingsModel;
     SettingsView settingsView;
     SettingsCtrl settingsCtrl;
@@ -262,9 +266,13 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            AddEditView addEdit = new AddEditView(view, true, model, false);
-            addEdit.setTitle("Add a new occurrence");
-            addEdit.setVisible(true);
+            if (addView == null) {
+                addModel = new AddEdit(model.getDatabase());
+                addView = new AddEditView(view, true, addModel, false);
+                addView.setTitle("Add a new occurrence");
+            }
+            addView.clearComponentData();
+            addView.setVisible(true);
         }
     }
     
@@ -276,9 +284,16 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            AddEditView addEdit = new AddEditView(view, true, model, true);
-            addEdit.setTitle("Edit occurrence");
-            addEdit.setVisible(true);
+            if (editView == null) {
+                editModel = new AddEdit(model.getDatabase());
+                Object[] row = model.getSelectedRow();
+                editModel.setRecord((AuthorOccurrence) row[row.length-1]);
+                editView = new AddEditView(view, true, editModel, true);
+                editView.setTitle("Edit occurrence");
+            }
+            editView.loadComponentData();
+            AddEditCtrl aec = new AddEditCtrl(editModel, editView, true);
+            editView.setVisible(true);
         }
     }
     
