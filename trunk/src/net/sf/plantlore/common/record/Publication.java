@@ -50,7 +50,7 @@ public class Publication extends Record {
      *   @return id of the publication
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

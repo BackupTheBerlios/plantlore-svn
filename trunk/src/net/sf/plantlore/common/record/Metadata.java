@@ -65,7 +65,7 @@ public class Metadata extends Record {
      *   @return id of the metadata
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

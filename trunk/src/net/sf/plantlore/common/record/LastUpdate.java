@@ -32,7 +32,7 @@ public class LastUpdate extends Record {
      *   @return id of the LastUpdate record
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

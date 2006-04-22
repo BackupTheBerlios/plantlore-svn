@@ -47,7 +47,7 @@ public class Right extends Record {
      *   @return id of the right
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

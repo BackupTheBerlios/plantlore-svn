@@ -4,6 +4,6 @@ import java.io.Serializable;
 
 public abstract class Record implements Serializable {
 
-	public abstract int getId();
+	public abstract Integer getId();
 	
 }

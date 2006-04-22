@@ -57,7 +57,7 @@ public class Habitat extends Record {
      *   @return id of the habitat
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

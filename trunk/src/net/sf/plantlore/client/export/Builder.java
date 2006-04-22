@@ -17,25 +17,8 @@ public interface Builder {
 	
 	void startNewRecord();
 	
+	void writeRecord(Record arg);
+	
 	void finishRecord();
 	
-	void writePartialRecord(Author arg);
-	
-	void writePartialRecord(AuthorOccurrence arg);
-	
-	void writePartialRecord(Habitat arg);
-	
-	void writePartialRecord(Metadata arg);
-	
-	void writePartialRecord(Occurrence arg);
-	
-	void writePartialRecord(Phytochorion arg);
-	
-	void writePartialRecord(Plant arg);
-	
-	void writePartialRecord(Publication arg);
-	
-	void writePartialRecord(Territory arg);
-
-	void writePartialRecord(Village arg);
 }

@@ -34,7 +34,7 @@ public class HistoryRecord extends Record {
      *   @return History record id
      *   @see setId
      */          
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
 

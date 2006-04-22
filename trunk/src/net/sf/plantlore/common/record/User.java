@@ -50,7 +50,7 @@ public class User extends Record {
      *   @return id of the user
      *   @see setID
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

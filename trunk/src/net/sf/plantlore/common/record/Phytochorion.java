@@ -39,7 +39,7 @@ public class Phytochorion extends Record {
      *   @return id of the phytochorion
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

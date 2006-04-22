@@ -35,7 +35,7 @@ public class Village extends Record {
      *   @return id of the village
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     

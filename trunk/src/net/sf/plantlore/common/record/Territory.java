@@ -37,7 +37,7 @@ public class Territory extends Record {
      *   @return id of the territory
      *   @see setId
      */
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     
