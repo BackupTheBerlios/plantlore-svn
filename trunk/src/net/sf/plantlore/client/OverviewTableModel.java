@@ -36,11 +36,11 @@ public class OverviewTableModel extends AbstractTableModel {
     private int resultsCount = 0;
     private int pageSize = 30;
     private int currentPage = 1;
-    private ArrayList<Record> recordsArray = new ArrayList<Record>();
-    private HashMap<Integer, Record> resultsMap = new HashMap<Integer, Record>();
+    private ArrayList<Record999> recordsArray = new ArrayList<Record999>();
+    private HashMap<Integer, Record999> resultsMap = new HashMap<Integer, Record999>();
     
-    class Record {
-        public Record(int id, boolean selected, int number) {
+    class Record999 {
+        public Record999(int id, boolean selected, int number) {
             this.id = id;
             this.selected = selected;
             this.number = number;
@@ -50,9 +50,9 @@ public class OverviewTableModel extends AbstractTableModel {
         public int number;
         
         public boolean equals(Object o) {
-            if (!(o instanceof Record))
+            if (!(o instanceof Record999))
                 return false;
-            Record r = (Record)o;
+            Record999 r = (Record999)o;
             return r.id == this.id;
         }
     }
@@ -163,7 +163,7 @@ public class OverviewTableModel extends AbstractTableModel {
         for (int i = 1; i <= to - from + 1 ; i++) {
             resultObj = (Object[])records[i-1];
             result = (AuthorOccurrence)resultObj[0];
-            Record r = new Record(result.getId(), false, from + i - 1);
+            Record999 r = new Record999(result.getId(), false, from + i - 1);
             if (from + i - 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
                 recordsArray.add(r);
             else 
