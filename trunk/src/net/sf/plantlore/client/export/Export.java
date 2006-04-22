@@ -44,22 +44,32 @@ public class Export implements Runnable {
 			
 			for(int i = 0; i < database.getNumRows( result ); i++) {
 				Object[] record = database.next( result );	
-				if( !selection.contains( record ) ) continue; // [!]
+				if( !selection.contains( (Record)record[0] ) ) continue;
 				
 				count++;
 				
 				builder.startNewRecord();
 				for(Object part : record) {
-					if(part instanceof Author) builder.writePartialRecord( (Author)part);
-					else if(part instanceof AuthorOccurrence) builder.writePartialRecord( (AuthorOccurrence)part);
-					else if(part instanceof Habitat) builder.writePartialRecord( (Habitat)part);
-					else if(part instanceof Metadata) builder.writePartialRecord( (Metadata)part);
-					else if(part instanceof Occurrence) builder.writePartialRecord( (Occurrence)part);
-					else if(part instanceof Phytochorion) builder.writePartialRecord( (Phytochorion)part);
-					else if(part instanceof Plant) builder.writePartialRecord( (Plant)part);
-					else if(part instanceof Publication) builder.writePartialRecord( (Publication)part);
-					else if(part instanceof Territory) builder.writePartialRecord( (Territory)part);
-					else if(part instanceof Village) builder.writePartialRecord( (Village)part);
+					if (part instanceof Author)
+						builder.writePartialRecord((Author) part);
+					else if (part instanceof AuthorOccurrence)
+						builder.writePartialRecord((AuthorOccurrence) part);
+					else if (part instanceof Habitat)
+						builder.writePartialRecord((Habitat) part);
+					else if (part instanceof Metadata)
+						builder.writePartialRecord((Metadata) part);
+					else if (part instanceof Occurrence)
+						builder.writePartialRecord((Occurrence) part);
+					else if (part instanceof Phytochorion)
+						builder.writePartialRecord((Phytochorion) part);
+					else if (part instanceof Plant)
+						builder.writePartialRecord((Plant) part);
+					else if (part instanceof Publication)
+						builder.writePartialRecord((Publication) part);
+					else if (part instanceof Territory)
+						builder.writePartialRecord((Territory) part);
+					else if (part instanceof Village)
+						builder.writePartialRecord((Village) part);
 					else /* ERROR */;
 				}
 				builder.finishRecord();

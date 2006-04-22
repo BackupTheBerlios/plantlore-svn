@@ -6,8 +6,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing THISTORYCOLUMN table in the DB. This object is used as a data
  *  holder for Hibernate operations on the server side. On the side of the client, it represents part
@@ -17,7 +15,7 @@ import java.io.Serializable;
  *  @author Lada Oberreiterova
  *  @author Tomas Kovarik
  */
-public class HistoryColumn implements Serializable {
+public class HistoryColumn extends Record {
     /** Parameters of the HistoryColumn. For detailed explanation see data model documentation. */
     private int id;    
     private String tableName;

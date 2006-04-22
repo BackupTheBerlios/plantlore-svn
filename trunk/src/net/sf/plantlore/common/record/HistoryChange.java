@@ -6,8 +6,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing THISTORYCHANGE table in the DB. This object is used as a data 
  *  holder for Hibernate operations on the server side. On the side of the client, it represents part
@@ -17,7 +15,7 @@ import java.io.Serializable;
  *  @author Lada Oberreiterova
  *  @author Tomas Kovarik
  */
-public class HistoryChange implements Serializable {
+public class HistoryChange extends Record {
 
     // Constants for HistoryChange operations (field COPERATION)
     public static final int HISTORYCHANGE_INSERT = 1;

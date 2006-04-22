@@ -3,6 +3,8 @@ package net.sf.plantlore.common;
 import java.util.Collection;
 import java.util.HashSet;
 
+import net.sf.plantlore.common.record.Record;
+
 
 public class Selection {
 	
@@ -22,6 +24,6 @@ public class Selection {
 	
 	public boolean contains(Long id) { return selected.contains(id) ^ inverted; }
 	
-	public boolean contains(Object un) { return false; }
+	public boolean contains(Record r) { return selected.contains(r.getId()) ^ inverted; }
 
 }

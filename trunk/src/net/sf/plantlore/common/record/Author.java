@@ -6,8 +6,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing TAUTHORS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents an author
@@ -17,7 +15,7 @@ import java.io.Serializable;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 14, 2006
  */
-public class Author implements Serializable {
+public class Author extends Record {
     /** Parameters of the author. For detailed explanation see data model documentation. */
     private int id;
     private String wholeName;

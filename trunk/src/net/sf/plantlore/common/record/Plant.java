@@ -7,8 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing TPLANTS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a plant
@@ -18,7 +16,7 @@ import java.io.Serializable;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 15, 2006
  */
-public class Plant implements Serializable {
+public class Plant extends Record {
     /** Parameters of the plant */    
     private Integer id;
     private String surveyTaxId;
@@ -51,7 +49,7 @@ public class Plant implements Serializable {
      *   @return id of the plant
      *   @see setId
      */
-    public Integer getId() {
+    public int getId() {
         return this.id;
     }    
     

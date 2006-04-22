@@ -7,8 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing TVILLAGES table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a village
@@ -18,7 +16,7 @@ import java.io.Serializable;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Village implements Serializable {
+public class Village extends Record {
     /** Parameters of the Village */    
     private int id;   
     private String name;

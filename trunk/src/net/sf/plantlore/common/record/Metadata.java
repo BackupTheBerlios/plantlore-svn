@@ -7,8 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing TMETADATA table in the DB. This object is used as a data
  *  holder for Hibernate operations on the server side. On the side of the client, it represents
@@ -18,7 +16,7 @@ import java.io.Serializable;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Metadata implements Serializable {
+public class Metadata extends Record {
     /** Parameters of Metadata */
     private Integer id;
     private String technicalContactName;
@@ -67,7 +65,7 @@ public class Metadata implements Serializable {
      *   @return id of the metadata
      *   @see setId
      */
-    public Integer getId() {
+    public int getId() {
         return this.id;
     }
     

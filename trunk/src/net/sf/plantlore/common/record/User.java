@@ -7,15 +7,13 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object containing information about a user
  *
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 15, 2006
  */
-public class User implements Serializable {
+public class User extends Record {
     /** Parameters of the user */
     private int id;
     private String login;

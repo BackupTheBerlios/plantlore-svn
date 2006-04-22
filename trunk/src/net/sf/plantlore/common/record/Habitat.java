@@ -7,8 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-
 /**
  *  Data holder object representing THABITATS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a habitat
@@ -18,7 +16,7 @@ import java.io.Serializable;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Habitat implements Serializable {   
+public class Habitat extends Record {   
     /** Parameters of the Habitat */
     private Integer id;
     private Territory territory;
@@ -59,7 +57,7 @@ public class Habitat implements Serializable {
      *   @return id of the habitat
      *   @see setId
      */
-    public Integer getId() {
+    public int getId() {
         return this.id;
     }
     

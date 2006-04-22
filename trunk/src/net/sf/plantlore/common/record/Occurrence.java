@@ -7,10 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-
 /**
  *  Data holder object representing TAUTHORS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents an occurrence
@@ -21,7 +17,7 @@ import java.util.Date;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 14, 2006
  */
-public class Occurrence implements Serializable {
+public class Occurrence extends Record {
     /** Parameters of the occurrence. For detailed explanation see data model documentation. */
     private Integer id;
     private String unitIdDb;
@@ -76,7 +72,7 @@ public class Occurrence implements Serializable {
      *   @return id of the occurrence
      *   @see setId
      */
-    public Integer getId() {
+    public int getId() {
         return this.id;
     }
     
