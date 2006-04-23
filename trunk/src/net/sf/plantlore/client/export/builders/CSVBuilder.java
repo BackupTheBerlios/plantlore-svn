@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import net.sf.plantlore.client.export.MetaBuilder;
-import net.sf.plantlore.client.export.RecordWalkBuilder;
+//import net.sf.plantlore.client.export.RecordWalkBuilder;
 import net.sf.plantlore.client.export.Template;
 
 
@@ -12,10 +12,9 @@ import net.sf.plantlore.client.export.Template;
  * CSV Builder.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @since 23.4.2006
- *
+ * @since 2006-04-23
  */
-public class CSVBuilder extends /*MetaBuilder*/RecordWalkBuilder {
+public class CSVBuilder extends MetaBuilder {
 	
 	private Writer output;
 	private Template tmp;
@@ -27,7 +26,13 @@ public class CSVBuilder extends /*MetaBuilder*/RecordWalkBuilder {
 	private boolean firstColumn = true;
 	
 		
-	
+	/**
+	 * Create a new CSV Builder. 
+	 * The output is written as a comma separated values.
+	 * 
+	 * @param output	The writer where the output will be sent.
+	 * @param tmp	The template that describes the selected columns and tables.
+	 */
 	public CSVBuilder(Writer output, Template tmp) {
 		super( tmp );
 		this.output = output; this.tmp = tmp;
@@ -40,8 +45,11 @@ public class CSVBuilder extends /*MetaBuilder*/RecordWalkBuilder {
 		firstColumn = true;
 	}
 	
-	/** CSV */
-	protected void wc(Class table, String column, Object value) throws IOException {
+	/**
+	 * Send the <code>[table, column, value]</code> in the CSV format
+	 * to the output.
+	 */ 
+	protected void w(Class table, String column, Object value) throws IOException {
 		// Shall we export this column?
 		if( !tmp.isSet(table, column) ) return;
 		
