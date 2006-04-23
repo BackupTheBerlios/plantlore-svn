@@ -46,7 +46,8 @@ public class Metadata extends Record {
     public static final String CONTENTCONTACTEMAIL = "contentContactEmail";
     public static final String DATASETTITLE = "dataSetTitle";    
     public static final String DATASETDETAILS = "dataSetDetails";    
-    public static final String SOURCEINSTITUTIONID = "sourceInstitutionId";    
+    public static final String SOURCEINSTITUTIONID = "sourceInstitutionId";
+    public static final String SOURCEID = "sourceId";
     public static final String OWNERORGANIZATIONABBREV = "ownerOrganizationAbbrev";
     public static final String DATECREATE = "dateCreate";    
     public static final String DATEMODIFIED = "dateModified";    
@@ -58,6 +59,14 @@ public class Metadata extends Record {
      *   Default constructor to create new class Metadata
      */
     public Metadata() {
+    }
+    
+    public String[] getColumns() {
+    	return new String[] { ID, TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
+    			CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL, CONTENTCONTACTNAME,
+    			DATASETDETAILS, DATASETTITLE, SOURCEID, SOURCEINSTITUTIONID,
+    			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, VERSIONPLANTSFILE,
+    			DATECREATE, DATEMODIFIED };
     }
     
     /**

@@ -31,6 +31,15 @@ public class AuthorOccurrence extends Record {
     public static final String ROLE = "role";
     public static final String RESULTREVISION = "resultRevision";
     
+    @Override
+    public String[] getForeignKeys() { 
+    	return new String[] { AUTHOR, OCCURRENCE }; 
+    }
+    
+    public String[] getColumns() {
+    	return new String[] { ID, AUTHOR, OCCURRENCE, ROLE, RESULTREVISION };
+    }
+    
     /**
      *   Default constructor to create new class AuthorOccurrences
      */

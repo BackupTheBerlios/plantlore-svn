@@ -45,6 +45,16 @@ public class Habitat extends Record {
     public static final String DELETED = "deleted";    
     public static final String NOTE = "note";
     
+    @Override
+    public String[] getForeignKeys() { 
+    	return new String[] { TERRITORY, PHYTOCHORION, NEARESTVILLAGE }; 
+    }
+    
+    public String[] getColumns() {
+    	return new String[] { ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+    			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE };
+    }
+    
     /**
      * Default constructor to create new class Habitat
      */

@@ -32,6 +32,10 @@ public class Territory extends Record {
         
     }
     
+    public String[] getColumns() {
+    	return new String[] { ID, NAME };
+    }
+    
     /**
      *   Get territory id
      *   @return id of the territory

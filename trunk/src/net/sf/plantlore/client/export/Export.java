@@ -1,5 +1,6 @@
 package net.sf.plantlore.client.export;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 import net.sf.plantlore.common.Selection;
@@ -43,13 +44,18 @@ public class Export implements Runnable {
 			builder.makeHeader();
 			
 			for(int i = 0; i < database.getNumRows( result ); i++) {
-				Object[] objRecord = database.next( result );
-				Record record = (Record)objRecord[0];
-				if( !selection.contains( record ) ) continue;
+				Record[] records = (Record[]) database.next( result );
+				if( !selection.contains( records[0] ) ) continue;
 				
 				count++;
 				builder.startNewRecord();
-				builder.writeRecord( record );
+				/* Why do we give the whole array of records?
+				 * It is more general - the builder can 
+				 * # either start with the records[0] and use the introspection,
+				 * # or use the whole records array and the template
+				 * to re-create the record.
+				 */
+				builder.writeRecord( records );
 				builder.finishRecord();
 			}
 		
@@ -60,6 +66,9 @@ public class Export implements Runnable {
 			logger.error(e); e.printStackTrace();
 		}
 		catch(RemoteException e) {
+			logger.error(e); e.printStackTrace();
+		}
+		catch(IOException e) {
 			logger.error(e); e.printStackTrace();
 		}
 	}

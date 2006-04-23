@@ -42,7 +42,10 @@ public class Author extends Record {
     
     /** Creates a new instance of AuthorRecord */
     public Author() {
-        
+    }
+    
+    public String[] getColumns() {
+    	return new String[] { ID, WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE };
     }
     
     /**

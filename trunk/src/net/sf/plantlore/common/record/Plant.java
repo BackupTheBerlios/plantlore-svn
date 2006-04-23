@@ -44,6 +44,11 @@ public class Plant extends Record {
         
     }
     
+    public String[] getColumns() {
+    	return new String[] { ID, TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR,
+    			CZECHNAME, SYNONYMS, NOTE, SURVEYTAXID };
+    }
+    
     /**
      *   Get plant id
      *   @return id of the plant

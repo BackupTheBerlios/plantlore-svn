@@ -27,6 +27,7 @@ public class LastUpdate extends Record {
         
     }
     
+        
     /**
      *   Get LastUpdate record id
      *   @return id of the LastUpdate record

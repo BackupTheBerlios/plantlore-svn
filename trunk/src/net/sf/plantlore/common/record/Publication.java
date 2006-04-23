@@ -45,6 +45,12 @@ public class Publication extends Record {
     public Publication() {
         
     }
+    
+    public String[] getColumns() {
+    	return new String[] { ID, COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
+    			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE };
+    }
+    
     /**
      *   Get publication id
      *   @return id of the publication

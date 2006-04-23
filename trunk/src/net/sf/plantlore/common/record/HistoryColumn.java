@@ -33,6 +33,7 @@ public class HistoryColumn extends Record {
         
     }
     
+      
     /**
      *   Get HistoryColumn id
      *   @return id of the HistoryColumn

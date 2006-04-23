@@ -29,6 +29,7 @@ public class HistoryRecord extends Record {
         
     }
     
+       
     /**
      *   Get History record id
      *   @return History record id

@@ -48,6 +48,7 @@ public class HistoryChange extends Record {
         
     }
     
+      
     /**
      *   Get HistoryChange record id
      *   @return id of the HistoryChange record

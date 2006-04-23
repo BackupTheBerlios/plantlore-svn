@@ -1,5 +1,7 @@
 package net.sf.plantlore.client.export;
 
+import java.io.IOException;
+
 import net.sf.plantlore.common.record.*;
 
 /**
@@ -11,14 +13,14 @@ import net.sf.plantlore.common.record.*;
  */
 public interface Builder {
 		
-	void makeHeader();
+	void makeHeader() throws IOException;
 	
-	void makeFooter();
+	void makeFooter() throws IOException;
 	
-	void startNewRecord();
+	void startNewRecord() throws IOException;
 	
-	void writeRecord(Record arg);
+	void writeRecord(Record[] args) throws IOException;
 	
-	void finishRecord();
+	void finishRecord() throws IOException;
 	
 }

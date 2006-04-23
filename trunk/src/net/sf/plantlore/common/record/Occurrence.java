@@ -62,6 +62,20 @@ public class Occurrence extends Record {
     public static final String DELETED = "deleted";
     public static final String NOTE = "note";        
     
+    
+    @Override
+    public String[] getForeignKeys() { 
+    	return new String[] { HABITAT, PLANT, PUBLICATION, METADATA }; 
+    }
+    
+    public String[] getColumns() {
+    	return new String[] { ID, UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED,
+    			MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, ISODATETIMEBEGIN,
+    			DATASOURCE, PUBLICATION, HERBARIUM, CREATEDWHEN, 
+    			UPDATEDWHEN, METADATA, NOTE };
+    }
+    
+    
     /** Creates a new instance of OccurrenceRecord */
     public Occurrence() {
         

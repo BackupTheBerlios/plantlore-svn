@@ -34,6 +34,10 @@ public class Phytochorion extends Record {
         
     }
     
+    public String[] getColumns() {
+    	return new String[] { ID, CODE, NAME };
+    }
+    
     /**
      *   Get phytochorion id
      *   @return id of the phytochorion

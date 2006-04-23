@@ -30,6 +30,10 @@ public class Village extends Record {
         
     }
     
+    public String[] getColumns() {
+    	return new String[] { ID, NAME };
+    }
+    
     /**
      *   Get village id
      *   @return id of the village
