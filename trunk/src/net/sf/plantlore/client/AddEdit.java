@@ -34,9 +34,14 @@ import org.apache.log4j.Logger;
  * @author fraktalek
  */
 public class AddEdit extends Observable {
+    public static final int WGS84 = 1;
+    public static final int S42 = 2;
+    public static final int SJTSK = 3;
+    
     private Logger logger;
     private DBLayer database;      
     
+    private int coordinateSystem;
     private AuthorOccurrence ao;
     private Pair<String,Integer> author;
     private Pair<String,Integer> village;
@@ -73,7 +78,7 @@ public class AddEdit extends Observable {
     private Pair<String, Integer>[] projects = null;
 
     //helper variable to avoid recursion potentially caused by phytCode and phytName updates
-    private boolean skipUpdate = false;
+    private Boolean skipUpdate = false;
     
     /** Creates a new instance of AddEdit */
     public AddEdit(DBLayer database) {
@@ -81,8 +86,13 @@ public class AddEdit extends Observable {
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
     }
  
+    /** Makes the model load data from the parameter ao.
+     *
+     * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
+     */
     public void setRecord(AuthorOccurrence ao) {
         this.ao = ao;
+        coordinateSystem = WGS84;
         author = new Pair(ao.getAuthor().getWholeName(),ao.getAuthor().getId());
         village = new Pair(ao.getOccurrence().getHabitat().getNearestVillage().getName(), ao.getOccurrence().getHabitat().getNearestVillage().getId());
         taxon = ao.getOccurrence().getPlant().getTaxon();
@@ -186,18 +196,21 @@ public class AddEdit extends Observable {
     public void setPhytName(Pair<String, Integer> phytName) {
         if (skipUpdate) {
             skipUpdate = false;
+            logger.debug("Skipping setPhytName");
             return;
         }
         this.phytName = phytName;
-        for (int i=0; i < phytCodes.length; i++)
-            if (phytCodes[i].getSecond() == phytCode.getSecond()) {
+        for (int i=0; i < phytCodes.length; i++) {
+            if (phytCodes[i].getSecond().equals(phytName.getSecond())) {
                 phytCode = phytCodes[i];
+                logger.debug("SetPhytName For "+phytName+" found "+phytCode);
                 skipUpdate = true;
                 break;
-            }
-        setChanged();
-        notifyObservers();
+            } 
+        }
         logger.debug("PhytName set to "+phytName);
+        setChanged();
+        notifyObservers("updateCode");
     }
 
     public Pair<String, Integer> getPhytCode() {
@@ -207,18 +220,21 @@ public class AddEdit extends Observable {
     public void setPhytCode(Pair<String, Integer> phytCode) {
         if (skipUpdate) {
             skipUpdate = false;
+            logger.debug("Skipping setPhytCode");
             return;
         }
         this.phytCode = phytCode;
-        for (int i=0; i < phytNames.length; i++)
-            if (phytNames[i].getSecond() == phytCode.getSecond()) {
+        for (int i=0; i < phytNames.length; i++) {
+            if (phytNames[i].getSecond().equals(phytCode.getSecond())) {
                 phytName = phytNames[i];
+                logger.debug("SetPhytCode For "+phytCode+" found "+phytName);
                 skipUpdate = true;
                 break;
             }
-        setChanged();
-        notifyObservers();
+        }
         logger.debug("PhytCode set to "+phytCode);
+        setChanged();
+        notifyObservers("updateName");
     }
 
     public String getPhytCountry() {
@@ -674,6 +690,25 @@ public class AddEdit extends Observable {
     public void setProject(Pair<String, Integer> project) {
         logger.debug("Project set to "+project);
         this.project = project;
+    }
+
+    public int getCoordinateSystem() {
+        return coordinateSystem;
+    }
+
+    public void setCoordinateSystem(int coordinateSystem) {
+        this.coordinateSystem = coordinateSystem;
+        switch (coordinateSystem) {
+            case WGS84:
+                logger.debug("CoordinateSystem set to WGS84");
+                break;
+            case S42:
+                logger.debug("CoordinateSystem set to S42");
+                break;
+            case SJTSK:
+                logger.debug("CoordinateSystem set to SJSTK");
+                break;
+        }
     }
     
 }

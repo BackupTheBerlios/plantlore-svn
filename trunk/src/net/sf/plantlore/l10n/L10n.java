@@ -29,6 +29,7 @@ public class L10n
     private static ResourceBundle resource;
     private static Preferences prefs;
     private static Logger logger = Logger.getLogger(L10n.class.getPackage().getName());
+    private static Locale currentLocale;
     
     /** Creates a new instance of L10n */
     public L10n()
@@ -70,6 +71,7 @@ public class L10n
                 logger.info("Using user stored locale "+locale);
         }
         resource = ResourceBundle.getBundle(RESOURCE_NAME, loc);
+        currentLocale = loc;
     }
     
     /** Gets string for the given key
@@ -106,5 +108,9 @@ public class L10n
             sb.deleteCharAt(i);
         
         return Character.toUpperCase(c);
+    }
+    
+    public static Locale getCurrentLocale() {
+        return (Locale) currentLocale.clone();
     }
 }

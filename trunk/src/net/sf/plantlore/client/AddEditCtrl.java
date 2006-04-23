@@ -15,8 +15,18 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Date;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import net.sf.plantlore.common.Pair;
 
 /**
@@ -36,26 +46,57 @@ public class AddEditCtrl {
         this.model = model;
         this.view = view;
         
-        view.authorComboBox.addActionListener(new ComboListener());
-        view.townComboBox.addActionListener(new ComboListener());
-        view.territoryNameCombo.addActionListener(new ComboListener());
-        view.phytNameCombo.addActionListener(new ComboListener());
-        view.phytCodeCombo.addActionListener(new ComboListener());
-        view.phytCountryCombo.addActionListener(new ComboListener());
-        view.sourceCombo.addActionListener(new ComboListener());
-        view.publicationCombo.addActionListener(new ComboListener());
-        view.projectCombo.addActionListener(new ComboListener());
+        //------- ComboBoxes --------
+        view.authorComboBox.addActionListener(new CommonActionListener());
+        view.townComboBox.addActionListener(new CommonActionListener());
+        view.territoryNameCombo.addActionListener(new CommonActionListener());
+        view.phytNameCombo.addActionListener(new CommonActionListener());
+        view.phytCodeCombo.addActionListener(new CommonActionListener());
+        view.phytCountryCombo.addActionListener(new CommonActionListener());
+        view.sourceCombo.addActionListener(new CommonActionListener());
+        view.publicationCombo.addActionListener(new CommonActionListener());
+        view.projectCombo.addActionListener(new CommonActionListener());
+
+        //------- TextFields --------        
+        view.herbariumTextField.addFocusListener(new HerbariumListener());
+        view.quadrantTextField.addFocusListener(new QuadrantListener());
+        view.altitudeFormattedTextField.addPropertyChangeListener("value",new AltitudeListener());
+        view.longitudeFormattedTextField.addPropertyChangeListener("value",new LongitudeListener());
+        view.latitudeFormattedTextField.addPropertyChangeListener("value",new LatitudeListener());
+        view.timeFormattedTextField.addPropertyChangeListener("value",new TimeListener());
         
+        //------- TextAreas --------        
         view.taxonTextArea.addFocusListener(new TaxonAreaListener());
         view.descriptionArea.addFocusListener(new PlaceAreaListener());
         view.locationNoteArea.addFocusListener(new LocationAreaListener());
         view.occurrenceNoteArea.addFocusListener(new OccurrenceAreaListener());
+
+        //------- Spinners --------
+        view.yearSpinner.addChangeListener(new YearListener());
+        view.monthSpinner.addChangeListener(new MonthListener());
+        view.daySpinner.addChangeListener(new DayListener());
+        
+        //------- RadioButtons --------
+        view.WGS84Button.addActionListener(new CoordinateSystemListener());
+        view.S42Button.addActionListener(new CoordinateSystemListener());
+        view.SJTSKButton.addActionListener(new CoordinateSystemListener());
+        
+        //------- Buttons --------
+        view.extendedButton.addMouseListener(new ExtendedButtonListener());
+        view.okButton.addMouseListener(new OkButtonListener());
+        view.cancelButton.addMouseListener(new CancelButtonListener());
+        view.helpButton.addMouseListener(new HelpButtonListener());
     }
     
-    class ComboListener implements ActionListener {
+    class CommonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            JComboBox c = (JComboBox)e.getSource();
+            JComboBox c = null;
+            
+            c  = (JComboBox) e.getSource();
+            
             String command = e.getActionCommand();
+            
+            //------- ComboBoxes --------            
             if (command.equals("authorComboBox"))
                 model.setAuthor((Pair<String, Integer>) c.getSelectedItem());
                 
@@ -82,10 +123,24 @@ public class AddEditCtrl {
            
             if (command.equals("projectCombo"))
                 model.setProject((Pair<String, Integer>) c.getSelectedItem());
-           
+            
         }
         
-    }//class ComboListener
+    }//class CommonActionListener
+    
+    class CoordinateSystemListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals("WGS84"))
+                model.setCoordinateSystem(AddEdit.WGS84);
+            
+            if (command.equals("S42"))
+                model.setCoordinateSystem(AddEdit.S42);
+            
+            if (command.equals("SJTSK"))
+                model.setCoordinateSystem(AddEdit.SJTSK);            
+        }
+    }//CoordinateSystemListener
     
     class TaxonAreaListener implements FocusListener {
         public void focusGained(FocusEvent e) {
@@ -125,5 +180,95 @@ public class AddEditCtrl {
             JTextArea ta = (JTextArea) e.getSource();
             model.setOccurrenceNote(ta.getText());
         }
-    }//LocationAreaListener
+    }//OccurrenceAreaListener
+    
+    class HerbariumListener implements FocusListener {
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            model.setHerbarium(tf.getText());
+        }
+    }//HerbariumListener
+    
+    class QuadrantListener implements FocusListener {
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            model.setQuadrant(tf.getText());
+        }
+    }//QuadrantListener
+    
+    class MonthListener implements ChangeListener {
+        public void stateChanged(ChangeEvent e) {
+            JSpinner s = (JSpinner) e.getSource();
+            model.setMonth((Integer)s.getValue());
+        }
+    }//MonthListener
+    class DayListener implements ChangeListener {
+        public void stateChanged(ChangeEvent e) {
+            JSpinner s = (JSpinner) e.getSource();
+            model.setDay((Integer)s.getValue());
+        }
+    }//DayListener
+    
+    class YearListener implements ChangeListener {
+        public void stateChanged(ChangeEvent e) {
+            JSpinner s = (JSpinner) e.getSource();
+            model.setYear((Integer)s.getValue());
+        }
+    }//YearListener
+    
+    class AltitudeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
+            model.setAltitude(((Number)evt.getNewValue()).doubleValue());
+        }        
+    }//AltitudeListener
+
+    class LongitudeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
+            model.setLongitude(((Number)evt.getNewValue()).doubleValue());
+        }        
+    }//LongitudeListener
+
+    class LatitudeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
+            model.setLatitude(((Number)evt.getNewValue()).doubleValue());
+        }        
+    }//LatitudeListener
+
+    class TimeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
+            model.setTime((Date)evt.getNewValue());
+        }        
+    }//AltitudeListener
+    
+    class ExtendedButtonListener extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            view.switchExtended();
+        }
+    }//ExtendedButtonListener
+    
+    class OkButtonListener extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            System.out.println("Ok");
+        }
+    }//OkButtonListener
+    
+    class CancelButtonListener extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            System.out.println("Cancel");
+            view.setVisible(false);
+        }
+    }//CancelButtonListener
+
+    class HelpButtonListener extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            System.out.println("Help");
+        }
+    }//HelpButtonListener
 }
+

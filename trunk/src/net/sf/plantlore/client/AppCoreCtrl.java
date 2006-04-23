@@ -65,6 +65,8 @@ public class AppCoreCtrl
     AddEdit editModel;
     AddEditView addView;
     AddEditView editView;
+    AddEditCtrl addCtrl;
+    AddEditCtrl editCtrl;
     Settings settingsModel;
     SettingsView settingsView;
     SettingsCtrl settingsCtrl;
@@ -290,10 +292,16 @@ public class AppCoreCtrl
                 editModel.setRecord((AuthorOccurrence) row[row.length-1]);
                 editView = new AddEditView(view, true, editModel, true);
                 editView.setTitle("Edit occurrence");
+                editCtrl = new AddEditCtrl(editModel, editView, true);
+                editView.loadComponentData();
+                editView.setVisible(true);                
+                return;
+            } else {
+                Object[] row = model.getSelectedRow();
+                editModel.setRecord((AuthorOccurrence) row[row.length-1]);
+                editView.loadComponentData();
+                editView.setVisible(true);
             }
-            editView.loadComponentData();
-            AddEditCtrl aec = new AddEditCtrl(editModel, editView, true);
-            editView.setVisible(true);
         }
     }
     
