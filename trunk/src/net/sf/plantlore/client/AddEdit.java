@@ -711,4 +711,135 @@ public class AddEdit extends Observable {
         }
     }
     
+    private AuthorOccurrence prepareAuthorOccurrence(boolean newRecord) {
+        Occurrence o;
+        Author a;
+        Habitat h;
+        Village v; 
+        Phytochorion p;
+        Territory t;
+        Metadata m;
+        Plant plant;
+        Publication publ ;
+        
+        if (newRecord)
+            o = new Occurrence();
+        else 
+            o = ao.getOccurrence();
+        
+        assert author != null;
+        if (newRecord)
+            a = new Author();
+        else
+            a = ao.getAuthor();
+        a.setId(author.getSecond());
+        
+        if (newRecord)
+            h = new Habitat();
+        else 
+            h = o.getHabitat();
+        
+        if (newRecord)
+            v = new Village();
+        else
+            v = h.getNearestVillage();
+        v.setId(village.getSecond());
+
+        
+        if (newRecord)
+            p = new Phytochorion();
+        else
+            p = h.getPhytochorion();
+        p.setId(phytCode.getSecond());
+        
+        if (newRecord)
+            t = new Territory();
+        else
+            t = h.getTerritory();
+        t.setId(territoryName.getSecond());
+
+        h.setAltitude(altitude);
+        h.setCountry(phytCountry);
+        h.setDescription(localityDescription);
+        h.setLatitude(latitude);
+        h.setLongitude(longitude);
+        h.setNearestVillage(v);
+        h.setNote(habitatNote);
+        h.setPhytochorion(p);
+        h.setQuadrant(quadrant);
+        h.setTerritory(t);
+        
+        if (newRecord)
+            m = new Metadata();
+        else
+            m = o.getMetadata();
+        if (project != null)
+            m.setId(project.getSecond());
+
+        if (newRecord)
+            plant = new Plant();
+        else
+            plant = o.getPlant();
+        for (int i=0; i < plants.length; i++)
+            if (plants[i].equals(taxon))
+                plant.setId(plants[i].getSecond());
+
+        if (newRecord)
+            publ = new Publication();
+        else
+            publ = o.getPublication();
+        if (publication != null)
+            publ.setId(publication.getSecond());
+            
+        o.setDayCollected(day);
+        o.setHabitat(h);
+        o.setHerbarium(herbarium);
+        //o.setIsoDateTimeBegin(); ???
+        o.setMetadata(m);
+        o.setMonthCollected(month);
+        o.setNote(occurrenceNote);
+        o.setPlant(plant);
+        o.setPublication(publ);
+        o.setTimeCollected(time);
+        o.setYearCollected(year);
+
+        
+        if (newRecord) {
+            AuthorOccurrence newAO = new AuthorOccurrence();
+            newAO.setAuthor(a);
+            newAO.setOccurrence(o);
+            return newAO;
+        } else {
+            ao.setAuthor(a);
+            ao.setOccurrence(o);
+            return ao;
+        }
+        
+    }//prepareAuthorOccurrence
+    
+    public void createRecord() {
+        logger.debug("About to insert new occurrence record");
+        //FIXME:
+        try {     
+            database.executeInsert(prepareAuthorOccurrence(true));
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }        
+    }//createRecord()
+    
+    public void updateRecord() {        
+        logger.debug("About to update existing occurrence record id="+ao.getId());
+        //FIXME:
+        try {     
+            database.executeUpdate(prepareAuthorOccurrence(false));
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
+    }//updateRecord()
 }
+
+

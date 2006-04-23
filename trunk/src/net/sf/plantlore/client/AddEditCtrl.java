@@ -254,7 +254,11 @@ public class AddEditCtrl {
     
     class OkButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            System.out.println("Ok");
+            if (inEditMode)
+                model.updateRecord();
+            else
+                model.createRecord();
+            view.setVisible(false);
         }
     }//OkButtonListener
     
