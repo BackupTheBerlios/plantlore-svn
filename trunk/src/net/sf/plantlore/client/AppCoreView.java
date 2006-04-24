@@ -72,7 +72,8 @@ public class AppCoreView extends JFrame implements Observer
     private JMenuItem helpContents = new JMenuItem(L10n.getString("helpContents"));
     private JMenuItem helpAbout = new JMenuItem(L10n.getString("helpAbout"));
     private JMenuItem dataAuthors = new JMenuItem(L10n.getString("authorMgr"));
-    private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr"));    
+    private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr")); 
+    private JMenuItem dataMetadata = new JMenuItem(L10n.getString("metadataManager"));
     private JMenuItem dataHistory = new JMenuItem(L10n.getString("History"));
     private JMenuItem dataWholeHistory = new JMenuItem(L10n.getString("wholeHistory"));
     private JMenuItem dataImport = new JMenuItem(L10n.getString("dataImport"));
@@ -164,7 +165,8 @@ public class AppCoreView extends JFrame implements Observer
         
         dataMenu.setMnemonic(L10n.getMnemonic("Data"));
         dataMenu.add(dataAuthors);
-        dataMenu.add(dataPublications);   
+        dataMenu.add(dataPublications);  
+        dataMenu.add(dataMetadata);
         dataMenu.add(dataImport);
         dataMenu.add(dataExport);
         dataMenu.add(dataSearch);
@@ -451,11 +453,19 @@ public class AppCoreView extends JFrame implements Observer
         dataHistory.addActionListener(al);
     }
     
-     /** Adds a listener to the HistoryData menu item.
+    /** Sets an action to the MetadataData menu item.
     *
     */
-    public void addDataWholeHistoryListener(ActionListener al) {
-        dataWholeHistory.addActionListener(al);
+    public void addDataMetadataAction(AbstractAction a) {
+        dataMetadata.setAction(a);
+    }
+    
+    
+     /** Sets an action to the HistoryData menu item.
+    *
+    */
+    public void addDataWholeHistoryAction(AbstractAction a) {
+        dataWholeHistory.setAction(a);
     }
     
     public void setRecordsPerPageListener(PropertyChangeListener p)

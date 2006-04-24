@@ -122,8 +122,5 @@ public class WholeHistoryTableModel extends AbstractTableModel {
      */
     public String getColumnName(int column){
         return columnNames[column];
-    }
-    
-    
-   
+    } 
 }

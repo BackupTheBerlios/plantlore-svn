@@ -1234,6 +1234,11 @@ public class History {
     	}
     }
     
+    public String getMessageUndoToDate(String toDate) {
+        String message = "Všechny změny od " + toDate + " budou zrušeny."; 
+        return message;
+    }
+    
     /*
      * Funkce ktera zjisti podrobne informace o polozce, ktera byla editovana
      */
@@ -1251,34 +1256,62 @@ public class History {
         
         //podle tableName najdeme podrobnosti o konkretnim objektu (autor, publikace, nalez,...)
          if (tableName.equals("Occurrence") || tableName.equals("Habitat")){           
-              Occurrence occurrence = historyChange.getOccurrence();
-              //bud tu rovnou napsat kod nebo tu volat funkci a v ni napsat ten kot
-              //occurrenceMessage(); 
+              Occurrence occurrence = historyChange.getOccurrence();             
               detailsMessage = "Details of Occurrences \n\n";
               detailsMessage = detailsMessage + "Taxon: "+ occurrence.getPlant().getTaxon()+"\n";
-              detailsMessage = detailsMessage + "Author: ???";
-              
+              detailsMessage = detailsMessage + "Author: ??? budu muset napsat fci pro dohledani autoru";
+              detailsMessage = detailsMessage + "Date/Time: " + occurrence.getIsoDateTimeBegin() +"\n";
+              detailsMessage = detailsMessage + "Nearest village: "+ occurrence.getHabitat().getNearestVillage().getName() + "\n";
+              detailsMessage = detailsMessage + "Place description: "+ occurrence.getHabitat().getDescription() + "\n";
+              detailsMessage = detailsMessage + "Territory: "+ occurrence.getHabitat().getTerritory().getName() + "\n";
+              detailsMessage = detailsMessage + "Phytochorion: "+ occurrence.getHabitat().getPhytochorion().getName() +" (Code: " + occurrence.getHabitat().getPhytochorion().getCode() + ")\n";
+              detailsMessage = detailsMessage + "Country: " + occurrence.getHabitat().getCountry() +"\n";
+              detailsMessage = detailsMessage + "Data source: " + occurrence.getDataSource() + "\n";
+              detailsMessage = detailsMessage + "Publications: " + occurrence.getPublication().getReferenceCitation() + "\n";
+              detailsMessage = detailsMessage + "Herbarium: " + occurrence.getHerbarium() +"\n";
+              detailsMessage = detailsMessage + "Note (occurernce): " + occurrence.getNote() + "\n";
+              detailsMessage = detailsMessage + "Note (habitat): " + occurrence.getHabitat().getNote() +"\n";
         } else if (tableName.equals("Publication")) {
               Object[] object = searchObject("Publication",recordId); 
               Publication publication = (Publication)object[0];
               detailsMessage = "Details of Publications \n\n";
+              detailsMessage = detailsMessage + "Name of collection: " + publication.getCollectionName() + "\n";
+              detailsMessage = detailsMessage + "Year of published collection: " + publication.getCollectionYearPublication() + "\n";
+              detailsMessage = detailsMessage + "Name of journal: " + publication.getJournalName() + "\n";
+              detailsMessage = detailsMessage + "Author of journal: " + publication.getJournalAuthorName() +"\n";
+              detailsMessage = detailsMessage + "URL: " + publication.getUrl() +"\n";
+              detailsMessage = detailsMessage + "Note: " + publication.getNote() + "\n";
         } else if (tableName.equals("Author")) {
               Object[] object = searchObject("Author",recordId);   
               Author author = (Author)object[0];
               detailsMessage = "Details of Author \n\n";
+              detailsMessage = detailsMessage + "Name: " + author.getWholeName() + "\n";
+              detailsMessage = detailsMessage + "Organization: " + author.getOrganization() + "\n";
+              detailsMessage = detailsMessage + "Role: " + author.getRole() + "\n";
+              detailsMessage = detailsMessage + "Address: " + author.getAddress() + "\n";
+              detailsMessage = detailsMessage + "Email: " + author.getEmail() + "\n";
+              detailsMessage = detailsMessage + "Telephone number: " + author.getPhoneNumber() + "\n";            
+              detailsMessage = detailsMessage + "URL: " + author.getUrl() + "\n";
+              detailsMessage = detailsMessage + "Note: " + author.getNote() + "\n";
         } else if (tableName.equals("Phytochorion")) {
               Object[] object = searchObject("Phytochorion",recordId); 
               Phytochorion  phytochorion = (Phytochorion)object[0];
               detailsMessage = "Details of Phytochorion \n\n";
+              detailsMessage = detailsMessage + "Phytochorion: " + phytochorion.getName() + "\n";
+              detailsMessage = detailsMessage + "Code of phytochorion: " + phytochorion.getCode() + "\n";
         } else if (tableName.equals("Territory")) {
               Object[] object = searchObject("Territory",recordId); 
               Territory territory = (Territory)object[0];
+              detailsMessage = "Details of Territory \n\n";
+              detailsMessage = detailsMessage + "Territory: " + territory.getName() + "\n";
         } else if (tableName.equals("Village")) {
               Object[] object = searchObject("Village",recordId);  
               Village village = (Village)object[0];
               detailsMessage = "Details of Village \n\n";
+              detailsMessage = detailsMessage + "Village: " + village.getName() + "\n";
         } else {
             logger.error("No table defined");
+            detailsMessage = "No details for selected row.";
         }        
         
         logger.debug("detailsMessage: "+ detailsMessage);

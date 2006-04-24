@@ -11,6 +11,7 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import org.apache.log4j.Logger;
 
 
@@ -164,13 +165,15 @@ public class WholeHistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableHistoryList.getSelectedRow() < 0) {    
-               view.messageUndoSelection();
+               view.messageSelection();
            } else {
                logger.debug("Undo to date - id of selected row: "+ view.tableHistoryList.getSelectedRow());
-               int toResult = view.tableHistoryList.getSelectedRow() + model.getCurrentFirstRow();
+               int selectedRow = view.tableHistoryList.getSelectedRow();
+               int toResult = selectedRow + model.getCurrentFirstRow();
+               Object toDate = view.tableHistoryList.getValueAt(selectedRow, 0);
                model.clearEditObjectList();
                model.undoToDate(toResult);
-               int okCancle = view.messageUndo("model.getMessageUndo()");      
+               int okCancle = view.messageUndo(model.getMessageUndoToDate(((Date)toDate).toString()));      
                if (okCancle == 0){
                    //Button OK was press
                    logger.debug("Button OK was press.");    
@@ -204,13 +207,10 @@ public class WholeHistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableHistoryList.getSelectedRow() < 0) {    
-               view.messageUndoSelection();
+               view.messageSelection();
            } else {
                //zobrazi se detailni informace o vybranem zaznamu
-               int resultNumber = view.tableHistoryList.getSelectedRow() + model.getCurrentFirstRow()-1;
-                
-               logger.debug("Result number: "+ resultNumber);
-        
+               int resultNumber = view.tableHistoryList.getSelectedRow() + model.getCurrentFirstRow()-1;             
                String detailsMessage = model.getDetailsMessage(resultNumber);
                DetailsHistoryView detailsView = new DetailsHistoryView(view, true);
                DetailsHistoryCtrl detailsCtrl = new DetailsHistoryCtrl(detailsView);

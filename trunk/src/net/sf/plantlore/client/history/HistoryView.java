@@ -169,7 +169,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Lst of changes"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("List of changes"));
         tableEditList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

@@ -21,9 +21,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
     
     //Whole History model
     private History model;  
-    //data
-    private Object[][] data;
-    
+  
     /** Creates new form WholeHistoryView */
     public WholeHistoryView(History model, java.awt.Frame parent, boolean modal) {
         
@@ -232,7 +230,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
     	return okCancle;
     }
      
-    public void messageUndoSelection() {
+    public void messageSelection() {
     	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
     } 
     

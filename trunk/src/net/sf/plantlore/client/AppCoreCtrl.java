@@ -27,6 +27,9 @@ import javax.swing.event.ListSelectionListener;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.WholeHistoryCtrl;
 import net.sf.plantlore.client.history.WholeHistoryView;
+import net.sf.plantlore.client.metadata.MetadataManager;
+import net.sf.plantlore.client.metadata.MetadataManagerCtrl;
+import net.sf.plantlore.client.metadata.MetadataManagerView;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -82,6 +85,11 @@ public class AppCoreCtrl
     WholeHistoryView wholeHistoryView;
     WholeHistoryCtrl wholeHistoryCtrl;
     
+    //MetadataManager
+    MetadataManager metadataManagerModel;
+    MetadataManagerView metadataManagerView;
+    MetadataManagerCtrl metadataManagerCtrl;
+    
     // Login
     Login loginModel;
     LoginView loginView;
@@ -104,8 +112,9 @@ public class AppCoreCtrl
         
         view.addDataAuthorsListener(new DataAuthorsListener());
         view.addDataPublicationsListener(new DataPublicationsListener());
+        view.addDataMetadataAction(new DataMetadataAction());
         view.addDataHistoryListener(new DataHistoryListener());
-        view.addDataWholeHistoryListener(new DataWholeHistoryListener());
+        view.addDataWholeHistoryAction(new DataWholeHistoryAction());
         
         view.setSearchAction(new SearchAction());
         view.setAddAction(new AddAction());
@@ -431,17 +440,38 @@ public class AppCoreCtrl
         }
     }    
     
-        class DataWholeHistoryListener implements ActionListener {
-    	public void actionPerformed(ActionEvent actionEvent)
-        {
+    class DataWholeHistoryAction extends AbstractAction {
+        public DataWholeHistoryAction() {
+             putValue(NAME, L10n.getString("wholeHistory"));
+        }
+
+        public void actionPerformed(ActionEvent actionEvent) {
             System.out.println("Whole history - Undo selected");
-            
+
             wholeHistoryModel = new History(model.getDatabase());
             wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view, true);
             wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel, wholeHistoryView);
             wholeHistoryView.setVisible(true); 
         }
     }    
+    
+   /* 
+    *
+    */
+    class DataMetadataAction extends AbstractAction {
+        public DataMetadataAction() {
+             putValue(NAME, L10n.getString("metadataManager"));
+        }
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("Metadata Manager");
+
+            metadataManagerModel = new MetadataManager(model.getDatabase());
+            metadataManagerView = new MetadataManagerView(metadataManagerModel, view, true);
+            metadataManagerCtrl = new MetadataManagerCtrl(metadataManagerModel, metadataManagerView);
+            metadataManagerView.setVisible(true);
+        }
+    }              
     
     class RecordsPerPagePropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {

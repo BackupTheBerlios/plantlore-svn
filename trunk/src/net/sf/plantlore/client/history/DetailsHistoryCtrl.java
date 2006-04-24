@@ -28,21 +28,10 @@ public class DetailsHistoryCtrl {
         logger = Logger.getLogger(this.getClass().getPackage().getName());              
         this.view = view;
         
-        view.okButton.addActionListener(new okButtonListener());
         view.closeButton.addActionListener(new closeButtonListener());
         view.helpButton.addActionListener(new helpButtonListener());
     }
-    
-               /** 
-    * On Ok makes the model store() the preferences and hides the view.
-    * 
-    */
-   class okButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {       
-           view.close();           
-       }
-   }
+     
   
    /**
     * On Cancel just hides the view.
