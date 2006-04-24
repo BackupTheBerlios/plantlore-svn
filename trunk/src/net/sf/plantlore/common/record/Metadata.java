@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing TMETADATA table in the DB. This object is used as a data
  *  holder for Hibernate operations on the server side. On the side of the client, it represents
@@ -61,12 +63,12 @@ public class Metadata extends Record {
     public Metadata() {
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
+    public ArrayList<String> getColumns() {
+    	return list( ID, TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
     			CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL, CONTENTCONTACTNAME,
     			DATASETDETAILS, DATASETTITLE, SOURCEID, SOURCEINSTITUTIONID,
     			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, VERSIONPLANTSFILE,
-    			DATECREATE, DATEMODIFIED };
+    			DATECREATE, DATEMODIFIED );
     }
     
     /**

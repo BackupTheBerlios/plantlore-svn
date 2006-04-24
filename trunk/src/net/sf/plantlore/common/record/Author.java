@@ -6,6 +6,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing TAUTHORS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents an author
@@ -44,8 +46,8 @@ public class Author extends Record {
     public Author() {
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE };
+    public ArrayList<String> getColumns() {
+    	return list( ID, WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE );
     }
     
     /**

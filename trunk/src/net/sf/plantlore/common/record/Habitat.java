@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing THABITATS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a habitat
@@ -46,13 +48,13 @@ public class Habitat extends Record {
     public static final String NOTE = "note";
     
     @Override
-    public String[] getForeignKeys() { 
-    	return new String[] { TERRITORY, PHYTOCHORION, NEARESTVILLAGE }; 
+    public ArrayList<String> getForeignKeys() { 
+    	return list( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
-    			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE };
+    public ArrayList<String> getColumns() {
+    	return list( ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+    			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE );
     }
     
     /**

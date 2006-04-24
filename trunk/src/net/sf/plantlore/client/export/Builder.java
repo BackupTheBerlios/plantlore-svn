@@ -20,25 +20,26 @@ public interface Builder {
 	/** 
 	 * Write a header. This method is called just once before the iteration starts. 
 	 */
-	void makeHeader() throws IOException;
+	void header() throws IOException;
 	
 	/** 
 	 * Write a footer. This method is called just once after the iteration ends. 
 	 */
-	void makeFooter() throws IOException;
+	void footer() throws IOException;
 	
 	/** 
 	 * Make adjustments needed before
 	 * the output of another record starts. 
 	 * This method is called right before the <code>writeRecord()</code>. 
 	 */
-	void startNewRecord() throws IOException;
+	void startRecord() throws IOException;
 	
-	/** 
-	 * Write the record that is contained within the <code>args</code> array.
-	 * @see net.sf.plantlore.middleware.DBLayer
+	/**
+	 * 
+	 * @param arg
+	 * @throws IOException
 	 */
-	void writeRecord(Record[] args) throws IOException;
+	void part(Record arg) throws IOException;
 	
 	/** 
 	 * Make adjustments needed after the output of the current record is completed.

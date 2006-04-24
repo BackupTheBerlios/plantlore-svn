@@ -17,14 +17,11 @@ import org.apache.log4j.Logger;
  * Purpose: The Director continualy fetches results of the <code>query</code>.
  * The selected queries (queries whose ID is in the <code>selection</code>)
  * are passed to the <code>builder</code> - the builder is responsible for
- * parsing the result and creating a corresponing output.
- * <br/>
- * Note that the Director doesn't manage any of these objects.
- * It merely iterates over the selected records of the result.
+ * creating a corresponing output.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
- *	@version 1.0
+ *	@version wrong (must be rewritten!) 
  *
  * @see net.sf.plantlore.client.common.Selection
  * @see net.sf.plantlore.client.export.Builder
@@ -34,7 +31,7 @@ public class Director implements Runnable {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 	
-	private Builder builder;
+	private Builder build;
 	private SelectQuery query;
 	private Selection selection;
 	private DBLayer database;
@@ -52,7 +49,7 @@ public class Director implements Runnable {
 	 * @param selection	The set of selected records.
 	 */
 	public Director(Builder builder, SelectQuery query, DBLayer database, Selection selection) {
-		this.builder = builder; this.query = query; this.database = database;
+		this.build = builder; this.query = query; this.database = database;
 		this.selection = selection;
 	}
 	
@@ -67,7 +64,7 @@ public class Director implements Runnable {
 			logger.info("Export begins...");
 			
 			// Create the header of the file (some opening tags possibly).
-			builder.makeHeader();
+			build.header();
 			// Iterate over the result of the query.
 			for(int i = 0; i < database.getNumRows( result ); i++) {
 				Record[] records = (Record[]) database.next( result );
@@ -75,12 +72,16 @@ public class Director implements Runnable {
 				
 				count++;
 				// Write down this record.
-				builder.startNewRecord();
-				builder.writeRecord( records );
-				builder.finishRecord();
+				build.startRecord();
+				
+				// Parse the record.
+				//build.writeRecord( records );
+				
+				
+				build.finishRecord();
 			}
 			// Create the footer of the file (some closing tags possibly).
-			builder.makeFooter();
+			build.footer();
 			logger.info("Export completed. " + count + " records sent to output.");
 		}
 		// FIXME: Since the run() method comes from the Runnable interface, it cannot throw

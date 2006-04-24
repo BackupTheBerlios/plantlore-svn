@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing TAUTHORSOCCURENCES table in the DB. This object is used as a 
  *  data holder for Hibernate operations on the server side. On the side of the client, it 
@@ -32,12 +34,12 @@ public class AuthorOccurrence extends Record {
     public static final String RESULTREVISION = "resultRevision";
     
     @Override
-    public String[] getForeignKeys() { 
-    	return new String[] { AUTHOR, OCCURRENCE }; 
+    public ArrayList<String> getForeignKeys() { 
+    	return list( AUTHOR, OCCURRENCE ); 
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, AUTHOR, OCCURRENCE, ROLE, RESULTREVISION };
+    public ArrayList<String> getColumns() {
+    	return list( ID, AUTHOR, OCCURRENCE, ROLE, RESULTREVISION );
     }
     
     /**

@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing TPHYTOCHORIA table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a phytochorion
@@ -34,8 +36,8 @@ public class Phytochorion extends Record {
         
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, CODE, NAME };
+    public ArrayList<String> getColumns() {
+    	return list( ID, CODE, NAME );
     }
     
     /**

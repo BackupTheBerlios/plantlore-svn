@@ -1,6 +1,7 @@
 package net.sf.plantlore.common.record;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * The common ancestor of all records. 
@@ -21,11 +22,29 @@ public abstract class Record implements Serializable {
 	/**
 	 * @return The set of all foreign keys (columns that refer to other tables).
 	 */
-	public String[] getForeignKeys() { return null; }
+	public ArrayList<String> getForeignKeys() { return new ArrayList(0); }
 	
 	/**
 	 * @return The set of all columns of the table.
 	 */
-	public String[] getColumns() { return null; }
+	public ArrayList<String> getColumns() { return new ArrayList(0); }
+	
+	/**
+	 * @return The set of columns that are not foreign keys.
+	 */
+	public ArrayList<String> getProperties() {
+		ArrayList<String> properties = getColumns();
+		properties.removeAll(getForeignKeys());
+		return properties;
+	}
+	
+	
+	
+	protected static ArrayList<String> list(String... values) {
+		if(values == null) return new ArrayList<String>(0);
+		ArrayList<String> list = new ArrayList<String>(values.length);
+		for(String value : values) list.add(value);
+		return list;
+	}
 	
 }

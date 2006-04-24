@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing TPUBLICATIONS table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a publication
@@ -46,9 +48,9 @@ public class Publication extends Record {
         
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
-    			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE };
+    public ArrayList<String> getColumns() {
+    	return list( ID, COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
+    			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE );
     }
     
     /**

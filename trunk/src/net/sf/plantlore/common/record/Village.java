@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.ArrayList;
+
 /**
  *  Data holder object representing TVILLAGES table in the DB. This object is used as a data holder
  *  for Hibernate operations on the server side. On the side of the client, it represents a village
@@ -30,8 +32,8 @@ public class Village extends Record {
         
     }
     
-    public String[] getColumns() {
-    	return new String[] { ID, NAME };
+    public ArrayList<String> getColumns() {
+    	return list( ID, NAME );
     }
     
     /**
