@@ -4,7 +4,7 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.User" table="TUSER">
+   <class name="net.sf.plantlore.common.record.User" table="TUSER" lazy="false">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
@@ -49,7 +49,8 @@
                 type="java.util.Date"/> 
       <many-to-one name="right" 
                    class="net.sf.plantlore.common.record.Right" 
-                   column="CRIGHTID"/>
+                   column="CRIGHTID"
+                   fetch="select"/>
       <property column="CNOTE"
                 length="4096"
                 name="note"

@@ -4,16 +4,18 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.HistoryRecord" table="THISTORY">
+   <class name="net.sf.plantlore.common.record.HistoryRecord" table="THISTORY" lazy="false">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
       <many-to-one name="historyColumn" 
                    class="net.sf.plantlore.common.record.HistoryColumn" 
-                   column="CCOLUMNID"/>
+                   column="CCOLUMNID"
+                   fetch="select"/>
       <many-to-one name="historyChange" 
                    class="net.sf.plantlore.common.record.HistoryChange" 
-                   column="CCHANGEID"/>
+                   column="CCHANGEID"
+                   fetch="select"/>
       <property column="COLDVALUE"
                 length="4096"
                 name="oldValue"

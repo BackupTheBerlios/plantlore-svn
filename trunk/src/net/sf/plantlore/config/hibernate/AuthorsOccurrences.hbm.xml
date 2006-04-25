@@ -4,16 +4,18 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.AuthorOccurrence" table="TAUTHORSOCCURRENCES">
+   <class name="net.sf.plantlore.common.record.AuthorOccurrence" table="TAUTHORSOCCURRENCES" lazy="false">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
       <many-to-one name="author" 
                    class="net.sf.plantlore.common.record.Author" 
-                   column="CAUTHORID"/>
+                   column="CAUTHORID"
+                   fetch="select"/>
       <many-to-one name="occurrence" 
                    class="net.sf.plantlore.common.record.Occurrence" 
-                   column="COCCURRENCEID"/>      
+                   column="COCCURRENCEID"
+                   fetch="select"/>      
       <property column="CROLE"
                 length="20"
                 name="role"

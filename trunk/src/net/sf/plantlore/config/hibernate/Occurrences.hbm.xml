@@ -4,7 +4,7 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.Occurrence" table="TOCCURRENCES">
+   <class name="net.sf.plantlore.common.record.Occurrence" table="TOCCURRENCES" lazy="false">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
@@ -21,10 +21,12 @@
                 type="java.lang.String"/>
       <many-to-one name="habitat" 
                    class="net.sf.plantlore.common.record.Habitat" 
-                   column="CHABITATID"/>                
+                   column="CHABITATID"
+                   fetch="select"/>                
       <many-to-one name="plant" 
                    class="net.sf.plantlore.common.record.Plant" 
-                   column="CPLANTID"/>                
+                   column="CPLANTID"
+                   fetch="select"/>                
       <property column="CYEARCOLLECTED"               
                 name="yearCollected"
                 not-null="true"                
@@ -52,7 +54,8 @@
                 type="java.lang.String"/> 
       <many-to-one name="publication" 
                    class="net.sf.plantlore.common.record.Publication" 
-                   column="CPUBLICATIONSID"/>                
+                   column="CPUBLICATIONSID"
+                   fetch="select"/>                
       <property column="CHERBARIUM"
 		length="20"
                 name="herbarium"
@@ -64,14 +67,16 @@
                 type="java.util.Date"/>
       <many-to-one name="createdWho" 
                    class="net.sf.plantlore.common.record.User" 
-                   column="CCREATEWHO"/>
+                   column="CCREATEWHO"
+                   fetch="select"/>
       <property column="CUPDATEWHEN"
                 name="updatedWhen"
                 not-null="true"                
                 type="java.util.Date"/>   
       <many-to-one name="updatedWho" 
                    class="net.sf.plantlore.common.record.User" 
-                   column="CUPDATEWHO"/>                      
+                   column="CUPDATEWHO"
+                   fetch="select"/>                      
       <property column="CNOTE"
                 length="4096"
                 name="note"
@@ -79,7 +84,8 @@
                 type="java.lang.String"/> 
       <many-to-one name="metadata" 
                    class="net.sf.plantlore.common.record.Metadata" 
-                   column="CMETADATAID"/>                      
+                   column="CMETADATAID"
+                   fetch="select"/>                      
       <property column="CDELETE"
                 name="deleted"
                 not-null="false"                

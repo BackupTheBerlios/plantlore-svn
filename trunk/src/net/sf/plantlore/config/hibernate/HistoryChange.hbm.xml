@@ -4,14 +4,15 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.HistoryChange" table="THISTORYCHANGE">
+   <class name="net.sf.plantlore.common.record.HistoryChange" table="THISTORYCHANGE" lazy="false">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
 
       <many-to-one name="occurrence" 
                    class="net.sf.plantlore.common.record.Occurrence" 
-                   column="COCCURRENCEID"/>           
+                   column="COCCURRENCEID"
+                   fetch="select"/>           
       <property column="CRECORDID"                
                 name="recordId"
                 not-null="true"
@@ -30,6 +31,7 @@
                 type="java.util.Date"/>          
       <many-to-one name="who" 
                    class="net.sf.plantlore.common.record.User" 
-                   column="CWHO"/>
+                   column="CWHO"
+                   fetch="select"/>
    </class>
 </hibernate-mapping>

@@ -4,17 +4,19 @@
           "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-   <class name="net.sf.plantlore.common.record.Habitat" table="THABITATS">
+   <class name="net.sf.plantlore.common.record.Habitat" table="THABITATS" lazy="false">
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
       
       <many-to-one name="territory" 
                    class="net.sf.plantlore.common.record.Territory" 
-                   column="CTERRITORYID"/>
+                   column="CTERRITORYID"
+                   fetch="select"/>
       <many-to-one name="phytochorion" 
                    class="net.sf.plantlore.common.record.Phytochorion" 
-                   column="CPHYTOCHORIAID"/>                   
+                   column="CPHYTOCHORIAID"
+                   fetch="select"/>                   
       <property column="CQUADRANT" 
         	length="10"              
                 name="quadrant"
@@ -27,7 +29,8 @@
                 type="java.lang.String"/>   
       <many-to-one name="nearestVillage" 
                    class="net.sf.plantlore.common.record.Village" 
-                   column="CNEARESTVILLAGEID"/>                   
+                   column="CNEARESTVILLAGEID"
+                   fetch="select"/>                   
       <property column="CCOUNTRY"
 		length="30"
                 name="country"
