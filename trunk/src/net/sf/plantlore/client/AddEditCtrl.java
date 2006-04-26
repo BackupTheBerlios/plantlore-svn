@@ -20,6 +20,8 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Date;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
@@ -27,6 +29,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableColumn;
+import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.Pair;
 
 /**
@@ -47,7 +51,6 @@ public class AddEditCtrl {
         this.view = view;
         
         //------- ComboBoxes --------
-        view.authorComboBox.addActionListener(new CommonActionListener());
         view.townComboBox.addActionListener(new CommonActionListener());
         view.territoryNameCombo.addActionListener(new CommonActionListener());
         view.phytNameCombo.addActionListener(new CommonActionListener());
@@ -97,8 +100,8 @@ public class AddEditCtrl {
             String command = e.getActionCommand();
             
             //------- ComboBoxes --------            
-            if (command.equals("authorComboBox"))
-                model.setAuthor((Pair<String, Integer>) c.getSelectedItem());
+//            if (command.equals("authorComboBox"))
+//                model.setAuthor((Pair<String, Integer>) c.getSelectedItem());
                 
             if (command.equals("townComboBox"))
                 model.setVillage((Pair<String, Integer>) c.getSelectedItem());
@@ -254,10 +257,7 @@ public class AddEditCtrl {
     
     class OkButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            if (inEditMode)
-                model.updateRecord();
-            else
-                model.createRecord();
+            model.storeRecord();
             view.setVisible(false);
         }
     }//OkButtonListener
@@ -274,5 +274,6 @@ public class AddEditCtrl {
             System.out.println("Help");
         }
     }//HelpButtonListener
+    
 }
 

@@ -11,7 +11,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.table.AbstractTableModel;
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Plant;
@@ -79,7 +81,8 @@ public class OverviewTableModel extends AbstractTableModel {
         this.pageSize = pageSize;
         resultsCount = 0;
         this.db = db;
-        SelectQuery sq = db.createQuery(AuthorOccurrence.class);
+        SelectQuery sq = db.createQuery(Occurrence.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED); //setridit podle roku
         //FIXME:
         try {
             setResultid(db.executeQuery(sq));
@@ -142,13 +145,38 @@ public class OverviewTableModel extends AbstractTableModel {
         columnSizes[23] = 100;
     }
     
+    private Pair<String,Integer>[] getAuthorsOf(Occurrence o) {
+        Pair<String,Integer>[] authorResults = null;
+        //FIXME:
+        try {
+            SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
+            sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
+            int resultid = db.executeQuery(sq);
+            int resultCount = db.getNumRows(resultid);
+            authorResults = new Pair[resultCount];
+            Object[] results = db.more(resultid, 1, resultCount);
+            Object[] tmp;
+            Author a;
+            for (int i = 0; i < resultCount; i++) {
+                tmp = (Object[]) results[i];
+                a = (Author)((AuthorOccurrence)tmp[0]).getAuthor();
+                authorResults[i] = new Pair<String,Integer>(a.getWholeName(), a.getId());
+            }
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+        return authorResults;
+    }
+    
     /**
      * Expects from, pageSize, currentPage and resultid variables to be set appropriately.
      */
     private void loadData() throws DBLayerException, RemoteException
     {
         Object[] row;
-        AuthorOccurrence result;
+        Occurrence result;
         Plant plant;
         Object[] resultObj, records;
         resultsCount = db.getNumRows(getResultid());
@@ -162,7 +190,7 @@ public class OverviewTableModel extends AbstractTableModel {
 
         for (int i = 1; i <= to - from + 1 ; i++) {
             resultObj = (Object[])records[i-1];
-            result = (AuthorOccurrence)resultObj[0];
+            result = (Occurrence)resultObj[0];
             Record999 r = new Record999(result.getId(), false, from + i - 1);
             if (from + i - 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
                 recordsArray.add(r);
@@ -172,33 +200,34 @@ public class OverviewTableModel extends AbstractTableModel {
             row = new Object[COLUMN_COUNT + 1]; //we'll store the record id in the last column
             row[0] = r.selected;
             row[1] = r.number;
-            row[2] = result.getOccurrence().getPlant().getTaxon();
-            row[3] = result.getAuthor().getWholeName();
-            row[4] = result.getOccurrence().getHabitat().getNearestVillage().getName();
-            row[5] = result.getOccurrence().getHabitat().getDescription();
-            row[6] = result.getOccurrence().getYearCollected();
-            row[7] = result.getOccurrence().getHabitat().getTerritory().getName();
-            row[8] = result.getOccurrence().getHabitat().getPhytochorion().getName();
-            row[9] = result.getOccurrence().getHabitat().getPhytochorion().getCode();
-            row[10] = result.getOccurrence().getHabitat().getCountry();
-            row[11] = result.getOccurrence().getHabitat().getQuadrant();
-            row[12] = result.getOccurrence().getNote();
-            row[13] = result.getOccurrence().getHabitat().getNote();
-            row[14] = result.getOccurrence().getHabitat().getAltitude();
-            row[15] = result.getOccurrence().getHabitat().getLongitude();
-            row[16] = result.getOccurrence().getHabitat().getLatitude();
-            row[17] = result.getOccurrence().getDataSource();
-            row[18] = result.getOccurrence().getPublication().getCollectionName();
-            row[19] = result.getOccurrence().getHerbarium();
-            row[20] = result.getOccurrence().getMetadata().getDataSetTitle();
-            row[21] = result.getOccurrence().getMonthCollected();
-            row[22] = result.getOccurrence().getDayCollected();
-            row[23] = result.getOccurrence().getTimeCollected();
+            row[2] = result.getPlant().getTaxon();
+            row[3] = ((Object[])getAuthorsOf(result))[0];//occurrence must have at least one author, we'll choose the first one
+            row[4] = result.getHabitat().getNearestVillage().getName();
+            row[5] = result.getHabitat().getDescription();
+            row[6] = result.getYearCollected();
+            row[7] = result.getHabitat().getTerritory().getName();
+            row[8] = result.getHabitat().getPhytochorion().getName();
+            row[9] = result.getHabitat().getPhytochorion().getCode();
+            row[10] = result.getHabitat().getCountry();
+            row[11] = result.getHabitat().getQuadrant();
+            row[12] = result.getNote();
+            row[13] = result.getHabitat().getNote();
+            row[14] = result.getHabitat().getAltitude();
+            row[15] = result.getHabitat().getLongitude();
+            row[16] = result.getHabitat().getLatitude();
+            row[17] = result.getDataSource();
+            row[18] = result.getPublication().getCollectionName();
+            row[19] = result.getHerbarium();
+            row[20] = result.getMetadata().getDataSetTitle();
+            row[21] = result.getMonthCollected();
+            row[22] = result.getDayCollected();
+            row[23] = result.getTimeCollected();
             row[24] = result; //won't  be displayed, because in getColumnCount we pretend not to have this column
             data[i-1] = row;
         }//i        
     }
     
+    //momentalne nepouzita metoda
     public AuthorOccurrence getRecord(int row) {
         AuthorOccurrence result = null;
         Object[] resultObj, records;

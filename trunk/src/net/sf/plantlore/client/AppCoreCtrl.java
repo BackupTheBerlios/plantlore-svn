@@ -287,7 +287,7 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             if (addView == null) {
-                addModel = new AddEdit(model.getDatabase());
+                addModel = new AddEdit(model.getDatabase(),false);
                 addView = new AddEditView(view, true, addModel, false);
                 addView.setTitle("Add a new occurrence");
             }
@@ -305,9 +305,9 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             if (editView == null) {
-                editModel = new AddEdit(model.getDatabase());
+                editModel = new AddEdit(model.getDatabase(),true);
                 Object[] row = model.getSelectedRow();
-                editModel.setRecord((AuthorOccurrence) row[row.length-1]);
+                editModel.setRecord((Occurrence) row[row.length-1]);
                 editView = new AddEditView(view, true, editModel, true);
                 editView.setTitle("Edit occurrence");
                 editCtrl = new AddEditCtrl(editModel, editView, true);
@@ -316,7 +316,7 @@ public class AppCoreCtrl
                 return;
             } else {
                 Object[] row = model.getSelectedRow();
-                editModel.setRecord((AuthorOccurrence) row[row.length-1]);
+                editModel.setRecord((Occurrence) row[row.length-1]);
                 editView.loadComponentData();
                 editView.setVisible(true);
             }

@@ -10,8 +10,12 @@
 package net.sf.plantlore.client;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Observable;
+import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
@@ -42,8 +46,13 @@ public class AddEdit extends Observable {
     private DBLayer database;      
     
     private int coordinateSystem;
-    private AuthorOccurrence ao;
-    private Pair<String,Integer> author;
+    private Occurrence o;
+    
+    //list of authors user selects
+    private ArrayList<Pair<Pair<String,Integer>,String>> authorList;
+    
+    //list of AuthorOccurrence objects that correspond to our Occurrence object, we need it for update
+    private HashMap<Integer,AuthorOccurrence> authorOccurrences;
     private Pair<String,Integer> village;
     private String taxon;
     private String localityDescription;
@@ -68,6 +77,7 @@ public class AddEdit extends Observable {
     
     private Pair<String, Integer>[] plants = null;
     private Pair<String, Integer>[] authors = null;
+    private String[] authorRoles = null;
     private Pair<String, Integer>[] villages = null;
     private Pair<String, Integer>[] territories = null;
     private Pair<String, Integer>[] phytNames = null;
@@ -79,10 +89,12 @@ public class AddEdit extends Observable {
 
     //helper variable to avoid recursion potentially caused by phytCode and phytName updates
     private Boolean skipUpdate = false;
+    private Boolean editMode = false;
     
     /** Creates a new instance of AddEdit */
-    public AddEdit(DBLayer database) {
+    public AddEdit(DBLayer database, Boolean editMode) {
         this.database = database;
+        this.editMode = editMode;
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
     }
  
@@ -90,40 +102,54 @@ public class AddEdit extends Observable {
      *
      * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
      */
-    public void setRecord(AuthorOccurrence ao) {
-        this.ao = ao;
+    public void setRecord(Occurrence o) {
+        this.o = o;
         coordinateSystem = WGS84;
-        author = new Pair(ao.getAuthor().getWholeName(),ao.getAuthor().getId());
-        village = new Pair(ao.getOccurrence().getHabitat().getNearestVillage().getName(), ao.getOccurrence().getHabitat().getNearestVillage().getId());
-        taxon = ao.getOccurrence().getPlant().getTaxon();
-        localityDescription = ao.getOccurrence().getHabitat().getDescription();
-        year = ao.getOccurrence().getYearCollected();
+        authorList = getAuthorsOf(o);
+        village = new Pair(o.getHabitat().getNearestVillage().getName(), o.getHabitat().getNearestVillage().getId());
+        taxon = o.getPlant().getTaxon();
+        localityDescription = o.getHabitat().getDescription();
+        year = o.getYearCollected();
         
-        occurrenceNote = ao.getOccurrence().getNote();
-        habitatNote = ao.getOccurrence().getHabitat().getNote();
-        territoryName = new Pair(ao.getOccurrence().getHabitat().getTerritory().getName(),ao.getOccurrence().getHabitat().getTerritory().getId());
-        phytName = new Pair(ao.getOccurrence().getHabitat().getPhytochorion().getName(), ao.getOccurrence().getHabitat().getPhytochorion().getId());
-        phytCode = new Pair(ao.getOccurrence().getHabitat().getPhytochorion().getCode(), ao.getOccurrence().getHabitat().getPhytochorion().getId());
-        phytCountry = ao.getOccurrence().getHabitat().getCountry();
-        quadrant = ao.getOccurrence().getHabitat().getQuadrant();
-        altitude = ao.getOccurrence().getHabitat().getAltitude();
-        longitude = ao.getOccurrence().getHabitat().getLongitude();
-        latitude = ao.getOccurrence().getHabitat().getLatitude();
-        source = ao.getOccurrence().getDataSource();
-        publication = new Pair(ao.getOccurrence().getPublication().getReferenceCitation(), ao.getOccurrence().getPublication().getId());
-        herbarium = ao.getOccurrence().getHerbarium();
-        month = ao.getOccurrence().getMonthCollected();
-        day = ao.getOccurrence().getDayCollected();
-        time = ao.getOccurrence().getTimeCollected();
+        occurrenceNote = o.getNote();
+        habitatNote = o.getHabitat().getNote();
+        territoryName = new Pair(o.getHabitat().getTerritory().getName(),o.getHabitat().getTerritory().getId());
+        phytName = new Pair(o.getHabitat().getPhytochorion().getName(), o.getHabitat().getPhytochorion().getId());
+        phytCode = new Pair(o.getHabitat().getPhytochorion().getCode(), o.getHabitat().getPhytochorion().getId());
+        phytCountry = o.getHabitat().getCountry();
+        quadrant = o.getHabitat().getQuadrant();
+        altitude = o.getHabitat().getAltitude();
+        longitude = o.getHabitat().getLongitude();
+        latitude = o.getHabitat().getLatitude();
+        source = o.getDataSource();
+        publication = new Pair(o.getPublication().getReferenceCitation(), o.getPublication().getId());
+        herbarium = o.getHerbarium();
+        month = o.getMonthCollected();
+        day = o.getDayCollected();
+        time = o.getTimeCollected();
     }
 
-    public Pair<String, Integer> getAuthor() {
+    public Pair<String, Integer> getAuthor(int i) {
+        return ((Pair<Pair<String,Integer>,String>)authorList.get(i)).getFirst();
+    }
+    
+    public String getAuthorRole(int i) {
+        return ((Pair<Pair<String,Integer>,String>)authorList.get(i)).getSecond();
+    }
+    
+    public int getAuthorCount() {
+        return authorList.size();
+    }
+    
+    public void addAuthor(Pair<Pair<String, Integer>,String> author) {
+        authorList.add(author);
+        logger.debug("Added author "+author.getFirst()+" as "+author.getSecond());
+    }
+    
+    public Pair<Pair<String, Integer>,String> removeAuthor(int i) {
+        Pair<Pair<String, Integer>,String> author = authorList.remove(i);
+        logger.debug("Removed author "+author.getFirst()+" "+author.getSecond());
         return author;
-    }
-
-    public void setAuthor(Pair<String, Integer> author) {
-        this.author = author;
-        logger.debug("Author set to "+author);
     }
 
     public Pair<String, Integer> getVillage() {
@@ -210,7 +236,7 @@ public class AddEdit extends Observable {
         }
         logger.debug("PhytName set to "+phytName);
         setChanged();
-        notifyObservers("updateCode");
+        notifyObservers(new Pair<String,Integer>("updateCode",-1));
     }
 
     public Pair<String, Integer> getPhytCode() {
@@ -234,7 +260,7 @@ public class AddEdit extends Observable {
         }
         logger.debug("PhytCode set to "+phytCode);
         setChanged();
-        notifyObservers("updateName");
+        notifyObservers(new Pair<String,Integer>("updateName",-1));
     }
 
     public String getPhytCountry() {
@@ -368,6 +394,7 @@ public class AddEdit extends Observable {
         } else
             return plants;
     }
+    
     public Pair<String, Integer>[] getAuthors() {
         if (authors == null)
         {
@@ -399,6 +426,39 @@ public class AddEdit extends Observable {
             return authors;
     }
     
+    public String[] getAuthorRoles() {
+        if (authorRoles == null)
+        {
+            SelectQuery sq;
+            int resultid;
+            int resultsCount;
+            Object[] records;
+            AuthorOccurrence ao;
+            //FIXME:
+            try {
+                sq = database.createQuery(AuthorOccurrence.class);
+                sq.addProjection(PlantloreConstants.PROJ_DISTINCT,AuthorOccurrence.ROLE);
+                sq.addOrder(PlantloreConstants.DIRECT_ASC, AuthorOccurrence.ROLE);
+                resultid = database.executeQuery(sq);
+                resultsCount = database.getNumRows(resultid);
+                records = database.more(resultid, 1, resultsCount);
+                authorRoles = new String[resultsCount];
+                String r;
+                for (int i = 1; i <= resultsCount; i++)
+                {
+                    r = (String)((Object[])records[i-1])[0];
+                    authorRoles[i-1] = r;
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }            
+            return authorRoles;
+        } else
+            return authorRoles;
+    }
+
     public Pair<String, Integer>[] getVillages() {
         if (villages == null)
         {
@@ -598,7 +658,6 @@ public class AddEdit extends Observable {
                 {
                     o = (Occurrence)((Object[])records[i-1])[0];
                     sources[i-1] = o.getDataSource();
-                    System.out.println("Sources: \""+o.getDataSource()+"\"");
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -711,7 +770,15 @@ public class AddEdit extends Observable {
         }
     }
     
-    private AuthorOccurrence prepareAuthorOccurrence(boolean newRecord) {
+    /** Pre-processes data gathered from the user.
+     *
+     * @return AuthorOccurrence the object that will be created or updated
+     * @return true the object has to be updated
+     * @return false the object has to be created
+     */
+    private Pair<AuthorOccurrence,Boolean> prepareAuthorOccurrence(boolean newRecord, Pair<Pair<String,Integer>,String> author) {
+        Pair<AuthorOccurrence,Boolean> result;
+        DBLayerUtils dlu = new DBLayerUtils(database);
         Occurrence o;
         Author a;
         Habitat h;
@@ -725,14 +792,18 @@ public class AddEdit extends Observable {
         if (newRecord)
             o = new Occurrence();
         else 
-            o = ao.getOccurrence();
+            o = this.o;
         
-        assert author != null;
-        if (newRecord)
+        assert authorList.size() > 0;
+        if (newRecord) {
             a = new Author();
-        else
-            a = ao.getAuthor();
-        a.setId(author.getSecond());
+            a.setId(author.getFirst().getSecond());
+        } else {
+            if (authorOccurrences.containsKey(author.getFirst().getSecond()))
+                a = authorOccurrences.get(author.getFirst().getSecond()).getAuthor(); //we already have the author Object
+            else
+                a = (Author) dlu.getObjectFor(author.getFirst().getSecond(), Author.class); //have to retrieve the author object from database
+        }
         
         if (newRecord)
             h = new Habitat();
@@ -794,7 +865,18 @@ public class AddEdit extends Observable {
         o.setDayCollected(day);
         o.setHabitat(h);
         o.setHerbarium(herbarium);
-        //o.setIsoDateTimeBegin(); ???
+        
+        //cIsoDateTimeBegin construction
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH,day);
+        Calendar temp = Calendar.getInstance();
+        temp.setTime(time);
+        c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
+        c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+        o.setIsoDateTimeBegin(c.getTime());
+        
         o.setMetadata(m);
         o.setMonthCollected(month);
         o.setNote(occurrenceNote);
@@ -808,20 +890,43 @@ public class AddEdit extends Observable {
             AuthorOccurrence newAO = new AuthorOccurrence();
             newAO.setAuthor(a);
             newAO.setOccurrence(o);
-            return newAO;
+            return new Pair<AuthorOccurrence,Boolean>(newAO, false);
         } else {
+            AuthorOccurrence ao;
+            Boolean update;
+            if (authorOccurrences.containsKey(author.getFirst().getSecond())) {
+                ao = authorOccurrences.get(author.getFirst().getSecond());
+                update = true;
+            } else {
+                ao = new AuthorOccurrence();
+                update = false;
+            }
             ao.setAuthor(a);
             ao.setOccurrence(o);
-            return ao;
+            return new Pair<AuthorOccurrence, Boolean>(ao, update);
         }
         
     }//prepareAuthorOccurrence
     
-    public void createRecord() {
-        logger.debug("About to insert new occurrence record");
+    public void storeRecord() {
         //FIXME:
         try {     
-            database.executeInsert(prepareAuthorOccurrence(true));
+            Pair<AuthorOccurrence,Boolean> rec;
+            for (int i = 0; i < authorList.size(); i++) {
+                Pair<Pair<String,Integer>,String> author = authorList.get(i);
+                if (editMode)
+                    rec = prepareAuthorOccurrence(false,author);
+                else
+                    rec = prepareAuthorOccurrence(true,author);
+                rec.getFirst().setRole(author.getSecond());
+                if (rec.getSecond()) {
+                    logger.info("Updating AuthorOccurrence record id="+rec.getFirst().getId());
+                    database.executeUpdate(rec.getFirst());
+                } else {
+                    logger.info("Creating a new AuthorOccurrence record for author "+author.getFirst().getFirst()+" role "+author.getSecond());
+                    database.executeInsert(rec.getFirst());
+                }
+            }
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } catch (DBLayerException ex) {
@@ -829,17 +934,61 @@ public class AddEdit extends Observable {
         }        
     }//createRecord()
     
-    public void updateRecord() {        
-        logger.debug("About to update existing occurrence record id="+ao.getId());
+    
+    private ArrayList<Pair<Pair<String,Integer>,String>> getAuthorsOf(Occurrence o) {
+        ArrayList<Pair<Pair<String,Integer>,String>> authorResults = new ArrayList<Pair<Pair<String,Integer>,String>>();
+        authorOccurrences = new HashMap<Integer,AuthorOccurrence>();
         //FIXME:
-        try {     
-            database.executeUpdate(prepareAuthorOccurrence(false));
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
+        try {
+            //Pair<Pair<String,Integer>,Pair<String,Integer>> p;
+            SelectQuery sq = database.createQuery(AuthorOccurrence.class);        
+            sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
+            int resultid = database.executeQuery(sq);
+            int resultCount = database.getNumRows(resultid);
+            Object[] results = database.more(resultid, 1, resultCount);
+            Object[] tmp;
+            AuthorOccurrence ao;
+            Author a;
+            for (int i = 0; i < resultCount; i++) {
+                tmp = (Object[]) results[i];
+                ao = (AuthorOccurrence)tmp[0];
+                a = ao.getAuthor();
+                authorResults.add(new Pair<Pair<String,Integer>,String>(
+                        new Pair<String,Integer>(a.getWholeName(),a.getId()),ao.getRole() ) );
+                authorOccurrences.put(a.getId(),ao);
+            }
         } catch (DBLayerException ex) {
             ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
         }
-    }//updateRecord()
+        return authorResults;
+    }
+    
+    
+    public void addAuthorRow() {
+        authorList.add(new Pair<Pair<String,Integer>,String>(new Pair<String,Integer>("",0),""));
+        logger.info("Adding a new author row");
+        setChanged();
+        notifyObservers(new Pair<String,Integer>("addAuthorRow",-1));
+    }
+    
+    public void removeAuthorRow(int i) {
+        authorList.remove(i);
+        logger.info("AddEdit: Removing author row #"+i);
+        setChanged();
+        notifyObservers(new Pair<String,Integer>("removeAuthorRow",i));        
+    }
+    
+    public void setAuthor(int i, Pair<String,Integer> author) {
+        authorList.get(i).setFirst(author);
+        logger.debug("Author name in row "+i+" set to "+author);
+    }
+    
+    public void setAuthorRole(int i, String role) {
+        authorList.get(i).setSecond(role);
+        logger.debug("Author role in row "+i+" set to "+role);
+    }
 }
 
 
