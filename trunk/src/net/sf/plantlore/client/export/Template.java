@@ -1,8 +1,10 @@
 package net.sf.plantlore.client.export;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Hashtable;
 
 import net.sf.plantlore.common.record.*;
 
@@ -31,6 +33,38 @@ public class Template {
 			Metadata.class, Occurrence.class, Phytochorion.class,
 			Plant.class, Publication.class, Territory.class,
 			Village.class };
+	
+	
+	private static Hashtable<String,Method> getters;
+	
+	
+	public static Method getMethod(Class table, String column) {
+		return getters.get(table+"."+column);
+	}
+		
+	static {
+		for( Class table : Template.BASIC_TABLES)
+			try {
+				ArrayList<String> columns = ((Record) table.newInstance()).getColumns();
+				for(String column : columns)  
+					getters.put(table+"."+column, getter(table, column));
+			} 
+			catch(IllegalAccessException e) { e.printStackTrace(); }
+			catch(InstantiationException e) { e.printStackTrace(); }
+	}
+	
+	
+	private static Method getter(Class table, String column) {
+		try {
+			StringBuilder s = new StringBuilder("get" + column); 
+			s.setCharAt(3, Character.toUpperCase(s.charAt(3)));
+			
+			return table.getMethod( s.toString(), new Class[0] );
+		} catch(NoSuchMethodException e) { e.printStackTrace(); }
+		return null;
+	}
+	
+	
 		
 	/** 
 	 * @return The table that is central (primary) to the current query. 

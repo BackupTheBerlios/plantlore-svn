@@ -36,6 +36,10 @@ public class Village extends Record {
     	return list( ID, NAME );
     }
     
+    public ArrayList<String> getNN() {
+    	return list(NAME);
+    }
+    
     /**
      *   Get village id
      *   @return id of the village

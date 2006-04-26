@@ -53,6 +53,10 @@ public class Publication extends Record {
     			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE );
     }
     
+    public ArrayList<String> getNN() {
+    	return list(REFERENCECITATION);
+    }
+    
     /**
      *   Get publication id
      *   @return id of the publication

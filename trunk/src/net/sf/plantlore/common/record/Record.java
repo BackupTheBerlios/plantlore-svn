@@ -39,6 +39,11 @@ public abstract class Record implements Serializable {
 	}
 	
 	
+	public ArrayList<String> getNN() {
+		ArrayList<String> nn = getForeignKeys();
+		return nn;
+	}
+	
 	
 	protected static ArrayList<String> list(String... values) {
 		if(values == null) return new ArrayList<String>(0);

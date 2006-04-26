@@ -41,6 +41,9 @@ public interface Builder {
 	 */
 	void part(Record arg) throws IOException;
 	
+	
+	void part(Record... args) throws IOException;
+	
 	/** 
 	 * Make adjustments needed after the output of the current record is completed.
 	 * This method is called right after the <code>writeRecord()</code>. 

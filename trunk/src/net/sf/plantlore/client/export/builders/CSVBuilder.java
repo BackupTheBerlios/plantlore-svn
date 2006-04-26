@@ -34,6 +34,7 @@ public class CSVBuilder implements Builder{
 	
 	private ArrayList<Record> cache = new ArrayList<Record>(20);
 	private ArrayList<Author> authors = new ArrayList<Author>(10);
+	private ArrayList<AuthorOccurrence> authocc = new ArrayList<AuthorOccurrence>(10);
 	
 	private Hashtable<Class, ArrayList<Method>> properties = 
 		new Hashtable<Class, ArrayList<Method>>(20);
@@ -56,13 +57,13 @@ public class CSVBuilder implements Builder{
 				properties.put(table, methods);
 				// Check if these properties (columns) are set to be exported. 
 				for(String column : columns)  
-					if( !tmp.isSet(table, column) ) // yes -> store the getter
+					if( tmp.isSet(table, column) ) // yes -> store the getter
 						try {
 							methods.add( table.getMethod( methodName(column), new Class[0] ) );
-						} catch(NoSuchMethodException e) {}
+						} catch(NoSuchMethodException e) { e.printStackTrace(); }
 			} 
-			catch(IllegalAccessException e) {}
-			catch(InstantiationException e) {}
+			catch(IllegalAccessException e) { e.printStackTrace(); }
+			catch(InstantiationException e) { e.printStackTrace(); }
 	}
 	
 	
@@ -77,26 +78,37 @@ public class CSVBuilder implements Builder{
 	
 	
 	public void startRecord() throws IOException {
-		 cache.clear(); authors.clear(); first = true;
+		 cache.clear(); authors.clear(); authocc.clear(); first = true;
 	}
 	
 	
 	public void finishRecord() throws IOException {
-		if(authors.size() == 0)
-			for(Record record : cache) write( record );
-		else
-			for(Author author : authors) {
-				for(Record record : cache) write( record );
-				write( author );
+		if(authors.size() + authocc.size() == 0)
+			for(Record record : cache) { 
+				write( record );
+				output.write(NEWLINE);
 			}
-		
-		output.write(NEWLINE);		
+		else
+			for(int i = 0; i < Math.max(authors.size(), authocc.size()); i++) {
+				for(Record record : cache) write( record );
+				if(!authors.isEmpty()) write( authors.get(i) );
+				if(!authocc.isEmpty()) write( authocc.get(i) );
+				output.write(NEWLINE);
+				first = true;
+			}
 	}
 	
 	
 	public void part(Record record) throws IOException {
-		if(record instanceof Author) authors.add( (Author) record);
+		if(record instanceof Author) authors.add( (Author) record );
+		else if(record instanceof AuthorOccurrence) authocc.add( (AuthorOccurrence) record );
 		else cache.add(record);
+	}
+	
+	
+	public void part(Record... records) throws IOException {
+		for(Record r : records) 
+			part( r );		
 	}
 	
 	
@@ -105,6 +117,8 @@ public class CSVBuilder implements Builder{
 	 * to the output.
 	 */ 
 	protected void w(Object value) throws IOException {
+		if( value == null ) return; // no value means no output 
+		
 		StringBuilder r = new StringBuilder( value.toString() );
 		boolean containsDoubleQuote = r.indexOf(DOUBLEQUOTE) >= 0, 
 			containsDelimiter = r.indexOf(DELIMITER) >= 0,
@@ -150,8 +164,8 @@ public class CSVBuilder implements Builder{
 				if( !first ) output.write(DELIMITER); else first = false;
 				w( value );
 			} 
-			catch(IllegalAccessException e) {}
-			catch(InvocationTargetException e) {}
+			catch(IllegalAccessException e) { e.printStackTrace(); }
+			catch(InvocationTargetException e) { e.printStackTrace(); }
 	}
 	
 

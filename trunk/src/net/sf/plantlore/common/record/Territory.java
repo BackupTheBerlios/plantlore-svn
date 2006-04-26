@@ -38,6 +38,10 @@ public class Territory extends Record {
     	return list( ID, NAME );
     }
     
+    public ArrayList<String> getNN() {
+    	return list(NAME);
+    }
+    
     /**
      *   Get territory id
      *   @return id of the territory

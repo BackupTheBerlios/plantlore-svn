@@ -51,6 +51,10 @@ public class Plant extends Record {
     			CZECHNAME, SYNONYMS, NOTE, SURVEYTAXID );
     }
     
+    public ArrayList<String> getNN() {
+    	return list( SURVEYTAXID, TAXON, SCIENTIFICNAMEAUTHOR );
+    }
+    
     /**
      *   Get plant id
      *   @return id of the plant

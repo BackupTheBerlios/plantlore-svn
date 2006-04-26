@@ -1,7 +1,10 @@
 package net.sf.plantlore.client.export;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.record.*;
@@ -32,10 +35,9 @@ public class Director implements Runnable {
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 	
 	private Builder build;
-	private SelectQuery query;
 	private Selection selection;
 	private DBLayer database;
-	
+	private int result;
 
 	/**
 	 * Create a new export Director. The Director iterates over the results 
@@ -48,17 +50,31 @@ public class Director implements Runnable {
 	 * @param database	The database layer that will carry out the execution of the query.
 	 * @param selection	The set of selected records.
 	 */
-	public Director(Builder builder, SelectQuery query, DBLayer database, Selection selection) {
-		this.build = builder; this.query = query; this.database = database;
+	public Director(Builder builder, int result, DBLayer database, Selection selection) {
+		this.build = builder; this.result = result; this.database = database;
 		this.selection = selection;
+	}
+	
+	
+	private static Object[] NO_PARAM = new Object[0];
+	
+	
+	private void buildPart(Record record) throws IOException {
+		build.part(record);
+		for(String key : record.getForeignKeys()) {
+			Method getter = Template.getMethod(record.getClass(), key);
+			try {
+				buildPart( (Record) getter.invoke( record, NO_PARAM ) );
+			}
+			catch(IllegalAccessException e) {}
+			catch(InvocationTargetException e) {}
+		}
 	}
 	
 	
 	/** Execute the exporting procedure as described. */
 	public void run() {
 		try {
-			// The result identifier.
-			int result = database.executeQuery( query );
 			long count = 0; // how many records were exported
 			
 			logger.info("Export begins...");
@@ -66,16 +82,21 @@ public class Director implements Runnable {
 			// Create the header of the file (some opening tags possibly).
 			build.header();
 			// Iterate over the result of the query.
-			for(int i = 0; i < database.getNumRows( result ); i++) {
-				Record[] records = (Record[]) database.next( result );
-				if( !selection.contains( records[0] ) ) continue; // is it selected?
+			
+			int rows = database.getNumRows( result );
+			for(int i = 0; i < rows; i++) {
+				Object[] records = database.next( result );
+				Record record = (Record) records[0];
+				if( !selection.contains( record ) ) continue; // is it selected?
 				
 				count++;
 				// Write down this record.
 				build.startRecord();
 				
 				// Parse the record.
-				//build.writeRecord( records );
+				buildPart( record );
+				
+				// Occurrence -> AuthorOccurrences & Authors
 				
 				
 				build.finishRecord();

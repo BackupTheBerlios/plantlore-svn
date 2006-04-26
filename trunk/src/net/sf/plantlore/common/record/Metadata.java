@@ -71,6 +71,11 @@ public class Metadata extends Record {
     			DATECREATE, DATEMODIFIED );
     }
     
+    public ArrayList<String> getNN() {
+    	return list(TECHNICALCONTACTNAME, CONTENTCONTACTNAME, DATASETTITLE, 
+    			SOURCEINSTITUTIONID, SOURCEID, DATECREATE, DATEMODIFIED);
+    }
+    
     /**
      *   Get metadata id
      *   @return id of the metadata

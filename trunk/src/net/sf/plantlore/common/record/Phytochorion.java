@@ -40,6 +40,10 @@ public class Phytochorion extends Record {
     	return list( ID, CODE, NAME );
     }
     
+    public ArrayList<String> getNN() {
+    	return list(CODE, NAME);
+    }
+    
     /**
      *   Get phytochorion id
      *   @return id of the phytochorion

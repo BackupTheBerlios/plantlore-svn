@@ -77,6 +77,13 @@ public class Occurrence extends Record {
     			UPDATEDWHEN, METADATA, NOTE );
     }
     
+    public ArrayList<String> getNN() {
+    	ArrayList<String> nn = getForeignKeys();
+    	nn.remove(PUBLICATION);
+    	nn.addAll( list(UNITIDDB, UNITVALUE, YEARCOLLECTED, CREATEDWHEN, UPDATEDWHEN) );
+    	return nn;
+    }
+    
     
     /** Creates a new instance of OccurrenceRecord */
     public Occurrence() {
