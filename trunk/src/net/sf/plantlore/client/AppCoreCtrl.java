@@ -30,6 +30,10 @@ import net.sf.plantlore.client.history.WholeHistoryView;
 import net.sf.plantlore.client.metadata.MetadataManager;
 import net.sf.plantlore.client.metadata.MetadataManagerCtrl;
 import net.sf.plantlore.client.metadata.MetadataManagerView;
+import net.sf.plantlore.client.publication.PublicationManager;
+import net.sf.plantlore.client.publication.PublicationManagerCtrl;
+import net.sf.plantlore.client.publication.PublicationManagerView;
+import net.sf.plantlore.client.publication.PublicationManagerView;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -90,6 +94,11 @@ public class AppCoreCtrl
     MetadataManagerView metadataManagerView;
     MetadataManagerCtrl metadataManagerCtrl;
     
+    //PublicationManager
+    PublicationManager publicationManagerModel;
+    PublicationManagerView publicationManagerView;
+    PublicationManagerCtrl publicationManagerCtrl;
+    
     // Login
     Login loginModel;
     LoginView loginView;
@@ -111,7 +120,7 @@ public class AppCoreCtrl
         view.setImportAction(new ImportAction());
         
         view.addDataAuthorsListener(new DataAuthorsListener());
-        view.addDataPublicationsListener(new DataPublicationsListener());
+        view.addDataPublicationsAction(new DataPublicationsAction());
         view.addDataMetadataAction(new DataMetadataAction());
         view.addDataHistoryListener(new DataHistoryListener());
         view.addDataWholeHistoryAction(new DataWholeHistoryAction());
@@ -419,11 +428,20 @@ public class AppCoreCtrl
         }
     }    
 
-    class DataPublicationsListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            // Open publication manager - not implemented yet
+    class DataPublicationsAction extends AbstractAction {
+        public DataPublicationsAction() {
+             putValue(NAME, L10n.getString("publicationMgr"));
         }
-    }   
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("PublicationManager");
+
+            publicationManagerModel = new PublicationManager(model.getDatabase());
+            publicationManagerView = new PublicationManagerView(publicationManagerModel, view, true);
+            publicationManagerCtrl = new PublicationManagerCtrl(publicationManagerModel, publicationManagerView);
+            publicationManagerView.setVisible(true); 
+        }
+    }    
     
     class DataHistoryListener implements ActionListener {
     	public void actionPerformed(ActionEvent actionEvent)

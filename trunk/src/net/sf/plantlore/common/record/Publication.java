@@ -20,9 +20,9 @@ import java.util.ArrayList;
  */
 public class Publication extends Record {
     /** Parameters of the publication */    
-    private int id;
+    private Integer id;
     private String collectionName;
-    private int collectionYearPublication;
+    private Integer collectionYearPublication;
     private String journalName;
     private String journalAuthorName;
     private String referenceCitation;
@@ -98,7 +98,7 @@ public class Publication extends Record {
      *   @return year when the collection was published
      *   @see setCollectionYearPublication
      */
-    public int getCollectionYearPublication() {
+    public Integer getCollectionYearPublication() {
         return this.collectionYearPublication;
     }
     
