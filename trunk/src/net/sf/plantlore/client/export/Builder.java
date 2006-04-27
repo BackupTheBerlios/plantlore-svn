@@ -13,40 +13,48 @@ import net.sf.plantlore.common.record.*;
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
  * @version 1.0
- * @see Director
+ * @see net.sf.plantlore.client.export.Director
  */
 public interface Builder {
 		
 	/** 
-	 * Write a header. This method is called just once before the iteration starts. 
+	 * Write a header. This method must be called just once before the iteration starts. 
 	 */
 	void header() throws IOException;
 	
 	/** 
-	 * Write a footer. This method is called just once after the iteration ends. 
+	 * Write a footer. This method must be called just once after the iteration ends. 
 	 */
 	void footer() throws IOException;
 	
 	/** 
 	 * Make adjustments needed before
 	 * the output of another record starts. 
-	 * This method is called right before the <code>writeRecord()</code>. 
+	 * This method must be called right before any call of <code>part()</code>. 
 	 */
 	void startRecord() throws IOException;
 	
 	/**
+	 * Write a part of the whole record.
 	 * 
-	 * @param arg
-	 * @throws IOException
+	 * @param arg A part of a record to be written. The record corresponds with one table.
+	 * @throws IOException If the writer encounters an error.
 	 */
 	void part(Record arg) throws IOException;
 	
-	
+	/**
+	 * Convenient passing of more records. 
+	 * A typical implementation should call <code>part(Record)</code> repeatedly.  
+	 * 
+	 * @param args An unempty list of records.
+	 * @throws IOException If the writer encounters an error.
+	 * @see Builder#part(Record)
+	 */
 	void part(Record... args) throws IOException;
 	
 	/** 
 	 * Make adjustments needed after the output of the current record is completed.
-	 * This method is called right after the <code>writeRecord()</code>. 
+	 * This method must be called right after the last call of <code>part()</code>. 
 	 */
 	void finishRecord() throws IOException;
 	
