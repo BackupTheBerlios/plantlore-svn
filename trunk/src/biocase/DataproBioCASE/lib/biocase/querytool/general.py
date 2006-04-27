@@ -295,6 +295,7 @@ def authenticateUser(clearPasswd, login, userFile):
     #Reads first line from file ".userData"
     line = fUser.readline()
     while line != "":          
+      line = line.replace('\r\n','')
       line = line.replace('\n','')
       parseLine = re.findall(r'\b[^@]+', line)
       # test login and password
