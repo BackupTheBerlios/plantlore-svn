@@ -11,6 +11,7 @@ package net.sf.plantlore.client.publication;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -28,7 +29,7 @@ public class PublicationManager {
     /** Instance of a database management object */
     private DBLayer database;   
     /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 6;    
+    protected static final int DEFAULT_DISPLAY_ROWS = 6;    
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;   
     /** Index of the first record shown in the table */
@@ -49,7 +50,22 @@ public class PublicationManager {
     //Vyvrany zaznam v tabulce s Petadaty
     private Publication selectedRecord;
     
+    //*********************Search - promenne podle,kterych se vyhledava************//
+    /** Field to be used for sorting search query results */
+    private int sortField = SORT_COLLECTIO_NNAME;
+    /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
+    private int sortDirection = 0;
+    private String collectionName;
+    private Integer collectionYearPublication;
+    private String journalName;
+    private String journalAuthorName;
     
+    /** Constants used for identification of fields for sorting */
+    public static final int SORT_COLLECTIO_NNAME = 1;
+    public static final int SORT_COLLECTION_YEAR_PUBLICATION = 2;
+    public static final int SORT_JOURNAL_NAME = 3;
+    public static final int SORT_JOURNAL_AUTHOR_NAME = 4;
+  
     /**
      * Creates a new instance of PublicationManager
      */
@@ -74,7 +90,43 @@ public class PublicationManager {
 
     	//  Select data from tPublication table
         try {
-                query = database.createQuery(Publication.class);                                
+                query = database.createQuery(Publication.class);         
+                
+                if (collectionName != null && !collectionName.equals("")) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.COLLECTIONNAME, null, "%" + collectionName + "%", null);
+                }
+                if (collectionYearPublication != null && collectionYearPublication != 0) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.COLLECTIONYEARPUBLICATION, null, "%" + collectionYearPublication + "%", null);
+                }
+                if (journalName != null && !journalName.equals("")) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.JOURNALNAME, null, "%" + journalName + "%", null);
+                }
+                if (journalAuthorName != null && !journalAuthorName.equals("")) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.COLLECTIONNAME, null, "%" + journalAuthorName + "%", null);
+                }
+                String field;
+                switch (sortField) {
+                case 1:
+                        field = Publication.COLLECTIONNAME;
+                        break;
+                case 2:
+                        field = Publication.COLLECTIONYEARPUBLICATION;
+                        break;
+                case 3:
+                        field = Publication.JOURNALNAME;
+                        break;
+                case 4:
+                        field = Publication.JOURNALAUTHORNAME;
+                        break;                
+                default:
+                        field = Publication.COLLECTIONNAME;
+                }
+
+                if (sortDirection == 0) {
+                        query.addOrder(PlantloreConstants.DIRECT_ASC, field);
+                } else {
+                        query.addOrder(PlantloreConstants.DIRECT_DESC, field);
+                }
         } catch (RemoteException e) {
         System.err.println("RemoteException- searchPublicationData(), createQuery");
         }
@@ -105,14 +157,14 @@ public class PublicationManager {
             logger.debug("Max available rows: "+(fromTable+count-1));
            
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
-            int to = Math.min(currentRow, fromTable+count-1);           
+            int to = Math.min(currentRow, fromTable+count-1);               
             if (to <= 0) {
-            	publicationList = new ArrayList<Publication>(); 
-            	setDisplayRows(0);
+            	publicationList = new ArrayList<Publication>();  
+                setDisplayRows(0);
             	setCurrentDisplayRows("0-0");
             } else {
                 logger.debug("Retrieving query results: 1 - "+to);
-                setCurrentDisplayRows(fromTable+ "-" + to);
+                setCurrentDisplayRows(fromTable+ "-" + to);                
                 try {                	 
                      // Retrieve selected row interval 
                 	Object[] objectPublication;
@@ -270,4 +322,93 @@ public class PublicationManager {
     public Publication getSelectedRecord() {
         return this.selectedRecord;
     }
+    
+        /**
+     *  Set field used for sorting results of the search query.
+     *  @param field numeric identificator of the field used for sorting
+     */
+    public void setSortField(int field) {
+        this.sortField = field;
+    }
+
+    /**
+     *  Set direction of sorting.
+     *  @param direction direction of sorting. 0 for ascending, 1 for descending
+     */
+    public void setSortDirection(int direction) {
+        this.sortDirection = direction;
+    }
+    
+        /**
+     *   Get name sort field
+     *   @return name sort field
+     *   @see setCollectionName
+     */
+    public String getCollectionName() {
+        return this.collectionName;
+    }
+    
+    /**
+     *   Set name sort field
+     *   @param collectionName sort field
+     *   @see getCollectionName
+     */
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;        
+    }
+    
+    /**
+     *   Get year sort field
+     *   @return year sort field
+     *   @see setCollectionYearPublication
+     */
+    public Integer getCollectionYearPublication() {
+        return this.collectionYearPublication;
+    }
+    
+    /**
+     *   Set year sort field
+     *   @param collectionYearPublication sort field
+     *   @see getCollectionYearPublication
+     */
+    public void setCollectionYearPublication(int collectionYearPublication) {
+        this.collectionYearPublication = collectionYearPublication;
+    }
+    
+    /**
+     *   Get name sort field
+     *   @return name sort field
+     *   @see setJournalName
+     */
+    public String getJournalName() {
+        return this.journalName;
+    }
+    
+    /**
+     *   Set name sort field
+     *   @param journalName sort field
+     *   @see getJournalName
+     */
+    public void setJournalName(String journalName) {
+        this.journalName = journalName;
+    }
+    
+    /**
+     *   Get author sort field
+     *   @return author sort field
+     *   @see setJournalAuthorName
+     */
+    public String getJournalAuthorName() {
+        return this.journalAuthorName;
+    }
+    
+    /**
+     *   Set author sort field
+     *   @param journalAuthorName sort field
+     *   @see getJournalAuthorName
+     */
+    public void setJournalAuthorName(String journalAuthorName) {
+        this.journalAuthorName = journalAuthorName;
+    }
+        
 }

@@ -30,6 +30,9 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         super(parent, modal);
         this.model = model;
         initComponents();
+        sortButtonGroup.add(sortAscendingRadioButton);
+        sortButtonGroup.add(sortDescendingRadioButton);
+        sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
         this.tablePublicationList.setRowSelectionAllowed(true);
         this.tablePublicationList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         this.tablePublicationList.setModel(new PublicationManagerTableModel(model));  
@@ -67,6 +70,14 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
     	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
     } 
     
+     public int getSortDirection() {
+        if (this.sortButtonGroup.isSelected(this.sortAscendingRadioButton.getModel()) == true) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -74,6 +85,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        sortButtonGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablePublicationList = new javax.swing.JTable();
@@ -153,12 +165,12 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 937, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 154, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 172, Short.MAX_VALUE)
                                 .add(totalResultLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(totalResultValueLabel)
@@ -324,7 +336,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(helpButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 757, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 775, Short.MAX_VALUE)
                         .add(closeButton)))
                 .addContainerGap())
         );
@@ -380,6 +392,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
     protected javax.swing.JButton previousButton;
     protected javax.swing.JButton searchButton;
     protected javax.swing.JRadioButton sortAscendingRadioButton;
+    protected javax.swing.ButtonGroup sortButtonGroup;
     protected javax.swing.JComboBox sortComboBox;
     protected javax.swing.JRadioButton sortDescendingRadioButton;
     protected javax.swing.JTable tablePublicationList;

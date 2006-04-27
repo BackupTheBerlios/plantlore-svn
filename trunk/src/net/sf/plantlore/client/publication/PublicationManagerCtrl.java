@@ -11,6 +11,8 @@ package net.sf.plantlore.client.publication;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import net.sf.plantlore.common.record.Publication;
 import org.apache.log4j.Logger;
 
@@ -42,6 +44,10 @@ public class PublicationManagerCtrl {
         view.addButtons.addActionListener(new addPublicationListener());
         view.editButtons.addActionListener(new editPublicationListener());
         view.deleteButton.addActionListener(new deletePublicationListener());
+        view.searchButton.addActionListener(new searchPublicationListener());
+        view.sortComboBox.addFocusListener(new SortComboFocusListener());
+        view.sortAscendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
+        view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
     }
     
        /**
@@ -276,4 +282,55 @@ public class PublicationManagerCtrl {
            }          
        }
     }
+    
+    class searchPublicationListener implements ActionListener {
+       public void actionPerformed(ActionEvent actionEvent)
+       {
+           model.setCollectionName(view.collectionNameSearchText.getText());
+           //model.setCollectionYearPublication(view.collectionYearSearchText.getText());
+           model.setCollectionYearPublication(0);
+           model.setJournalName(view.journalNameSearchText.getText());
+           model.setJournalAuthorName(view.journalAuthorNameSearchText.getText());
+           //musi se nastavit podle ceho to mabyt setrizeno a zda vzestupne ci sestupne
+           //opet funkci pro vyzadani si dat postupne
+           model.searchPublication();
+           if (model.getDisplayRows() <= 0) {
+                    model.setDisplayRows(PublicationManager.DEFAULT_DISPLAY_ROWS);
+           }
+           model.processResult(1, model.getDisplayRows());
+           view.tablePublicationList.setModel(new PublicationManagerTableModel(model));                      
+           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+       }
+    }
+    
+     /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
+     *  stores value of the field to model.
+     */
+    class SortComboFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setSortField(view.sortComboBox.getSelectedIndex());
+            logger.debug("Sort field: "+view.sortComboBox.getSelectedIndex());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty
+        }
+    }    
+    
+    /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
+     *  stores value of the field to model.
+     */
+    class SortDirectionRadioFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setSortDirection(view.getSortDirection());
+            logger.debug("Sort asc, dsc: "+ view.getSortDirection());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty
+        }
+    }                
 }

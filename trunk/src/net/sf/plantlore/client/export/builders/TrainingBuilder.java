@@ -30,15 +30,15 @@ public class TrainingBuilder extends AbstractBuilder {
 	public TrainingBuilder(Template template) {
 		super(template);
 	}
-
+  //vola se na zacatku
 	public void header() throws IOException {
 		System.out.println("Training Builder engaged.");		
 	}
-
+  //vola se na konci 
 	public void footer() throws IOException {
 		System.out.println("Training Builder disengaged.");
 	}
-
+  //pro jednotlive zaznamy
 	public void startRecord() throws IOException {
 		System.out.println(" <" + i + ">");
 	}
