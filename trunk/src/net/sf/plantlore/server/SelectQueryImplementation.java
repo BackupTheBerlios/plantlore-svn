@@ -14,6 +14,7 @@ import net.sf.plantlore.middleware.SelectQuery;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -58,6 +59,10 @@ public class SelectQueryImplementation implements SelectQuery {
      */
     public void createAlias(String propertyName, String aliasName) {
         criteria.createAlias(propertyName, aliasName);
+    }
+    
+    public void setDistinct() {
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
     }
     
     /**

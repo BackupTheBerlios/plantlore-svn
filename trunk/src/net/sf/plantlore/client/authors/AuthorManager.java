@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.AuthorOccurrence;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.server.DBLayerException;
@@ -37,7 +39,7 @@ public class AuthorManager extends Observable {
     /** Organization of the author */
     private String organization;
     /** Role of the author */
-    private String role;   
+    private String role;
     /** Address of the author */
     private String address;
     /** Phone number of the author */
@@ -55,13 +57,13 @@ public class AuthorManager extends Observable {
     /** Role field used for searching */
     private String searchRole;
     /** Email field used for searching */
-    private String searchEmail;            
+    private String searchEmail;
     /** Flag telling whether a long running operation has already finished */
     private boolean done;
     /** Result of the search query */
     private int resultId = 0;
     /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 10;    
+    private static final int DEFAULT_DISPLAY_ROWS = 10;
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;
     /** Data (results of a search query) displayed in the table */
@@ -80,22 +82,22 @@ public class AuthorManager extends Observable {
     public static final int SORT_ORGANIZATION = 2;
     public static final int SORT_ROLE = 3;
     public static final int SORT_EMAIL = 4;
-    public static final int SORT_PHONE = 5;    
-    public static final int SORT_URL = 6;        
-    /** 
+    public static final int SORT_PHONE = 5;
+    public static final int SORT_URL = 6;
+    /**
      *  Creates a new instance of AuthorManager.
      *  @param database Instance of a database management object
      */
     public AuthorManager(DBLayer database) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         this.database = database;
-    }    
+    }
     
     /**
      *  Save new author to the database. Information about the author are stored in data fields of this class.
      *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
      */
-    public void saveAuthor() {     
+    public void saveAuthor() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // The operation is not finished yet
@@ -122,10 +124,10 @@ public class AuthorManager extends Observable {
                     done = true;
                     return null;
                 } catch(RemoteException e) {
-                	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
                 logger.info("Author "+name+" saved successfuly.");
-                if (isResultAvailable()) {                
+                if (isResultAvailable()) {
                     searchAuthor();
                 }
                 done = true;
@@ -133,7 +135,7 @@ public class AuthorManager extends Observable {
             }
         };
         worker.start();
-    }    
+    }
     
     /**
      *  Delete an author from the database. To-be-deleted author is identified by his ID and is
@@ -143,28 +145,28 @@ public class AuthorManager extends Observable {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // Operation not finished yet
-                done = false;                
+                done = false;
                 try {
                     // Execute query
-                    database.executeDelete((Author)data.get(getAuthorIndex()));                            
+                    database.executeDelete((Author)data.get(getAuthorIndex()));
                 } catch (DBLayerException e) {
                     // Log and set an error
                     logger.error("Deleting author failed. Unable to execute delete query.");
                     setError(e);
-                    // Set operation state to finished                    
-                    done = true;       
+                    // Set operation state to finished
+                    done = true;
                     return null;
                 } catch(RemoteException e) {
-                	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
                 // Execute author search - required in order to display up-to-date data in the table of authors
-                searchAuthor();                
+                searchAuthor();
                 // Set operation state to finished
-                done = true;       
+                done = true;
                 return null;
-            }        
+            }
         };
-        worker.start();            
+        worker.start();
     }
     
     public void editAuthor() {
@@ -178,115 +180,133 @@ public class AuthorManager extends Observable {
     public void searchAuthor() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
+/*
+                SelectQuery query;
+                Integer qid;
+                Occurrence nalez;
+                try {
+                    query = database.createQuery(Occurrence.class);
+                    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, 17, null);
+                    qid = database.executeQuery(query);
+                    Object[] vysledky = database.next(qid);
+                    nalez = (Occurrence)vysledky[0];
+                    System.out.println("dlzka vysledkov: "+vysledky.length);
+                    query = database.createQuery(AuthorOccurrence.class);
+                    query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, nalez, null);
+                    query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.ROLE, null, "collect", null);
+                    qid = database.executeQuery(query);
+                    Object[] vysledky2 = database.next(qid);
+                    AuthorOccurrence autOcc = (AuthorOccurrence)vysledky2[0];
+                    System.out.println(autOcc.getAuthor().getWholeName());
+                } catch(RemoteException e) {
+                    System.err.println("RemoteException- searchInsertInfo(), createQuery");
+                } catch (DBLayerException e1) {
+                    System.out.println("DBLayer exception");
+                }
+ 
+                query = database.createQuery(Authors.class);
+                query.createAlias("authorsOccurrences", "ao");
+                query.addRestriction(PlantloreConstants.RESTR_EQ, ao.OCCURRENCE, null, occurrence, null);
+ */
                 // Operation not finished yet
-                done = false;                
+                done = false;
                 // Create new Select query
                 SelectQuery query;
                 try {
-					query = database.createQuery(Author.class);
-
-					if (searchName != null)
-						query.addRestriction(PlantloreConstants.RESTR_LIKE,
-								Author.WHOLENAME, null, "%" + searchName + "%",
-								null);
-					if (searchOrganization != null)
-						query.addRestriction(PlantloreConstants.RESTR_LIKE,
-								Author.ORGANIZATION, null, "%"
-										+ searchOrganization + "%", null);
-					if (searchRole != null)
-						query
-								.addRestriction(PlantloreConstants.RESTR_LIKE,
-										Author.ROLE, null, "%" + searchRole
-												+ "%", null);
-					if (searchEmail != null)
-						query.addRestriction(PlantloreConstants.RESTR_LIKE,
-								Author.EMAIL, null, "%" + searchEmail + "%",
-								null);
-					String field;
-					switch (sortField) {
-					case 1:
-						field = Author.WHOLENAME;
-						break;
-					case 2:
-						field = Author.ORGANIZATION;
-						break;
-					case 3:
-						field = Author.ROLE;
-						break;
-					case 4:
-						field = Author.EMAIL;
-						break;
-					case 5:
-						field = Author.PHONENUMBER;
-						break;
-					case 6:
-						field = Author.URL;
-						break;
-					default:
-						field = Author.WHOLENAME;
-					}
-
-					if (sortDirection == 0) {
-						query.addOrder(PlantloreConstants.DIRECT_ASC, field);
-					} else {
-						query.addOrder(PlantloreConstants.DIRECT_DESC, field);
-					}
-					int resultId = 0;
-					try {
-						// Execute query
-						resultId = database.executeQuery(query);
-					} catch (DBLayerException e) {
-						// Log and set an error
-						logger
-								.error("Searching authors failed. Unable to execute search query.");
-						setError(e);
-						// setError("Searching authors failed. Please contact
-						// your administrator.");
-					} finally {
-						// Set operation state to finished
-						done = true;
-						// Save the results
-						setResult(resultId);
-					}
-					return resultId;
-				} catch (RemoteException e) {
-					System.err
-							.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-					return null;
-				}
+                    query = database.createQuery(Author.class);                    
+                    if (searchName != null)
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.WHOLENAME, null, "%" + searchName + "%", null);
+                    if (searchOrganization != null)
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ORGANIZATION, null, "%" + searchOrganization + "%", null);
+                    if (searchRole != null)
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ROLE, null, "%" + searchRole + "%", null);
+                    if (searchEmail != null)
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.EMAIL, null, "%" + searchEmail + "%", null);
+                    String field;
+                    switch (sortField) {
+                        case 1:
+                            field = Author.WHOLENAME;
+                            break;
+                        case 2:
+                            field = Author.ORGANIZATION;
+                            break;
+                        case 3:
+                            field = Author.ROLE;
+                            break;
+                        case 4:
+                            field = Author.EMAIL;
+                            break;
+                        case 5:
+                            field = Author.PHONENUMBER;
+                            break;
+                        case 6:
+                            field = Author.URL;
+                            break;
+                        default:
+                            field = Author.WHOLENAME;
+                    }
+                    
+                    if (sortDirection == 0) {
+                        query.addOrder(PlantloreConstants.DIRECT_ASC, field);
+                    } else {
+                        query.addOrder(PlantloreConstants.DIRECT_DESC, field);
+                    }
+                    int resultId = 0;
+                    try {
+                        // Execute query
+                        resultId = database.executeQuery(query);
+                    } catch (DBLayerException e) {
+                        // Log and set an error
+                        logger
+                                .error("Searching authors failed. Unable to execute search query.");
+                        setError(e);
+                        // setError("Searching authors failed. Please contact
+                        // your administrator.");
+                    } finally {
+                        // Set operation state to finished
+                        done = true;
+                        // Save the results
+                        setResult(resultId);
+                    }
+                    return resultId;
+                } catch (RemoteException e) {
+                    System.err
+                            .println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                    return null;
+                }
             }
         };
         worker.start();
     }
-
+    
     /**
-	 * Checks whether an error is set. If yes, notifies observers to display it.
-	 * Finally unsets the error flag.
-	 * 
-	 * @return <code>true</code> if an error was set (and observers were
-	 *         notified), <code>false</code> otherwise
-	 */
+     * Checks whether an error is set. If yes, notifies observers to display it.
+     * Finally unsets the error flag.
+     *
+     * @return <code>true</code> if an error was set (and observers were
+     *         notified), <code>false</code> otherwise
+     */
     public boolean processErrors() {
         if (this.error != null) {
             setChanged();
-            notifyObservers();        
+            notifyObservers();
             this.error = null;
             return true;
         }
         return false;
     }
-
+    
     /**
-	 * Process results of a search query. Retrieves results using the database
-	 * management object (DBLayer) and stores them in the data field of the
-	 * class. Notifies observers about the changes. Sets an error in case of an
-	 * exception.
-	 * 
-	 * @param from
-	 *            number of the first row to retrieve.
-	 * @param count
-	 *            number of rows to retrieve
-	 */
+     * Process results of a search query. Retrieves results using the database
+     * management object (DBLayer) and stores them in the data field of the
+     * class. Notifies observers about the changes. Sets an error in case of an
+     * exception.
+     *
+     * @param from
+     *            number of the first row to retrieve.
+     * @param count
+     *            number of rows to retrieve
+     */
     public void processResults(int from, int count) {
         if (this.resultId != 0) {
             logger.debug("Rows in the result: "+getResultRows());
@@ -294,19 +314,19 @@ public class AuthorManager extends Observable {
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
             int to = Math.min(getResultRows(), from+count-1);
             if (to == 0) {
-                this.data = new ArrayList();                
+                this.data = new ArrayList();
             } else {
-                logger.debug("Retrieving query results: "+from+" - "+to);                
+                logger.debug("Retrieving query results: "+from+" - "+to);
                 try {
                     // Retrieve selected row interval
-                	Object[] objArray;
-                	try {
-                            // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
-                            // from-1 and to-1 just temporary
-                            objArray = database.more(resultId, from-1, to-1);
-                	} catch(RemoteException e) {
-                    	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                    	return;
+                    Object[] objArray;
+                    try {
+                        // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
+                        // from-1 and to-1 just temporary
+                        objArray = database.more(resultId, from-1, to-1);
+                    } catch(RemoteException e) {
+                        System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                        return;
                     }
                     logger.debug("Results retrieved. Count: "+objArray.length);
                     // Create storage for the results
@@ -321,10 +341,10 @@ public class AuthorManager extends Observable {
                     logger.error("Processing search results failed: "+e.toString());
                     setError(e);
                 }
-                // Update current first displayed row (only if data retrieval was successful). 
+                // Update current first displayed row (only if data retrieval was successful).
                 if (!this.isError()) {
                     // Update current first displayed row
-                    setCurrentFirstRow(from);            
+                    setCurrentFirstRow(from);
                 }
             }
             // Tell observers to update
@@ -350,7 +370,7 @@ public class AuthorManager extends Observable {
         this.setUrl(selectedAuth.getUrl());
         this.setNote(selectedAuth.getNote());
         setChanged();
-        notifyObservers();        
+        notifyObservers();
     }
     
     /**
@@ -368,13 +388,13 @@ public class AuthorManager extends Observable {
     public int getResult() {
         return this.resultId;
     }
-       
+    
     public int getResultRows() {
-    	int result = 0;
+        int result = 0;
         if (resultId != 0) try {
-        	result = database.getNumRows(resultId);
+            result = database.getNumRows(resultId);
         } catch(RemoteException e) {
-        	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+            System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
         }
         return result;
     }
@@ -426,7 +446,7 @@ public class AuthorManager extends Observable {
     /**
      *  Set index of currently selected author. The index is used to locate author record in the data field.
      *  @param index index of currently selected author
-     */    
+     */
     protected void setAuthorIndex(int index) {
         this.authorIndex = index;
     }
@@ -462,7 +482,7 @@ public class AuthorManager extends Observable {
     public void setCurrentFirstRow(int row) {
         this.currentFirstRow = row;
     }
-      
+    
     /**
      *  Indicates whether a long running operation executed in a separate thread has already finished.
      *  @return true if the operation is finished (no operation running), false otherwise
@@ -470,7 +490,7 @@ public class AuthorManager extends Observable {
     public boolean isOperationDone() {
         return this.done;
     }
-            
+    
     /**
      *  Indicate whether result of a search query is available at the momoent
      *  @return true if search query result is available
@@ -489,7 +509,7 @@ public class AuthorManager extends Observable {
     public void setSortField(int field) {
         this.sortField = field;
     }
-
+    
     /**
      *  Set direction of sorting.
      *  @param direction direction of sorting. 0 for ascending, 1 for descending
@@ -497,11 +517,11 @@ public class AuthorManager extends Observable {
     public void setSortDirection(int direction) {
         this.sortDirection = direction;
     }
-
+    
     /**
      *  Set name search field.
      *  @param name name of author to search for
-     */    
+     */
     public void setSearchName(String name) {
         this.searchName = name;
     }
@@ -509,7 +529,7 @@ public class AuthorManager extends Observable {
     /**
      *  Set organization search field.
      *  @param organization organization of author used for searching
-     */    
+     */
     public void setSearchOrganization(String organization) {
         this.searchOrganization = organization;
     }
@@ -517,7 +537,7 @@ public class AuthorManager extends Observable {
     /**
      *  Set role search field.
      *  @param role role of author used for searching
-     */    
+     */
     public void setSearchRole(String role) {
         this.searchRole = role;
     }
@@ -525,7 +545,7 @@ public class AuthorManager extends Observable {
     /**
      *  Set email search field.
      *  @param email email of author used for searching
-     */    
+     */
     public void setSearchEmail(String email) {
         this.searchEmail = email;
     }
@@ -537,7 +557,7 @@ public class AuthorManager extends Observable {
     public String getName() {
         return name;
     }
-
+    
     /**
      *  Set name of the author.
      *  @param name name of the author
@@ -545,7 +565,7 @@ public class AuthorManager extends Observable {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     /**
      *  Get organization of the author.
      *  @return string with the organization of the author
@@ -553,7 +573,7 @@ public class AuthorManager extends Observable {
     public String getOrganization() {
         return organization;
     }
-
+    
     /**
      *  Set organization of the author.
      *  @param organization organization of the author
@@ -561,7 +581,7 @@ public class AuthorManager extends Observable {
     public void setOrganization(String organization) {
         this.organization = organization;
     }
-
+    
     /**
      *  Get role of the author.
      *  @return string with the role of the author
@@ -569,7 +589,7 @@ public class AuthorManager extends Observable {
     public String getRole() {
         return role;
     }
-
+    
     /**
      *  Set role of the author.
      *  @param role role of the author
@@ -577,7 +597,7 @@ public class AuthorManager extends Observable {
     public void setRole(String role) {
         this.role = role;
     }
-
+    
     /**
      *  Get address of the author.
      *  @return string with the address of the author
@@ -585,7 +605,7 @@ public class AuthorManager extends Observable {
     public String getAddress() {
         return address;
     }
-
+    
     /**
      *  Set address of the author.
      *  @param address address of the author
@@ -593,7 +613,7 @@ public class AuthorManager extends Observable {
     public void setAddress(String address) {
         this.address = address;
     }
-
+    
     /**
      *  Get phone number of the author.
      *  @return string with the phone number of the author
@@ -601,7 +621,7 @@ public class AuthorManager extends Observable {
     public String getPhoneNumber() {
         return phoneNumber;
     }
-
+    
     /**
      *  Set phone number of the author.
      *  @param phoneNumber phone number of the author
@@ -609,7 +629,7 @@ public class AuthorManager extends Observable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
+    
     /**
      *  Get email of the author.
      *  @return string with the email of the author
@@ -617,7 +637,7 @@ public class AuthorManager extends Observable {
     public String getEmail() {
         return email;
     }
-
+    
     /**
      *  Set email of the author.
      *  @param email email of the author
@@ -625,7 +645,7 @@ public class AuthorManager extends Observable {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    
     /**
      *  Get URL of the author.
      *  @return string with the URL of the author
@@ -633,7 +653,7 @@ public class AuthorManager extends Observable {
     public String getUrl() {
         return url;
     }
-
+    
     /**
      *  Set URL of the author.
      *  @param url URL of the author
@@ -641,7 +661,7 @@ public class AuthorManager extends Observable {
     public void setUrl(String url) {
         this.url = url;
     }
-
+    
     /**
      *  Get note of the author.
      *  @return string with the note of the author
@@ -649,12 +669,12 @@ public class AuthorManager extends Observable {
     public String getNote() {
         return note;
     }
-
+    
     /**
      *  Set note of the author.
      *  @param note note of the author
      */
     public void setNote(String note) {
         this.note = note;
-    }    
+    }
 }

@@ -72,6 +72,10 @@ public class PlantloreConstants {
     public static final int DIRECT_ASC            = 60;
     public static final int DIRECT_DESC           = 61;    
             
+    public static final int INSERT                = 1;
+    public static final int UPDATE                = 2;
+    public static final int DELETE                = 3;
+    
     /** Creates a new instance of PlantloreConstants */
     public PlantloreConstants() {
     }

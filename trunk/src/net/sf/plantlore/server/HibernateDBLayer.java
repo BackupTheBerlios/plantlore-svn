@@ -1,7 +1,7 @@
 /*
  * HibernateDBLayer.java
  *
- * Created on 18. únor 2006, 22:31
+ * Created on April 18, 2006, 22:31
  *
  */
 
@@ -13,6 +13,18 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
 import java.util.Hashtable;
+import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.HistoryChange;
+import net.sf.plantlore.common.record.HistoryColumn;
+import net.sf.plantlore.common.record.HistoryRecord;
+import net.sf.plantlore.common.record.Occurrence;
+import net.sf.plantlore.common.record.Phytochorion;
+import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.Right;
+import net.sf.plantlore.common.record.Territory;
+import net.sf.plantlore.common.record.User;
+import net.sf.plantlore.common.record.Village;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
@@ -30,26 +42,35 @@ import org.hibernate.Transaction;
  *  
  *  TODO: Nezapominat generovat stub! (rmic net.sf.plantlore.server.HibernateDBLayer)
  *
- *  @author Tomáš Kovařík (database parts), Erik Kratochvíl (rmi parts)
+ *  @author Tomas Kovarik (database parts), Erik Kratochvil (rmi parts)
  *  @version far from ready!
  */
 public class HibernateDBLayer implements DBLayer, Unreferenced {
     /** Instance of a logger */
     private Logger logger;
     /** Configuration file for Hibernate */
-    private File configFile;   
-    /** Hibernate session */
-    private Session session;
+    private File configFile;
     /** Pool of select queries */        
     private Hashtable<Integer, ScrollableResults> results;
     /** Maximum result ID used */
     private int maxResultId;
     
+    private int maxSessionId;
+    /** Session factory for creating Hibernate sessions */
+    private SessionFactory sessionFactory;    
+    /** List of select queries */
+    private Hashtable<SelectQuery, SelectQuery> queries;    
     
-    private Hashtable<SelectQuery, SelectQuery> queries;
+    private Hashtable<SelectQuery, Session> sessions;
+    /** Authenticated user */
+    private User plantloreUser;
+    /** Rights of the authenticated user */
+    private Right rights;    
     
+    private static final int INITIAL_POOL_SIZE = 8;
     
-    /** Creates a new instance of HibernateDBLayer.
+    /**
+     * Creates a new instance of HibernateDBLayer.
      * 
      *  @param undertaker The object that is responsible for cleanup if the client crashes. 
      */
@@ -61,31 +82,29 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     
     /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer() {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());
-        
-        
-        logger.debug("      Constructing a new HibernateDBLayer ...");
-        
-        // Initialize pool of result sets, initial capacity = 8
-        results = new Hashtable<Integer, ScrollableResults>(8); 
+        logger = Logger.getLogger(this.getClass().getPackage().getName());                
+        logger.debug("      Constructing a new HibernateDBLayer ...");        
+        // Initialize pool of result sets, initial capacity = INITIAL POOL SIZE
+        results = new Hashtable<Integer, ScrollableResults>(INITIAL_POOL_SIZE); 
         // Initialize maximum result id
-        maxResultId = 0;
-        
-        // Table of all living queries, initial capacity = 8
-        queries = new Hashtable<SelectQuery, SelectQuery>(8);
-        
+        maxResultId = 0;        
+        maxSessionId = 0;
+        // Table of all living queries, initial capacity = INITIAL_POOL_SIZE
+        queries = new Hashtable<SelectQuery, SelectQuery>(INITIAL_POOL_SIZE);        
+        sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
         logger.debug("      completed.");
     }    
     
     /**
      *  Initialize database connection. Fire up Hibernate and open a session.
-     *  
-     *  FIXME prepracovat initialize tak, aby pouzival zaslane informace & nacitala prava!
+     *  Authenticate user and Load rights of this user
      *  
      *  @throws DBLayerException when the hibernate or database connection cannot be initialized
      */
-    public void initialize(String dbID, String user, String password) throws DBLayerException {
+    public Right initialize(String dbID, String user, String password) throws DBLayerException {
         Configuration cfg;
+        int result = 0;
+        
         // File containing Hibernate configuration
         configFile = new File("hibernate.cfg.xml");        
         // Load Hibernate configuration
@@ -95,23 +114,39 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             logger.fatal("Cannot load Hibernate configuration. Details: "+e.getMessage());
             throw new DBLayerException("Cannot load Hibernate configuration. Details: "+e.getMessage());            
         }
-
-        //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Temp/plantloreHIBdata.fdb");
-        //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:c:/Kovo/DatabaseTest/database/plantlore.fdb");
-        //cfg.setProperty("hibernate.connection.url", "jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdata.fdb");
+        // TODO: this should be loaded from a configuration file on the server
+        // We are temporarily using this for DB authetication and user athentication as well
         cfg.setProperty("hibernate.connection.url", dbID);
-        //cfg.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/plantlore");
         cfg.setProperty("hibernate.connection.username", user);
         cfg.setProperty("hibernate.connection.password", password);        
         try {
             // Build session factory
-            SessionFactory sessionFactory = cfg.buildSessionFactory();
-            // Open Session
-            this.session = sessionFactory.openSession();                
+            sessionFactory = cfg.buildSessionFactory();
         } catch (HibernateException e) {
-            logger.fatal("Cannot create Hibernate session. Details: "+e.getMessage());
-            throw new DBLayerException("Cannot create Hibernate session. Details: "+e.getMessage());                        
+            logger.fatal("Cannot build Hibernate session factory. Details: "+e.getMessage());
+            throw new DBLayerException("Cannot build Hibernate session factory. Details: "+e.getMessage());
         }        
+        // Authenticate user
+        try {
+            SelectQuery sq = this.createQuery(User.class);            
+            sq.addRestriction(PlantloreConstants.RESTR_EQ, User.LOGIN, null, user, null);
+            result = this.executeQuery(sq);
+        } catch (RemoteException e) {
+            logger.fatal("Cannot load user information. Details: "+e.getMessage());
+        }
+        Object[] userinfo = next(result);
+        if (userinfo == null) {
+            // Authentication failed, close DB connection
+            sessionFactory.close();
+            sessionFactory = null;
+            logger.warn("Authentication of user "+user+" failed!");
+            return null;
+        } else {
+            User clientUser = (User)userinfo[0];
+            this.rights = clientUser.getRight();           
+            this.plantloreUser = clientUser;
+        }
+        return rights;
     }    
     
     /**
@@ -122,7 +157,105 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when saving data into the database fails
      */
     public int executeInsert(Object data) throws DBLayerException {
+        int recordId, id, result = 0;        
+        String table;
+        HistoryColumn column;
+        
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }        
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;                
+        try {
+            // Begin transaction
+            tx = session.beginTransaction();            
+            // Save item into the database
+            recordId = (Integer)session.save(data);            
+            // Save data to history tables - only for selected tables
+            if ((data instanceof Publication) || (data instanceof Territory) ||
+                (data instanceof Village) || (data instanceof Phytochorion) ||
+                (data instanceof Author) || (data instanceof Occurrence)) {
+                HistoryChange historyChange = new HistoryChange();
+                if (data instanceof Occurrence) {
+                    historyChange.setOccurrence((Occurrence)data);
+                    historyChange.setRecordId(0);
+                    table = PlantloreConstants.ENTITY_OCCURRENCE;
+                } else {
+                    historyChange.setOccurrence(null);
+                    if (data instanceof Publication) {
+                        table = PlantloreConstants.ENTITY_PUBLICATION;
+                    } else if (data instanceof Territory) {
+                        table = PlantloreConstants.ENTITY_TERRITORY;                        
+                    } else if (data instanceof Village) {
+                        table = PlantloreConstants.ENTITY_VILLAGE;                        
+                    } else if (data instanceof Phytochorion) {
+                        table = PlantloreConstants.ENTITY_PHYTOCHORION;                        
+                    } else if (data instanceof Author) {
+                        table = PlantloreConstants.ENTITY_AUTHOR;                        
+                    } else {
+                        table = "";
+                    }
+                    historyChange.setRecordId(recordId);
+                }
+                historyChange.setOldRecordId(0);
+                historyChange.setOperation(PlantloreConstants.INSERT);
+                historyChange.setWho(this.plantloreUser);
+                historyChange.setWhen(new java.util.Date());
+                
+                // Load record from THistoryColumn table
+                try {
+                    SelectQuery sq = this.createQuery(HistoryColumn.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ, HistoryColumn.TABLENAME, null, table, null);
+                    sq.addRestriction(PlantloreConstants.RESTR_IS_NULL, HistoryColumn.COLUMNNAME, null, null, null);
+                    result = this.executeQuery(sq);
+                } catch (RemoteException e) {
+                    logger.fatal("Cannot load HistoryChange information. Details: "+e.getMessage());
+                }
+                Object[] objCol = next(result);
+                if (objCol == null) {                
+                    logger.error("tHistoryColumn doesn't contain required data");
+                    throw new DBLayerException("tHistoryColumn doesn't contain required data");                    
+                } else {
+                    column = (HistoryColumn)objCol[0];
+                }                
+                HistoryRecord history = new HistoryRecord();
+                history.setHistoryColumn(column);
+                history.setNewValue(null);
+                history.setOldValue(null);
+                // Save into the database
+                recordId = (Integer)session.save(historyChange);
+                history.setHistoryChange(historyChange);                
+                recordId = (Integer)session.save(history);                
+            }
+            // Commit transaction
+            tx.commit();                                      
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("Saving record into the database failed. Details: "+e.getMessage());
+            throw new DBLayerException("Saving record into the database failed. Details: "+e.getMessage());
+        } finally {
+            session.close();
+        }
+        return recordId;
+    }
+
+    /**
+     *  Insert data into the database without modifying history tables
+     *
+     *  @param data data to insert (one of the data holder objects)
+     *  @return identifier (primary key) of the inserted row
+     *  @throws DBLayerException when saving data into the database fails
+     */
+    public int executeInsertHistory(Object data) throws DBLayerException {
         int recordId;        
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }        
+        Session session = sessionFactory.openSession();
         Transaction tx = null;        
         try {
             // Begin transaction
@@ -137,6 +270,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             logger.fatal("Saving record into the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Saving record into the database failed. Details: "+e.getMessage());
+        } finally {
+            session.close();
         }
         return recordId;
     }
@@ -148,6 +283,97 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when deleting data fails
      */
     public void executeDelete(Object data) throws DBLayerException {
+        String table;
+        int id, result = 0;
+        HistoryColumn column;
+        
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }        
+        Session session = sessionFactory.openSession();        
+        Transaction tx = null;
+        // Save records to history if required
+        try {        
+            if ((data instanceof Publication) || (data instanceof Author) || (data instanceof Occurrence)) {
+                HistoryChange historyChange = new HistoryChange();
+                if (data instanceof Occurrence) {
+                    historyChange.setOccurrence((Occurrence)data);
+                    historyChange.setRecordId(0);
+                    table = PlantloreConstants.ENTITY_OCCURRENCE;
+                } else {
+                    historyChange.setOccurrence(null);
+                    if (data instanceof Publication) {
+                        id = ((Publication)data).getId();
+                        table = PlantloreConstants.ENTITY_PUBLICATION;
+                    } else if (data instanceof Author) {
+                        id = ((Author)data).getId();
+                        table = PlantloreConstants.ENTITY_AUTHOR;                        
+                    } else {
+                        id = 0;
+                        table = "";
+                    }
+                    historyChange.setRecordId(id);
+                }
+                historyChange.setOldRecordId(0);
+                historyChange.setOperation(PlantloreConstants.DELETE);
+                historyChange.setWho(this.plantloreUser);
+                historyChange.setWhen(new java.util.Date());
+                
+                // Load record from THistoryColumn table
+                try {
+                    SelectQuery sq = this.createQuery(HistoryColumn.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ, HistoryColumn.TABLENAME, null, table, null);
+                    sq.addRestriction(PlantloreConstants.RESTR_IS_NULL, HistoryColumn.COLUMNNAME, null, null, null);
+                    result = this.executeQuery(sq);
+                } catch (RemoteException e) {
+                    logger.fatal("Cannot load HistoryChange information. Details: "+e.getMessage());
+                }
+                Object[] objCol = next(result);
+                if (objCol == null) {                
+                    logger.error("tHistoryColumn doesn't contain required data");
+                    throw new DBLayerException("tHistoryColumn doesn't contain required data");                    
+                } else {
+                    column = (HistoryColumn)objCol[0];
+                }                
+                HistoryRecord history = new HistoryRecord();
+                history.setHistoryChange(historyChange);
+                history.setHistoryColumn(column);
+                history.setNewValue(null);
+                history.setOldValue(null);
+                // Save into the database
+                session.save(historyChange);
+                session.save(history);                
+            }        
+            // Save the data itself
+            tx = session.beginTransaction();
+            // Save item into the database
+            session.delete(data);
+            // Commit transaction
+            tx.commit();                                      
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("Deleting record from the database failed. Details: "+e.getMessage());
+            throw new DBLayerException("Deleting record from the database failed. Details: "+e.getMessage());
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     *  Delete data from the database without modifying history tables
+     *
+     *  @param data data we want to delete (must be one of the holder objects)
+     *  @throws DBLayerException when deleting data fails
+     */
+    public void executeDeleteHistory(Object data) throws DBLayerException {
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }
+        Session session = sessionFactory.openSession();        
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -161,6 +387,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             logger.fatal("Deleting record from the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Deleting record from the database failed. Details: "+e.getMessage());
+        } finally {
+            session.close();
         }
     }
     
@@ -171,6 +399,43 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when updating data fails
      */
     public void executeUpdate(Object data) throws DBLayerException {
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+        try {
+            // Save data into history tables if required
+            // TODO
+            tx = session.beginTransaction();
+            // Save item into the database
+            session.update(data);
+            // Commit transaction
+            tx.commit();                                      
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
+            throw new DBLayerException("Updating record in the database failed. Details: "+e.getMessage());
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     *  Update data in the database without modifying history tables.
+     *
+     *  @param data to update (must be one of the holder objects)
+     *  @throws DBLayerException when updating data fails
+     */
+    public void executeUpdateHistory(Object data) throws DBLayerException {
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }
+        Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -184,7 +449,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
             throw new DBLayerException("Updating record in the database failed. Details: "+e.getMessage());
-        }                
+        } finally {
+            session.close();
+        }
     }
     
     /**
@@ -285,11 +552,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when closing session fails
      */
     public void close() throws DBLayerException {    
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            throw new DBLayerException("SessionFactory not available");
+        }        
         try {
-            session.close();
+            sessionFactory.close();
         } catch (HibernateException e) {
-            logger.fatal("Cannot close session");
-            throw new DBLayerException("Cannot close session");            
+            logger.fatal("Cannot close session factory");
+            throw new DBLayerException("Cannot close session factory");            
         }
     }
     
@@ -300,7 +571,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @return an instance of <code>SelectQuery</code> used for building a query by client
      *
      */
+    // TODO: Pridat throws DBLayerException
     public SelectQuery createQuery(Class classname) throws RemoteException {
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            // throw new DBLayerException("SessionFactory not available");
+        }
+        Session session = sessionFactory.openSession();
         SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname)), 
         	stub = query;
         
@@ -308,7 +585,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         	stub = (SelectQuery) UnicastRemoteObject.exportObject(query); 
         
         queries.put(stub, query);
-        
+        sessions.put(stub, session);
         return stub;
     }    
     
@@ -319,7 +596,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when selecting records from the database fails
      */
     public int executeQuery(SelectQuery query) throws DBLayerException {
-    	
+
     	SelectQuery selectQuery = queries.remove(query);
     	if(selectQuery == null) throw new DBLayerException("You can only pass queries created by this DBLayer!");
     	
@@ -333,9 +610,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	if(sq == null) logger.fatal("Class cast failed. Why the fuck?!");
     	
         Transaction tx = null;        
-        ScrollableResults res;
-        
-        
+        ScrollableResults res;        
+        Session session = sessions.get(query);
         try {
             tx = session.beginTransaction();
             // Execute detached criteria query
@@ -351,15 +627,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // Update current maximum result id and save the results
         maxResultId++; 
-        /* FIXME: NIKDE NENI maxResultId-- nebo tak neco, to je ficura nebo BUG?
-         * Si predstav, ze hypoteticky by nekdo drzel resultid = 0 dlouho, a mezitim 
-         * by se nekomu povedlo vykonat ty 4miliardy dotazu (nemusi to bejt uplne
-         * za vlasy pritazeny, kdyz budou v db statisice zaznamu) a dostal by se  s tim
-         * resultid zase na nulu. ale resultid = 0 uz v hashtable je, takze by to vratilo
-         * spatne...
-         */
         results.put(maxResultId, res);
         return maxResultId;
+    }
+    
+    public void closeQuery(SelectQuery query) {
+        Session session = sessions.get(query);
+        session.close();
+        sessions.remove(query);
     }
     
     /**

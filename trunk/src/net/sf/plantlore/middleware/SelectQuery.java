@@ -31,6 +31,8 @@ public interface SelectQuery extends Serializable, Remote {
      */    
     void createAlias(String propertyName, String aliasName)  throws RemoteException;
     
+    void setDistinct() throws RemoteException;
+    
     /**
      *  Add restriction to the constructed criteria. Restrictions are parts of the where condition.
      *

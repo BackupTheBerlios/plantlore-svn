@@ -10,6 +10,7 @@ package net.sf.plantlore.middleware;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.server.DBLayerException;
 
 /**
@@ -22,7 +23,7 @@ import net.sf.plantlore.server.DBLayerException;
 public interface DBLayer extends Remote, Serializable {
     
     /** Initialize database connection */
-    void initialize(String dbID, String user, String password) throws DBLayerException, RemoteException;
+    Right initialize(String dbID, String user, String password) throws DBLayerException, RemoteException;
     
     public int executeInsert(Object data) throws DBLayerException, RemoteException;
     
@@ -38,9 +39,12 @@ public interface DBLayer extends Remote, Serializable {
         
     public void close() throws DBLayerException, RemoteException;
     
+    // TODO: Pridat throws DBLayerException
     public SelectQuery createQuery(Class classname) throws RemoteException;
 
     public int executeQuery(SelectQuery query) throws DBLayerException, RemoteException;
+    
+    public void closeQuery(SelectQuery query);
     
     public void shutdown() throws RemoteException;
         
