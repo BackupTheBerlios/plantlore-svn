@@ -26,7 +26,7 @@ import net.sf.plantlore.common.record.*;
 public class Template {
 	
 	/** The list of all pairs Table.Column that are set. */
-	private Collection<String> columns = new HashSet<String>(20);
+	private Collection<String> columns = new HashSet<String>(100);
 	
 	/** 
 	 * The list of "basic tables" i.e. tables related directly to the Occurence data.
@@ -104,22 +104,31 @@ public class Template {
 			
 	/** Select the <code>table.column</code>. */
 	public void set(Class table, String column) { 
-		columns.add(table.getSimpleName()+"."+column);
+		columns.add(table.getSimpleName()+ (column == null ? "" : "."+column));
+		System.out.println(" + " + table.getSimpleName() + (column == null ? "" : "." + column));
 	}
 	
 	/** Unselect the <code>table.column</code>. */
 	public void unset(Class table, String column) { 
-		columns.remove(table.getSimpleName()+"."+column); 
+		columns.remove(table.getSimpleName()+ (column == null ? "" : "."+column));
+		System.out.println(" - " + table.getSimpleName() + (column == null ? "" : "." + column));
 	}
 	
 	/** @return true if the <code>table.column</code> is set.*/
-	public boolean isSet(Class table, String column) { 
-		return columns.contains(table.getSimpleName()+"."+column); 
+	public boolean isSet(Class table, String column) {
+		return columns.contains(table.getSimpleName()+ (column == null ? "" : "."+column));
 	}
 	
 	/** Unselect all columns of all tables. */
 	public void unsetEverything() { 
 		columns.clear(); 
+	}
+	
+	/**
+	 * @return true if nothing is selected.
+	 */
+	public boolean isEmpty() {
+		return columns.isEmpty();
 	}
 	
 		

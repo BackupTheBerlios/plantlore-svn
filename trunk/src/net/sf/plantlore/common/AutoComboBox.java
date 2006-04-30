@@ -1,16 +1,12 @@
 package net.sf.plantlore.common;
 
-import java.awt.BorderLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -37,7 +33,7 @@ import javax.swing.text.PlainDocument;
  * record "------" or "not specified" instead.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @version 1.1
+ * @version 1.1 jlist doesn't get updated when the user types
  * @since The beginning of time.
  */
 public class AutoComboBox extends JComboBox {
@@ -45,9 +41,7 @@ public class AutoComboBox extends JComboBox {
 	protected boolean allowNew = false;
 	protected int capacity = 32;
 	
-	private Object last;
-	
-	
+
 	
 
 	/**
@@ -113,7 +107,6 @@ public class AutoComboBox extends JComboBox {
 							super.remove(0, getLength());
 							super.insertString(0, item.substring(0, prefix.length()), null); // rewrite the text
 							noMatch = false;
-							last = getItemAt(i);
 							break;
 						}
 					}
@@ -151,22 +144,4 @@ public class AutoComboBox extends JComboBox {
 	}
 
 	
-/* ================================================================================== */
-	public static void main(String[] args) {
-		String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
-        try { UIManager.setLookAndFeel(lookAndFeel); }
-        catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
-		
-		JFrame f = new JFrame();
-		//String[] ch = { "Daniel Jackson", "Etrachlorethylen", "Jack O'Neill", "Samantha Carter", "Tetrachlorethylen", "Tetraethylen", "Thor", "Ty'alc" };
-		String[] ch = new String[1000];
-		for(int i = 0; i < 1000; i++) ch[i] = Integer.toBinaryString(i);
-		
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(new AutoComboBox(ch), BorderLayout.NORTH);
-		f.getContentPane().add(new JButton("Done"), BorderLayout.SOUTH);
-		f.pack();
-		f.setVisible(true);
-	}
-
 }

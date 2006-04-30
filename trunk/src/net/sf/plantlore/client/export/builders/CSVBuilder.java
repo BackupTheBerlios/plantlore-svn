@@ -14,7 +14,7 @@ import net.sf.plantlore.client.export.Template;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
- * @version 1.0 final
+ * @version 1.0 header is missing
  */
 public class CSVBuilder extends AbstractBuilder{
 	
@@ -47,6 +47,12 @@ public class CSVBuilder extends AbstractBuilder{
 		assert(tmp != null);
 		
 		this.stream = output;
+	}
+	
+	/**
+	 * Make a note that the header is yet to be created.
+	 */
+	public void header() throws IOException {
 	}
 	
 	/**

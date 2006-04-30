@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.Observable;
 
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.record.*;
@@ -19,6 +20,14 @@ import org.apache.log4j.Logger;
  * The selected results (records whose ID is in the <code>selection</code>)
  * are passed to the <code>builder</code> - the builder is responsible for
  * creating a corresponing output.
+ * <br/>
+ * The Director is supposed to run in a separate thread which is why
+ * all exceptions are handled in the <code>run()</code> method
+ * in a following manner:
+ * <pre>
+ * catch(AnException e) { setChanged(); notifyObservers( e ); }
+ * </pre> 
+ *
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
@@ -28,7 +37,7 @@ import org.apache.log4j.Logger;
  * @see net.sf.plantlore.client.export.Builder
  * @see net.sf.plantlore.middleware.DBLayer
  */
-public class Director implements Runnable {
+public class DefaultDirector extends Observable implements Runnable {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 	
@@ -36,6 +45,8 @@ public class Director implements Runnable {
 	private Selection selection;
 	private DBLayer database;
 	private int result;
+	
+	private boolean aborted = false;
 	
 	private int count = 0;
 
@@ -50,14 +61,18 @@ public class Director implements Runnable {
 	 * @param database	The database layer that will quench the Director's thirst for more results.
 	 * @param selection	The set of selected records.
 	 */
-	public Director(Builder builder, int result, DBLayer database, Selection selection) {
+	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection) {
+		assert(database != null);
+		assert(builder != null);
+		assert(selection != null);
+		
 		this.build = builder; this.result = result; this.database = database;
-		this.selection = selection;
+		this.selection = selection.clone(); 
 	}
 	
 	
 	/** 
-	 * How many records has been exported.
+	 * How many records have been exported.
 	 * 
 	 * @return The exact number of exported records.
 	 */
@@ -105,7 +120,7 @@ public class Director implements Runnable {
 			
 			// Iterate over the result of the query.
 			int rows = database.getNumRows( result );
-			for(int i = 0; i < rows; i++) {
+			for(int i = 0; i < rows && !aborted; i++) {
 				Object[] records = database.next( result );
 				Record record = (Record) records[0];
 				if( !selection.contains( record ) ) continue; // Is the record selected?
@@ -118,27 +133,39 @@ public class Director implements Runnable {
 				
 				// ONE-TO-MANY HACK:
 				// Occurrence -> AuthorOccurrences & Authors
-				// TODO: Iterace pres vsechny AuthorOccurence
+				// FIXME: Jak se to ma Director dozvedet, ze ma delat tuhle iteraci :\
+				
 				
 				
 				
 				build.finishRecord();
+				
+				setChanged(); notifyObservers( count );
 			}
 
 			build.footer();
 			logger.info("Export completed. " + count + " records sent to output.");
 		}
-		// FIXME: Since the run() method comes from the Runnable interface, it cannot throw
-		// any exceptions :( This is yet to be solved!
 		catch(DBLayerException e) {
-			logger.error(e); e.printStackTrace();
+			logger.error("Export ended prematurely " + e);
+			setChanged(); notifyObservers( e ); 
 		}
 		catch(RemoteException e) {
-			logger.error(e); e.printStackTrace();
+			logger.error("Export ended prematurely " + e);
+			setChanged(); notifyObservers( e );
 		}
 		catch(IOException e) {
-			logger.error(e); e.printStackTrace();
+			logger.error("Export ended prematurely " + e); 
+			setChanged(); notifyObservers( e );
 		}
+		if(aborted) logger.info("Export aborted. " + count + " records sent to output.");
+	}
+	
+	/**
+	 * Abort the export immediately.
+	 */
+	public void abort() {
+		aborted = true;
 	}
 
 }

@@ -20,16 +20,37 @@ public class Selection {
 	private boolean inverted = false;
 	
 	/**
-	 * Add another record to the selection.
+	 * Create a new empty selection.
+	 */
+	public Selection() {}
+	
+	/**
+	 * Create a new selection containing the same records 
+	 * as the other <code>selection</code>
+	 * @param selection The selection to duplicate.
+	 */
+	public Selection(Selection selection) {
+		selected = new HashSet<Integer>( selection.selected );
+		inverted = selection.inverted;
+	}
+	
+	/**
+	 * Add another record to the selection. 
 	 * @param id	The primary key of the record.
 	 */
-	public void add(Integer id) { selected.add(id); }
+	public void add(Integer id) {
+		if( !inverted ) selected.add(id);
+		else selected.remove(id);
+	}
 		
 	/**
 	 * Remove a selected record from the selection (deselect).
 	 * @param id Of the record that is deselected.
 	 */
-	public void remove(Integer id) { selected.remove(id); }
+	public void remove(Integer id) {
+		if( !inverted ) selected.remove(id);
+		else selected.add(id);
+	}
 	
 	/**
 	 * Invert the current selection.
@@ -57,5 +78,25 @@ public class Selection {
 	 * @return true if the record is selected.
 	 */
 	public boolean contains(Record r) { return selected.contains(r.getId()) ^ inverted; }
+	
+	/**
+	 * @param total The number of all records (from which the selection is made).
+	 * @return The number of selected records.
+	 */
+	public int size(int total) {
+		return inverted ? total - selected.size() : selected.size();
+	}
+	
+	/**
+	 * @return true if nothing is selected;
+	 */
+	public boolean isEmpty() {
+		return selected.isEmpty() ^ inverted;
+	}
+	
+	@Override
+	public Selection clone() {
+		return new Selection( this );
+	}
 
 }
