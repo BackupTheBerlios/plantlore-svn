@@ -9,6 +9,7 @@ package net.sf.plantlore.l10n;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import org.apache.log4j.Logger;
@@ -79,14 +80,20 @@ public class L10n
      * Removes the first ampersand sign (&) because it is assumed that it is an indiaction of a mnemonic.
      *
      * @param key Key of the required value
-     * @trhows NullPointerException in case that <code>load()</code> wasn't called first or it failed.
+     * @throws NullPointerException in case that <code>load()</code> wasn't called first or it failed.
+     * @throws MissingResourceException in case the <code>key</code> is not defined!
      */
     public static String getString(String key) {
-        StringBuffer sb = new StringBuffer(resource.getString(key));
-        int i = sb.indexOf("&");
-        if (i>=0)
-            sb.deleteCharAt(i);
-        return sb.toString();
+    	try {
+    		StringBuffer sb = new StringBuffer(resource.getString(key));
+    		int i = sb.indexOf("&");
+    		if (i>=0)
+    			sb.deleteCharAt(i);
+    		return sb.toString();
+    	} catch( MissingResourceException e ) {
+    		logger.warn("The key \"" + key + "\" is not defined in the property file!");
+    		return key; // nothing else we can do...
+    	}
     }
     
     /** Returns mnemonic for the given key.
