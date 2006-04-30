@@ -1,0 +1,31 @@
+ <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+  <!DOCTYPE map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN" "http://java.sun.com/products/javahelp/map_1_0.dtd">
+  <map version="1.0">
+    <mapID target="plantlore.overview" url="index.html"/>
+    <mapID target="plantlore.resources" url="resources.html"/>
+    <mapID target="plantlore.licence" url="licence.html"/>
+    <mapID target="login" url="login.html"/>
+    <mapID target="login.selectdb" url="login.html#selectdb"/>
+    <mapID target="login.authentication" url="login.html#authentication"/>
+    <mapID target="settings" url="settings.html"/>
+    <mapID target="overview" url="overview.html"/>
+    <mapID target="overview.addoccurrence" url="addoccurrence.html"/>
+    <mapID target="overview.addoccurrence.basic" url="addoccurrence.html#basic"/>
+    <mapID target="overview.addoccurrence.extended" url="addoccurrence.html#extended"/>
+    <mapID target="overview.addoccurrence.checklist" url="addoccurrence.html#checklist"/>
+    <mapID target="overview.search" url="search.html"/>
+    <mapID target="overview.history" url="occurr_history.html"/>
+    <mapID target="author" url="author.html"/>
+    <mapID target="author.add" url="author.html#add"/>
+    <mapID target="publication" url="publication.html"/>
+    <mapID target="publication.add" url="publication.html#add"/>
+    <mapID target="metadata" url="metadata.html"/>
+    <mapID target="metadata.add" url="metadata.html#add"/>
+    <mapID target="history" url="history.html"/>
+    <mapID target="user" url="user.html"/>
+    <mapID target="user.add" url="user.html#add"/>
+    <mapID target="user.rights" url="user.html#rights"/>
+    <mapID target="import" url="import.html"/>
+    <mapID target="export" url="export.html"/>
+    <mapID target="id328078" url="cheat.html"/>
+  </map>
