@@ -106,7 +106,7 @@ public class CSVBuilder extends AbstractBuilder{
 	 *  @return The converted value.
 	 */ 
 	protected String convertToValidCSV(Object value) throws IOException {
-		if( value == null ) return null; // no value means no output 
+		if( value == null ) return ""; // no value means no output 
 		
 		StringBuilder r = new StringBuilder( value.toString() );
 		boolean containsDoubleQuote = r.indexOf(DOUBLEQUOTE) >= 0, 

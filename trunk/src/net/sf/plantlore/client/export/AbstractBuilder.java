@@ -48,7 +48,6 @@ public abstract class AbstractBuilder implements Builder {
 	 * @param template The new template. <b>Mustn't be <i>null</i></b>.
 	 */
 	public void setTemplate(Template template) {
-		assert(template != null);
 		this.template = template.clone();
 		
 		// Store all getters of all selected columns.

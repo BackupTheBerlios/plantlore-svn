@@ -38,7 +38,10 @@ public abstract class Record implements Serializable {
 		return properties;
 	}
 	
-	
+	/**
+	 * 
+	 * @return All not-null columns (including foreign keys).
+	 */
 	public ArrayList<String> getNN() {
 		ArrayList<String> nn = getForeignKeys();
 		return nn;

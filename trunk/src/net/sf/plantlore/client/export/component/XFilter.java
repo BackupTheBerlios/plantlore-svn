@@ -84,13 +84,13 @@ public class XFilter extends FileFilter {
 	 * A valid extension is an extension that belongs to
 	 * the list of extensions of this format.
 	 * 
-	 * @param file	The file to be tested.
+	 * @param filename	The file to be tested.
 	 * @return	True if the file has a valid extension of this format.
 	 */
-	public boolean hasExtension(File file) {
-		int dot = file.getName().lastIndexOf(".");
+	public boolean hasExtension(String filename) {
+		int dot = filename.lastIndexOf(".");
 		if(dot < 0) return false;
-		if(extensions.contains( file.getName().substring(dot) )) return true;
+		if(extensions.contains( filename.substring(dot) )) return true;
 		return false;
 	}
 	
@@ -99,13 +99,13 @@ public class XFilter extends FileFilter {
 	 * If the file already has an extension, the name is not changed.
 	 * An extension is added, if the file has not a valid extension. 
 	 * 
-	 * @param file	The file the name will be derived from.
+	 * @param filename	The name of the file.
 	 * @return The suggested name for this file.
-	 * @see net.sf.plantlore.client.export.component.XFilter#hasExtension(File)
+	 * @see net.sf.plantlore.client.export.component.XFilter#hasExtension(String)
 	 */
-	public String suggestName(File file) {
-		if(hasExtension(file)) return file.getName();
-		else return file.getName() + extensions.get(0);
+	public String suggestName(String filename) {
+		if(hasExtension(filename)) return filename;
+		else return filename + extensions.get(0);
 	}
 	
 }

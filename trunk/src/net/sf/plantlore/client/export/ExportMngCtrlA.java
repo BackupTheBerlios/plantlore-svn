@@ -1,6 +1,7 @@
 package net.sf.plantlore.client.export;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.export.component.XFilter;
 
@@ -25,14 +26,30 @@ public class ExportMngCtrlA {
 		if(visible) {
 			int result = view.choice.showDialog(null, "Export");
 			if( result == JFileChooser.APPROVE_OPTION ) {
-				model.setSelectedFile( view.choice.getSelectedFile() );
+				
+				if(view.choice.getSelectedFile() == null) {
+					JOptionPane.showMessageDialog(null,
+							"You must insert a name!",
+						    "Nothing selected...",
+						    JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+				model.setSelectedFile( view.choice.getSelectedFile().getAbsolutePath() );
 				XFilter filter = (XFilter) view.choice.getFileFilter();
 				model.setActiveFileFilter( filter );
 				
 				if( filter.isColumnSelectionEnabled() )
 					viewB.setVisible(true);
-				else
+				else try {
+					model.start();
 					progressView.setVisible(true);
+				} catch(Exception e) {
+					JOptionPane.showMessageDialog(null,
+							"Unable to start the export procedure!\n" + e,
+						    "Export failed...",
+						    JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		}
 	}

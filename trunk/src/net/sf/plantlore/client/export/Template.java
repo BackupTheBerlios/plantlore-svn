@@ -17,11 +17,18 @@ import net.sf.plantlore.common.record.*;
  * <br/>
  * Note: The template doesn't know anything about the structure
  * (mapping) of the database.  
- *  
+ * <br/>
+ * A little dictionary:
+ * <ul>
+ * <li><i>foreign key</i> a column of a table that refers to another table,</li>
+ * <li><i>property</i> a column of a table that contains a (possibly null) value,
+ * but doesn't refer to another table</li>
+ * <li><i>nn</i> a property that cannot be null (defined in the db model)</li>
+ * </ul>
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-22
- * @version 1.0
+ * @version 1.1
  */
 public class Template {
 	
@@ -53,7 +60,7 @@ public class Template {
 		return new Template(this);
 	}
 	
-	
+		
 	/** The list of all getters (of all properties of all tables). */
 	private static Hashtable<String,Method> getters = new Hashtable<String, Method>(100);
 	
@@ -105,13 +112,13 @@ public class Template {
 	/** Select the <code>table.column</code>. */
 	public void set(Class table, String column) { 
 		columns.add(table.getSimpleName()+ (column == null ? "" : "."+column));
-		System.out.println(" + " + table.getSimpleName() + (column == null ? "" : "." + column));
+		//System.out.println(" + " + table.getSimpleName() + (column == null ? "" : "." + column));
 	}
 	
 	/** Unselect the <code>table.column</code>. */
 	public void unset(Class table, String column) { 
 		columns.remove(table.getSimpleName()+ (column == null ? "" : "."+column));
-		System.out.println(" - " + table.getSimpleName() + (column == null ? "" : "." + column));
+		//System.out.println(" - " + table.getSimpleName() + (column == null ? "" : "." + column));
 	}
 	
 	/** @return true if the <code>table.column</code> is set.*/
@@ -122,6 +129,38 @@ public class Template {
 	/** Unselect all columns of all tables. */
 	public void unsetEverything() { 
 		columns.clear(); 
+	}
+	
+	/** Select all columns (properties) of all tables. */
+	public void setEverything() {
+		for(Class table : BASIC_TABLES)
+			setAllProperties(table);
+	}
+	
+	/** Select all not null columns (properties). */
+	public void setEverythingNN() {
+		
+	}
+	
+	/** Select all properties of this <code>table</code>. */
+	public void setAllProperties(Class table) {
+		try {
+			for( String column : ((Record)table.newInstance()).getProperties() )
+				set(table, column);
+		} catch(IllegalAccessException e) {}
+		catch(InstantiationException e) {}
+	}
+	
+	/** Select all not-null properties of the specified <code>table</code>. */
+	public void setAllNN(Class table) {
+		try {
+			Record record = ((Record)table.newInstance());
+			ArrayList<String> nnProperties = record.getNN();
+			nnProperties.removeAll(record.getForeignKeys());
+			for( String column :  nnProperties )
+				set(table, column);
+		} catch(IllegalAccessException e) {}
+		catch(InstantiationException e) {}
 	}
 	
 	/**
@@ -141,5 +180,6 @@ public class Template {
 	public boolean match(Template t) { 
 		return columns.containsAll(t.columns); 
 	}
-
+	
+	
 }

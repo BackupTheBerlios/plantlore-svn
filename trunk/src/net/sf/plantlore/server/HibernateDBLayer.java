@@ -125,7 +125,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         } catch (HibernateException e) {
             logger.fatal("Cannot build Hibernate session factory. Details: "+e.getMessage());
             throw new DBLayerException("Cannot build Hibernate session factory. Details: "+e.getMessage());
-        }        
+        }   
+        
+/* ===== SWITCH OFF THE SILLY AUTHENTICATION ===========================================        
         // Authenticate user
         try {
             SelectQuery sq = this.createQuery(User.class);            
@@ -146,6 +148,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             this.rights = clientUser.getRight();           
             this.plantloreUser = clientUser;
         }
+*/
         return rights;
     }    
     
@@ -478,7 +481,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Move ResultSet to the first row we want to read. In case we want to read the first row,
         // move the pointer before the first row, else move it to the given position
         try {
-            if (from > 1) {
+            if (from >= 1) {
                 res.setRowNumber(from-1);
             } else {
                 res.beforeFirst();

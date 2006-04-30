@@ -32,7 +32,7 @@ public class ExportMngCtrlB {
 				view.setVisible(false);
 				model.setTemplate( t ); // Set the new template.
 				try {
-					model.start(true);
+					model.start();
 					progressView.setVisible(true);
 				}
 				catch(Exception e) {

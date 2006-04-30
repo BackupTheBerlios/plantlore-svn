@@ -49,7 +49,7 @@ public class TrainingBuilder extends AbstractBuilder {
 	}
 	
 	protected void output(Class table, String column, Object value) throws IOException {
-		System.out.println("   " + table.getName() + "." + column + " = " + value.toString());
+		System.out.println("   " + table.getSimpleName() + "." + column + " = " + value);
 	}
 
 }

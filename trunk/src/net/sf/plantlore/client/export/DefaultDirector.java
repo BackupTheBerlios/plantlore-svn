@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
- * @version 0.9 might still slightly change
+ * @version 1.0 BETA - might still slightly change
  *
  * @see net.sf.plantlore.client.common.Selection
  * @see net.sf.plantlore.client.export.Builder
@@ -62,10 +62,6 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @param selection	The set of selected records.
 	 */
 	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection) {
-		assert(database != null);
-		assert(builder != null);
-		assert(selection != null);
-		
 		this.build = builder; this.result = result; this.database = database;
 		this.selection = selection.clone(); 
 	}
@@ -121,8 +117,11 @@ public class DefaultDirector extends Observable implements Runnable {
 			// Iterate over the result of the query.
 			int rows = database.getNumRows( result );
 			for(int i = 0; i < rows && !aborted; i++) {
-				Object[] records = database.next( result );
-				Record record = (Record) records[0];
+				
+				// Abandon the database.nect() Object[] records = database.next( result );
+				Object[] records = database.more( result, i, i );
+				
+				Record record = (Record) ((Object[])records[0])[0]; // [0][0] since we use `more`
 				if( !selection.contains( record ) ) continue; // Is the record selected?
 			
 				count++;

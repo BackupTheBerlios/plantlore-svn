@@ -19,10 +19,10 @@ public class ExportMngViewA {
 
 	
 	private void initComponents() {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setAcceptAllFileFilterUsed(false);
+		choice = new JFileChooser();
+		choice.setAcceptAllFileFilterUsed(false);
 		for( FileFilter filter: model.getFilters() )
-			chooser.addChoosableFileFilter(filter);
+			choice.addChoosableFileFilter(filter);
 	}
 	
 	

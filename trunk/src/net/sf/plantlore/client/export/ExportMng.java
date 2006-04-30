@@ -49,11 +49,11 @@ public class ExportMng extends Observable implements Observer {
 	 * List of all filters the Export Manager is capable to handle.
 	 */
 	private XFilter[] filters = new XFilter[] {
-		new XFilter(L10n.getString("FilterDC"), ".xml"),
-		new XFilter(L10n.getString("FilterABCD"), ".xml"),
-		new XFilter(L10n.getString("FilterCSV"), ".txt", ".csv"),
-		new XFilter(L10n.getString("FilterXML"), ".xml"),
-		new XFilter(L10n.getString("FilterPlantloreNative"), ".xml", ".pln")
+			new XFilter(L10n.getString("FilterPlantloreNative"), ".xml", ".pln"),
+			new XFilter(L10n.getString("FilterXML"), true, ".xml"),
+			new XFilter(L10n.getString("FilterCSV"), true, ".txt", ".csv"),	
+			new XFilter(L10n.getString("FilterABCD"), ".xml"),	
+			new XFilter(L10n.getString("FilterDC"), ".xml")
 	};
 	
 	
@@ -62,7 +62,7 @@ public class ExportMng extends Observable implements Observer {
 	private Template template;
 	private Selection select;
 	private XFilter filter;
-	private File file;
+	private String filename;
 	private Integer resultId;
 	private DefaultDirector director;
 	private Builder builder;
@@ -78,8 +78,8 @@ public class ExportMng extends Observable implements Observer {
 	 * 
 	 * @param dblayer The database layer mediating the access to the database.
 	 * @param result	The result set identificator which is to be iterated over.
-	 * @param selection	The list of selected records. Shouldn't be empty.
-	 * @param template	The list of selected columns.
+	 * @param selection	The list of selected records. 
+	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
 	 */
 	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template) {
 		setDBLayer(dblayer);
@@ -89,7 +89,7 @@ public class ExportMng extends Observable implements Observer {
 	}
 
 	/**
-	 * Create a new Export manager and <b>mark all records as selected</b>.
+	 * Create a new Export manager and <b>mark all records AND columns as selected</b>.
 	 * 
 	 * @param dblayer	The database layer mediating the access to the database.
 	 * @param result	The result set identificator which is to be iterated over.
@@ -104,10 +104,10 @@ public class ExportMng extends Observable implements Observer {
 	}
 	
 	/**
-	 * Create a new Export manager.
+	 * Create a new Export manager and <b>mark all columns as selected</b>.
 	 * 
-	 * @param dblayer	The database layer mediating the access to the database. Shouldn't be empty.
-	 * @param result	The result set identificator which is to be iterated over. Shouldn't be empty.
+	 * @param dblayer	The database layer mediating the access to the database. 
+	 * @param result	The result set identificator which is to be iterated over.
 	 * @param selection	The list of selected records. Shouldn't be empty.
 	 */
 	public ExportMng(DBLayer dblayer, int result, Selection selection) {
@@ -120,13 +120,13 @@ public class ExportMng extends Observable implements Observer {
 	 * @param dblayer	The database layer mediating the access to the database. Shouldn't be empty.
 	 * @param result	The result set identificator which is to be iterated over. Shouldn't be empty.
 	 * @param selection	The list of selected records. Shouldn't be empty.
-	 * @param template	The list of selected columns.
+	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
 	 * @param filter	The filter which will be used to determine the appropriate builder of the output.
-	 * @param file	The file where the output will be written.
+	 * @param file	The name of the file where the output will be written.
 	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template, XFilter filter, File file) {
+	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template, XFilter filter, String filename) {
 		this(dblayer, result, selection, template);
-		setSelectedFile(file);
+		setSelectedFile(filename);
 		setActiveFileFilter(filter);
 	}
 	
@@ -144,9 +144,13 @@ public class ExportMng extends Observable implements Observer {
 	
 	/**
 	 * Store a copy of the <code>template</code>.
+	 * <b>Null means everything is selected!</b>
 	 */
 	synchronized public void setTemplate(Template template) {
-		if(template == null) this.template = null;
+		if(template == null) {
+			this.template = new Template();
+			this.template.setEverything();
+		}
 		else this.template = template.clone();
 	}
 	
@@ -181,10 +185,10 @@ public class ExportMng extends Observable implements Observer {
 	 * Set the selected file. Into this file the builder will 
 	 * spit its output. 
 	 */
-	synchronized public void setSelectedFile(File file) { 
-		if(file == null)
+	synchronized public void setSelectedFile(String filename) { 
+		if(filename == null)
 			logger.warn("The selected file is null!");
-		this.file = file; 
+		this.filename = filename; 
 	}
 	
 	/**
@@ -208,14 +212,14 @@ public class ExportMng extends Observable implements Observer {
 	 * @throws ExportException	If the information provided is not complete.
 	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
 	 */
-	synchronized public void start(boolean append) throws ExportException, IOException {
+	synchronized public void start() throws ExportException, IOException {
 		// Check if we have all necessary components ready.
 		if( db == null )
 			throw new ExportException("There is no point in starting an export - the DBLayer is not set!");
 		if( filter == null ) 
 			throw new ExportException("The Filter is not set!");
-		if( file == null ) 
-			throw new ExportException("The File is not set!");
+		if( filename == null ) 
+			throw new ExportException("The Filename is not set!");
 		if( select.isEmpty() )
 			throw new ExportException("There is no point in starting an export - the list of selected records is empty!");
 			
@@ -223,8 +227,13 @@ public class ExportMng extends Observable implements Observer {
 		logger.debug("Initializing the export environment.");
 		aborted = false;
 		
+		// Create a new file.
+		File file = new File( filter.suggestName(filename) );
+		System.out.println( ">>> " + file );
+		boolean append = ! file.createNewFile();
+		
 		// Create a new writer.
-		writer = new FileWriter( filter.suggestName(file), append );
+		writer = new FileWriter( file, append );
 		if(writer == null) {
 			logger.fatal("Unable to create a new Writer.");
 			throw new ExportException("Unable to create a new Writer.");
@@ -241,6 +250,7 @@ public class ExportMng extends Observable implements Observer {
 		// Create a new Director and run it in a separate thread.
 		director = new DefaultDirector(builder, resultId, db, select);
 		director.addObserver(this);
+		
 		current = new Thread( director, "Export" );
 		if(current == null) {
 			logger.fatal("Unable to create a new thread.");
@@ -260,6 +270,8 @@ public class ExportMng extends Observable implements Observer {
 					writer.close();
 					exportInProgress = false;
 					logger.debug("Environment cleaned up.");
+					// Notify observers the export has ended.
+					update(null, null);
 				}catch(Exception e) {}
 			}
 		}, "ExportMonitor");
@@ -303,6 +315,7 @@ public class ExportMng extends Observable implements Observer {
 	 * @return The number of results that have already been exported.
 	 */
 	public int getNumberOfExported() {
+		if(director == null) return 0;
 		return director.exportedRecords();
 	}
 	

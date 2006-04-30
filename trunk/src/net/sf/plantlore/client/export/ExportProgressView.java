@@ -23,6 +23,8 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     	this.model = model;
         initComponents();
         setLocationRelativeTo(null); // center of the screen
+        
+        model.addObserver(this);
     }
     
     /** This method is called from within the constructor to
@@ -101,18 +103,32 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     
     
 	public void update(Observable source, Object parameter) {
-		if(model.isAborted()) 
+		if(model.isAborted()) {
 			status.setText("Aborting...");
+		}
+		if(!model.isExportInProgress()) {
+			setTitle("Export completed");
+			status.setText("Completed...");
+			progress.setMaximum(100);
+			progress.setValue(100);
+			progress.setString("100%");
+			
+		}
 		else if( this.isVisible() ) {
 			int count = model.getNumberOfExported();
 			if(count >= 0) {
 				progress.setValue( count );
-				if(total > 0) { 
-					progress.setString( Integer.toString(100*count / total) );
+				if(total > 0) {
+					String percent = Integer.toString(100*count / total) + "%";
+					progress.setString( percent );
 					status.setText("Exporting " + count + ". of " + total);
+					setTitle("Exported " + percent);
 				}
-				else
+				else {
 					status.setText("Exporting " + count + ".");
+					setTitle("Exported " + count);
+				}
+				
 			}
 		}
 	}
