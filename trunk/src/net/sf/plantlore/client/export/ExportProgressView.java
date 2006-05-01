@@ -16,7 +16,7 @@ import java.util.Observer;
 public class ExportProgressView extends javax.swing.JFrame implements Observer {
 	
 	private ExportMng model;
-	private int total;
+	private int total, count;
     
     /** Creates new form ExportProgressView */
     public ExportProgressView(ExportMng model) {
@@ -95,6 +95,8 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     		progress.setStringPainted(false);
     	}
     	
+    	abort.setText("Abort");
+    	
     	super.setVisible(visible);
     	
     	update(null, null);
@@ -104,28 +106,45 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     
 	public void update(Observable source, Object parameter) {
 		if(model.isAborted()) {
-			status.setText("Aborting...");
-		}
-		if(!model.isExportInProgress()) {
+			setTitle("Export aborted");
+			if(total > 0)
+				status.setText("Export procedure aborted.\n " + count +"/" + total + " records exported.");
+			else
+				status.setText("Export procedure aborted.\n " + count + " records exported.");
+			progress.setValue(0);
+			progress.setString("");
+			abort.setText("Close");
+		} 
+		else if(!model.isExportInProgress()) {
 			setTitle("Export completed");
 			status.setText("Completed...");
 			progress.setMaximum(100);
 			progress.setValue(100);
 			progress.setString("100%");
+			abort.setText("Close");
+		}
+		else if( parameter != null && parameter instanceof Exception ) {
+			Exception e = (Exception) parameter;
+			setTitle("Export interrupted");
 			
+			status.setText("An exception interrupted the export procedure: " + e);
+			
+			progress.setValue(0);
+			progress.setString("");
+			abort.setText("Close");
 		}
 		else if( this.isVisible() ) {
-			int count = model.getNumberOfExported();
+			count = model.getNumberOfExported();
 			if(count >= 0) {
 				progress.setValue( count );
 				if(total > 0) {
 					String percent = Integer.toString(100*count / total) + "%";
 					progress.setString( percent );
-					status.setText("Exporting " + count + ". of " + total);
+					status.setText("Exporting\n " + count + ". of " + total);
 					setTitle("Exported " + percent);
 				}
 				else {
-					status.setText("Exporting " + count + ".");
+					status.setText("Exporting\n " + count + ".");
 					setTitle("Exported " + count);
 				}
 				

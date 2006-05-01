@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,6 +14,8 @@ import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.SelectQuery;
+import net.sf.plantlore.server.DBLayerException;
 
 import org.apache.log4j.Logger;
 
@@ -23,12 +26,15 @@ import org.apache.log4j.Logger;
  * <br/>
  * There are several entities involved in the export:
  * <ul>
+ * <li><b>DBLayer</b> the database layer that will carry out the requests.
+ * 					Mustn't be null!</li>
  * <li><b>Director</b> iterates over the <i>result set</i> 
  * 					and <i>selected records</i> passes to the <i>builder</i>,</li>
  * <li><b>Builder</b> writes the records to the <i>output</i>.</li>
  * <li><b>Selection</b> stores the list of all selected records 
  * 					(<i>restriction</i> in the database terminology).</li>
  * <li><b>ResultID</b> identifies the result set.</li>
+ * <li><b>SelectQuery</b> identifies the result set as well (in fact the resultId is derived from it).</li>
  * <li><b>Template</b> stores the list of all selected columns that should be 
  * 					exported (<i>projection</i> in the database terminology).</li>
  * <li><b>File</b> stores the name of file as the user has suggested it.</li>
@@ -36,7 +42,11 @@ import org.apache.log4j.Logger;
  * 					and is used to determine which <i>builder</i> will be used
  * 					to produce the output.</li>
  * </ul>
- *  
+ * <br/>
+ * It is strongly recommended to <b>use one of the constructors</b>
+ * instead of creating the object partially using setters!
+ * The participating entities may depend on each other and
+ * therefore their setters must be called in a specific order.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29 
@@ -67,7 +77,8 @@ public class ExportMng extends Observable implements Observer {
 	private DefaultDirector director;
 	private Builder builder;
 	private boolean aborted = false, exportInProgress = false;
-	private int results, selectedResults;
+	private int results = -1, selectedResults = -1;
+	private SelectQuery query = null;
 	
 	private Writer writer;
 	private Thread current;
@@ -81,11 +92,28 @@ public class ExportMng extends Observable implements Observer {
 	 * @param selection	The list of selected records. 
 	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
 	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template) {
+	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template) 
+	throws ExportException {
 		setDBLayer(dblayer);
 		setResultId(result);
 		setSelection(selection);
 		setTemplate(template); 
+	}
+	
+	/**
+	 * Create a new Export Manager.
+	 * 
+	 * @param dblayer The database layer mediating the access to the database.
+	 * @param query	The query defining the result set which is to be iterated over.
+	 * @param selection	The list of selected records. 
+	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
+	 */
+	public ExportMng(DBLayer dblayer, SelectQuery query, Selection selection, Template template) 
+	throws ExportException, DBLayerException, RemoteException {
+		setDBLayer(dblayer);
+		setSelectQuery(query);
+		setSelection(selection);
+		setTemplate(template);
 	}
 
 	/**
@@ -94,9 +122,26 @@ public class ExportMng extends Observable implements Observer {
 	 * @param dblayer	The database layer mediating the access to the database.
 	 * @param result	The result set identificator which is to be iterated over.
 	 */
-	public ExportMng(DBLayer dblayer, int result) {
+	public ExportMng(DBLayer dblayer, int result) 
+	throws ExportException {
 		setDBLayer(dblayer);
 		setResultId(result);
+		setTemplate(null);
+		
+		Selection select = new Selection(); select.all();
+		setSelection(select);
+	}
+	
+	/**
+	 * Create a new Export manager and <b>mark all records AND columns as selected</b>.
+	 * 
+	 * @param dblayer	The database layer mediating the access to the database.
+	 * @param query	The query defining the result set which is to be iterated over.
+	 */
+	public ExportMng(DBLayer dblayer, SelectQuery query) 
+	throws ExportException, DBLayerException, RemoteException {
+		setDBLayer(dblayer);
+		setSelectQuery(query);
 		setTemplate(null);
 		
 		Selection select = new Selection(); select.all();
@@ -110,7 +155,8 @@ public class ExportMng extends Observable implements Observer {
 	 * @param result	The result set identificator which is to be iterated over.
 	 * @param selection	The list of selected records. Shouldn't be empty.
 	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection) {
+	public ExportMng(DBLayer dblayer, int result, Selection selection) 
+	throws ExportException{
 		this(dblayer, result, selection, null);
 	}
 	
@@ -124,20 +170,44 @@ public class ExportMng extends Observable implements Observer {
 	 * @param filter	The filter which will be used to determine the appropriate builder of the output.
 	 * @param file	The name of the file where the output will be written.
 	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template, XFilter filter, String filename) {
+	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template, XFilter filter, String filename) 
+	throws ExportException {
 		this(dblayer, result, selection, template);
 		setSelectedFile(filename);
 		setActiveFileFilter(filter);
 	}
 	
 	/**
-	 * Set a new DBLayer.
-	 * <b>Forget the current result set identificator</b> (if there is any) - that identificator
-	 * most probably refered to a result set of the previous dblayer! 
+	 * Create a new Export manager.
+	 * 
+	 * @param dblayer	The database layer mediating the access to the database. Shouldn't be empty.
+	 * @param query	The query defining the result set which is to be iterated over. Shouldn't be empty.
+	 * @param selection	The list of selected records. Shouldn't be empty.
+	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
+	 * @param filter	The filter which will be used to determine the appropriate builder of the output.
+	 * @param file	The name of the file where the output will be written.
 	 */
-	synchronized public void setDBLayer(DBLayer dblayer) {
-		if(dblayer == null) 
-			logger.warn("The database layer is null!");
+	public ExportMng(DBLayer dblayer, SelectQuery query, Selection selection, Template template, XFilter filter, String filename) 
+	throws ExportException, DBLayerException, RemoteException  {
+		setDBLayer(dblayer);
+		setSelectQuery(query);
+		setSelection(selection);
+		setTemplate(template);
+		setSelectedFile(filename);
+		setActiveFileFilter(filter);
+	}
+	
+	/**
+	 * Set a new DBLayer.
+	 * <b>Forget the current result set identificator AND/OR selection query</b>
+	 * - those objects most probably refered to a result set of the previous dblayer! 
+	 */
+	synchronized public void setDBLayer(DBLayer dblayer)
+	throws ExportException {
+		if(dblayer == null) { 
+			logger.error("The database layer is null!");
+			throw new ExportException("The database layer cannot be null!");
+		}
 		db = dblayer;
 		results = selectedResults = resultId = -1;
 	}
@@ -205,6 +275,28 @@ public class ExportMng extends Observable implements Observer {
 	}
 	
 	/**
+	 * Set a particular select query. The manager will execute this select query
+	 * and update the <code>resultId</code>. 
+	 */
+	synchronized public void setSelectQuery(SelectQuery query) 
+	throws ExportException, DBLayerException, RemoteException {
+		if(query == null)
+			logger.warn("The select query is null!");
+
+		// Discontinue using the previous query
+		if(this.query != null) db.closeQuery(this.query);
+		this.query = query;
+		
+		if(this.query != null) {
+			results = selectedResults = -1;
+			resultId = db.executeQuery( query );
+			results = db.getNumRows( resultId );
+			if(select != null) selectedResults = select.size( results );
+		}
+	}
+	
+	
+	/**
 	 * Start the export procedure. The export procedure
 	 * will run in its own thread.
 	 * 
@@ -212,7 +304,8 @@ public class ExportMng extends Observable implements Observer {
 	 * @throws ExportException	If the information provided is not complete.
 	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
 	 */
-	synchronized public void start() throws ExportException, IOException {
+	synchronized public void start() 
+	throws ExportException, IOException {
 		// Check if we have all necessary components ready.
 		if( db == null )
 			throw new ExportException("There is no point in starting an export - the DBLayer is not set!");
@@ -269,6 +362,8 @@ public class ExportMng extends Observable implements Observer {
 					// Dispose of the writer.
 					writer.close();
 					exportInProgress = false;
+					// Dispose of the query.
+					if(query != null) db.closeQuery( query );
 					logger.debug("Environment cleaned up.");
 					// Notify observers the export has ended.
 					update(null, null);

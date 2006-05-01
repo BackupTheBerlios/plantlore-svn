@@ -62,10 +62,37 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @param selection	The set of selected records.
 	 */
 	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection) {
-		this.build = builder; this.result = result; this.database = database;
-		this.selection = selection.clone(); 
+		setBuilder(builder); 
+		setResult(result); 
+		setDatabase(database); 
+		setSelection(selection); 
 	}
 	
+	
+	protected void setBuilder(Builder builder) {
+		if(builder == null)
+			logger.warn("The builder is null!");
+		build = builder;
+	}
+	
+	protected void setResult(int result) {
+		if(result < 0)
+			logger.warn("The result set is probably not valid!");
+		this.result =  result;
+	}
+	
+	protected void setDatabase(DBLayer db) {
+		if(db == null)
+			logger.warn("The database layer is null!");
+		this.database = db;
+	}
+	
+	protected void setSelection(Selection selection) {
+		if(selection == null || selection.isEmpty())
+			logger.warn("The selection is null or empty!");
+		if(selection == null) this.selection = new Selection(); // empty selection
+		else this.selection = selection.clone();
+	}
 	
 	/** 
 	 * How many records have been exported.
@@ -88,7 +115,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @param record The "node" in the tree hierarchy representing the
 	 * whole record.
 	 */
-	private void buildPart(Record record) throws IOException {
+	private void buildParts(Record record) throws IOException {
 		// Build this part of the record.
 		build.part(record);
 		// Now look at all children of this record.
@@ -96,7 +123,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			Method getter = Template.getMethod(record.getClass(), key);
 			try {
 				// And build'em too.
-				buildPart( (Record) getter.invoke( record, NO_PARAM ) );
+				buildParts( (Record) getter.invoke( record, NO_PARAM ) );
 			}
 			catch(IllegalAccessException e) { e.printStackTrace(); }
 			catch(InvocationTargetException e) { e.printStackTrace(); }
@@ -128,7 +155,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				build.startRecord();
 				
 				// Parse the record.
-				buildPart( record );
+				buildParts( record );
 				
 				// ONE-TO-MANY HACK:
 				// Occurrence -> AuthorOccurrences & Authors
