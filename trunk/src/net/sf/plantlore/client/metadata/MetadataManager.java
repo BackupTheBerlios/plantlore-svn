@@ -117,7 +117,7 @@ public class MetadataManager {
                      // Retrieve selected row interval 
                 	Object[] objectMetadata;
                  	try {
-                 		objectMetadata = database.more(this.resultId, 1, to);  
+                 		objectMetadata = database.more(this.resultId, 0, to-1);  
                  	} catch(RemoteException e) {
                      	System.err.println("RemoteException- processEditResult, more");
                      	logger.debug("RemoteException- processEditResult, more");

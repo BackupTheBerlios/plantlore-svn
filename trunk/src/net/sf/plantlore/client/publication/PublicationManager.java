@@ -169,7 +169,7 @@ public class PublicationManager {
                      // Retrieve selected row interval 
                 	Object[] objectPublication;
                  	try {
-                 		objectPublication = database.more(this.resultId, 1, to);  
+                 		objectPublication = database.more(this.resultId, 0, to-1);  
                  	} catch(RemoteException e) {
                      	System.err.println("RemoteException- processEditResult, more");
                      	logger.debug("RemoteException- processEditResult, more");
