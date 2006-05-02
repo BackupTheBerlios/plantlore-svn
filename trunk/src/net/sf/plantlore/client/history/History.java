@@ -179,7 +179,7 @@ public class History {
        try {
        	 // Retrieve selected row interval         	
         	try {
-        		objectOccurrence = database.more(resultId, 1, 1);  
+        		objectOccurrence = database.more(resultId, 0, 0);  
         	} catch(RemoteException e) {            	  
             	return;
             }   
@@ -302,7 +302,7 @@ public class History {
         try {
         	 // Retrieve selected row interval         	
          	try {
-         		objectHistory = database.more(resultIdInsert, 1, 1);  
+         		objectHistory = database.more(resultIdInsert, 0, 0);  
          	} catch(RemoteException e) {             	
              	logger.debug("RemoteException- setInsertResult, more");
              	return;
@@ -373,7 +373,7 @@ public class History {
                      // Retrieve selected row interval 
                 	Object[] objectHistory;
                  	try {
-                 		objectHistory = database.more(this.resultId, 1, to);  
+                 		objectHistory = database.more(this.resultId, 0, to-1);  
                  	} catch(RemoteException e) {
                      	System.err.println("RemoteException- processEditResult, more");
                      	logger.debug("RemoteException- processEditResult, more");
@@ -1097,7 +1097,7 @@ public class History {
        try {
        	    // Retrieve selected row interval         	
             try {
-                 objects = database.more(resultIdPlant, 1, 1);  
+                 objects = database.more(resultIdPlant, 0, 0);  
             } catch(RemoteException e) {            	
                 logger.debug("RemoteException- searchObject, more");            	
             }   
