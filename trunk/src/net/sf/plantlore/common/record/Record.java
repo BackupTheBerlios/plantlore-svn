@@ -24,6 +24,16 @@ public abstract class Record implements Serializable {
 	public abstract Integer getId();
 	
 	/**
+	 * Some records in the database are marked as deleted.
+	 * A record is considered <i>dead</i> if it was marked as deleted. 
+	 * 
+	 * @return True if the record was marked as deleted.
+	 */
+	public boolean isDead() {
+		return false;
+	}
+	
+	/**
 	 * @return The set of all foreign keys (columns that refer to other tables).
 	 */
 	public ArrayList<String> getForeignKeys() { return new ArrayList(0); }

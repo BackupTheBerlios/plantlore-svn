@@ -50,6 +50,12 @@ public class Author extends Record {
     	return list( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
     }
     
+    
+    @Override 
+    public boolean isDead() {
+    	return getDeleted() != 0;
+    }
+    
     /**
      *   Set unique id of the author
      *   @param id unique id of the author

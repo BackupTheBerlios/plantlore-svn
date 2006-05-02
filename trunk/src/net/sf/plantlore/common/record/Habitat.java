@@ -57,6 +57,11 @@ public class Habitat extends Record {
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     
+    @Override 
+    public boolean isDead() {
+    	return getDeleted() != 0;
+    }
+    
     /**
      * Default constructor to create new class Habitat
      */

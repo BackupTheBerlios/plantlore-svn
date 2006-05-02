@@ -84,6 +84,11 @@ public class Occurrence extends Record {
     	return nn;
     }
     
+    @Override 
+    public boolean isDead() {
+    	return getDeleted() != 0;
+    }
+    
     
     /** Creates a new instance of OccurrenceRecord */
     public Occurrence() {

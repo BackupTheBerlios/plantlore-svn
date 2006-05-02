@@ -57,6 +57,11 @@ public class Publication extends Record {
     	return list(REFERENCECITATION);
     }
     
+    @Override 
+    public boolean isDead() {
+    	return getDeleted() != 0;
+    }
+    
     /**
      *   Get publication id
      *   @return id of the publication

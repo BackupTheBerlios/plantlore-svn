@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -106,6 +107,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	/** The maximum number of lines that can be inserted into the text area. */
 	protected int capacity = 50;
 	
+	
 
 	/*======================================================================
 	 	Keyboard behaviour
@@ -117,6 +119,12 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	/** Keyboard unleashed - see the JavaDoc of the AutoTextArea class for detailed description. */
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
+		
+		// Update the information about the current line (the one with the caret).
+		int offset = getCaretPosition(), line, start, end;
+		try {
+			line = getLineOfOffset(offset); start = getLineStartOffset(line); end = getLineEndOffset(line);
+		} catch(BadLocationException b) { return; }
 		
 		// --- Free roam mode ---
 		if (mode == Mode.FREE_ROAM) {
@@ -146,11 +154,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			}
 		}
 		
-		// Update the information about the current line (the one with the caret).
-		int offset = getCaretPosition(), line, start, end;
-		try {
-			line = getLineOfOffset(offset); start = getLineStartOffset(line); end = getLineEndOffset(line);
-		} catch(BadLocationException b) { return; }
+		
 		
 		// Consume the event -> no further processing 
 		e.consume();
@@ -168,7 +172,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			switch (key) {
 			case KeyEvent.VK_TAB: // autocomplete the entry
 				if(!list.isSelectionEmpty()) {
-					String s = (String)list.getSelectedValue();
+					String s = list.getSelectedValue().toString();
 					int i = s.indexOf(KeyEvent.VK_SPACE, offset - start) + 1;
 					if(i <= 0) i = s.length();
 					replaceRange(s.substring(0, i), start, end);
@@ -209,7 +213,10 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 				String newline = (capacity <= this.getLineCount()) ? "" : "\n";
 				if(eoln) end++;
 				if(list.isSelectionEmpty()) replaceRange("", start, end);
-				else replaceRange(list.getSelectedValue() + newline, start, end);
+				else {
+					Object value = list.getSelectedValue();
+					replaceRange(value.toString() + newline, start, end);
+				}
 				return;
 			}
 		}
@@ -253,15 +260,15 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			int i = list.getNextMatch(σ + e.getKeyChar(), 0, Position.Bias.Forward);
 			if(i < 0) {
 				assistant.setSelectedValue(σ);
-				replaceRange(((String)list.getSelectedValue()).substring(0, offset - start), start, end);
+				replaceRange((list.getSelectedValue()).toString().substring(0, offset - start), start, end);
 			} else {
 				assistant.setSelectedIndex(i);
-				replaceRange(((String)list.getSelectedValue()).substring(0, offset - start + 1), start, end);
+				replaceRange((list.getSelectedValue()).toString().substring(0, offset - start + 1), start, end);
 			}
 		}
 	}
 	
-	
+
 	
 	
 	/*======================================================================
@@ -295,7 +302,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	 * @param choices	List of available (allowed) strings. 
 	 * @param frame	The parent frame which the AutoTextArea is added to.  
 	 */
-	public AutoTextArea(String[] choices, JFrame frame) {
+	public AutoTextArea(Object[] choices, JFrame frame) {
 		this(choices, frame.getLayeredPane());
 	}
 	
@@ -306,7 +313,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	 * @param choices	List of available (allowed) strings. 
 	 * @param dialog	The parent dialog which the AutoTextArea is added to.  
 	 */
-	public AutoTextArea(String[] choices, JDialog dialog) {
+	public AutoTextArea(Object[] choices, JDialog dialog) {
 		this(choices, dialog.getLayeredPane());
 	}
 	
@@ -317,7 +324,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	 * @param choices	List of available (allowed) strings. 
 	 * @param container	The container which the AutoTextArea is added to.  
 	 */
-	public AutoTextArea(String[] choices, Container container) {
+	public AutoTextArea(Object[] choices, Container container) {
 		assistant = new Assistant(choices, container);
 		assistant.getList().addMouseListener(this);
 		addKeyListener(this); addFocusListener(this);
@@ -333,6 +340,17 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 		this.capacity = capacity;
 	}
 
+
+	/**
+	 * 
+	 * @param line	Line number (starts with 0).
+	 * @return	The string on the specified line.
+	 * @throws BadLocationException	If there is no such line.
+	 */
+	public String getLine(int line) throws BadLocationException {
+		int start = getLineStartOffset(line), end = getLineEndOffset(line);
+		return getText(start, end - start).trim();
+	}
 	
 	
 	

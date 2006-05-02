@@ -50,7 +50,7 @@ public class Assistant extends JScrollPane {
 	 * @param choices	Array of choices.
 	 * @param container	The container to which the assistant will be added.
 	 */
-	public Assistant(String[] choices, Container container) {
+	public Assistant(Object[] choices, Container container) {
 		this(new JList(choices), container);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setFocusable(false);
