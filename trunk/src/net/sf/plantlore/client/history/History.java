@@ -482,7 +482,7 @@ public class History {
      * delete == 0 ... obnovit
      */
     public void undoInsertDelete(int delete) {
-        if (tableName.equals("Occurrence")){
+        if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)){
              Object[] object = searchObject("Occurrence",recordId);             
              Occurrence occurrence = (Occurrence)object[delete];
              occurrence.setDeleted(1);
@@ -490,23 +490,23 @@ public class History {
       //       Object[] object = searchObject("v",recordId);  
       //       Habitat habitat = (Habitat)object[delete];
       //       habitat.setDeleted(1);
-        } else if (tableName.equals("Publication")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
              Object[] object = searchObject("Publication",recordId);  
              Publication publication = (Publication)object[delete];
              publication.setDeleted(1);
-        } else if (tableName.equals("Author")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {
              Object[] object = searchObject("Author",recordId);   
              Author author = (Author)object[delete];
              author.setDeleted(1);
-        } else if (tableName.equals("Phytochorion")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
              Object[] object = searchObject("Phytochorion",recordId);   
              Phytochorion phytochorion = (Phytochorion)object[delete];             
              //phytochorion.setDelete(1);
-        } else if (tableName.equals("Territoriy")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
              Object[] object = searchObject("Territory",recordId); 
              Territory territory = (Territory)object[delete];             
              //territory.setDelete(1);
-        } else if (tableName.equals("Village")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
              Object[] object = searchObject("Village",recordId); 
              Village village = (Village)object[delete];             
              //village.setDelete(1);
@@ -526,19 +526,19 @@ public class History {
         occurrenceId = historyChange.getOccurrence().getId();		           
         oldValue = historyRecord.getOldValue();
         
-        if (tableName.equals("Occurrence")){
+        if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)){
                 undoOccurrence();
-        } else if (tableName.equals("Habitat")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {
                 undoHabitat();
-        } else if (tableName.equals("Publication")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
                 undoPublication();
-        } else if (tableName.equals("Author")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {
                 undoAuthor();
-        } else if (tableName.equals("Phytochorion")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
                 undoPhytochorion();
-        } else if (tableName.equals("Territory")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
                 undoTerritory();
-        } else if (tableName.equals("Village")) {
+        } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
                 undoVillage();
         } else {
             logger.error("No table defined");
