@@ -1,10 +1,10 @@
 /*
- * AuthorManagerView.java
+ * PublicationManagerView.java
  *
  * Created on 30. duben 2006, 14:58
  */
 
-package net.sf.plantlore.client.authors;
+package net.sf.plantlore.client.publications;
 
 import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
@@ -18,35 +18,36 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- * Main dialog of the AuthorManager used for searching authors and displaying the search results.
- *
- * @author  Tomas Kovarik
+ * Main dialog of the PublicationManager used for searching publications and displaying the search results.
+ * 
+ * @author Tomas Kovarik
  * @version 1.0 BETA, May 1, 2006
  */
-public class AuthorManagerView extends javax.swing.JDialog implements Observer {
-    /** Model of the AuthorManager MVC */
-    private AuthorManager model;
+public class PublicationManagerView extends javax.swing.JDialog implements Observer {
+    /** Model of the PublicationManager MVC */
+    private PublicationManager model;
     /** Names of fields available for sorting the results */
-    private String[] sortFields = {L10n.getString("authorName"), L10n.getString("authorOrganization"), L10n.getString("authorRole"), L10n.getString("authorEmail"), L10n.getString("authorPhone"), L10n.getString("authorURL")};        
+    private String[] sortFields = {L10n.getString("collectionNameTitle"), L10n.getString("publicationYearTitle"), L10n.getString("journalNameTitle"), L10n.getString("journalAuthorTitle"), L10n.getString("referenceCitationTitle"), L10n.getString("referenceDetailTitle")};        
     /** Names of the columns in the search results */
-    private String[] columnNames = new String [] {L10n.getString("authorName"), L10n.getString("authorOrganization"), L10n.getString("authorRole"), L10n.getString("authorPhone"), L10n.getString("authorEmail"), L10n.getString("authorURL")};    
+    private String[] columnNames = new String [] {L10n.getString("collectionNameTitle"), L10n.getString("publicationYearTitle"), L10n.getString("journalNameTitle"), L10n.getString("journalAuthorTitle"), L10n.getString("referenceCitationTitle"), L10n.getString("referenceDetailTitle"), L10n.getString("publicationUrlTitle")};    
     /** Contents of the table with the query result */
     private String[][] tableData;
     
     /**
-     * Creates new form AuthorManagerView 
+     * Creates new form PublicationManagerView 
      * 
-     * @param model     model of the AuthorManager MVC
+     * @param model     model of the PublicationManager MVC
      * @param parent    parent of this dialog
      * @param modal     boolean flag whether the dialog should be modal or not
      */
-    public AuthorManagerView(AuthorManager model, JFrame parent, boolean modal) {        
+    public PublicationManagerView(PublicationManager model, JFrame parent, boolean modal) {        
         super(parent, modal);
         this.model = model;
-        this.model.addObserver(this);         
+        this.model.addObserver(this);
         initComponents();
     }
     
@@ -83,10 +84,10 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         searchBtn = new javax.swing.JButton();
-        nameField = new javax.swing.JFormattedTextField();
-        organizationField = new javax.swing.JFormattedTextField();
-        roleField = new javax.swing.JFormattedTextField();
-        emailField = new javax.swing.JFormattedTextField();
+        collectionNameField = new javax.swing.JFormattedTextField();
+        journalNameField = new javax.swing.JFormattedTextField();
+        referenceCitationField = new javax.swing.JFormattedTextField();
+        referenceDetailField = new javax.swing.JFormattedTextField();
         closeBtn = new javax.swing.JButton();
         helpBtn = new javax.swing.JButton();
 
@@ -95,8 +96,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         sortButtonGroup.setSelected(ascRadio.getModel(), true);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(L10n.getString("authorManager"));
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("authorList")));
+        setTitle(L10n.getString("publicationManager"));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("publicationList")));
         listTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -114,11 +115,11 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
 
         nextBtn.setText(L10n.getString("nextButton"));
 
-        deleteBtn.setText(L10n.getString("deleteAuthorBtn"));
+        deleteBtn.setText(L10n.getString("deletePublicationBtn"));
 
-        editBtn.setText(L10n.getString("editAuthorBtn"));
+        editBtn.setText(L10n.getString("editPublicationBtn"));
 
-        addBtn.setText(L10n.getString("addAuthorBtn"));
+        addBtn.setText(L10n.getString("addPublicationBtn"));
 
         totalResultLabel2.setText(L10n.getString("totalResult"));
 
@@ -139,7 +140,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
                     .add(jPanel7Layout.createSequentialGroup()
                         .add(previousBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -151,20 +152,20 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel7Layout.createSequentialGroup()
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(addBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 121, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(deleteBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jPanel7Layout.createSequentialGroup()
                                 .add(rowsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(89, 89, 89)
                                 .add(displayedLabel2)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(displayedLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel7Layout.createSequentialGroup()
-                                .add(addBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(displayedLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(2, 2, 2)))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                            .add(nextBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(deleteBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .add(nextBtn)))))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -184,16 +185,16 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                     .add(rowsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(15, 15, 15)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(addBtn)
-                    .add(deleteBtn)
-                    .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(deleteBtn))
                 .addContainerGap())
         );
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("searchAuthorsLbl")));
-        jLabel11.setText(L10n.getString("authorNameLbl"));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("searchPublicationsLbl")));
+        jLabel11.setText(L10n.getString("collectionNameLbl"));
 
-        jLabel12.setText(L10n.getString("authorOrganizationLbl"));
+        jLabel12.setText(L10n.getString("journalNameLbl"));
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("sortingLbl")));
         descRadio.setText(L10n.getString("descending"));
@@ -234,19 +235,19 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel14.setText(L10n.getString("authorRoleLbl"));
+        jLabel14.setText(L10n.getString("referenceCitationLbl"));
 
-        jLabel15.setText(L10n.getString("authorEmailLbl"));
+        jLabel15.setText(L10n.getString("referenceDetailLbl"));
 
-        searchBtn.setText(L10n.getString("searchAuthorsBtn"));
+        searchBtn.setText(L10n.getString("searchPublicationsBtn"));
 
-        nameField.setValue("");
+        collectionNameField.setValue("");
 
-        organizationField.setValue("");
+        journalNameField.setValue("");
 
-        roleField.setValue("");
+        referenceCitationField.setValue("");
 
-        emailField.setValue("");
+        referenceDetailField.setValue("");
 
         org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -261,17 +262,17 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                             .add(jLabel12))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(organizationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .add(nameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+                            .add(journalNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                            .add(collectionNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel14)
                             .add(jLabel15))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(emailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .add(roleField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
-                    .add(searchBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 144, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(referenceDetailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                            .add(referenceCitationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)))
+                    .add(searchBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 149, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -284,15 +285,15 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                         .addContainerGap()
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(jLabel11)
-                            .add(nameField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(collectionNameField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(jLabel14)
-                            .add(roleField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(referenceCitationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(jLabel12)
-                            .add(organizationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(journalNameField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(jLabel15)
-                            .add(emailField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(referenceDetailField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(searchBtn))
                     .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -310,12 +311,12 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(helpBtn)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 554, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 585, Short.MAX_VALUE)
                         .add(closeBtn))
-                    .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -332,25 +333,25 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+        
     /**
      *  Check whether the given field is emty or not. This is used for validating user input when searching
-     *  authors.
+     *  publications.
      *
      *  @param field field we want to check
      *  @return true if the field is empty, false otherwise
      */
     public boolean checkNonEmpty(String field) {
-        if (field.equals("name") && (nameField.getText().length() == 0)) {
+        if (field.equals("collectionName") && (collectionNameField.getText().length() == 0)) {
             return false;
         }
-        if (field.equals("email") && (emailField.getText().length() == 0)) {
+        if (field.equals("journalName") && (journalNameField.getText().length() == 0)) {
             return false;
         }
-        if (field.equals("role") && (roleField.getText().length() == 0)) {
+        if (field.equals("referenceCitation") && (referenceCitationField.getText().length() == 0)) {
             return false;
         }
-        if (field.equals("organization") && (organizationField.getText().length() == 0)) {
+        if (field.equals("referenceDetail") && (referenceDetailField.getText().length() == 0)) {
             return false;
         }        
         return true;
@@ -365,7 +366,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
     
     /**
-     *  Return an instance of this Dialog.
+     *  Return an instance of this dialog.
      *  @return instance of this dialog
      */
     public JDialog getDialog() {
@@ -401,18 +402,21 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
 
     /**
-     *  
+     *  Display search results in the result table.
+     *
+     *  @param results list of Publications with the search query results 
      */
     public void displayResults(ArrayList results) {
         this.tableData = new String[results.size()][];
         for (int i=0;i<results.size();i++) {            
-            this.tableData[i] = new String[6];
-            this.tableData[i][0] = ((Author)results.get(i)).getWholeName();
-            this.tableData[i][1] = ((Author)results.get(i)).getOrganization();
-            this.tableData[i][2] = ((Author)results.get(i)).getRole();
-            this.tableData[i][3] = ((Author)results.get(i)).getPhoneNumber();
-            this.tableData[i][4] = ((Author)results.get(i)).getEmail();
-            this.tableData[i][5] = ((Author)results.get(i)).getUrl();
+            this.tableData[i] = new String[7];
+            this.tableData[i][0] = ((Publication)results.get(i)).getCollectionName();
+            this.tableData[i][1] = ((Publication)results.get(i)).getCollectionYearPublication()+"";
+            this.tableData[i][2] = ((Publication)results.get(i)).getJournalName();
+            this.tableData[i][3] = ((Publication)results.get(i)).getJournalAuthorName();
+            this.tableData[i][4] = ((Publication)results.get(i)).getReferenceCitation();
+            this.tableData[i][5] = ((Publication)results.get(i)).getReferenceDetail();
+            this.tableData[i][6] = ((Publication)results.get(i)).getUrl();            
         }
         listTable.setModel(new DefaultTableModel(this.tableData, this.columnNames));       
         // Set total number of rows in the result
@@ -452,7 +456,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
 
     /**
-     *  Add ActionListener to Add author button.
+     *  Add ActionListener to Add Publication button.
      *
      *  @param al ActionListener to add
      */    
@@ -461,7 +465,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
 
     /**
-     *  Add ActionListener to Edit author button.
+     *  Add ActionListener to Edit publication button.
      *
      *  @param al ActionListener to add
      */    
@@ -470,7 +474,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
 
     /**
-     *  Add ActionListener to Delete author button.
+     *  Add ActionListener to Delete publication button.
      *
      *  @param al ActionListener to add
      */    
@@ -479,7 +483,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }    
 
     /**
-     *  Add ActionListener to Search authors button.
+     *  Add ActionListener to Search publications button.
      *
      *  @param al ActionListener to add
      */    
@@ -520,35 +524,35 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
     
     /**
-     *  Get the name of the author from the textfield.
-     *  @return name of the author from the textfield
+     *  Get the collection name from the textfield.
+     *  @return name of the collection from the textfield
      */        
-    public String getName() {
-        return (String)nameField.getValue();
+    public String getCollectionName() {
+        return (String)collectionNameField.getValue();
     }
     
     /**
-     *  Get the role of the author from the textfield.
-     *  @return role of the author from the textfield
+     *  Get the journal name from the textfield.
+     *  @return journal name from the textfield
      */        
-    public String getRole() {
-        return (String)roleField.getValue();
+    public String getJournalName() {
+        return (String)journalNameField.getValue();
     }    
     
     /**
-     *  Get the organization from the textfield.
-     *  @return organization from the textfield
+     *  Get the reference citation from the textfield.
+     *  @return reference citation from the textfield
      */            
-    public String getOrganization() {
-        return (String)organizationField.getValue();
+    public String getReferenceCitation() {
+        return (String)referenceCitationField.getValue();
     }
     
     /**
-     *  Get the email from the textfield.
-     *  @return email from the textfield
+     *  Get the reference detail from the textfield.
+     *  @return reference detail from the textfield
      */                
-    public String getEmail() {
-        return (String)emailField.getValue();
+    public String getReferenceDetail() {
+        return (String)referenceDetailField.getValue();
     }    
 
     /**
@@ -569,24 +573,25 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     
     /**
      *  Return the field used for sorting the results of a search. 
-     *  @return field used for sorting. Constants for fields are defined in AuthorManager.java
+     * 
+     * @return field used for sorting. Constants for fields are defined in PublicationManager.java
      */
     public int getSortField() {        
         int field;
         switch (this.sortCombo.getSelectedIndex()) {
-            case 0: field = AuthorManager.SORT_NAME;
+            case 0: field = PublicationManager.SORT_COLLECTION_NAME;
                     break;
-            case 1: field = AuthorManager.SORT_ORGANIZATION;
+            case 1: field = PublicationManager.SORT_PUBLICATION_YEAR;
                     break;
-            case 2: field = AuthorManager.SORT_ROLE;
+            case 2: field = PublicationManager.SORT_JOURNAL_NAME;
                     break;
-            case 3: field = AuthorManager.SORT_EMAIL;
+            case 3: field = PublicationManager.SORT_JOURNAL_AUTHOR;
                     break;
-            case 4: field = AuthorManager.SORT_PHONE;
+            case 4: field = PublicationManager.SORT_REFERENCE_CITATION;
                     break;
-            case 5: field = AuthorManager.SORT_URL;
+            case 5: field = PublicationManager.SORT_REFERENCE_DETAIL;
                     break;                    
-            default:field = AuthorManager.SORT_NAME;
+            default:field = PublicationManager.SORT_COLLECTION_NAME;
         }
         return field;
     }
@@ -604,35 +609,35 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
     
     /**
-     *  Add PropertyChangeListener to name field.
-     *  @param pcl PropertyChangeListener for the name field
+     *  Add PropertyChangeListener to collection name field.
+     *  @param pcl PropertyChangeListener for the collection name field
      */
-    void nameAddPropertyChangeListener(PropertyChangeListener pcl) {
-        nameField.addPropertyChangeListener(pcl);
+    void collectionNameAddPropertyChangeListener(PropertyChangeListener pcl) {
+        collectionNameField.addPropertyChangeListener(pcl);
     }
     
     /**
-     *  Add PropertyChangeListener to organization field.
-     *  @param pcl PropertyChangeListener for the organization field
+     *  Add PropertyChangeListener to journal name field.
+     *  @param pcl PropertyChangeListener for the journal name field
      */    
-    void organizationAddPropertyChangeListener(PropertyChangeListener pcl) {
-        organizationField.addPropertyChangeListener(pcl);
+    void journalNameAddPropertyChangeListener(PropertyChangeListener pcl) {
+        journalNameField.addPropertyChangeListener(pcl);
     }    
     
     /**
-     *  Add PropertyChangeListener to role field.
-     *  @param pcl PropertyChangeListener for the role field
+     *  Add PropertyChangeListener to reference citation field.
+     *  @param pcl PropertyChangeListener for the reference citation field
      */    
-    void roleAddPropertyChangeListener(PropertyChangeListener pcl) {
-        roleField.addPropertyChangeListener(pcl);
+    void referenceCitationAddPropertyChangeListener(PropertyChangeListener pcl) {
+        referenceCitationField.addPropertyChangeListener(pcl);
     }    
 
     /**
-     *  Add PropertyChangeListener to email field.
-     *  @param pcl PropertyChangeListener for the email field
+     *  Add PropertyChangeListener to referenceDetail field.
+     *  @param pcl PropertyChangeListener for the referenceDetail field
      */    
-    void emailAddPropertyChangeListener(PropertyChangeListener pcl) {
-        emailField.addPropertyChangeListener(pcl);
+    void referenceDetailAddPropertyChangeListener(PropertyChangeListener pcl) {
+        referenceDetailField.addPropertyChangeListener(pcl);
     }        
         
     /**
@@ -666,8 +671,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      */
     public boolean confirmDelete() {
         // JOptionPane results: 0 = Yes, 1 = No
-        int res = JOptionPane.showConfirmDialog(this, "Do you really want to delete selected author?", 
-                                                "Delete author", JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, "Do you really want to delete selected publication?", 
+                                                "Delete publication", JOptionPane.YES_NO_OPTION);
         if (res == 0) {
             return true;
         }
@@ -675,26 +680,26 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
     
     /**
-     *  Get index of the (first) selected author in the table with the list of authors
-     *  @return index of the (first) selected author in the table
+     *  Get index of the (first) selected publication in the table with the list of publications
+     *  @return index of the (first) selected publication in the table
      */
-    public int getSelectedAuthor() {        
+    public int getSelectedPublication() {        
         return listTable.getSelectedRow();
     }
 
     /**
-     *  Display dialog with the message saying that no row in the table with authors is selected
+     *  Display dialog with the message saying that no row in the table with publications is selected
      */
     public void selectRowMsg() {
-        JOptionPane.showMessageDialog(this, "Please select at least one author from the list",
-                                      "Select author", JOptionPane.WARNING_MESSAGE);        
+        JOptionPane.showMessageDialog(this, "Please select at least one publication from the list",
+                                      "Select publication", JOptionPane.WARNING_MESSAGE);        
     }
 
     /**
      *  Display dialoge with message saying that the result of the search is empty
      */
     public void showSearchInfoMessage() {
-        JOptionPane.showMessageDialog(this, "No authors with the given attributes were found. Please modify search criteria.",
+        JOptionPane.showMessageDialog(this, "No publications with the given attributes were found. Please modify search criteria.",
                                       "No search results", JOptionPane.INFORMATION_MESSAGE);                
     }
     
@@ -703,12 +708,12 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JButton addBtn;
     private javax.swing.JRadioButton ascRadio;
     protected javax.swing.JButton closeBtn;
+    private javax.swing.JFormattedTextField collectionNameField;
     protected javax.swing.JButton deleteBtn;
     private javax.swing.JRadioButton descRadio;
     protected javax.swing.JLabel displayedLabel;
     private javax.swing.JLabel displayedLabel2;
     protected javax.swing.JButton editBtn;
-    private javax.swing.JFormattedTextField emailField;
     protected javax.swing.JButton helpBtn;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -719,12 +724,12 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JFormattedTextField journalNameField;
     protected javax.swing.JTable listTable;
-    private javax.swing.JFormattedTextField nameField;
     protected javax.swing.JButton nextBtn;
-    private javax.swing.JFormattedTextField organizationField;
     protected javax.swing.JButton previousBtn;
-    private javax.swing.JFormattedTextField roleField;
+    private javax.swing.JFormattedTextField referenceCitationField;
+    private javax.swing.JFormattedTextField referenceDetailField;
     private javax.swing.JFormattedTextField rowsField;
     private javax.swing.JButton searchBtn;
     private javax.swing.ButtonGroup sortButtonGroup;

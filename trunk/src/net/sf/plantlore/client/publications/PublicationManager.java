@@ -1,11 +1,11 @@
 /*
- * AuthorManager.java
+ * PublicationManager.java
  *
  * Created on 15. leden 2006, 2:04
  *
  */
 
-package net.sf.plantlore.client.authors;
+package net.sf.plantlore.client.publications;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
+import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -22,47 +23,48 @@ import net.sf.plantlore.common.SwingWorker;
 import org.apache.log4j.Logger;
 
 /**
- * Author manager model. Contains bussines logic and data fields of the AuthorManager. Implements
- * operations including add author, edit author, delete author, search authors.
- *
+ * Publication manager model. Contains bussines logic and data fields of the PublicationManager. 
+ * Implements operations including add publication, edit publication, delete publication, search 
+ * publications.
+ * 
  * @author Tomas Kovarik
  * @version 1.0 BETA, May 1, 2006
- *
+ * 
  * TODO:    Proper exception handling
  *          Clean API (get rid of unused or unnecessary methods)
  *          Improve thread management
  */
-public class AuthorManager extends Observable {
+public class PublicationManager extends Observable {
     /** Instance of a logger */
     private Logger logger;
     /** Exception with details about an error */
     private String error = null;
     /** Instance of a database management object */
     private DBLayer database;
-    /** First name of the author */
-    private String name;
-    /** Organization of the author */
-    private String organization;
-    /** Role of the author */
-    private String role;
-    /** Address of the author */
-    private String address;
-    /** Phone number of the author */
-    private String phoneNumber;
-    /** Email of the author */
-    private String email;
+    /** Name of the collection */
+    private String collectionName;
+    /** Year of publication */
+    private int publicationYear;
+    /** Name of the journal */
+    private String journalName;
+    /** Name of the author of the journal */
+    private String journalAuthor;
+    /** Reference citation */
+    private String referenceCitation;
+    /** Reference detail */
+    private String referenceDetail;
     /** URL of the author */
     private String url;
     /** Note of the author */
     private String note;
-    /** Name field used for searching */
-    private String searchName;
-    /** Organization field used for searching */
-    private String searchOrganization;
-    /** Role field used for searching */
-    private String searchRole;
-    /** Email field used for searching */
-    private String searchEmail;
+    /** Collection name field used for searching */
+    private String searchCollectionName;
+    /** Journal name field used for searching */
+    private String searchJournalName;
+    /** Reference citation field used for searching */
+    private String searchReferenceCitation;
+    /** Reference detail field used for searching */
+    private String searchReferenceDetail;
     /** Flag telling whether a long running operation has already finished */
     private boolean done;
     /** Result of the search query */
@@ -75,63 +77,73 @@ public class AuthorManager extends Observable {
     private ArrayList data;
     /** Index of the first record shown in the table */
     private int currentFirstRow;
-    /** Index of currently selected author in the table */
-    private int authorIndex;
+    /** Index of currently selected publication in the table */
+    private int publicationIndex;
     /** Field to be used for sorting search query results */
-    private int sortField = SORT_NAME;
+    private int sortField = SORT_COLLECTION_NAME;
     /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
     private int sortDirection = 0;
-    /** Author we want to edit */
-    private Author editAuthor;
+    /** Publication we want to edit */
+    private Publication editPublication;
     /** Constants used for identification of fields for sorting */
-    public static final int SORT_NAME = 1;
-    public static final int SORT_ORGANIZATION = 2;
-    public static final int SORT_ROLE = 3;
-    public static final int SORT_EMAIL = 4;
-    public static final int SORT_PHONE = 5;
-    public static final int SORT_URL = 6;
+    public static final int SORT_COLLECTION_NAME = 1;
+    public static final int SORT_PUBLICATION_YEAR = 2;
+    public static final int SORT_JOURNAL_NAME = 3;
+    public static final int SORT_JOURNAL_AUTHOR = 4;
+    public static final int SORT_REFERENCE_CITATION = 5;
+    public static final int SORT_REFERENCE_DETAIL = 6;
     
-    public static final String ERROR_SEARCH = L10n.getString("authorSearchFailed");
-    public static final String ERROR_SAVE = L10n.getString("authorSaveFailed");
-    public static final String ERROR_UPDATE = L10n.getString("authorUpdateFailed");    
-    public static final String ERROR_DELETE = L10n.getString("authorDeleteFailed");
-    public static final String ERROR_PROCESS = L10n.getString("authorProcessResultsFailed");
+    public static final int FIELD_COLLECTION_NAME = 1;
+    public static final int FIELD_COLLECTION_YEAR = 2;
+    public static final int FIELD_JOURNAL_NAME = 3;
+    public static final int FIELD_JOURNAL_AUTHOR = 4;
+    public static final int FIELD_REFERENCE_CITATION = 5;
+    public static final int FIELD_REFERENCE_DETAIL = 6;    
+    public static final int FIELD_URL = 7;    
+    public static final int FIELD_NOTE = 8;    
+    
+    public static final String ERROR_SEARCH = L10n.getString("publicationSearchFailed");
+    public static final String ERROR_SAVE = L10n.getString("publicationSaveFailed");
+    public static final String ERROR_UPDATE = L10n.getString("publicationUpdateFailed");    
+    public static final String ERROR_DELETE = L10n.getString("publicationDeleteFailed");
+    public static final String ERROR_PROCESS = L10n.getString("publicationProcessResultsFailed");
     
     /**
-     *  Creates a new instance of AuthorManager.
-     *  @param database Instance of a database management object
+     * Creates a new instance of PublicationManager.
+     * 
+     * @param database Instance of a database management object
      */
-    public AuthorManager(DBLayer database) {
+    public PublicationManager(DBLayer database) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         this.database = database;
     }
     
     /**
-     *  Save new author to the database. Information about the author are stored in data fields of this class.
+     *  Save new publication to the database. Information about the publication are stored in data fields of this class.
      *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
      */
-    public void saveAuthor() {
+    public void savePublication() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // The operation is not finished yet
                 done = false;
-                // Create Author object for author we want to add
-                Author author = new Author();
-                author.setWholeName(name);
-                author.setOrganization(organization);
-                author.setRole(role);
-                author.setAddress(address);
-                author.setPhoneNumber(phoneNumber);
-                author.setEmail(email);
-                author.setUrl(url);
-                author.setNote(note);
+                // Create Publication object for publication we want to add
+                Publication publication = new Publication();
+                publication.setCollectionName(collectionName);
+                publication.setCollectionYearPublication(publicationYear);
+                publication.setJournalName(journalName);
+                publication.setJournalAuthorName(journalAuthor);
+                publication.setReferenceCitation(referenceCitation);
+                publication.setReferenceDetail(referenceDetail);
+                publication.setUrl(url);
+                publication.setNote(note);
                 int rowId = -1;
                 try {
                     // Execute query
-                    rowId = database.executeInsert(author);
+                    rowId = database.executeInsert(publication);
                 } catch (DBLayerException e) {
                     // Log and set an error
-                    logger.error("Saving author failed. Unable to execute insert query");
+                    logger.error("Saving publication failed. Unable to execute insert query");
                     setError(ERROR_SAVE);
                     // Set operation state to finished
                     done = true;
@@ -139,9 +151,9 @@ public class AuthorManager extends Observable {
                 } catch(RemoteException e) {
                     System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
-                logger.info("Author "+name+" saved successfuly.");
+                logger.info("Publication "+collectionName+" saved successfuly.");
                 if (isResultAvailable()) {
-                    searchAuthor();
+                    searchPublication();
                 }
                 done = true;
                 return rowId;
@@ -151,20 +163,20 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Delete an author from the database. To-be-deleted author is identified by his ID and is
-     *  retrieved based on the value of <code>authorIndex</code> field. Error is set in case of an exception.
+     *  Delete a publication from the database. To-be-deleted publication is identified by the ID and is
+     *  retrieved based on the value of <code>publicationIndex</code> field. Error is set in case of an exception.
      */
-    public void deleteAuthor() {
+    public void deletePublication() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // Operation not finished yet
                 done = false;
                 try {
                     // Execute query
-                    database.executeDelete((Author)data.get(getAuthorIndex()));
+                    database.executeDelete((Publication)data.get(getPublicationIndex()));
                 } catch (DBLayerException e) {
                     // Log and set an error
-                    logger.error("Deleting author failed. Unable to execute delete query.");
+                    logger.error("Deleting publication failed. Unable to execute delete query.");
                     setError(ERROR_DELETE);
                     // Set operation state to finished
                     done = true;
@@ -172,9 +184,9 @@ public class AuthorManager extends Observable {
                 } catch(RemoteException e) {
                     System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
-                logger.info("Author "+name+" deleted succesfully");
-                // Execute author search - required in order to display up-to-date data in the table of authors
-                searchAuthor();
+                logger.info("Publication "+collectionName+" deleted succesfully");
+                // Execute publication search - required in order to display up-to-date data in the table of publications
+                searchPublication();
                 // Set operation state to finished
                 done = true;
                 return true;
@@ -184,30 +196,30 @@ public class AuthorManager extends Observable {
     }
 
     /**
-     *  Update author in the database. To-be-updated author is stored in <code>editAuthor</code> field. Operation 
+     *  Update publication in the database. To-be-updated publication is stored in <code>editPublication</code> field. Operation 
      *  is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
      */    
-    public void editAuthor() {
+    public void editPublication() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // The operation is not finished yet
                 done = false;
-                // Update to*be-updated author based on user input
-                Author author = getEditAuthor();
-                author.setWholeName(name);
-                author.setOrganization(organization);
-                author.setRole(role);
-                author.setAddress(address);
-                author.setPhoneNumber(phoneNumber);
-                author.setEmail(email);
-                author.setUrl(url);
-                author.setNote(note);
+                // Update to-be-updated publication based on user input
+                Publication publication = getEditPublication();
+                publication.setCollectionName(collectionName);
+                publication.setCollectionYearPublication(publicationYear);
+                publication.setJournalName(journalName);
+                publication.setJournalAuthorName(journalAuthor);
+                publication.setReferenceCitation(referenceCitation);
+                publication.setReferenceDetail(referenceDetail);
+                publication.setUrl(url);
+                publication.setNote(note);
                 try {
                     // Execute query
-                    database.executeUpdate(author);
+                    database.executeUpdate(publication);
                 } catch (DBLayerException e) {
                     // Log and set an error
-                    logger.error("Saving author failed. Unable to execute insert query");
+                    logger.error("Update publication failed. Unable to execute update query");
                     setError(ERROR_UPDATE);
                     // Set operation state to finished
                     done = true;
@@ -215,9 +227,9 @@ public class AuthorManager extends Observable {
                 } catch(RemoteException e) {
                     System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                 }
-                logger.info("Author "+name+" updated successfuly.");
+                logger.info("Publication "+collectionName+" updated successfuly.");
                 if (isResultAvailable()) {
-                    searchAuthor();
+                    searchPublication();
                 }
                 done = true;
                 return true;
@@ -227,10 +239,10 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Search for authors in the database. Criteria for search are stored in data fields of this class.
+     *  Search for publications in the database. Criteria for search are stored in data fields of this class.
      *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception
      */
-    public void searchAuthor() {
+    public void searchPublication() {
         final SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 // Operation not finished yet
@@ -238,33 +250,32 @@ public class AuthorManager extends Observable {
                 SelectQuery query;
                 try {
                     // Create new Select query                    
-                    query = database.createQuery(Author.class);                    
-                    System.out.println("ROLE:"+searchRole);
+                    query = database.createQuery(Publication.class);                    
                     // Add given restrictions (WHERE clause)
-                    if ((searchName != null) && (searchName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.WHOLENAME, null, "%" + searchName + "%", null);
-                    if ((searchOrganization != null) && (searchOrganization != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ORGANIZATION, null, "%" + searchOrganization + "%", null);
-                    if ((searchRole != null) && (searchRole != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ROLE, null, "%" + searchRole + "%", null);
-                    if ((searchEmail != null) && (searchEmail != null))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.EMAIL, null, "%" + searchEmail + "%", null);
+                    if ((searchCollectionName != null) && (searchCollectionName != ""))
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.COLLECTIONNAME, null, "%" + searchCollectionName + "%", null);
+                    if ((searchJournalName != null) && (searchJournalName != ""))
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.JOURNALNAME, null, "%" + searchJournalName + "%", null);
+                    if ((searchReferenceCitation != null) && (searchReferenceCitation != ""))
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.REFERENCECITATION, null, "%" + searchReferenceCitation + "%", null);
+                    if ((searchReferenceDetail != null) && (searchReferenceDetail != null))
+                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.REFERENCEDETAIL, null, "%" + searchReferenceDetail + "%", null);
                     String field;
                     // Add ORDER BY clause
                     switch (sortField) {
-                        case 1: field = Author.WHOLENAME;
+                        case 1: field = Publication.COLLECTIONNAME;
                                 break;
-                        case 2: field = Author.ORGANIZATION;
+                        case 2: field = Publication.COLLECTIONYEARPUBLICATION;
                                 break;
-                        case 3: field = Author.ROLE;
+                        case 3: field = Publication.JOURNALNAME;
                                 break;
-                        case 4: field = Author.EMAIL;
+                        case 4: field = Publication.JOURNALAUTHORNAME;
                                 break;
-                        case 5: field = Author.PHONENUMBER;
+                        case 5: field = Publication.REFERENCECITATION;
                                 break;
-                        case 6: field = Author.URL;
+                        case 6: field = Publication.REFERENCEDETAIL;
                                 break;
-                        default:field = Author.WHOLENAME;
+                        default:field = Publication.COLLECTIONNAME;
                     }
                     
                     if (sortDirection == 0) {
@@ -278,14 +289,12 @@ public class AuthorManager extends Observable {
                         resultId = database.executeQuery(query);
                     } catch (DBLayerException e) {
                         // Log and set an error
-                        logger.error("Searching authors failed. Unable to execute search query.");
+                        logger.error("Searching publications failed. Unable to execute search query.");
                         setError(ERROR_SEARCH);
-                        // setError("Searching authors failed. Please contact
-                        // your administrator.");
                     } finally {
                         // Set operation state to finished
                         done = true;
-                        logger.info("Authors successfuly retrieved from the database");
+                        logger.info("Publications successfuly retrieved from the database");
                         // Save the results
                         setResult(resultId);
                     }
@@ -350,7 +359,7 @@ public class AuthorManager extends Observable {
                     // Cast the results to the AuthorRecord objects
                     for (int i=0;i<objArray.length;i++) {
                         Object[] objAuth = (Object[])objArray[i];
-                        this.data.add((Author)objAuth[0]);
+                        this.data.add((Publication)objAuth[0]);
                     }
                 } catch (DBLayerException e) {
                     // Log and set error in case of an exception
@@ -373,31 +382,31 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Load fields with information about selected author (specified by the value of <code>authorIndex</code> field).
-     *  Notify observers about this change. This is used to load a form when editing authors.
+     *  Load fields with information about selected publication (specified by the value of <code>publicationIndex</code> field).
+     *  Notify observers about this change. This is used to load a form when editing publications.
      */
-    public void loadAuthor() {
-        Author selectedAuth = (Author)data.get(this.getAuthorIndex());
-        this.setName(selectedAuth.getWholeName());
-        this.setOrganization(selectedAuth.getOrganization());
-        this.setRole(selectedAuth.getRole());
-        this.setAddress(selectedAuth.getAddress());
-        this.setEmail(selectedAuth.getEmail());
-        this.setPhoneNumber(selectedAuth.getPhoneNumber());
-        this.setUrl(selectedAuth.getUrl());
-        this.setNote(selectedAuth.getNote());
+    public void loadPublication() {
+        Publication selectedPubl = (Publication)data.get(this.getPublicationIndex());
+        this.setCollectionName(selectedPubl.getCollectionName());
+        this.setPublicationYear(selectedPubl.getCollectionYearPublication());
+        this.setJournalName(selectedPubl.getJournalName());
+        this.setJournalAuthor(selectedPubl.getJournalAuthorName());
+        this.setReferenceCitation(selectedPubl.getReferenceCitation());
+        this.setReferenceDetail(selectedPubl.getReferenceDetail());
+        this.setUrl(selectedPubl.getUrl());
+        this.setNote(selectedPubl.getNote());
         setChanged();
         notifyObservers();
     }
     
     /**
-     *  Return currently displayed and selected author (at the selected index in the data field)
+     *  Return currently displayed and selected publication (at the selected index in the data field)
      *
-     *  @param  index   index of the author in the data field
-     *  @return         Author at the given index
+     *  @param  index   index of the publication in the data field
+     *  @return         Publication at the given index
      */
-    public Author getSelectedAuthor(int index) {
-        return (Author)data.get(index);
+    public Publication getSelectedPublication(int index) {
+        return (Publication)data.get(index);
     }
     
     /**
@@ -468,19 +477,23 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Get index of currently selected author. The index is used to locate author record in the data field.
-     *  @return index of currently selected author
+     *  Get index of currently selected publication. The index is used to locate publication 
+     *  record in the data field.
+     *
+     *  @return index of currently selected publication
      */
-    protected int getAuthorIndex() {
-        return this.authorIndex;
+    protected int getPublicationIndex() {
+        return this.publicationIndex;
     }
     
     /**
-     *  Set index of currently selected author. The index is used to locate author record in the data field.
-     *  @param index index of currently selected author
+     *  Set index of currently selected publication. The index is used to locate publication 
+     *  record in the data field.
+     *
+     *  @param index index of currently selected publication
      */
-    protected void setAuthorIndex(int index) {
-        this.authorIndex = index;
+    protected void setPublicationIndex(int index) {
+        this.publicationIndex = index;
     }
     
     /**
@@ -500,20 +513,20 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Get index of the first row currently displayed in the list of authors. This is an index 
+     *  Get index of the first row currently displayed in the list of publications. This is an index 
      *  in the results returned by a search query.
      *
-     *  @return index of the first row currently displayed in the list of authors
+     *  @return index of the first row currently displayed in the list of publications
      */
     public int getCurrentFirstRow() {
         return this.currentFirstRow;
     }
     
     /**
-     *  Set index of the forst row currently displayed in the list of authors. This is an index
+     *  Set index of the forst row currently displayed in the list of publications. This is an index
      *  in the results returned by a search query.
      *
-     *  @param row index of the first row currently displayed in the list of authors
+     *  @param row index of the first row currently displayed in the list of publications
      */
     public void setCurrentFirstRow(int row) {
         this.currentFirstRow = row;
@@ -539,19 +552,19 @@ public class AuthorManager extends Observable {
     }
 
     /**
-     *  Set author we are going to edit in the add/edit author dialog
-     *  @param editAuthor   Author we are going to edit
+     *  Set publication we are going to edit in the add/edit publication dialog
+     *  @param editPublication   Publication we are going to edit
      */
-    public void setEditAuthor(Author editAuthor) {
-        this.editAuthor = editAuthor;
+    public void setEditPublication(Publication editPublication) {
+        this.editPublication = editPublication;
     }
     
     /**
-     *  Get author we are editing in the add/edit author dialog
-     *  @param editAuthor   Author we are editing
+     *  Get publication we are editing in the add/edit publication dialog
+     *  @param editPublication   Publication we are editing
      */    
-    public Author getEditAuthor() {
-        return this.editAuthor;
+    public Publication getEditPublication() {
+        return this.editPublication;
     }
     
     /**
@@ -571,131 +584,131 @@ public class AuthorManager extends Observable {
     }
     
     /**
-     *  Set name search field.
-     *  @param name name of author to search for
+     *  Set collection name search field.
+     *  @param collectionName name of the collection to search for
      */
-    public void setSearchName(String name) {
-        this.searchName = name;
+    public void setSearchCollectionName(String collectionName) {
+        this.searchCollectionName = collectionName;
     }
     
     /**
-     *  Set organization search field.
-     *  @param organization organization of author used for searching
+     *  Set journal name search field.
+     *  @param journalName name of the journal used for searching
      */
-    public void setSearchOrganization(String organization) {
-        this.searchOrganization = organization;
+    public void setSearchJournalName(String journalName) {
+        this.searchJournalName = journalName;
     }
     
     /**
-     *  Set role search field.
-     *  @param role role of author used for searching
+     *  Set reference citation search field.
+     *  @param referenceCitation reference citation used for searching
      */
-    public void setSearchRole(String role) {
-        this.searchRole = role;
+    public void setSearchReferenceCitation(String referenceCitation) {
+        this.searchReferenceCitation = referenceCitation;
     }
     
     /**
-     *  Set email search field.
-     *  @param email email of author used for searching
+     *  Set reference detail search field.
+     *  @param referenceDetail reference detail used for searching
      */
-    public void setSearchEmail(String email) {
-        this.searchEmail = email;
+    public void setSearchReferenceDetail(String referenceDetail) {
+        this.searchReferenceDetail = referenceDetail;
     }
         
     /**
-     *  Get name of the author.
-     *  @return string with the name of the author
+     *  Get collection name.
+     *  @return collection name for the publication
      */
-    public String getName() {
-        return name;
+    public String getCollectionName() {
+        return collectionName;
     }
     
     /**
-     *  Set name of the author.
-     *  @param name name of the author
+     *  Set collection name.
+     *  @param collectionName collection name for the publication
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
     }
     
     /**
-     *  Get organization of the author.
-     *  @return string with the organization of the author
+     *  Get year of collection publication.
+     *  @return year of collection publication
      */
-    public String getOrganization() {
-        return organization;
+    public int getPublicationYear() {
+        return publicationYear;
     }
     
     /**
-     *  Set organization of the author.
-     *  @param organization organization of the author
+     *  Set year of collection publication.
+     *  @param publicationYear year of collection publication
      */
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setPublicationYear(int publicationYear) {
+        this.publicationYear = publicationYear;
     }
     
     /**
-     *  Get role of the author.
-     *  @return string with the role of the author
+     *  Get the name of the journal where published.
+     *  @return name of the journal where published
      */
-    public String getRole() {
-        return role;
+    public String getJournalName() {
+        return journalName;
     }
     
     /**
-     *  Set role of the author.
-     *  @param role role of the author
+     *  Set the name of the journal where published.
+     *  @param journalName name of the journal where published
      */
-    public void setRole(String role) {
-        this.role = role;
+    public void setJournalName(String journalName) {
+        this.journalName = journalName;
     }
     
     /**
-     *  Get address of the author.
-     *  @return string with the address of the author
+     *  Get the name of the author of the journal where published.
+     *  @return name of the author of the journal where published
      */
-    public String getAddress() {
-        return address;
+    public String getJournalAuthor() {
+        return journalAuthor;
     }
     
     /**
-     *  Set address of the author.
-     *  @param address address of the author
+     *  Set the name of the author of the journal where published.
+     *  @param journalAuthor name of the author of the journal where published
      */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setJournalAuthor(String journalAuthor) {
+        this.journalAuthor = journalAuthor;
     }
     
     /**
-     *  Get phone number of the author.
-     *  @return string with the phone number of the author
+     *  Get the reference citation.
+     *  @return reference citation
      */
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getReferenceCitation() {
+        return referenceCitation;
     }
     
     /**
-     *  Set phone number of the author.
-     *  @param phoneNumber phone number of the author
+     *  Set the reference citation.
+     *  @param referenceCitation reference citation
      */
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setReferenceCitation(String referenceCitation) {
+        this.referenceCitation = referenceCitation;
     }
     
     /**
-     *  Get email of the author.
-     *  @return string with the email of the author
+     *  Get the reference detail.
+     *  @return reference detail
      */
-    public String getEmail() {
-        return email;
+    public String getReferenceDetail() {
+        return referenceDetail;
     }
     
     /**
-     *  Set email of the author.
-     *  @param email email of the author
+     *  Set the reference detail.
+     *  @param referenceDetail reference detail
      */
-    public void setEmail(String email) {
-        this.email = email;
+    public void setReferenceDetail(String referenceDetail) {
+        this.referenceDetail = referenceDetail;
     }
     
     /**

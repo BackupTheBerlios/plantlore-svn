@@ -1,11 +1,11 @@
 /*
- * AddAuthorCtrl.java
+ * AddPublicationCtrl.java
  *
  * Created on 21. leden 2006, 0:58
  *
  */
 
-package net.sf.plantlore.client.authors;
+package net.sf.plantlore.client.publications;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,34 +15,34 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import net.sf.plantlore.common.PlantloreHelp;
 import javax.swing.Timer;
-import net.sf.plantlore.client.authors.AuthorManagerCtrl.RoleFieldPropertyChangeListener;
 import net.sf.plantlore.common.ProgressDialog;
 import org.apache.log4j.Logger;
 
 /**
- * Controller for the Add/Edit author dialog in the AuthorManager MVC.
- *
+ * Controller for the Add/Edit publication dialog in the PublicationManager MVC.
+ * 
  * @author Tomas Kovarik
  * @version 1.0 BETA, May 1, 2006
  */
-public class AddAuthorCtrl {
-    /** Model of the Author manager MVC */
-    private AuthorManager model;
-    /** View for adding authors in Autho mManager */
-    private AddAuthorView view;
+public class AddPublicationCtrl {
+    /** Model of the Publication manager MVC */
+    private PublicationManager model;
+    /** View for adding publications in PublicationManager */
+    private AddPublicationView view;
     /** Timer used to check for the end of long running tasks */
     private Timer timer;
     /** Instance of progress dialog */
     private ProgressDialog progress;    
     /** Instance of a logger */ 
     private Logger logger;
-    /** 
-     *  Creates a new instance of AddAuthorCtrl 
-     *
-     *  @param addModel Model of the Author manager MVC
-     *  @param addView View for adding authors in Author manager
+    
+    /**
+     *  Creates a new instance of AddPublicationCtrl 
+     * 
+     * @param addModel Model of the Publication manager MVC
+     * @param addView View for adding authors in Publication manager
      */
-    public AddAuthorCtrl(AuthorManager addModel, AddAuthorView addView) {
+    public AddPublicationCtrl(PublicationManager addModel, AddPublicationView addView) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         // Save instance of view and model
         this.model = addModel;
@@ -50,13 +50,13 @@ public class AddAuthorCtrl {
         // Add listeners for buttons and fields
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.helpBtnAddActionListener(new HelpButtonListener());
-        view.saveBtnAddActionListener(new SaveAuthorButtonListener());        
-        view.nameAddPropertyChangeListener(new NameFieldPropertyChangeListener());
-        view.organizationAddPropertyChangeListener(new OrganizationFieldPropertyChangeListener());
-        view.roleAddPropertyChangeListener(new RoleFieldPropertyChangeListener());
-        view.addressAddFocusListener(new AddressAreaFocusListener());
-        view.phoneNumberAddPropertyChangeListener(new PhoneFieldPropertyChangeListener());
-        view.emailAddPropertyChangeListener(new EmailFieldPropertyChangeListener());
+        view.saveBtnAddActionListener(new SavePublicationButtonListener());        
+        view.collectionNameAddPropertyChangeListener(new CollectionNameFieldPropertyChangeListener());
+        view.publicationYearAddPropertyChangeListener(new PublicationYearFieldPropertyChangeListener());
+        view.journalNameAddPropertyChangeListener(new JournalNameFieldPropertyChangeListener());
+        view.journalAuthorAddPropertyChangeListener(new JournalAuthorFieldPropertyChangeListener());
+        view.referenceCitationAddPropertyChangeListener(new ReferenceCitationFieldPropertyChangeListener());
+        view.referenceDetailAddPropertyChangeListener(new ReferenceDetailFieldPropertyChangeListener());
         view.urlAddPropertyChangeListener(new UrlFieldPropertyChangeListener());
         view.noteAddFocusListener(new NoteAreaFocusListener());                
         // Create a timer to check for the end of long running task
@@ -69,7 +69,6 @@ public class AddAuthorCtrl {
                     view.setDialogEnabled(true);                    
                     if (model.processErrors() == false) {    
                         if (model.isResultAvailable()) {   
-                            System.out.println("current first row: "+model.getCurrentFirstRow());
                             model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());                        
                         }
                     }
@@ -100,23 +99,26 @@ public class AddAuthorCtrl {
     }
     
     /**
-     * ActionListener class controlling the <b>Save author</b> button on the form. Checks whether all the 
-     * required fields have been set and calls model to save the data when the button is clicked.
-     * This metod is used for saving new author as well as updating the existing one.
+     * ActionListener class controlling the <b>Save publication</b> button on the form. Checks whether all 
+     * the required fields have been set and calls model to save the data when the button is clicked.
+     * This metod is used for saving new publication as well as updating the existing one.
      */    
-    class SaveAuthorButtonListener implements ActionListener {
+    class SavePublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {            
             // Check whether all the required fields are present
-            if (view.checkNonEmpty("name") &&
-                view.checkNonEmpty("organization") && view.checkNonEmpty("role") &&
-                view.checkNonEmpty("address") && view.checkNonEmpty("phone") &&
-                view.checkNonEmpty("email") && view.checkNonEmpty("url")) {
-                if (model.getEditAuthor() == null) {
-                    // Save new author
-                    model.saveAuthor();                
+            if (view.checkNonEmpty(PublicationManager.FIELD_COLLECTION_NAME) &&
+                view.checkNonEmpty(PublicationManager.FIELD_COLLECTION_YEAR) && 
+                view.checkNonEmpty(PublicationManager.FIELD_JOURNAL_AUTHOR) &&
+                view.checkNonEmpty(PublicationManager.FIELD_JOURNAL_NAME) &&
+                view.checkNonEmpty(PublicationManager.FIELD_REFERENCE_CITATION) &&
+                view.checkNonEmpty(PublicationManager.FIELD_REFERENCE_DETAIL) && 
+                view.checkNonEmpty(PublicationManager.FIELD_URL)) {
+                if (model.getEditPublication() == null) {
+                    // Save new publication
+                    model.savePublication();                
                 } else {
-                    // Edit existing author
-                    model.editAuthor();
+                    // Edit existing publication
+                    model.editPublication();
                 }
                 // Disable the dialog while saving author
                 view.setDialogEnabled(false);                                
@@ -131,60 +133,56 @@ public class AddAuthorCtrl {
     }        
 
     /**
-     *  PropertyChangeListener class for updating <b>Name</b> field in the model with data from the form.
+     *  PropertyChangeListener class for updating <b>Collection name</b> field in the model with data from the form.
      */
-    class NameFieldPropertyChangeListener implements PropertyChangeListener {
+    class CollectionNameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setName(view.getName());
+            model.setCollectionName(view.getCollectionName());
         }        
     }
     
     /**
-     *  PropertyChangeListener class for updating <b>organization</b> field in the model with data from the form.
+     *  PropertyChangeListener class for updating <b>publication year</b> field in the model with data from the form.
      */
-    class OrganizationFieldPropertyChangeListener implements PropertyChangeListener {
+    class PublicationYearFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setOrganization(view.getOrganization());
+            model.setPublicationYear(view.getPublicationYear());
         }        
     }    
     
     /**
-     *  PropertyChangeListener class for updating <b>role</b> field in the model with data from the form.
+     *  PropertyChangeListener class for updating <b>journal name</b> field in the model with data from the form.
      */
-    class RoleFieldPropertyChangeListener implements PropertyChangeListener {
+    class JournalNameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setRole(view.getRole());
+            model.setJournalName(view.getJournalName());
         }        
     }    
 
     /**
-     *  FocusListener class for updating <b>address</b> field in the model with data from the form.
-     */    
-    class AddressAreaFocusListener implements FocusListener {
-        public void focusLost(FocusEvent e) {
-            model.setAddress(view.getAddress());
+     *  PropertyChangeListener class for updating <b>journal author</b> field in the model with data from the form.
+     */
+    class JournalAuthorFieldPropertyChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
+            model.setJournalAuthor(view.getJournalAuthor());
         }        
-
-        public void focusGained(FocusEvent e) {
-            // Empty
-        }
-    }        
+    }    
     
     /**
-     *  PropertyChangeListener class for updating <b>phone number</b> field in the model with data from the form.
+     *  PropertyChangeListener class for updating <b>reference citation</b> field in the model with data from the form.
      */
-    class PhoneFieldPropertyChangeListener implements PropertyChangeListener {
+    class ReferenceCitationFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setPhoneNumber(view.getPhoneNumber());
+            model.setReferenceCitation(view.getReferenceCitation());
         }        
     }        
     
     /**
-     *  PropertyChangeListener class for updating <b>email</b> field in the model with data from the form.
+     *  PropertyChangeListener class for updating <b>reference detail</b> field in the model with data from the form.
      */
-    class EmailFieldPropertyChangeListener implements PropertyChangeListener {
+    class ReferenceDetailFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setEmail(view.getEmail());
+            model.setReferenceDetail(view.getReferenceDetail());
         }        
     }        
     

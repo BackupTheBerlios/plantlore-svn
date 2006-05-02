@@ -1,11 +1,11 @@
 /*
- * AuthorManagerCtrl.java
+ * PublicationManagerCtrl.java
  *
  * Created on 15. leden 2006, 2:04
  *
  */
 
-package net.sf.plantlore.client.authors;
+package net.sf.plantlore.client.publications;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,18 +18,18 @@ import javax.swing.Timer;
 import org.apache.log4j.Logger;
 
 /**
- * Controller for the main AuthorManager dialog (part of the AutorManager MVC).
- *
+ * Controller for the main PublicationManager dialog (part of the PublicationManager MVC).
+ * 
  * @author Tomas Kovarik
  * @version 1.0 BETA, May 1, 2006
  */
-public class AuthorManagerCtrl {
+public class PublicationManagerCtrl {
     /** Instance of a logger */
     private Logger logger; 
-    /** Model of the AuthorManager MVC */
-    AuthorManager model;
-    /** View of the AuthorManager MVC */
-    AuthorManagerView view;
+    /** Model of the PublicationManager MVC */
+    PublicationManager model;
+    /** View of the PublicationManager MVC  */
+    PublicationManagerView view;
          
     private Timer timerSearch;          // Used for periodic checking of the state of other thread
     private Timer timerDelete;          // Used for periodic checking of the state of other thread    
@@ -37,30 +37,31 @@ public class AuthorManagerCtrl {
     /** Frequency of the timer used for periodic checking of the state of other threads */
     private final int TIMER_FREQUENCY = 100;
     
-    /** 
-     * Creates a new instance of AuthorManagerCtrl 
-     * @param authModel model of AuthorManager MVC
-     * @param authView  view of AuthorManager MVC
+    /**
+     * Creates a new instance of PublicationManagerCtrl 
+     * 
+     * @param publModel model of PublicationManager MVC
+     * @param publView  view of PublicationManager MVC
      */
-    public AuthorManagerCtrl(AuthorManager authModel, AuthorManagerView authView) {
+    public PublicationManagerCtrl(PublicationManager publModel, PublicationManagerView publView) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
         // Save model and view
-        this.model = authModel;
-        this.view = authView;
+        this.model = publModel;
+        this.view = publView;
         // Add action listeners to buttons
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.helpBtnAddActionListener(new HelpButtonListener());
-        view.addBtnAddActionListener(new AddAuthorButtonListener());
-        view.searchBtnAddActionlistener(new SearchAuthorButtonListener());
-        view.deleteBtnAddActionListener(new DeleteAuthorButtonListener());
-        view.editBtnAddActionListener(new EditAuthorButtonListener());
+        view.addBtnAddActionListener(new AddPublicationButtonListener());
+        view.searchBtnAddActionlistener(new SearchPublicationButtonListener());
+        view.deleteBtnAddActionListener(new DeletePublicationButtonListener());
+        view.editBtnAddActionListener(new EditPublicationButtonListener());
         view.previousBtnAddActionListener(new PreviousButtonListener());
         view.nextBtnAddActionListener(new NextButtonListener());        
         // Add PropertyChange listeners to fields in search box
-        view.nameAddPropertyChangeListener(new NameFieldPropertyChangeListener());
-        view.organizationAddPropertyChangeListener(new OrganizationFieldPropertyChangeListener());
-        view.roleAddPropertyChangeListener(new RoleFieldPropertyChangeListener());
-        view.emailAddPropertyChangeListener(new EmailFieldPropertyChangeListener());                
+        view.collectionNameAddPropertyChangeListener(new CollectionNameFieldPropertyChangeListener());
+        view.journalNameAddPropertyChangeListener(new JournalNameFieldPropertyChangeListener());
+        view.referenceCitationAddPropertyChangeListener(new ReferenceCitationFieldPropertyChangeListener());
+        view.referenceDetailAddPropertyChangeListener(new ReferenceDetailFieldPropertyChangeListener());                
         // Add PropertyChange listener for the field with number of records to show
         view.rowsAddPropertyChangeListener(new RowsPropertyChangeListener());
         view.sortAddFocusListener(new SortComboFocusListener());
@@ -106,14 +107,14 @@ public class AuthorManagerCtrl {
                                 model.setCurrentFirstRow(row);                                                                
                             }
                         }
-                        // Update table with authors - remove deleted author                        
+                        // Update table with publications - remove deleted author                        
                         model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
                     }
                 }
             }
         });   
-        // Display all authors when Author manager is opened
-        model.searchAuthor();
+        // Display all publications when Publication manager is opened
+        model.searchPublication();
         // Disable current view and run timer
         view.setDialogEnabled(false);                                
         timerSearch.start();                
@@ -144,54 +145,54 @@ public class AuthorManagerCtrl {
     }
     
     /**
-     * ActionListener class controlling the <b>Add author</b> button on the form.
+     * ActionListener class controlling the <b>Add publication</b> button on the form.
      */    
-    class AddAuthorButtonListener implements ActionListener {
+    class AddPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // Display dialog for adding / editing authors. This dialog shares model with
-            // the rest of the AuthorManager.
-            AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), false);
-            AddAuthorCtrl addAuthCtrl = new AddAuthorCtrl(model, addAuthView);            
-            // We are going to add author, no editing
-            model.setEditAuthor(null);
-            addAuthView.setSize(400,450);        
-            addAuthView.setLocationRelativeTo(null);
-            logger.info("Add Author dialog opened for adding new author");            
-            addAuthView.setVisible(true);
+            // Display dialog for adding / editing publications. This dialog shares model with
+            // the rest of the PublicationManager.
+            AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), false);
+            AddPublicationCtrl addPublCtrl = new AddPublicationCtrl(model, addPublView);            
+            // We are going to add publication, no editing
+            model.setEditPublication(null);
+            // addPublView.setSize(400,450);        
+            addPublView.setLocationRelativeTo(null);
+            logger.info("Add Publication dialog opened for adding new author");            
+            addPublView.setVisible(true);
         }
     }    
     
     /**
-     * ActionListener class controlling the <b>Edit author</b> button on the form.
+     * ActionListener class controlling the <b>Edit publication</b> button on the form.
      */    
-    class EditAuthorButtonListener implements ActionListener {
+    class EditPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            int index = view.getSelectedAuthor();
+            int index = view.getSelectedPublication();
             if (index == -1) {
                 view.selectRowMsg();
                 return;
             }          
-            AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), false);
-            AddAuthorCtrl addAuthCtrl = new AddAuthorCtrl(model, addAuthView);            
+            AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), false);
+            AddPublicationCtrl addPublCtrl = new AddPublicationCtrl(model, addPublView);            
             // Save author we are going to edit
-            model.setEditAuthor(model.getSelectedAuthor(index));            
-            model.setAuthorIndex(index);
-            model.loadAuthor();
-            addAuthView.setSize(400,450);        
-            addAuthView.setLocationRelativeTo(null);
-            logger.info("Add Author dialog opened for editing author");
-            addAuthView.setVisible(true);            
+            model.setEditPublication(model.getSelectedPublication(index));            
+            model.setPublicationIndex(index);
+            model.loadPublication();
+            // addPublView.setSize(400,450);        
+            addPublView.setLocationRelativeTo(null);
+            logger.info("Add Publication dialog opened for editing author");
+            addPublView.setVisible(true);            
         }
     }
     
     /**
-     * ActionListener class controlling the <b>Delete Author</b> button on the form.
+     * ActionListener class controlling the <b>Delete Publication</b> button on the form.
      */    
-    class DeleteAuthorButtonListener implements ActionListener {
+    class DeletePublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            logger.info("Delete Author button pressed");
+            logger.info("Delete Publication button pressed");
             // Check whether a row is selected
-            int index = view.getSelectedAuthor();
+            int index = view.getSelectedPublication();
             if (index == -1) {
                 view.selectRowMsg();
                 return;
@@ -201,8 +202,8 @@ public class AuthorManagerCtrl {
                 return;
             }
             // Call delete
-            model.setAuthorIndex(index);
-            model.deleteAuthor();
+            model.setPublicationIndex(index);
+            model.deletePublication();
             // Disable current view and run timer
             view.setDialogEnabled(false);                    
             timerDelete.start();                
@@ -213,21 +214,21 @@ public class AuthorManagerCtrl {
     }    
 
     /**
-     * ActionListener class controlling the <b>Search Authors</b> button on the form.
+     * ActionListener class controlling the <b>Search Publications</b> button on the form.
      */    
-    class SearchAuthorButtonListener implements ActionListener {
+    class SearchPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Check whether at least one search field is non-empty
-            if (view.checkNonEmpty("name") || view.checkNonEmpty("organization") ||
-                view.checkNonEmpty("role") || view.checkNonEmpty("email")) {
+            if (view.checkNonEmpty("collectionName") || view.checkNonEmpty("journalName") ||
+                view.checkNonEmpty("referenceCitation") || view.checkNonEmpty("referenceDetail")) {
                 // Run DB search
-                model.searchAuthor();
+                model.searchPublication();
                 // Disable current view and run timer
                 view.setDialogEnabled(false);                                
                 timerSearch.start();                
                 // Display dialog with progress bar
                 progress = new ProgressDialog(view.getDialog(), true);
-                progress.show();                                                
+                progress.show();                                   
             } else {
                 // Show error message - no search criteria
                 view.showSearchErrorMessage();
@@ -289,43 +290,42 @@ public class AuthorManagerCtrl {
     }                
     
     /**
-     *  PropertyChange listener for the <strong>name field</strong> at the search panel. After losing focus automaticaly 
+     *  PropertyChange listener for the <strong>collection name field</strong> at the search panel. After losing focus automaticaly 
      *  stores value of the field to model object.
      */
-    class NameFieldPropertyChangeListener implements PropertyChangeListener {
+    class CollectionNameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setSearchName(view.getName());
-            System.out.println("Name set: "+view.getName());
+            model.setSearchCollectionName(view.getCollectionName());
         }        
     }
 
     /**
-     *  PropertyChange listener for the <strong>organization field</strong> at the search panel. After losing focus automaticaly 
+     *  PropertyChange listener for the <strong>journal name field</strong> at the search panel. After losing focus automaticaly 
      *  stores value of the field to model object.
      */    
-    class OrganizationFieldPropertyChangeListener implements PropertyChangeListener {
+    class JournalNameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setSearchOrganization(view.getOrganization());
+            model.setSearchJournalName(view.getJournalName());
         }        
     }    
 
     /**
-     *  PropertyChange listener for the <strong>role field</strong> at the search panel. After losing focus automaticaly 
+     *  PropertyChange listener for the <strong>reference citation field</strong> at the search panel. After losing focus automaticaly 
      *  stores value of the field to model object.
      */    
-    class RoleFieldPropertyChangeListener implements PropertyChangeListener {
+    class ReferenceCitationFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setSearchRole(view.getRole());
+            model.setSearchReferenceCitation(view.getReferenceCitation());
         }        
     }    
 
     /**
-     *  PropertyChange listener for the <strong>email field</strong> at the search panel. After losing focus automaticaly 
+     *  PropertyChange listener for the <strong>reference detail field</strong> at the search panel. After losing focus automaticaly 
      *  stores value of the field to model object.
      */        
-    class EmailFieldPropertyChangeListener implements PropertyChangeListener {
+    class ReferenceDetailFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setSearchEmail(view.getEmail());
+            model.setSearchReferenceDetail(view.getReferenceDetail());
         }        
     }        
     
@@ -344,7 +344,6 @@ public class AuthorManagerCtrl {
             }
             // Set new value in the model
             model.setDisplayRows(view.getDisplayRows());
-            logger.debug("New number of rows to display: "+view.getDisplayRows());
             // If neccessary reload search results
             if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
                 model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
