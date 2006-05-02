@@ -1120,7 +1120,7 @@ public class History {
     	for (int i=0; i< count; i++) {
     		try {
     			logger.debug("Object for update: "+editObjectList.get(i));
-                database.executeUpdate(editObjectList.get(i));
+                database.executeUpdateHistory(editObjectList.get(i));
 	        } catch (RemoteException e) {
 	                logger.error("CommitUpdate - RemoteException: "+e.toString());
 	        } catch (DBLayerException e) {
@@ -1152,7 +1152,7 @@ public class History {
     		historyChange = historyRecord.getHistoryChange(); 
     		
 	    	try {
-				database.executeDelete(historyRecord);
+				database.executeDeleteHistory(historyRecord);
 				logger.debug("Deleting historyRecord successfully. Number of result: "+i);
 			} catch (RemoteException e) {
 				logger.error("Deleting historyRecord - remoteException. "+e.toString());
@@ -1164,7 +1164,7 @@ public class History {
 				//samzat zaznam z tabulky tHistoryChange - muzeme protoze neexistuji dalsi FK z tHistory.cChngeId
 				//pokud po smazani zaznamu z tHistory jsme nasli alespon jeden zaznam, ktery ma stejny FK na zaznam z tChangeHistory
 				try {
-					database.executeDelete(historyChange);
+					database.executeDeleteHistory(historyChange);
 					logger.debug("Deleting historyChange successfully.");
 				} catch (RemoteException e) {
 					logger.error("Deleting historyChange - remoteException. "+e.toString());

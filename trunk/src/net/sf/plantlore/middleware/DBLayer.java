@@ -31,6 +31,12 @@ public interface DBLayer extends Remote, Serializable {
         
     public void executeUpdate(Object data) throws DBLayerException, RemoteException;
     
+    public int executeInsertHistory(Object data) throws DBLayerException, RemoteException;
+    
+    public void executeDeleteHistory(Object data) throws DBLayerException, RemoteException;
+        
+    public void executeUpdateHistory(Object data) throws DBLayerException, RemoteException;
+    
     public Object[] more(int resultId, int from, int to) throws DBLayerException, RemoteException;
     
     public Object[] next(int resultId) throws DBLayerException, RemoteException;
