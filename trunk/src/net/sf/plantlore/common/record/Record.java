@@ -1,7 +1,11 @@
 package net.sf.plantlore.common.record;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+
+import net.sf.plantlore.client.export.Template;
 
 /**
  * The common ancestor of all records. 
@@ -47,7 +51,43 @@ public abstract class Record implements Serializable {
 		return nn;
 	}
 	
+	/**
+	 * Two records are equal if they have exactly the same values
+	 * in the same columns (and this extends to foreign keys as well).
+	 * <br/>
+	 * For instance:
+	 * Comparing <code>Occurrence1</code> to <code>Occurrence2</code> will also compare
+	 * <code>Occurrence1.Habitat.Territory.Name</code>
+	 *  to <code>Occurrence2.Habitat.Territory.Name</code>.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof Record) ) return false;
+		Record record = (Record) obj;
+		Class table = record.getClass();
+		for(String column : record.getColumns() ) {
+			Method get = Template.getMethod(table, column);
+			try {
+				Object 
+					v1 = get.invoke(this, new Object[0]),
+					v2 = get.invoke(obj, new Object[0]);
+				if(v1 == null && v2 == null) return true;
+				if(v1 == null || v2 == null) return false;
+				return v1.equals(v2); // possible recursion here!
+			} 
+			catch(IllegalAccessException e) { return false; }
+			catch(InvocationTargetException e) { return false; }
+		}
+		return false;
+	}
 	
+	
+	/**
+	 * Convert an array of strings to an ArrayList<String>.
+	 * 
+	 * @param values	Varargs - strings.
+	 * @return	ArrayList containing all values.
+	 */
 	protected static ArrayList<String> list(String... values) {
 		if(values == null) return new ArrayList<String>(0);
 		ArrayList<String> list = new ArrayList<String>(values.length);

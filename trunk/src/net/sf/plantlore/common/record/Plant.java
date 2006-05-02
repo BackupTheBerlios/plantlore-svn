@@ -47,7 +47,7 @@ public class Plant extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR,
+    	return list( TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR,
     			CZECHNAME, SYNONYMS, NOTE, SURVEYTAXID );
     }
     

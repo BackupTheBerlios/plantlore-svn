@@ -47,7 +47,7 @@ public class Author extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE );
+    	return list( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
     }
     
     /**

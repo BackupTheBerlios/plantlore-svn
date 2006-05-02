@@ -49,8 +49,8 @@ public class Publication extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
-    			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE );
+    	return list( COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
+    			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE, DELETED );
     }
     
     public ArrayList<String> getNN() {

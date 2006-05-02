@@ -67,6 +67,8 @@ public class CSVBuilder extends AbstractBuilder{
 	 */
 	public void startRecord() throws IOException {
 		 cache.clear(); authors.clear(); authocc.clear(); firstColumnOnThisLine = true;
+		 stream.write("====================================================");
+		 stream.write(NEWLINE);
 	}
 	
 	/**

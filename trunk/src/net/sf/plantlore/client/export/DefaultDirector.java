@@ -6,9 +6,12 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Observable;
 
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.Selection;
+import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.server.DBLayerException;
 
 import org.apache.log4j.Logger;
@@ -31,7 +34,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
- * @version 1.0 BETA - might still slightly change
+ * @version 1.0 RC 1
  *
  * @see net.sf.plantlore.client.common.Selection
  * @see net.sf.plantlore.client.export.Builder
@@ -61,7 +64,8 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @param database	The database layer that will quench the Director's thirst for more results.
 	 * @param selection	The set of selected records.
 	 */
-	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection) {
+	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection) 
+	throws ExportException {
 		setBuilder(builder); 
 		setResult(result); 
 		setDatabase(database); 
@@ -69,29 +73,40 @@ public class DefaultDirector extends Observable implements Runnable {
 	}
 	
 	
-	protected void setBuilder(Builder builder) {
-		if(builder == null)
+	protected void setBuilder(Builder builder) 
+	throws ExportException {
+		if(builder == null) {
 			logger.warn("The builder is null!");
+			throw new ExportException("The builder cannot be null!");
+		}
 		build = builder;
 	}
 	
-	protected void setResult(int result) {
-		if(result < 0)
+	protected void setResult(int result) 
+	throws ExportException {
+		if(result < 0) {
 			logger.warn("The result set is probably not valid!");
+			throw new ExportException("The result set identificator cannot be negative!");
+		}
 		this.result =  result;
 	}
 	
-	protected void setDatabase(DBLayer db) {
-		if(db == null)
+	protected void setDatabase(DBLayer db) 
+	throws ExportException {
+		if(db == null) {
 			logger.warn("The database layer is null!");
+			throw new ExportException("The database layer cannot be null!");
+		}
 		this.database = db;
 	}
 	
-	protected void setSelection(Selection selection) {
-		if(selection == null || selection.isEmpty())
+	protected void setSelection(Selection selection) 
+	throws ExportException {
+		if(selection == null || selection.isEmpty()) {
 			logger.warn("The selection is null or empty!");
-		if(selection == null) this.selection = new Selection(); // empty selection
-		else this.selection = selection.clone();
+			throw new ExportException("The selection cannot be empty!");
+		}
+		this.selection = selection.clone();
 	}
 	
 	/** 
@@ -116,6 +131,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * whole record.
 	 */
 	private void buildParts(Record record) throws IOException {
+		if(record == null) return;
 		// Build this part of the record.
 		build.part(record);
 		// Now look at all children of this record.
@@ -125,9 +141,33 @@ public class DefaultDirector extends Observable implements Runnable {
 				// And build'em too.
 				buildParts( (Record) getter.invoke( record, NO_PARAM ) );
 			}
-			catch(IllegalAccessException e) { e.printStackTrace(); }
-			catch(InvocationTargetException e) { e.printStackTrace(); }
+			catch(IllegalAccessException e) { /*e.printStackTrace();*/ }
+			catch(InvocationTargetException e) { /*e.printStackTrace();*/ }
 		}
+	}
+	
+	
+	
+	private void loadAssociatedAuthors(Occurrence occurrence) 
+	throws RemoteException, IOException, DBLayerException {
+		
+		SelectQuery query = database.createQuery(AuthorOccurrence.class);
+		query.createAlias(AuthorOccurrence.OCCURRENCE, "OCC");
+
+		// AuthorOccurrence.OCCURRENCE = Occurrence.ID  &&  Occurrence.ID = occ.getId()
+		query.addRestriction(PlantloreConstants.RESTR_EQ_PROPERTY, AuthorOccurrence.OCCURRENCE, "OCC."+Occurrence.ID, null, null);
+		query.addRestriction(PlantloreConstants.RESTR_EQ, "OCC."+Occurrence.ID, null, occurrence.getId(), null);
+		int resultId = database.executeQuery( query );
+		
+		// Take all results and spit'em out.
+		int rows = database.getNumRows( resultId );
+		for(int i = 0; i < rows; i++) {
+			Object[] pulp = database.more( resultId, i, i );
+			AuthorOccurrence ao = (AuthorOccurrence) ((Object[])pulp[0])[0];
+			ao.setOccurrence( null ); // cut off the way back to the occurrence
+			buildParts( ao );
+		}
+		database.closeQuery( query );
 	}
 	
 	
@@ -157,12 +197,12 @@ public class DefaultDirector extends Observable implements Runnable {
 				// Parse the record.
 				buildParts( record );
 				
-				// ONE-TO-MANY HACK:
-				// Occurrence -> AuthorOccurrences & Authors
-				// FIXME: Jak se to ma Director dozvedet, ze ma delat tuhle iteraci :\
-				
-				
-				
+				/* -----------------------------------------------------------
+				 * Deal with the one-to-many relationship
+				 * of Occurence -> AuthorOccurence ~ Author
+				 * ----------------------------------------------------------- */
+				if( record instanceof Occurrence ) 
+					loadAssociatedAuthors( (Occurrence)record );
 				
 				build.finishRecord();
 				

@@ -39,7 +39,7 @@ public class AuthorOccurrence extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, AUTHOR, OCCURRENCE, ROLE, RESULTREVISION );
+    	return list( AUTHOR, OCCURRENCE, ROLE, RESULTREVISION );
     }
     
     /**

@@ -53,8 +53,8 @@ public class Habitat extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
-    			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE );
+    	return list( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+    			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     
     /**

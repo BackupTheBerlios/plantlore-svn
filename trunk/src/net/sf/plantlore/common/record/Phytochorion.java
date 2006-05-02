@@ -37,7 +37,7 @@ public class Phytochorion extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, CODE, NAME );
+    	return list( CODE, NAME );
     }
     
     public ArrayList<String> getNN() {

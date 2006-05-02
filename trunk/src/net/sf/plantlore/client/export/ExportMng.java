@@ -63,7 +63,8 @@ public class ExportMng extends Observable implements Observer {
 			new XFilter(L10n.getString("FilterXML"), true, ".xml"),
 			new XFilter(L10n.getString("FilterCSV"), true, ".txt", ".csv"),	
 			new XFilter(L10n.getString("FilterABCD"), ".xml"),	
-			new XFilter(L10n.getString("FilterDC"), ".xml")
+			new XFilter(L10n.getString("FilterDC"), ".xml"),
+			new XFilter(L10n.getString("FilterStdOut"), true, ".out")
 	};
 	
 	

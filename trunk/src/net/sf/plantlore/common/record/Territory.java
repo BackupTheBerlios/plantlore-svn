@@ -35,7 +35,7 @@ public class Territory extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( ID, NAME );
+    	return list( NAME );
     }
     
     public ArrayList<String> getNN() {
