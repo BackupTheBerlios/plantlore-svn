@@ -20,6 +20,7 @@ import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
 
@@ -40,6 +41,7 @@ public class AppCore extends Observable
     private int recordsPerPage = 30;
     private int currentPage = 1;
     private DBLayer database;  
+    private Right accessRights;
     private OverviewTableModel tableModel;
     private Logger logger;
 
@@ -83,6 +85,14 @@ public class AppCore extends Observable
     
     protected void setDatabase(DBLayer dblayer) {
     	this.database = dblayer;
+    }
+    
+    public Right getAccessRights() {
+    	return this.accessRights;
+    }
+    
+    protected void setAccessRights(Right rights) {
+    	this.accessRights = rights;
     }
     
     /** Returns table model for the main Overview.

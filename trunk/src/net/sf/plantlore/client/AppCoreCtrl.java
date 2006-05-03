@@ -24,6 +24,12 @@ import javax.swing.JFormattedTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import net.sf.plantlore.client.export.ExportMng;
+import net.sf.plantlore.client.export.ExportMngCtrlA;
+import net.sf.plantlore.client.export.ExportMngViewA;
+import net.sf.plantlore.client.export.ExportProgressCtrl;
+import net.sf.plantlore.client.export.ExportProgressView;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.WholeHistoryCtrl;
 import net.sf.plantlore.client.history.WholeHistoryView;
@@ -103,6 +109,14 @@ public class AppCoreCtrl
     Login loginModel;
     LoginView loginView;
     LoginCtrl loginCtrl;
+    
+    // Export
+    ExportMng exportModel;
+    ExportMngViewA exportView;
+    ExportMngCtrlA exportCtrl;
+    ExportProgressView exportProgressView;
+    ExportProgressCtrl exportProgressCtrl;
+    
     
     /** Creates a new instance of AppCoreCtrl */
     public AppCoreCtrl(AppCore model, AppCoreView view)
@@ -554,6 +568,7 @@ public class AppCoreCtrl
     			System.out.println("[!] DBLayer retrieval.");
     			DBLayer dblayer = loginModel.getDBLayer();
     			model.setDatabase(dblayer);
+    			model.setAccessRights( loginModel.getAccessRights() );
     			view.initOverview();
     		}
     	}
