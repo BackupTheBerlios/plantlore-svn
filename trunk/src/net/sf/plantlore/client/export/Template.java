@@ -41,10 +41,17 @@ public class Template {
 	 * (concerns History, LastUpdate, User, AccessRights, and possibly more).
 	 */
 	public final static Class[] BASIC_TABLES = new Class[] { 
-			Author.class, AuthorOccurrence.class, Habitat.class,
-			Metadata.class, Occurrence.class, Phytochorion.class,
-			Plant.class, Publication.class, Territory.class,
-			Village.class };
+		Author.class, AuthorOccurrence.class, Habitat.class,
+		Metadata.class, Occurrence.class, Phytochorion.class,
+		Plant.class, Publication.class, Territory.class,
+		Village.class 
+	};
+	
+	/**
+	 * A set of tables that cannot be changed.
+	 */
+	public final static HashSet<Class> IMMUTABLE = new HashSet( 10 );
+
 	
 	/** Create a new template. */
 	public Template() {}
@@ -76,9 +83,22 @@ public class Template {
 	public static Method getMethod(Class table, String column) {
 		return getters.get(table+"."+column);
 	}
+	
+	
+	public static Object get(Record record, String column) {
+		try {
+			return getMethod(record.getClass(), column).invoke(record, new Object[0]);
+		} catch (Exception e) { return null; }
+	}
 		
 	/** Pre-load all getters. */
 	static {
+		
+		IMMUTABLE.add(Plant.class);
+		IMMUTABLE.add(Territory.class);
+		IMMUTABLE.add(Village.class);
+		IMMUTABLE.add(Phytochorion.class);
+		
 		// Take all basic tables.
 		for( Class table : Template.BASIC_TABLES)
 			try {
