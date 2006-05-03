@@ -18,7 +18,7 @@ package net.sf.plantlore.common.record;
  */
 public class Right extends Record {
     /** Parameters of the Right record */
-    private int id;   
+    private Integer id;   
     private int administrator;
     private int editAll;
     private int editOwn;
@@ -56,7 +56,7 @@ public class Right extends Record {
      *   @param id id of the right
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class Village extends Record {
     /** Parameters of the Village */    
-    private int id;   
+    private Integer id;   
     private String name;
 
     /** Constants with column mapping (used for building select queries) */
@@ -54,7 +54,7 @@ public class Village extends Record {
      *   @param id id of the village
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

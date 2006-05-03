@@ -23,6 +23,13 @@ public abstract class Record implements Serializable {
 	 */
 	public abstract Integer getId();
 	
+	/** 
+	 * Every record has an ID number that is unique in its table.
+	 * 
+	 * @param id The new ID number of the record.
+	 */
+	public abstract void setId(Integer id);
+	
 	/**
 	 * Some records in the database are marked as deleted.
 	 * A record is considered <i>dead</i> if it was marked as deleted. 
@@ -62,8 +69,25 @@ public abstract class Record implements Serializable {
 	}
 	
 	/**
+	 * Are all not null values really not null?
+	 * <b>Very expensive operation!</b>
+	 * 
+	 * @return True if all columns marked as Not Null contain some value (i.e. they are not null).
+	 */
+	public boolean areAllNNSet() {
+		for( String column : getNN() ) try {
+			Object value = Template.getMethod(this.getClass(), column).invoke(this, new Object[0]);
+			if( value == null ) return false;
+			if( value instanceof Record && !((Record)value).areAllNNSet() ) return false;
+		} catch(IllegalAccessException e) { return false; }
+		catch(InvocationTargetException e) { return false; }
+		return true;
+	}
+	
+	/**
 	 * Two records are equal if they have exactly the same values
 	 * in the same columns (and this extends to foreign keys as well).
+	 * <b>Very expensive operation!</b>
 	 * <br/>
 	 * For instance:
 	 * Comparing <code>Occurrence1</code> to <code>Occurrence2</code> will also compare
@@ -98,7 +122,7 @@ public abstract class Record implements Serializable {
 	 * @param values	Varargs - strings.
 	 * @return	ArrayList containing all values.
 	 */
-	protected static ArrayList<String> list(String... values) {
+	public static ArrayList<String> list(String... values) {
 		if(values == null) return new ArrayList<String>(0);
 		ArrayList<String> list = new ArrayList<String>(values.length);
 		for(String value : values) list.add(value);

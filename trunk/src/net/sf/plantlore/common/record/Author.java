@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Author extends Record {
     /** Parameters of the author. For detailed explanation see data model documentation. */
-    private int id;
+    private Integer id;
     private String wholeName;
     private String organization;
     private String role;
@@ -61,7 +61,7 @@ public class Author extends Record {
      *   @param id unique id of the author
      *   @see getID
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

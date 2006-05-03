@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class Territory extends Record {
     /** Parameters of the territory */
-    private int id;    
+    private Integer id;    
     private String name;
     
     /** Constants with column mapping (used for building select queries) */
@@ -56,7 +56,7 @@ public class Territory extends Record {
      *   @param id   id of the territory
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

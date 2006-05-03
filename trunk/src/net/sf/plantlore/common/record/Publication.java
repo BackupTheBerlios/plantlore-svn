@@ -76,7 +76,7 @@ public class Publication extends Record {
      *   @param id id of the publication
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

@@ -24,7 +24,7 @@ public class HistoryChange extends Record {
     public static final int HISTORYCHANGE_EDITGROUP = 4;    
     
     /** Parameters of the HistoryChange. For detailed explanation see data model documentation. */
-    private int id;
+    private Integer id;
     private Occurrence occurrence;
     private int recordId;
     private int oldRecordId;
@@ -63,7 +63,7 @@ public class HistoryChange extends Record {
      *   @param id   id of the HistoryChange record
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

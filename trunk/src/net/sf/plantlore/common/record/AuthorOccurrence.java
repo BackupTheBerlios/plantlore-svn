@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class AuthorOccurrence extends Record {
     /** Parameters of AuthorOccurence */
-    private int id;
+    private Integer id;
     private Author author;
     private Occurrence occurrence;
     private String role;
@@ -63,7 +63,7 @@ public class AuthorOccurrence extends Record {
      *   @param id id of the AuthorOccurrence
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

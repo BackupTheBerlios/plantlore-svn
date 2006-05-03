@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class Phytochorion extends Record {
     /** Parameters of phytochorion */
-    private int id;
+    private Integer id;
     private String code;
     private String name;
     
@@ -58,7 +58,7 @@ public class Phytochorion extends Record {
      *   @param id id of the phytochorion
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

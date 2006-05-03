@@ -17,7 +17,7 @@ package net.sf.plantlore.common.record;
  */
 public class HistoryColumn extends Record {
     /** Parameters of the HistoryColumn. For detailed explanation see data model documentation. */
-    private int id;    
+    private Integer id;    
     private String tableName;
     private String columnName;
 
@@ -48,7 +48,7 @@ public class HistoryColumn extends Record {
      *   @param id id of the HistoryColumn
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

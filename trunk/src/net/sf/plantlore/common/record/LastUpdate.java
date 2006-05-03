@@ -11,7 +11,7 @@ package net.sf.plantlore.common.record;
 public class LastUpdate extends Record {
 
 	 /** Parameters of the LastUpdate. For detailed explanation see data model documentation. */
-    private int id;
+    private Integer id;
     private String tableName;
     private java.util.Date lastUpdate;    
     
@@ -42,7 +42,7 @@ public class LastUpdate extends Record {
      *   @param id   id of the LastUpdate record
      *   @see getId
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     

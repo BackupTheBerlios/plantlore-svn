@@ -15,7 +15,7 @@ package net.sf.plantlore.common.record;
  */
 public class User extends Record {
     /** Parameters of the user */
-    private int id;
+    private Integer id;
     private String login;
     private String firstName;
     private String surname;
@@ -59,7 +59,7 @@ public class User extends Record {
      *   @param id id of the user
      *   @see getID
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     
