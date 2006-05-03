@@ -48,6 +48,7 @@ public class AuthCtrl {
 			}
 			catch(RemoteException e) {
 				logger.warn("Either the network connection has failed or the server has crashed or gone off. Details: " + e);
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(view,
 						L10n.getString("errorRemoteException"),
 					    L10n.getString("errorRemoteExceptionTitle"),

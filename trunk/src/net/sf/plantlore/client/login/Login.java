@@ -7,6 +7,7 @@ import java.util.Observable;
 
 import org.apache.log4j.Logger;
 
+import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.DBLayerFactory;
 import net.sf.plantlore.server.DBLayerException;
@@ -44,6 +45,9 @@ public class Login extends Observable {
 	private DBLayer dblayer;
 	private Logger logger;
 	
+	
+	private Right accessRights;
+	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
 	 * new DBLayers.
@@ -67,6 +71,15 @@ public class Login extends Observable {
 		
 
 		 // TEMPORARY CODE STARTS HERE
+		dbinfo.add(new DBInfo("Kovo Home", "86.49.59.39", -1,
+				"jdbc:firebirdsql:localhost/3050:c:/Kovo/PlantloreClean/plantloreHIBdataUTF.fdb", 
+				new String[] { "sysdba", null, null, null, null }));
+		
+		
+		dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
+				"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
+				new String[] { "sysdba", null, null, null, null }));
+		
 				dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
 						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdataUTF.fdb", 
 						new String[] { "sysdba", null, null, null, null }));
@@ -75,9 +88,7 @@ public class Login extends Observable {
 							"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
 							new String[] { "sysdba", null, null, null, null }));
 				
-				dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
-						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
-						new String[] { "sysdba", null, null, null, null }));
+				
 		 // TEMPORARY CODE ENDS HERE
 		
 		this.setChanged(); this.notifyObservers();
@@ -219,10 +230,10 @@ public class Login extends Observable {
 		// Initialize the database layer.
 		logger.debug("Initializing that DBLayer (" + selected.db + ", " + name + ", " + password + "...");
 		try {
-			dblayer.initialize(selected.db,name, password);
+			accessRights = dblayer.initialize(selected.db,name, password);
 		} 
 		catch (DBLayerException exception) {
-			logger.warn("The initialization of the DBLayer failed! Here's why: " + exception);
+			logger.error("The initialization of the DBLayer failed! Here's why: " + exception);
 			// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 			// If it is not, the server's policy may not allow another connection from this client!
 			factory.destroy(dblayer);
@@ -247,6 +258,7 @@ public class Login extends Observable {
 		if(dblayer != null) {
 			factory.destroy(dblayer);
 			dblayer = null;
+			accessRights = null;
 			logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
 			this.setChanged(); this.notifyObservers();
 		}
@@ -258,5 +270,13 @@ public class Login extends Observable {
 	 */	
 	public DBLayer getDBLayer() { 
 		return dblayer; 
+	}
+	
+	/**
+	 * @return The list of access rights as returned by the database layer
+	 * after initialization.
+	 */
+	public Right getAccessRights() {
+		return accessRights;
 	}
 }
