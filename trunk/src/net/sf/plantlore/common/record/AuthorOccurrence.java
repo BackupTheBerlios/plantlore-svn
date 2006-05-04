@@ -25,6 +25,7 @@ public class AuthorOccurrence extends Record {
     private Occurrence occurrence;
     private String role;
     private String resultRevision;
+    private Integer deleted;
         
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
@@ -32,6 +33,7 @@ public class AuthorOccurrence extends Record {
     public static final String OCCURRENCE = "occurrence";
     public static final String ROLE = "role";
     public static final String RESULTREVISION = "resultRevision";
+    public static final String DELETED = "deleted";
     
     @Override
     public ArrayList<String> getForeignKeys() { 
@@ -138,4 +140,23 @@ public class AuthorOccurrence extends Record {
     public void setResultRevision(String resultRevision) {
         this.resultRevision = resultRevision;
     }    
+    
+        /**
+     *   Get flag telling whether the record has been deleted
+     *   @return flag telling whether the record has been deleted. Value 1 means deleted.
+     *   @see setDeleted
+     */
+    public Integer getDeleted() {
+        return this.deleted;
+    }
+    
+    /**
+     *   Set flag telling whether the record has been deleted
+     *   @param deleted flag telling whether the record has been deleted. Value 1 means deleted.
+     *   @see getDeleted
+     */
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }   
+    
 }
