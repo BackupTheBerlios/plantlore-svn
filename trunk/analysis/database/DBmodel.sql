@@ -284,7 +284,7 @@ CREATE VIEW TAUTHORREVISION(
     CMONTH,
     CYEAR)
 AS
-select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.cresultrevisition, O.cdaycollected, O.cmonthcollected, O.cyearcollected
+select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.cresultrevision, O.cdaycollected, O.cmonthcollected, O.cyearcollected
 from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO JOIN toccurrences O  ON (A.CID = AO.cauthorid) ON (AO.coccurrenceid = O.cid)
 WHERE AO.crole = 'revision'
 ;
