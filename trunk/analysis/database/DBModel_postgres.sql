@@ -4,7 +4,6 @@
 /* 		Version: 4.4. 2006			     */
 /*							     */
 /*************************************************************/
-
 SET client_encoding = 'UNICODE';
 
 SET search_path = public, pg_catalog;
@@ -30,10 +29,11 @@ PRIMARY KEY (CID));
 /* Table: TAUTHORSOCCURRENCES, Owner: SYSDBA */
 CREATE TABLE TAUTHORSOCCURRENCES (
     CAUTHORID          SERIAL NOT NULL,
-    COCCURRENCEID      INTEGER,
+    COCCURRENCEID      INTEGER NOT NULL,
     CID                INTEGER NOT NULL,
     CROLE              VARCHAR(20),
     CRESULTREVISION  VARCHAR(30),
+    CDELETE           SMALLINT DEFAULT 0,
 PRIMARY KEY (CID));
 
 /* Table: THABITATS, Owner: SYSDBA */
@@ -76,7 +76,7 @@ PRIMARY KEY (CID));
 CREATE TABLE THISTORYCOLUMN (
     CID          SERIAL NOT NULL,
     CTABLENAME   VARCHAR(20) NOT NULL,
-    CCOLUMNNAME  VARCHAR(20),
+    CCOLUMNNAME  VARCHAR(30),
 PRIMARY KEY (CID));
 
 /* Table: TMETADATA, Owner: SYSDBA */
