@@ -39,7 +39,8 @@ public class WholeHistoryCtrl {
         view.nextButton.addActionListener(new nextButtonListener());     
         view.undoToDateButton.addActionListener(new undoToDateButtonListener());
         view.detailsButton.addActionListener(new detailsHistoryListener());
-        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());       
+        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener()); 
+        view.clearHistoryButton.addActionListener(new clearHistoryListener());
     }
     
             /** 
@@ -217,6 +218,22 @@ public class WholeHistoryCtrl {
                detailsView.setDetailsMessage(detailsMessage);
                detailsView.setVisible(true);               
            }          
+       }
+    }
+    
+    /**
+    *
+    */  
+    class clearHistoryListener implements ActionListener {
+       public void actionPerformed(ActionEvent actionEvent)
+       {
+           int okCancle = view.messageClearHistory();
+           if (okCancle == 0){
+                   //Button OK was press
+                   logger.debug("Button OK was press.");  
+                   //model.clearHistory
+                   //model.clearDatabase
+           }
        }
     }
 }

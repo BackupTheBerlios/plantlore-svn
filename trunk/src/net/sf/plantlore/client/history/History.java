@@ -200,6 +200,8 @@ public class History {
        setNamePlant(namePlant);
        setNameAuthor(nameAuthor);
        setLocation(location);
+       
+       database.closeQuery(query);
 /*
  * konec casti kodu, ktera bude dobudoucna nahrazena.
  * 
@@ -250,7 +252,8 @@ public class History {
            logger.error("Searching history data with condition 'operation = insert' failed. Unable to execute search query.");          
        } catch (RemoteException e) {		 
     	   System.err.println("RemoteException- searchInsertInfo(), executeQuery");
-	    }             
+	    }         
+       database.closeQuery(query);
     }
     
     
@@ -289,7 +292,9 @@ public class History {
             logger.error("Searching history data with condition 'operation = edit' failed. Unable to execute search query.");           
         } catch (RemoteException e) { 		   
      	   System.err.println("RemoteException- searchEditHistory(), executeQuery");
-	 	}           
+	 	}    
+        
+        //zde nejde zavrit session closeQuery
     }
     
     
@@ -351,7 +356,9 @@ public class History {
             logger.error("Searching whole history data failed. Unable to execute search query.");           
         } catch (RemoteException e) { 		   
      	   System.err.println("RemoteException- searchWholeHistoryData(), executeQuery");
-        }          
+        }   
+        
+        //zde nelze zavrit session closeQuery
     }
     
    /**
@@ -1164,8 +1171,11 @@ public class History {
        } catch (DBLayerException e) {
            // Log and set error in case of an exception
            logger.error("Processing search " +typeObject+ " results failed: "+e.toString());            
-       }     	    
-        return object; 	       	          	   
+       }   
+       //close session
+       database.closeQuery(query);
+       
+       return object; 	       	          	   
            	        
     }
     
@@ -1210,7 +1220,9 @@ public class History {
             String role = ((AuthorOccurrence)object[0]).getRole();
             allAuthor = allAuthor + role + ": " + author + "\n";
         }           
-      
+       //close session
+       database.closeQuery(query);
+       
        return allAuthor;     	    
     }
     
@@ -1309,16 +1321,19 @@ public class History {
             logger.error("Searching historyChangeId failed. Unable to execute search query.");
         } catch (RemoteException e) {		 
      	   System.err.println("RemoteException- searchHistoryChangeId(), executeQuery");
- 	    } 
+        } 
+
+        int countResult = 100;
+        try {
+                    countResult = database.getNumRows(resultIdChange);
+                    logger.debug("SearchHistoryChangeId - Number of result: "+countResult);
+            } catch (RemoteException e) {
+                    System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
+            }		
+        //close session
+        database.closeQuery(query);
         
- 	    int countResult = 100;
- 	    try {
-			countResult = database.getNumRows(resultIdChange);
-			logger.debug("SearchHistoryChangeId - Number of result: "+countResult);
-		} catch (RemoteException e) {
-			System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
-		}		
-		return countResult;
+	return countResult;
     }
     
     public void generateMessageUndo() {    	
@@ -1426,6 +1441,24 @@ public class History {
         
         logger.debug("detailsMessage: "+ detailsMessage);
         return detailsMessage;
+    }
+    
+    /*
+     * Tato funkce smaze vsechny data z tabulky tHistoryChange a z tHistory
+     * delete from tHistory;
+     * delete from tHistoryChange;
+     */
+    public void clearHistory() {
+        
+    }
+    
+    /*
+     * Tato funkce projde tabulky s cdelete - tAuthors, tAuthorsOccurrences, tOccurrences, tHabitats, tPublications
+     * a smaze v techto tabulkach zaznamy, ktere maji cdelete == 1
+     * delete from tAuthors where cdelete = 1;
+     */
+    public void clearDatabase() {
+        
     }
     
      //***************************//

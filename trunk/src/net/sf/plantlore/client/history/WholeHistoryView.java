@@ -59,6 +59,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         nextButton = new javax.swing.JButton();
         previousButton = new javax.swing.JButton();
         detailsButton = new javax.swing.JButton();
+        clearHistoryButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
@@ -99,6 +100,8 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
 
         detailsButton.setText(L10n.getString("detailsHistory"));
 
+        clearHistoryButton.setText(L10n.getString("clearHistory"));
+
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -124,6 +127,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
                         .add(org.jdesktop.layout.GroupLayout.LEADING, nextButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(org.jdesktop.layout.GroupLayout.LEADING, previousButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
                     .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, clearHistoryButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(org.jdesktop.layout.GroupLayout.LEADING, detailsButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(org.jdesktop.layout.GroupLayout.LEADING, undoToDateButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -134,7 +138,9 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
                 .add(undoToDateButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(detailsButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 65, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(clearHistoryButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 36, Short.MAX_VALUE)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(totalResultLabel)
                     .add(totalResultValueLabel))
@@ -232,7 +238,12 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
      
     public void messageSelection() {
     	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
-    } 
+    }
+    
+    public int messageClearHistory() {
+    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("clearHistoryMessage"), "Information", JOptionPane.OK_CANCEL_OPTION);
+    	return okCancle;
+    }
     
     /**Rows to display */
     public Integer getDisplayRows() { 
@@ -251,6 +262,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
     }  
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton clearHistoryButton;
     protected javax.swing.JButton closeButton;
     protected javax.swing.JButton detailsButton;
     private javax.swing.JLabel displayedLabel;

@@ -133,6 +133,7 @@
                               <Component id="previousButton" alignment="0" pref="125" max="32767" attributes="1"/>
                           </Group>
                           <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="clearHistoryButton" alignment="0" max="32767" attributes="1"/>
                               <Component id="detailsButton" alignment="0" max="32767" attributes="1"/>
                               <Component id="undoToDateButton" alignment="0" pref="126" max="32767" attributes="1"/>
                           </Group>
@@ -147,7 +148,9 @@
                       <Component id="undoToDateButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="detailsButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="65" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="clearHistoryButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="36" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="totalResultLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="totalResultValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -258,6 +261,16 @@
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="L10n.getString(&quot;detailsHistory&quot;)" type="code"/>
+                </Property>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="clearHistoryButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="L10n.getString(&quot;clearHistory&quot;)" type="code"/>
                 </Property>
               </Properties>
               <AuxValues>
