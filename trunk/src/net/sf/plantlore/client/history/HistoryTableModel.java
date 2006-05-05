@@ -84,12 +84,14 @@ public class HistoryTableModel extends AbstractTableModel
     	}
     	//loud data for view
         Object[][] editHistoryData = new Object[countRow][6];   
-    	for (int i=firstRow-1; i < countResult; i++) {  
-    		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());    		
+    	for (int i=firstRow-1; i < countResult; i++) { 
+                String columnName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName();
+                String tableName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getTableName();
+    		String item = L10n.getString(tableName+"."+columnName);    		
     		if (! selectAll){     			
     			mark = isMark(item, i);
     		}
-    		editHistoryData[ii][0] = new Boolean(mark);    		
+            editHistoryData[ii][0] = new Boolean(mark);    		
     	    editHistoryData[ii][1] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
     	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
     	    editHistoryData[ii][3] = item;
@@ -185,8 +187,10 @@ public class HistoryTableModel extends AbstractTableModel
     public void initMarkAllItem() {    	
     	editHistoryDataList = model.getHistoryDataList();    	
     	int countResult = editHistoryDataList.size();    	
-    	for (int i=0; i < countResult; i++) {      		    		    	
-    		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());
+    	for (int i=0; i < countResult; i++) {    
+                String columnName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName();
+                String tableName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getTableName();
+    		String item = L10n.getString(tableName+"."+columnName);        		
     		updateMarkList(item, i, true);
     	} 
     	model.setMarkItem(markItem);
@@ -195,7 +199,7 @@ public class HistoryTableModel extends AbstractTableModel
     }
     
     /**
-     * 
+     * v markListId se drzi seznam polozek, ktere jsou oznaceny
      *
      */
     public void updateMarkListId() {
@@ -204,7 +208,9 @@ public class HistoryTableModel extends AbstractTableModel
     	markItem = model.getMarkItem();
     	int countResult = editHistoryDataList.size();    	
     	for (int i=0; i < countResult; i++) {  
-    		String item = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());    		    		
+    		String columnName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName();
+                String tableName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getTableName();
+    		String item = L10n.getString(tableName+"."+columnName);    
     		if (isMark(item, i)){
     			markListId.add(i);
     		}

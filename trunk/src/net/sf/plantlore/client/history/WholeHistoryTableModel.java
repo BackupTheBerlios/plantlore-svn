@@ -75,11 +75,14 @@ public class WholeHistoryTableModel extends AbstractTableModel {
         int ii = 0;
     	//loud data for view
         Object[][] editHistoryData = new Object[countRow][6];   
-    	for (int i=firstRow-1; i < countResult; i++) {      	            
+    	for (int i=firstRow-1; i < countResult; i++) {     
+            String columnName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName();
+            String tableName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getTableName();
+            String item = L10n.getString(tableName+"."+columnName); 
     	    editHistoryData[ii][0] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
             editHistoryData[ii][1] = L10n.getString( "operation"+((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getOperation());
     	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
-    	    editHistoryData[ii][3] = L10n.getString(((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName());
+    	    editHistoryData[ii][3] = item;
     	    editHistoryData[ii][4] = ((HistoryRecord)editHistoryDataList.get(i)).getOldValue();
     	    editHistoryData[ii][5] = ((HistoryRecord)editHistoryDataList.get(i)).getNewValue();
     	    ii++;

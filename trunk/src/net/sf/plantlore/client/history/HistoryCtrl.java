@@ -69,7 +69,7 @@ public class HistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {    	  
     	   // Display help viewer            
-    	   System.out.println("Tady se bude volat Help!");
+    	   System.out.println("Tady se bude volat Help!");           
        }
    }
    
