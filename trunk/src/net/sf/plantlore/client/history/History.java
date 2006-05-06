@@ -29,6 +29,7 @@ import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.middleware.DBLayer;
@@ -61,7 +62,7 @@ public class History {
     /** List of data (results of a search query) displayed in the table */
     private ArrayList<HistoryRecord> historyDataList = new ArrayList();     
     // seznam editovanych objektu (potrebny pro hromadne potvrzeni update)
-    private ArrayList<Object> editObjectList = new ArrayList();
+    private ArrayList<Record> editObjectList = new ArrayList<Record>();
     // informace pro uzivatele o record undo
     private String messageUndo;
 
@@ -71,11 +72,7 @@ public class History {
     //Seznam Item + maxIdItem (nejstarsi oznacene id pro dany Item=sloupec)
     private ArrayList<Object[]> markItem = new ArrayList();
     //Informuje o tom, zda byla zvolena volba "SelectAll"
-    private boolean selectAll;
-    //Informuje o tom zda exituje pro dany nalez vazba 1:1 mezi tabulkami tHabitats a tOccurrences
-    private boolean relationship;
-    //Informuje o tom zda doslo k editaci polozky z tabulky tHabitat
-    private boolean editHabitat;
+    private boolean selectAll;    
     
     //*********************Record of history, ... ***************************************//    
     private Occurrence occurrence;
@@ -443,7 +440,7 @@ public class History {
                 */
                 if (operation == HistoryChange.HISTORYCHANGE_INSERT) {
                     undoInsertDelete(0);
-                } else if (operation == HistoryChange.HISTORYCHANGE_EDIT || operation == HistoryChange.HISTORYCHANGE_EDITGROUP) {
+                } else if (operation == HistoryChange.HISTORYCHANGE_EDIT) {
                     undoEdit();
                 } else if (operation == HistoryChange.HISTORYCHANGE_DELETE) {
                     undoInsertDelete(1);
@@ -459,14 +456,13 @@ public class History {
     public void undoSelected() {
     	
     	// Inicalization of hashTable
+        initAuthorsOccurrenceHash();
     	initOccurrenceHash();
     	initHabitatHash();    	  
         	
     	//number of result
     	int countResult = getResultRows();
-    	// Pomocne hodnoty pro zjisteni zda zmena ovlivni vice nalezu
-    	relationship = false;
-    	editHabitat = false;
+    	// Pomocne hodnoty pro zjisteni zda zmena ovlivni vice nalezu    	
     	
     	//take from younger record to older record
     	for( int i=0; i < countResult; i++) {
@@ -561,13 +557,13 @@ public class History {
     public void undoAuthorOccurrence() {
         
         Object[] object = searchObject("AuthorOccurrence", recordId);
-        authorOccurrence = (AuthorOccurrence)object[0];
+        AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];        
         
         //test, zda jiz dany zaznam byl editovan
-        boolean objectList = editObjectList.contains(authorOccurrence); 
+        boolean objectList = editObjectList.contains((Record)authorOccurrence); 
         if (!objectList) {
         	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-            editObjectList.add(authorOccurrence);
+            editObjectList.add((Record)authorOccurrence);
         }
         logger.debug("editObjectList.contains: "+objectList);
         logger.debug("authorOccurrence: "+ authorOccurrence.getId());
@@ -609,13 +605,15 @@ public class History {
     public void undoOccurrence() {
         
         //zaznam v ramci, ktereho doslo k editaci tabulky tOccurrences
-        occurrence = historyChange.getOccurrence();
+        occurrence = historyChange.getOccurrence();               
         
-        boolean objectList = editObjectList.contains(occurrence);
+        boolean objectList = editObjectList.contains((Record)occurrence);
         if (!objectList) {
         	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-            editObjectList.add(occurrence);
+            logger.debug("ObjectList... add occurrences");
+            editObjectList.add((Record)occurrence);
         }
+        
         logger.debug("editObjectList: "+objectList);
         logger.debug("OccurrenceID: "+occurrence.getId());
         logger.debug("columnName: "+columnName);
@@ -729,14 +727,14 @@ public class History {
     public void undoHabitat() {
         
         //zaznam v ramci, ktereho doslo k editaci tabulky tHabitats        
-        habitat = historyChange.getOccurrence().getHabitat();
+        Habitat habitat = historyChange.getOccurrence().getHabitat();
       
         //K editaci tabulky tHabitats dojde jen v pripade editace nejakeho konkretniho nalezu
         //protoze neni k dispozici kaskadovy update musi se do seznamu objektu pridat i Habitat, i kdyz na nej muzem pristupovat pres konkretni zaznam
-        boolean objectList = editObjectList.contains(habitat); 
+        boolean objectList = editObjectList.contains((Record)habitat); 
         if (!objectList) {
             //pridani objektu do listu - informace o tom, ze byl dany objekt editovan (editace habitat vzdy v ramci occurrence)
-            editObjectList.add(habitat);
+            editObjectList.add((Record)habitat);
         }
         logger.debug("editObjectList: "+objectList);
         logger.debug("Habitat - OccurrenceID: "+habitat.getId());
@@ -750,9 +748,6 @@ public class History {
              columnConstant = 0;
         }        	    			
 
-        //informuje o tom, ze byla editovana tabulka tHabitat 
-        editHabitat = true;
-
         // Save new value for the column        		
         switch (columnConstant) {
         case 1:  //Quadrant     	                	
@@ -761,48 +756,27 @@ public class History {
                  * vazba mezi tabulkami pro dany nalez jiz bude na vzdy 1:1 
                  */ 	                		  
                 occurrence.getHabitat().setQuadrant(oldValue);		                	
-                logger.debug("Set selected value for update of attribute Quadrant.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {
-	                // existuji dva edity EDIT (ovlivni jeden nalez) a EDITGROUP (ovlivni vice nalezu)
-	                // potrebujeme zjistit, zda pro dany nalez je vazeba mezi tHabitats a tOccurrences vzdy 1:N
-	                // nebo zda editaci nalezu vznikla vazvba 1:1
-	                relationship = true;
-                } 	                	
+                logger.debug("Set selected value for update of attribute Quadrant.");                	
             break;
         case 2: //Place description 	                	 	                			                		 
                 occurrence.getHabitat().setDescription(oldValue);		                	
-                logger.debug("Set selected value for update of attribute Description.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	              	
+                logger.debug("Set selected value for update of attribute Description.");              	              	
                 break;
         case 3:  //Country 	                	 	                			                		 
                 occurrence.getHabitat().setCountry(oldValue);		                	
-                logger.debug("Set selected value for update of attribute Country.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	
+                logger.debug("Set selected value for update of attribute Country.");                
             break;
         case 4: //Altitude 	                	                			                		 
                 occurrence.getHabitat().setAltitude(Double.parseDouble(oldValue));		                	
-                logger.debug("Set selected value for update of attribute Altitude.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	
+                logger.debug("Set selected value for update of attribute Altitude.");                
                 break;
         case 5:  //Latitude   	                		                			                		  
                 occurrence.getHabitat().setLatitude(Double.parseDouble(oldValue));		                	
-                logger.debug("Set selected value for update of attribute Latitude.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	
+                logger.debug("Set selected value for update of attribute Latitude.");                
             break;
         case 6: //Longitude 	                		                			                		
                 occurrence.getHabitat().setLongitude(Double.parseDouble(oldValue));		                	
-                logger.debug("Set selected value for update of attribute Longitude.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	
+                logger.debug("Set selected value for update of attribute Longitude.");                
                 break;
         case 7: //Nearest bigger seat   	                	 	                			                		 
                 //Nacteni Village pro nasledny update tHabitat.cNearestVillageId
@@ -813,10 +787,7 @@ public class History {
                 logger.debug("Set selected value for update of attribute NearesVillage.");
                 } else {
                         logger.error("UNDO - Incorrect oldRecordId for Village.");
-                }
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                       relationship = true;
-                } 	
+                }                
             break;
         case 8: //Phytochorion or phytochorion code 	                	             			                		 
                 // Nacteni Phytochorion pro nasledny update tHabitat.cPhytochorionId
@@ -827,10 +798,7 @@ public class History {
                         logger.debug("Set selected value for update of attribute Phytochorion.");
                 }else {
                         logger.error("UNDO - Incorrect oldRecordId for Phytochoria.");
-                }
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	
+                }                
             break; 	               
         case 9:  //Territory   	                	                			                		  
                 // Nacteni Territory pro nasledny update tHabitat.cTerritory
@@ -841,17 +809,11 @@ public class History {
                         logger.debug("Set selected value for update of attribute Territory.");
                 }else {
                         logger.error("UNDO - Incorrect oldRecordId for Territory.");
-                }	
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                        relationship = true;
-                } 	        	
+                }	               
             break;
         case 10: //Note habitat	                		                			                		  
                 occurrence.getHabitat().setNote(oldValue);		                	
-                logger.debug("Set selected value for update of attribute Note.");
-                if (operation == HistoryChange.HISTORYCHANGE_EDIT) {	                		
-                       relationship = true;
-                } 	
+                logger.debug("Set selected value for update of attribute Note.");                
                 break;
         default:            
             logger.error("Habitat - No column defined for name "+ columnName);	                   
@@ -867,10 +829,10 @@ public class History {
         publication = (Publication)object[0];
         
         //test, zda jiz dany zaznam byl editovan
-        boolean objectList = editObjectList.contains(publication); 
+        boolean objectList = editObjectList.contains((Record)publication); 
         if (!objectList) {
         	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-            editObjectList.add(publication);
+            editObjectList.add((Record)publication);
         }
         logger.debug("editObjectList.contains: "+objectList);
         logger.debug("Publication: "+publication.getId());
@@ -928,10 +890,10 @@ public class History {
        author = (Author)object[0];
        
        //test, zda jiz dany zaznam byl editovan
-       boolean objectList = editObjectList.contains(author); 
+       boolean objectList = editObjectList.contains((Record)author); 
        if (!objectList) {
        	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-           editObjectList.add(author);
+           editObjectList.add((Record)author);
        }
        logger.debug("editObjectList.contains: "+objectList);
        logger.debug("author: "+author.getId());
@@ -993,10 +955,10 @@ public class History {
         phytochorion = (Phytochorion)object[0];     
         
         //test, zda jiz dany zaznam byl editovan
-        boolean objectList = editObjectList.contains(phytochorion); 
+        boolean objectList = editObjectList.contains((Record)phytochorion); 
         if (!objectList) {
         	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-            editObjectList.add(phytochorion);
+            editObjectList.add((Record)phytochorion);
         }
         logger.debug("editObjectList.contains: "+objectList);
         logger.debug("phytochorion: "+phytochorion.getId());
@@ -1022,10 +984,10 @@ public class History {
         village = (Village)object[0];
         
         // test, zda jiz dany zaznam byl editovan
-        boolean objectList = editObjectList.contains(village); 
+        boolean objectList = editObjectList.contains((Record)village); 
         if (!objectList) {
         	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-            editObjectList.add(village);
+            editObjectList.add((Record)village);
         }
         logger.debug("editObjectList.contains: "+objectList);
         logger.debug("village: "+village.getId());
@@ -1049,10 +1011,10 @@ public class History {
         territory = (Territory)object[0];
         
         // test, zda jiz dany zaznam byl editovan
-        boolean objectList = editObjectList.contains(territory); 
+        boolean objectList = editObjectList.contains((Record)territory); 
         if (!objectList) {
         	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
-            editObjectList.add(territory);
+            editObjectList.add((Record)territory);
         }
         logger.debug("editObjectList.contains: "+objectList);
         logger.debug("territory: "+territory.getId());
@@ -1275,7 +1237,7 @@ public class History {
 			} catch (DBLayerException e) {
 				logger.error("Deleting historyRecord failed. "+e.toString());
 			}
-			int countResult = searchHistoryChangeId(historyChange.getId());			
+			int countResult = getRelationshipHistoryChange(historyChange.getId());			
 			if (countResult == 0) {
 				//samzat zaznam z tabulky tHistoryChange - muzeme protoze neexistuji dalsi FK z tHistory.cChngeId
 				//pokud po smazani zaznamu z tHistory jsme nasli alespon jeden zaznam, ktery ma stejny FK na zaznam z tChangeHistory
@@ -1301,16 +1263,16 @@ public class History {
      * @param id
      * @return
      */
-    public int searchHistoryChangeId(int id){    	
+    public int getRelationshipHistoryChange(int id){    	
     	SelectQuery query = null;
         try {
-        	    query = database.createQuery(HistoryRecord.class);
-        	    // Create aliases for table tHistoryChange.      
+                query = database.createQuery(HistoryRecord.class);
+                // Create aliases for table tHistoryChange.      
                 query.createAlias("historyChange", "hc");  
                 // Add restriction to cChangeId column 
                 query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.id", null, id , null);
         } catch(RemoteException e) {
-        	    System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
+        	System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
         }        
         
         
@@ -1320,13 +1282,48 @@ public class History {
         } catch (DBLayerException e) {                   
             logger.error("Searching historyChangeId failed. Unable to execute search query.");
         } catch (RemoteException e) {		 
-     	   System.err.println("RemoteException- searchHistoryChangeId(), executeQuery");
+     	   System.err.println("RemoteException- getRelationshipHistoryChange(), executeQuery");
         } 
 
         int countResult = 100;
         try {
                     countResult = database.getNumRows(resultIdChange);
-                    logger.debug("SearchHistoryChangeId - Number of result: "+countResult);
+                    logger.debug("getRelationshipHistoryChange - Number of result: "+countResult);
+            } catch (RemoteException e) {
+                    System.err.println("RemoteException- getRelationshipHistoryChange(), getNumRows");
+            }		
+        //close session
+        database.closeQuery(query);
+        
+	return countResult;
+    }
+    
+    /*
+     * Tato funkce vrati pocet zaznamu z tOccurrence, ktere jsou provazany s konktretnim zaznamem v tHabitats
+     */
+    public int getRelationshipHabitat() {
+        SelectQuery query = null;
+        try {
+                query = database.createQuery(Occurrence.class);                
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.HABITAT , null, occurrence.getHabitat() , null);
+        } catch(RemoteException e) {
+        	System.err.println("RemoteException- getRelationshipHabitat(), createQuery");       	  
+        }        
+        
+        
+        int resultIdHabitat = 0;
+        try {                   
+        	resultIdHabitat = database.executeQuery(query);        
+        } catch (DBLayerException e) {                   
+            logger.error("Searching habitatId failed. Unable to execute search query.");
+        } catch (RemoteException e) {		 
+     	   System.err.println("RemoteException- getRelationshipHabitat(), executeQuery");
+        } 
+
+        int countResult = 100;
+        try {
+                    countResult = database.getNumRows(resultIdHabitat);
+                    logger.debug("getRelationshipHabitat - Number of result: "+countResult);
             } catch (RemoteException e) {
                     System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
             }		
@@ -1336,6 +1333,9 @@ public class History {
 	return countResult;
     }
     
+    /*
+     * Tato funkce je volana jen pro UNDO RECORD, coz znamena, ze pracuje jen s konkretnim nalezem
+     */
     public void generateMessageUndo() {    	
     	messageUndo = "Budou provedeny následující změny:\n";      
     	int count = markItem.size();
@@ -1346,13 +1346,13 @@ public class History {
     		oldValue = ((HistoryRecord)historyDataList.get(maxId)).getOldValue(); 
     		messageUndo = messageUndo + item + " --> " + oldValue + "\n";
     	}
-    	if (!relationship && editHabitat) {
-    		logger.debug(relationship);
-    		logger.debug(editHabitat);
-    		messageUndo = "\n" + messageUndo + "Tyto změny ovlivní více nálezů.\n";
+        //pracuji stale s konkretnim occurrence
+        int countResult = getRelationshipHabitat();			
+        if (countResult > 1) {
+            messageUndo = "\n" + messageUndo + "Tyto změny ovlivní více nálezů.\n";
     	}
-    }
-    
+    }    
+
     public String getMessageUndoToDate(String toDate) {
         String message = "Všechny změny od " + toDate + " budou zrušeny."; 
         return message;
