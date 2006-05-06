@@ -14,7 +14,6 @@ import net.sf.plantlore.common.PlantloreConstants;
  * explanation refer to Plantlore dosumnetation.
  *
  * FIXME Tie metody by asi mali hadzat DBLayerException a prekladat vyhadzovane HibernateExceptions
- * FIXME Chyba tu zoskupovanie podmienok vo WHERE klauzuli pomocou AND a OR
  *
  * @author Erik Kratochvíl (discontinuum@gmail.com), Tomáš Kovařík (kovo@matfyz.cz)
  * @since 2006-03-26
@@ -29,8 +28,13 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param propertyName name of the column for which we want to create an alias (foreign key column)
      *  @param aliasName name of the new alias
      */    
-    void createAlias(String propertyName, String aliasName)  throws RemoteException;
-    
+    void createAlias(String propertyName, String aliasName) throws RemoteException;
+
+    /**
+     *  Make the rows of the results to be distinct from each other. This checks whether whole rows
+     *  are distinct from each other. The check is done by Hibernate after the results are retrieved
+     *  from the database.
+     */    
     void setDistinct() throws RemoteException;
     
     /**
@@ -43,6 +47,23 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param values collection of values for restrictions working with more values (RESTR_IN)
      */
     void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values)  throws RemoteException;
+
+    /**
+     *  Connect restrictions with disjunction (OR) in the WHERE clause.
+     *  
+     *  @param items array of objects with the following structure:
+     *               <ul>
+     *                  <li>Index 0: type of the restriction (see PlantloreConstants for constants)</li>
+     *                  <li>Index 1: first property name (column name). Used to compare column with value</li>
+     *                  <li>Index 2: second property name (column name). Used when comparing two columns</li>
+     *                  <li>Index 3: value for the comparison. Used to compare column with value</li>
+     *              </ul>
+     *              4 values make one restriction, you can pass unlimited number of restrictions which will
+     *              be grouped together and connected in disjunction.
+     *  @throws IllegalArgumentException in case the input array is not of the correct length 
+     *  (must be at least 4 items and number of items must be divisible by 4)
+     */    
+    public void addOrRestriction(Object[] items) throws IllegalArgumentException, RemoteException;
     
     /**
      *  Add projection to constructed criteria. Projections are columns we want to select
@@ -51,7 +72,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param propertyName name of the column for the projection
      *  @see PlantloreConstants
      */
-    void addProjection(int type, String propertyName)  throws RemoteException;
+    void addProjection(int type, String propertyName) throws RemoteException;
     
     /**
      *  Set method of fetching the results.
@@ -59,7 +80,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param associationPath
      *  @param mode
      */
-    void setFetchMode(String associationPath, int mode)  throws RemoteException;
+    void setFetchMode(String associationPath, int mode) throws RemoteException;
     
     /**
      *  Add orderby clause to the constructed criteria.
@@ -67,7 +88,7 @@ public interface SelectQuery extends Serializable, Remote {
      *  @param direction direction of ordering (ASC or DESC)
      *  @param propertyName property we want to use for ordering the results
      */
-    void addOrder(int direction, String propertyName)  throws RemoteException;
+    void addOrder(int direction, String propertyName) throws RemoteException;
     
     /**
      *  Add association to the criteria. Association means that given associated record (from a
@@ -75,6 +96,6 @@ public interface SelectQuery extends Serializable, Remote {
      *
      *  @param associationPath path of associated entities
      */
-    void addAssociation(String associationPath)  throws RemoteException;
+    void addAssociation(String associationPath) throws RemoteException;
     
 }

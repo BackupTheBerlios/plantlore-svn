@@ -4,6 +4,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
+import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
 
@@ -47,6 +48,7 @@ public class Login extends Observable {
 	
 	
 	private Right accessRights;
+        private User plantloreUser;
 	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
@@ -71,24 +73,23 @@ public class Login extends Observable {
 		
 
 		 // TEMPORARY CODE STARTS HERE
-		dbinfo.add(new DBInfo("Kovo Home", "86.49.59.39", -1,
-				"jdbc:firebirdsql:localhost/3050:c:/Kovo/PlantloreClean/plantloreHIBdataUTF.fdb", 
-				new String[] { "sysdba", null, null, null, null }));
-		
-		
-		dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
-				"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
-				new String[] { "sysdba", null, null, null, null }));
-		
-				dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
+
+				dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
+						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
+						new String[] { "sysdba", null, null, null, null }));                
+
+				dbinfo.add(new DBInfo("My Home Database", "", -1,
+							"jdbc:firebirdsql:localhost/3050:c:/Kovo/PlantloreClean/plantloreHIBdataUTF.fdb", 
+							new String[] { "sysdba", null, null, null, null }));
+                                
+                                dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
 						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdataUTF.fdb", 
 						new String[] { "sysdba", null, null, null, null }));
 		
 				dbinfo.add(new DBInfo("Local Database", "localhost", -1,
 							"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
-							new String[] { "sysdba", null, null, null, null }));
-				
-				
+							new String[] { "sysdba", null, null, null, null }));				
+
 		 // TEMPORARY CODE ENDS HERE
 		
 		this.setChanged(); this.notifyObservers();
@@ -230,7 +231,9 @@ public class Login extends Observable {
 		// Initialize the database layer.
 		logger.debug("Initializing that DBLayer (" + selected.db + ", " + name + ", " + password + "...");
 		try {
-			accessRights = dblayer.initialize(selected.db,name, password);
+			Object[] init = dblayer.initialize(selected.db,name, password);
+                        plantloreUser = (User)init[0];
+                        accessRights = (Right)init[1];
 		} 
 		catch (DBLayerException exception) {
 			logger.error("The initialization of the DBLayer failed! Here's why: " + exception);

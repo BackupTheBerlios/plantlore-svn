@@ -27,6 +27,7 @@ import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Village;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -66,7 +67,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private User plantloreUser;
     /** Rights of the authenticated user */
     private Right rights;    
-    
+
     private static final int INITIAL_POOL_SIZE = 8;
     
     /**
@@ -93,15 +94,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         queries = new Hashtable<SelectQuery, SelectQuery>(INITIAL_POOL_SIZE);        
         sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
         logger.debug("      completed.");
-    }    
+    }
     
     /**
      *  Initialize database connection. Fire up Hibernate and open a session.
      *  Authenticate user and Load rights of this user
-     *  
+     *
+     *  @param dbID identifier of the database we want to connect to
+     *  @param user username for the access to plantlore on the server
+     *  @param password password for the access to plantlore on the server
+     *  @return array with two objects - User object with logged in user (index 0) and user's rights 
+     *          (Right object, index 1)
      *  @throws DBLayerException when the hibernate or database connection cannot be initialized
      */
-    public Right initialize(String dbID, String user, String password) throws DBLayerException {
+    public Object[] initialize(String dbID, String user, String password) throws DBLayerException {
         Configuration cfg;
         int result = 0;
         
@@ -127,7 +133,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw new DBLayerException("Cannot build Hibernate session factory. Details: "+e.getMessage());
         }   
         
-/* ===== SWITCH OFF THE SILLY AUTHENTICATION ===========================================        
         // Authenticate user
         try {
             SelectQuery sq = this.createQuery(User.class);            
@@ -144,12 +149,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             logger.warn("Authentication of user "+user+" failed!");
             return null;
         } else {
-            User clientUser = (User)userinfo[0];
+            User clientUser = (User)userinfo[0];            
             this.rights = clientUser.getRight();           
             this.plantloreUser = clientUser;
         }
-*/
-        return rights;
+        Object[] retValue = new Object[2];
+        retValue[0] = this.plantloreUser;
+        retValue[1] = this.rights;
+        return retValue;
     }    
     
     /**
@@ -288,8 +295,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public void executeDelete(Object data) throws DBLayerException {
         String table;
         int id, result = 0;
-        HistoryColumn column;
-        
+        HistoryColumn column;        
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable");
             throw new DBLayerException("SessionFactory not available");
@@ -402,16 +408,50 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when updating data fails
      */
     public void executeUpdate(Object data) throws DBLayerException {
+        int id;
+        
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable");
             throw new DBLayerException("SessionFactory not available");
         }
         Session session = sessionFactory.openSession();
-        Transaction tx = null;
+        Transaction tx = null;        
         try {
+            tx = session.beginTransaction();            
+/*            
             // Save data into history tables if required
-            // TODO
-            tx = session.beginTransaction();
+            if ((data instanceof Occurrence) || (data instanceof Author) ||
+                (data instanceof Publication) || (data instanceof Territory) ||
+                (data instanceof Village) || (data instanceof Phytochorion)) {
+                
+                HistoryChange historyChange = new HistoryChange();            
+                historyChange.setOperation(PlantloreConstants.UPDATE);
+                historyChange.setWhen(new java.util.Date());
+                historyChange.setWho(this.plantloreUser);
+                if (data instanceof Occurrence) {
+                    historyChange.setOccurrence((Occurrence)data);
+                    
+                    id = ((Publication)data).getId();                    
+                } else {
+                    historyChange.setOccurrence(null);
+                    historyChange.setOldRecordId(0);
+                    if (data instanceof Publication) {
+                        id = ((Publication)data).getId();
+                    } else if (data instanceof Author) {
+                        id = ((Author)data).getId();
+                    } else if (data instanceof Territory) {
+                        id = ((Territory)data).getId();                        
+                    } else if (data instanceof Village) {
+                        id = ((Village)data).getId();
+                    } else if (data instanceof Phytochorion) {
+                        id = ((Phytochorion)data).getId();
+                    } else {
+                        id = 0;
+                    }
+                    historyChange.setRecordId(id);
+                }                
+            }
+*/            
             // Save item into the database
             session.update(data);
             // Commit transaction
@@ -460,6 +500,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     /**
      *  Get more rows from the current result set.
      *
+     *  @param resultId id of the result from which we want to read
      *  @param from index of the first record we want to load
      *  @param to index of the last row we want to load
      *  @return array of records from the current result set. Each item in the array can be an
@@ -494,6 +535,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Object[] data = new Object[to-from+1];
         // Read all the selected rows
         try {
+            System.out.println("to-from = "+(to-from));
             for (int i=0; i<=(to-from); i++) {
                 logger.debug("About to get result number "+i);
                 if (res.next()) {
@@ -514,6 +556,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     /**
      *  Get next result from the current result set.
      *
+     *  @param resultId id of the result from which we want to read
      *  @return next record from the active result set. Array can contain more objects in case
      *          associated entities were fetched.
      *  @throws DBLayerException when loading the results fails
@@ -533,6 +576,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return res.get();        
     }
     
+    /**
+     *  Get the number of rows returned in the result.
+     *
+     *  @param  resultId id of the result we want the number of rows for
+     *  @return number of rows in the given result
+     */
     public int getNumRows(int resultId) {
         int numRows;
                 
@@ -550,13 +599,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
     
     /**
-     *  Close hibernate session.
+     *  Close the DBLayer. Close the session factory
      *
      *  @throws DBLayerException when closing session fails
      */
     public void close() throws DBLayerException {    
         if (sessionFactory == null) {
-            logger.warn("SessionFactory not avilable");
+            logger.warn("SessionFactory not available");
             throw new DBLayerException("SessionFactory not available");
         }        
         try {
@@ -568,7 +617,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
     
     /**
-     *  Start building select query.
+     *  Start building a select query.
      *
      *  @param classname entity we want to select from the database (given holder object class)
      *  @return an instance of <code>SelectQuery</code> used for building a query by client
@@ -605,7 +654,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	
     	if(undertaker != null) 
     		try { UnicastRemoteObject.unexportObject(selectQuery, true); }
-    		catch(NoSuchObjectException e) {}
+                catch(NoSuchObjectException e) {}
     	
     	assert(selectQuery instanceof SelectQueryImplementation);
     	SelectQueryImplementation sq = (SelectQueryImplementation) selectQuery;
@@ -634,10 +683,78 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return maxResultId;
     }
     
+    /**
+     *  Execute SQL delete with condition. Only administrator should be allowed to run this.
+     *  The method doesn't handle foreign key constraints
+     *  
+     *  @param tableClass class representing the table we want to delete data from
+     *  @param column name of the column in the condition
+     *  @param operation operation in the condition (must be SQL compatible, e.g. =, >, <)
+     *  @param value value in the condition. Must be either String, Integer or Date
+     *  @return number of rows deleted
+     */
+    public int conditionDelete(Class tableClass, String column, String operation, Object value) throws DBLayerException {
+        String tableName;
+        int deletedEntities = 0;
+        
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable");
+            // throw new DBLayerException("SessionFactory not available");
+        }
+        Transaction tx = null;
+        try {
+            Session session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+            Query hqlQuery;
+            String hqlDelete = "delete "+tableClass.getName(); 
+            if (column != null) {
+                hqlDelete += " where "+column+" "+operation+" :value";
+                hqlQuery = session.createQuery(hqlDelete);
+                if (value instanceof String) {                
+                    hqlQuery.setString("value", ((String)value));
+                } else if (value instanceof Integer) {
+                    hqlQuery.setInteger("value", ((Integer)value));
+                } else if (value instanceof java.util.Date) {
+                    hqlQuery.setDate("value", ((java.util.Date)value));
+                }
+            } else {
+                hqlQuery = session.createQuery(hqlDelete);            
+            }
+            deletedEntities = hqlQuery.executeUpdate();
+            tx.commit();
+            session.close();                    
+        } catch (HibernateException e) {
+            logger.fatal("Cannot execute conditional delete on table "+tableClass.getName());
+            throw new DBLayerException("Cannot execute conditional delete on table "+tableClass.getName());
+        }
+        return deletedEntities;
+    }
+    
+    /**
+     *  Close the select query.
+     *
+     *  @param query query we want to close
+     */
     public void closeQuery(SelectQuery query) {
         Session session = sessions.get(query);
         session.close();
         sessions.remove(query);
+    }
+    
+    /**
+     *  Method to get the currently logged user. Returns null if there is no user logged in.
+     *  @return currently logged in user or null, if there is no user logged in.
+     */
+    public User getUser() {
+        return this.plantloreUser;
+    }
+    
+    /**
+     *  Method to get the rights of the currently logged in user. Returns null if there is no user logged in
+     *  @return rights of the currently logged in user or null if there is no user logged in.
+     */
+    public Right getUserRights() {
+        return this.rights;
     }
     
     /**

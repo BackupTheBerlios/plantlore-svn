@@ -8,6 +8,7 @@
 package net.sf.plantlore.server;
 
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -15,9 +16,11 @@ import net.sf.plantlore.middleware.SelectQuery;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 
 /**
  * Implemetation of SelectQuery using Hibernate OR Mapping for database querying. Creates Hibernate
@@ -57,11 +60,16 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @param propertyName name of the column for which we want to create an alias (foreign key column)
      *  @param aliasName name of the new alias
      */
-    public void createAlias(String propertyName, String aliasName) {
+    public void createAlias(String propertyName, String aliasName) throws RemoteException {
         criteria.createAlias(propertyName, aliasName);
     }
     
-    public void setDistinct() {
+    /**
+     *  Make the rows of the results to be distinct from each other. This checks whether whole rows
+     *  are distinct from each other. The check is done by Hibernate after the results are retrieved
+     *  from the database.
+     */
+    public void setDistinct() throws RemoteException {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
     }
     
@@ -74,10 +82,13 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @param value value for restrictions containg values
      *  @param values collection of values for restrictions working with more values (RESTR_IN)
      */
-    public void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values) {
+    public void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values) throws RemoteException {
         switch (type) {
             case PlantloreConstants.RESTR_BETWEEN:
-                criteria.add(Restrictions.like(firstPropertyName, value));
+                Object[] vals = values.toArray();
+                if (vals.length >= 2) {
+                    criteria.add(Restrictions.between(firstPropertyName, vals[0], vals[1]));
+                }
                 break;
             case PlantloreConstants.RESTR_EQ:
                 criteria.add(Restrictions.eq(firstPropertyName, value));
@@ -139,6 +150,93 @@ public class SelectQueryImplementation implements SelectQuery {
             default:
                 
         }
+    }   
+    
+    /**
+     *  Connect restrictions with disjunction (OR) in the WHERE clause.
+     *  
+     *  @param items array of objects with the following structure:
+     *               <ul>
+     *                  <li>Index 0: type of the restriction (see PlantloreConstants for constants)</li>
+     *                  <li>Index 1: first property name (column name). Used to compare column with value</li>
+     *                  <li>Index 2: second property name (column name). Used when comparing two columns</li>
+     *                  <li>Index 3: value for the comparison. Used to compare column with value</li>
+     *              </ul>
+     *              4 values make one restriction, you can pass unlimited number of restrictions which will
+     *              be grouped together and connected in disjunction.
+     *  @throws IllegalArgumentException in case the input array is not of the correct length 
+     *  (must be at least 4 items and number of items must be divisible by 4)
+     */
+    public void addOrRestriction(Object[] items) throws IllegalArgumentException, RemoteException {
+        int type;
+        SimpleExpression se;
+        Disjunction disj = Restrictions.disjunction();
+        if ((items.length % 4) != 0) {
+            throw new IllegalArgumentException("Incorrect number of values in the input array");
+        }
+        int conditions = items.length / 4;        
+        for (int i=0;i<conditions;i++) {
+            type = (Integer)items[0+i*4];            
+            switch (type) {
+                case PlantloreConstants.RESTR_EQ:
+                    disj.add(Restrictions.eq(((String)items[1+i*4]), items[3+i*4]));
+                    break;          
+                case PlantloreConstants.RESTR_GE:
+                    disj.add(Restrictions.ge(((String)items[1+i*4]), items[3+i*4]));
+                    break;                
+                case PlantloreConstants.RESTR_GT:
+                    disj.add(Restrictions.gt(((String)items[1+i*4]), items[3+i*4]));
+                    break;                
+                case PlantloreConstants.RESTR_LE:
+                    disj.add(Restrictions.le(((String)items[1+i*4]), items[3+i*4]));
+                    break;                
+                case PlantloreConstants.RESTR_LIKE:
+                    disj.add(Restrictions.like(((String)items[1+i*4]), items[3+i*4]));
+                    break;
+                case PlantloreConstants.RESTR_LT:
+                    disj.add(Restrictions.lt(((String)items[1+i*4]), items[3+i*4]));
+                    break;                
+                case PlantloreConstants.RESTR_NE:
+                    disj.add(Restrictions.ne(((String)items[1+i*4]), items[3+i*4]));
+                    break;
+                case PlantloreConstants.RESTR_EQ_PROPERTY:
+                    disj.add(Restrictions.eqProperty(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_GE_PROPERTY:
+                    disj.add(Restrictions.geProperty(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_GT_PROPERTY:
+                    disj.add(Restrictions.gtProperty(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_ILIKE:
+                    disj.add(Restrictions.ilike(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_IS_EMPTY:
+                    disj.add(Restrictions.isEmpty(((String)items[1+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_IS_NOT_EMPTY:
+                    disj.add(Restrictions.isNotEmpty(((String)items[1+i*4])));                
+                    break;
+                case PlantloreConstants.RESTR_IS_NULL:
+                    disj.add(Restrictions.isNull(((String)items[1+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_IS_NOT_NULL:
+                    disj.add(Restrictions.isNotNull(((String)items[1+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_LE_PROPERTY:
+                    disj.add(Restrictions.leProperty(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;                
+                case PlantloreConstants.RESTR_LT_PROPERTY:
+                    disj.add(Restrictions.ltProperty(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;
+                case PlantloreConstants.RESTR_NE_PROPERTY:
+                    disj.add(Restrictions.neProperty(((String)items[1+i*4]), ((String)items[2+i*4])));
+                    break;
+                default:
+                    disj.add(Restrictions.eq(((String)items[1+i*4]), items[3+i*4]));
+            }
+        }
+        criteria.add(disj);
     }
     
     /**
@@ -148,7 +246,7 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @param propertyName name of the column for the projection
      *  @see PlantloreConstants
      */
-    public void addProjection(int type, String propertyName) {
+    public void addProjection(int type, String propertyName) throws RemoteException {
         switch (type) {
             case PlantloreConstants.PROJ_AVG:
                 criteria.setProjection(Projections.avg(propertyName));
@@ -190,7 +288,7 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @param associationPath
      *  @param mode 
      */
-    public void setFetchMode(String associationPath, int mode) {
+    public void setFetchMode(String associationPath, int mode) throws RemoteException {
         switch (mode) {
             case PlantloreConstants.FETCH_SELECT:
                 criteria.setFetchMode(associationPath, FetchMode.SELECT);
@@ -209,7 +307,7 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @param direction direction of ordering (ASC or DESC)
      *  @param propertyName property we want to use for ordering the results
      */
-    public void addOrder(int direction, String propertyName) {
+    public void addOrder(int direction, String propertyName) throws RemoteException {
         switch (direction) {
             case PlantloreConstants.DIRECT_ASC: criteria.addOrder(Order.asc(propertyName));                    
                                 break;
@@ -225,7 +323,7 @@ public class SelectQueryImplementation implements SelectQuery {
      *
      *  @param associationPath path of associated entities
      */
-    public void addAssociation(String associationPath) {
+    public void addAssociation(String associationPath) throws RemoteException {
         criteria.createCriteria(associationPath);
     }
 }
