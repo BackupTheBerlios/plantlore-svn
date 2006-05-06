@@ -40,6 +40,9 @@ import net.sf.plantlore.client.publication.PublicationManager;
 import net.sf.plantlore.client.publication.PublicationManagerCtrl;
 import net.sf.plantlore.client.publication.PublicationManagerView;
 import net.sf.plantlore.client.publication.PublicationManagerView;
+import net.sf.plantlore.client.user.UserManager;
+import net.sf.plantlore.client.user.UserManagerCtrl;
+import net.sf.plantlore.client.user.UserManagerView;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -105,6 +108,11 @@ public class AppCoreCtrl
     PublicationManagerView publicationManagerView;
     PublicationManagerCtrl publicationManagerCtrl;
     
+    //UserManager
+    UserManager userManagerModel;
+    UserManagerView userManagerView;
+    UserManagerCtrl userManagerCtrl;
+    
     // Login
     Login loginModel;
     LoginView loginView;
@@ -138,6 +146,7 @@ public class AppCoreCtrl
         view.addDataMetadataAction(new DataMetadataAction());
         view.addDataHistoryListener(new DataHistoryListener());
         view.addDataWholeHistoryAction(new DataWholeHistoryAction());
+        view.addDataUserAction(new DataUserAction());
         
         view.setSearchAction(new SearchAction());
         view.setAddAction(new AddAction());
@@ -432,7 +441,7 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             //try {
                 AuthorManager authModel = new AuthorManager(model.getDatabase());
-                AuthorManagerView authView = new AuthorManagerView(authModel, view);
+                AuthorManagerView authView = new AuthorManagerView(authModel, view, false);
                 AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
                 //authModel.pokus();
                 authView.show();                
@@ -454,6 +463,21 @@ public class AppCoreCtrl
             publicationManagerView = new PublicationManagerView(publicationManagerModel, view, true);
             publicationManagerCtrl = new PublicationManagerCtrl(publicationManagerModel, publicationManagerView);
             publicationManagerView.setVisible(true); 
+        }
+    }   
+    
+        class DataUserAction extends AbstractAction {
+        public DataUserAction() {
+             putValue(NAME, L10n.getString("userManager"));
+        }
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.out.println("UserManager");
+
+            userManagerModel = new UserManager(model.getDatabase());
+            userManagerView = new UserManagerView(userManagerModel, view, true);
+            userManagerCtrl = new UserManagerCtrl(userManagerModel, userManagerView);
+            userManagerView.setVisible(true); 
         }
     }    
     

@@ -73,6 +73,7 @@ public class AppCoreView extends JFrame implements Observer
     private JMenuItem helpAbout = new JMenuItem(L10n.getString("helpAbout"));
     private JMenuItem dataAuthors = new JMenuItem(L10n.getString("authorMgr"));
     private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr")); 
+    private JMenuItem dataUser = new JMenuItem(L10n.getString("UserManager"));
     private JMenuItem dataMetadata = new JMenuItem(L10n.getString("metadataManager"));
     private JMenuItem dataHistory = new JMenuItem(L10n.getString("History"));
     private JMenuItem dataWholeHistory = new JMenuItem(L10n.getString("wholeHistory"));
@@ -172,6 +173,7 @@ public class AppCoreView extends JFrame implements Observer
         dataMenu.add(dataSearch);
         dataMenu.add(dataHistory); 
         dataMenu.add(dataWholeHistory); 
+        dataMenu.add(dataUser);
 
         helpMenu.setMnemonic(L10n.getMnemonic("Help"));
         helpMenu.add(helpContents);
@@ -445,6 +447,13 @@ public class AppCoreView extends JFrame implements Observer
     public void addDataPublicationsAction(AbstractAction a) {
         dataPublications.setAction(a);
     }    
+    
+    /** Adds a listener to the User manager menu item.
+     *
+     */
+    public void addDataUserAction(AbstractAction a) {
+        dataUser.setAction(a);
+    }   
     
     /** Adds a listener to the HistoryData menu item.
     *

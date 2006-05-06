@@ -17,26 +17,28 @@ public class User extends Record {
     /** Parameters of the user */
     private Integer id;
     private String login;
+    private String password;
     private String firstName;
     private String surname;
     private String wholeName;
     private String email;
     private String address;
-    private java.util.Date whenCreated;
-    private java.util.Date whenDropped;
+    private java.util.Date createWhen;
+    private java.util.Date dropWhen;
     private Right right;
     private String note;
 
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
     public static final String LOGIN = "login";    
+    public static final String PASSWORD = "password";
     public static final String FIRSTNAME = "firstName";    
     public static final String SURNAME = "surname";    
     public static final String WHOLENAME = "wholeName";    
     public static final String EMAIL = "email";    
     public static final String ADDRESS = "address";    
-    public static final String WHENCREATED = "whenCreated";    
-    public static final String WHENDROPPED = "whenDropped";    
+    public static final String CREATEWHEN = "createWhen";    
+    public static final String DROPWHEN = "dropWhen";    
     public static final String RIGHT = "right";    
     public static final String NOTE = "note";    
         
@@ -91,6 +93,26 @@ public class User extends Record {
         this.login = login;
     }
     
+    
+    /**
+     *   Get password of the user
+     *   @return password of the user
+     *   @see setPassword
+     */
+    public String getPassword() {
+        return this.password;
+    }
+    
+    /**
+     *   Set password of the user
+     *   @param password string containing password of the user
+     *   @see getPassword
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    
     /**
      *   Get first name of the user
      *   @return string containing the first name of the user
@@ -99,6 +121,7 @@ public class User extends Record {
     public String getFirstName() {
         return this.firstName;
     }
+        
     
     /**
      *   Set first name of the user
@@ -184,37 +207,37 @@ public class User extends Record {
     /**
      *   Get date when the user was created
      *   @return date when the user was added to the system
-     *   @see setWhenCreated
+     *   @see setCreateWhen
      */
-    public java.util.Date getWhenCreated() {
-        return this.whenCreated;
+    public java.util.Date getCreateWhen() {
+        return this.createWhen;
     }
     
     /**
      *   Set date when the user was created
-     *   @param whenCreated date when the user was added to the system
-     *   @see getWhenCreated
+     *   @param createWhen date when the user was added to the system
+     *   @see getCreateWhen
      */
-    public void setWhenCreated(java.util.Date whenCreated) {
-        this.whenCreated = whenCreated;
+    public void setCreateWhen(java.util.Date createWhen) {
+        this.createWhen = createWhen;
     }
     
     /**
      *   Get date when the user was dropped
      *   @return date when the user was deleted from the system
-     *   @see setWhenDropped
+     *   @see setDropWhen
      */
-    public java.util.Date getWhenDropped() {
-        return this.whenDropped;
+    public java.util.Date getDropWhen() {
+        return this.dropWhen;
     }
     
     /**
      *   Set date when the user was dropped
-     *   @param whenDropped date when the user was deleted from the system
-     *   @see getWhenDropped
+     *   @param dropWhen date when the user was deleted from the system
+     *   @see getDropWhen
      */
-    public void setWhenDropped(java.util.Date whenDropped) {
-        this.whenDropped = whenDropped;
+    public void setDropWhen(java.util.Date dropWhen) {
+        this.dropWhen = dropWhen;
     }
 
     /**

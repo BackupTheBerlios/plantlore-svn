@@ -14,6 +14,11 @@
                 name="login"
                 not-null="true"
                 type="java.lang.String"/>
+      <property column="CPASSWORD"
+                length="20"
+                name="password"
+                not-null="true"
+                type="java.lang.String"/>
       <property column="CFIRSTNAME"
                 length="20"
                 name="firstName"
@@ -40,11 +45,11 @@
                 not-null="false"                
                 type="java.lang.String"/>          
       <property column="CCREATEWHEN"
-                name="whenCreated"
+                name="createWhen"
                 not-null="true"                
                 type="java.util.Date"/>   
       <property column="CDROPWHEN"
-                name="whenDropped"
+                name="dropWhen"
                 not-null="false"                
                 type="java.util.Date"/> 
       <many-to-one name="right" 
