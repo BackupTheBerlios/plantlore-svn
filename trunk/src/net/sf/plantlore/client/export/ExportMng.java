@@ -1,4 +1,4 @@
-﻿package net.sf.plantlore.client.export;
+package net.sf.plantlore.client.export;
 
 import java.io.File;
 import java.io.FileWriter;
