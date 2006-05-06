@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class AuthorOccurrence extends Record {
+public class AuthorOccurrence extends Record implements Deletable {
     /** Parameters of AuthorOccurence */
     private Integer id;
     private Author author;

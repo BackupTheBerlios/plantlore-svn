@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 15, 2006
  */
-public class Publication extends Record {
+public class Publication extends Record implements Deletable  {
     /** Parameters of the publication */    
     private Integer id;
     private String collectionName;

@@ -19,7 +19,7 @@ import java.util.ArrayList;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 14, 2006
  */
-public class Occurrence extends Record {
+public class Occurrence extends Record implements Deletable {
     /** Parameters of the occurrence. For detailed explanation see data model documentation. */
     private Integer id;
     private String unitIdDb;

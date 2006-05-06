@@ -17,7 +17,7 @@ import java.util.ArrayList;
  *  @author Tomas Kovarik
  *  @version 0.1, Mar 14, 2006
  */
-public class Author extends Record {
+public class Author extends Record implements Deletable {
     /** Parameters of the author. For detailed explanation see data model documentation. */
     private Integer id;
     private String wholeName;

@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Habitat extends Record {   
+public class Habitat extends Record implements Deletable {   
     /** Parameters of the Habitat */
     private Integer id;
     private Territory territory;
