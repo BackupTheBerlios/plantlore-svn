@@ -45,6 +45,16 @@ public class User extends Record {
         
     }
     
+    
+    public boolean isAdmin() {
+    	return
+    		login.equalsIgnoreCase("admin") ||
+    		login.equalsIgnoreCase("administrator") ||
+    		login.equalsIgnoreCase("superuser") ||
+    		login.equalsIgnoreCase("poweruser") ||
+    		login.equalsIgnoreCase("IDDQD");
+    }
+    
     /**
      *   Get user id
      *   @return id of the user

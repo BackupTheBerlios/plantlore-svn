@@ -49,7 +49,20 @@ public class Author extends Record {
     public ArrayList<String> getColumns() {
     	return list( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
     }
-    
+
+    @Override
+    public void setValue(String column, Object value) {
+    	if(column.equals(ID)) setId((Integer)value);
+    	else if(column.equals(WHOLENAME)) setWholeName((String)value);
+    	else if(column.equals(ORGANIZATION)) setOrganization((String)value);
+    	else if(column.equals(ROLE)) setRole((String)value);
+    	else if(column.equals(ADDRESS)) setAddress((String)value);
+    	else if(column.equals(PHONENUMBER)) setPhoneNumber((String)value);
+    	else if(column.equals(EMAIL)) setEmail((String)value);
+    	else if(column.equals(URL)) setUrl((String)value);
+    	else if(column.equals(NOTE)) setNote((String)value);
+    	else if(column.equals(DELETED)) setDeleted((Integer)value);
+	}
     
     @Override 
     public boolean isDead() {

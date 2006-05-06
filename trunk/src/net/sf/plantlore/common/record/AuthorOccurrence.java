@@ -41,7 +41,22 @@ public class AuthorOccurrence extends Record {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( AUTHOR, OCCURRENCE, ROLE, RESULTREVISION );
+    	return list( AUTHOR, OCCURRENCE, ROLE, RESULTREVISION, DELETED );
+    }
+    
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(AUTHOR)) setAuthor((Author)value);
+		else if(column.equals(OCCURRENCE)) setOccurrence((Occurrence)value);
+		else if(column.equals(ROLE)) setRole((String)value);
+		else if(column.equals(RESULTREVISION)) setResultRevision((String)value);
+		else if(column.equals(DELETED)) setDeleted((Integer)value);
+    }
+    
+    @Override
+    public boolean isDead() {
+    	return getDeleted() != 0;
     }
     
     /**

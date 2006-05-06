@@ -1,20 +1,125 @@
 package net.sf.plantlore.common.record;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
 
-import net.sf.plantlore.client.export.Template;
 
 /**
  * The common ancestor of all records. 
  * Every record corresponds to a certain table of the database.
+ * <br/>
+ * This abstract class provides several methods 
+ * that can ease your life.
  * 
+ * @see #setValue(String, Object)
+ * @see #getValue(String)
+ *  
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
  */
 public abstract class Record implements Serializable {
+	
+	/** 
+	 * The list of "basic tables" i.e. tables related directly to the Occurence data.
+	 * The other tables are database specific and are used by our System only
+	 * (concerns History, LastUpdate, User, AccessRights, and possibly more).
+	 */
+	public final static Class[] BASIC_TABLES = new Class[] { 
+		Author.class, AuthorOccurrence.class, Habitat.class,
+		Metadata.class, Occurrence.class, Phytochorion.class,
+		Plant.class, Publication.class, Territory.class,
+		Village.class 
+	};
+	
+	
+	/**
+	 * A set of tables that cannot be changed.
+	 */
+	public final static HashSet<Class> IMMUTABLE = new HashSet( 10 );
+	
+	
+	/** The list of all getters (of all properties of all tables). */
+	private static Hashtable<String,Method> getters = new Hashtable<String, Method>(100);
+	
+	
+	/** Pre-load all getters. */
+	static {
+		
+		IMMUTABLE.add(Plant.class);
+		IMMUTABLE.add(Territory.class);
+		IMMUTABLE.add(Village.class);
+		IMMUTABLE.add(Phytochorion.class);
+		IMMUTABLE.add(Metadata.class);
+		
+		// Take all basic tables.
+		for( Class table : BASIC_TABLES)
+			try {
+				// Take all their columns.
+				ArrayList<String> columns = ((Record) table.newInstance()).getColumns();
+				for(String column : columns)
+					// And store their getters. 
+					getters.put(table.getSimpleName()+"."+column, getter(table, column));
+			} 
+			catch(IllegalAccessException e) {}
+			catch(InstantiationException e) {}
+	}
+
+
+	/**
+	 * Return the value in the specified column.
+	 * 
+	 * @param column	The name of the column.
+	 * @return	The value this record contains in this column.
+	 */
+	public Object getValue(String column) {
+		try {
+			return getters.get(getClass().getSimpleName()+"."+column).invoke(this, new Object[0]);
+		} catch (Exception e) { return null; }
+	}
+	
+	/**
+	 * Set the value in the specified column.
+	 * 
+	 * @param column	The name of the column.
+	 * @param value	The new value.
+	 */
+	public void setValue(String column, Object value) {
+//		System.out.println(column + " = " + value);
+	}
+	
+	/**
+	 * Replace certain <code>columns</code> 
+	 * with values contained in the other <code>record</code>.
+	 * <br/>
+	 * Implementation:
+	 * <pre>
+	 * for( column : columns )
+	 *     this.setValue( column, record.getValue(column) );
+	 * </pre>.
+	 * 
+	 * @param record	The source (containing new values).
+	 * @param columns	Names of columns whose values will change.
+	 */	
+	public void replaceValues(Record record, String...columns) {
+		if(this.getClass() != record.getClass()) return;
+		for(String column : columns)
+			setValue( column, record.getValue(column) );
+	}
+
+	/**
+	 * Replace all collumns with values from the record,
+	 * making a virtual clone of the <code>record</code>.
+	 * 
+	 * @param record The source record whose values will replace those of this record.
+	 */
+	public void replaceWith(Record record) {
+		if(this.getClass() != record.getClass()) return;
+		for(String column : record.getColumns())
+			setValue( column, record.getValue(column) );
+	}
 
 	/** 
 	 * Every record has an ID number that is unique in its table.
@@ -41,17 +146,17 @@ public abstract class Record implements Serializable {
 	}
 	
 	/**
-	 * @return The set of all foreign keys (columns that refer to other tables).
+	 * @return The set of names of all foreign keys (columns that refer to other tables).
 	 */
 	public ArrayList<String> getForeignKeys() { return new ArrayList(0); }
 	
 	/**
-	 * @return The set of all columns of the table.
+	 * @return The set of names of all columns of the table.
 	 */
 	public ArrayList<String> getColumns() { return new ArrayList(0); }
 	
 	/**
-	 * @return The set of columns that are not foreign keys.
+	 * @return The set of names of columns that are not foreign keys.
 	 */
 	public ArrayList<String> getProperties() {
 		ArrayList<String> properties = getColumns();
@@ -60,8 +165,7 @@ public abstract class Record implements Serializable {
 	}
 	
 	/**
-	 * 
-	 * @return All not-null columns (including foreign keys).
+	 * @return The set of names of all not-null columns (including foreign keys).
 	 */
 	public ArrayList<String> getNN() {
 		ArrayList<String> nn = getForeignKeys();
@@ -70,24 +174,23 @@ public abstract class Record implements Serializable {
 	
 	/**
 	 * Are all not null values really not null?
-	 * <b>Very expensive operation!</b>
+	 * <b>Recursive operation!</b>
 	 * 
 	 * @return True if all columns marked as Not Null contain some value (i.e. they are not null).
 	 */
 	public boolean areAllNNSet() {
-		for( String column : getNN() ) try {
-			Object value = Template.getMethod(this.getClass(), column).invoke(this, new Object[0]);
+		for( String column : getNN() ) { 
+			Object value = getValue(column);
 			if( value == null ) return false;
 			if( value instanceof Record && !((Record)value).areAllNNSet() ) return false;
-		} catch(IllegalAccessException e) { return false; }
-		catch(InvocationTargetException e) { return false; }
+		}
 		return true;
 	}
 	
 	/**
-	 * Two records are equal if they have exactly the same values
+	 * Two records are equal if and only if they have exactly the same values
 	 * in the same columns (and this extends to foreign keys as well).
-	 * <b>Very expensive operation!</b>
+	 * <b>Recursive operation!</b>
 	 * <br/>
 	 * For instance:
 	 * Comparing <code>Occurrence1</code> to <code>Occurrence2</code> will also compare
@@ -96,21 +199,16 @@ public abstract class Record implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if( !(obj instanceof Record) ) return false;
+		if( getClass() != obj.getClass() ) return false;
 		Record record = (Record) obj;
-		Class table = record.getClass();
-		for(String column : record.getColumns() ) {
-			Method get = Template.getMethod(table, column);
-			try {
-				Object 
-					v1 = get.invoke(this, new Object[0]),
-					v2 = get.invoke(obj, new Object[0]);
-				if(v1 == null && v2 == null) return true;
-				if(v1 == null || v2 == null) return false;
-				return v1.equals(v2); // possible recursion here!
-			} 
-			catch(IllegalAccessException e) { return false; }
-			catch(InvocationTargetException e) { return false; }
+		for( String column : getColumns() ) {
+			Object 
+			v1 = this.getValue(column),
+			v2 = record.getValue(column);
+			if(v1 == null && v2 == null) continue;
+			if(v1 == null || v2 == null) return false;
+			if( v1.equals(v2) ) continue;
+			else return false;
 		}
 		return false;
 	}
@@ -127,6 +225,23 @@ public abstract class Record implements Serializable {
 		ArrayList<String> list = new ArrayList<String>(values.length);
 		for(String value : values) list.add(value);
 		return list;
+	}
+		
+	
+	/**
+	 * Return the method that corresponds with the getter of <code>table.column</code>.  
+	 * 
+	 * @return The getter of <code>table.column</code>. 
+	 */
+	private static Method getter(Class table, String column) {
+		try {
+			// Create the name of the getter.
+			StringBuilder s = new StringBuilder("get" + column); 
+			s.setCharAt(3, Character.toUpperCase(s.charAt(3)));
+			// Take it. 
+			return table.getMethod( s.toString(), new Class[0] );
+		} catch(NoSuchMethodException e) {}
+		return null;
 	}
 	
 }

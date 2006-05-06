@@ -55,6 +55,20 @@ public class Plant extends Record {
     	return list( SURVEYTAXID, TAXON, SCIENTIFICNAMEAUTHOR );
     }
     
+    
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(SURVEYTAXID)) setSurveyTaxId((String)value);
+		else if(column.equals(TAXON)) setTaxon((String)value);
+		else if(column.equals(GENUS)) setGenus((String)value);
+		else if(column.equals(SPECIES)) setSpecies((String)value);
+		else if(column.equals(SCIENTIFICNAMEAUTHOR)) setScientificNameAuthor((String)value);
+		else if(column.equals(CZECHNAME)) setCzechName((String)value);
+		else if(column.equals(SYNONYMS)) setSynonyms((String)value);
+		else if(column.equals(NOTE)) setNote((String)value);
+    }
+    
     /**
      *   Get plant id
      *   @return id of the plant

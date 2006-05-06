@@ -57,6 +57,20 @@ public class Publication extends Record {
     	return list(REFERENCECITATION);
     }
     
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(COLLECTIONNAME)) setCollectionName((String)value);
+		else if(column.equals(COLLECTIONYEARPUBLICATION)) setCollectionYearPublication((Integer)value);
+		else if(column.equals(JOURNALNAME)) setJournalName((String)value);
+		else if(column.equals(JOURNALAUTHORNAME)) setJournalAuthorName((String)value);
+		else if(column.equals(REFERENCECITATION)) setReferenceCitation((String)value);
+		else if(column.equals(REFERENCEDETAIL)) setReferenceDetail((String)value);
+		else if(column.equals(URL)) setUrl((String)value);
+		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(NOTE)) setNote((String)value);
+    }
+    
     @Override 
     public boolean isDead() {
     	return getDeleted() != 0;

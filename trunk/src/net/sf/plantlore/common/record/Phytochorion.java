@@ -44,6 +44,14 @@ public class Phytochorion extends Record {
     	return list(CODE, NAME);
     }
     
+    
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(CODE)) setCode((String)value);
+		else if(column.equals(NAME)) setName((String)value);
+    }
+    
     /**
      *   Get phytochorion id
      *   @return id of the phytochorion

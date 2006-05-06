@@ -84,6 +84,28 @@ public class Occurrence extends Record {
     	return nn;
     }
     
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(UNITIDDB)) setUnitIdDb((String)value);
+		else if(column.equals(UNITVALUE)) setUnitValue((String)value);
+		else if(column.equals(HABITAT)) setHabitat((Habitat)value);
+		else if(column.equals(PLANT)) setPlant((Plant)value);
+		else if(column.equals(YEARCOLLECTED)) setYearCollected((Integer)value);
+		else if(column.equals(MONTHCOLLECTED)) setMonthCollected((Integer)value);
+		else if(column.equals(DAYCOLLECTED)) setDayCollected((Integer)value);
+		else if(column.equals(TIMECOLLECTED)) setTimeCollected((java.util.Date)value);
+		else if(column.equals(ISODATETIMEBEGIN)) setIsoDateTimeBegin((java.util.Date)value);
+		else if(column.equals(DATASOURCE)) setDataSource((String)value);
+		else if(column.equals(PUBLICATION)) setPublication((Publication)value);
+		else if(column.equals(HERBARIUM)) setHerbarium((String)value);
+		else if(column.equals(CREATEDWHEN)) setCreatedWhen((java.util.Date)value);
+		else if(column.equals(UPDATEDWHEN)) setUpdatedWhen((java.util.Date)value);
+		else if(column.equals(METADATA)) setMetadata((Metadata)value);
+		else if(column.equals(NOTE)) setNote((String)value);
+		else if(column.equals(DELETED)) setDeleted((Integer)value);
+    }
+    
     @Override 
     public boolean isDead() {
     	return getDeleted() != 0;

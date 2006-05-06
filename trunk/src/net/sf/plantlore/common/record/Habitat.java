@@ -62,6 +62,22 @@ public class Habitat extends Record {
     	return getDeleted() != 0;
     }
     
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(TERRITORY)) setTerritory((Territory)value);
+		else if(column.equals(PHYTOCHORION)) setPhytochorion((Phytochorion)value);
+		else if(column.equals(NEARESTVILLAGE)) setNearestVillage((Village)value);
+		else if(column.equals(QUADRANT)) setQuadrant((String)value);
+		else if(column.equals(DESCRIPTION)) setDescription((String)value);
+		else if(column.equals(COUNTRY)) setCountry((String)value);
+		else if(column.equals(ALTITUDE)) setAltitude((Double)value);
+		else if(column.equals(LATITUDE)) setLatitude((Double)value);
+		else if(column.equals(LONGITUDE)) setLongitude((Double)value);
+		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(NOTE)) setNote((String)value);
+    }
+    
     /**
      * Default constructor to create new class Habitat
      */

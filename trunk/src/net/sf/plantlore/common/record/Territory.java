@@ -27,6 +27,13 @@ public class Territory extends Record {
     public static final String ID = "id";
     public static final String NAME = "name";    
     
+    
+    @Override
+    public void setValue(String column, Object value) {
+		if(column.equals(ID)) setId((Integer)value);
+		else if(column.equals(NAME)) setName((String)value);
+    }
+    
     /**
      *   Default constructor to create new class Territory
      */
