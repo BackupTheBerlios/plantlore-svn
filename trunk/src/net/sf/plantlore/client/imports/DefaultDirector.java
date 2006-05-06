@@ -1,8 +1,8 @@
 package net.sf.plantlore.client.imports;
 
-import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
 
@@ -11,28 +11,71 @@ import org.apache.log4j.Logger;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_IS_NULL;
 import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.client.imports.Parser.Action;
-import net.sf.plantlore.client.export.Template;
+
+
 
 public class DefaultDirector extends Observable implements Runnable {
 	
-	
+	/**
+	 * The parameter sent to the Observers when a decision has to be made
+	 * (ie. the User must intervene because the import procedure is unsure
+	 * what to do with the current record).
+	 */
 	public static Object DECISION_EXPECTED = new Object();
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 
 	private Parser parser;
 	private DBLayer db;
-	
-	private int count;
-	
+	private int count, imported;
 	private Action lastDecision = Action.UNKNOWN;
 	
-	private boolean aborted = false;
+	private boolean aborted = false, isAdmin = false;
+	private User user;
+	private Calendar now = Calendar.getInstance();
+
+	
+	public DefaultDirector(DBLayer db, Parser parser, User user) 
+	throws ImportException {
+		setDatabase(db);
+		setParser(parser);
+		setUser(user);
+	}
+	
+	
+	protected void setDatabase(DBLayer db) 
+	throws ImportException {
+		if(db == null) {
+			logger.error("The database layer is null!");
+			throw new ImportException("The database layer cannot be null!");
+		}
+		this.db = db;
+	}
+	
+	protected void setParser(Parser parser) 
+	throws ImportException {
+		if(parser == null) {
+			logger.error("The Parser is null!");
+			throw new ImportException("The Parser cannot be null!");
+		}
+		this.parser = parser;
+	}
+	
+	protected void setUser(User user) 
+	throws ImportException {
+		if(user == null) {
+			logger.error("The User is null!");
+			throw new ImportException("The User cannot be null!");
+		}
+		this.user = user;
+		
+	}
 	
 	
 	synchronized public void makeDecision(Action decision) {
@@ -60,9 +103,9 @@ public class DefaultDirector extends Observable implements Runnable {
 	public void run() {
 		
 		try {
-			count = 0;
+			count = imported = 0;
 			
-			while( parser.hasNext() ) {
+			while( !aborted && parser.hasNext() ) {
 				Occurrence occ = (Occurrence) parser.next();
 				Action action = parser.intentedFor();
 				count++;
@@ -149,6 +192,9 @@ public class DefaultDirector extends Observable implements Runnable {
 						break;
 					}
 			}
+			
+			imported++;
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -161,7 +207,8 @@ public class DefaultDirector extends Observable implements Runnable {
 	
 	
 	/**
-	 * Try to find a record, that has exactly the same properties.
+	 * Try to find a record, that has exactly the same properties
+	 * and foreign keys.
 	 * 
 	 * @param record	The record we are looking for in the database.
 	 * @return	The matching record from the database, or null if no such record exists.
@@ -176,15 +223,15 @@ public class DefaultDirector extends Observable implements Runnable {
 
 		// Equal properties.
 		for(String property : record.getProperties()) {
-			Object value = Template.get(record, property);
+			Object value = record.getValue(property);
 			if( value == null ) // use the database null
 				query.addRestriction(RESTR_EQ, property, null, RESTR_IS_NULL, null);
 			else
 				query.addRestriction(RESTR_EQ, property, null, value, null);
 		}
-		// Equal foreign keys.
+		// Equal foreign keys (by their ID's)!
 		for(String key : record.getForeignKeys() ) {
-			Record subrecord = (Record) Template.get(record, key);
+			Record subrecord = (Record) record.getValue(key);
 			query.addRestriction(RESTR_EQ, key, null, subrecord.getId(), null);
 		}
 		
@@ -203,15 +250,50 @@ public class DefaultDirector extends Observable implements Runnable {
 		return record;
 	}
 	
-	
-	public void insert(Record record) 
-	throws RemoteException, DBLayerException {
+	/**
+	 * Insert.
+	 * 
+	 * @param record
+	 * @throws RemoteException
+	 * @throws DBLayerException
+	 */
+	public Record insert(Record record) 
+	throws RemoteException, DBLayerException, ImportException {
+		boolean immutable = isAdmin ?
+				Record.IMMUTABLE.contains( record.getClass() ) :
+				record instanceof Plant;
 		
+		if( immutable ) {
+			Record counterpart = findMatchInDB( record );
+			if( counterpart == null )
+				throw new ImportException("The record is not in the immutable table!");
+			return counterpart;
+		} 
+		else {
+			for(String key : record.getForeignKeys())
+				record.setValue( key, insert( (Record)record.getValue(key) ) );
+			
+			if( record instanceof Occurrence ) {
+				Occurrence occ = (Occurrence) record;
+				occ.setCreatedWhen(now.getTime());
+				occ.setCreatedWho(user);
+				occ.setUpdatedWhen(now.getTime());
+				occ.setUpdatedWho(user);
+			}
+			
+			db.executeInsert(record);			
+		}
+		
+		
+		return null;
 	}
 	
 	/**
 	 * Update the <code>current</code> record from the database 
 	 * according to the other <code>record</code>.
+	 * <br/> 
+	 * The source record is
+	 * always kept up-to-date and its members always belong to the database.
 	 * 
 	 * @param current	The source record - the record from the database that needs to be updated.
 	 * @param replacement	The record containing changes the <code>current</code> record must undergo.
@@ -219,11 +301,13 @@ public class DefaultDirector extends Observable implements Runnable {
 	 */
 	public Record update(Record current, Record replacement) 
 	throws RemoteException, DBLayerException, ImportException {
-		boolean immutable = Template.IMMUTABLE.contains( current.getClass() );
+		boolean immutable = isAdmin ?
+				Record.IMMUTABLE.contains( current.getClass() ) :
+				current instanceof Plant;
 		/*
 		 * We have an immutable table here - 
 		 * it must match something in the database.
-		 * (Plant, Phytochorion, Territory, Village). 
+		 * (Plant, Phytochorion, Territory, Village, Metadata). 
 		 */
 		if( immutable ) {
 			// Don't they happen to be the same?
@@ -243,7 +327,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			boolean propertiesMatch = propertiesMatch(current, replacement);
 			
 			// [A] There are no foreign keys.
-			// (Metadata, Publication)
+			// (Publication)
 			if( keys.size() == 0 ) {
 				// Both records have the same properties.
 				if( propertiesMatch )
@@ -259,16 +343,16 @@ public class DefaultDirector extends Observable implements Runnable {
 				// update the existing one.
 				// This is up to the User.
 				Action decision = expectDecision();
-				if( decision == Action.UPDATE ) {
-					replacement.setId( current.getId() );
-					db.executeUpdate( replacement );
+				if( decision == Action.UPDATE ) { // update the current record
+					current.replaceWith( replacement );
+					db.executeUpdate( current );
+					return current;
 				}
-				else if( decision == Action.INSERT ){
+				else /*if( decision == Action.INSERT )*/ {
 					Integer newId = db.executeInsert(replacement);
 					replacement.setId( newId );
+					return replacement;
 				}
-				// Replacement is in both cases in the database.
-				return replacement;
 			}
 			// [B] There are some foreign keys.
 			// (Habitat, Occurrence)
@@ -278,28 +362,37 @@ public class DefaultDirector extends Observable implements Runnable {
 				// that already are in the database.
 				for(String key : keys) {
 					Object 
-						originalSubrecord = Template.get(current, key),
-						replacementSubrecord = Template.get(replacement, key);
-					if(originalSubrecord == null || replacementSubrecord == null)
+						currentSubrecord = current.getValue(key),
+						replacementSubrecord = replacement.getValue(key);
+					if(currentSubrecord == null || replacementSubrecord == null)
 						throw new ImportException("Foreign keys cannot be null!");
-					Object suggestion = update( (Record)originalSubrecord, (Record)replacementSubrecord );
+					Record 
+						suggestion =  update( (Record)currentSubrecord, (Record)replacementSubrecord );
 					// The sub-record doesn't have to change.
-					if( originalSubrecord == suggestion ) // == suffices (there's no need for equals()).
+					if( currentSubrecord == suggestion ) // == suffices (there's no need for equals()).
 						continue;
 					
+					current.setValue(key, suggestion);
 					dirty = true;
-					// replacementSubrecord
-					
 				}
-				// No changes were needed
-				if( !dirty && propertiesMatch )
-					return current;
-					
 				
+				if( !propertiesMatch )
+					for(String property : current.getProperties()) 
+						current.setValue(property, replacement.getValue(property));
 				
+				// Update the record in the database.
+				if( dirty || !propertiesMatch ) {
+					if( current instanceof Occurrence ) {
+						Occurrence occ = (Occurrence) current;
+						occ.setUpdatedWhen(now.getTime());
+						occ.setUpdatedWho(user);
+					}
+					db.executeUpdate(current);
+				}
+				// Return the current record (updated).
+				return current;
 			}
 		}
-		return null;
 	}
 	
 	
@@ -308,8 +401,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		if( table != b.getClass() ) return false;
 		for( String property : a.getProperties() ) { 
 			Object 
-			valueA = Template.get(a, property),
-			valueB = Template.get(b, property);
+			valueA = a.getValue(property),
+			valueB = b.getValue(property);
 			if(valueA == null && valueB == null) continue;
 			if(valueA == null || valueB == null) return false;
 			if( !valueA.equals(valueB) ) return false;
@@ -329,7 +422,10 @@ public class DefaultDirector extends Observable implements Runnable {
 	public void delete(Record record) 
 	throws RemoteException, DBLayerException {
 		if( record instanceof Occurrence ) {
-			((Occurrence)record).setDeleted(1);
+			Occurrence occ = (Occurrence) record;
+			occ.setDeleted(1);
+			occ.setUpdatedWhen(now.getTime());
+			occ.setUpdatedWho(user);
 			db.executeUpdate( record );
 		}
 	}
@@ -345,16 +441,21 @@ public class DefaultDirector extends Observable implements Runnable {
 	public void revive(Record record)
 	throws RemoteException, DBLayerException {
 		if( record instanceof Occurrence ) {
-			((Occurrence)record).setDeleted(0);
+			Occurrence occ = (Occurrence) record;
+			occ.setDeleted(0);
+			occ.setUpdatedWhen(now.getTime());
+			occ.setUpdatedWho(user);
 			db.executeUpdate( record );
 		}
 	}
 
 	
 	
-	
-	
-	public static void main(String[] args) {
+	/**
+	 * Abort the export immediately.
+	 */
+	public void abort() {
+		aborted = true;
 	}
-
+	
 }
