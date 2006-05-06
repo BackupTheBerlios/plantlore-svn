@@ -17,5 +17,7 @@ public interface Parser {
 	
 	Action intentedFor(); 
 	
-	Record part(Class table);
+	Record nextPart(Class table);
+	
+	boolean hasNextPart(Class table);
 }
