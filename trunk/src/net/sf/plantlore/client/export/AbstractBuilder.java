@@ -1,10 +1,7 @@
 package net.sf.plantlore.client.export;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Hashtable;
+
 
 import net.sf.plantlore.common.record.Record;
 
@@ -28,9 +25,6 @@ public abstract class AbstractBuilder implements Builder {
 	
 	protected Template template;
 	
-	/** A list of getters of selected columns for every table. */
-	protected Hashtable<Class, ArrayList<Method>> properties = 
-		new Hashtable<Class, ArrayList<Method>>(20);
 	
 	/**
 	 * Create a new DefaultBuilder.
@@ -49,22 +43,6 @@ public abstract class AbstractBuilder implements Builder {
 	 */
 	public void setTemplate(Template template) {
 		this.template = template.clone();
-		
-		// Store all getters of all selected columns.
-		for( Class table : Template.BASIC_TABLES)
-			try {
-				// Get the list of all properties.
-				ArrayList<String> columns = ((Record) table.newInstance()).getProperties();
-				// Create a list of getters of those properties.
-				ArrayList<Method> methods = new ArrayList<Method>( columns.size() );
-				properties.put(table, methods);
-				// Check if these properties (columns) are set to be exported. 
-				for(String column : columns)  
-					if( template.isSet(table, column) )
-						methods.add( Template.getMethod( table, column ) );
-			} 
-			catch(IllegalAccessException e) { /*e.printStackTrace();*/ }
-			catch(InstantiationException e) { /*e.printStackTrace();*/ }
 	}
 	
 	/**
@@ -93,15 +71,8 @@ public abstract class AbstractBuilder implements Builder {
 	public void part(Record record) throws IOException {
 		if(record == null) return;
 		Class table = record.getClass();
-		ArrayList<Method> methods = properties.get( table );
-		for(Method getter : methods) 
-			try {
-				// Invoke the getter.
-				Object value = getter.invoke( record, NO_PARAMETERS );
-				output( table, getter.getName().substring(3), value );
-			} 
-			catch(IllegalAccessException e) { /*e.printStackTrace();*/ }
-			catch(InvocationTargetException e) { /*e.printStackTrace();*/ }
+		for( String property : record.getProperties() ) 
+				output( table, property, record.getValue(property) );
 	}
 
 	/**

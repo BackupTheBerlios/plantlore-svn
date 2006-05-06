@@ -1,10 +1,8 @@
 package net.sf.plantlore.client.export;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Hashtable;
 
 import net.sf.plantlore.common.record.*;
 
@@ -35,22 +33,7 @@ public class Template {
 	/** The list of all pairs Table.Column that are set. */
 	private Collection<String> columns = new HashSet<String>(100);
 	
-	/** 
-	 * The list of "basic tables" i.e. tables related directly to the Occurence data.
-	 * The other tables are database specific and are used by our System only
-	 * (concerns History, LastUpdate, User, AccessRights, and possibly more).
-	 */
-	public final static Class[] BASIC_TABLES = new Class[] { 
-		Author.class, AuthorOccurrence.class, Habitat.class,
-		Metadata.class, Occurrence.class, Phytochorion.class,
-		Plant.class, Publication.class, Territory.class,
-		Village.class 
-	};
 	
-	/**
-	 * A set of tables that cannot be changed.
-	 */
-	public final static HashSet<Class> IMMUTABLE = new HashSet( 10 );
 
 	
 	/** Create a new template. */
@@ -67,68 +50,7 @@ public class Template {
 		return new Template(this);
 	}
 	
-		
-	/** The list of all getters (of all properties of all tables). */
-	private static Hashtable<String,Method> getters = new Hashtable<String, Method>(100);
 	
-	/**
-	 * Return the getter of this Table.Column property.
-	 * <br/>
-	 * This method is fast because all getters are pre-loaded.
-	 * 
-	 * @param table	The class identifying the table.
-	 * @param column The name of the column.
-	 * @return The getter of table.column
-	 */
-	public static Method getMethod(Class table, String column) {
-		return getters.get(table+"."+column);
-	}
-	
-	
-	public static Object get(Record record, String column) {
-		try {
-			return getMethod(record.getClass(), column).invoke(record, new Object[0]);
-		} catch (Exception e) { return null; }
-	}
-		
-	/** Pre-load all getters. */
-	static {
-		
-		IMMUTABLE.add(Plant.class);
-		IMMUTABLE.add(Territory.class);
-		IMMUTABLE.add(Village.class);
-		IMMUTABLE.add(Phytochorion.class);
-		
-		// Take all basic tables.
-		for( Class table : Template.BASIC_TABLES)
-			try {
-				// Take all their columns.
-				ArrayList<String> columns = ((Record) table.newInstance()).getColumns();
-				for(String column : columns)
-					// And store their getters. 
-					getters.put(table+"."+column, getter(table, column));
-			} 
-			catch(IllegalAccessException e) {}
-			catch(InstantiationException e) {}
-	}
-	
-	/**
-	 * Return the method that corresponds with the getter of <code>table.column</code>.  
-	 * 
-	 * @return The getter of <code>table.column</code>. 
-	 */
-	private static Method getter(Class table, String column) {
-		try {
-			// Create the name of the getter.
-			StringBuilder s = new StringBuilder("get" + column); 
-			s.setCharAt(3, Character.toUpperCase(s.charAt(3)));
-			// Take it. 
-			return table.getMethod( s.toString(), new Class[0] );
-		} catch(NoSuchMethodException e) {}
-		return null;
-	}
-	
-			
 	/** Select the <code>table.column</code>. */
 	public void set(Class table, String column) { 
 		columns.add(table.getSimpleName()+ (column == null ? "" : "."+column));
@@ -153,7 +75,7 @@ public class Template {
 	
 	/** Select all columns (properties) of all tables. */
 	public void setEverything() {
-		for(Class table : BASIC_TABLES)
+		for(Class table : Record.BASIC_TABLES)
 			setAllProperties(table);
 	}
 	

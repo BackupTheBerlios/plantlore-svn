@@ -1,8 +1,6 @@
 package net.sf.plantlore.client.export;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Observable;
 
@@ -94,7 +92,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	protected void setDatabase(DBLayer db) 
 	throws ExportException {
 		if(db == null) {
-			logger.warn("The database layer is null!");
+			logger.error("The database layer is null!");
 			throw new ExportException("The database layer cannot be null!");
 		}
 		this.database = db;
@@ -119,8 +117,6 @@ public class DefaultDirector extends Observable implements Runnable {
 	}
 	
 	
-	private static Object[] NO_PARAM = new Object[0];
-	
 	/**
 	 * The whole record is returned in a tree structure.
 	 * We must traverse this structure.
@@ -136,13 +132,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		build.part(record);
 		// Now look at all children of this record.
 		for(String key : record.getForeignKeys()) {
-			Method getter = Template.getMethod(record.getClass(), key);
-			try {
-				// And build'em too.
-				buildParts( (Record) getter.invoke( record, NO_PARAM ) );
-			}
-			catch(IllegalAccessException e) { /*e.printStackTrace();*/ }
-			catch(InvocationTargetException e) { /*e.printStackTrace();*/ }
+			// And build'em too.
+			buildParts( (Record) record.getValue(key) );
 		}
 	}
 	
