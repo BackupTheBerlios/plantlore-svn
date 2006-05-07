@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
   <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 1.0//EN" "http://java.sun.com/products/javahelp/helpset_1_0.dtd">
   <helpset version="1.0">
-    <title>Plantlore Help</title>
+    <title>Nápověda Plantlore</title>
     <maps>
       <homeID>top</homeID>
-      <mapref location="default/jhelpmap.jhm"/>
+      <mapref location="cs/jhelpmap.jhm"/>
     </maps>
     <view>
       <name>TOC</name>
-      <label>Table Of Contents</label>
+      <label>Obsah</label>
       <type>javax.help.TOCView</type>
-      <data>default/jhelptoc.xml</data>
+      <data>cs/jhelptoc.xml</data>
     </view>
     <view>
       <name>Index</name>
       <label>Index</label>
       <type>javax.help.IndexView</type>
-      <data>default/jhelpidx.xml</data>
+      <data>cs/jhelpidx.xml</data>
     </view>
     <view>
       <name>Search</name>
-      <label>Search</label>
+      <label>Vyhledávání</label>
       <type>javax.help.SearchView</type>
       <data engine="com.sun.java.help.search.DefaultSearchEngine">JavaHelpSearch</data>
     </view>
-  </helpset>
+	  </helpset>

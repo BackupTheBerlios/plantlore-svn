@@ -1,0 +1,39 @@
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+  <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN" "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+  <toc version="1.0">
+    <tocitem target="plantlore" text="Plantlore">
+        <tocitem target="plantlore.overview" text="Přehled"/>
+        <tocitem target="plantlore.resources" text="Zdroje"/>        
+        <tocitem target="plantlore.licence" text="Licence"/>
+    </tocitem>
+    <tocitem target="login" text="Přihlášení">
+        <tocitem target="login.selectdb" text="Výběr databáze"/>
+        <tocitem target="login.authentication" text="Přihlášovací údaje"/>        
+    </tocitem>
+    <tocitem target="settings" text="Nastavení"/>
+    <tocitem target="overview" text="Přehled nálezů">
+        <tocitem target="overview.addoccurrence" text="Přidej/Edituj nález">        
+            <tocitem target="overview.addoccurrence.basic" text="Základní data"/>
+            <tocitem target="overview.addoccurrence.extended" text="Rozšířené data"/>            
+            <tocitem target="overview.addoccurrence.checklist" text="Škrták"/>                        
+        </tocitem>
+        <tocitem target="overview.search" text="Vyhledávání"/>
+        <tocitem target="overview.history" text="Historie úprav nálezů"/>        
+    </tocitem>
+    <tocitem target="author" text="Autoři">
+        <tocitem target="author.add" text="Přidej/uprav autora"/>
+    </tocitem>
+    <tocitem target="publication" text="Publikace">
+        <tocitem target="publication.add" text="Přidej/uprav publikaci"/>        
+    </tocitem>
+    <tocitem target="metadata" text="Metadata">
+        <tocitem target="metadata.add" text="Přidej/edituj metadata"/>
+    </tocitem>
+    <tocitem target="history" text="Historie úprav"/>
+    <tocitem target="user" text="Uživatelé">
+        <tocitem target="user.add" text="Přidej/uprav uživatele"/>
+        <tocitem target="user.rights" text="Uživatelské práva"/>        
+    </tocitem>
+    <tocitem target="import" text="Import dat"/>
+    <tocitem target="export" text="Export dat"/>
+  </toc>

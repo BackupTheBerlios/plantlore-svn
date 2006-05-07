@@ -4,19 +4,19 @@
     <title>Plantlore Help</title>
     <maps>
       <homeID>top</homeID>
-      <mapref location="default/jhelpmap.jhm"/>
+      <mapref location="en/jhelpmap.jhm"/>
     </maps>
     <view>
       <name>TOC</name>
       <label>Table Of Contents</label>
       <type>javax.help.TOCView</type>
-      <data>default/jhelptoc.xml</data>
+      <data>en/jhelptoc.xml</data>
     </view>
     <view>
       <name>Index</name>
       <label>Index</label>
       <type>javax.help.IndexView</type>
-      <data>default/jhelpidx.xml</data>
+      <data>en/jhelpidx.xml</data>
     </view>
     <view>
       <name>Search</name>

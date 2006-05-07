@@ -13,6 +13,7 @@ import javax.help.HelpSetException;
 import javax.help.JHelp;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  * Class for invoking Help viewer.
@@ -94,7 +95,7 @@ public class PlantloreHelp {
         try {
             // Get the classloader of this class.
             ClassLoader cl = PlantloreHelp.class.getClassLoader();
-            URL url = HelpSet.findHelpSet(cl, HELPFILE);
+            URL url = HelpSet.findHelpSet(cl, HELPFILE, L10n.getCurrentLocale());
             // Create a new JHelp object with a new HelpSet.        
             HelpSet hs = new HelpSet(cl, url);
             helpViewer = new JHelp(hs);
