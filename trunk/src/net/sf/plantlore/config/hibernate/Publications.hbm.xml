@@ -46,6 +46,10 @@
       <property column="CDELETE"
                 name="deleted"
                 not-null="false"                
-                type="java.lang.Integer"/>                                                         
+                type="java.lang.Integer"/>
+      <property column="CNOTE"
+                name="note"
+                not-null="false"                
+                type="java.lang.String"/>
    </class>
 </hibernate-mapping>
