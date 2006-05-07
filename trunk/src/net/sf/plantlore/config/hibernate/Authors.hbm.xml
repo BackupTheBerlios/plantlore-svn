@@ -41,7 +41,7 @@
                 type="java.lang.String"/> 
       <property column="CURL"
 		length="100"
-                name="Url"
+                name="url"
                 not-null="false"                
                 type="java.lang.String"/> 
       <property column="CDELETE"
