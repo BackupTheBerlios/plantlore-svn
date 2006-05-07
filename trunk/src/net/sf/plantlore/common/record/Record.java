@@ -210,7 +210,7 @@ public abstract class Record implements Serializable {
 			if( v1.equals(v2) ) continue;
 			else return false;
 		}
-		return false;
+		return true;
 	}
 	
 	
