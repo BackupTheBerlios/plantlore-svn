@@ -82,9 +82,9 @@
                 name="biotopeText"
                 not-null="false"                
                 type="java.lang.String"/>
-      <property column="CVERSIONPLANTSFILE"
-                name="versionPlantsFile"
-                not-null="false"                
-                type="java.lang.Integer"/>                
+      <property column="CDELETE"
+                name="deleted"
+                not-null="true"                
+                type="java.lang.Integer"/>            
    </class>
 </hibernate-mapping>

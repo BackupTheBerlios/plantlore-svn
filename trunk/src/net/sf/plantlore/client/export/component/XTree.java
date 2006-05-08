@@ -158,8 +158,7 @@ public class XTree extends javax.swing.JTree {
 				new XNode(Metadata.class, Metadata.DATECREATE, true),
 				new XNode(Metadata.class, Metadata.DATEMODIFIED, true),
 				new XNode(Metadata.class, Metadata.RECORDBASIS),
-				new XNode(Metadata.class, Metadata.BIOTOPETEXT),
-				new XNode(Metadata.class, Metadata.VERSIONPLANTSFILE)
+				new XNode(Metadata.class, Metadata.BIOTOPETEXT),				
 			}
 		},
 		new Object[] { // AUTHOR
@@ -260,8 +259,7 @@ public class XTree extends javax.swing.JTree {
 			new XNode(Metadata.class, Metadata.DATECREATE, true),
 			new XNode(Metadata.class, Metadata.DATEMODIFIED, true),
 			new XNode(Metadata.class, Metadata.RECORDBASIS),
-			new XNode(Metadata.class, Metadata.BIOTOPETEXT),
-			new XNode(Metadata.class, Metadata.VERSIONPLANTSFILE)
+			new XNode(Metadata.class, Metadata.BIOTOPETEXT),			
 		},
 		new Object[] { // AUTHOR
 			new XNode(Author.class, null),

@@ -36,7 +36,7 @@ public class Metadata extends Record {
     private java.util.Date dateModified;
     private String recordBasis;
     private String biotopeText;
-    private Integer versionPlantsFile;
+    private Integer deleted;
     
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
@@ -55,7 +55,7 @@ public class Metadata extends Record {
     public static final String DATEMODIFIED = "dateModified";    
     public static final String RECORDBASIS = "recordBasis";
     public static final String BIOTOPETEXT = "biotopeText";    
-    public static final String VERSIONPLANTSFILE = "versionPlantsFile";
+    public static final String DELETE = "delete";
     
     /**
      *   Default constructor to create new class Metadata
@@ -67,7 +67,7 @@ public class Metadata extends Record {
     	return list( TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
     			CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL, CONTENTCONTACTNAME,
     			DATASETDETAILS, DATASETTITLE, SOURCEID, SOURCEINSTITUTIONID,
-    			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, VERSIONPLANTSFILE/*,
+    			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, DELETE/*,
     			DATECREATE,*//* DATEMODIFIED*/ ); // Damn this table!
     }
     
@@ -92,7 +92,7 @@ public class Metadata extends Record {
 		else if(column.equals(OWNERORGANIZATIONABBREV)) setOwnerOrganizationAbbrev((String)value);
 		else if(column.equals(BIOTOPETEXT)) setBiotopeText((String)value);
 		else if(column.equals(RECORDBASIS)) setRecordBasis((String)value);
-		else if(column.equals(VERSIONPLANTSFILE)) setVersionPlantsFile((Integer)value);
+		else if(column.equals(DELETE)) setDeleted((Integer)value);
 		else if(column.equals(DATECREATE)) setDateCreate((java.util.Date)value);
 		else if(column.equals(DATEMODIFIED)) setDateModified((java.util.Date)value);
     }
@@ -383,23 +383,23 @@ public class Metadata extends Record {
      */
     public void setBiotopeText(String biotopeText) {
         this.biotopeText = biotopeText;
-    }    
-
-    /**
-     *   Get version of the file with plant names used
-     *   @return version of the file with plant names used
-     *   @see setVersionPlantsFile
+    }  
+    
+       /**
+     *   Get flag telling whether the record has been deleted
+     *   @return flag telling whether the record has been deleted. Value 1 means deleted.
+     *   @see setDeleted
      */
-    public Integer getVersionPlantsFile() {
-        return this.versionPlantsFile;
+    public Integer getDeleted() {
+        return this.deleted;
     }
     
     /**
-     *   Set version of the file with plant names used
-     *   @param versionPlantsFile version of the file with plant names used
-     *   @see getVersionPlantsFile
+     *   Set flag telling whether the record has been deleted
+     *   @param deleted flag telling whether the record has been deleted. Value 1 means deleted.
+     *   @see getDeleted
      */
-    public void setVersionPlantsFile(Integer versionPlantsFile) {
-        this.versionPlantsFile = versionPlantsFile;
-    }    
+    public void setDeleted(Integer deleted) {
+    	this.deleted = deleted;
+    }   
 }

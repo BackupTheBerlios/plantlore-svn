@@ -28,7 +28,7 @@
                 type="java.lang.String"/>  
       <property column="CDELETE"
                 name="deleted"
-                not-null="false"                
+                not-null="true"                
                 type="java.lang.Integer"/> 
    </class>
 </hibernate-mapping>

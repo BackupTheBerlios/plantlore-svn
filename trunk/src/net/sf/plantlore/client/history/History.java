@@ -1388,6 +1388,12 @@ public class History {
               detailsMessage = detailsMessage + "Telephone number: " + author.getPhoneNumber() + "\n";            
               detailsMessage = detailsMessage + "URL: " + author.getUrl() + "\n";
               detailsMessage = detailsMessage + "Note: " + author.getNote() + "\n";
+        }  else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
+             //Get details for Metadata
+              Object[] object = searchObject("Metadata",recordId);   
+              Metadata metadata = (Metadata)object[0];
+              detailsMessage = "Details of Metadata \n\n";
+        
         } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
               //Get details for Phytochorion
               Object[] object = searchObject("Phytochorion",recordId); 
@@ -1490,8 +1496,7 @@ public class History {
         metadataHash.put(Metadata.DATECREATE, 12);
         metadataHash.put(Metadata.DATEMODIFIED, 13);
         metadataHash.put(Metadata.RECORDBASIS, 14);
-        metadataHash.put(Metadata.BIOTOPETEXT, 15);
-        metadataHash.put(Metadata.VERSIONPLANTSFILE, 16);
+        metadataHash.put(Metadata.BIOTOPETEXT, 15);        
     }
     
     private void initPublicationHash() {
