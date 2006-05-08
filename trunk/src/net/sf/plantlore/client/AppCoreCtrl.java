@@ -313,6 +313,7 @@ public class AppCoreCtrl
                 addModel = new AddEdit(model.getDatabase(),false);
                 addView = new AddEditView(view, true, addModel, false);
                 addView.setTitle("Add a new occurrence");
+                addCtrl = new AddEditCtrl(addModel, addView, false);
             }
             addView.clearComponentData();
             addView.setVisible(true);

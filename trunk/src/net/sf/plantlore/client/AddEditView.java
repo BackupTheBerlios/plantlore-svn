@@ -771,7 +771,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     }
     
     public void clearComponentData() {
-        //authorComboBox.setSelectedIndex(-1);        
+        model.clearAuthors(); resetAuthorModel(); initAuthorTable();
         townComboBox.setSelectedIndex(-1);
         taxonTextArea.setText("");
         descriptionArea.setText("");

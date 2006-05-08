@@ -256,6 +256,8 @@ public class AddEdit extends Observable {
     }
 
     public void setPhytName(Pair<String, Integer> phytName) {
+        if (phytName == null)
+            return;
         if (skipUpdate) {
             skipUpdate = false;
             logger.debug("Skipping setPhytName");
@@ -280,6 +282,9 @@ public class AddEdit extends Observable {
     }
 
     public void setPhytCode(Pair<String, Integer> phytCode) {
+        if (phytCode == null)
+            return;
+        
         if (skipUpdate) {
             skipUpdate = false;
             logger.debug("Skipping setPhytCode");
@@ -884,6 +889,9 @@ public class AddEdit extends Observable {
         occ.setUpdatedWhen(new Date());
         occ.setCreatedWho((User) dlu.getObjectFor(2,User.class));
         occ.setUpdatedWho((User) dlu.getObjectFor(2,User.class));        
+        //----------
+        occ.setUnitIdDb("docasna unitIdDb");
+        occ.setUnitValue("docasna unit value");
         //####        
         
         return occ;
@@ -1349,6 +1357,10 @@ public class AddEdit extends Observable {
         return authorResults;
     }
     
+    public void clearAuthors() {
+        authorList = new ArrayList<Pair<Pair<String,Integer>,String>>();
+        resultRevision = new ArrayList<String>();        
+    }
     
     public void addAuthorRow() {
         authorList.add(new Pair<Pair<String,Integer>,String>(new Pair<String,Integer>("",0),""));

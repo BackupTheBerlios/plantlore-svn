@@ -239,19 +239,22 @@ public class AddEditCtrl {
     
     class AltitudeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            model.setAltitude(((Number)evt.getNewValue()).doubleValue());
+            if (evt.getNewValue() != null)
+                model.setAltitude(((Number)evt.getNewValue()).doubleValue());
         }        
     }//AltitudeListener
 
     class LongitudeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            model.setLongitude(((Number)evt.getNewValue()).doubleValue());
+            if (evt.getNewValue() != null)
+                model.setLongitude(((Number)evt.getNewValue()).doubleValue());
         }        
     }//LongitudeListener
 
     class LatitudeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            model.setLatitude(((Number)evt.getNewValue()).doubleValue());
+            if (evt.getNewValue() != null)
+                model.setLatitude(((Number)evt.getNewValue()).doubleValue());
         }        
     }//LatitudeListener
 
@@ -273,7 +276,9 @@ public class AddEditCtrl {
             Pair<Boolean,String> check = model.checkData();
             if (!check.getFirst()) {
                 JOptionPane.showMessageDialog(view,check.getSecond());
-            } else {
+                return;
+            } 
+            if (inEditMode) {
                 Occurrence[] sharedOcc = model.getHabitatSharingOccurrences();
                 if (sharedOcc.length > 1) {
                     Object[] options = {"All","Just this","Cancel"};
@@ -303,6 +308,9 @@ public class AddEditCtrl {
                         model.storeRecord(true);
                         view.setVisible(false);                    
                 }
+            } else {//inAddMode
+                model.storeRecord(true);
+                view.setVisible(false);
             }
         }
     }//OkButtonListener
