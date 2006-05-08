@@ -46,7 +46,7 @@ public class DBLayerUtils {
             int resultCount = db.getNumRows(resultid);
             if (resultCount == 0)
                 return null;
-            Object[] results = db.more(resultid, 1, 1);
+            Object[] results = db.more(resultid, 0, 0);
             Object[] tmp = (Object[]) results[0];
             return (Record)tmp[0];
             

@@ -158,6 +158,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
+        descriptionArea.setLineWrap(true);
         jScrollPane2.setViewportView(descriptionArea);
 
         taxonTextArea.setColumns(20);
@@ -200,59 +201,59 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel2Layout.createSequentialGroup()
-                        .add(22, 22, 22)
-                        .add(YearLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(yearSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 102, Short.MAX_VALUE)
-                        .add(checklistButton))
-                    .add(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(TaxonLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
-                            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))))
-                .add(110, 110, 110)
+                .addContainerGap()
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(jLabel2)
-                    .add(TownLabel))
+                    .add(TaxonLabel)
+                    .add(YearLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
-                    .add(extendedButton)
-                    .add(townComboBox, 0, 254, Short.MAX_VALUE))
+                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(yearSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 157, Short.MAX_VALUE)
+                        .add(checklistButton))
+                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
+                .add(85, 85, 85)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(TownLabel)
+                    .add(jLabel2))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(townComboBox, 0, 223, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(extendedButton)
+                            .add(jScrollPane2))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(townComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(TownLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel2)
-                            .add(townComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(26, 26, 26)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .add(TownLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(TaxonLabel)
-                                .add(38, 38, 38))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(checklistButton)
-                    .add(yearSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(YearLabel)
-                    .add(extendedButton))
-                .add(4, 4, 4))
+                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(TaxonLabel)
+                            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 53, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                .add(yearSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(YearLabel))
+                            .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                .add(checklistButton)
+                                .add(extendedButton)))))
+                .add(183, 183, 183))
         );
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
@@ -456,6 +457,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Location note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         locationNoteArea.setColumns(20);
         locationNoteArea.setRows(5);
+        locationNoteArea.setLineWrap(true);
         jScrollPane4.setViewportView(locationNoteArea);
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
@@ -568,6 +570,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ocurrence note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         occurrenceNoteArea.setColumns(20);
         occurrenceNoteArea.setRows(5);
+        occurrenceNoteArea.setLineWrap(true);
         jScrollPane5.setViewportView(occurrenceNoteArea);
 
         org.jdesktop.layout.GroupLayout jPanel9Layout = new org.jdesktop.layout.GroupLayout(jPanel9);
@@ -697,16 +700,25 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             tableModel = new AuthorTableModel(model);
         authorTable.setModel(tableModel);
 
-        authorTable.setDefaultEditor(JButton.class, new ButtonEditor());
-        authorTable.setDefaultRenderer(JButton.class, new ButtonEditor());
+        //authorTable.setDefaultEditor(JButton.class, new ButtonEditor());
+        //authorTable.setDefaultRenderer(JButton.class, new ButtonEditor());
 
         TableColumn tc1 = authorTable.getColumnModel().getColumn(0);
         TableColumn tc2 = authorTable.getColumnModel().getColumn(1);
+        TableColumn tc3 = authorTable.getColumnModel().getColumn(2);
+        TableColumn tc4 = authorTable.getColumnModel().getColumn(3);
 
         JComboBox cb = new AutoComboBox(model.getAuthors());
         tc1.setCellEditor(new DefaultCellEditor(cb));  
         cb = new AutoComboBox(model.getAuthorRoles());
         tc2.setCellEditor(new DefaultCellEditor(cb));
+        
+        ButtonEditor be = new ButtonEditor(model);
+        tc3.setCellEditor(be);
+        tc3.setCellRenderer(be);
+        
+        AuthorRevisionEditor are = new AuthorRevisionEditor(model);
+        tc4.setCellEditor(are);
     }
     
     private void resetAuthorModel() {
@@ -734,7 +746,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         initAuthorTable();
         
         townComboBox.setSelectedItem(model.getVillage());
-        taxonTextArea.insert(model.getTaxon(),0);
+        taxonTextArea.setText(model.getTaxon(0));
         descriptionArea.setText(model.getLocalityDescription());
         yearSpinner.setValue(model.getYear());
         
@@ -822,7 +834,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             tableModel.removeRow(i);
             //unfortunately have to set up the editors and renderers again because of the
             //fireTableStructureChanged() in the tableModel.removeRow() ... :-/
-            initAuthorTable();            
+            //initAuthorTable();            
         }
     }
         

@@ -70,6 +70,14 @@ public class Pair<A, B> {
         }
     }
     
+    /** Needed for the Pair to work with hash tables (HashSet, HashMap, ...).
+     * See JavaDoc for Object.hashCode()
+     */
+    @Override
+    public int hashCode() {
+    	return a.hashCode() ^ b.hashCode();
+    }    
+    
     /** Converts this pair to String.
      *
      * @return "[first,second]" in case first and second are both instances of String

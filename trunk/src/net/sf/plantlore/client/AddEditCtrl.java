@@ -19,19 +19,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
+import javax.swing.text.BadLocationException;
 import net.sf.plantlore.common.AutoComboBox;
+import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.record.Occurrence;
 
 /**
  *
@@ -150,8 +155,15 @@ public class AddEditCtrl {
         }
 
         public void focusLost(FocusEvent e) {
-            JTextArea ta = (JTextArea) e.getSource();
-            model.setTaxon(ta.getText());
+            ArrayList<String> taxonList = new ArrayList<String>();
+            AutoTextArea ta = (AutoTextArea) e.getSource();
+            int lineCount = ta.getLineCount();
+            for (int i=0; i < lineCount; i++) {
+                String tmp = ta.getLine(i);
+                if (tmp.length() > 1) //omit empty lines
+                    taxonList.add(tmp);
+            }
+            model.setTaxons(taxonList);
         }
     }//taxonAreaListener
     
@@ -257,8 +269,41 @@ public class AddEditCtrl {
     
     class OkButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            model.storeRecord();
-            view.setVisible(false);
+            int choice=-1;
+            Pair<Boolean,String> check = model.checkData();
+            if (!check.getFirst()) {
+                JOptionPane.showMessageDialog(view,check.getSecond());
+            } else {
+                Occurrence[] sharedOcc = model.getHabitatSharingOccurrences();
+                if (sharedOcc.length > 1) {
+                    Object[] options = {"All","Just this","Cancel"};
+                    choice = JOptionPane.showOptionDialog(view, 
+                            "This plant's habitat is shared by "+sharedOcc.length+" other occurrences. \nDo you want to edit all the plants or just this one?",
+                            "Multiple plants share the same habitat",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]);
+                    System.out.println("User selected "+options[choice]);
+                    switch (choice) {
+                        case 0:
+                            model.storeRecord(true);
+                            view.setVisible(false);
+                            break;
+                        case 1:
+                            model.storeRecord(false);
+                            view.setVisible(false);
+                            break;
+                        case 2:
+                        default:                        
+                            //we'll do nothing and leave the AddEdit dialog visible
+                    }
+                } else {
+                        model.storeRecord(true);
+                        view.setVisible(false);                    
+                }
+            }
         }
     }//OkButtonListener
     

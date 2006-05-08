@@ -70,7 +70,7 @@ public class OverviewTableModel extends AbstractTableModel {
      */
     private boolean simple = true;
     
-    private int from = 1;
+    private int from = 0;
     private int to = 1;
     
     /** Creates a new instance of OverviewTableModel */
@@ -83,6 +83,7 @@ public class OverviewTableModel extends AbstractTableModel {
         this.db = db;
         SelectQuery sq = db.createQuery(Occurrence.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED); //setridit podle roku
+        sq.addRestriction(PlantloreConstants.RESTR_NE, Occurrence.DELETED, null, 1, null);
         //FIXME:
         try {
             setResultid(db.executeQuery(sq));
@@ -154,7 +155,7 @@ public class OverviewTableModel extends AbstractTableModel {
             int resultid = db.executeQuery(sq);
             int resultCount = db.getNumRows(resultid);
             authorResults = new Pair[resultCount];
-            Object[] results = db.more(resultid, 1, resultCount);
+            Object[] results = db.more(resultid, 0, resultCount-1);
             Object[] tmp;
             Author a;
             for (int i = 0; i < resultCount; i++) {
@@ -175,56 +176,59 @@ public class OverviewTableModel extends AbstractTableModel {
      */
     private void loadData() throws DBLayerException, RemoteException
     {
+        logger.info("Loading data for overview.");
         Object[] row;
         Occurrence result;
         Plant plant;
         Object[] resultObj, records;
         resultsCount = db.getNumRows(getResultid());
-        logger.debug("resultsCount = "+resultsCount);
-        to = Math.min(resultsCount, from + pageSize - 1);
-        logger.debug("to = "+to+" from="+from+" currentPage="+currentPage);
-        data = new Object[to - from + 1][];
-        logger.debug("data.length = "+data.length);
-        records = db.more(getResultid(), from, to);
-        logger.debug("records.length = " + records.length);
+        if (resultsCount > 0) {
+            logger.debug("resultsCount = "+resultsCount);
+            to = Math.min(resultsCount-1, from + pageSize - 1);
+            logger.debug("to = "+to+" from="+from+" currentPage="+currentPage);
+            data = new Object[to - from + 1][];
+            logger.debug("data.length = "+data.length);
+            records = db.more(getResultid(), from, to);
+            logger.debug("records.length = " + records.length);
 
-        for (int i = 1; i <= to - from + 1 ; i++) {
-            resultObj = (Object[])records[i-1];
-            result = (Occurrence)resultObj[0];
-            Record999 r = new Record999(result.getId(), false, from + i - 1);
-            if (from + i - 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
-                recordsArray.add(r);
-            else 
-                r = recordsArray.get(from+i-2);//array starts from 0 whereas records are numbered from 1
-            
-            row = new Object[COLUMN_COUNT + 1]; //we'll store the record id in the last column
-            row[0] = r.selected;
-            row[1] = r.number;
-            row[2] = result.getPlant().getTaxon();
-            row[3] = ((Object[])getAuthorsOf(result))[0];//occurrence must have at least one author, we'll choose the first one
-            row[4] = result.getHabitat().getNearestVillage().getName();
-            row[5] = result.getHabitat().getDescription();
-            row[6] = result.getYearCollected();
-            row[7] = result.getHabitat().getTerritory().getName();
-            row[8] = result.getHabitat().getPhytochorion().getName();
-            row[9] = result.getHabitat().getPhytochorion().getCode();
-            row[10] = result.getHabitat().getCountry();
-            row[11] = result.getHabitat().getQuadrant();
-            row[12] = result.getNote();
-            row[13] = result.getHabitat().getNote();
-            row[14] = result.getHabitat().getAltitude();
-            row[15] = result.getHabitat().getLongitude();
-            row[16] = result.getHabitat().getLatitude();
-            row[17] = result.getDataSource();
-            row[18] = result.getPublication().getCollectionName();
-            row[19] = result.getHerbarium();
-            row[20] = result.getMetadata().getDataSetTitle();
-            row[21] = result.getMonthCollected();
-            row[22] = result.getDayCollected();
-            row[23] = result.getTimeCollected();
-            row[24] = result; //won't  be displayed, because in getColumnCount we pretend not to have this column
-            data[i-1] = row;
-        }//i        
+            for (int i = 0; i < data.length ; i++) {
+                resultObj = (Object[])records[i];
+                result = (Occurrence)resultObj[0];
+                Record999 r = new Record999(result.getId(), false, from + i + 1);//we want to show the user numbers starting from 1 therefor the +1
+                if (from + i + 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
+                    recordsArray.add(r);
+                else 
+                    r = recordsArray.get(from+i);
+
+                row = new Object[COLUMN_COUNT + 1]; //we'll store the record id in the last column
+                row[0] = r.selected;
+                row[1] = r.number;
+                row[2] = result.getPlant().getTaxon();
+                row[3] = ((Object[])getAuthorsOf(result))[0];//occurrence must have at least one author, we'll choose the first one
+                row[4] = result.getHabitat().getNearestVillage().getName();
+                row[5] = result.getHabitat().getDescription();
+                row[6] = result.getYearCollected();
+                row[7] = result.getHabitat().getTerritory().getName();
+                row[8] = result.getHabitat().getPhytochorion().getName();
+                row[9] = result.getHabitat().getPhytochorion().getCode();
+                row[10] = result.getHabitat().getCountry();
+                row[11] = result.getHabitat().getQuadrant();
+                row[12] = result.getNote();
+                row[13] = result.getHabitat().getNote();
+                row[14] = result.getHabitat().getAltitude();
+                row[15] = result.getHabitat().getLongitude();
+                row[16] = result.getHabitat().getLatitude();
+                row[17] = result.getDataSource();
+                row[18] = result.getPublication().getCollectionName();
+                row[19] = result.getHerbarium();
+                row[20] = result.getMetadata().getDataSetTitle();
+                row[21] = result.getMonthCollected();
+                row[22] = result.getDayCollected();
+                row[23] = result.getTimeCollected();
+                row[24] = result; //won't  be displayed, because in getColumnCount we pretend not to have this column
+                data[i] = row;
+            }//i        
+        }//if resultsCount > 1
     }
     
     //momentalne nepouzita metoda
@@ -268,6 +272,9 @@ public class OverviewTableModel extends AbstractTableModel {
         return columnNames[c];
     }
     
+    /* nepouziva se
+     * primo v overview nelze editovat
+     */
     public void setValueAt(Object value, int row, int column) {
         data[row][column] = value;
         if (column == 0)
@@ -324,9 +331,9 @@ public class OverviewTableModel extends AbstractTableModel {
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
         if (from + pageSize > resultsCount)
-            from = resultsCount - pageSize + 1;
-        if (from < 1) //pageSize was bigger than the number of results
-            from = 1;
+            from = resultsCount - pageSize;
+        if (from < 0) //pageSize was bigger than the number of results
+            from = 0;
         
         currentPage = from / pageSize + 1;
         //FIXME: 

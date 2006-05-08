@@ -347,9 +347,20 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	 * @return	The string on the specified line.
 	 * @throws BadLocationException	If there is no such line.
 	 */
-	public String getLine(int line) throws BadLocationException {
-		int start = getLineStartOffset(line), end = getLineEndOffset(line);
-		return getText(start, end - start).trim();
+	public String getLine(int line) {
+            int start, end;
+            String s;
+            try {
+		start = getLineStartOffset(line);
+                end = getLineEndOffset(line);
+                s = getText(start, end - start);
+            } catch (BadLocationException ble) {
+                throw new IndexOutOfBoundsException(""+line);
+            }
+            if (s.length() > 0 && s.charAt(s.length()-1) == '\n')
+                return s.substring(0,s.length()-1);
+            else
+                return s;
 	}
 	
 	

@@ -12,30 +12,14 @@ package net.sf.plantlore.client;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.Pair;
-
-/** Listener for buttons in the table.
- * Adds or removes rows calling the view according to the button's text.
- */
-class AuthorButtonListener implements ActionListener {
-    AddEdit aemodel;
-    
-    public AuthorButtonListener(AddEdit aemodel) {
-        this.aemodel = aemodel;
-    }
-    
-    public void actionPerformed(ActionEvent actionEvent) {
-        JButton btn = (JButton) actionEvent.getSource();
-        if (btn.getText().equals("Add"))
-            aemodel.addAuthorRow();
-        else
-            aemodel.removeAuthorRow(Integer.parseInt(actionEvent.getActionCommand()));
-    }
-}
+import net.sf.plantlore.l10n.L10n;
 
 
 /** Table model for the authors table in AddEditView.
@@ -48,13 +32,14 @@ public class AuthorTableModel extends AbstractTableModel {
     
     public AuthorTableModel(AddEdit aemodel) {
         this.aemodel = aemodel;
-        row = new Object[3];
+        row = new Object[4];
         row[0] = new Pair("",0);
         row[1] = "";
-        JButton b = new JButton("Add");
+/*        JButton b = new JButton("Add");
         b.addActionListener(new AuthorButtonListener(aemodel));
-        b.setActionCommand("0");
-        row[2] = b;
+        b.setActionCommand("0"); */
+        row[2] = "";//x
+        row[3] = "";
         data.add(row);
         loadDataFromModel();
         fireTableDataChanged();
@@ -62,18 +47,19 @@ public class AuthorTableModel extends AbstractTableModel {
     
     private void loadDataFromModel() {
         for (int i = 0; i < aemodel.getAuthorCount(); i++)
-            addRow(aemodel.getAuthor(i), aemodel.getAuthorRole(i));        
+            addRow(aemodel.getAuthor(i), aemodel.getAuthorRole(i), aemodel.getResultRevision(i));        
     }
     
     public void reset() {
         data.clear();
-        row = new Object[3];
+        row = new Object[4];
         row[0] = new Pair("",0);
         row[1] = "";
-        JButton b = new JButton("Add");
+/*        JButton b = new JButton("Add");
         b.addActionListener(new AuthorButtonListener(aemodel));
-        b.setActionCommand("0");
-        row[2] = b;
+        b.setActionCommand("0"); */
+        row[2] = //x;
+        row[3] = "";
         data.add(row);
         loadDataFromModel();
         fireTableDataChanged();        
@@ -81,17 +67,18 @@ public class AuthorTableModel extends AbstractTableModel {
     
     public void addRow() {
         //create a new row
-        row = new Object[3];
+        row = new Object[4];
         row[0] = new Pair("",0);
         row[1] = "";
-        JButton b = new JButton("Add");
+/*        JButton b = new JButton("Add");
         b.addActionListener(new AuthorButtonListener(aemodel));
-        b.setActionCommand(""+data.size());
-        row[2] = b;
+        b.setActionCommand(""+data.size()); */
+        row[2] = "";//x
+        row[3] = "";
         
         //get the last row and update it's text to Remove
-        Object[] rowTmp = data.get(data.size()-1);
-        ((JButton)rowTmp[2]).setText("Remove");
+//        Object[] rowTmp = data.get(data.size()-1);
+//        ((JButton)rowTmp[2]).setText("Remove");
         
         data.add(row);
 
@@ -100,30 +87,32 @@ public class AuthorTableModel extends AbstractTableModel {
         fireTableRowsInserted(data.size()-1,data.size()-1);
     }
     
-    public void addRow(Pair<String, Integer> author, String role) {
+    public void addRow(Pair<String, Integer> author, String role, String revision) {
         addRow();
         Object[] row = data.get(data.size()-2);
         row[0] = author;
         row[1] = role;
+        row[3] = revision;
         fireTableDataChanged();
     }
     
     public void removeRow(int i) {
         System.out.println("AuthorTableModel: removing row #"+i);
         Object[] row = data.remove(i);
-        JButton b = (JButton)row[2];
+
+/*        JButton b = (JButton)row[2];
         for (int j=0; j < data.size(); j++){
             b = (JButton)data.get(j)[2];
             b.setActionCommand(""+j);
         }
-
+*/
         //we fire that in case someone would like to register a table model listener with us
         //and get some reasonable data
         fireTableRowsDeleted(i,i);
 
         //unfortunately have to do this so that each cell regets it's updated renderer
         //which is needed for the last row mainly
-        fireTableStructureChanged();
+        //fireTableStructureChanged();
     }
     
     public int getRowCount() {
@@ -149,6 +138,8 @@ public class AuthorTableModel extends AbstractTableModel {
             aemodel.setAuthor(r, (Pair<String, Integer>) o);
         if (c == 1)
             aemodel.setAuthorRole(r, (String) o);
+        if (c == 3)
+            aemodel.setResultRevision(r, (String) o);
     }
     
     public Class getColumnClass(int c) {
@@ -162,6 +153,8 @@ public class AuthorTableModel extends AbstractTableModel {
             case 1:
                 return String.class;
             case 2:
+                return JButton.class;
+            case 3:
                 return JButton.class;
             default:
                 return null;
@@ -186,6 +179,8 @@ public class AuthorTableModel extends AbstractTableModel {
                 return "Role";
             case 2:
                 return "";
+            case 3:
+                return "Revision";
             default:
                 return "";
         }
