@@ -73,14 +73,14 @@ public class Occurrence extends Record implements Deletable {
     public ArrayList<String> getColumns() {
     	return list( UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED,
     			MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, ISODATETIMEBEGIN,
-    			DATASOURCE, PUBLICATION, HERBARIUM, CREATEDWHEN, 
-    			UPDATEDWHEN, METADATA, NOTE );
+    			DATASOURCE, PUBLICATION, HERBARIUM, /*CREATEDWHEN,*/ 
+    			/*UPDATEDWHEN,*/ METADATA, NOTE );
     }
     
     public ArrayList<String> getNN() {
     	ArrayList<String> nn = getForeignKeys();
     	nn.remove(PUBLICATION);
-    	nn.addAll( list(UNITIDDB, UNITVALUE, YEARCOLLECTED, CREATEDWHEN, UPDATEDWHEN) );
+    	nn.addAll( list(UNITIDDB, UNITVALUE, YEARCOLLECTED/*, CREATEDWHEN*//*, UPDATEDWHEN*/) );
     	return nn;
     }
     
@@ -108,7 +108,9 @@ public class Occurrence extends Record implements Deletable {
     
     @Override 
     public boolean isDead() {
-    	return getDeleted() != 0;
+    	Integer c = getDeleted();
+    	if( c == null ) return false;
+    	else return c != 0;
     }
     
     

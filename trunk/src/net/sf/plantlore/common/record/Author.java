@@ -66,7 +66,9 @@ public class Author extends Record implements Deletable {
     
     @Override 
     public boolean isDead() {
-    	return getDeleted() != 0;
+    	Integer c = getDeleted();
+    	if( c == null ) return false;
+    	else return c != 0;
     }
     
     /**
@@ -228,7 +230,7 @@ public class Author extends Record implements Deletable {
      *   @see getDeleted
      */
     public void setDeleted(Integer deleted) {
-        this.deleted = deleted;
+    	this.deleted = deleted;
     }       
     
     /**

@@ -63,8 +63,8 @@ public abstract class Record implements Serializable {
 					// And store their getters. 
 					getters.put(table.getSimpleName()+"."+column, getter(table, column));
 			} 
-			catch(IllegalAccessException e) {}
-			catch(InstantiationException e) {}
+			catch(IllegalAccessException e) { e.printStackTrace(); }
+			catch(InstantiationException e) { e.printStackTrace(); }
 	}
 
 
@@ -77,7 +77,10 @@ public abstract class Record implements Serializable {
 	public Object getValue(String column) {
 		try {
 			return getters.get(getClass().getSimpleName()+"."+column).invoke(this, new Object[0]);
-		} catch (Exception e) { return null; }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null; 
+		}
 	}
 	
 	/**
@@ -181,6 +184,7 @@ public abstract class Record implements Serializable {
 	public boolean areAllNNSet() {
 		for( String column : getNN() ) { 
 			Object value = getValue(column);
+			System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
 			if( value == null ) return false;
 			if( value instanceof Record && !((Record)value).areAllNNSet() ) return false;
 		}
@@ -242,6 +246,20 @@ public abstract class Record implements Serializable {
 			return table.getMethod( s.toString(), new Class[0] );
 		} catch(NoSuchMethodException e) {}
 		return null;
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder sigma = new StringBuilder();
+		for(String property : this.getProperties()) {
+			sigma.append(property);
+			sigma.append(" = ");
+			sigma.append(this.getValue(property));
+			sigma.append("; ");
+		}
+		
+		return sigma.toString();
 	}
 	
 }

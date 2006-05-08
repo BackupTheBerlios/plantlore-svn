@@ -73,7 +73,9 @@ public class Publication extends Record implements Deletable  {
     
     @Override 
     public boolean isDead() {
-    	return getDeleted() != 0;
+    	Integer c = getDeleted();
+    	if( c == null ) return false;
+    	else return c != 0;
     }
     
     /**
@@ -126,7 +128,7 @@ public class Publication extends Record implements Deletable  {
      *   @param collectionYearPublication year when the collection was published
      *   @see getCollectionYearPublication
      */
-    public void setCollectionYearPublication(int collectionYearPublication) {
+    public void setCollectionYearPublication(Integer collectionYearPublication) {
         this.collectionYearPublication = collectionYearPublication;
     }
     
@@ -226,7 +228,7 @@ public class Publication extends Record implements Deletable  {
      *   @see setDeleted
      */
     public Integer getDeleted() {
-        return this.deleted;
+    	return this.deleted;
     }
     
     /**

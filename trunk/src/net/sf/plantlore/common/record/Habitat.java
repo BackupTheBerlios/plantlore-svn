@@ -59,7 +59,9 @@ public class Habitat extends Record implements Deletable {
     
     @Override 
     public boolean isDead() {
-    	return getDeleted() != 0;
+    	Integer c = getDeleted();
+    	if( c == null ) return false;
+    	else return c != 0;
     }
     
     @Override
@@ -272,7 +274,7 @@ public class Habitat extends Record implements Deletable {
      *   @see setDeleted
      */
     public Integer getDeleted() {
-        return this.deleted;
+    	return this.deleted;
     }
     
     /**
