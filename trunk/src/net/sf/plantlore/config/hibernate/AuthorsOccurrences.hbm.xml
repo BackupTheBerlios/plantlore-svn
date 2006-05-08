@@ -21,9 +21,9 @@
                 name="role"
                 not-null="false"
                 type="java.lang.String"/>
-      <property column="CRESULTREVISION"
-                length="30"
-                name="resultRevision"
+      <property column="CNOTE"
+                length="4096"
+                name="note"
                 not-null="false"
                 type="java.lang.String"/>  
       <property column="CDELETE"

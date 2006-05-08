@@ -24,7 +24,7 @@ public class AuthorOccurrence extends Record implements Deletable {
     private Author author;
     private Occurrence occurrence;
     private String role;
-    private String resultRevision;
+    private String note;
     private Integer deleted;
         
     /** Constants with column mapping (used for building select queries) */
@@ -32,7 +32,7 @@ public class AuthorOccurrence extends Record implements Deletable {
     public static final String AUTHOR = "author";    
     public static final String OCCURRENCE = "occurrence";
     public static final String ROLE = "role";
-    public static final String RESULTREVISION = "resultRevision";
+    public static final String NOTE = "note";
     public static final String DELETED = "deleted";
     
     @Override
@@ -41,7 +41,7 @@ public class AuthorOccurrence extends Record implements Deletable {
     }
     
     public ArrayList<String> getColumns() {
-    	return list( AUTHOR, OCCURRENCE, ROLE, RESULTREVISION, DELETED );
+    	return list( AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED );
     }
     
     @Override
@@ -50,7 +50,7 @@ public class AuthorOccurrence extends Record implements Deletable {
 		else if(column.equals(AUTHOR)) setAuthor((Author)value);
 		else if(column.equals(OCCURRENCE)) setOccurrence((Occurrence)value);
 		else if(column.equals(ROLE)) setRole((String)value);
-		else if(column.equals(RESULTREVISION)) setResultRevision((String)value);
+		else if(column.equals(NOTE)) setNote((String)value);
 		else if(column.equals(DELETED)) setDeleted((Integer)value);
     }
     
@@ -140,20 +140,20 @@ public class AuthorOccurrence extends Record implements Deletable {
 
     /**
      *   Get
-     *   @return
-     *   @see setResultRevision
+     *   @return authors note or result revision
+     *   @see setNote
      */
-    public String getResultRevision() {
-        return this.resultRevision;
+    public String getNote() {
+        return this.note;
     }
     
     /**
      *   Set
-     *   @param resultRevision
-     *   @see getResultRevision
+     *   @param authors note or resutl revision
+     *   @see getNote
      */
-    public void setResultRevision(String resultRevision) {
-        this.resultRevision = resultRevision;
+    public void setNote(String note) {
+        this.note = note;
     }    
     
         /**

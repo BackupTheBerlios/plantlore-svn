@@ -32,7 +32,7 @@
       <property column="CWHOLENAME"
                 length="50"
                 name="wholeName"
-                not-null="false"
+                not-null="true"
                 type="java.lang.String"/>                
       <property column="CEMAIL"      
                 length="50"

@@ -11,16 +11,12 @@
 
       <property column="CADMINISTRATOR"                
                 name="administrator"
-                not-null="false"
+                not-null="true"
                 type="java.lang.Integer"/>
       <property column="CEDITALL"                
                 name="editAll"
-                not-null="false"
-                type="java.lang.Integer"/>
-      <property column="CEDITOWN"                
-                name="editOwn"
-                not-null="false"
-                type="java.lang.Integer"/>
+                not-null="true"
+                type="java.lang.Integer"/>     
       <property column="CEDITGROUP"    
                 length = "255"            
                 name="editGroup"
@@ -33,7 +29,7 @@
                 type="java.lang.String"/>
       <property column="CADD"    
                 name="add"
-                not-null="false"
+                not-null="true"
                 type="java.lang.Integer"/>
    </class>
 </hibernate-mapping>

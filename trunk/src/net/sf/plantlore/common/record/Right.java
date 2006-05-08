@@ -20,8 +20,7 @@ public class Right extends Record {
     /** Parameters of the Right record */
     private Integer id;   
     private int administrator;
-    private int editAll;
-    private int editOwn;
+    private int editAll;    
     private String editGroup;
     private String seeColumns;
     private int add;    
@@ -29,8 +28,7 @@ public class Right extends Record {
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
     public static final String ADMINISTRATOR = "administrator";    
-    public static final String EDITALL = "editAll";    
-    public static final String EDITOWN = "editOwn";    
+    public static final String EDITALL = "editAll";          
     public static final String EDITGROUP = "editGroup";    
     public static final String SEECOLUMNS = "seeColumns";    
     public static final String ADD = "add";    
@@ -96,23 +94,6 @@ public class Right extends Record {
         this.editAll= editAll;
     }
     
-    /**
-     *   Get information about edit only own occurrences right
-     *   @return information about edit only own occurrences right
-     *   @see setEditOwn
-     */
-    public int getEditOwn() {
-        return this.editOwn;
-    }
-    
-    /**
-     *   Set information about edit only own occurrences right
-     *   @param editOwn information about edit only own occurrences right
-     *   @see getEditOwn
-     */
-    public void setEditOwn(int editOwn) {
-        this.editOwn= editOwn;
-    }
           
     /**
      *   Get list of users whose occurrences the user can edit
