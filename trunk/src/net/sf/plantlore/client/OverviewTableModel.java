@@ -9,6 +9,7 @@ package net.sf.plantlore.client;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.Pair;
@@ -265,7 +266,36 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public Class getColumnClass(int c) {
-        return getValueAt(0,c).getClass();
+        switch (c) {
+            case 0:return Boolean.class;
+            case 1:return Integer.class;
+            case 2:return String.class;
+            case 3:return String.class;
+            case 4:return String.class;
+            case 5:return String.class;
+            case 6:return Integer.class;
+            case 7:return String.class;
+            case 8:return String.class;
+            case 9:return String.class;
+            case 10:return String.class;
+            case 11:return String.class;
+            case 12:return String.class;
+            case 13:return String.class;
+            case 14:return Double.class;
+            case 15:return Double.class;
+            case 16:return Double.class;
+            case 17:return String.class;
+            case 18:return String.class;
+            case 19:return String.class;
+            case 20:return String.class;
+            case 21:return Integer.class;
+            case 22:return Integer.class;
+            case 23:return Date.class;
+            case 24:return Occurrence.class;
+            default:
+                return Object.class;
+        }
+        //return getValueAt(0,c).getClass();
     }
     
     public String getColumnName(int c){
