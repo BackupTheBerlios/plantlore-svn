@@ -29,6 +29,6 @@
       <mapping file="Territories.hbm.xml"/>
       <mapping file="User.hbm.xml"/>
       <mapping file="Villages.hbm.xml"/>  
-      <mapping file="LastUpdate.hbm.xml"/> 
+      <mapping file="LastDataVersion.hbm.xml"/> 
    </session-factory>
 </hibernate-configuration>

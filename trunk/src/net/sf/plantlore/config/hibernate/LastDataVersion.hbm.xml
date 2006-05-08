@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.LastDataVersion" table="TLASTDATAVERSION" lazy="false">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CPLANTSVERSION"
+                name="plantsVersion"
+                not-null="true"                
+                type="java.lang.Integer"/>             
+      <property column="CVILLAGESVERSION"
+                name="villagesVersion"
+                not-null="true"                
+                type="java.lang.Integer"/>               
+      <property column="CPHYTOCHORIAVERSION"
+                name="phytochoriaVersion"
+                not-null="true"                
+                type="java.lang.Integer"/>               
+      <property column="CTERRITORYVERSION"
+                name="territoryVersion"
+                not-null="true"                
+                type="java.lang.Integer"/>               
+      <property column="CDATE"
+                name="date"
+                not-null="true"                
+                type="java.util.Date"/>
+   </class>
+</hibernate-mapping>
