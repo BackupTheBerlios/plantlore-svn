@@ -12,7 +12,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 
 /**
  * Interface for database access.
@@ -129,7 +129,7 @@ public interface DBLayer extends Remote, Serializable {
      *  @return an instance of <code>SelectQuery</code> used for building a query by client
      *
      */
-    public SelectQuery createQuery(Class classname) throws RemoteException;
+    public SelectQuery createQuery(Class classname) throws DBLayerException, RemoteException;
 
     /**
      *  Execute constructed SELECT query. Only executes query, for retrieving results use next() and more()
@@ -144,7 +144,7 @@ public interface DBLayer extends Remote, Serializable {
      *
      *  @param query query we want to close
      */    
-    public void closeQuery(SelectQuery query);
+    public void closeQuery(SelectQuery query) throws RemoteException;
 
     /**
      *  Execute SQL delete with condition. Only administrator should be allowed to run this.
@@ -156,7 +156,7 @@ public interface DBLayer extends Remote, Serializable {
      *  @param value value in the condition. Must be either String, Integer or Date
      *  @return number of rows deleted
      */    
-    public int conditionDelete(Class tableClass, String column, String operation, Object value) throws DBLayerException;
+    public int conditionDelete(Class tableClass, String column, String operation, Object value) throws DBLayerException, RemoteException;
 
     /**
      *  Method to get the currently logged user. Returns null if there is no user logged in.
@@ -169,7 +169,19 @@ public interface DBLayer extends Remote, Serializable {
      *  @return rights of the currently logged in user or null if there is no user logged in.
      */    
     public Right getUserRights() throws RemoteException;
-        
+
+    public boolean beginTransaction() throws DBLayerException, RemoteException;
+            
+    public boolean commitTransaction() throws DBLayerException, RemoteException;
+            
+    public boolean rollbackTransaction() throws DBLayerException, RemoteException;    
+
+    public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException;
+            
+    public void executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException;
+    
+    public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException;
+                        
     public void shutdown() throws RemoteException;
         
 }

@@ -34,7 +34,7 @@ import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -162,8 +162,10 @@ public class History {
        	    query = database.createQuery(Occurrence.class);
        	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, idOcc, null);
        } catch(RemoteException e) {
-       	    System.err.println("RemoteException - History(), crateQuery");       	  
-       }      
+       	    System.err.println("RemoteException - History(), createQuery");       	  
+       } catch(DBLayerException e) {
+       	    System.err.println("DBLayerException - History(), createQuery");       	  
+       }
              
        
        int resultId = 0;
@@ -197,8 +199,12 @@ public class History {
        setNamePlant(namePlant);
        setNameAuthor(nameAuthor);
        setLocation(location);
-       
-       database.closeQuery(query);
+       try {
+            database.closeQuery(query);
+       } catch(RemoteException e) {
+       	    System.err.println("RemoteException");
+       }
+
 /*
  * konec casti kodu, ktera bude dobudoucna nahrazena.
  * 
@@ -236,21 +242,23 @@ public class History {
        	    query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OPERATION, null, HistoryChange.HISTORYCHANGE_INSERT, null);
        } catch(RemoteException e) {
        	    System.err.println("RemoteException- searchInsertInfo(), createQuery");       	  
+       } catch(DBLayerException e) {
+       	    System.err.println("DBLayerException - searchInsertInfo(), createQuery");
        }            
-              
+       
        int resultIdInsert = 0;
        try {
            // Execute query                    
            resultIdInsert = database.executeQuery(query); 
            // Save "insert" history data
            setInsertResult(resultIdInsert);
+           database.closeQuery(query);           
        } catch (DBLayerException e) {
            // Log and set an error                   
            logger.error("Searching history data with condition 'operation = insert' failed. Unable to execute search query.");          
        } catch (RemoteException e) {		 
     	   System.err.println("RemoteException- searchInsertInfo(), executeQuery");
-	    }         
-       database.closeQuery(query);
+       }
     }
     
     
@@ -266,18 +274,19 @@ public class History {
 
     	//  Select data from tHistory table
         try {
-			query = database.createQuery(HistoryRecord.class);
-			// Create aliases for table tHistoryChange.      
+		query = database.createQuery(HistoryRecord.class);
+		// Create aliases for table tHistoryChange.      
 	        query.createAlias("historyChange", "hc");        
 	        // Add restriction to COPERATION column of tJistoryChange table
 	        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.operation", null, HistoryChange.HISTORYCHANGE_EDIT, null);        
 	        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.occurrence", null, occurrence, null);    	
 	        query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
-		} catch (RemoteException e) {
-			System.err.println("RemoteException- searchEditHistory(), createQuery");
-		}
-                
-    	
+	} catch (RemoteException e) {
+		System.err.println("RemoteException - searchEditHistory(), createQuery");
+	} catch (DBLayerException e) {
+		System.err.println("DBLayerException - searchEditHistory(), createQuery");
+	}                
+
         int resultIdEdit = 0;
         try {
             // Execute query                    
@@ -338,10 +347,12 @@ public class History {
 			query.createAlias("historyChange", "hc");
 			// sort by date/time
 			query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
-		} catch (RemoteException e) {
-                System.err.println("RemoteException- searchWholeHistoryData(), createQuery");
+	} catch (RemoteException e) {
+                System.err.println("RemoteException - searchWholeHistoryData(), createQuery");
+	} catch (DBLayerException e) {
+                System.err.println("DBLayerException - searchWholeHistoryData(), createQuery");
         }
-                
+
     	
         int resultId = 0;
         try {
@@ -1033,85 +1044,46 @@ public class History {
      * @param id
      * @return
      */
-    public Object[] searchObject(String typeObject, int id) { 
-      
+    public Object[] searchObject(String typeObject, int id) {       
     	SelectQuery query = null;
-    	if (typeObject.equals("Occurrence")){
-            try {
-            	query = database.createQuery(Occurrence.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject() - Occurrence, createQuery");       	  
-            }            
-            
-    	} else if (typeObject.equals("AuthorOccurrence")){
-            try {
-            	query = database.createQuery(AuthorOccurrence.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject() - AuthorOccurrence, createQuery");       	  
-            }            
-            
-    	} else if (typeObject.equals("Habitat")){
-            try {
-            	query = database.createQuery(Habitat.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject() - Habitat, createQuery");       	  
-            }            
-            
-    	} else if (typeObject.equals("Plant")){
-            try {
-            	query = database.createQuery(Plant.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject() - Plant, createQuery");       	  
-            }            
-            
-    	} else if (typeObject.equals("Author")){
-            try {
-            	query = database.createQuery(Author.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Author.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject() - Author, createQuery");       	  
-            }            
-            
-    	} else if (typeObject.equals("Publication")){
-            try {
-            	query = database.createQuery(Publication.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject() - Publication, createQuery");       	  
-            }            
-            
-    	} else if (typeObject.equals("Village")){
-            try {
-            	query = database.createQuery(Village.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject()- Village, createQuery");       	  
-            }            
-            
-    	}  else if  (typeObject.equals("Territory")){
-            try {
-            	query = database.createQuery(Territory.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject()- Territory, createQuery");       	  
-            }            
-             
-    	} else if (typeObject.equals("Phytochorion")){
-            try {
-            	query = database.createQuery(Phytochorion.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, searchObject()- Phytochorion, createQuery");       	  
-            }            
-            
-    	} else {
-    		logger.error("SearchObject() - Incorrect type of object.");
-    	}
-                        
+
+        try {
+            if (typeObject.equals("Occurrence")){
+                query = database.createQuery(Occurrence.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, id , null);
+            } else if (typeObject.equals("AuthorOccurrence")){
+                query = database.createQuery(AuthorOccurrence.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.ID, null, id , null);
+            } else if (typeObject.equals("Habitat")){
+                query = database.createQuery(Habitat.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.ID, null, id , null);
+            } else if (typeObject.equals("Plant")){
+                query = database.createQuery(Plant.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.ID, null, id , null);
+            } else if (typeObject.equals("Author")){
+                query = database.createQuery(Author.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Author.ID, null, id , null);
+            } else if (typeObject.equals("Publication")){
+                query = database.createQuery(Publication.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
+            } else if (typeObject.equals("Village")){
+                query = database.createQuery(Village.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
+            }  else if  (typeObject.equals("Territory")){
+                query = database.createQuery(Territory.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null);
+            } else if (typeObject.equals("Phytochorion")){
+                query = database.createQuery(Phytochorion.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
+            } else {
+                logger.error("SearchObject() - Incorrect type of object.");
+            }
+        } catch(RemoteException e) {
+            System.err.println("RemoteException, searchObject() - "+typeObject+", createQuery");
+        } catch(DBLayerException e) {
+            System.err.println("DBLayerException, searchObject() - "+typeObject+", createQuery");
+        }
+        
         int resultId = 0;
         try {                   
             resultId = database.executeQuery(query);        
@@ -1129,14 +1101,16 @@ public class History {
             } catch(RemoteException e) {            	
                 logger.debug("RemoteException- searchObject, more");            	
             }   
-        	object = (Object[])objects[0];           
+            object = (Object[])objects[0];           
+            //close session
+            database.closeQuery(query);            
        } catch (DBLayerException e) {
            // Log and set error in case of an exception
            logger.error("Processing search " +typeObject+ " results failed: "+e.toString());            
-       }   
-       //close session
-       database.closeQuery(query);
-       
+       } catch (RemoteException e) {
+           // Log and set error in case of an exception
+           logger.error("Processing search " +typeObject+ " results failed: "+e.toString());            
+       }       
        return object; 	       	          	   
            	        
     }
@@ -1147,23 +1121,17 @@ public class History {
     public String getAllAuthors(Occurrence occurrence) {
         String allAuthor = "";
         SelectQuery query = null;
+        int resultId = 0;
         
         try {
-            	query = database.createQuery(AuthorOccurrence.class);
-            	query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, occurrence , null);
-            } catch(RemoteException e) {
-            	    System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");       	  
-            }   
-        int resultId = 0;
-        try {
-                             
-            resultId = database.executeQuery(query);        
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }        
-       
+            query = database.createQuery(AuthorOccurrence.class);
+            query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, occurrence , null);
+            resultId = database.executeQuery(query);
+        } catch(RemoteException e) {
+            System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
+        } catch(DBLayerException e) {
+            System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
+        }
        Object[] objects = null;       
        try {
             objects = database.more(resultId, 0, 0);  
@@ -1183,8 +1151,12 @@ public class History {
             allAuthor = allAuthor + role + ": " + author + "\n";
         }           
        //close session
-       database.closeQuery(query);
-       
+        try {
+            database.closeQuery(query);
+        } catch(RemoteException e) {
+            System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
+        }
+        
        return allAuthor;     	    
     }
     
@@ -1272,8 +1244,10 @@ public class History {
                 // Add restriction to cChangeId column 
                 query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.id", null, id , null);
         } catch(RemoteException e) {
-        	System.err.println("RemoteException- searchHistoryChangeId(), createQuery");       	  
-        }        
+        	System.err.println("RemoteException - searchHistoryChangeId(), createQuery");       	  
+        } catch(DBLayerException e) {
+        	System.err.println("DBLayerException - searchHistoryChangeId(), createQuery");       	  
+        }
         
         
         int resultIdChange = 0;
@@ -1287,14 +1261,13 @@ public class History {
 
         int countResult = 100;
         try {
-                    countResult = database.getNumRows(resultIdChange);
-                    logger.debug("getRelationshipHistoryChange - Number of result: "+countResult);
-            } catch (RemoteException e) {
-                    System.err.println("RemoteException- getRelationshipHistoryChange(), getNumRows");
-            }		
-        //close session
-        database.closeQuery(query);
-        
+            countResult = database.getNumRows(resultIdChange);
+            logger.debug("getRelationshipHistoryChange - Number of result: "+countResult);
+            //close session
+            database.closeQuery(query);
+        } catch (RemoteException e) {
+            System.err.println("RemoteException- getRelationshipHistoryChange(), getNumRows");
+        }
 	return countResult;
     }
     
@@ -1307,9 +1280,10 @@ public class History {
                 query = database.createQuery(Occurrence.class);                
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.HABITAT , null, occurrence.getHabitat() , null);
         } catch(RemoteException e) {
-        	System.err.println("RemoteException- getRelationshipHabitat(), createQuery");       	  
+        	System.err.println("RemoteException - getRelationshipHabitat(), createQuery");       	  
+        } catch(DBLayerException e) {
+        	System.err.println("DBLayerException - getRelationshipHabitat(), createQuery");       	  
         }        
-        
         
         int resultIdHabitat = 0;
         try {                   
@@ -1322,14 +1296,13 @@ public class History {
 
         int countResult = 100;
         try {
-                    countResult = database.getNumRows(resultIdHabitat);
-                    logger.debug("getRelationshipHabitat - Number of result: "+countResult);
-            } catch (RemoteException e) {
-                    System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
-            }		
-        //close session
-        database.closeQuery(query);
-        
+            countResult = database.getNumRows(resultIdHabitat);
+            logger.debug("getRelationshipHabitat - Number of result: "+countResult);
+            //close session
+            database.closeQuery(query);
+        } catch (RemoteException e) {
+            System.err.println("RemoteException- searchHistoryChangeId(), getNumRows");
+        }
 	return countResult;
     }
     

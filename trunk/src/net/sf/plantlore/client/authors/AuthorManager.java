@@ -13,11 +13,12 @@ import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
+import net.sf.plantlore.common.record.HistoryRecord;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.SwingWorker;
 import org.apache.log4j.Logger;
 
@@ -116,7 +117,7 @@ public class AuthorManager extends Observable {
                 // The operation is not finished yet
                 done = false;
                 // Create Author object for author we want to add
-                Author author = new Author();
+/*                Author author = new Author();
                 author.setWholeName(name);
                 author.setOrganization(organization);
                 author.setRole(role);
@@ -143,6 +144,31 @@ public class AuthorManager extends Observable {
                 if (isResultAvailable()) {
                     searchAuthor();
                 }
+*/
+                int rowId = 0;                
+                try {
+                    database.conditionDelete(HistoryRecord.class, HistoryRecord.ID, ">", 10);
+                    
+/*                    SelectQuery query = database.createQuery(Occurrence.class);
+                    System.out.println("Created SelectQuery");
+                    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, 8, null);
+                    System.out.println("Going to execute select query");
+                    int id = database.executeQuery(query);
+                    System.out.println("Select query executed");
+                    Object[] res = database.more(id, 0, 0);
+                    Object[] resres = (Object[])res[0];
+                    Occurrence occ = (Occurrence)resres[0];
+                    occ.getPublication().setCollectionName("Nove collection name");
+                    database.executeUpdate(occ);
+ */
+                } catch (DBLayerException e2) {
+                    e2.printStackTrace();
+                } catch (RemoteException e3) {
+                    e3.printStackTrace();
+                }
+
+               
+                
                 done = true;
                 return rowId;
             }
@@ -272,6 +298,16 @@ public class AuthorManager extends Observable {
                     } else {
                         query.addOrder(PlantloreConstants.DIRECT_DESC, field);
                     }
+                    Object[] args = new Object[8];
+                    args[0] = PlantloreConstants.RESTR_EQ_PROPERTY;
+                    args[1] = Author.WHOLENAME;
+                    args[2] = Author.EMAIL;
+                    args[3] = null;                    
+                    args[4] = PlantloreConstants.RESTR_EQ_PROPERTY;
+                    args[5] = Author.WHOLENAME;
+                    args[6] = Author.ORGANIZATION;
+                    args[7] = null;
+                    query.addOrRestriction(args);
                     int resultId = 0;
                     try {
                         // Execute query
@@ -291,6 +327,9 @@ public class AuthorManager extends Observable {
                     }
                     return resultId;
                 } catch (RemoteException e) {
+                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                    return null;
+                } catch (DBLayerException e) {
                     System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                     return null;
                 }

@@ -36,7 +36,7 @@ import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -76,7 +76,9 @@ public class MetadataManager {
         try {
                 query = database.createQuery(Metadata.class);                                
         } catch (RemoteException e) {
-        System.err.println("RemoteException- searchMetadataData(), createQuery");
+            System.err.println("RemoteException - searchMetadataData(), createQuery");
+        } catch (DBLayerException e) {
+            System.err.println("DBLayerException - searchMetadataData(), createQuery");
         }
                 
         int resultId = 0;

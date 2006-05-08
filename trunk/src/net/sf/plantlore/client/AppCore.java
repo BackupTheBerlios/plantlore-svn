@@ -27,7 +27,7 @@ import net.sf.plantlore.common.record.Village;
 // Imports for temporary db access
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import org.apache.log4j.Logger;
 

@@ -15,7 +15,7 @@ import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 
 import org.apache.log4j.Logger;
 

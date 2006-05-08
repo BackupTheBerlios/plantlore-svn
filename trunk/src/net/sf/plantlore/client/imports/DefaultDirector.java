@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_IS_NULL;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.*;

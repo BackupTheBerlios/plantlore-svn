@@ -3,7 +3,7 @@ package net.sf.plantlore.middleware;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 
 /** 
  * Interface for obtaining remote references of the DBLayer objects running on some remote server.

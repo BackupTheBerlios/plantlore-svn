@@ -17,7 +17,7 @@ import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -138,7 +138,9 @@ public class UserManager {
                         query.addOrder(PlantloreConstants.DIRECT_DESC, field);
                 }
         } catch (RemoteException e) {
-        System.err.println("RemoteException- searchUserData(), createQuery");
+            System.err.println("RemoteException - searchUserData(), createQuery");
+        } catch (DBLayerException e) {
+            System.err.println("DBLayerException - searchUserData(), createQuery");
         }
                 
         int resultId = 0;

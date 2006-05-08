@@ -15,7 +15,7 @@ import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
@@ -128,7 +128,9 @@ public class PublicationManager {
                         query.addOrder(PlantloreConstants.DIRECT_DESC, field);
                 }
         } catch (RemoteException e) {
-        System.err.println("RemoteException- searchPublicationData(), createQuery");
+            System.err.println("RemoteException - searchPublicationData(), createQuery");
+        } catch (DBLayerException e) {
+            System.err.println("DBlayerException - searchPublicationData(), createQuery");
         }
                 
         int resultId = 0;

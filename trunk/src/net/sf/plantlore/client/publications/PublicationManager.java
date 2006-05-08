@@ -18,7 +18,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.SwingWorker;
 import org.apache.log4j.Logger;
 
@@ -300,6 +300,9 @@ public class PublicationManager extends Observable {
                     }
                     return resultId;
                 } catch (RemoteException e) {
+                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+                    return null;
+                } catch (DBLayerException e) {
                     System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
                     return null;
                 }

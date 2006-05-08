@@ -6,6 +6,7 @@ import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
 import java.util.Hashtable;
+import net.sf.plantlore.common.exception.DBLayerException;
 
 import org.apache.log4j.Logger;
 

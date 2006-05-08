@@ -9,7 +9,7 @@ import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 import net.sf.plantlore.server.ConnectionInfo;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 

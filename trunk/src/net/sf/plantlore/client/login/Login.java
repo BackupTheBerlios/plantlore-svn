@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.DBLayerFactory;
-import net.sf.plantlore.server.DBLayerException;
+import net.sf.plantlore.common.exception.DBLayerException;
 
 /**
  * Login is responsible for the following:
@@ -74,10 +74,10 @@ public class Login extends Observable {
 
 		 // TEMPORARY CODE STARTS HERE
 
-				dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
+/*				dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
 						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
 						new String[] { "sysdba", null, null, null, null }));                
-
+*/
 				dbinfo.add(new DBInfo("My Home Database", "", -1,
 							"jdbc:firebirdsql:localhost/3050:c:/Kovo/PlantloreClean/plantloreHIBdataUTF.fdb", 
 							new String[] { "sysdba", null, null, null, null }));
@@ -237,6 +237,7 @@ public class Login extends Observable {
 		} 
 		catch (DBLayerException exception) {
 			logger.error("The initialization of the DBLayer failed! Here's why: " + exception);
+                        exception.printStackTrace();
 			// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 			// If it is not, the server's policy may not allow another connection from this client!
 			factory.destroy(dblayer);
