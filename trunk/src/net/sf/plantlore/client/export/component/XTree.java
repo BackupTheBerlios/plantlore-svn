@@ -176,7 +176,7 @@ public class XTree extends javax.swing.JTree {
 		new Object[] { // AUTHOR-OCCURENCE
 			new XNode(AuthorOccurrence.class, null),
 			new XNode(AuthorOccurrence.class, AuthorOccurrence.ROLE),
-			new XNode(AuthorOccurrence.class, AuthorOccurrence.RESULTREVISION)
+			new XNode(AuthorOccurrence.class, AuthorOccurrence.NOTE)
 		}
 	};
 	
@@ -277,7 +277,7 @@ public class XTree extends javax.swing.JTree {
 		new Object[] { // AUTHOR-OCCURENCE
 			new XNode(AuthorOccurrence.class, null),
 			new XNode(AuthorOccurrence.class, AuthorOccurrence.ROLE),
-			new XNode(AuthorOccurrence.class, AuthorOccurrence.RESULTREVISION)
+			new XNode(AuthorOccurrence.class, AuthorOccurrence.NOTE)
 		}
 	};
 	

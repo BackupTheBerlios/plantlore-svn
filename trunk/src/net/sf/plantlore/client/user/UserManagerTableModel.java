@@ -10,7 +10,9 @@
 package net.sf.plantlore.client.user;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
@@ -75,16 +77,21 @@ public class UserManagerTableModel  extends AbstractTableModel  {
     	int countResult = Math.min(userDataList.size(), firstRow+ model.getDisplayRows()-1);
     	int countRow = countResult - firstRow + 1;   
         int ii = 0;
+        //init Calendar for save valu of date   		
+        Calendar isoDateTime = new GregorianCalendar();
     	//loud data for view
         Object[][] userData = new Object[countRow][5];   
     	for (int i=firstRow-1; i < countResult; i++) {     
             userData[ii][0] = ((User)userDataList.get(i)).getLogin();
             userData[ii][1] = ((User)userDataList.get(i)).getWholeName(); 
             userData[ii][2] = ((User)userDataList.get(i)).getEmail();
-            //userData[ii][3] = ((User)userDataList.get(i)).getCreateWhen().toString();  	    
-            //userData[ii][4] = ((User)userDataList.get(i)).getDropWhen().toString();                 
-            userData[ii][3] = new Date();
-            userData[ii][4] = new Date();
+            userData[ii][3] = ((User)userDataList.get(i)).getCreateWhen().toString();              
+            Date dropWhen = ((User)userDataList.get(i)).getDropWhen();
+            if (dropWhen != null){
+                userData[ii][4] = dropWhen.toString();
+            } else {
+                userData[ii][4] = "";
+            }            
     	    ii++;
     	}      	    	
     	this.data = userData;    	

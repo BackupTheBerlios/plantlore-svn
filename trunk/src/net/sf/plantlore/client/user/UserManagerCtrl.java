@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Date;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
 import org.apache.log4j.Logger;
@@ -208,9 +209,8 @@ public class UserManagerCtrl {
                editView.surnameText.setText(user.getSurname());
                editView.emailText.setText(user.getEmail());
                editView.addressText.setText(user.getAddress());
-               //FIXME: osetrit praci s casem
-                //editView.createWhenText.setText(user.getCreateWhen().toString());
-               //editView.dropWhenText.setText(user.getDropWhen().toString());               
+               editView.createWhenText.setValue(user.getCreateWhen());
+               editView.dropWhenText.setValue(user.getDropWhen());               
                editView.noteText.setText(user.getNote());
                //Right
                Right right = user.getRight();
@@ -225,12 +225,7 @@ public class UserManagerCtrl {
                    editView.editAllCheckBox.setSelected(true);                   
                } else {
                    editView.editAllCheckBox.setSelected(false);                   
-               }
-               if (right.getEditOwn() == 1) {
-                   editView.editOwenCheckBox.setSelected(true);
-               } else {
-                   editView.editOwenCheckBox.setSelected(false);
-               }
+               }               
                if (right.getAdd() == 1) {
                    editView.addRightCheckBox.setSelected(true);
                } else {
@@ -277,10 +272,9 @@ public class UserManagerCtrl {
                detailsView.firstNameText.setText(user.getFirstName());
                detailsView.surnameText.setText(user.getSurname());
                detailsView.emailText.setText(user.getEmail());
-               detailsView.addressText.setText(user.getAddress());
-               //FIXME osetrit praci s casem
-               //detailsView.createWhenText.setText(user.getCreateWhen().toString());
-               //detailsView.dropWhenText.setText(user.getDropWhen().toString());               
+               detailsView.addressText.setText(user.getAddress());               
+               detailsView.createWhenText.setValue(user.getCreateWhen());
+               detailsView.dropWhenText.setValue(user.getDropWhen());               
                detailsView.noteText.setText(user.getNote());
                //Right
                Right right = user.getRight();
@@ -295,12 +289,7 @@ public class UserManagerCtrl {
                    detailsView.editAllCheckBox.setSelected(true);                   
                } else {
                    detailsView.editAllCheckBox.setSelected(false);                   
-               }
-               if (right.getEditOwn() == 1) {
-                   detailsView.editOwenCheckBox.setSelected(true);
-               } else {
-                   detailsView.editOwenCheckBox.setSelected(false);
-               }
+               }              
                if (right.getAdd() == 1) {
                    detailsView.addRightCheckBox.setSelected(true);
                } else {
@@ -327,14 +316,20 @@ public class UserManagerCtrl {
                //smazani zaznamu
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1; 
                model.setSelectedRecord(resultNumber);
-               model.deleteUserRecord();        
-               //nacteni metadat
-               model.searchUser();
-               //opet funkci pro vyzadani si dat postupne
-               model.processResult(1, model.getDisplayRows());
-               view.tableUserList.setModel(new UserManagerTableModel(model));                      
-               view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());  
-               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+               //informace administratorovi,o tom, ze dany uzivatel bude smazan
+               int okCancle = view.messageDelete(model.getSelectedRecord().getWholeName());
+               if (okCancle == 1) {
+                   logger.debug("Ok button was press");
+                   //zavolani delete na vybraneho uzivatele
+                   model.deleteUserRecord();        
+                   //nacteni metadat
+                   model.searchUser();
+                   //opet funkci pro vyzadani si dat postupne
+                   model.processResult(1, model.getDisplayRows());
+                   view.tableUserList.setModel(new UserManagerTableModel(model));                      
+                   view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());  
+                   view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+               }
            }          
        }
     }

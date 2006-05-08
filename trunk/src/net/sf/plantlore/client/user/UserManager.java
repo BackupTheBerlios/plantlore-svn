@@ -226,8 +226,14 @@ public class UserManager {
     }
     
     public void deleteUserRecord() {
+        
+        //pokud bude nastaveno zobrazeni jen uzivatelu, kteri maji pristup do databaze, tak je nutne smazat uzivatele z listu
+        
+        //pri mazani uzivatele se mu nastavi DROPWHEN na aktualni cas - nebude fyzicky smazan z databaze
+        selectedRecord.setDropWhen(new Date());
+                
         try {
-            database.executeDelete(selectedRecord);
+            database.executeUpdate(selectedRecord);
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } catch (DBLayerException ex) {

@@ -105,11 +105,7 @@ public class AddEditUserCtrl {
                    }
                    //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
                    //BUDE TO CHTIT CHYTRE OZNACOVANI
-                   if (view.editOwenCheckBox.isSelected()) {
-                       right.setEditOwn(1);
-                   } else {
-                       right.setEditOwn(0);
-                   }
+                 
                    if (view.addRightCheckBox.isSelected()) {
                        right.setAdd(1);
                    } else {
@@ -153,12 +149,7 @@ public class AddEditUserCtrl {
                        right.setEditAll(0);
                    }
                    //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
-                   //BUDE TO CHTIT CHYTRE OZNACOVANI
-                   if (view.editOwenCheckBox.isSelected()) {
-                       right.setEditOwn(1);
-                   } else {
-                       right.setEditOwn(0);
-                   }
+                   //BUDE TO CHTIT CHYTRE OZNACOVANI                   
                    if (view.addRightCheckBox.isSelected()) {
                        right.setAdd(1);
                    } else {

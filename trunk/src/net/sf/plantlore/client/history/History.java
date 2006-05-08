@@ -591,7 +591,7 @@ public class History {
                 logger.debug("Set selected value for update of attribe Role of Author.");
                 break;
             case 3: //Result of revisition
-                authorOccurrence.setResultRevision(oldValue);
+                authorOccurrence.setNote(oldValue);
                 logger.debug("Set selected value for update of attribute Result of revision.");
                 break;
             default:
@@ -1469,7 +1469,7 @@ public class History {
         authorsOccurrenceHash = new Hashtable<String, Integer>(3);
         authorsOccurrenceHash.put(AuthorOccurrence.AUTHOR, 1);
         authorsOccurrenceHash.put(AuthorOccurrence.ROLE, 2);
-        authorsOccurrenceHash.put(AuthorOccurrence.RESULTREVISION, 3);
+        authorsOccurrenceHash.put(AuthorOccurrence.NOTE, 3);
     }
     
     private void initOccurrenceHash() {
