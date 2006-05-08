@@ -29,6 +29,7 @@ public class Publication extends Record implements Deletable  {
     private String referenceDetail;
     private String url;
     private Integer deleted;
+    private User createdWho;
     private String note;
 
     /** Constants with column mapping (used for building select queries) */
@@ -41,6 +42,7 @@ public class Publication extends Record implements Deletable  {
     public static final String REFERENCEDETAIL = "referenceDetail";    
     public static final String URL = "url";    
     public static final String DELETED = "deleted";            
+    public static final String CREATEDWHO = "createdWho";    
     public static final String NOTE = "note";
     
     /** Creates a new instance of PublicationRecord */
@@ -68,6 +70,7 @@ public class Publication extends Record implements Deletable  {
 		else if(column.equals(REFERENCEDETAIL)) setReferenceDetail((String)value);
 		else if(column.equals(URL)) setUrl((String)value);
 		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(CREATEDWHO)) setCreatedWho((User)value);                
 		else if(column.equals(NOTE)) setNote((String)value);
     }
     
@@ -239,6 +242,24 @@ public class Publication extends Record implements Deletable  {
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }   
+
+    /**
+     *  Get user who created this publication
+     *  @return User who created this Publication
+     *  @see setCreatedWho
+     */
+    public User getCreatedWho() {
+        return this.createdWho;
+    }
+    
+    /**
+     *  Set user who created this Publication.
+     *  @param createdWho user who created this Publication
+     *  @see getCreatedWho
+     */
+    public void setCreatedWho(User createdWho) {
+        this.createdWho = createdWho;
+    }    
     
     /**
      *   Get note for the publication
