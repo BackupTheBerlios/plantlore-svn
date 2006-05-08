@@ -47,6 +47,10 @@
                 name="deleted"
                 not-null="false"                
                 type="java.lang.Integer"/>
+      <many-to-one name="createdWho" 
+                   class="net.sf.plantlore.common.record.User" 
+                   column="CCREATEWHO"
+                   fetch="select"/>                
       <property column="CNOTE"
                 name="note"
                 not-null="false"                
