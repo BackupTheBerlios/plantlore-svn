@@ -85,6 +85,6 @@
       <property column="CDELETE"
                 name="deleted"
                 not-null="true"                
-                type="java.lang.Integer"/>            
+                type="java.lang.Integer"/>                 
    </class>
 </hibernate-mapping>

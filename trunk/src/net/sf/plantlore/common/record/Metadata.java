@@ -35,7 +35,7 @@ public class Metadata extends Record {
     private java.util.Date dateCreate;
     private java.util.Date dateModified;
     private String recordBasis;
-    private String biotopeText;
+    private String biotopeText;    
     private Integer deleted;
     
     /** Constants with column mapping (used for building select queries) */
@@ -55,7 +55,7 @@ public class Metadata extends Record {
     public static final String DATEMODIFIED = "dateModified";    
     public static final String RECORDBASIS = "recordBasis";
     public static final String BIOTOPETEXT = "biotopeText";    
-    public static final String DELETE = "delete";
+    public static final String DELETED = "deleted";
     
     /**
      *   Default constructor to create new class Metadata
@@ -67,13 +67,13 @@ public class Metadata extends Record {
     	return list( TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
     			CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL, CONTENTCONTACTNAME,
     			DATASETDETAILS, DATASETTITLE, SOURCEID, SOURCEINSTITUTIONID,
-    			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, DELETE/*,
+    			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, DELETED/*,
     			DATECREATE,*//* DATEMODIFIED*/ ); // Damn this table!
     }
     
     public ArrayList<String> getNN() {
     	return list(TECHNICALCONTACTNAME, CONTENTCONTACTNAME, DATASETTITLE, 
-    			SOURCEINSTITUTIONID, SOURCEID/*, DATECREATE*//*, DATEMODIFIED*/);
+    			SOURCEINSTITUTIONID, SOURCEID, DELETED/*, DATECREATE*//*, DATEMODIFIED*/);
     }
     
     @Override
@@ -92,7 +92,7 @@ public class Metadata extends Record {
 		else if(column.equals(OWNERORGANIZATIONABBREV)) setOwnerOrganizationAbbrev((String)value);
 		else if(column.equals(BIOTOPETEXT)) setBiotopeText((String)value);
 		else if(column.equals(RECORDBASIS)) setRecordBasis((String)value);
-		else if(column.equals(DELETE)) setDeleted((Integer)value);
+		else if(column.equals(DELETED)) setDeleted((Integer)value);
 		else if(column.equals(DATECREATE)) setDateCreate((java.util.Date)value);
 		else if(column.equals(DATEMODIFIED)) setDateModified((java.util.Date)value);
     }
@@ -383,9 +383,9 @@ public class Metadata extends Record {
      */
     public void setBiotopeText(String biotopeText) {
         this.biotopeText = biotopeText;
-    }  
-    
-       /**
+    }    
+
+   /**
      *   Get flag telling whether the record has been deleted
      *   @return flag telling whether the record has been deleted. Value 1 means deleted.
      *   @see setDeleted
@@ -401,5 +401,5 @@ public class Metadata extends Record {
      */
     public void setDeleted(Integer deleted) {
     	this.deleted = deleted;
-    }   
+    }    
 }
