@@ -63,16 +63,20 @@ public abstract class AbstractBuilder implements Builder {
 	protected abstract void output(Class table, String column, Object value) throws IOException;
 
 	/**
-	 * Send the value of all properties (i.e. all columns that are not foreign keys)
-	 * of this record to the output. Uses the <code>output()</code> method.
+	 * Send all properties to output and traverse the subrecords, too.
 	 * 
-	 * @see AbstractBuilder#output(Class, String, Object)
 	 */
 	public void part(Record record) throws IOException {
 		if(record == null) return;
+		// Build this part of the record.
 		Class table = record.getClass();
 		for( String property : record.getProperties() ) 
-				output( table, property, record.getValue(property) );
+			output( table, property, record.getValue(property) );
+		// Now look at all children of this record.
+		for(String key : record.getForeignKeys()) {
+			// And build'em too.
+			part( (Record) record.getValue(key) );
+		}
 	}
 
 	/**

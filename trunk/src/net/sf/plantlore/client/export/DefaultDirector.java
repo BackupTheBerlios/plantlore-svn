@@ -116,28 +116,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		return count;
 	}
 	
-	
-	/**
-	 * The whole record is returned in a tree structure.
-	 * We must traverse this structure.
-	 * The children are denoted as <i>foreign keys</i> 
-	 * - they contain other parts of the whole record.
-	 * 
-	 * @param record The "node" in the tree hierarchy representing the
-	 * whole record.
-	 */
-	private void buildParts(Record record) throws IOException {
-		if(record == null) return;
-		// Build this part of the record.
-		build.part(record);
-		// Now look at all children of this record.
-		for(String key : record.getForeignKeys()) {
-			// And build'em too.
-			buildParts( (Record) record.getValue(key) );
-		}
-	}
-	
-	
+		
 	
 	private void loadAssociatedAuthors(Occurrence occurrence) 
 	throws RemoteException, IOException, DBLayerException {
@@ -156,7 +135,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			Object[] pulp = database.more( resultId, i, i );
 			AuthorOccurrence ao = (AuthorOccurrence) ((Object[])pulp[0])[0];
 			ao.setOccurrence( null ); // cut off the way back to the occurrence
-			buildParts( ao );
+			build.part( ao );
 		}
 		database.closeQuery( query );
 	}
@@ -185,8 +164,8 @@ public class DefaultDirector extends Observable implements Runnable {
 				count++;
 				build.startRecord();
 				
-				// Parse the record.
-				buildParts( record );
+				// Build this part of the record.
+				build.part( record );
 				
 				/* -----------------------------------------------------------
 				 * Deal with the one-to-many relationship

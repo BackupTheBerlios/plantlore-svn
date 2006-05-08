@@ -35,9 +35,11 @@ public interface Builder {
 	void startRecord() throws IOException;
 	
 	/**
-	 * Write a part of the whole record.
+	 * Write a part of the record.
 	 * 
-	 * @param arg A part of a record to be written. The record corresponds with one table.
+	 * @param arg A part of a record to be written. The record may span across several tables.
+	 * The correct implementation should traverse the given record table by table and 
+	 * build the ouptut appropriately.
 	 * @throws IOException If the writer encounters an error.
 	 */
 	void part(Record arg) throws IOException;
