@@ -1136,7 +1136,7 @@ public class AddEdit extends Observable {
                             logger.info("Updating authorOccurrence properties for "+pTmp.getFirst().getFirst());
                             AuthorOccurrence aoTmp = authorOccurrences.get(pTmp.getFirst().getSecond());
                             aoTmp.setRole(pTmp.getSecond());
-                            aoTmp.setResultRevision(resultRevision.get(j));
+                            aoTmp.setNote(resultRevision.get(j));
                             database.executeUpdate(aoTmp);
                             logger.debug("AuthorOccurrence id="+aoTmp.getId()+" "+pTmp.getFirst().getFirst()+" updated");
                         } 
@@ -1169,7 +1169,7 @@ public class AddEdit extends Observable {
                             AuthorOccurrence aoTmp = new AuthorOccurrence();
                             aoTmp.setAuthor((Author)dlu.getObjectFor(pTmp.getFirst().getSecond(),Author.class));
                             aoTmp.setRole(pTmp.getSecond());
-                            aoTmp.setResultRevision(resultRevision.get(k));
+                            aoTmp.setNote(resultRevision.get(k));
                             aoTmp.setOccurrence(occTmp);
                             aoTmp.setDeleted(0);
                             database.executeInsert(aoTmp);
@@ -1194,7 +1194,7 @@ public class AddEdit extends Observable {
                                 logger.info("Creating authorOccurrence for "+o.getPlant().getTaxon()+" and "+pTmp.getFirst().getFirst());
                                 aoTmp.setAuthor((Author)dlu.getObjectFor(pTmp.getFirst().getSecond(),Author.class));
                                 aoTmp.setRole(pTmp.getSecond());
-                                aoTmp.setResultRevision(resultRevision.get(k));
+                                aoTmp.setNote(resultRevision.get(k));
                                 aoTmp.setOccurrence(o);
                                 aoTmp.setDeleted(0);
                                 database.executeInsert(aoTmp);    
@@ -1237,7 +1237,7 @@ public class AddEdit extends Observable {
                             AuthorOccurrence aoTmp = new AuthorOccurrence();
                             aoTmp.setRole(pTmp.getSecond());
                             aoTmp.setAuthor((Author)dlu.getObjectFor(pTmp.getFirst().getSecond(),Author.class));
-                            aoTmp.setResultRevision(resultRevision.get(k));
+                            aoTmp.setNote(resultRevision.get(k));
                             aoTmp.setOccurrence(occ);
                             aoTmp.setDeleted(0);
                             database.executeInsert(aoTmp);                            
@@ -1347,7 +1347,7 @@ public class AddEdit extends Observable {
                 authorResults.add(new Pair<Pair<String,Integer>,String>(
                         new Pair<String,Integer>(a.getWholeName(),a.getId()),role ) );
                 authorOccurrences.put(a.getId(),ao);
-                resultRevision.add(ao.getResultRevision());
+                resultRevision.add(ao.getNote());
             }
         } catch (DBLayerException ex) {
             ex.printStackTrace();
