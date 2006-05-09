@@ -306,8 +306,8 @@ public class DefaultDirector extends Observable implements Runnable {
 					// The record in the database is newer than the record in the file.
 					if(updateInDBOccurred.after(updateInFile)) {
 						logger.debug("The record in the file is OLDER than the record stored in the database.");
-//						if( !doNotAskAboutDateAgain ) 
-//							dateDecision = expectDecision( occInDB );
+						if( !doNotAskAboutDateAgain ) 
+							dateDecision = expectDecision( occInDB );
 						
 						if( dateDecision != Action.UPDATE && dateDecision != Action.INSERT ) 
 							continue;
@@ -709,8 +709,8 @@ public class DefaultDirector extends Observable implements Runnable {
 					// This is up to the User.
 					logger.info("The record "+current+" is shared!");
 					insertUpdateDecision = lastDecision;
-//					if(!useLastDecision) // ASK THE USER!
-//						insertUpdateDecision = expectDecision( replacement );
+					if(!useLastDecision) // ASK THE USER!
+						insertUpdateDecision = expectDecision( replacement );
 				}
 				else
 					insertUpdateDecision = Action.UPDATE;
@@ -788,8 +788,8 @@ public class DefaultDirector extends Observable implements Runnable {
 						} else {
 							// If the shared record is something else, the User's intervention may be needed.
 							insertUpdateDecision = lastDecision;
-//							if(!useLastDecision) 
-//								insertUpdateDecision = expectDecision( replacement );
+							if(!useLastDecision) 
+								insertUpdateDecision = expectDecision( replacement );
 							if(insertUpdateDecision == Action.UPDATE) 
 								// User decided to update (potentially dangerous).
 								db.executeUpdateHistory(current);

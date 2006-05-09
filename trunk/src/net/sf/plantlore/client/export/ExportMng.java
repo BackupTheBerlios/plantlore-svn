@@ -384,12 +384,12 @@ public class ExportMng extends Observable implements Observer {
 	}
 	
 	
+	/** Something that will not be true for a long time, at least the mankind hopes so. */
 	private boolean sunExploded = false;
 	
 
 	/**
-	 * Abort the current export. You <b>must call</b> <code>finish()</code> 
-	 * after calling <code>abort()</code>. 
+	 * Abort the current export. 
 	 */
 	synchronized public void abort() {
 		if(!exportInProgress) return;

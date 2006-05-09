@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
 
@@ -31,6 +35,15 @@ public class ImportMng extends Observable implements Observer {
 	private Thread current;
 	
 	
+	/**
+	 * Create a new Import Manager. 
+	 * This manager is primarily intented for import of the occurrence data.
+	 * 
+	 * @param db	The database layer.
+	 * @param user	The User that is currently logged in.
+	 * @param filename	The name of the file where the data reside.
+	 * @throws ImportException	If some of the parameters are not valid.
+	 */
 	public ImportMng(DBLayer db, User user, String filename) 
 	throws ImportException {
 		setDBLayer(db);
@@ -38,14 +51,26 @@ public class ImportMng extends Observable implements Observer {
 		setSelectedFile(filename);
 	}
 	
-	
+	/**
+	 * Create a new Import Manager. 
+	 * This manager is primarily intented for import of the occurrence data.
+	 * 
+	 * @param db	The database layer.
+	 * @param user	The User that is currently logged in.
+	 * @throws ImportException	If some of the parameters are not valid.
+	 */
 	public ImportMng(DBLayer db, User user) 
 	throws ImportException {
 		this(db, user, null);
 	}
 	
 	
-	
+	/**
+	 * Set a new database layer.
+	 * 
+	 * @param dblayer	The database layer to be used.
+	 * @throws ImportException	If the parameter is not valid.
+	 */
 	synchronized public void setDBLayer(DBLayer dblayer) 
 	throws ImportException {
 		if(dblayer == null) { 
@@ -55,6 +80,11 @@ public class ImportMng extends Observable implements Observer {
 		db = dblayer;
 	}
 	
+	/**
+	 * Set another user.
+	 * @param user	The new User.
+	 * @throws ImportException	If the parameter is not valid.
+	 */
 	synchronized public void setUser(User user) 
 	throws ImportException {
 		if(user == null) { 
@@ -66,8 +96,10 @@ public class ImportMng extends Observable implements Observer {
 	
 	
 	/**
-	 * Set the selected file. Into this file the builder will 
-	 * spit its output. 
+	 * Set the selected file. 
+	 * This file contains the data. 
+	 * 
+	 * @param filename
 	 */
 	synchronized public void setSelectedFile(String filename) { 
 		if(filename == null)
@@ -76,19 +108,48 @@ public class ImportMng extends Observable implements Observer {
 	}
 	
 	
-	
+	/**
+	 * Make a decision any time the user's intervention is required.
+	 * There are several occasions which need the user's supervision,
+	 * some of them are: 
+	 * <ul>
+	 * <li>when the record contained in the database is newer than the one contained in the file,</li>
+	 * <li>when a part of the record is shared and the intended operation is update -
+	 * 			this may affect more records</li>
+	 * </ul>
+	 * 
+	 * @param decision	The decision the user has made.
+	 */
 	public void makeDecision(Action decision) {
 		if(director != null) 
 			director.makeDecision(decision);
 	}
 	
-	
+	/**
+	 * If the user no longer wants to be bothered with decision-making
+	 * he can instruct the import manager to remember his last decision
+	 * and apply it whenever necessary.
+	 * <br/>
+	 * In this case, the Import Director will always respect the decision
+	 * made when older record should replace a newer.
+	 * 
+	 * @param arg	True if the User should no longer be asked.
+	 */
 	public void setAskAboutTime(boolean arg) {
 		if(director != null) 
 			director.useLastDecisionInTimeIssues(arg);
 	}
 	
-	
+	/**
+	 * If the user no longer wants to be bothered with decision-making
+	 * he can instruct the import manager to remember his last decision
+	 * and apply it whenever necessary.
+	 * <br/>
+	 * In this case, the Import Director will always respect the decision
+	 * that has been made when a shared record is to be updated.
+	 * 
+	 * @param arg	True if the User should no longer be asked.
+	 */
 	public void setAskAboutInsert(boolean arg) {
 		if(director != null) 
 			director.useLastDecisionInUpdateInsertIssues(arg);
@@ -98,7 +159,7 @@ public class ImportMng extends Observable implements Observer {
 	 * Start the import procedure. The import will run in its own thread.
 	 * 
 	 * @throws ImportException	If the information provided is not complete.
-	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
+	 * @throws IOException	If anything with the file goes wrong (disk failure, insufficient permissions).
 	 */
 	synchronized public void start() 
 	throws ImportException, IOException {
@@ -128,7 +189,7 @@ public class ImportMng extends Observable implements Observer {
 		director = new DefaultDirector(db, parser, user);
 		director.addObserver(this);
 		
-		current = new Thread( director, "Export" );
+		current = new Thread( director, "Import" );
 		if(current == null) {
 			logger.fatal("Unable to create a new thread.");
 			throw new ImportException("Unable to create a new thread.");
@@ -145,8 +206,8 @@ public class ImportMng extends Observable implements Observer {
 					try {
 						current.join();
 						break;
-					}catch(InterruptedException e) {} // FIXME: join the thread again
-				// Dispose of the writer.
+					}catch(InterruptedException e) {} 
+				// Dispose of the reader.
 				try {
 					reader.close();
 				}catch(IOException e) {}
@@ -159,12 +220,11 @@ public class ImportMng extends Observable implements Observer {
 		monitor.start();
 	}
 	
-	
+	/** Something that will not be true for a long time, at least the mankind hopes so. */
 	private boolean universeImploded = false;
 
 	/**
-	 * Abort the current export. You <b>must call</b> <code>finish()</code> 
-	 * after calling <code>abort()</code>. 
+	 * Abort the current import. 
 	 */
 	synchronized public void abort() {
 		if(!importInProgress) return;
@@ -189,7 +249,7 @@ public class ImportMng extends Observable implements Observer {
 	
 	
 	/**
-	 * @return The number of results that have already been exported.
+	 * @return The number of results that have already been imported into the database.
 	 */
 	public int getNumberOfImported() {
 		if(director == null) return 0;
@@ -197,17 +257,24 @@ public class ImportMng extends Observable implements Observer {
 	}
 	
 	
-	public Record getProcessedRecordFromFile() {
-		return (director == null) ? null : director.getProcessedRecordFromFile();
+	/**
+	 * 
+	 * @return	The record that is currently loaded from the database
+	 * and the record loaded from the file.
+	 */
+	public TableModel getProcessedRecords() {
+		return (director == null) ? null : 
+			new RecordTable(
+					director.getProcessedRecordInDatabase(), 
+					director.getProcessedRecordFromFile());
 	}
 	
-	
-	public Record getProcessedRecordInDatabase() {
-		return (director == null) ? null : director.getProcessedRecordInDatabase();
-	}
-	
-	public Record getProblematicRecord() {
-		return (director == null) ? null : director.getProblematic();
+	/**
+	 * 
+	 * @return	The record that caused problems (exceptions).
+	 */
+	public TableModel getProblematicRecord() {
+		return (director == null) ? null : new RecordTable( director.getProblematic() );
 	}
 	
 	
@@ -218,6 +285,83 @@ public class ImportMng extends Observable implements Observer {
 	 */
 	public void update(Observable source, Object parameter) {
 		setChanged(); notifyObservers( parameter );
+	}
+	
+	
+	private class RecordTable extends AbstractTableModel {
+		
+		ArrayList<String>[] value;
+		String[] columnNames;
+			
+		
+		/**
+		 * Display the record and all its properties
+		 * so that the user can see the problem.
+		 * 
+		 * @param record
+		 */
+		public RecordTable(Record record) {
+			value = new ArrayList[2];
+			value[0] = new ArrayList<String>(20);
+			value[1] = new ArrayList<String>(20);
+			columnNames = new String[] { "Property", "Value" };
+			traverse(record);
+		}
+		
+		/**
+		 * Display the records and all their properties
+		 * so that the user can compare them.
+		 * 
+		 * @param a	The first record (the record in the database).
+		 * @param b	The second record (the record in the file).
+		 */
+		public RecordTable(Record a, Record b) {
+			value = new ArrayList[3];
+			value[0] = new ArrayList<String>(20);
+			value[1] = new ArrayList<String>(20);
+			value[2] = new ArrayList<String>(20);
+			columnNames = new String[] { "Property", "Value (in DB)", "Value (in file)" };
+			traverse(a, b);
+		}
+		
+		
+		private void traverse(Record...r) {
+			int n;
+			if(r[0] != null) n = 0; else if(r.length >= 2 && r[1] != null) n = 1;
+			else return;
+			Class table = r[n].getClass(); 
+				
+			for( String property : r[n].getProperties()) {
+				value[0].add(table.getSimpleName()+"."+property);
+				for(int i = 0; i < r.length; i++) { 
+					Object v = (r[i] == null) ? null : r[i].getValue(property);
+					value[i].add( (v == null) ? "" : v.toString() );
+				}
+			}
+			for( String key : r[n].getForeignKeys() )
+				if(r.length == 1)
+					traverse((Record)r[0].getValue(key));
+				else
+					traverse((Record)r[0].getValue(key), (Record)r[1].getValue(key));
+		}
+		
+
+		public int getRowCount() {
+			return columnNames.length;
+		}
+
+		public int getColumnCount() {
+			return value.length;
+		}
+		
+		public String getColumnName(int column) {
+			return columnNames[column];
+		}
+
+		public Object getValueAt(int row, int column) {
+			return value[column].get(row);
+		}
+		
 	}
 
 
