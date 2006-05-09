@@ -12,6 +12,7 @@ import net.sf.plantlore.client.export.Template;
 /**
  * CSV Builder.
  * 
+ * FIXME: Possibly broken due to the changes of the AbstractBuilder!
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
  * @version 1.0 header is missing

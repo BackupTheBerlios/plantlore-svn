@@ -357,18 +357,23 @@ public class ExportMng extends Observable implements Observer {
 		// Register a cleanup procedure
 		Thread monitor = new Thread(new Runnable() {
 			public void run() {
+				// Sleep until the thread is really dead.
 				try {
-					// Sleep until the thread is really dead.
 					current.join();
-					// Dispose of the writer.
+				}catch(InterruptedException e) {} // FIXME: join the thread again
+				// Dispose of the writer.
+				try {
 					writer.close();
-					exportInProgress = false;
-					// Dispose of the query.
-					if(query != null) db.closeQuery( query );
-					logger.debug("Environment cleaned up.");
-					// Notify observers the export has ended.
-					update(null, null);
-				}catch(Exception e) {}
+				}catch(IOException e) {}
+				exportInProgress = false;
+				// Dispose of the query.
+				try {
+				if(query != null) db.closeQuery( query );
+				}catch(RemoteException e) {}
+				logger.debug("Environment cleaned up.");
+				// Notify observers the export has ended.
+				update(null, null);
+				
 			}
 		}, "ExportMonitor");
 		monitor.start();
