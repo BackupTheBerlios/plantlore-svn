@@ -14,7 +14,7 @@ import net.sf.plantlore.common.record.Record;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-27
- * @version 1.0
+ * @version 1.2
  * @see net.sf.plantlore.client.Builder
  * @see AbstractBuilder#output(Class, String, Object)
  */
@@ -63,15 +63,16 @@ public abstract class AbstractBuilder implements Builder {
 	protected abstract void output(Class table, String column, Object value) throws IOException;
 
 	/**
-	 * Send all properties to output and traverse the subrecords, too.
-	 * 
+	 * Send all desired properties to the output 
+	 * and traverse the subrecords, too.
 	 */
 	public void part(Record record) throws IOException {
 		if(record == null) return;
 		// Build this part of the record.
 		Class table = record.getClass();
 		for( String property : record.getProperties() ) 
-			output( table, property, record.getValue(property) );
+			if( template.isSet(table, property) )
+				output( table, property, record.getValue(property) );
 		// Now look at all children of this record.
 		for(String key : record.getForeignKeys()) {
 			// And build'em too.

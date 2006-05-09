@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  * The Director class (for export).
  * Purpose: The Director continualy fetches results of the resultset
  * identified by the <code>result</code>.
- * The selected results (records whose ID is in the <code>selection</code>)
+ * The selected results (records containted in the <code>selection</code>)
  * are passed to the <code>builder</code> - the builder is responsible for
  * creating a corresponing output.
  * <br/>
@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
- * @version 1.0 RC 1
+ * @version 1.0 RC 2
  *
  * @see net.sf.plantlore.client.common.Selection
  * @see net.sf.plantlore.client.export.Builder
@@ -70,7 +70,11 @@ public class DefaultDirector extends Observable implements Runnable {
 		setSelection(selection); 
 	}
 	
-	
+	/**
+	 * Set a new Builder
+	 * @param builder	The builder to be used.
+	 * @throws ExportException	If the builder is not valid.
+	 */
 	protected void setBuilder(Builder builder) 
 	throws ExportException {
 		if(builder == null) {
@@ -79,7 +83,13 @@ public class DefaultDirector extends Observable implements Runnable {
 		}
 		build = builder;
 	}
-	
+
+	/**
+	 * Set a new resultset identificator.
+	 * 
+	 * @param result	The identifier of the resultset.
+	 * @throws ExportException	If the identifier is not valid.
+	 */
 	protected void setResult(int result) 
 	throws ExportException {
 		if(result < 0) {
@@ -89,6 +99,11 @@ public class DefaultDirector extends Observable implements Runnable {
 		this.result =  result;
 	}
 	
+	/**
+	 * Set a new database layer.
+	 * @param db	The database layer to be set.
+	 * @throws ExportException	If the database layer is not valid.
+	 */
 	protected void setDatabase(DBLayer db) 
 	throws ExportException {
 		if(db == null) {
@@ -98,6 +113,11 @@ public class DefaultDirector extends Observable implements Runnable {
 		this.database = db;
 	}
 	
+	/**
+	 * Set a new selection.	
+	 * @param selection	The selection to be cloned.
+	 * @throws ExportException	If the selection is not valid.
+	 */
 	protected void setSelection(Selection selection) 
 	throws ExportException {
 		if(selection == null || selection.isEmpty()) {
@@ -117,7 +137,12 @@ public class DefaultDirector extends Observable implements Runnable {
 	}
 	
 		
-	
+	/**
+	 * Find all AuthorOccurrences associated with the <code>Occurrence</code>
+	 * and send them to the Builder, too.
+	 * 
+	 * @param occurrence	The currently processed occurrence data.
+	 */
 	private void loadAssociatedAuthors(Occurrence occurrence) 
 	throws RemoteException, IOException, DBLayerException {
 		
@@ -182,17 +207,9 @@ public class DefaultDirector extends Observable implements Runnable {
 			build.footer();
 			logger.info("Export completed. " + count + " records sent to output.");
 		}
-		catch(DBLayerException e) {
-			logger.error("Export ended prematurely " + e);
+		catch(Exception e) {
+			logger.error("Export ended prematurely. " + e);
 			setChanged(); notifyObservers( e ); 
-		}
-		catch(RemoteException e) {
-			logger.error("Export ended prematurely " + e);
-			setChanged(); notifyObservers( e );
-		}
-		catch(IOException e) {
-			logger.error("Export ended prematurely " + e); 
-			setChanged(); notifyObservers( e );
 		}
 		if(aborted) logger.info("Export aborted. " + count + " records sent to output.");
 	}

@@ -103,9 +103,25 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     }
     
     
+    private boolean exceptionOccured = false;
     
 	public void update(Observable source, Object parameter) {
-		if(model.isAborted()) {
+		// The final cleanup may overwrite the exception! 
+		if(exceptionOccured)
+			return;
+		
+		if( parameter != null && parameter instanceof Exception ) {
+			Exception e = (Exception) parameter;
+			setTitle("Export interrupted");
+			
+			status.setText("An exception interrupted the export procedure: " + e);
+			
+			progress.setValue(0);
+			progress.setString("");
+			abort.setText("Close");
+			exceptionOccured = true;
+		}
+		else if(model.isAborted()) {
 			setTitle("Export aborted");
 			if(total > 0)
 				status.setText("Export procedure aborted.\n " + count +"/" + total + " records exported.");
@@ -121,16 +137,6 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 			progress.setMaximum(100);
 			progress.setValue(100);
 			progress.setString("100%");
-			abort.setText("Close");
-		}
-		else if( parameter != null && parameter instanceof Exception ) {
-			Exception e = (Exception) parameter;
-			setTitle("Export interrupted");
-			
-			status.setText("An exception interrupted the export procedure: " + e);
-			
-			progress.setValue(0);
-			progress.setString("");
 			abort.setText("Close");
 		}
 		else if( this.isVisible() ) {

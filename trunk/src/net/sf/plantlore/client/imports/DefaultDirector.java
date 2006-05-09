@@ -2,7 +2,6 @@ package net.sf.plantlore.client.imports;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Observable;
@@ -444,17 +443,12 @@ public class DefaultDirector extends Observable implements Runnable {
 				}
 					
 				imported++;
+				setChanged(); notifyObservers( imported );
 			}
 		} 
-		catch(DBLayerException e) {
+		catch(Exception e) {
 			logger.error("The import ended prematurely. "+imported+" records imported into the database.");
-			logger.error("The exception was caused by the DBLayer: " + e);
-			/*e.printStackTrace();*/
-			setChanged(); notifyObservers(e);
-		}
-		catch(RemoteException e) {
-			logger.error("The import ended prematurely. "+imported+" records imported into the database.");
-			logger.error("The exception was caused by the the transport layer (RMI): " + e);
+			logger.error(e);
 			/*e.printStackTrace();*/
 			setChanged(); notifyObservers(e);
 		}
@@ -863,6 +857,14 @@ public class DefaultDirector extends Observable implements Runnable {
 	public void abort() {
 		aborted = true;
 		logger.info("Import aborted!");
+	}
+	
+	/**
+	 * 
+	 * @return The number of records inserted into the database.
+	 */
+	public int importedRecords() {
+		return imported;
 	}
 	
 }

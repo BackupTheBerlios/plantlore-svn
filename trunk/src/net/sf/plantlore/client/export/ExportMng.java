@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29 
+ * @version 1.0
  * @see net.sf.plantlore.client.export.DefaultDirector
  * @see net.sf.plantlore.client.export.Builder
  */
@@ -232,7 +233,10 @@ public class ExportMng extends Observable implements Observer {
 		if(selection == null || selection.isEmpty())
 			logger.warn("The list of selected records is empty!");
 
-		if(selection == null) select = new Selection();
+		if(selection == null) {
+			select = new Selection();
+			select.all();
+		}
 		else select = selection.clone();
 
 		selectedResults = -1;
@@ -298,11 +302,9 @@ public class ExportMng extends Observable implements Observer {
 	
 	
 	/**
-	 * Start the export procedure. The export procedure
-	 * will run in its own thread.
+	 * Start the export procedure. The export will run in its own thread.
 	 * 
-	 * @param append	True if the Builder shall append its output to an already existing file.
-	 * @throws ExportException	If the information provided is not complete.
+	 * @throws ExportException	If information provided is not complete.
 	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
 	 */
 	synchronized public void start() 
@@ -358,9 +360,11 @@ public class ExportMng extends Observable implements Observer {
 		Thread monitor = new Thread(new Runnable() {
 			public void run() {
 				// Sleep until the thread is really dead.
-				try {
-					current.join();
-				}catch(InterruptedException e) {} // FIXME: join the thread again
+				while( !sunExploded )
+					try {
+						current.join();
+						break;
+					}catch(InterruptedException e) {}
 				// Dispose of the writer.
 				try {
 					writer.close();
@@ -378,6 +382,9 @@ public class ExportMng extends Observable implements Observer {
 		}, "ExportMonitor");
 		monitor.start();
 	}
+	
+	
+	private boolean sunExploded = false;
 	
 
 	/**

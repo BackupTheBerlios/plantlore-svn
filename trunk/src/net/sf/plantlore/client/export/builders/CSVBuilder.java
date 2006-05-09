@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 
 import net.sf.plantlore.client.export.AbstractBuilder;
+import net.sf.plantlore.client.export.Builder;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.client.export.Template;
 
@@ -12,14 +13,14 @@ import net.sf.plantlore.client.export.Template;
 /**
  * CSV Builder.
  * 
- * FIXME: Possibly broken due to the changes of the AbstractBuilder!
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
- * @version 1.0 header is missing
+ * @version 1.2
  */
-public class CSVBuilder extends AbstractBuilder{
+public class CSVBuilder implements Builder {
 	
 	private Writer stream;
+	private Template template;
 	
 	/** Is this the first column on this line? */
 	private boolean firstColumnOnThisLine;
@@ -28,8 +29,14 @@ public class CSVBuilder extends AbstractBuilder{
 	private static final String DOUBLEQUOTE = "\"";
 	private static final String NEWLINE = System.getProperty("line.separator");
 	
-	private ArrayList<Record> cache = new ArrayList<Record>(20);
-	private ArrayList<Author> authors = new ArrayList<Author>(10);
+	/**
+	 * The basic record.
+	 */
+	private Record cache;
+	/**
+	 * The list of associated records.
+	 * Due to the one-to-many relationship.
+	 */
 	private ArrayList<AuthorOccurrence> authocc = new ArrayList<AuthorOccurrence>(10);
 	
 	
@@ -44,16 +51,49 @@ public class CSVBuilder extends AbstractBuilder{
 	 * @param tmp	The template that describes the selected columns and tables.
 	 */
 	public CSVBuilder(Writer output, Template tmp) {
-		super(tmp);
-		assert(tmp != null);
-		
 		this.stream = output;
+		this.template = tmp;
 	}
 	
 	/**
 	 * Make a note that the header is yet to be created.
 	 */
 	public void header() throws IOException {
+		firstColumnOnThisLine = true;
+		
+		Occurrence sample = new Occurrence();
+		sample.setMetadata(new Metadata());
+		sample.setPublication(new Publication());
+		sample.setHabitat(new Habitat());
+		Habitat habitat = sample.getHabitat();
+		habitat.setPhytochorion(new Phytochorion());
+		habitat.setTerritory(new Territory());
+		habitat.setNearestVillage(new Village());
+		sample.setPlant(new Plant());
+		
+		constructHeader(sample);
+		
+		AuthorOccurrence associated = new AuthorOccurrence();
+		associated.setAuthor(new Author());
+		
+		constructHeader(associated);
+		
+//		stream.write(NEWLINE);
+//		stream.write("====================================================");
+		stream.write(NEWLINE);
+	}
+	
+	
+	private void constructHeader(Record record) throws IOException {
+		if(record == null) return;
+		Class table = record.getClass();
+		for( String property : record.getProperties() ) 
+			if( template.isSet(table, property) ) {
+				output( table.getSimpleName()+"."+property );
+			}
+		for(String key : record.getForeignKeys()) {
+			constructHeader( (Record)record.getValue(key) );
+		}
 	}
 	
 	/**
@@ -67,8 +107,7 @@ public class CSVBuilder extends AbstractBuilder{
 	 * Clear the cache before receiving a new record set.
 	 */
 	public void startRecord() throws IOException {
-		 cache.clear(); authors.clear(); authocc.clear(); firstColumnOnThisLine = true;
-		 stream.write("====================================================");
+		 cache = null; authocc.clear(); firstColumnOnThisLine = true;
 		 stream.write(NEWLINE);
 	}
 	
@@ -76,17 +115,14 @@ public class CSVBuilder extends AbstractBuilder{
 	 * Flush the cache.
 	 */
 	public void finishRecord() throws IOException {
-		if(authors.size() + authocc.size() == 0) {
-			for(Record record : cache) 
-				writeCached( record );
+		if(authocc.size() == 0) {
+			writeCached( cache );
 			stream.write(NEWLINE);
 		}
 		else
-			for(int i = 0; i < Math.max(authors.size(), authocc.size()); i++) {
-				for(Record record : cache) 
-					writeCached( record );
-				if(!authors.isEmpty()) writeCached( authors.get(i) );
-				if(!authocc.isEmpty()) writeCached( authocc.get(i) );
+			for(int i = 0; i < authocc.size(); i++) {
+				writeCached( cache );
+				writeCached( authocc.get(i) );
 				stream.write(NEWLINE);
 				firstColumnOnThisLine = true;
 			}
@@ -95,11 +131,19 @@ public class CSVBuilder extends AbstractBuilder{
 	/**
 	 * Cache the results.
 	 */
-	@Override
 	public void part(Record record) throws IOException {
-		if(record instanceof Author) authors.add( (Author) record );
-		else if(record instanceof AuthorOccurrence) authocc.add( (AuthorOccurrence) record );
-		else cache.add(record);
+		if(record instanceof AuthorOccurrence) authocc.add( (AuthorOccurrence) record );
+		else cache = record;
+	}
+	
+	/**
+	 * Call <code>part(Record)</code> repeatedly.
+	 * 
+	 * @see AbstractBuilder#part(Record)
+	 */
+	public void part(Record... records) throws IOException {
+		for(Record r : records) 
+			part( r );		
 	}
 	
 		
@@ -131,19 +175,30 @@ public class CSVBuilder extends AbstractBuilder{
 	
 	
 	/**
-	 * Write the cached records - use the <code>part()</code> method now.
-	 * 
-	 * @param record
+	 * Write the cached records.
+	 *  
+	 * @param record	A record from the cache.
 	 * @see net.sf.plantlore.client.export.AbstractBuilder#part(Record)
 	 */
 	protected void writeCached(Record record) throws IOException {
-		super.part(record);
+		if(record == null) return;
+		// Build this part of the record.
+		Class table = record.getClass();
+		for( String property : record.getProperties() ) 
+			if( template.isSet(table, property) ) {
+				output(record.getValue(property) );
+			}
+		// Now look at all children of this record.
+		for(String key : record.getForeignKeys()) {
+			// And build'em too.
+			writeCached( (Record) record.getValue(key) );
+		}
 	}
 	
 	/**
 	 * Send the <code>value</code> to the output.
 	 */
-	protected void output(Class table, String column, Object value) throws IOException {
+	protected void output(Object value) throws IOException {
 		if( firstColumnOnThisLine ) firstColumnOnThisLine = false; 
 		else stream.write(DELIMITER);
 		stream.write( convertToValidCSV( value ) );
