@@ -85,9 +85,42 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 	
 	
 	
+    private boolean exceptionOccured = false;
+    
 	
-	public void update(Observable arg0, Object arg1) {
-		count = model.getNumberOfImported();
+	public void update(Observable source, Object parameter) {
+		// The final cleanup may overwrite the exception! 
+		if(exceptionOccured)
+			return;
+		
+		if( parameter != null && parameter instanceof Exception ) {
+			Exception e = (Exception) parameter;
+			setTitle("Import interrupted");
+			status.setText("An exception interrupted the import procedure: " + e);
+			progress.setValue(0);
+			abort.setText("Close");
+			exceptionOccured = true;
+		}
+		else if(model.isAborted()) {
+			setTitle("Import aborted");
+			count = model.getNumberOfImported();
+			status.setText("Import procedure aborted.\n " + count + " records imported.");
+			progress.setValue(0);
+			abort.setText("Close");
+		} 
+		else if(!model.isImportInProgress()) {
+			setTitle("Import completed");
+			status.setText("Completed...");
+			progress.setMaximum(100);
+			progress.setValue(100);
+			abort.setText("Close");
+		}
+		else if( this.isVisible() ) {
+			count = model.getNumberOfImported();
+			progress.setValue( count );
+			status.setText("Importing\n " + count + ".");
+			setTitle("Imported " + count);
+		}
 	}
 
 }

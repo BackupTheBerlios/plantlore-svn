@@ -284,7 +284,14 @@ public class ImportMng extends Observable implements Observer {
 	 * or an exception that has to be dealt with.
 	 */
 	public void update(Observable source, Object parameter) {
+		issue = parameter;
 		setChanged(); notifyObservers( parameter );
+	}
+	
+	private Object issue;
+	
+	protected Object getIssue() {
+		return issue;
 	}
 	
 	
