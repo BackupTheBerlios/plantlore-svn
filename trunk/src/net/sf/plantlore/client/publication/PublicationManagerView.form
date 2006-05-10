@@ -370,14 +370,14 @@
         <Component class="javax.swing.JLabel" name="collectionNameSearchLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;collectionName&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;publication.collectionName&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="collectionYearSearchLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;collectionYearPublication&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;publication.collectionYearPublication&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -496,7 +496,7 @@
         <Component class="javax.swing.JLabel" name="journalNameSearchLaber">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;journalName&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;publication.journalName&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -508,7 +508,7 @@
         <Component class="javax.swing.JLabel" name="journaAuthorlNameSearchLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;journalAuthorName&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;publication.journalAuthorName&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>

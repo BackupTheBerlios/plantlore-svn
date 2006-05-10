@@ -227,9 +227,9 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         helpButton.setText(L10n.getString("Help"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Search publicatin"));
-        wholeNameLabel.setText(L10n.getString("nameUser"));
+        wholeNameLabel.setText(L10n.getString("user.name"));
 
-        loginLabel.setText(L10n.getString("loginUser"));
+        loginLabel.setText(L10n.getString("user.login"));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Sorting"));
         sortDescendingRadioButton.setText(L10n.getString("sortDescending"));
@@ -271,9 +271,9 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        emailLabel.setText(L10n.getString("emailUser"));
+        emailLabel.setText(L10n.getString("user.email"));
 
-        addressLabel.setText(L10n.getString("addressUser"));
+        addressLabel.setText(L10n.getString("user.address"));
 
         searchButton.setText(L10n.getString("dataSearch"));
 

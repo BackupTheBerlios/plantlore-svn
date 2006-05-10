@@ -6,11 +6,13 @@
 
 package net.sf.plantlore.client.history;
 
+import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -33,11 +35,12 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
-        getTable().setModel(new HistoryTableModel(model));
+        getTable().setModel(new HistoryTableModel(model));           
     }
     
       public void update(Observable observable, Object object)
-    {
+    {                                
+       
     } 
     
     /** This method is called from within the constructor to
@@ -79,7 +82,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         helpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Details of the record"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("detailsRecordPanel")));
         taxonLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         taxonLabel.setText(L10n.getString("taxon"));
 
@@ -130,14 +133,14 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 .addContainerGap())
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Record created"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("recordCreatedPanel")));
         whenInserLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         whenInserLabel.setText(L10n.getString("whenInsert"));
 
         whoInsertLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         whoInsertLabel.setText(L10n.getString("whoInsert"));
 
-        whenInsertValueLabel.setText(model.getWhen().toString());
+        whenInsertValueLabel.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(model.getWhen()) );
 
         whoInsertValueLabel.setText(model.getNameUser());
 
@@ -169,7 +172,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("List of changes"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("changesRecordPanel")));
         tableEditList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

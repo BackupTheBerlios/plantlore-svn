@@ -155,11 +155,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Institution"));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Technical contact"));
-        technicalContactNameLabel.setText(L10n.getString("technicalContactName"));
+        technicalContactNameLabel.setText(L10n.getString("metadata.technicalContactName"));
 
-        technicalContactEmailLabel.setText(L10n.getString("technicalContactEmail"));
+        technicalContactEmailLabel.setText(L10n.getString("metadata.technicalContactEmail"));
 
-        technivalContactAddressLabel.setText(L10n.getString("technicalContactAddress"));
+        technivalContactAddressLabel.setText(L10n.getString("metadata.technicalContactAddress"));
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -197,11 +197,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Content contact"));
-        contentContactNameLabel.setText(L10n.getString("contentContactName"));
+        contentContactNameLabel.setText(L10n.getString("metadata.contentContactName"));
 
-        contentContactEmail.setText(L10n.getString("contentContactEmail"));
+        contentContactEmail.setText(L10n.getString("metadata.contentContactEmail"));
 
-        contectContactAddressLabel.setText(L10n.getString("contentContactAddress"));
+        contectContactAddressLabel.setText(L10n.getString("metadata.contentContactAddress"));
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -238,9 +238,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addContainerGap(35, Short.MAX_VALUE))
         );
 
-        sourceInstitutionIdLabel.setText(L10n.getString("sourceInstitutionId"));
+        sourceInstitutionIdLabel.setText(L10n.getString("metadata.sourceInstitutionId"));
 
-        abbrevLabel.setText(L10n.getString("ownerOrganizationAbbrev"));
+        abbrevLabel.setText(L10n.getString("metadata.ownerOrganizationAbbrev"));
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -284,11 +284,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Project - data"));
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dataSetTitleLabel.setText(L10n.getString("dataSetTitle"));
+        dataSetTitleLabel.setText(L10n.getString("metadata.dataSetTitle"));
 
-        dataSetDetailsLabel.setText(L10n.getString("dataSetDetails"));
+        dataSetDetailsLabel.setText(L10n.getString("metadata.dataSetDetails"));
 
-        sourceIdLabel.setText(L10n.getString("sourceId"));
+        sourceIdLabel.setText(L10n.getString("metadata.sourceId"));
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -326,11 +326,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        recordbasisLabel.setText(L10n.getString("recordbasis"));
+        recordbasisLabel.setText(L10n.getString("metadata.recordbasis"));
 
-        biotopetextLabel.setText(L10n.getString("biotopetext"));
+        biotopetextLabel.setText(L10n.getString("metadata.biotopetext"));
 
-        versionPlantloreFileLabel.setText(L10n.getString("versionPlantsFile"));
+        versionPlantloreFileLabel.setText(L10n.getString("metadata.versionPlantsFile"));
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -368,9 +368,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dateCreateLabel.setText(L10n.getString("dateCreate"));
+        dateCreateLabel.setText(L10n.getString("metadata.dateCreate"));
 
-        dateModifiedLabel.setText(L10n.getString("dateModified"));
+        dateModifiedLabel.setText(L10n.getString("metadata.dateModified"));
 
         org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -444,14 +444,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(204, 204, 204))
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
-                .addContainerGap(6, Short.MAX_VALUE))
+                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

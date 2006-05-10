@@ -65,7 +65,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         helpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Whole History"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("wholeHistoryPanel")));
         tableHistoryList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

@@ -224,9 +224,9 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         helpButton.setText(L10n.getString("Help"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Search publicatin"));
-        collectionNameSearchLabel.setText(L10n.getString("collectionName"));
+        collectionNameSearchLabel.setText(L10n.getString("publication.collectionName"));
 
-        collectionYearSearchLabel.setText(L10n.getString("collectionYearPublication"));
+        collectionYearSearchLabel.setText(L10n.getString("publication.collectionYearPublication"));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Sorting"));
         sortDescendingRadioButton.setText(L10n.getString("sortDescending"));
@@ -268,9 +268,9 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        journalNameSearchLaber.setText(L10n.getString("journalName"));
+        journalNameSearchLaber.setText(L10n.getString("publication.journalName"));
 
-        journaAuthorlNameSearchLabel.setText(L10n.getString("journalAuthorName"));
+        journaAuthorlNameSearchLabel.setText(L10n.getString("publication.journalAuthorName"));
 
         searchButton.setText(L10n.getString("dataSearch"));
 

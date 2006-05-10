@@ -369,14 +369,14 @@
         <Component class="javax.swing.JLabel" name="wholeNameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;nameUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;user.name&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="loginLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;loginUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;user.login&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -495,7 +495,7 @@
         <Component class="javax.swing.JLabel" name="emailLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;emailUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;user.email&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -507,7 +507,7 @@
         <Component class="javax.swing.JLabel" name="addressLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;addressUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;user.address&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>

@@ -11,7 +11,9 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
 import java.util.Date;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 
@@ -171,27 +173,27 @@ public class WholeHistoryCtrl {
                logger.debug("Undo to date - id of selected row: "+ view.tableHistoryList.getSelectedRow());
                int selectedRow = view.tableHistoryList.getSelectedRow();
                int toResult = selectedRow + model.getCurrentFirstRow();
-               Object toDate = view.tableHistoryList.getValueAt(selectedRow, 0);
+               Object toDate = view.tableHistoryList.getValueAt(selectedRow, 0);                   	       
                model.clearEditObjectList();
                model.undoToDate(toResult);
-               int okCancle = view.messageUndo(model.getMessageUndoToDate(((Date)toDate).toString()));      
+               int okCancle = view.messageUndo(toDate.toString());     
                if (okCancle == 0){
                    //Button OK was press
                    logger.debug("Button OK was press.");    
                    model.commitUpdate();
                    model.deleteHistory(toResult, false);
-		    	   model.searchWholeHistoryData();        	
-		    	   model.processResult(1,model.getDisplayRows());
-		    	   view.tableHistoryList.setModel(new WholeHistoryTableModel(model));
-		    	   Integer resultRows = model.getResultRows();
-	        	   if (resultRows == 0) {
-	        		   view.displayedValueLabel.setText("0-0"); 
-	        	   } else {
-	        		   int from = model.getCurrentFirstRow();
-	                   int to = from + view.tableHistoryList.getRowCount() - 1;               
-	                   view.displayedValueLabel.setText(from + "-" + to);    
-	        	   }               
-	                   view.totalResultValueLabel.setText(resultRows.toString());
+                   model.searchWholeHistoryData();        	
+                   model.processResult(1,model.getDisplayRows());
+                   view.tableHistoryList.setModel(new WholeHistoryTableModel(model));
+                   Integer resultRows = model.getResultRows();
+                   if (resultRows == 0) {
+                           view.displayedValueLabel.setText("0-0"); 
+                   } else {
+                           int from = model.getCurrentFirstRow();
+                   int to = from + view.tableHistoryList.getRowCount() - 1;               
+                   view.displayedValueLabel.setText(from + "-" + to);    
+                   }               
+                   view.totalResultValueLabel.setText(resultRows.toString());
                } else {
                        //Button Cancle was press
                        //neco jako rollback - bude se volat nebo to bude zarizeno tim, ze se nezavola executeUpdate??
@@ -231,8 +233,18 @@ public class WholeHistoryCtrl {
            if (okCancle == 0){
                    //Button OK was press
                    logger.debug("Button OK was press.");  
-                   //model.clearHistory
+                   //smazani dat z tabulek tHistoryChange a tHistory
+                   model.clearHistory();
+                   //smaznamu, ktere maji deleted = 1
                    //model.clearDatabase
+                   //aktualizovat zobrazeni dat
+                   model.searchWholeHistoryData();        	
+                   model.processResult(1,model.getDisplayRows());
+                   view.tableHistoryList.setModel(new WholeHistoryTableModel(model));
+                   view.displayedValueLabel.setText("0-0");
+                   view.displayedValueLabel.setText("0-0"); 
+                   view.totalResultValueLabel.setText("0");
+                   
            }
        }
     }

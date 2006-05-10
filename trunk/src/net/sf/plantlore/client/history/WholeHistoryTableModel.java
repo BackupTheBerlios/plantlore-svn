@@ -9,7 +9,9 @@
 
 package net.sf.plantlore.client.history;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.record.HistoryRecord;
 import net.sf.plantlore.l10n.L10n;
@@ -78,8 +80,10 @@ public class WholeHistoryTableModel extends AbstractTableModel {
     	for (int i=firstRow-1; i < countResult; i++) {     
             String columnName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getColumnName();
             String tableName = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryColumn().getTableName();
-            String item = L10n.getString(tableName+"."+columnName); 
-    	    editHistoryData[ii][0] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
+            String item = L10n.getString(tableName+"."+columnName);             
+            Date when = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
+            
+    	    editHistoryData[ii][0] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(when);     	    
             editHistoryData[ii][1] = L10n.getString( "operation"+((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getOperation());
     	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
     	    editHistoryData[ii][3] = item;
@@ -126,4 +130,20 @@ public class WholeHistoryTableModel extends AbstractTableModel {
     public String getColumnName(int column){
         return columnNames[column];
     } 
+    
+    /**
+     * Gets right Class Integer Object for OPERATION column, Date Object in the DATE column and String Object in other columns. 
+     * @param column index of column
+     * @return the Class for Object instances in the specified column.
+     */
+    public Class getColumnClass(int column) {
+    	switch (column) {
+            case 0: return DateFormat.class;
+            case 1: return Integer.class;
+            case 2: return String.class;
+            case 3: return String.class;
+            case 4: return String.class;
+            default: return String.class;
+        }
+    }
 }

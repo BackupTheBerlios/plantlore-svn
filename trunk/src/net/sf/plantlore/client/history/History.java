@@ -32,6 +32,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -85,6 +86,7 @@ public class History {
     private Village village;
     private Territory territory;
     private Phytochorion phytochorion;
+    private Metadata metadata;
     
      //	**************Informations about HistoryRecord*************//	
     /** Name of the table where value was changed*/
@@ -324,7 +326,7 @@ public class History {
              	logger.debug("RemoteException- setInsertResult, more");
              	return;
              }   
-         	Object[] objHis = (Object[])objectHistory[0]; 
+         	Object[] objHis = (Object[])objectHistory[0];                 
          	setWhen(((HistoryChange)objHis[0]).getWhen());
          	setNameUser(((HistoryChange)objHis[0]).getWho().getWholeName());         	
         } catch (DBLayerException e) {         
@@ -428,7 +430,8 @@ public class History {
     	initOccurrenceHash();
     	initHabitatHash();   
         initPublicationHash();
-        initAuthorHash();       
+        initAuthorHash();      
+        initMetadataHash();
         	
     	//number of result
     	//int countResult = this.historyDataList.size();
@@ -511,11 +514,15 @@ public class History {
              Object[] object = searchObject("AuthorOccurrence",recordId);  
              AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];
              authorOccurrence.setDeleted(isDelete);             
-       } else if (tableName.equals("Habitat")) {
+       } else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {
             //jeste rozmyslet, zda to tu bude
-               Object[] object = searchObject("v",recordId);  
+               Object[] object = searchObject("Habitat",recordId);  
                Habitat habitat = (Habitat)object[0];
                habitat.setDeleted(isDelete);
+        } else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
+             Object[] object = searchObject("Metadata",recordId);  
+             Metadata metadata = (Metadata)object[0];
+             metadata.setDeleted(isDelete);
         } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
              Object[] object = searchObject("Publication",recordId);  
              Publication publication = (Publication)object[0];
@@ -550,6 +557,8 @@ public class History {
                 undoPublication();
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {
                 undoAuthor();
+        } else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
+                undoMetadata();
         } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
                 undoPhytochorion();
         } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
@@ -960,6 +969,92 @@ public class History {
     /**
      *
      */
+    public void undoMetadata() {
+        
+       Object[] object = searchObject("Metadata", recordId);
+       metadata = (Metadata)object[0];
+       
+       //test, zda jiz dany zaznam byl editovan
+       boolean objectList = editObjectList.contains((Record)metadata); 
+       if (!objectList) {
+       	//pridani objektu do listu - informace o tom, ze byl dany objekt editovan
+           editObjectList.add((Record)metadata);
+       }
+       logger.debug("editObjectList.contains: "+objectList);
+       logger.debug("metadata: "+ metadata.getId());
+       logger.debug("columnName: "+columnName);
+        
+       // Get a specified number of columnName from habitat mapping.
+        int columnConstant;
+        if (metadataHash.containsKey(columnName)) {
+                 columnConstant = (Integer)metadataHash.get(columnName); 
+        } else {
+             columnConstant = 0;
+        }        	    			
+      
+        // Save new value for the column        		
+        switch (columnConstant) {
+        case 1:  //technicalContactName     	                	
+                metadata.setTechnicalContactName(oldValue);
+                logger.debug("Metadata - Set selected value for update of attribute technicalContactName.");                 	
+            break;
+        case 2:  //technicalContactEmail     	                	
+            metadata.setTechnicalContactEmail(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute technicalContactEmail.");                 	
+        break;
+        case 3:  //technicalContactAddress     	                	
+            metadata.setTechnicalContactName(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute technicalContactAddress.");                 	
+        break;
+        case 4:  //contentContactName     	                	
+            metadata.setContentContactName(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute contentContactName.");                 	
+        break;
+        case 5:  //contentContactEmail     	                	
+            metadata.setContentContactEmail(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute technicalContactEmail.");                 	
+        break;
+        case 6:  //contentContactAddress     	                	
+            metadata.setContentContactAddress(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute contentContactAddress.");                 	
+        break;        
+        case 7:  //dataSetTitle
+            metadata.setDataSetTitle(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute dataSetTitle.");                 	
+        break;
+        case 8:  //dataSetDetail     	                	
+            metadata.setDataSetDetails(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute dataSetDetails.");                 	
+        break;
+        case 9:  //sourceInstitutionId
+            metadata.setSourceInstitutionId(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute sourceInstitutionId.");                 	
+        break;
+        case 10:  //sourceId     	                	
+            metadata.setSourceId(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute sourceId.");                 	
+        break;
+        case 11:  //owenOraganicationAbbrev     	                	
+            metadata.setOwnerOrganizationAbbrev(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute owenOraganicationAbbrev.");                 	
+        break;
+        case 12:  //recordbasis    	                	
+            metadata.setRecordBasis(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute recordbasis.");                 	
+        break;         
+         case 13:  //biotopetext     	                	
+            metadata.setBiotopeText(oldValue);
+            logger.debug("Metadata - Set selected value for update of attribute biotopetext.");                 	
+        break;         
+        default:            
+            logger.error("Metadata - No column defined for name "+ columnName);	                   
+        } 
+    }
+    
+    
+    /**
+     *
+     */
     public void undoPhytochorion() {
         
         Object[] object = searchObject("Phytochorion", recordId);
@@ -1075,6 +1170,9 @@ public class History {
             } else if (typeObject.equals("Phytochorion")){
                 query = database.createQuery(Phytochorion.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
+            } else if (typeObject.equals("Metadata")){
+                query = database.createQuery(Metadata.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Metadata.ID, null, id , null);
             } else {
                 logger.error("SearchObject() - Incorrect type of object.");
             }
@@ -1350,25 +1448,25 @@ public class History {
          if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE) || tableName.equals(PlantloreConstants.ENTITY_HABITAT) || tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {           
               //Get details for occurrence
               Occurrence occurrence = historyChange.getOccurrence();             
-              detailsMessage = "Details of Occurrences \n\n";
-              detailsMessage = detailsMessage + "Taxon: "+ occurrence.getPlant().getTaxon()+"\n";
-              detailsMessage = detailsMessage + getAllAuthors(occurrence);
-              detailsMessage = detailsMessage + "Date/Time: " + occurrence.getIsoDateTimeBegin() +"\n";
-              detailsMessage = detailsMessage + "Nearest village: "+ occurrence.getHabitat().getNearestVillage().getName() + "\n";
-              detailsMessage = detailsMessage + "Place description: "+ occurrence.getHabitat().getDescription() + "\n";
-              detailsMessage = detailsMessage + "Territory: "+ occurrence.getHabitat().getTerritory().getName() + "\n";
-              detailsMessage = detailsMessage + "Phytochorion: "+ occurrence.getHabitat().getPhytochorion().getName() +" (Code: " + occurrence.getHabitat().getPhytochorion().getCode() + ")\n";
-              detailsMessage = detailsMessage + "Country: " + occurrence.getHabitat().getCountry() +"\n";
-              detailsMessage = detailsMessage + "Data source: " + occurrence.getDataSource() + "\n";
-              detailsMessage = detailsMessage + "Publications: " + occurrence.getPublication().getReferenceCitation() + "\n";
-              detailsMessage = detailsMessage + "Herbarium: " + occurrence.getHerbarium() +"\n";
-              detailsMessage = detailsMessage + "Note (occurernce): " + occurrence.getNote() + "\n";
-              detailsMessage = detailsMessage + "Note (habitat): " + occurrence.getHabitat().getNote() +"\n";
+              detailsMessage = L10n.getString("detailsOccurrence") + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("occurrence.plant") + ": "+ occurrence.getPlant().getTaxon()+"\n";
+              detailsMessage = detailsMessage + L10n.getString("authorOccurrence.author") + ": " +getAllAuthors(occurrence);
+              detailsMessage = detailsMessage + L10n.getString("occurrence.isoDateTime") + ": " + occurrence.getIsoDateTimeBegin() +"\n";
+              detailsMessage = detailsMessage + L10n.getString("habitat.nearestVillage") + ": "+ occurrence.getHabitat().getNearestVillage().getName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("habitat.description") + ": "+ occurrence.getHabitat().getDescription() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("habitat.territory") + ": "+ occurrence.getHabitat().getTerritory().getName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("habitat.phytochorion") + ": "+ occurrence.getHabitat().getPhytochorion().getName() +" (Code: " + occurrence.getHabitat().getPhytochorion().getCode() + ")\n";
+              detailsMessage = detailsMessage + L10n.getString("habitat.country") + ": " + occurrence.getHabitat().getCountry() +"\n";
+              detailsMessage = detailsMessage + L10n.getString("occurrence.dataSource") + ": " + occurrence.getDataSource() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("occurrence.publication") + ": " + occurrence.getPublication().getReferenceCitation() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("occurrence.herbarium") + ": " + occurrence.getHerbarium() +"\n";
+              detailsMessage = detailsMessage + L10n.getString("occurrence.note") + ": " + occurrence.getNote() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("habitat.note") + ": " + occurrence.getHabitat().getNote() +"\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
               //Get details for Publication
               Object[] object = searchObject("Publication",recordId); 
               Publication publication = (Publication)object[0];
-              detailsMessage = "Details of Publications \n\n";
+              detailsMessage = L10n.getString("detailsPublication") + "\n\n";
               detailsMessage = detailsMessage + "Name of collection: " + publication.getCollectionName() + "\n";
               detailsMessage = detailsMessage + "Year of published collection: " + publication.getCollectionYearPublication() + "\n";
               detailsMessage = detailsMessage + "Name of journal: " + publication.getJournalName() + "\n";
@@ -1379,7 +1477,7 @@ public class History {
               //Get details for Author
               Object[] object = searchObject("Author",recordId);   
               Author author = (Author)object[0];
-              detailsMessage = "Details of Author \n\n";
+              detailsMessage = L10n.getString("detailsAuthor") + "\n\n";
               detailsMessage = detailsMessage + "Name: " + author.getWholeName() + "\n";
               detailsMessage = detailsMessage + "Organization: " + author.getOrganization() + "\n";
               detailsMessage = detailsMessage + "Role: " + author.getRole() + "\n";
@@ -1392,26 +1490,44 @@ public class History {
              //Get details for Metadata
               Object[] object = searchObject("Metadata",recordId);   
               Metadata metadata = (Metadata)object[0];
-              detailsMessage = "Details of Metadata \n\n";
-        
+              detailsMessage = L10n.getString("detailsMetadata") + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("institution") + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.sourceInstitutionId") + ": " + metadata.getSourceInstitutionId() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.ownerOrganizationAbbrev") + ": " + metadata.getOwnerOrganizationAbbrev() + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.technicalContact")+ ":\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.technicalContactName") + ": " + metadata.getTechnicalContactName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.technicalContactEmail") + ": " + metadata.getTechnicalContactEmail() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.technicalContactAddress") + ": " + metadata.getTechnicalContactAddress() + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.contentContact") + ": \n\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.contentContactName") + ": " + metadata.getContentContactName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.contentContactEmail") + ": " + metadata.getContentContactEmail() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.contentContactAddress") + ": " + metadata.getContentContactAddress() + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.project") + ": \n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.dataSetTitle") + ": " + metadata.getDataSetTitle() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.dataSetDetails") + ": " + metadata.getDataSetDetails() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.sourceId") + ": " + metadata.getSourceId() +"\n\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.dateCreate") + ": " +metadata.getDateCreate() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.dateModified") + ": " +metadata.getDateModified() + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.recordbasic") + ": " + metadata.getRecordBasis() + "\n";
+              detailsMessage = detailsMessage + L10n.getString("metadata.biotopetext") + ": " + metadata.getBiotopeText() + "\n";                      
         } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
               //Get details for Phytochorion
               Object[] object = searchObject("Phytochorion",recordId); 
               Phytochorion  phytochorion = (Phytochorion)object[0];
-              detailsMessage = "Details of Phytochorion \n\n";
+              detailsMessage = L10n.getString("detailsPhytochorion") + "\n\n";
               detailsMessage = detailsMessage + "Phytochorion: " + phytochorion.getName() + "\n";
               detailsMessage = detailsMessage + "Code of phytochorion: " + phytochorion.getCode() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
               //Get details for Territory
               Object[] object = searchObject("Territory",recordId); 
               Territory territory = (Territory)object[0];
-              detailsMessage = "Details of Territory \n\n";
+              detailsMessage = L10n.getString("detailsTerritory") + "\n\n";
               detailsMessage = detailsMessage + "Territory: " + territory.getName() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
               //Get details for Village
               Object[] object = searchObject("Village",recordId);  
               Village village = (Village)object[0];
-              detailsMessage = "Details of Village \n\n";
+              detailsMessage = L10n.getString("detailsVillage") + "\n\n";
               detailsMessage = detailsMessage + "Village: " + village.getName() + "\n";
         } else {
             logger.error("No table defined");
@@ -1427,7 +1543,25 @@ public class History {
      * delete from tHistory;
      * delete from tHistoryChange;
      */
-    public void clearHistory() {
+    public void clearHistory() {        
+        
+        try {
+            //smazani dat z tabulky tHistory
+            database.conditionDelete(HistoryRecord.class, HistoryRecord.ID, ">", 0);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
+        
+        try {            
+            //smazani dat z tabulky tHistoryChange
+            database.conditionDelete(HistoryChange.class, HistoryChange.ID, ">", 0);
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
         
     }
     
@@ -1437,7 +1571,42 @@ public class History {
      * delete from tAuthors where cdelete = 1;
      */
     public void clearDatabase() {
-        
+        try {
+            
+            database.conditionDelete(Author.class, Author.DELETED, "=", 1);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            database.conditionDelete(AuthorOccurrence.class, AuthorOccurrence.DELETED, "=", 1);
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            database.conditionDelete(Occurrence.class, Occurrence.DELETED, "=", 1);
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            database.conditionDelete(Habitat.class, Habitat.DELETED, "=", 1);
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            database.conditionDelete(Publication.class, Publication.DELETED, "=", 1);
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
     }
     
      //***************************//
@@ -1492,11 +1661,9 @@ public class History {
         metadataHash.put(Metadata.DATASETDETAILS, 8);
         metadataHash.put(Metadata.SOURCEINSTITUTIONID, 9);
         metadataHash.put(Metadata.SOURCEID, 10);
-        metadataHash.put(Metadata.OWNERORGANIZATIONABBREV, 11);
-        metadataHash.put(Metadata.DATECREATE, 12);
-        metadataHash.put(Metadata.DATEMODIFIED, 13);
-        metadataHash.put(Metadata.RECORDBASIS, 14);
-        metadataHash.put(Metadata.BIOTOPETEXT, 15);        
+        metadataHash.put(Metadata.OWNERORGANIZATIONABBREV, 11);                
+        metadataHash.put(Metadata.RECORDBASIS, 12);
+        metadataHash.put(Metadata.BIOTOPETEXT, 13);        
     }
     
     private void initPublicationHash() {

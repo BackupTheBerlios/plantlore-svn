@@ -56,8 +56,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
        this.createWhenText.setEditable(false);
        this.dropWhenText.setEditable(false);
        this.administratorCheckBox.setEnabled(false);
-       this.editAllCheckBox.setEnabled(false);
-       this.editOwenCheckBox.setEnabled(false);
+       this.editAllCheckBox.setEnabled(false);       
        this.addRightCheckBox.setEnabled(false);
        this.editGroupText.setEditable(false);
        this.seeColumnText.setEditable(false);
@@ -111,7 +110,6 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         rightUserLabel = new javax.swing.JLabel();
         administratorCheckBox = new javax.swing.JCheckBox();
         editAllCheckBox = new javax.swing.JCheckBox();
-        editOwenCheckBox = new javax.swing.JCheckBox();
         addRightCheckBox = new javax.swing.JCheckBox();
         editGroupLabel = new javax.swing.JLabel();
         editGroupText = new javax.swing.JTextField();
@@ -125,50 +123,46 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("User"));
-        loginLabel.setText(L10n.getString("loginUser"));
+        loginLabel.setText(L10n.getString("user.login"));
 
-        firstNameLabel.setText(L10n.getString("firstNameUser"));
+        firstNameLabel.setText(L10n.getString("user.firstName"));
 
-        surnameLabel.setText(L10n.getString("surnameUser"));
+        surnameLabel.setText(L10n.getString("user.surname"));
 
-        emailLabel.setText(L10n.getString("emailUser"));
+        emailLabel.setText(L10n.getString("user.email"));
 
-        addressLabel.setText(L10n.getString("addressUser"));
+        addressLabel.setText(L10n.getString("user.address"));
 
-        createWhenuser.setText(L10n.getString("createWhenUser"));
+        createWhenuser.setText(L10n.getString("user.createWhen"));
 
-        noteLabel.setText(L10n.getString("noteUser"));
+        noteLabel.setText(L10n.getString("user.note"));
 
         noteText.setColumns(20);
         noteText.setRows(5);
         jScrollPane1.setViewportView(noteText);
 
-        dropWhenLabel.setText(L10n.getString("dropWhenUser"));
+        dropWhenLabel.setText(L10n.getString("user.dropWhen"));
 
-        jLabel2.setText(L10n.getString("passwordUser"));
+        jLabel2.setText(L10n.getString("user.password"));
 
         rightUserLabel.setFont(new java.awt.Font("Tahoma", 1, 12));
-        rightUserLabel.setText(L10n.getString("rightUser"));
+        rightUserLabel.setText(L10n.getString("user.right"));
 
-        administratorCheckBox.setText(L10n.getString("administratorRight"));
+        administratorCheckBox.setText(L10n.getString("right.administrator"));
         administratorCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         administratorCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        editAllCheckBox.setText(L10n.getString("editAllRight"));
+        editAllCheckBox.setText(L10n.getString("right.editAll"));
         editAllCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         editAllCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        editOwenCheckBox.setText(L10n.getString("editOwenRight"));
-        editOwenCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        editOwenCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-
-        addRightCheckBox.setText(L10n.getString("addRight"));
+        addRightCheckBox.setText(L10n.getString("right.add"));
         addRightCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         addRightCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        editGroupLabel.setText(L10n.getString("editGroupRight"));
+        editGroupLabel.setText(L10n.getString("right.editGroup"));
 
-        seeColumnLabel.setText(L10n.getString("seeColumnRight"));
+        seeColumnLabel.setText(L10n.getString("right.seeColumn"));
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -202,12 +196,11 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                     .add(administratorCheckBox)
                     .add(rightUserLabel)
                     .add(editAllCheckBox)
-                    .add(editOwenCheckBox)
-                    .add(addRightCheckBox)
                     .add(editGroupLabel)
-                    .add(editGroupText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                    .add(editGroupText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
                     .add(seeColumnLabel)
-                    .add(seeColumnText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
+                    .add(seeColumnText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .add(addRightCheckBox))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -234,12 +227,11 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(surnameText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(surnameLabel)
-                            .add(editOwenCheckBox))
+                            .add(addRightCheckBox))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(emailText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(emailLabel)
-                            .add(addRightCheckBox))
+                            .add(emailLabel))
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(19, 19, 19)
@@ -286,22 +278,24 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
-                        .add(200, 200, 200)
-                        .add(operationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(21, 21, 21)
-                        .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(14, 14, 14)
-                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .add(200, 200, 200)
+                .add(operationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(21, 21, 21)
+                .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(14, 14, 14)
+                .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(198, Short.MAX_VALUE))
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(72, 72, 72))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 338, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addContainerGap()
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(100, 100, 100)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(operationButton)
                     .add(closeButton)
@@ -335,7 +329,6 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     protected javax.swing.JCheckBox editAllCheckBox;
     private javax.swing.JLabel editGroupLabel;
     protected javax.swing.JTextField editGroupText;
-    protected javax.swing.JCheckBox editOwenCheckBox;
     private javax.swing.JLabel emailLabel;
     protected javax.swing.JTextField emailText;
     private javax.swing.JLabel firstNameLabel;

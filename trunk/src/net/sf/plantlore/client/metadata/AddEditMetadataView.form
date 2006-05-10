@@ -56,17 +56,13 @@
                           <Component id="closeButton" min="-2" pref="101" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="helpButton" min="-2" pref="109" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="204" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
-                              <Component id="jPanel4" alignment="0" max="32767" attributes="1"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jPanel4" alignment="0" max="32767" attributes="1"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="6" max="32767" attributes="0"/>
+                  <EmptySpace pref="10" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -206,21 +202,21 @@
                 <Component class="javax.swing.JLabel" name="technicalContactNameLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;technicalContactName&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.technicalContactName&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="technicalContactEmailLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;technicalContactEmail&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.technicalContactEmail&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="technivalContactAddressLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;technicalContactAddress&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.technicalContactAddress&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -297,21 +293,21 @@
                 <Component class="javax.swing.JLabel" name="contentContactNameLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;contentContactName&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.contentContactName&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="contentContactEmail">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;contentContactEmail&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.contentContactEmail&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="contectContactAddressLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;contentContactAddress&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.contentContactAddress&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -335,14 +331,14 @@
             <Component class="javax.swing.JLabel" name="sourceInstitutionIdLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;sourceInstitutionId&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;metadata.sourceInstitutionId&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="abbrevLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;ownerOrganizationAbbrev&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;metadata.ownerOrganizationAbbrev&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -455,21 +451,21 @@
                 <Component class="javax.swing.JLabel" name="dataSetTitleLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;dataSetTitle&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.dataSetTitle&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="dataSetDetailsLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;dataSetDetails&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.dataSetDetails&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="sourceIdLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;sourceId&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.sourceId&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -546,21 +542,21 @@
                 <Component class="javax.swing.JLabel" name="recordbasisLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;recordbasis&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.recordbasis&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="biotopetextLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;biotopetext&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.biotopetext&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="versionPlantloreFileLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;versionPlantsFile&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.versionPlantsFile&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -630,14 +626,14 @@
                 <Component class="javax.swing.JLabel" name="dateCreateLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;dateCreate&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.dateCreate&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="dateModifiedLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;dateModified&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;metadata.dateModified&quot;)" type="code"/>
                     </Property>
                   </Properties>
                 </Component>

@@ -1,6 +1,9 @@
 package net.sf.plantlore.client.history;
 
+import java.text.DateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import javax.swing.table.AbstractTableModel;
 
@@ -25,6 +28,8 @@ public class HistoryTableModel extends AbstractTableModel
 	
     /** Names of the columns */
     private String[] columnNames;
+    /** Size of the columns */
+    private int[] columnSizes;
     /** Data values displayed in the table*/
     private Object[][] data;
 
@@ -45,7 +50,8 @@ public class HistoryTableModel extends AbstractTableModel
     	logger = Logger.getLogger(this.getClass().getPackage().getName());
     	this.model = model;        
     	initColumns();    	
-    	initData();    	
+        initColumnSize();
+    	initData();    	       
     }  
    
     private void initColumns() {
@@ -57,6 +63,16 @@ public class HistoryTableModel extends AbstractTableModel
         columnNames[4] = L10n.getString("historyColOldValue");       
         columnNames[5] = L10n.getString("historyColNewValue");        
     }       
+    
+    private void initColumnSize() {
+        columnSizes = new int[6];
+        columnSizes[0] = 30;
+        columnSizes[1] = 100;
+        columnSizes[2] = 100;
+        columnSizes[3] = 100;
+        columnSizes[4] = 100;
+        columnSizes[5] = 100;
+    }
     
     /**
      * Load data for dislaying 
@@ -81,7 +97,8 @@ public class HistoryTableModel extends AbstractTableModel
     	if (selectAll) {
     		initMarkAllItem();
     		mark = true;    		
-    	}
+    	}                
+        
     	//loud data for view
         Object[][] editHistoryData = new Object[countRow][6];   
     	for (int i=firstRow-1; i < countResult; i++) { 
@@ -91,8 +108,9 @@ public class HistoryTableModel extends AbstractTableModel
     		if (! selectAll){     			
     			mark = isMark(item, i);
     		}
-            editHistoryData[ii][0] = new Boolean(mark);    		
-    	    editHistoryData[ii][1] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
+            editHistoryData[ii][0] = new Boolean(mark);  
+            Date when = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
+    	    editHistoryData[ii][1] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(when); 
     	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
     	    editHistoryData[ii][3] = item;
     	    editHistoryData[ii][4] = ((HistoryRecord)editHistoryDataList.get(i)).getOldValue();
@@ -299,7 +317,12 @@ public class HistoryTableModel extends AbstractTableModel
     {
         return columnNames.length;
     }
-
+     
+     
+    public void setColumnSizes(int[] columnSizes) {
+          this.columnSizes=columnSizes;
+    }
+    
     /**
      * Gets the name of the specified column
      * @param column index of column
@@ -315,18 +338,14 @@ public class HistoryTableModel extends AbstractTableModel
      * @return the Class for Object instances in the specified column.
      */
     public Class getColumnClass(int column) {
-    	Class dataType = super.getColumnClass(column);
-    	if (column == MARK){
-    		dataType = Boolean.class;
-    	}
-    	//FIXME: do budoucna by sloupec DATE mel byt typu Date
-    	//else if (column == DATE){
-    	//	dataType = java.util.Date.class;
-    	//}
-    	else {
-    		dataType = String.class;
-    	}    		
-        return dataType;
+    	switch (column) {
+            case 0: return Boolean.class;
+            case 1: return DateFormat.class;
+            case 2: return String.class;
+            case 3: return String.class;
+            case 4: return String.class;
+            default: return String.class;
+        }
     }
     
 }

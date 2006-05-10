@@ -102,19 +102,19 @@ public class AddEditPublicationView extends javax.swing.JDialog  implements Obse
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Publication"));
-        collectionNameLable.setText(L10n.getString("collectionName"));
+        collectionNameLable.setText(L10n.getString("publication.collectionName"));
 
-        colllectionYearPublictionLabel.setText(L10n.getString("collectionYearPublication"));
+        colllectionYearPublictionLabel.setText(L10n.getString("publication.collectionYearPublication"));
 
-        journalNameLabel.setText(L10n.getString("journalName"));
+        journalNameLabel.setText(L10n.getString("publication.journalName"));
 
-        journalAuthorNameLabel.setText(L10n.getString("journalAuthorName"));
+        journalAuthorNameLabel.setText(L10n.getString("publication.journalAuthorName"));
 
-        referenceDetailLabel.setText(L10n.getString("referenceDetail"));
+        referenceDetailLabel.setText(L10n.getString("publication.referenceDetail"));
 
-        urlLabel.setText(L10n.getString("urlPublication"));
+        urlLabel.setText(L10n.getString("publication.url"));
 
-        noteLabel.setText(L10n.getString("notePublication"));
+        noteLabel.setText(L10n.getString("publication.note"));
 
         noteText.setColumns(20);
         noteText.setRows(5);
