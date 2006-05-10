@@ -20,7 +20,14 @@ import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
-
+/**
+ * The Import Manager.
+ * It controls the whole process of the Import.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-05-08
+ * @version 1.0
+ */
 public class ImportMng extends Observable implements Observer {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -75,7 +82,7 @@ public class ImportMng extends Observable implements Observer {
 	throws ImportException {
 		if(dblayer == null) { 
 			logger.error("The database layer is null!");
-			throw new ImportException("The database layer cannot be null!");
+			throw new ImportException(L10n.getString("error.InvalidDBLayer"));
 		}
 		db = dblayer;
 	}
@@ -89,7 +96,7 @@ public class ImportMng extends Observable implements Observer {
 	throws ImportException {
 		if(user == null) { 
 			logger.error("The user is null!");
-			throw new ImportException("The user cannot be null!");
+			throw new ImportException(L10n.getString("error.InvalidUser"));
 		}
 		this.user = user;
 	}
@@ -103,7 +110,7 @@ public class ImportMng extends Observable implements Observer {
 	 */
 	synchronized public void setSelectedFile(String filename) { 
 		if(filename == null)
-			logger.warn("The selected file is null!");
+			logger.warn("The selected filename is empty!");
 		this.filename = filename; 
 	}
 	
@@ -165,9 +172,9 @@ public class ImportMng extends Observable implements Observer {
 	throws ImportException, IOException {
 		// Check if we have all necessary components ready.
 		if( db == null )
-			throw new ImportException("There is no point in starting an import - the DBLayer is not set!");
+			throw new ImportException(L10n.getString("error.InvalidDBLayer"));
 		if( filename == null ) 
-			throw new ImportException("The Filename is not set!");
+			throw new ImportException(L10n.getString("error.MissingFileName"));
 			
 		
 		logger.debug("Initializing the import environment.");
@@ -178,7 +185,7 @@ public class ImportMng extends Observable implements Observer {
 		reader = new FileReader( file );
 		if(reader == null) {
 			logger.fatal("Unable to create a new Reader.");
-			throw new ImportException("Unable to create a new Reader.");
+			throw new ImportException(L10n.getString("error.ReaderNotCreated"));
 		}
 		
 		// Create a new parser according to the format.
@@ -192,7 +199,7 @@ public class ImportMng extends Observable implements Observer {
 		current = new Thread( director, "Import" );
 		if(current == null) {
 			logger.fatal("Unable to create a new thread.");
-			throw new ImportException("Unable to create a new thread.");
+			throw new ImportException(L10n.getString("error.ThreadFailed"));
 		}
 		current.start();
 		
@@ -256,6 +263,14 @@ public class ImportMng extends Observable implements Observer {
 		return director.importedRecords();
 	}
 	
+	/**
+	 * @return The number of rejected records (records, that were incomplete, 
+	 * or could not be imported due to the insufficient access rights).
+	 */
+	public int getNumberOfRejected() {
+		if(director == null) return 0;
+		return director.totalRecords();
+	}
 	
 	/**
 	 * 
@@ -290,11 +305,21 @@ public class ImportMng extends Observable implements Observer {
 	
 	private Object issue;
 	
+	/**
+	 * 
+	 * @return The last parameter from the DefaultDirector that was processed by Observer.update().
+	 */
 	protected Object getIssue() {
 		return issue;
 	}
 	
-	
+	/**
+	 * The model of a table containing the problematic record (records).
+	 * 
+	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @since 2006-05-09
+	 *
+	 */
 	private class RecordTable extends AbstractTableModel {
 		
 		ArrayList<String>[] value;
@@ -305,13 +330,15 @@ public class ImportMng extends Observable implements Observer {
 		 * Display the record and all its properties
 		 * so that the user can see the problem.
 		 * 
-		 * @param record
+		 * @param record	The problematic record.
 		 */
 		public RecordTable(Record record) {
 			value = new ArrayList[2];
 			value[0] = new ArrayList<String>(20);
 			value[1] = new ArrayList<String>(20);
-			columnNames = new String[] { "Property", "Value" };
+			columnNames = new String[] { 
+					L10n.getString("record.Property"), 
+					L10n.getString("record.Value") };
 			traverse(record);
 		}
 		
@@ -327,7 +354,10 @@ public class ImportMng extends Observable implements Observer {
 			value[0] = new ArrayList<String>(20);
 			value[1] = new ArrayList<String>(20);
 			value[2] = new ArrayList<String>(20);
-			columnNames = new String[] { "Property", "Value (in DB)", "Value (in file)" };
+			columnNames = new String[] { 
+					L10n.getString("record.Property"), 
+					L10n.getString("record.InDatabase"), 
+					L10n.getString("record.FromFile") };
 			traverse(a, b);
 		}
 		
@@ -339,7 +369,9 @@ public class ImportMng extends Observable implements Observer {
 			Class table = r[n].getClass(); 
 				
 			for( String property : r[n].getProperties()) {
-				value[0].add(table.getSimpleName()+"."+property);
+				
+				value[0].add(L10n.getString(table.getSimpleName()+"."+property));
+				
 				for(int i = 0; i < r.length; i++) { 
 					Object v = (r[i] == null) ? null : r[i].getValue(property);
 					value[i].add( (v == null) ? "" : v.toString() );

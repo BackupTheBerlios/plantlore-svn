@@ -3,12 +3,14 @@ package net.sf.plantlore.client.imports;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.l10n.L10n;
+
 
 
 public class ImportProgressView  extends javax.swing.JFrame implements Observer {
 
 	private ImportMng model;
-	private int count = 0;
+	private int count = 0, rejected = 0;
     
     /** Creates new form ExportProgressView */
     public ImportProgressView(ImportMng model) {
@@ -75,10 +77,10 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
     
     @Override
     public void setVisible(boolean visible) {
-    	status.setText("Initializing...");
+    	status.setText(L10n.getString("import.Initializing"));
    		progress.setIndeterminate(true);
    		progress.setStringPainted(false);
-    	abort.setText("Abort");
+    	abort.setText(L10n.getString("import.Abort"));
     	super.setVisible(visible);
     	update(null, null);
     }
@@ -95,31 +97,36 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 		
 		if( parameter != null && parameter instanceof Exception ) {
 			Exception e = (Exception) parameter;
-			setTitle("Import interrupted");
-			status.setText("An exception interrupted the import procedure: " + e);
+			setTitle(L10n.getString("import.Failed"));
+			status.setText(e.toString());
 			progress.setValue(0);
-			abort.setText("Close");
+			abort.setText(L10n.getString("import.Hide"));
 			exceptionOccured = true;
 		}
 		else if(model.isAborted()) {
-			setTitle("Import aborted");
+			setTitle(L10n.getString("import.Aborted"));
 			count = model.getNumberOfImported();
-			status.setText("Import procedure aborted.\n " + count + " records imported.");
+			status.setText(count + L10n.getString("import.RecordsImported"));
 			progress.setValue(0);
-			abort.setText("Close");
+			abort.setText(L10n.getString("import.Hide"));
 		} 
 		else if(!model.isImportInProgress()) {
-			setTitle("Import completed");
-			status.setText("Completed...");
+			count = model.getNumberOfImported();
+			rejected = model.getNumberOfRejected();
+			setTitle(L10n.getString("import.Completed"));
+			status.setText(count + L10n.getString("import.RecordsImported") + ", " 
+					+ rejected + L10n.getString("import.RecordsRejected"));
 			progress.setMaximum(100);
 			progress.setValue(100);
-			abort.setText("Close");
+			abort.setText(L10n.getString("import.Hide"));
 		}
 		else if( this.isVisible() ) {
 			count = model.getNumberOfImported();
+			rejected = model.getNumberOfRejected();
 			progress.setValue( count );
-			status.setText("Importing\n " + count + ".");
-			setTitle("Imported " + count);
+			status.setText(count + L10n.getString("import.RecordsImported") + ", " 
+					+ rejected + L10n.getString("import.RecordsRejected"));
+			setTitle(count + L10n.getString("import.RecordsImported"));
 		}
 	}
 

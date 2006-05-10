@@ -3,6 +3,8 @@ package net.sf.plantlore.client.imports;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.l10n.L10n;
+
 
 public class ImportMngCtrl {
 	
@@ -17,13 +19,13 @@ public class ImportMngCtrl {
 	
 	public void setVisible(boolean visible) {
 		if(visible) {
-			int result = view.choice.showDialog(null, "Import");
+			int result = view.choice.showDialog(null, L10n.getString("import.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				
 				if(view.choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,
-							"You must insert a name!",
-						    "Nothing selected...",
+							L10n.getString("error.MissingFileName"),
+							L10n.getString("error.NothingSelected"),
 						    JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -34,8 +36,8 @@ public class ImportMngCtrl {
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,
-							"Unable to start the import procedure!\n" + e,
-							"Import failed...",
+							L10n.getString("error.ImportFailed") + e,
+							L10n.getString("import.Failed"),
 							JOptionPane.WARNING_MESSAGE);
 				}
 			}

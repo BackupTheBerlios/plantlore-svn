@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.l10n.L10n;
+
 
 public class ImportProgressCtrl {
 	
@@ -24,8 +26,8 @@ public class ImportProgressCtrl {
 			if(model.isImportInProgress()) {
 				int response =
 					JOptionPane.showOptionDialog(view,
-							"The import procedure will be aborted.",
-							"Abort import",
+							L10n.getString("question.AbortImport"),
+							L10n.getString("import.Aborted"),
 							JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.WARNING_MESSAGE,
 							null,

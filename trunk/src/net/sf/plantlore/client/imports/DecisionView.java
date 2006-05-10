@@ -11,6 +11,7 @@ import java.util.Observer;
 
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -43,7 +44,7 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
         update = new javax.swing.JButton();
         remember = new javax.swing.JCheckBox();
 
-        setTitle("Decision");
+        setTitle(L10n.getString("import.DecisionExpected"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         question.setText("It does not do to dwell on dreams and forget to live.");
 
@@ -61,7 +62,7 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
 
         update.setText("Update");
 
-        remember.setText("Remember my decision, do not ask again.");
+        remember.setText(L10n.getString("import.RememberDecision"));
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
@@ -122,19 +123,19 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
 		if(parameter instanceof Record)
 			// The record in the database is newer than the one in the file.
 			if(parameter instanceof Occurrence) {
-				question.setText("The record in the database is newer than the one from the file.");
+				question.setText(L10n.getString("question.NewerRecord"));
 				recordView.setModel( model.getProcessedRecords() );
-				leave.setText("Skip");
-				update.setText("Update");
+				leave.setText(L10n.getString("import.Skip"));
+				update.setText(L10n.getString("import.Replace"));
 				remember.setSelected(false);
 				setVisible(true);
 			}
 			// There is a shared record in the database that is to be updated.
 			else {
-				question.setText("The record that is to be updated is shared.");
+				question.setText(L10n.getString("question.SharedRecord"));
 				recordView.setModel( model.getProblematicRecord() );
-				leave.setText("Insert new");
-				update.setText("Update");
+				leave.setText(L10n.getString("import.Insert"));
+				update.setText(L10n.getString("import.Update"));
 				remember.setSelected(false);
 				setVisible(true);
 			}

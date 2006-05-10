@@ -5,7 +5,7 @@ import net.sf.plantlore.common.record.*;
 
 
 /**
- * The parser is responsible for reading the input (a file for instance)
+ * The parser is responsible for reading the input (from a file for instance)
  * and re-creating the records stored in the file.
  * 
  * <br/>

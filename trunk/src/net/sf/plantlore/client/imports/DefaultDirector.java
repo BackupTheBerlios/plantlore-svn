@@ -21,7 +21,7 @@ import net.sf.plantlore.client.imports.Parser.Action;
 
 
 /**
- * The Director for the import of the <b>Occurrence data</b>.
+ * The Director for importing the <b>Occurrence data</b>.
  * <br/>
  * Warning: <b>This Director is NOT meant for import of simple
  * records, such as Plants.</b> The Import's Default Director is
@@ -35,7 +35,7 @@ import net.sf.plantlore.client.imports.Parser.Action;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-05-06
- * @version beta
+ * @version 1.0
  * @see net.sf.plantlore.client.imports.Parser
  */
 public class DefaultDirector extends Observable implements Runnable {
@@ -130,7 +130,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ImportException {
 		if(db == null) {
 			logger.error("The database layer is null!");
-			throw new ImportException("The database layer cannot be null!");
+			throw new ImportException(L10n.getString("error.InvalidDBLayer"));
 		}
 		this.db = db;
 	}
@@ -145,7 +145,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ImportException {
 		if(parser == null) {
 			logger.error("The Parser is null!");
-			throw new ImportException("The Parser cannot be null!");
+			throw new ImportException(L10n.getString("error.InvalidParser"));
 		}
 		this.parser = parser;
 	}
@@ -161,7 +161,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ImportException {
 		if(user == null) {
 			logger.error("The User is null!");
-			throw new ImportException("The User cannot be null!");
+			throw new ImportException(L10n.getString("error.InvalidUser"));
 		}
 		this.user = user;
 	}
@@ -246,7 +246,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			
 			// Go through the whole file.
 			while( !aborted && parser.hasNextRecord() ) {
-				logger.info("Fetching a new record.");
+				logger.info("Fetching a new record from the Parser.");
 				// What is supposed to happen with the occurrence.
 				Action intention = parser.fetchNextRecord(); 
 				// Get a new Occurrence.
@@ -255,7 +255,8 @@ public class DefaultDirector extends Observable implements Runnable {
 					count++;
 					occ = (Occurrence) parser.nextPart(Occurrence.class);
 				} catch( ParserException e) {
-					logger.warn("The record is not valid (probably incomplete). " +e);
+					logger.warn("The record is not valid (probably incomplete). " + e);
+					logger.info("Skipping the record No. " + count);
 					continue;
 				}
 				recordFromFile = occ;
@@ -268,7 +269,7 @@ public class DefaultDirector extends Observable implements Runnable {
 					logger.info("The record No. "+count+" is not valid! Some of the not-null values are not specified!");
 					continue;
 				}
-				logger.debug("The record is valid = all necessary columns are set.");
+				logger.debug("The record is valid.");
 				
 				
 				
@@ -297,7 +298,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				 * a newer record.
 				 *----------------------------------------------------------*/
 				if( isInDB ) {
-					logger.debug("The record is in the database already!");
+					logger.debug("The record is in the database already.");
 					
 					Date 
 						updateInDBOccurred = occInDB.getUpdatedWhen(),
@@ -305,7 +306,7 @@ public class DefaultDirector extends Observable implements Runnable {
 					
 					// The record in the database is newer than the record in the file.
 					if(updateInDBOccurred.after(updateInFile)) {
-						logger.debug("The record in the file is OLDER than the record stored in the database.");
+						logger.info("The record in the file is older than the record stored in the database.");
 						if( !doNotAskAboutDateAgain ) 
 							dateDecision = expectDecision( occInDB );
 						
@@ -355,7 +356,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				}
 				catch(ImportException ie) {
 					logger.error("The import of the record No. " + count + " was unsuccessful!");
-					logger.error("The exception occured during insert/update/delete: " + ie);
+					logger.error("This exception occured during insert/update/delete: " + ie);
 					// The user cannot do a thing. Should he be informed?
 					continue;
 				}
@@ -372,11 +373,11 @@ public class DefaultDirector extends Observable implements Runnable {
 				while( parser.hasNextPart(AuthorOccurrence.class) ) {
 					
 					AuthorOccurrence ao;
-					logger.info("Fetching associated data (Author, AuthorOccurrene).");
+					logger.info("Fetching associated data (Author, AuthorOccurrence).");
 					try {
 						ao = (AuthorOccurrence)parser.nextPart(AuthorOccurrence.class);
 					} catch (ParserException e) {
-						logger.warn("The record is not valid. " + e);
+						logger.warn("The associated record is not valid. " + e);
 						continue;
 					}
 					
@@ -419,25 +420,30 @@ public class DefaultDirector extends Observable implements Runnable {
 					AuthorOccurrence aoInDB = (counterpart != null) ? (AuthorOccurrence)counterpart : null;
 					
 					// AO is not in the database.
-					if(aoInDB == null)
-						switch(intention) {
-						case DELETE:
-							break;
-						default:
-							db.executeInsertHistory(ao);	
-						}
-					// AO is in the database already.
-					else
-						switch(intention) {
-						case DELETE:
-							delete(aoInDB);
-							break;
-						case UNKNOWN:
-						case INSERT:
-						case UPDATE:
-							// AO is already in the database (with the same properties a FKs!)
-							break;
-						}
+					try {
+						if(aoInDB == null)
+							switch(intention) {
+							case DELETE:
+								break;
+							default:
+								db.executeInsertHistory(ao);	
+							}
+						// AO is in the database already.
+						else
+							switch(intention) {
+							case DELETE:
+								delete(aoInDB);
+								break;
+							case UNKNOWN:
+							case INSERT:
+							case UPDATE:
+								// AO is already in the database (with the same properties a FKs!)
+								break;
+							}
+					} catch (DBLayerException e) {
+						logger.error("The associated record was not processed properly.");
+						logger.error("The problem: " + e);
+					}
 					
 					logger.debug("Author-occurence processed.");
 				}
@@ -448,11 +454,13 @@ public class DefaultDirector extends Observable implements Runnable {
 		} 
 		catch(Exception e) {
 			logger.error("The import ended prematurely. "+imported+" records imported into the database.");
-			logger.error(e);
+			logger.error("The problem: " + e);
 			/*e.printStackTrace();*/
 			setChanged(); notifyObservers(e);
 		}
-		logger.info("Import ended. " + imported + " records were imported (out of " + count + ").");
+		
+		logger.info("Import completed. " + imported + " records were imported into the database.");
+		logger.info("(" + (count - imported) + " records rejected)");
 	}
 	
 	
@@ -535,8 +543,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		int results = db.executeQuery( query );
 		int rows = db.getNumRows( results );
 		if( rows > 1 && !(record instanceof Habitat) ) 
-			logger.info("Weird! There are two (or more) " +
-					"identical records in the " + table.getSimpleName() + " table!");
+			logger.info("There are " + rows + 
+					" completely identical records in the " + table.getSimpleName() + " table!");
 		
 		record = null;
 		if( rows != 0 ) // ain't that beautiful! 
@@ -566,7 +574,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	 */
 	public Record insert(Record record) 
 	throws RemoteException, DBLayerException, ImportException {
-		logger.debug("Inserting "+record+" into the database.");
+		logger.debug("Inserting ["+record+"] into the database.");
 		
 		// Is this part of the record from an immutable table?
 		boolean immutable = user.isAdmin() ?
@@ -576,18 +584,18 @@ public class DefaultDirector extends Observable implements Runnable {
 		// This part of the record is from an immutable table -
 		// try to find it in the table.
 		if( immutable ) {
-			logger.debug("Processing an immutable table "+record.getClass().getSimpleName());
+			logger.debug("The record belongs to an immutable table "+record.getClass().getSimpleName());
 			Record counterpart = findMatchInDB( record );
 			if( counterpart == null ) {
 				logger.fatal("The counterpart for the record (in the immutable table " +
 						record.getClass().getSimpleName()	+ ") was not found!");
-				throw new ImportException(L10n.getString("errorNotInAnImmutableTable"), record);
+				throw new ImportException(L10n.getString("error.RecordNotFound"), record);
 			}
 			return counterpart;
 		} 
 		// The part of the record is from a common table.
 		else {
-			logger.debug("Processing a common table "+record.getClass().getSimpleName());
+			logger.debug("The record belongs to a common table "+record.getClass().getSimpleName());
 			// Insert all of its sub-records.
 			ArrayList<String> keys = record.getForeignKeys();
 			// Inserting a new AuthorOccurrence MUSTN'T cause the insertion of the Occurrence.
@@ -614,7 +622,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			}
 			// The record is in the database.
 			else {
-				logger.debug("The record is in the database already. It will be reused.");
+				logger.debug("The record is in the database already. It will be used.");
 				// Do not insert anything, use that record instead.
 				return counterpart;
 			}
@@ -649,7 +657,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		
 	private Record update(Record current, Record replacement, Class father, String foreignKey) 
 		throws RemoteException, DBLayerException, ImportException {		
-		logger.debug("Updating "+current+" with "+replacement+".");
+		logger.debug("Updating ["+current+"] with ["+replacement+"].");
 		
 		boolean immutable = user.isAdmin() ?
 				Record.IMMUTABLE.contains( current.getClass() ) :
@@ -660,7 +668,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		 * that is in the database already.
 		 */
 		if( immutable ) {
-			logger.debug("Processing an immutable table "+current.getClass().getSimpleName());
+			logger.debug("The record belongs to an immutable table "+current.getClass().getSimpleName());
 			// Don't they happen to be the same?
 			if( doPropertiesMatch(current, replacement) )
 				return current;
@@ -669,7 +677,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			if( counterpart == null ) {
 				logger.fatal("The counterpart for the record (in the immutable table " +
 						current.getClass().getSimpleName()	+ ") was not found!");
-				throw new ImportException(L10n.getString("errorNotInAnImmutableTable"), replacement);
+				throw new ImportException(L10n.getString("error.RecordNotFound"), replacement);
 			}
 			return counterpart;
 		}
@@ -681,7 +689,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			ArrayList<String> keys = replacement.getForeignKeys();
 			boolean propertiesMatch = doPropertiesMatch(current, replacement);
 			
-			logger.debug("Updating a record from a common table "+current.getClass().getSimpleName());
+			logger.debug("The record belongs to a common table "+current.getClass().getSimpleName());
 			
 			// [A] There are no foreign keys.
 			// (Publication)
@@ -707,7 +715,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				if( isShared(current, father, foreignKey) ) {
 					// This is up to the User.
-					logger.info("The record "+current+" is shared!");
+					logger.info("The record ["+current+"] is shared!");
 					insertUpdateDecision = lastDecision;
 					if(!useLastDecision) // ASK THE USER!
 						insertUpdateDecision = expectDecision( replacement );
@@ -733,7 +741,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			// [B] There are some foreign keys.
 			// (Habitat, Occurrence)
 			else {
-				logger.debug("Table with foreign keys.");
+				logger.debug("The common table contains foreign keys.");
 				
 				// Indicate, whether the record needed some changes.
 				boolean dirty = false;
@@ -747,7 +755,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						currentSubrecord = current.getValue(key),
 						replacementSubrecord = replacement.getValue(key);
 					if(currentSubrecord == null || replacementSubrecord == null)
-						throw new ImportException(L10n.getString("errorFKCannotBeNull"));
+						throw new ImportException(L10n.getString("error.FKIsNull"));
 					
 					Record 
 						suggestion =  update( 
@@ -843,7 +851,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	public Record delete(Record record) 
 	throws RemoteException, DBLayerException {
 		if(record instanceof Deletable) {
-			logger.info("Deleting "+record+" from the database.");
+			logger.info("Deleting ["+record+"] from the database.");
 			((Deletable)record).setDeleted(1);
 			db.executeUpdateHistory( record );
 		}
@@ -861,10 +869,17 @@ public class DefaultDirector extends Observable implements Runnable {
 	
 	/**
 	 * 
-	 * @return The number of records inserted into the database.
+	 * @return The number of records that were actually inserted into the database.
 	 */
 	public int importedRecords() {
 		return imported;
 	}
 	
+	/**
+	 * @return The total number of loaded records (some of them may have been rejected).
+	 * @see #importedRecords()
+	 */
+	public int totalRecords() {
+		return count;
+	}
 }
