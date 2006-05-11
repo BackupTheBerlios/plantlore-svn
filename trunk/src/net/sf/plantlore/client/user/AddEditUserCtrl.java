@@ -85,8 +85,8 @@ public class AddEditUserCtrl {
                    user.setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
                    user.setEmail(view.emailText.getText());
                    user.setAddress(view.addressText.getText());
-                   //user.setCreateWhen(view.createWhenText.getText());
-                   //user.setDropWhen(view.dropWhenText.getText());
+                   user.setCreateWhen(new Date());
+                   user.setDropWhen(null);
                    user.setNote(view.noteText.getText());
                    //Right
                    Right right = new Right();
@@ -116,7 +116,7 @@ public class AddEditUserCtrl {
                     //pridani zaznamu do tabulky User
                    
                    //FIXME: PRIDANI PADA na vlozeni do tabulky tUser
-                    //model.addUserRecord(user, right);                                                           
+                    model.addUserRecord(user, right);                                                           
                     view.close(); 
                 }
            } else if (model.getOperation().equals("EDIT")) {  
@@ -130,9 +130,7 @@ public class AddEditUserCtrl {
                    model.getSelectedRecord().setSurname(view.surnameText.getText());
                    model.getSelectedRecord().setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
                    model.getSelectedRecord().setEmail(view.emailText.getText());
-                   model.getSelectedRecord().setAddress(view.addressText.getText());
-                   //model.getSelectedRecord().setCreateWhen(view.createWhenText.getText());
-                   //model.getSelectedRecord().setDropWhen(view.dropWhenText.getText());
+                   model.getSelectedRecord().setAddress(view.addressText.getText());                  
                    model.getSelectedRecord().setNote(view.noteText.getText());
                    //Right
                    Right right = model.getSelectedRecord().getRight();
@@ -155,8 +153,8 @@ public class AddEditUserCtrl {
                    } else {
                        right.setAdd(0);
                    }
-                   //FIXME: OTESTOVAT
-                   //model.editUserRecord();
+                   //ulozeni uzivatele - melibychom zobrazit message,ze bude olozen novy uzivatel OK, CANCLE
+                   model.editUserRecord();
                    view.close(); 
                 }
            } else if (model.getOperation().equals("DETAILS")) {

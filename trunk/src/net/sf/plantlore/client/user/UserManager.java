@@ -57,6 +57,8 @@ public class UserManager {
     private int sortField = SORT_SURNAME;
     /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
     private int sortDirection = 0;
+    /** Direction of type user. 0 = All user,1 = Current user. Default is All user.*/
+    private int showUserDirection = 0;
     /** Data about user*/
     private String login;
     private String password;
@@ -114,6 +116,11 @@ public class UserManager {
                 if (address != null && !address.equals("")) {
                     query.addRestriction(PlantloreConstants.RESTR_LIKE, User.ADDRESS, null, "%" + address + "%", null);
                 }
+                
+                if ( this.showUserDirection == 1 ) {
+                    query.addRestriction(PlantloreConstants.RESTR_IS_NULL, User.DROPWHEN, null, null, null);
+                }
+                
                 String field;
                 switch (sortField) {
                 case 1:
@@ -218,7 +225,7 @@ public class UserManager {
     
     public void editUserRecord() {       
         try {
-            database.executeDelete(selectedRecord.getRight());
+            database.executeUpdate(selectedRecord.getRight());
             database.executeUpdate(selectedRecord);
         } catch (RemoteException ex) {
             ex.printStackTrace();
@@ -241,8 +248,7 @@ public class UserManager {
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         }
-    }
-    
+    }      
            
     //****************************//
     //****Get and set metods*****//
@@ -357,6 +363,14 @@ public class UserManager {
      */
     public void setSortDirection(int direction) {
         this.sortDirection = direction;
+    }
+    
+       /**
+     *  Set direction of type user (All, current).
+     *  @param direction direction of type user. 0 show all user, 1 show only current user
+     */
+    public void setShowUserDirection(int direction) {
+        this.showUserDirection = direction;
     }
     
      /**

@@ -50,6 +50,8 @@ public class UserManagerCtrl {
         view.sortComboBox.addFocusListener(new SortComboFocusListener());
         view.sortAscendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
         view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
+        view.showAllUserRadioBUtton.addFocusListener(new ShowUserDirectionRadioFocusListener());
+        view.showCurrentUserRadioButton.addFocusListener(new ShowUserDirectionRadioFocusListener());
     }
     
        /**
@@ -168,13 +170,10 @@ public class UserManagerCtrl {
            model.setOperation("ADD");           
            //otevre se dialog addEdit s tim, ze mu rekneme, ze jde o ADD
            //pozor: pri add se musi ohlidat, zda byly vyplneny povinne polozky
-           AddEditUserView addView = new AddEditUserView(view,true);
+           AddEditUserView addView = new AddEditUserView(model, view,true);
            AddEditUserCtrl addCtrl = new AddEditUserCtrl(addView, model);
            addView.setAddForm();
-           addView.setVisible(true);
-           //pokud bude pridan zaznam,je potreba ho zobrazit v tabulce = provest znovu dotaz nebo pridat do datalistu, ale tam
-           //nezarucim spravne setrizeni,takze novy dotaz bude lepsi....
-           //bylo by dobre si nekde drzet query (kdyby pouzil uzivatel search)
+           addView.setVisible(true);           
            //nacteni            
            model.searchUser();
            //opet funkci pro vyzadani si dat postupne
@@ -192,7 +191,7 @@ public class UserManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableUserList.getSelectedRow() < 0) {    
-               view.messageSelection();
+               view.selectRowMessage();
            } else {
                //v modelu nastavim informaci o tom, ze jde o EDIT
                model.setOperation("EDIT");
@@ -201,43 +200,14 @@ public class UserManagerCtrl {
                model.setSelectedRecord(resultNumber);
                //nacteni dat do dialogu
                User user = model.getSelectedRecord();               
-               AddEditUserView editView = new AddEditUserView(view,true);
+               AddEditUserView editView = new AddEditUserView(model,view,true);
                AddEditUserCtrl editCtrl = new AddEditUserCtrl(editView, model);
-               editView.loginText.setText(user.getLogin());
-               editView.passwordtext.setText(user.getPassword());
-               editView.firstNameText.setText(user.getFirstName());
-               editView.surnameText.setText(user.getSurname());
-               editView.emailText.setText(user.getEmail());
-               editView.addressText.setText(user.getAddress());
-               editView.createWhenText.setValue(user.getCreateWhen());
-               editView.dropWhenText.setValue(user.getDropWhen());               
-               editView.noteText.setText(user.getNote());
-               //Right
-               Right right = user.getRight();
-               editView.editGroupText.setText(right.getEditGroup());
-               editView.seeColumnText.setText(right.getSeeColumns());
-               if (right.getAdministrator() == 1) {
-                   editView.administratorCheckBox.setSelected(true);
-               } else {
-                   editView.administratorCheckBox.setSelected(false);
-               }
-               if (right.getEditAll() == 1) {
-                   editView.editAllCheckBox.setSelected(true);                   
-               } else {
-                   editView.editAllCheckBox.setSelected(false);                   
-               }               
-               if (right.getAdd() == 1) {
-                   editView.addRightCheckBox.setSelected(true);
-               } else {
-                   editView.addRightCheckBox.setSelected(false);
-               }
-               //FIXME: vsechny Integery v DB nastavit defautlne na nulu,aby to pri prevodech na string nedelalo neplechu
-               //editView.versionPlantsFileText.setText(User.getVersionPlantsFile().toString());
+               //nacteni dat pro dialog
+               editView.loadData();               
                //vytvoreni dialogu
                editView.setEditForm();               
                editView.setVisible(true);    
-               //po editaci zaznamu se musi zobrazit zmena i v tabulce
-              //nacteni metadat
+               //nacteni uzivatelu
                model.searchUser();
                //opet funkci pro vyzadani si dat postupne
                model.processResult(1, model.getDisplayRows());
@@ -254,7 +224,7 @@ public class UserManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableUserList.getSelectedRow() < 0) {    
-               view.messageSelection();
+               view.selectRowMessage();
            } else {
                //v modelu nastavim informaci o tom, ze jde o DETAILS
                 model.setOperation("DETAILS");
@@ -263,40 +233,10 @@ public class UserManagerCtrl {
                model.setSelectedRecord(resultNumber);
                //nacteni dat do dialogu
                User user = model.getSelectedRecord();               
-               AddEditUserView detailsView = new AddEditUserView(view,true);
+               AddEditUserView detailsView = new AddEditUserView(model, view,true);
                AddEditUserCtrl detailsCtrl = new AddEditUserCtrl(detailsView, model);
                //nacteni dat            
-               //FIXME - nacteni dat by mohlo byt ve zvlastni funkci, protoze je stejne pro EDIT i DETAIL
-               detailsView.loginText.setText(user.getLogin());
-               detailsView.passwordtext.setText(user.getPassword());
-               detailsView.firstNameText.setText(user.getFirstName());
-               detailsView.surnameText.setText(user.getSurname());
-               detailsView.emailText.setText(user.getEmail());
-               detailsView.addressText.setText(user.getAddress());               
-               detailsView.createWhenText.setValue(user.getCreateWhen());
-               detailsView.dropWhenText.setValue(user.getDropWhen());               
-               detailsView.noteText.setText(user.getNote());
-               //Right
-               Right right = user.getRight();
-               detailsView.editGroupText.setText(right.getEditGroup());
-               detailsView.seeColumnText.setText(right.getSeeColumns());
-               if (right.getAdministrator() == 1) {
-                   detailsView.administratorCheckBox.setSelected(true);
-               } else {
-                   detailsView.administratorCheckBox.setSelected(false);
-               }
-               if (right.getEditAll() == 1) {
-                   detailsView.editAllCheckBox.setSelected(true);                   
-               } else {
-                   detailsView.editAllCheckBox.setSelected(false);                   
-               }              
-               if (right.getAdd() == 1) {
-                   detailsView.addRightCheckBox.setSelected(true);
-               } else {
-                   detailsView.addRightCheckBox.setSelected(false);
-               }
-               //FIXME: vsechny Integery v DB nastavit defautlne na nulu,aby to pri prevodech na string nedelalo neplechu
-               //detailsView.versionPlantsFileText.setText(User.getVersionPlantsFile().toString());
+               detailsView.loadData();
                //vytvoreni dialogu
                detailsView.setDetailsForm();
                detailsView.setVisible(true); 
@@ -311,14 +251,15 @@ public class UserManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableUserList.getSelectedRow() < 0) {    
-               view.messageSelection();
+               view.selectRowMessage();
            } else {
                //smazani zaznamu
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1; 
                model.setSelectedRecord(resultNumber);
                //informace administratorovi,o tom, ze dany uzivatel bude smazan
                int okCancle = view.messageDelete(model.getSelectedRecord().getWholeName());
-               if (okCancle == 1) {
+               logger.debug(okCancle);
+               if (okCancle == 0) {
                    logger.debug("Ok button was press");
                    //zavolani delete na vybraneho uzivatele
                    model.deleteUserRecord();        
@@ -341,16 +282,23 @@ public class UserManagerCtrl {
            model.setLogin(view.loginSearchText.getText());
            model.setEmail(view.emailSearchText.getText());
            model.setAddress(view.addressSearchText.getText());
-           //musi se nastavit podle ceho to mabyt setrizeno a zda vzestupne ci sestupne
-           //opet funkci pro vyzadani si dat postupne
-           model.searchUser();
-           if (model.getDisplayRows() <= 0) {
-                    model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
+           if (!(view.checkNonEmpty("login") || view.checkNonEmpty("name") ||
+               view.checkNonEmpty("email") || view.checkNonEmpty("address"))) {
+               view.showSearchErrorMessage();
+           } else {           
+               //opet funkci pro vyzadani si dat postupne
+               model.searchUser();
+               if (model.getDisplayRows() <= 0) {
+                   model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
+               }
+               if (model.getResultRows() < 1) {
+                   view.showSearchInfoMessage();
+               }
+               model.processResult(1, model.getDisplayRows());
+               view.tableUserList.setModel(new UserManagerTableModel(model));                      
+               view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
            }
-           model.processResult(1, model.getDisplayRows());
-           view.tableUserList.setModel(new UserManagerTableModel(model));                      
-           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
        }
     }
     
@@ -377,6 +325,21 @@ public class UserManagerCtrl {
         public void focusLost(FocusEvent e) {
             model.setSortDirection(view.getSortDirection());
             logger.debug("Sort asc, dsc: "+ view.getSortDirection());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty
+        }
+    }      
+    
+    /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
+     *  stores value of the field to model.
+     */
+    class ShowUserDirectionRadioFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setShowUserDirection(view.getShowUserDirection());
+            logger.debug("Show all user or only current user: "+ view.getShowUserDirection());
         }        
 
         public void focusGained(FocusEvent e) {

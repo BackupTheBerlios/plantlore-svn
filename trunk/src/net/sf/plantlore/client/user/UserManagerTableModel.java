@@ -9,6 +9,7 @@
 
 package net.sf.plantlore.client.user;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,11 +55,11 @@ public class UserManagerTableModel  extends AbstractTableModel  {
    
     private void initColumns() {
         columnNames = new String[5];                  
-        columnNames[0] = L10n.getString("loginUser");   
-        columnNames[1] = L10n.getString("nameUser");  
-        columnNames[2] = L10n.getString("emailUser");
-        columnNames[3] = L10n.getString("createWhenUser"); 
-        columnNames[4] = L10n.getString("dropWhenUser");                              
+        columnNames[0] = L10n.getString("user.login");   
+        columnNames[1] = L10n.getString("user.name");  
+        columnNames[2] = L10n.getString("user.email");
+        columnNames[3] = L10n.getString("user.createWhen"); 
+        columnNames[4] = L10n.getString("user.dropWhen");                              
     }       
     
     /**
@@ -81,16 +82,17 @@ public class UserManagerTableModel  extends AbstractTableModel  {
         Calendar isoDateTime = new GregorianCalendar();
     	//loud data for view
         Object[][] userData = new Object[countRow][5];   
-    	for (int i=firstRow-1; i < countResult; i++) {     
+    	for (int i=firstRow-1; i < countResult; i++) {                             
             userData[ii][0] = ((User)userDataList.get(i)).getLogin();
             userData[ii][1] = ((User)userDataList.get(i)).getWholeName(); 
             userData[ii][2] = ((User)userDataList.get(i)).getEmail();
-            userData[ii][3] = ((User)userDataList.get(i)).getCreateWhen().toString();              
+            Date createWhen = ((User)userDataList.get(i)).getCreateWhen();
+            userData[ii][3] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(createWhen);     	                               
             Date dropWhen = ((User)userDataList.get(i)).getDropWhen();
             if (dropWhen != null){
-                userData[ii][4] = dropWhen.toString();
+                userData[ii][4] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(dropWhen);     	                               
             } else {
-                userData[ii][4] = "";
+                userData[ii][4] = null;
             }            
     	    ii++;
     	}      	    	
@@ -132,5 +134,21 @@ public class UserManagerTableModel  extends AbstractTableModel  {
      */
     public String getColumnName(int column){
         return columnNames[column];
+    }
+    
+    /**
+     * Gets right Class - Date Object in the CREATEWHEN, DROPWHEN column and String Object in other columns. 
+     * @param column index of column
+     * @return the Class for Object instances in the specified column.
+     */
+    public Class getColumnClass(int column) {
+    	switch (column) {                        
+            case 0: return String.class;
+            case 1: return String.class;
+            case 2: return String.class;
+            case 3: return DateFormat.class;
+            case 4: return DateFormat.class;
+            default: return String.class;
+        }
     }
 }

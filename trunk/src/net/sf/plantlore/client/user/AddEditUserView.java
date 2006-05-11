@@ -12,6 +12,8 @@ import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.record.Right;
+import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -20,11 +22,15 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     
+    /**User manager model */
+    private UserManager model;
+    
     /**
      * Creates new form AddEditUserView
      */
-    public AddEditUserView(javax.swing.JDialog parent, boolean modal) {
+    public AddEditUserView(UserManager model, javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
+        this.model = model;
         initComponents();        
     }
     
@@ -61,6 +67,42 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
        this.editGroupText.setEditable(false);
        this.seeColumnText.setEditable(false);
        this.noteText.setEditable(false);
+     }
+     
+     /**
+      * Nacteni dat pro edit/details dialog
+      */
+     public void loadData() {
+           //Get selected user object
+           User user = model.getSelectedRecord();      
+           loginText.setText(user.getLogin());
+           passwordtext.setText(user.getPassword());
+           firstNameText.setText(user.getFirstName());
+           surnameText.setText(user.getSurname());
+           emailText.setText(user.getEmail());
+           addressText.setText(user.getAddress());
+           createWhenText.setValue(user.getCreateWhen());
+           dropWhenText.setValue(user.getDropWhen());               
+           noteText.setText(user.getNote());
+           //Right
+           Right right = user.getRight();
+           editGroupText.setText(right.getEditGroup());
+           seeColumnText.setText(right.getSeeColumns());
+           if (right.getAdministrator() == 1) {
+               administratorCheckBox.setSelected(true);
+           } else {
+               administratorCheckBox.setSelected(false);
+           }
+           if (right.getEditAll() == 1) {
+               editAllCheckBox.setSelected(true);                   
+           } else {
+               editAllCheckBox.setSelected(false);                   
+           }               
+           if (right.getAdd() == 1) {
+               addRightCheckBox.setSelected(true);
+           } else {
+               addRightCheckBox.setSelected(false);
+           }
      }
      
      /**
@@ -311,7 +353,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AddEditUserView(new javax.swing.JDialog(), true).setVisible(true);
+                new AddEditUserView(null, new javax.swing.JDialog(), true).setVisible(true);
             }
         });
     }

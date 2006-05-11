@@ -33,9 +33,12 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         sortButtonGroup.add(sortAscendingRadioButton);
         sortButtonGroup.add(sortDescendingRadioButton);
         sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
-        this.tableUserList.setRowSelectionAllowed(true);
-        this.tableUserList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        this.tableUserList.setModel(new UserManagerTableModel(model));  
+        showUserbuttonGroup.add(showAllUserRadioBUtton);
+        showUserbuttonGroup.add(showCurrentUserRadioButton);
+        showUserbuttonGroup.setSelected(showAllUserRadioBUtton.getModel(),true);
+        tableUserList.setRowSelectionAllowed(true);
+        tableUserList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+        tableUserList.setModel(new UserManagerTableModel(model));  
        
     }
     
@@ -66,14 +69,30 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         this.toDisplayValueTextField.setText(value.toString());
     }  
     
-    public void messageSelection() {
-    	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
-    } 
+    /**
+     * Display error message saying that no row of table has been selected.
+     */
+    public void selectRowMessage() {
+    	JOptionPane.showMessageDialog(this, "Please select one user from the list", "Select user", JOptionPane.WARNING_MESSAGE);               
+    }             
     
      public int messageDelete(String message) {
-    	int okCancle = JOptionPane.showConfirmDialog(this, "Access for user "+message+ " will be disolved.", "Delete information", JOptionPane.OK_CANCEL_OPTION);
+    	int okCancle = JOptionPane.showConfirmDialog(this, "Access for user "+message+ " will be prohibit.", "Drop user", JOptionPane.OK_CANCEL_OPTION);
     	return okCancle;
+    }          
+    
+     /**
+     *  Display error message saying that no search field has been filled in.
+     */
+    public void showSearchErrorMessage() {
+        JOptionPane.showMessageDialog(this, "Please fill in at least one search field", "Missing search data", JOptionPane.ERROR_MESSAGE);       
     }
+    
+    public void showSearchInfoMessage() {
+        JOptionPane.showMessageDialog(this, "No users with the given attributes were found. Please modify search criteria.",
+                                      "No search results", JOptionPane.INFORMATION_MESSAGE);                
+    }
+     
      public int getSortDirection() {
         if (this.sortButtonGroup.isSelected(this.sortAscendingRadioButton.getModel()) == true) {
             return 0;
@@ -82,6 +101,37 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         }
     }
     
+      public int getShowUserDirection() {
+        if (this.showUserbuttonGroup.isSelected(this.showAllUserRadioBUtton.getModel()) == true) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+     
+        /**
+     *  Check whether the given field is emty or not. This is used for validating user input when searching
+     *  user.
+     *
+     *  @param field field we want to check
+     *  @return true if the field is empty, false otherwise
+     */
+    public boolean checkNonEmpty(String field) {
+        if (field.equals("login") && (loginSearchText.getText().length() == 0)) {
+            return false;
+        }
+        if (field.equals("name") && (wholeNameSearchText.getText().length() == 0)) {
+            return false;
+        }
+        if (field.equals("email") && (emailSearchText.getText().length() == 0)) {
+            return false;
+        }
+        if (field.equals("address") && (addressSearchText.getText().length() == 0)) {
+            return false;
+        }        
+        return true;
+    }
+      
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -90,6 +140,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         sortButtonGroup = new javax.swing.ButtonGroup();
+        showUserbuttonGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableUserList = new javax.swing.JTable();
@@ -122,6 +173,9 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         addressLabel = new javax.swing.JLabel();
         addressSearchText = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
+        showActiveUserPanel = new javax.swing.JPanel();
+        showAllUserRadioBUtton = new javax.swing.JRadioButton();
+        showCurrentUserRadioButton = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("User list"));
@@ -142,13 +196,13 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
 
         nextButton.setText(L10n.getString("nextButton"));
 
-        deleteButton.setText(L10n.getString("recordDelete"));
+        deleteButton.setText(L10n.getString("userManager.dropUser"));
 
-        editButtons.setText(L10n.getString("recordEdit"));
+        editButtons.setText(L10n.getString("userManager.editUser"));
 
-        addButtons.setText(L10n.getString("recordAdd"));
+        addButtons.setText(L10n.getString("userManager.addUser"));
 
-        detailsButton.setText(L10n.getString("userDetails"));
+        detailsButton.setText(L10n.getString("userManager.details"));
 
         totalResultLabel.setText(L10n.getString("totalResult"));
 
@@ -255,8 +309,8 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(sortDescendingRadioButton)
                     .add(sortAscendingRadioButton)
-                    .add(sortComboBox, 0, 214, Short.MAX_VALUE))
-                .addContainerGap())
+                    .add(sortComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -277,6 +331,36 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
 
         searchButton.setText(L10n.getString("dataSearch"));
 
+        showActiveUserPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show"));
+        showAllUserRadioBUtton.setText(L10n.getString("userManager.showAllUser"));
+        showAllUserRadioBUtton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        showAllUserRadioBUtton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        showCurrentUserRadioButton.setText(L10n.getString("userManager.showActiveUser"));
+        showCurrentUserRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        showCurrentUserRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        org.jdesktop.layout.GroupLayout showActiveUserPanelLayout = new org.jdesktop.layout.GroupLayout(showActiveUserPanel);
+        showActiveUserPanel.setLayout(showActiveUserPanelLayout);
+        showActiveUserPanelLayout.setHorizontalGroup(
+            showActiveUserPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(showActiveUserPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(showActiveUserPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(showAllUserRadioBUtton)
+                    .add(showCurrentUserRadioButton))
+                .addContainerGap(29, Short.MAX_VALUE))
+        );
+        showActiveUserPanelLayout.setVerticalGroup(
+            showActiveUserPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(showActiveUserPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(showAllUserRadioBUtton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(showCurrentUserRadioButton)
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -290,41 +374,45 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
                             .add(wholeNameLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(loginSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                            .add(wholeNameSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
+                            .add(loginSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                            .add(wholeNameSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(emailLabel)
                             .add(addressLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(addressSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                            .add(emailSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)))
+                            .add(addressSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                            .add(emailSearchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)))
                     .add(searchButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(60, 60, 60)
+                .add(58, 58, 58)
+                .add(showActiveUserPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(16, 16, 16)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(emailLabel)
-                            .add(emailSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(loginLabel)
-                            .add(loginSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(addressLabel)
-                            .add(addressSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(wholeNameLabel)
-                            .add(wholeNameSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(16, 16, 16)
-                        .add(searchButton))
-                    .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, showActiveUserPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(jPanel2Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                .add(emailLabel)
+                                .add(emailSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(loginLabel)
+                                .add(loginSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                            .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                                .add(addressLabel)
+                                .add(addressSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(wholeNameLabel)
+                                .add(wholeNameSearchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(16, 16, 16)
+                            .add(searchButton))
+                        .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -332,15 +420,15 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(helpButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 686, Short.MAX_VALUE)
-                        .add(closeButton))
-                    .add(jPanel2, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(closeButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -349,7 +437,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(15, 15, 15)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 14, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)
                     .add(closeButton))
@@ -392,6 +480,10 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
     protected javax.swing.JButton nextButton;
     protected javax.swing.JButton previousButton;
     protected javax.swing.JButton searchButton;
+    protected javax.swing.JPanel showActiveUserPanel;
+    protected javax.swing.JRadioButton showAllUserRadioBUtton;
+    protected javax.swing.JRadioButton showCurrentUserRadioButton;
+    protected javax.swing.ButtonGroup showUserbuttonGroup;
     protected javax.swing.JRadioButton sortAscendingRadioButton;
     protected javax.swing.ButtonGroup sortButtonGroup;
     protected javax.swing.JComboBox sortComboBox;
