@@ -4,6 +4,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.export.component.XFilter;
+import net.sf.plantlore.l10n.L10n;
 
 public class ExportMngCtrlA {
 	
@@ -29,8 +30,8 @@ public class ExportMngCtrlA {
 				
 				if(view.choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,
-							"You must insert a name!",
-						    "Nothing selected...",
+							L10n.getString("error.MissingFileName"),
+							L10n.getString("error.NothingSelected"),
 						    JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -46,8 +47,8 @@ public class ExportMngCtrlA {
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,
-							"Unable to start the export procedure!\n" + e,
-						    "Export failed...",
+							L10n.getString("error.ExportFailed") + e,
+							L10n.getString("export.Failed"),
 						    JOptionPane.WARNING_MESSAGE);
 				}
 			}

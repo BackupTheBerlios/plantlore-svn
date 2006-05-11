@@ -1,5 +1,7 @@
 package net.sf.plantlore.client.export.component;
 
+import net.sf.plantlore.l10n.L10n;
+
 /**
  * A representation of a node in an XTree.
  * Every node corresponds to a <code>column</code> of a <code>table</code>.
@@ -38,6 +40,6 @@ public class XNode {
 	 */
 	@Override
 	public String toString() {
-		return column == null ? table.getSimpleName() :  column;
+		return L10n.getString(table.getSimpleName() + ((column != null) ? "." +  column : ""));
 	}
 }

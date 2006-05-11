@@ -9,6 +9,8 @@ package net.sf.plantlore.client.export;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.l10n.L10n;
+
 /**
  *
  * @author  Erik Kratochvíl
@@ -83,7 +85,7 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     
     @Override
     public void setVisible(boolean visible) {
-    	status.setText("Initializing...");
+    	status.setText(L10n.getString("export.Initializing"));
     	total = model.getNumberOfResults();
     	if(total > 0) {
     		progress.setIndeterminate(false);
@@ -95,7 +97,7 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     		progress.setStringPainted(false);
     	}
     	
-    	abort.setText("Abort");
+    	abort.setText(L10n.getString("export.Abort"));
     	
     	super.setVisible(visible);
     	
@@ -112,32 +114,30 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 		
 		if( parameter != null && parameter instanceof Exception ) {
 			Exception e = (Exception) parameter;
-			setTitle("Export interrupted");
-			
-			status.setText("An exception interrupted the export procedure: " + e);
-			
+			setTitle(L10n.getString("export.Failed"));
+			status.setText(e.toString());
 			progress.setValue(0);
 			progress.setString("");
-			abort.setText("Close");
+			abort.setText(L10n.getString("import.Hide"));
 			exceptionOccured = true;
 		}
 		else if(model.isAborted()) {
-			setTitle("Export aborted");
+			setTitle(L10n.getString("export.Aborted"));
 			if(total > 0)
-				status.setText("Export procedure aborted.\n " + count +"/" + total + " records exported.");
+				status.setText(count +"/" + total + " " + L10n.getString("export.RecordsExported"));
 			else
-				status.setText("Export procedure aborted.\n " + count + " records exported.");
+				status.setText(count + " " + L10n.getString("export.RecordsExported"));
 			progress.setValue(0);
 			progress.setString("");
-			abort.setText("Close");
+			abort.setText(L10n.getString("export.Hide"));
 		} 
 		else if(!model.isExportInProgress()) {
-			setTitle("Export completed");
-			status.setText("Completed...");
+			setTitle(L10n.getString("import.Completed"));
+			status.setText(count + " " + L10n.getString("export.RecordsExported"));
 			progress.setMaximum(100);
 			progress.setValue(100);
 			progress.setString("100%");
-			abort.setText("Close");
+			abort.setText(L10n.getString("export.Hide"));
 		}
 		else if( this.isVisible() ) {
 			count = model.getNumberOfExported();
@@ -146,12 +146,12 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 				if(total > 0) {
 					String percent = Integer.toString(100*count / total) + "%";
 					progress.setString( percent );
-					status.setText("Exporting\n " + count + ". of " + total);
-					setTitle("Exported " + percent);
+					status.setText(count +"/" + total + " " + L10n.getString("export.RecordsExported"));
+					setTitle(percent + "% " + L10n.getString("export.Progress"));
 				}
 				else {
-					status.setText("Exporting\n " + count + ".");
-					setTitle("Exported " + count);
+					status.setText(count + " " + L10n.getString("export.RecordsExported"));
+					setTitle(count + " " + L10n.getString("export.RecordsExported"));
 				}
 				
 			}

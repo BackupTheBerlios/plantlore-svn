@@ -18,6 +18,11 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 	
 	private Template xtemplate = new Template();
 	
+	/**
+	 * Setting a selection path
+	 * adds the selection path if it is not selected
+	 * or removes it if it is selected.
+	 */
 	@Override 
 	public void setSelectionPath(TreePath path) {
 		if( isPathSelected(path) )
@@ -26,6 +31,9 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 			addSelectionPath(path);
 	}
 	
+	/**
+	 * Update the Template appropriately.
+	 */
 	@Override 
 	public void removeSelectionPaths(TreePath[] paths) {
 		for(TreePath path : paths) {
@@ -39,6 +47,9 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 		super.removeSelectionPaths( paths );
 	}
 	
+	/**
+	 * Update the Template appropriately.
+	 */
 	@Override 
 	public void addSelectionPaths(TreePath[] paths) {
 		for(TreePath path : paths) {

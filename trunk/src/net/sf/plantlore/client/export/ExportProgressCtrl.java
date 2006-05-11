@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.l10n.L10n;
+
 //import net.sf.plantlore.l10n.L10n;
 
 public class ExportProgressCtrl {
@@ -24,8 +26,8 @@ public class ExportProgressCtrl {
 			if(model.isExportInProgress()) {
 				int response =
 					JOptionPane.showOptionDialog(view,
-							"The export procedure will be aborted.",
-							"Abort export",
+							L10n.getString("question.AbortImport"),
+							L10n.getString("export.Aborted"),
 							JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.WARNING_MESSAGE,
 							null,

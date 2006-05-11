@@ -8,6 +8,7 @@ import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.common.record.*;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -79,7 +80,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(builder == null) {
 			logger.warn("The builder is null!");
-			throw new ExportException("The builder cannot be null!");
+			throw new ExportException(L10n.getString("error.InvalidBuilder"));
 		}
 		build = builder;
 	}
@@ -94,7 +95,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(result < 0) {
 			logger.warn("The result set is probably not valid!");
-			throw new ExportException("The result set identificator cannot be negative!");
+			throw new ExportException(L10n.getString("error.InvalidResultset"));
 		}
 		this.result =  result;
 	}
@@ -108,7 +109,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(db == null) {
 			logger.error("The database layer is null!");
-			throw new ExportException("The database layer cannot be null!");
+			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
 		}
 		this.database = db;
 	}
@@ -122,7 +123,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(selection == null || selection.isEmpty()) {
 			logger.warn("The selection is null or empty!");
-			throw new ExportException("The selection cannot be empty!");
+			throw new ExportException(L10n.getString("error.InvalidSelection"));
 		}
 		this.selection = selection.clone();
 	}
@@ -146,6 +147,8 @@ public class DefaultDirector extends Observable implements Runnable {
 	private void loadAssociatedAuthors(Occurrence occurrence) 
 	throws RemoteException, IOException, DBLayerException {
 		
+		logger.debug("Processing the associated information about Authors.");
+		
 		SelectQuery query = database.createQuery(AuthorOccurrence.class);
 		query.createAlias(AuthorOccurrence.OCCURRENCE, "OCC");
 
@@ -157,12 +160,19 @@ public class DefaultDirector extends Observable implements Runnable {
 		// Take all results and spit'em out.
 		int rows = database.getNumRows( resultId );
 		for(int i = 0; i < rows; i++) {
+			logger.info("Fetching associated data (Author, AuthorOccurrence).");
+			
 			Object[] pulp = database.more( resultId, i, i );
 			AuthorOccurrence ao = (AuthorOccurrence) ((Object[])pulp[0])[0];
 			ao.setOccurrence( null ); // cut off the way back to the occurrence
+			
+			logger.debug("New author-occurence record: " + ao);
+			
 			build.part( ao );
 		}
 		database.closeQuery( query );
+		
+		logger.debug("Author-occurence processed.");
 	}
 	
 	
@@ -180,11 +190,16 @@ public class DefaultDirector extends Observable implements Runnable {
 			int rows = database.getNumRows( result );
 			for(int i = 0; i < rows && !aborted; i++) {
 				
+				logger.info("Fetching a new record from the database.");
+				
 				// Abandon the database.nect() Object[] records = database.next( result );
 				Object[] records = database.more( result, i, i );
-				
 				Record record = (Record) ((Object[])records[0])[0]; // [0][0] since we use `more`
+				
+				logger.debug("New record No. "+i+" fetched: "+record);
 				if( !selection.contains( record ) ) continue; // Is the record selected?
+				
+				logger.debug("The record is in the selection. It will be exported.");
 			
 				count++;
 				build.startRecord();
@@ -205,10 +220,11 @@ public class DefaultDirector extends Observable implements Runnable {
 			}
 
 			build.footer();
-			logger.info("Export completed. " + count + " records sent to output.");
+			logger.info("Export completed. " + count + " records sent to output. ");
 		}
 		catch(Exception e) {
-			logger.error("Export ended prematurely. " + e);
+			logger.error("Export ended prematurely. Only "+count+" records exported.");
+			logger.error("The problem: "+e);
 			setChanged(); notifyObservers( e ); 
 		}
 		if(aborted) logger.info("Export aborted. " + count + " records sent to output.");

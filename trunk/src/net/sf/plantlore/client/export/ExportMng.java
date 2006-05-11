@@ -208,7 +208,7 @@ public class ExportMng extends Observable implements Observer {
 	throws ExportException {
 		if(dblayer == null) { 
 			logger.error("The database layer is null!");
-			throw new ExportException("The database layer cannot be null!");
+			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
 		}
 		db = dblayer;
 		results = selectedResults = resultId = -1;
@@ -220,6 +220,7 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	synchronized public void setTemplate(Template template) {
 		if(template == null) {
+			logger.info("The list of selected columns is empty! Creating a new Template where every column is selected.");
 			this.template = new Template();
 			this.template.setEverything();
 		}
@@ -230,10 +231,8 @@ public class ExportMng extends Observable implements Observer {
 	 * Store a copy of the <code>selection</code>.
 	 */
 	synchronized public void setSelection(Selection selection) {
-		if(selection == null || selection.isEmpty())
-			logger.warn("The list of selected records is empty!");
-
-		if(selection == null) {
+		if(selection == null || selection.isEmpty()) {
+			logger.info("The list of selected records is empty! Creating a new Selection where everything is selected.");
 			select = new Selection();
 			select.all();
 		}
@@ -252,7 +251,7 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	synchronized public void setActiveFileFilter(XFilter filter) {
 		if(filter == null)
-			logger.warn("The active filter is null!");
+			logger.warn("The filter is set to null!");
 		this.filter = filter; 
 	}
 	
@@ -261,8 +260,8 @@ public class ExportMng extends Observable implements Observer {
 	 * spit its output. 
 	 */
 	synchronized public void setSelectedFile(String filename) { 
-		if(filename == null)
-			logger.warn("The selected file is null!");
+		if(filename == null || filename.length() == 0)
+			logger.warn("The supplied file name is either null or an empty string!");
 		this.filename = filename; 
 	}
 	
@@ -271,7 +270,7 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	synchronized public void setResultId(Integer result) { 
 		if(result < 0) 
-			logger.warn("The result set identificator is null!");
+			logger.warn("The result set identificator is a negative integer!");
 
 		this.resultId = result;
 		results = -1;
@@ -286,7 +285,7 @@ public class ExportMng extends Observable implements Observer {
 	synchronized public void setSelectQuery(SelectQuery query) 
 	throws ExportException, DBLayerException, RemoteException {
 		if(query == null)
-			logger.warn("The select query is null!");
+			logger.warn("The select query is not valid - it is null!");
 
 		// Discontinue using the previous query
 		if(this.query != null) db.closeQuery(this.query);
@@ -311,13 +310,11 @@ public class ExportMng extends Observable implements Observer {
 	throws ExportException, IOException {
 		// Check if we have all necessary components ready.
 		if( db == null )
-			throw new ExportException("There is no point in starting an export - the DBLayer is not set!");
+			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
 		if( filter == null ) 
-			throw new ExportException("The Filter is not set!");
-		if( filename == null ) 
-			throw new ExportException("The Filename is not set!");
-		if( select.isEmpty() )
-			throw new ExportException("There is no point in starting an export - the list of selected records is empty!");
+			throw new ExportException(L10n.getString("error.InvalidFilter"));
+		if( filename == null || filename.length() == 0 ) 
+			throw new ExportException(L10n.getString("error.MissingFileName"));
 			
 		
 		logger.debug("Initializing the export environment.");
@@ -332,7 +329,7 @@ public class ExportMng extends Observable implements Observer {
 		writer = new FileWriter( file, append );
 		if(writer == null) {
 			logger.fatal("Unable to create a new Writer.");
-			throw new ExportException("Unable to create a new Writer.");
+			throw new ExportException(L10n.getString("error.WriterNotCreated"));
 		}
 		
 		// Create a new builder according to the selected format.
@@ -350,7 +347,7 @@ public class ExportMng extends Observable implements Observer {
 		current = new Thread( director, "Export" );
 		if(current == null) {
 			logger.fatal("Unable to create a new thread.");
-			throw new ExportException("Unable to create a new thread.");
+			throw new ExportException(L10n.getString("error.ThreadFailed"));
 		}
 		current.start();
 		

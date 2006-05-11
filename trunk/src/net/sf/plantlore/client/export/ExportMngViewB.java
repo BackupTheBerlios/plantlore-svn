@@ -8,6 +8,7 @@ package net.sf.plantlore.client.export;
 
 import net.sf.plantlore.client.export.component.TemplateSelectionModel;
 import net.sf.plantlore.client.export.component.XTree;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -39,9 +40,10 @@ public class ExportMngViewB extends javax.swing.JDialog {
         next = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        setTitle(L10n.getString("export.SelectColumns"));
         jScrollPane1.setViewportView(tree);
 
-        next.setText("Export");
+        next.setText(L10n.getString("export.Title"));
         
         tree.setSelectionModel( tsm );
 
