@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Observable;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
@@ -28,7 +29,6 @@ import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
