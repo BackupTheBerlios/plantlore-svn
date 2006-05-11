@@ -60,10 +60,10 @@ public class OverviewTableModel extends AbstractTableModel {
         }
     }
     
-    private Object[][] data = {
+    private Object[][] data;/* = {
         {true, "Pampeliska", "neznamy", "Praha", new Integer(1995), "phy", "cechy", new Boolean(false), new Integer(10), new Integer(12), new Integer(-5), "","","","","","","","","","","",""},
         {false,"Hermanek", "Jakub", "Zelezny Brod", new Integer(1990), "phy", "cechy", new Boolean(true), new Integer(10), new Integer(12), new Integer(-5), "","","","","","","","","","","",""}
-    };
+    };*/
     
     /** Simple mode if true - only first three columns are displayed
      * Extended mode if false - all columns are displayed
@@ -183,6 +183,7 @@ public class OverviewTableModel extends AbstractTableModel {
         Plant plant;
         Object[] resultObj, records;
         resultsCount = db.getNumRows(getResultid());
+        System.out.println("resultsCount="+resultsCount);
         if (resultsCount > 0) {
             logger.debug("resultsCount = "+resultsCount);
             to = Math.min(resultsCount-1, from + pageSize - 1);
@@ -193,6 +194,7 @@ public class OverviewTableModel extends AbstractTableModel {
             logger.debug("records.length = " + records.length);
 
             for (int i = 0; i < data.length ; i++) {
+                System.out.println("i="+i);
                 resultObj = (Object[])records[i];
                 result = (Occurrence)resultObj[0];
                 Record999 r = new Record999(result.getId(), false, from + i + 1);//we want to show the user numbers starting from 1 therefor the +1
@@ -205,7 +207,7 @@ public class OverviewTableModel extends AbstractTableModel {
                 row[0] = r.selected;
                 row[1] = r.number;
                 row[2] = result.getPlant().getTaxon();
-                row[3] = ((Object[])getAuthorsOf(result))[0];//occurrence must have at least one author, we'll choose the first one
+                row[3] = ((Pair<String,Integer>)((Object[])getAuthorsOf(result))[0]).getFirst();//occurrence must have at least one author, we'll choose the first one
                 row[4] = result.getHabitat().getNearestVillage().getName();
                 row[5] = result.getHabitat().getDescription();
                 row[6] = result.getYearCollected();
@@ -228,6 +230,8 @@ public class OverviewTableModel extends AbstractTableModel {
                 row[23] = result.getTimeCollected();
                 row[24] = result; //won't  be displayed, because in getColumnCount we pretend not to have this column
                 data[i] = row;
+                for (int k=0; k < 24 ; k++)
+                    System.out.println("row "+k+"=#"+row[k]+"#");
             }//i        
         }//if resultsCount > 1
     }
@@ -254,7 +258,10 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public int getRowCount() {
-        return data.length;
+        if (data != null)
+            return data.length;
+        else
+            return 0;
     }
     
     public int getColumnCount() {
@@ -418,10 +425,12 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public int getResultid() {
+        System.out.println("returning resultid "+resultid);
         return resultid;
     }
 
     public void setResultid(int resultid) {
+        System.out.println("setting resultid to "+resultid);
         this.resultid = resultid;
     }
 

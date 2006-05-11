@@ -83,10 +83,15 @@ public class AppCoreCtrl
     AddEditView editView;
     AddEditCtrl addCtrl;
     AddEditCtrl editCtrl;
+    
+    Search searchModel;
+    SearchView searchView;
+    SearchCtrl searchCtrl;
+    
     Settings settingsModel;
     SettingsView settingsView;
     SettingsCtrl settingsCtrl;
-    Preferences prefs;
+    Preferences prefs;    
     
     // History of one occurrence
     History historyModel;
@@ -403,7 +408,14 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("Search pressed");
+            if (searchModel == null) {
+                searchModel = new Search(model.getDatabase());
+                searchView = new SearchView(view, true, searchModel);
+                searchView.setTitle("Search");
+                searchCtrl = new SearchCtrl(searchModel, searchView);
+            }
+            searchView.clearComponentData();
+            searchView.setVisible(true);
         }
     }
     
