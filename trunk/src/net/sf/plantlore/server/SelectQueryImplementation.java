@@ -45,7 +45,7 @@ public class SelectQueryImplementation implements SelectQuery {
     // Hibernate criteria used in criteria query
     private Criteria criteria;
     /* List of projections for the query */
-    private HashSet projections = new HashSet();
+    private ArrayList projections = new ArrayList();
     /** Creates a new instance of SelectQueryImplementation */
     public SelectQueryImplementation(Criteria criteria) {
         this.criteria = criteria;
