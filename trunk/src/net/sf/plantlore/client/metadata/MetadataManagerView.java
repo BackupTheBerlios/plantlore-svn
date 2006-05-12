@@ -28,6 +28,9 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         super(parent, modal);
         this.model = model;
         initComponents();
+        sortButtonGroup.add(sortAscendingRadioButton);
+        sortButtonGroup.add(sortDescendingRadioButton);
+        sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
         this.tableMetadataList.setRowSelectionAllowed(true);
         this.tableMetadataList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         this.tableMetadataList.setModel(new MetadataManagerTableModel(model));  
@@ -61,6 +64,14 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         this.toDisplayValueTextField.setText(value.toString());
     }  
     
+     public int getSortDirection() {
+        if (this.sortButtonGroup.isSelected(this.sortAscendingRadioButton.getModel()) == true) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+    
     public void messageSelection() {
     	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
     } 
@@ -72,6 +83,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        sortButtonGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableMetadataList = new javax.swing.JTable();
@@ -90,20 +102,20 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         closeButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        sourceInstitutionIdLabel = new javax.swing.JLabel();
+        sourceLabel = new javax.swing.JLabel();
+        sourceInstitutionIdText = new javax.swing.JTextField();
+        sourceIdText = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jLabel5 = new javax.swing.JLabel();
+        sortDescendingRadioButton = new javax.swing.JRadioButton();
+        sortAscendingRadioButton = new javax.swing.JRadioButton();
+        dataSortLabel = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        dataSetTitleLabel = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata list"));
@@ -151,12 +163,12 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 76, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 154, Short.MAX_VALUE)
                                 .add(totalResultLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(totalResultValueLabel)
@@ -210,26 +222,23 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         helpButton.setText(L10n.getString("Help"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Search metadata"));
-        jLabel1.setText("jLabel1");
+        sourceInstitutionIdLabel.setText(L10n.getString("metadata.sourceInstitutionId")
+        );
 
-        jLabel2.setText("jLabel2");
-
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setText("jTextField2");
+        sourceLabel.setText(L10n.getString("metadata.sourceId"));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Sorting"));
-        jRadioButton1.setText("jRadioButton1");
-        jRadioButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jRadioButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        sortDescendingRadioButton.setText(L10n.getString("sortDescending"));
+        sortDescendingRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        sortDescendingRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jRadioButton2.setText("jRadioButton2");
-        jRadioButton2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jRadioButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        sortAscendingRadioButton.setText(L10n.getString("sortAscending"));
+        sortAscendingRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        sortAscendingRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jLabel5.setText("jLabel5");
+        dataSortLabel.setText(L10n.getString("dataSort"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("metadata.sourceInstitutionId"), L10n.getString("metadata.sourceId"), L10n.getString("metadata.dataSetTitle"), L10n.getString("metadata.technicalContactName"),L10n.getString("metadata.contentContactName"), L10n.getString("metadata.dateCreate"), L10n.getString("metadata.dateModified")}));
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -237,11 +246,11 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jLabel5)
+                .add(dataSortLabel)
                 .add(19, 19, 19)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jRadioButton1)
-                    .add(jRadioButton2)
+                    .add(sortDescendingRadioButton)
+                    .add(sortAscendingRadioButton)
                     .add(jComboBox1, 0, 214, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -249,24 +258,20 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel5)
+                    .add(dataSortLabel)
                     .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jRadioButton2)
+                .add(sortAscendingRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jRadioButton1)
+                .add(sortDescendingRadioButton)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel3.setText("jLabel3");
+        dataSetTitleLabel.setText(L10n.getString("metadata.dataSetTitle"));
 
-        jTextField3.setText("jTextField3");
+        jLabel4.setText(L10n.getString(""));
 
-        jLabel4.setText("jLabel4");
-
-        jTextField4.setText("jTextField4");
-
-        jButton1.setText("jButton1");
+        searchButton.setText(L10n.getString("dataSearch"));
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -277,21 +282,21 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel1)
-                            .add(jLabel2))
+                            .add(sourceInstitutionIdLabel)
+                            .add(sourceLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jTextField1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                            .add(jTextField2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
+                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel3)
+                            .add(dataSetTitleLabel)
                             .add(jLabel4))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jTextField4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                             .add(jTextField3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
-                    .add(jButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(searchButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(60, 60, 60)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(28, 28, 28))
@@ -303,18 +308,18 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                     .add(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel1)
-                            .add(jLabel3)
+                            .add(sourceInstitutionIdLabel)
+                            .add(dataSetTitleLabel)
                             .add(jTextField3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel2)
+                            .add(sourceLabel)
                             .add(jLabel4)
                             .add(jTextField4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jTextField2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(16, 16, 16)
-                        .add(jButton1))
+                        .add(searchButton))
                     .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -330,7 +335,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(helpButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 679, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 757, Short.MAX_VALUE)
                         .add(closeButton)))
                 .addContainerGap())
         );
@@ -363,31 +368,32 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton addButtons;
     protected javax.swing.JButton closeButton;
+    private javax.swing.JLabel dataSetTitleLabel;
+    private javax.swing.JLabel dataSortLabel;
     protected javax.swing.JButton deleteButton;
     protected javax.swing.JButton detailsButton;
     private javax.swing.JLabel displayedLabel;
     protected javax.swing.JLabel displayedValueLabel;
     protected javax.swing.JButton editButtons;
     protected javax.swing.JButton helpButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     protected javax.swing.JButton nextButton;
     protected javax.swing.JButton previousButton;
+    protected javax.swing.JButton searchButton;
+    protected javax.swing.JRadioButton sortAscendingRadioButton;
+    private javax.swing.ButtonGroup sortButtonGroup;
+    protected javax.swing.JRadioButton sortDescendingRadioButton;
+    protected javax.swing.JTextField sourceIdText;
+    private javax.swing.JLabel sourceInstitutionIdLabel;
+    protected javax.swing.JTextField sourceInstitutionIdText;
+    private javax.swing.JLabel sourceLabel;
     protected javax.swing.JTable tableMetadataList;
     protected javax.swing.JTextField toDisplayValueTextField;
     private javax.swing.JLabel toDisplayedLabel;

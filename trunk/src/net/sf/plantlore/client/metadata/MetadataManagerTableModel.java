@@ -51,13 +51,13 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
    
     private void initColumns() {
         columnNames = new String[7];                  
-        columnNames[0] = L10n.getString("sourceInstitutionId");   
-        columnNames[1] = L10n.getString("sourceId");  
-        columnNames[2] = L10n.getString("dataSetTitle");
-        columnNames[3] = L10n.getString("technicalContacName"); 
-        columnNames[4] = L10n.getString("contentContactName");                      
-        columnNames[5] = L10n.getString("dateCreate"); 
-        columnNames[6] = L10n.getString("dateModified");          
+        columnNames[0] = L10n.getString("metadata.sourceInstitutionId");   
+        columnNames[1] = L10n.getString("metadata.sourceId");  
+        columnNames[2] = L10n.getString("metadata.dataSetTitle");
+        columnNames[3] = L10n.getString("metadata.technicalContactName"); 
+        columnNames[4] = L10n.getString("metadata.contentContactName");                      
+        columnNames[5] = L10n.getString("metadata.dateCreate"); 
+        columnNames[6] = L10n.getString("metadata.dateModified");          
     }       
     
     /**

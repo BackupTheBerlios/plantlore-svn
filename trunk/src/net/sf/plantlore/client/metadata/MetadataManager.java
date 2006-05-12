@@ -11,6 +11,7 @@ package net.sf.plantlore.client.metadata;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -50,6 +51,17 @@ public class MetadataManager {
     private Metadata selectedRecord;
     
     
+    //*********************Search - promenne podle,kterych se vyhledava************//
+    /** Field to be used for sorting search query results */
+    private int sortField = 1;
+    /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
+    private int sortDirection = 0;
+    
+    //***********Metadata*******************//
+    private String dataSetTitle;    
+    private String sourceInstitutionId;
+    private String sourceId;        
+    
     /**
      * Creates a new instance of MetadataManager
      */
@@ -66,6 +78,7 @@ public class MetadataManager {
     
      /**
      *
+     *
      */
     public void searchMetadata() {
         
@@ -74,7 +87,53 @@ public class MetadataManager {
 
     	//  Select data from tMetadata table
         try {
-                query = database.createQuery(Metadata.class);                                
+                query = database.createQuery(Metadata.class);     
+                
+                if (sourceInstitutionId != null && !sourceInstitutionId.equals("")) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Metadata.SOURCEINSTITUTIONID, null, "%" + sourceInstitutionId + "%", null);
+                }
+                if (sourceId != null && !sourceId.equals("")) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Metadata.SOURCEID, null, "%" + sourceId + "%", null);
+                }
+                if (dataSetTitle != null && !dataSetTitle.equals("")) {
+                    query.addRestriction(PlantloreConstants.RESTR_LIKE, Metadata.DATASETTITLE, null, "%" + dataSetTitle + "%", null);
+                }
+               
+                
+                String field;
+                switch (sortField) {
+                case 1:
+                        field = Metadata.SOURCEINSTITUTIONID;
+                        break;
+                case 2:
+                        field = Metadata.SOURCEID;
+                        break;
+                case 3:
+                        field = Metadata.DATASETTITLE;
+                        break;
+                case 4:
+                        field = Metadata.TECHNICALCONTACTNAME;
+                        break;                
+                case 5:
+                        field = Metadata.CONTENTCONTACTNAME;
+                        break;
+                case 6:
+                        field = Metadata.DATECREATE;
+                        break;
+                case 7:
+                        field = Metadata.DATEMODIFIED;
+                        break;
+                default:
+                        field = Metadata.SOURCEINSTITUTIONID;
+                }
+
+                if (sortDirection == 0) {
+                        query.addOrder(PlantloreConstants.DIRECT_ASC, field);
+                } else {
+                        query.addOrder(PlantloreConstants.DIRECT_DESC, field);
+                }
+                
+                
         } catch (RemoteException e) {
             System.err.println("RemoteException - searchMetadataData(), createQuery");
         } catch (DBLayerException e) {
@@ -272,4 +331,76 @@ public class MetadataManager {
     public Metadata getSelectedRecord() {
         return this.selectedRecord;
     }
+    
+        /**
+     *   Get concise title of the project
+     *   @return concise title of the project
+     *   @see setDataSetTitle
+     */
+    public String getDataSetTitle() {
+        return this.dataSetTitle;
+    }
+    
+    /**
+     *   Set concise title of the project
+     *   @param dataSetTitle string containing concise title of the project
+     *   @see getDataSetTitle
+     */
+    public void setDataSetTitle(String dataSetTitle) {
+        this.dataSetTitle = dataSetTitle;
+    }
+    
+    /**
+     *   Get unique identifier (code or name) of the institution holding the original data source
+     *   @return unique identifier of the institution holding the original data source.
+     *   @see setSourceInstitutionId
+     */
+    public String getSourceInstitutionId() {
+        return this.sourceInstitutionId;
+    }
+    
+    /**
+     *   Set unique identifier (code or name) of the institution holding the original data source
+     *   @param sourceInstitutionId string containing unique identifier of the institution holding the original data source
+     *   @see getSourceInstitutionId
+     */
+    public void setSourceInstitutionId(String sourceInstitutionId) {
+        this.sourceInstitutionId = sourceInstitutionId;
+    }    
+    
+    /**
+     *   Get name or code of the data source
+     *   @return name or code of the data source
+     *   @see setSourceId
+     */
+    public String getSourceId() {
+        return this.sourceId;
+    }
+    
+    /**
+     *   Set name or code of the data source
+     *   @param sourceId string containing name or code of the data source
+     *   @see getTechnicalContactName
+     */
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+    
+          /**
+     *  Set field used for sorting results of the search query.
+     *  @param field numeric identificator of the field used for sorting
+     */
+    public void setSortField(int field) {
+        this.sortField = field;
+    }
+
+    /**
+     *  Set direction of sorting.
+     *  @param direction direction of sorting. 0 for ascending, 1 for descending
+     */
+    public void setSortDirection(int direction) {
+        this.sortDirection = direction;
+    }
+    
 }
+

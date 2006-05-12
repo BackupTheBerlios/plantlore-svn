@@ -91,6 +91,7 @@ public class AddEditMetadataCtrl {
                     metadata.setDateModified(new Date());                            
                     metadata.setRecordBasis(view.recordbasisText.getText());
                     metadata.setBiotopeText(view.biotopetextText.getText());
+                    metadata.setDeleted(0);
                     //metadata.setVersionPlantsFile(Integer.parseInt(view.versionPlantsFileText.getText())); 
                     //mela by se tu vypsat nejaka informace pro uzivatele
                     //pridani metadat
@@ -117,6 +118,7 @@ public class AddEditMetadataCtrl {
                     //model.getSelectedRecord().setDateModified(view.dateModifiedText.getText());
                     model.getSelectedRecord().setRecordBasis(view.recordbasisText.getText());
                     model.getSelectedRecord().setBiotopeText(view.biotopetextText.getText());
+                    model.getSelectedRecord().setDeleted(0);
                    // model.getSelectedRecord().setVersionPlantsFile(Integer.parseInt(view.versionPlantsFileText.getText()));                
                    //mela by se tu vypsat nejaka informace pro uzivatele
                    //editace vybraneho zaznamu

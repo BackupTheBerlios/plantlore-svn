@@ -87,6 +87,7 @@ public class AddEditPublicationCtrl {
                     publication.setReferenceDetail(view.referenceDetailText.getText());
                     publication.setUrl(view.urlText.getText());
                     publication.setNote(view.noteText.getText());
+                    publication.setDeleted(0);
                     //mela by se tu vypsat nejaka informace pro uzivatele
                     //pridani zaznamu do tabulky publication
                     model.addPublicationRecord(publication);                                                           
@@ -106,6 +107,7 @@ public class AddEditPublicationCtrl {
                     model.getSelectedRecord().setReferenceDetail(view.referenceDetailText.getText());
                     model.getSelectedRecord().setUrl(view.urlText.getText());
                     model.getSelectedRecord().setNote(view.noteText.getText());
+                    model.getSelectedRecord().setDeleted(0);
                    model.editPublicationRecord(); 
                    view.close(); 
                 }

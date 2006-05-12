@@ -11,6 +11,8 @@ package net.sf.plantlore.client.metadata;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import net.sf.plantlore.common.record.Metadata;
 import org.apache.log4j.Logger;
 
@@ -40,6 +42,9 @@ public class MetadataManagerCtrl {
         view.addButtons.addActionListener(new addMetadataListener());
         view.editButtons.addActionListener(new editMetadataListener());
         view.deleteButton.addActionListener(new deleteMetadataListener());
+        view.searchButton.addActionListener(new searchUserListener());
+        view.sortAscendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
+        view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
     }
     
        /**
@@ -289,4 +294,28 @@ public class MetadataManagerCtrl {
            }          
        }
     }
+    
+        class searchUserListener implements ActionListener {
+       public void actionPerformed(ActionEvent actionEvent)
+       {
+           model.setSourceInstitutionId(view.sourceInstitutionIdText.getText());           
+           model.setSourceId(view.sourceIdText.getText());
+           //FIXME: dopsat
+       }
+    }
+    
+    /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
+     *  stores value of the field to model.
+     */
+    class SortDirectionRadioFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setSortDirection(view.getSortDirection());
+            logger.debug("Sort asc, dsc: "+ view.getSortDirection());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty
+        }
+    }    
 }
