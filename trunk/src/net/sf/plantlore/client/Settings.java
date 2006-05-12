@@ -61,6 +61,7 @@ public class Settings
      */
     public void setLanguage(String language) {
         this.language = language;
+        logger.debug("Language set to "+language);
     }
 
     /** Stores all settings using the Preferences class.

@@ -758,24 +758,26 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     }
 
     public void update(Observable o, Object arg) {
-        String s = ((Pair<String,Integer>)arg).getFirst();
-        int i = ((Pair<String,Integer>)arg).getSecond(); 
-        if (s.equals("updateCode"))
-            phytCodeCombo.setSelectedItem(model.getPhytCode());
-        if (s.equals("updateName"))
-            phytNameCombo.setSelectedItem(model.getPhytName());
-        if (s.equals("addAuthorRow")) {
-            tableModel.addRow();
-            /*
-            DefaultCellEditor dce = (DefaultCellEditor) authorTable.getCellEditor(0,0);
-            Object o = dce.getCellEditorValue();
-             */            
-        }             
-        if (s.equals("removeAuthorRow")) {
-            tableModel.removeRow(i);
-            //unfortunately have to set up the editors and renderers again because of the
-            //fireTableStructureChanged() in the tableModel.removeRow() ... :-/
-            //initAuthorTable();            
+        if (arg != null && arg instanceof Pair) {
+            String s = ((Pair<String,Integer>)arg).getFirst();
+            int i = ((Pair<String,Integer>)arg).getSecond(); 
+            if (s.equals("updateCode"))
+                phytCodeCombo.setSelectedItem(model.getPhytCode());
+            if (s.equals("updateName"))
+                phytNameCombo.setSelectedItem(model.getPhytName());
+            if (s.equals("addAuthorRow")) {
+                tableModel.addRow();
+                /*
+                DefaultCellEditor dce = (DefaultCellEditor) authorTable.getCellEditor(0,0);
+                Object o = dce.getCellEditorValue();
+                 */            
+            }             
+            if (s.equals("removeAuthorRow")) {
+                tableModel.removeRow(i);
+                //unfortunately have to set up the editors and renderers again because of the
+                //fireTableStructureChanged() in the tableModel.removeRow() ... :-/
+                //initAuthorTable();            
+            }
         }
     }
         

@@ -16,8 +16,12 @@ import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
+import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
+import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
+import net.sf.plantlore.common.record.Territory;
+import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -35,12 +39,13 @@ public class OverviewTableModel extends AbstractTableModel {
     private String[] columnNames;
     private int[] columnSizes;
     
-    private int resultid = 0;
+    private int resultId = 0;
     private int resultsCount = 0;
     private int pageSize = 30;
     private int currentPage = 1;
     private ArrayList<Record999> recordsArray = new ArrayList<Record999>();
     private HashMap<Integer, Record999> resultsMap = new HashMap<Integer, Record999>();
+    private Column[] columns;
     
     class Record999 {
         public Record999(int id, boolean selected, int number) {
@@ -82,20 +87,52 @@ public class OverviewTableModel extends AbstractTableModel {
         this.pageSize = pageSize;
         resultsCount = 0;
         this.db = db;
-        SelectQuery sq = db.createQuery(Occurrence.class);
+/*        SelectQuery sq = db.createQuery(Occurrence.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED); //setridit podle roku
-        sq.addRestriction(PlantloreConstants.RESTR_NE, Occurrence.DELETED, null, 1, null);
+        sq.addRestriction(PlantloreConstants.RESTR_NE, Occurrence.DELETED, null, 1, null);*/
+        SelectQuery sq = db.createQuery(AuthorOccurrence.class);
+        sq.createAlias(AuthorOccurrence.AUTHOR,"author");
+        sq.createAlias(AuthorOccurrence.OCCURRENCE,"occ");
+        sq.createAlias("occ."+Occurrence.HABITAT,"habitat");
+        sq.createAlias("occ."+Occurrence.PLANT,"plant");
+        sq.createAlias("occ."+Occurrence.PUBLICATION,"publication");
+        sq.createAlias("occ."+Occurrence.METADATA,"metadata");
+        sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
+        sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
+        sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
+        sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+Village.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.YEARCOLLECTED);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.ID);
+        
         //FIXME:
         try {
-            setResultid(db.executeQuery(sq));
+            setResultId(db.executeQuery(sq));
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         }
-        loadData();
+        loadData2();
     }
     
     private void init() {
-        columnNames = new String[COLUMN_COUNT];
+        columns = new Column[10];
+        columns[0] = new Column(Column.Type.SELECTION);
+        columns[1] = new Column(Column.Type.NUMBER);
+        columns[2] = new Column(Column.Type.PLANT_TAXON);        
+        columns[3] = new Column(Column.Type.AUTHOR);
+        columns[4] = new Column(Column.Type.HABITAT_NEAREST_VILLAGE_NAME);
+        columns[5] = new Column(Column.Type.OCCURRENCE_YEARCOLLECTED);
+        columns[6] = new Column(Column.Type.PHYTOCHORION_NAME);
+        columns[7] = new Column(Column.Type.HABITAT_DESCRIPTION);
+        columns[8] = new Column(Column.Type.TERRITORY_NAME);
+        columns[9] = new Column(Column.Type.OCCURRENCE_ID);
+/*        columnNames = new String[COLUMN_COUNT];
         columnSizes = new int[COLUMN_COUNT];
         columnNames[0] = L10n.getString("overviewColX");
         columnSizes[0] = 30;
@@ -144,7 +181,7 @@ public class OverviewTableModel extends AbstractTableModel {
         columnNames[22] = L10n.getString("overviewColDay");
         columnSizes[22] = 50;
         columnNames[23] = L10n.getString("overviewColTime");
-        columnSizes[23] = 100;
+        columnSizes[23] = 100; */
     }
     
     private Pair<String,Integer>[] getAuthorsOf(Occurrence o) {
@@ -172,6 +209,52 @@ public class OverviewTableModel extends AbstractTableModel {
         return authorResults;
     }
     
+    private void loadData2() throws DBLayerException, RemoteException 
+    {
+        resultsCount = db.getNumRows(getResultId());
+        System.out.println("resultsCount="+resultsCount);
+        Object[] records;
+        Object[] projArray;
+        Object[] row;
+        if (resultsCount > 0) {
+            logger.debug("resultsCount = "+resultsCount);
+            to = Math.min(resultsCount-1, from + pageSize - 1);
+            logger.debug("to = "+to+" from="+from+" currentPage="+currentPage);
+            data = new Object[to - from + 1][];
+            logger.debug("data.length = "+data.length);
+            records = db.more(getResultId(), from, to);
+            logger.debug("records.length = " + records.length);
+
+            for (int i = 0; i < data.length ; i++) {
+                projArray = (Object[]) records[i];
+                Record999 r = new Record999(from + i + 1, false, from + i + 1);//we want to show the user numbers starting from 1 therefor the +1
+                if (from + i + 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
+                    recordsArray.add(r);
+                else 
+                    r = recordsArray.get(from+i);
+
+                row = new Object[columns.length + 1]; //we'll store the record id in the last column
+                int proj = 0;
+                for (int j = 0; j < columns.length; j++) {
+                    if (columns[j].type.equals(Column.Type.SELECTION)) {
+                        row[j] = r.selected;
+                    System.out.println("row["+j+"]="+r.selected);
+                    } else 
+                    if (columns[j].type.equals((Column.Type.NUMBER))) {
+                        row[j] = r.number;
+                    System.out.println("row["+j+"]="+r.number);
+                    } else {
+                        row[j] = projArray[proj];
+                    System.out.println("row["+j+"]="+projArray[proj]);
+                        proj++;
+                    }
+                }// for j
+                data[i] = row;
+            }//for i
+        }//if resultsCount>0
+        
+    }
+    
     /**
      * Expects from, pageSize, currentPage and resultid variables to be set appropriately.
      */
@@ -182,7 +265,7 @@ public class OverviewTableModel extends AbstractTableModel {
         Occurrence result;
         Plant plant;
         Object[] resultObj, records;
-        resultsCount = db.getNumRows(getResultid());
+        resultsCount = db.getNumRows(getResultId());
         System.out.println("resultsCount="+resultsCount);
         if (resultsCount > 0) {
             logger.debug("resultsCount = "+resultsCount);
@@ -190,7 +273,7 @@ public class OverviewTableModel extends AbstractTableModel {
             logger.debug("to = "+to+" from="+from+" currentPage="+currentPage);
             data = new Object[to - from + 1][];
             logger.debug("data.length = "+data.length);
-            records = db.more(getResultid(), from, to);
+            records = db.more(getResultId(), from, to);
             logger.debug("records.length = " + records.length);
 
             for (int i = 0; i < data.length ; i++) {
@@ -242,7 +325,7 @@ public class OverviewTableModel extends AbstractTableModel {
         Object[] resultObj, records;
         //FIXME:
         try {
-            records = db.more(getResultid(), from, from + row);
+            records = db.more(getResultId(), from, from + row);
             result = (AuthorOccurrence)((Object[])records[0])[0];
         } catch (RemoteException ex) {
             ex.printStackTrace();
@@ -265,13 +348,18 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public int getColumnCount() {
-        return columnNames.length;
+        return columns.length;
+        //return columnNames.length;
     }
     
     public Object getValueAt(int i, int i0) {
         return data[i][i0];
     }
     
+    public Class getColumnClass(int c) {
+        return columns[c].getColumnClass();
+    }
+/*    
     public Class getColumnClass(int c) {
         switch (c) {
             case 0:return Boolean.class;
@@ -304,9 +392,10 @@ public class OverviewTableModel extends AbstractTableModel {
         }
         //return getValueAt(0,c).getClass();
     }
-    
+*/    
     public String getColumnName(int c){
-        return columnNames[c];
+//        return columnNames[c];
+        return columns[c].getL10nName();
     }
     
     /* nepouziva se
@@ -329,7 +418,8 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public int getColumnSize(int col) {
-        return columnSizes[col];
+        //return columnSizes[col];
+        return columns[col].getPreferredSize();
     }
     
     public boolean isSimple() {
@@ -375,7 +465,7 @@ public class OverviewTableModel extends AbstractTableModel {
         currentPage = from / pageSize + 1;
         //FIXME: 
         try {
-            loadData();
+            loadData2();
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } catch (DBLayerException ex) {
@@ -400,7 +490,7 @@ public class OverviewTableModel extends AbstractTableModel {
         {
             currentPage++;  
             from = from + pageSize;
-            loadData(); //load data with new parameter currentPage
+            loadData2(); //load data with new parameter currentPage
             fireTableDataChanged(); //let the table compoment know it should redraw itself
             logger.debug("currentPage = "+ currentPage);
             return true;
@@ -415,7 +505,7 @@ public class OverviewTableModel extends AbstractTableModel {
         {
             currentPage--;
             from = from - pageSize;
-            loadData(); //load data with new parameter currentPage
+            loadData2(); //load data with new parameter currentPage
             fireTableDataChanged(); //let the table compoment know it should redraw itself
             logger.debug("currentPage = "+ currentPage);
             return true;
@@ -424,14 +514,23 @@ public class OverviewTableModel extends AbstractTableModel {
         }
     }
     
-    public int getResultid() {
-        System.out.println("returning resultid "+resultid);
-        return resultid;
+    public int getResultId() {
+        System.out.println("returning resultid "+resultId);
+        return resultId;
     }
 
-    public void setResultid(int resultid) {
-        System.out.println("setting resultid to "+resultid);
-        this.resultid = resultid;
+    public void setResultId(int resultId) {
+        logger.debug("Setting resultid to "+resultId);
+        this.resultId = resultId;
+        from = 0;
+        //FIXME
+        try {
+            loadData2();
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public int getResultsCount() {
@@ -445,5 +544,13 @@ public class OverviewTableModel extends AbstractTableModel {
     public int getPagesCount() 
     {
         return ((Number)Math.ceil(resultsCount / (pageSize*1.0))).intValue();
+    }
+
+    public Column[] getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Column[] columns) {
+        this.columns = columns;
     }
 }

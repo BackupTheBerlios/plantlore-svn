@@ -244,6 +244,8 @@ public class AppCore extends Observable
         prefs.putInt("recordsPerPage", recordsPerPage);
     }
     
-    
+    public void setResultId(int resultId) {
+        tableModel.setResultId(resultId);
+    }
     
 }

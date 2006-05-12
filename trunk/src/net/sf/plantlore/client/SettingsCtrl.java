@@ -16,6 +16,7 @@ import java.awt.event.WindowListener;
 import java.util.Observable;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 /** Controller for the Settings MVC
@@ -34,10 +35,12 @@ public class SettingsCtrl extends Observable
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = model;
         this.view = view;
-        view.addListener(new SettingsListener());
-        view.addIconListener(new IconListener());
-        view.addLanguagesListener(new LanguagesListener());
-        view.addButtonsListener(new ButtonsListener());
+        view.okButton.addActionListener(new ButtonListener());
+        view.cancelButton.addActionListener(new ButtonListener());
+        view.helpButton.addActionListener(new ButtonListener());
+        view.englishRadioButton.addActionListener(new LanguagesListener());
+        view.czechRadioButton.addActionListener(new LanguagesListener());
+        view.defaultRadioButton.addActionListener(new LanguagesListener());
     }
     
     /** Handles clicks on languages radio buttons.
@@ -45,23 +48,16 @@ public class SettingsCtrl extends Observable
      * Stores the currently selected language into Settings model.
      * Reacts only to itemEvents with SECELTED state change set.
      */
-    class LanguagesListener implements ItemListener {
-        public void itemStateChanged(ItemEvent itemEvent)
-        {
-            //we're ineterested only in what button was selected
-            if (itemEvent.getStateChange() == itemEvent.DESELECTED)
-                return;
-            
-            if (itemEvent.getStateChange() == itemEvent.SELECTED) {
-                String s;
-                JRadioButton b;
-                b = (JRadioButton) itemEvent.getItem();
-                s = b.getActionCommand();
-                model.setLanguage(s);
-                return;
+    class LanguagesListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String cmd = e.getActionCommand();
+            if (cmd.equals("ENGLISH")) {
+                model.setLanguage(L10n.ENGLISH);
             }
-            
-            logger.error("ItemEvent in LanguagesListener was neither of: SELECTED, DESELECTED.");
+            if (cmd.equals("CZECH")) 
+                model.setLanguage(L10n.CZECH);
+            if (cmd.equals("DEFAULT"))
+                model.setLanguage(L10n.DEFAULT_LANGUAGE);
         }
     }
     
@@ -71,7 +67,7 @@ public class SettingsCtrl extends Observable
      * On Cancel just hides the view.
      * On Help should call help.
      */
-    class ButtonsListener implements ActionListener {
+    class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent)
         {
             String s = actionEvent.getActionCommand();
@@ -86,49 +82,5 @@ public class SettingsCtrl extends Observable
         }
     }
     
-    /** JToggleButtons listener.
-     *
-     * Changes the view's mainPane.
-     */
-    class IconListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent)
-        {
-            view.setMainPane((JToggleButton)actionEvent.getSource());
-        } 
-    }
     
-    /** Settings dialog listener.
-     * Only logs window activation and deactivation now.
-     */
-    class SettingsListener implements WindowListener {
-        public void windowOpened(WindowEvent windowEvent)
-        {
-        }
-
-        public void windowClosing(WindowEvent windowEvent)
-        {
-        }
-
-        public void windowClosed(WindowEvent windowEvent)
-        {
-        }
-
-        public void windowIconified(WindowEvent windowEvent)
-        {
-        }
-
-        public void windowDeiconified(WindowEvent windowEvent)
-        {
-        }
-
-        public void windowActivated(WindowEvent windowEvent)
-        {
-            logger.info("Settings activated");
-        }
-
-        public void windowDeactivated(WindowEvent windowEvent)
-        {
-            logger.info("Settings deactivated");
-        }        
-    }
 }

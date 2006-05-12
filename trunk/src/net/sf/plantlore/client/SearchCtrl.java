@@ -270,12 +270,6 @@ public class SearchCtrl {
         }
     }//MonthListener
     
-    class YearListener implements ChangeListener {
-        public void stateChanged(ChangeEvent e) {
-            JSpinner s = (JSpinner) e.getSource();
-            model.setYear((Integer)s.getValue());
-        }
-    }//YearListener
     
     class AltitudeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {

@@ -191,7 +191,7 @@ public class AppCoreCtrl
             //If the dialog is already constructed then use it. Otherwise construct it first.
             //if (settingsModel == null) {
                 settingsModel = new Settings();
-                settingsView = new SettingsView(settingsModel, view.getSBM());
+                settingsView = new SettingsView(view,true,settingsModel);
                 settingsCtrl = new SettingsCtrl(settingsModel, settingsView);
                 settingsView.setVisible(true);
             /*} else {
@@ -410,13 +410,26 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             if (searchModel == null) {
                 searchModel = new Search(model.getDatabase());
+                searchModel.setColumns(model.getTableModel().getColumns().clone());
                 searchView = new SearchView(view, true, searchModel);
                 searchView.setTitle("Search");
                 searchCtrl = new SearchCtrl(searchModel, searchView);
+                searchModel.addObserver(new SearchBridge());
             }
+            searchModel.clear();
             searchView.clearComponentData();
             searchView.setVisible(true);
         }
+    }
+    
+    class SearchBridge implements Observer {
+        public void update(Observable o, Object arg) {
+            if (arg != null && arg instanceof Integer) {
+                logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
+                model.setResultId(searchModel.getNewResultId());
+            }
+        }
+        
     }
     
     class PreviousPageAction extends AbstractAction {
@@ -610,6 +623,5 @@ public class AppCoreCtrl
     		}
     	}
     }
-    
     
 }

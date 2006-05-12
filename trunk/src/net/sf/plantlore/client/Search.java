@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
+import javax.swing.text.PlainDocument;
+import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -42,9 +44,6 @@ public class Search extends Observable {
     private Logger logger;
     private DBLayer database;      
     
-    private int coordinateSystem;
-    private Occurrence o; //original occurrence
-    
     //list of authors user selects
     private ArrayList<Pair<Pair<String,Integer>,String>> authorList;
     private ArrayList<String> resultRevision;
@@ -72,12 +71,7 @@ public class Search extends Observable {
     private Pair<String,Integer> project = new Pair<String,Integer>("",-1);
     private Integer month;
     private Date fromDate, toDate;
-    
-    private boolean yearChanged = false;
-    private boolean dayChanged = false;
-    private boolean monthChanged = false;
-    private boolean timeChanged = false;
-    
+        
     
     private Pair<String, Integer>[] plants = null;
     private Pair<String, Integer>[] authors = null;
@@ -97,6 +91,8 @@ public class Search extends Observable {
     private int timeChoice = INTERVAL;
     private Boolean editMode = false;
     
+    private Column[] columns;
+    private int newResultId = -1;
     
     /** Creates a new instance of AddEdit */
     public Search(DBLayer database) {
@@ -149,12 +145,6 @@ public class Search extends Observable {
         return year;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
-        if (!year.equals(1))
-            yearChanged = true;
-        logger.debug("Year set to "+ year);
-    }
 
     public String getHabitatNote() {
         return habitatNote;
@@ -314,8 +304,6 @@ public class Search extends Observable {
 
     public void setMonth(Integer month) {
         this.month = month;
-        if (!month.equals(1))
-            monthChanged = true;
         logger.debug("Month set to "+month);
     }
 
@@ -709,9 +697,6 @@ public class Search extends Observable {
         this.project = project;
     }
 
-    public int getCoordinateSystem() {
-        return coordinateSystem;
-    }
 
     public void setTimeChoice(int choice) {
         this.timeChoice = choice;
@@ -788,19 +773,20 @@ public class Search extends Observable {
         if (isNotEmpty(village))
             allNull = false;
         
-        for (int i = 0; i < taxonList.size(); i++) {
-            if (isNotEmpty(taxonList.get(i)))
-                allNull = false;
-        }
-            
-        if (isNotEmpty(taxonOriginal))
-            allNull = false;
-    
+        if (taxonList != null)
+            for (int i = 0; i < taxonList.size(); i++) {
+                if (isNotEmpty(taxonList.get(i)))
+                    allNull = false;
+            }
+                
         if (isNotEmpty(localityDescription))
             allNull = false;
         
         
         if (isNotEmpty(habitatNote))
+            allNull = false;
+        
+        if (isNotEmpty(occurrenceNote))
             allNull = false;
         
         if (isNotEmpty(territoryName))
@@ -873,6 +859,7 @@ public class Search extends Observable {
     }
     
     public SelectQuery constructQuery() {
+        DBLayerUtils dlu = new DBLayerUtils(database);
         SelectQuery sq = null;
             //FIXME:
             try {
@@ -888,20 +875,248 @@ public class Search extends Observable {
                 sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
                 sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
+                
+                for (int i=0; i < columns.length; i++) {
+                    switch (columns[i].type) {
+                        case AUTHOR:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
+                            break;
+                        case HABITAT_ALTITUDE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.ALTITUDE);
+                            break;
+                        case HABITAT_COUNTRY:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.COUNTRY);
+                            break;
+                        case HABITAT_DESCRIPTION:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);                    
+                            break;
+                        case HABITAT_LATITUDE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LATITUDE);
+                            break;
+                        case HABITAT_LONGITUDE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LONGITUDE);
+                            break;
+                        case HABITAT_NEAREST_VILLAGE_NAME:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+Village.NAME);
+                            break;
+                        case HABITAT_NOTE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
+                            break;
+                        case HABITAT_QUADRANT:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.QUADRANT);
+                            break;
+                        case METADATA_DATASETTITLE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"metadata."+Metadata.DATASETTITLE);
+                            break;
+                        case NUMBER:
+                            break;
+                        case OCCURRENCE_DATASOURCE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.DATASOURCE);
+                            break;
+                        case OCCURRENCE_DAYCOLLECTED:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.DAYCOLLECTED);
+                            break;
+                        case OCCURRENCE_HERBARIUM:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.HERBARIUM);
+                            break;
+                        case OCCURRENCE_ID:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.ID);                            
+                            break;
+                        case OCCURRENCE_MONTHCOLLECTED:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.MONTHCOLLECTED);
+                            break;
+                        case OCCURRENCE_NOTE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.NOTE);
+                            break;
+                        case OCCURRENCE_TIMECOLLECTED:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.TIMECOLLECTED);
+                            break;
+                        case OCCURRENCE_YEARCOLLECTED:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.YEARCOLLECTED);
+                            break;
+                        case PHYTOCHORION_CODE:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.CODE);                    
+                            break;
+                        case PHYTOCHORION_NAME:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);                    
+                            break;
+                        case PLANT_TAXON:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
+                            break;
+                        case PUBLICATION_COLLECTIONNAME:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"publication."+Publication.REFERENCECITATION);
+                            break;
+                        case SELECTION:
+                            break;
+                        case TERRITORY_NAME:
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
+                            break;
+                        default:                                                
+                    }
+                }
+                
+                if (isNotEmpty(village)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,dlu.getObjectFor(village.getSecond(),Village.class),null);
+                }
+                
+                int notEmpty = 0;
+                for (int i = 0; i < authorList.size(); i++) {
+                    Pair<Pair<String,Integer>,String> authorPair = authorList.get(i);
+                    if (isNotEmpty(authorPair.getFirst()))
+                        notEmpty++;
+                    if (isNotEmpty(authorPair.getSecond()))
+                        notEmpty++;
+                }
+                
+                if (notEmpty > 0) {
+                    Object[] args = new Object[notEmpty*4];
+                    int conditionNumber = 0;
+                    for (int i = 0; i < authorList.size(); i++) {
+                        Pair<Pair<String,Integer>,String> authorPair = authorList.get(i);
+                        if (isNotEmpty(authorPair.getFirst())) {
+                            args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
+                            args[4*conditionNumber+1] = AuthorOccurrence.AUTHOR;
+                            args[4*conditionNumber+2] = null;
+                            args[4*conditionNumber+3] = dlu.getObjectFor(lookupPlant(authorPair.getSecond()),Author.class);
+                            conditionNumber++;
+                        }
+                        if (isNotEmpty(authorPair.getSecond())) {
+                            args[4*conditionNumber] = PlantloreConstants.RESTR_LIKE;
+                            args[4*conditionNumber+1] = AuthorOccurrence.ROLE;
+                            args[4*conditionNumber+2] = null;
+                            args[4*conditionNumber+3] = authorPair.getSecond();
+                            conditionNumber++;
+                        }
+                    }
+                    sq.addOrRestriction(args);
+                }
+
+                notEmpty = 0;
+                if (taxonList != null)
+                    for (int i = 0; i < taxonList.size(); i++) {
+                        if (isNotEmpty(taxonList.get(i)))
+                            notEmpty++;
+                    }
+                
+                if (notEmpty > 0) {
+                    Object[] args = new Object[notEmpty*4];
+                    for (int i = 0; i < taxonList.size(); i++) {
+                        String taxon = taxonList.get(i);
+                        if (isNotEmpty(taxon)) {
+                            args[4*i] = PlantloreConstants.RESTR_EQ;
+                            args[4*i+1] = "occ."+Occurrence.PLANT;
+                            args[4*i+2] = null;
+                            args[4*i+3] = dlu.getObjectFor(lookupPlant(taxon),Plant.class);
+                        }
+                    }
+                    sq.addOrRestriction(args);
+                }
+                if (isNotEmpty(localityDescription)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
+                }
+                
+                if (isNotEmpty(occurrenceNote)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_LIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
+                }
+                
+                if (isNotEmpty(habitatNote)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
+                }
+                
+                if (isNotEmpty(territoryName)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null,dlu.getObjectFor(territoryName.getSecond(),Territory.class),null);
+                }
+                
+                if (isNotEmpty(phytName)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,dlu.getObjectFor(phytName.getSecond(),Phytochorion.class),null);
+                }
+                
+                if (isNotEmpty(phytCountry)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.COUNTRY,null,phytCountry,null);
+                }
+                
+                if (isNotEmpty(quadrant)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.QUADRANT,null,quadrant,null);
+                }
+                
+                if (isNotEmpty(altitude)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.ALTITUDE,null,altitude,null);
+                }
+                
+                if (isNotEmpty(longitude)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LONGITUDE,null,longitude,null);
+                }
+
+                if (isNotEmpty(latitude)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LATITUDE,null,latitude,null);
+                }
+
+                if (isNotEmpty(source)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.DATASOURCE,null,source,null);
+                }
+                
+                if (isNotEmpty(publication)) {
+                    //FIXME: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,dlu.getObjectFor(publication.getSecond(),Publication.class),null);
+                }
+                
+                if (isNotEmpty(herbarium)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HERBARIUM,null,herbarium,null);
+                }
+                
+                if (isNotEmpty(project)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,dlu.getObjectFor(project.getSecond(),Metadata.class),null);
+                }
+                
                 if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
                     ArrayList a = new ArrayList();
                     a.add(fromDate);
                     a.add(toDate);
                     sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
                 }
+                
+                if (timeChoice == MONTH && isNotEmpty(month)) {
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
+                }
+                
                 int resultId = database.executeQuery(sq);
-                System.out.println("Number of results: "+database.getNumRows(resultId));
+                this.newResultId = resultId;
+                logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
+                //let the SearchBridge in AppCoreCtrl know that new result is there
+                setChanged(); 
+                notifyObservers(resultId);
             } catch (RemoteException ex) {                
                 ex.printStackTrace();
             } catch (DBLayerException ex) {
                 ex.printStackTrace();
             }
         return sq;
+    }
+    
+    public void clear() {
+        clearAuthors();
+    
+        village = null;
+        taxonList = null;
+        localityDescription = null;
+        year = null;
+        habitatNote = null;
+        occurrenceNote = null;
+        territoryName = null;
+        phytName = null;
+        phytCode = null;
+        phytCountry = null;
+        quadrant = null;
+        altitude = null;
+        longitude = null;
+        latitude = null;
+        source = null;
+        publication = null;
+        herbarium = null;
+        project = null;
+        month  = null;
+        fromDate = null;
+        toDate = null;
     }
     
     public void clearAuthors() {
@@ -968,6 +1183,15 @@ public class Search extends Observable {
         for (int i = 0; i < taxonList.size(); i++) {
             logger.debug("Taxon list contains plant #"+taxonList.get(i)+"#");
         }
+    }
+
+    public int getNewResultId() {
+        return newResultId;
+    }
+
+    public void setColumns(Column[] columns) {
+        logger.debug("Setting columns.");
+        this.columns = columns;
     }
 }
 
