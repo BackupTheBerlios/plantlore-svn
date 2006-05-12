@@ -9,7 +9,13 @@ package net.sf.plantlore.server;
 
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.middleware.SelectQuery;
 
@@ -18,6 +24,7 @@ import org.hibernate.FetchMode;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
@@ -37,7 +44,8 @@ import org.hibernate.criterion.SimpleExpression;
 public class SelectQueryImplementation implements SelectQuery {
     // Hibernate criteria used in criteria query
     private Criteria criteria;
-    
+    /* List of projections for the query */
+    private HashSet projections = new HashSet();
     /** Creates a new instance of SelectQueryImplementation */
     public SelectQueryImplementation(Criteria criteria) {
         this.criteria = criteria;
@@ -247,39 +255,58 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @see PlantloreConstants
      */
     public void addProjection(int type, String propertyName) throws RemoteException {
-        switch (type) {
-            case PlantloreConstants.PROJ_AVG:
-                criteria.setProjection(Projections.avg(propertyName));
-                break;
-            case PlantloreConstants.PROJ_COUNT:
-                criteria.setProjection(Projections.count(propertyName));
-                break;
-            case PlantloreConstants.PROJ_COUNT_DISTINCT:
-                criteria.setProjection(Projections.countDistinct(propertyName));
-                break;
-            case PlantloreConstants.PROJ_GROUP:
-                criteria.setProjection(Projections.groupProperty(propertyName));
-                break;
-            case PlantloreConstants.PROJ_MAX:
-                criteria.setProjection(Projections.max(propertyName));
-                break;
-            case PlantloreConstants.PROJ_MIN:
-                criteria.setProjection(Projections.min(propertyName));
-                break;
-            case PlantloreConstants.PROJ_PROPERTY:
-                criteria.setProjection(Projections.property(propertyName));
-                break;
-            case PlantloreConstants.PROJ_ROW_COUNT:
-                criteria.setProjection(Projections.rowCount());
-                break;
-            case PlantloreConstants.PROJ_SUM:
-                criteria.setProjection(Projections.sum(propertyName));
-                break;
-            case PlantloreConstants.PROJ_DISTINCT:
-                criteria.setProjection(Projections.distinct(Projections.property(propertyName)));
-            default:
-                
+        ArrayList proj = new ArrayList(2);
+        proj.add(type);
+        proj.add(propertyName);
+        this.projections.add(proj);
+    }
+    
+    /**
+     *  Add the list of projections to the query. This method is only called by DBLayer method 
+     *  executeQuery() when executing Select query. Clients should add projections using 
+     *  addProjection() method.
+     */
+    void setProjectionList() {        
+        ProjectionList pList = Projections.projectionList();
+        if (projections.isEmpty()) {
+            return;
         }
+        for (Iterator projIter = projections.iterator(); projIter.hasNext(); ) {
+            ArrayList proj = (ArrayList)projIter.next();
+            System.out.println("Processing projection for: "+proj.get(1));
+            switch ((Integer)proj.get(0)) {
+                case PlantloreConstants.PROJ_AVG:
+                    pList.add(Projections.avg((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_COUNT:
+                    pList.add(Projections.count((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_COUNT_DISTINCT:
+                    pList.add(Projections.countDistinct((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_GROUP:
+                    pList.add(Projections.groupProperty((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_MAX:
+                    pList.add(Projections.max((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_MIN:
+                    pList.add(Projections.min((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_PROPERTY:
+                    pList.add(Projections.property((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_ROW_COUNT:
+                    pList.add(Projections.rowCount());
+                    break;
+                case PlantloreConstants.PROJ_SUM:
+                    pList.add(Projections.sum((String)proj.get(1)));
+                    break;
+                case PlantloreConstants.PROJ_DISTINCT:
+                    pList.add(Projections.distinct(Projections.property((String)proj.get(1))));
+            }
+        }
+        criteria.setProjection(pList);
     }
     
     /**

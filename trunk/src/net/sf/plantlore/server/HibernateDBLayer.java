@@ -199,6 +199,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setCreatedWhen(new java.util.Date());
+            occ.setCreatedWho(this.plantloreUser);
+            data = occ;
+        }
+        if (data instanceof Publication) {
+            Publication pub = (Publication)data;
+            pub.setCreatedWho(this.plantloreUser);
+            data = pub;
+        }
+        if (data instanceof Author) {
+            Author aut = (Author)data;
+            aut.setCreatedWho(this.plantloreUser);
+            data = aut;
+        }        
         Session session = sessionFactory.openSession();
         Transaction tx = null;                
         try {
@@ -207,63 +223,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Save item into the database
             recordId = (Integer)session.save(data);            
             // Save data to history tables - only for selected tables
-            if ((data instanceof Publication) || (data instanceof Territory) ||
-                (data instanceof Village) || (data instanceof Phytochorion) ||
-                (data instanceof Author) || (data instanceof Occurrence)) {
-                HistoryChange historyChange = new HistoryChange();
-                if (data instanceof Occurrence) {
-                    historyChange.setOccurrence((Occurrence)data);
-                    historyChange.setRecordId(0);
-                    table = PlantloreConstants.ENTITY_OCCURRENCE;
-                } else {
-                    historyChange.setOccurrence(null);
-                    if (data instanceof Publication) {
-                        table = PlantloreConstants.ENTITY_PUBLICATION;
-                    } else if (data instanceof Territory) {
-                        table = PlantloreConstants.ENTITY_TERRITORY;                        
-                    } else if (data instanceof Village) {
-                        table = PlantloreConstants.ENTITY_VILLAGE;                        
-                    } else if (data instanceof Phytochorion) {
-                        table = PlantloreConstants.ENTITY_PHYTOCHORION;                        
-                    } else if (data instanceof Author) {
-                        table = PlantloreConstants.ENTITY_AUTHOR;                        
-                    } else {
-                        table = "";
-                    }
-                    historyChange.setRecordId(recordId);
-                }
-                historyChange.setOldRecordId(0);
-                historyChange.setOperation(PlantloreConstants.INSERT);
-                historyChange.setWho(this.plantloreUser);
-                historyChange.setWhen(new java.util.Date());
-                
-                // Load record from THistoryColumn table
-                try {
-                    SelectQuery sq = this.createQuery(HistoryColumn.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ, HistoryColumn.TABLENAME, null, table, null);
-                    sq.addRestriction(PlantloreConstants.RESTR_IS_NULL, HistoryColumn.COLUMNNAME, null, null, null);
-                    result = this.executeQuery(sq);
-                } catch (RemoteException e) {
-                    logger.fatal("Cannot load HistoryChange information. Details: "+e.getMessage());
-                }
-                Object[] objCol = next(result);
-                if (objCol == null) {                
-                    logger.error("tHistoryColumn doesn't contain required data");
-                    DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
-                    ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_HISTORYCOLUMN);
-                    throw ex;
-                } else {
-                    column = (HistoryColumn)objCol[0];
-                }                
-                HistoryRecord history = new HistoryRecord();
-                history.setHistoryColumn(column);
-                history.setNewValue(null);
-                history.setOldValue(null);
-                // Save into the database
-                recordId = (Integer)session.save(historyChange);
-                history.setHistoryChange(historyChange);                
-                recordId = (Integer)session.save(history);                
-            }
+            // this.saveHistory(session, data, INSERT, recordId);
             // Commit transaction
             tx.commit();                                      
         } catch (HibernateException e) {
@@ -296,6 +256,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
+        }
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setCreatedWhen(new java.util.Date());
+            occ.setCreatedWho(this.plantloreUser);
+            data = occ;
+        }
+        if (data instanceof Publication) {
+            Publication pub = (Publication)data;
+            pub.setCreatedWho(this.plantloreUser);
+            data = pub;
+        }
+        if (data instanceof Author) {
+            Author aut = (Author)data;
+            aut.setCreatedWho(this.plantloreUser);
+            data = aut;
         }
         Session session = sessionFactory.openSession();
         Transaction tx = null;        
@@ -464,6 +440,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
+        // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }
         Session session = sessionFactory.openSession();
         Transaction tx = null;        
         try {
@@ -533,6 +516,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
+        // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }        
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {
@@ -741,7 +731,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         try {
             tx = session.beginTransaction();
             // Execute detached criteria query
-            System.out.println(sq.getCriteria().toString());            
+            sq.setProjectionList();
             res = sq.getCriteria().scroll(); // retrieve Criteria from SelectQuery
             // Commit transaction
             tx.commit();                                      
@@ -965,13 +955,30 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 }
                 Object[] res = sc.get();
                 Author aut = (Author)res[0];
-                // Check for direct ownership first
-                if (!aut.getCreatedWho().equals(this.plantloreUser)) {
+                boolean equal = false;
+                // Check for administrator rights
+                if (this.plantloreUser.getRight().getAdministrator() == 1) {
+                    equal = true;
+                }                
+                // Check for direct ownership first                
+                if (aut.getCreatedWho().equals(this.plantloreUser)) {
+                    equal = true;
                 }
                 // Then check for indirect (group) ownership
-                String[] group = this.rights.getEditGroup().split(",");                    
+                String[] group = this.rights.getEditGroup().split(",");
+                String strId;
                 for (int i=0;i<group.length;i++) {
-                    // if ()
+                    strId = this.plantloreUser.getId().toString();
+                    if (strId.equals(group[i])) {
+                        equal = true;
+                        break;
+                    }
+                }
+                if (equal == false) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOR);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOR);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_AUTHOR);
+                    throw ex;                    
                 }
             }
             if (type == INSERT) {
@@ -1040,27 +1047,285 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (data instanceof Publication) {
             if ((type == DELETE) || (type == UPDATE)) {
                 // Only data of the user and those listed in CEDITGROUP
+                sess = this.sessionFactory.openSession();
+                ScrollableResults sc = sess.createCriteria(Publication.class)
+                    .add(Restrictions.eq(Publication.ID, ((Publication)data).getId()))
+                    .scroll();
+                // If we haven't found the publication in the database, raise exception
+                if (sc.next()) {
+                    logger.error("To-be-updated/deleted publication not found in the database. Publication ID:"+((Publication)data).getId());
+                    ex = new DBLayerException("To-be-updated/deleted publication not found in the database. Publication ID:"+((Publication)data).getId());
+                    ex.setError(ex.ERROR_OTHER, null);
+                    throw ex;                                        
+                }
+                Object[] res = sc.get();
+                Publication pub = (Publication)res[0];
+                boolean equal = false;
+                // Check for direct ownership first                
+                if (pub.getCreatedWho().equals(this.plantloreUser)) {
+                    equal = true;
+                }
+                // Check for administrator rights
+                if (this.plantloreUser.getRight().getAdministrator() == 1) {
+                    equal = true;
+                }                
+                // Then check for indirect (group) ownership
+                String[] group = this.rights.getEditGroup().split(",");
+                String strId;
+                for (int i=0;i<group.length;i++) {
+                    strId = this.plantloreUser.getId().toString();
+                    if (strId.equals(group[i])) {
+                        equal = true;
+                        break;
+                    }
+                }
+                if (equal == false) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_PUBLICATION);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_PUBLICATION);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_PUBLICATION);
+                    throw ex;
+                }
             }
             if (type == INSERT) {
                 // Only if CADD = 1
+                if (this.rights.getAdd() == 0) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_PUBLICATION);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_PUBLICATION);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_PUBLICATION);
+                    throw ex;                    
+                }                
             }                        
         }
         // Check rights for table TOCCURRENCES
         if (data instanceof Occurrence) {
-           
+            if ((type == DELETE) || (type == UPDATE)) {
+                // Only data of the user and those listed in CEDITGROUP
+                sess = this.sessionFactory.openSession();
+                ScrollableResults sc = sess.createCriteria(Occurrence.class)
+                    .add(Restrictions.eq(Occurrence.ID, ((Occurrence)data).getId()))
+                    .scroll();
+                // If we haven't found the occurrence in the database, raise exception
+                if (sc.next()) {
+                    logger.error("To-be-updated/deleted occurrence not found in the database. Occurrence ID:"+((Publication)data).getId());
+                    ex = new DBLayerException("To-be-updated/deleted occurrence not found in the database. Occurrence ID:"+((Publication)data).getId());
+                    ex.setError(ex.ERROR_OTHER, null);
+                    throw ex;                                        
+                }
+                Object[] res = sc.get();
+                Occurrence occ = (Occurrence)res[0];
+                boolean equal = false;
+                // Check for direct ownership first                
+                if (occ.getCreatedWho().equals(this.plantloreUser)) {
+                    equal = true;
+                }
+                // Check for administrator rights
+                if (this.plantloreUser.getRight().getAdministrator() == 1) {
+                    equal = true;
+                }
+                // Then check for indirect (group) ownership
+                String[] group = this.rights.getEditGroup().split(",");
+                String strId;
+                for (int i=0;i<group.length;i++) {
+                    strId = this.plantloreUser.getId().toString();
+                    if (strId.equals(group[i])) {
+                        equal = true;
+                        break;
+                    }
+                }
+                if (equal == false) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_OCCURRENCE);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_OCCURRENCE);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_OCCURRENCE);
+                    throw ex;
+                }
+            }
+            if (type == INSERT) {
+                // Insert only if CADD = 1
+                if (this.rights.getAdd() == 0) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_OCCURRENCE);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_OCCURRENCE);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_OCCURRENCE);
+                    throw ex;                    
+                }                
+            }                            
         }
         // Check rights for table THABITATS
         if (data instanceof Habitat) {
-            
+            if ((type == DELETE) || (type == UPDATE)) {
+                // Only data of the user and those listed in CEDITGROUP
+                sess = this.sessionFactory.openSession();
+                ScrollableResults sc = sess.createCriteria(Occurrence.class)
+                    .add(Restrictions.eq(Occurrence.ID, ((Habitat)data).getId()))
+                    .scroll();
+                // If we haven't found the occurrence in the database, raise exception
+                if (sc.next()) {
+                    logger.error("To-be-updated/deleted habitat not found in the database. Occurrence ID:"+((Habitat)data).getId());
+                    ex = new DBLayerException("To-be-updated/deleted habitat not found in the database. Occurrence ID:"+((Habitat)data).getId());
+                    ex.setError(ex.ERROR_OTHER, null);
+                    throw ex;                                        
+                }
+                Object[] res = sc.get();
+                Habitat hab = (Habitat)res[0];
+                boolean equal = false;
+                // Check for direct ownership first                
+                // TODO - FINISH
+                /*
+                if (hab.getCreatedWho().equals(this.plantloreUser))) {
+                    equal = true;
+                }
+                 */
+                // Check for administrator rights
+                if (this.plantloreUser.getRight().getAdministrator() == 1) {
+                    equal = true;
+                }
+                // Then check for indirect (group) ownership
+                String[] group = this.rights.getEditGroup().split(",");
+                String strId;
+                for (int i=0;i<group.length;i++) {
+                    strId = this.plantloreUser.getId().toString();
+                    if (strId.equals(group[i])) {
+                        equal = true;
+                        break;
+                    }
+                }
+                if (equal == false) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_HABITAT);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_HABITAT);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_HABITAT);
+                    throw ex;
+                }
+            }            
+            if (type == INSERT) {
+                // Insert only if CADD = 1
+                if (this.rights.getAdd() == 0) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_HABITAT);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_HABITAT);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_HABITAT);
+                    throw ex;                    
+                }                
+            }                                        
         }
         // Check rights for table TAUTHORSOCCURRENCES
         if (data instanceof AuthorOccurrence) {
-            
+            if ((type == DELETE) || (type == UPDATE)) {
+                // Only data of the user and those listed in CEDITGROUP
+                sess = this.sessionFactory.openSession();
+                ScrollableResults sc = sess.createCriteria(Occurrence.class)
+                    .add(Restrictions.eq(AuthorOccurrence.ID, ((AuthorOccurrence)data).getId()))
+                    .scroll();
+                // If we haven't found the occurrence in the database, raise exception
+                if (sc.next()) {
+                    logger.error("To-be-updated/deleted authoroccurrence not found in the database. Occurrence ID:"+((AuthorOccurrence)data).getId());
+                    ex = new DBLayerException("To-be-updated/deleted authoroccurrence not found in the database. Occurrence ID:"+((AuthorOccurrence)data).getId());
+                    ex.setError(ex.ERROR_OTHER, null);
+                    throw ex;                                        
+                }
+                Object[] res = sc.get();
+                AuthorOccurrence ao = (AuthorOccurrence)res[0];
+                boolean equal = false;
+                // Check for direct ownership first                
+                if (ao.getOccurrence().getCreatedWho().equals(this.plantloreUser)) {
+                    equal = true;
+                }
+                // Check for administrator rights
+                if (this.plantloreUser.getRight().getAdministrator() == 1) {
+                    equal = true;
+                }
+                // Then check for indirect (group) ownership
+                String[] group = this.rights.getEditGroup().split(",");
+                String strId;
+                for (int i=0;i<group.length;i++) {
+                    strId = this.plantloreUser.getId().toString();
+                    if (strId.equals(group[i])) {
+                        equal = true;
+                        break;
+                    }
+                }
+                if (equal == false) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                    throw ex;
+                }
+            }            
+            if (type == INSERT) {
+                // Insert only if CADD = 1
+                if (this.rights.getAdd() == 0) {
+                    logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                    ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                    throw ex;                    
+                }                
+            }            
         }        
     }
     
     private void saveHistory(Session sess, Object data, int type, Integer recordId) throws DBLayerException {
+        String table;
+        Integer result = 0;
+        HistoryColumn column;
+        Integer recId;
+        Object[] objCol = null;
         
+        if (type == INSERT) {
+            if ((data instanceof Publication) || (data instanceof Author) ||
+                (data instanceof Occurrence)) {
+                HistoryChange historyChange = new HistoryChange();
+                if (data instanceof Occurrence) {
+                    historyChange.setOccurrence((Occurrence)data);
+                    historyChange.setRecordId(0);
+                    table = PlantloreConstants.ENTITY_OCCURRENCE;
+                } else {
+                    historyChange.setOccurrence(null);
+                    if (data instanceof Publication) {
+                        table = PlantloreConstants.ENTITY_PUBLICATION;
+                    } else if (data instanceof Author) {
+                        table = PlantloreConstants.ENTITY_AUTHOR;                        
+                    } else {
+                        table = "";
+                    }
+                    historyChange.setRecordId(recordId);
+                }
+                historyChange.setOldRecordId(0);
+                historyChange.setOperation(PlantloreConstants.INSERT);
+                historyChange.setWho(this.plantloreUser);
+                historyChange.setWhen(new java.util.Date());
+                
+                // Load record from THistoryColumn table
+                try {
+                    SelectQuery sq = this.createQuery(HistoryColumn.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ, HistoryColumn.TABLENAME, null, table, null);
+                    sq.addRestriction(PlantloreConstants.RESTR_IS_NULL, HistoryColumn.COLUMNNAME, null, null, null);
+                    result = this.executeQuery(sq);
+                } catch (RemoteException e) {
+                    logger.fatal("Cannot load HistoryChange information. Details: "+e.getMessage());
+                }
+                try {
+                    objCol = next(result);
+                } catch (RemoteException e) {
+                                        
+                }
+                if (objCol == null) {                
+                    logger.error("tHistoryColumn doesn't contain required data");
+                    DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
+                    ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_HISTORYCOLUMN);
+                    throw ex;
+                } else {
+                    column = (HistoryColumn)objCol[0];
+                }                
+                HistoryRecord history = new HistoryRecord();
+                history.setHistoryColumn(column);
+                history.setNewValue(null);
+                history.setOldValue(null);
+                // Save into the database
+                recId = (Integer)sess.save(historyChange);
+                history.setHistoryChange(historyChange);                
+                recId = (Integer)sess.save(history);                
+            }            
+        }
+        if (type == UPDATE){
+            
+        }
     }
     
     
