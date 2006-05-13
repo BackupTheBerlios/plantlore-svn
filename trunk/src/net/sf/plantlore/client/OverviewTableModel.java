@@ -244,11 +244,13 @@ public class OverviewTableModel extends AbstractTableModel {
                         row[j] = r.number;
                     System.out.println("row["+j+"]="+r.number);
                     } else {
+                        if (columns[j].type.equals(Column.Type.OCCURRENCE_ID))
+                            row[row.length-1] = projArray[proj];
                         row[j] = projArray[proj];
-                    System.out.println("row["+j+"]="+projArray[proj]);
+                        System.out.println("row["+j+"]="+projArray[proj]);
                         proj++;
                     }
-                }// for j
+                }// for j                
                 data[i] = row;
             }//for i
         }//if resultsCount>0

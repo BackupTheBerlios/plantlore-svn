@@ -116,8 +116,9 @@ public class AddEdit extends Observable {
      *
      * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
      */
-    public void setRecord(Occurrence o) {
-        this.o = o;
+    public void setRecord(Integer occurrenceId) {
+        DBLayerUtils dlu = new DBLayerUtils(database);
+        this.o = (Occurrence) dlu.getObjectFor(occurrenceId, Occurrence.class);
         coordinateSystem = WGS84;
         
         authorList = getAuthorsOf(o);

@@ -360,7 +360,7 @@ public class AppCoreCtrl
                 editModel.setTerritories(model.getTerritories());
                 
                 Object[] row = model.getSelectedRow();
-                editModel.setRecord((Occurrence) row[row.length-1]);
+                editModel.setRecord((Integer) row[row.length-1]);
                 editView = new AddEditView(view, true, editModel, true);
                 editView.setTitle("Edit occurrence");
                 editCtrl = new AddEditCtrl(editModel, editView, true);
@@ -369,7 +369,7 @@ public class AppCoreCtrl
                 return;
             } else {
                 Object[] row = model.getSelectedRow();
-                editModel.setRecord((Occurrence) row[row.length-1]);
+                editModel.setRecord((Integer) row[row.length-1]);
                 editView.loadComponentData();
                 editView.setVisible(true);
             }
