@@ -528,6 +528,7 @@ public class OverviewTableModel extends AbstractTableModel {
         //FIXME
         try {
             loadData2();
+            fireTableDataChanged(); //let the table compoment know it should redraw itself
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         } catch (RemoteException ex) {

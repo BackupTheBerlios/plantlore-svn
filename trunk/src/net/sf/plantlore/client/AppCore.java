@@ -204,7 +204,7 @@ public class AppCore extends Observable
                 ex.printStackTrace();
             }
             setChanged();
-            notifyObservers();        
+            notifyObservers("PAGE_CHANGED");        
         }
     }
     
@@ -220,7 +220,7 @@ public class AppCore extends Observable
                 ex.printStackTrace();
             }
             setChanged();
-            notifyObservers();
+            notifyObservers("PAGE_CHANGED");
         }
     }
 
@@ -277,6 +277,8 @@ public class AppCore extends Observable
     
     public void setResultId(int resultId) {
         tableModel.setResultId(resultId);
+        setChanged();
+        notifyObservers("NEW_QUERY");
     }
 
     public Pair<String, Integer>[] getPlants() {

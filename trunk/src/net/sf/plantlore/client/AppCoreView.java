@@ -116,10 +116,19 @@ public class AppCoreView extends JFrame implements Observer
 
     public void update(Observable observable, Object object)
     {
-        recordsCount.setText(""+model.getResultsCount());
-        pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
-        //FIXME: change selection only if really required
-        overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
+        if (object != null && object instanceof String) {
+            String arg = (String) object;
+            if (arg.equals("PAGE_CHANGED")) {
+                recordsCount.setText(""+model.getResultsCount());
+                pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
+                //FIXME: change selection only if really required
+                overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
+            }
+            if (arg.equals("NEW_QUERY")) {
+                recordsCount.setText(""+model.getResultsCount());
+                pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());                
+            }
+        }
     }
     
     /** Calls all the constructing init methods.
