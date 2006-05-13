@@ -481,9 +481,9 @@ public class Search extends Observable {
             if (isNotEmpty(month) && !month.equals(12)) //12 is the index of the empty String in the MonthChooser's ComboBox, the empty String is added in Post-init code in SearchView
                 allNull = false;
         
-        if (allNull)
+       /* if (allNull)
             return new Pair<Boolean,String>(false,"You have to fill in at least one field.");
-        else
+        else */
             return new Pair<Boolean,String>(true,"");
     }
     
@@ -606,11 +606,11 @@ public class Search extends Observable {
                             args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
                             args[4*conditionNumber+1] = AuthorOccurrence.AUTHOR;
                             args[4*conditionNumber+2] = null;
-                            args[4*conditionNumber+3] = dlu.getObjectFor(lookupPlant(authorPair.getSecond()),Author.class);
+                            args[4*conditionNumber+3] = dlu.getObjectFor(authorPair.getFirst().getSecond(),Author.class);
                             conditionNumber++;
                         }
                         if (isNotEmpty(authorPair.getSecond())) {
-                            args[4*conditionNumber] = PlantloreConstants.RESTR_LIKE;
+                            args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
                             args[4*conditionNumber+1] = AuthorOccurrence.ROLE;
                             args[4*conditionNumber+2] = null;
                             args[4*conditionNumber+3] = authorPair.getSecond();
