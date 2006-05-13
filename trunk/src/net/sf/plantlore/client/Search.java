@@ -315,12 +315,14 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            Plant p;
+            Object[] row;
             
             //FIXME:
             try {
                 sq = database.createQuery(Plant.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Plant.TAXON);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.TAXON);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.ID);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 System.out.println("getPlants(): we got "+resultsCount+" results.");
@@ -328,8 +330,8 @@ public class Search extends Observable {
                 plants = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    p = (Plant)((Object[])records[i])[0];
-                    plants[i] = new Pair(p.getTaxon(), p.getId());
+                    row = (Object[])records[i];
+                    plants[i] = new Pair((String)row[0], (Integer)row[1]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -348,19 +350,23 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            Author a;
+            Object[] row;
+
             //FIXME:
             try {
                 sq = database.createQuery(Author.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.WHOLENAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.ID);
+                
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 authors = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    a = (Author)((Object[])records[i])[0];
-                    authors[i] = new Pair<String, Integer>(a.getWholeName(), a.getId());
+                    row = (Object[])records[i];
+                    authors[i] = new Pair<String, Integer>((String)row[0], (Integer)row[1]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -379,7 +385,7 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            AuthorOccurrence ao;
+
             //FIXME:
             try {
                 sq = database.createQuery(AuthorOccurrence.class);
@@ -412,20 +418,22 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            Village v;
+            Object[] row;
             
             //FIXME:
             try {
                 sq = database.createQuery(Village.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.ID);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 villages = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    v = (Village)((Object[])records[i])[0];
-                    villages[i] = new Pair<String, Integer>(v.getName(), v.getId());
+                    row = (Object[])records[i];
+                    villages[i] = new Pair<String, Integer>((String)row[0],(Integer)row[1]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -444,20 +452,22 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            Territory t;
+            Object[] row;
             
             //FIXME:
             try {
                 sq = database.createQuery(Territory.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Territory.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.ID);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 territories = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    t = (Territory)((Object[])records[i])[0];
-                    territories[i] = new Pair<String,Integer>(t.getName(), t.getId());
+                    row = (Object[])records[i];
+                    territories[i] = new Pair<String,Integer>((String)row[0],(Integer)row[1]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -475,21 +485,25 @@ public class Search extends Observable {
             SelectQuery sq;
             int resultid;
             int resultsCount;
-            Object[] records;
-            Phytochorion p;
+            Object[] records, row;
             
             //FIXME:
             try {
                 sq = database.createQuery(Phytochorion.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.CODE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.ID);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 phytNames = new Pair[resultsCount];
+                phytCodes = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    p = (Phytochorion)((Object[])records[i])[0];
-                    phytNames[i] = new Pair<String,Integer>(p.getName(), p.getId());
+                    row = (Object[])records[i];
+                    phytNames[i] = new Pair<String,Integer>((String)row[0], (Integer)row[2]);
+                    phytCodes[i] = new Pair<String,Integer>((String)row[1], (Integer)row[2]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -504,30 +518,7 @@ public class Search extends Observable {
     public Pair<String, Integer>[] getPhytCodes() {
         if (phytCodes == null)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Phytochorion p;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Phytochorion.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.CODE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                phytCodes = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    p = (Phytochorion)((Object[])records[i])[0];
-                    phytCodes[i] = new Pair<String,Integer>(p.getCode(), p.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
+            getPhytNames();
             return phytCodes;
         } else
             return phytCodes;
@@ -540,39 +531,24 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             int uniqueCount = 0;
-            String[] countriesTemp;
             Object[] records;
-            Habitat h;
+            String country;
             
             //FIXME:
             try {
                 sq = database.createQuery(Habitat.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Habitat.COUNTRY);
+                sq.addProjection(PlantloreConstants.PROJ_DISTINCT, Habitat.COUNTRY);
                 resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
-                countriesTemp = new String[resultsCount];
+                countries = new String[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    h = (Habitat)((Object[])records[i])[0];
-                    if (h.getCountry() ==  null)
-                        System.out.println("\twas null");
-                    if (i == 0) {
-                        countriesTemp[0] = h.getCountry();
-                        uniqueCount++;
-                        continue;
-                    }
-                        
-                    if (h.getCountry()!=null && !h.getCountry().equals(countriesTemp[uniqueCount-1])) { //filter duplicates and null values
-                        countriesTemp[uniqueCount] = h.getCountry();
-                        uniqueCount++;
-                    }
+                    country = (String)((Object[])records[i])[0];
+                    countries[i] = country;
                 }
                 
-                countries = new String[uniqueCount];
-                for (int i = 0; i < uniqueCount; i++) {
-                    countries[i] = countriesTemp[i];
-                }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             } catch (DBLayerException ex) {
@@ -590,20 +566,19 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            Occurrence o;
             
             //FIXME:
             try {
                 sq = database.createQuery(Occurrence.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.DATASOURCE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.DATASOURCE);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 sources = new String[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    o = (Occurrence)((Object[])records[i])[0];
-                    sources[i] = o.getDataSource();
+                    sources[i] = (String)((Object[])records[i])[0];
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -622,21 +597,22 @@ public class Search extends Observable {
             int resultid;
             int resultsCount;
             Object[] records;
-            Publication p;
+            Object[] row;
             
             //FIXME:
             try {
                 sq = database.createQuery(Publication.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Publication.REFERENCECITATION);
-                //sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
+                sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Publication.ID);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 publications = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    p = (Publication)((Object[])records[i])[0];
-                    publications[i] = new Pair(p.getReferenceCitation(), p.getId());
+                    row = (Object[])records[i];
+                    publications[i] = new Pair(row[0], row[1]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -654,21 +630,22 @@ public class Search extends Observable {
             SelectQuery sq;
             int resultid;
             int resultsCount;
-            Object[] records;
-            Metadata m;
+            Object[] records,row;
             
             //FIXME:
             try {
                 sq = database.createQuery(Metadata.class);
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, Metadata.DATASETTITLE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.DATASETTITLE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.ID);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
                 records = database.more(resultid, 0, resultsCount-1);
                 projects = new Pair[resultsCount];
                 for (int i = 0; i < resultsCount; i++)
                 {
-                    m = (Metadata)((Object[])records[i])[0];
-                    projects[i] = new Pair(m.getDataSetTitle(), m.getId());
+                    row = (Object[])records[i];
+                    projects[i] = new Pair(row[0], row[1]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
