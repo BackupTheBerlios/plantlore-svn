@@ -316,6 +316,18 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             if (addView == null) {
                 addModel = new AddEdit(model.getDatabase(),false);
+                addModel.setAuthors(model.getAuthors());
+                addModel.setAuthorRoles(model.getAuthorRoles());
+                addModel.setPlants(model.getPlants());
+                addModel.setVillages(model.getVillages());
+                addModel.setPhytNames(model.getPhytNames());
+                addModel.setPhytCodes(model.getPhytCodes());
+                addModel.setCountries(model.getCountries());
+                addModel.setSources(model.getSources());
+                addModel.setPublications(model.getPublications());
+                addModel.setProjects(model.getProjects());
+                addModel.setTerritories(model.getTerritories());
+                
                 addView = new AddEditView(view, true, addModel, false);
                 addView.setTitle("Add a new occurrence");
                 addCtrl = new AddEditCtrl(addModel, addView, false);
@@ -335,6 +347,18 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             if (editView == null) {
                 editModel = new AddEdit(model.getDatabase(),true);
+                editModel.setAuthors(model.getAuthors());
+                editModel.setAuthorRoles(model.getAuthorRoles());
+                editModel.setPlants(model.getPlants());
+                editModel.setVillages(model.getVillages());
+                editModel.setPhytNames(model.getPhytNames());
+                editModel.setPhytCodes(model.getPhytCodes());
+                editModel.setCountries(model.getCountries());
+                editModel.setSources(model.getSources());
+                editModel.setPublications(model.getPublications());
+                editModel.setProjects(model.getProjects());
+                editModel.setTerritories(model.getTerritories());
+                
                 Object[] row = model.getSelectedRow();
                 editModel.setRecord((Occurrence) row[row.length-1]);
                 editView = new AddEditView(view, true, editModel, true);
@@ -411,6 +435,18 @@ public class AppCoreCtrl
             if (searchModel == null) {
                 searchModel = new Search(model.getDatabase());
                 searchModel.setColumns(model.getTableModel().getColumns().clone());
+                searchModel.setAuthors(model.getAuthors());
+                searchModel.setAuthorRoles(model.getAuthorRoles());
+                searchModel.setPlants(model.getPlants());
+                searchModel.setVillages(model.getVillages());
+                searchModel.setPhytNames(model.getPhytNames());
+                searchModel.setPhytCodes(model.getPhytCodes());
+                searchModel.setCountries(model.getCountries());
+                searchModel.setSources(model.getSources());
+                searchModel.setPublications(model.getPublications());
+                searchModel.setProjects(model.getProjects());
+                searchModel.setTerritories(model.getTerritories());
+                
                 searchView = new SearchView(view, true, searchModel);
                 searchView.setTitle("Search");
                 searchCtrl = new SearchCtrl(searchModel, searchView);

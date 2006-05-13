@@ -403,378 +403,6 @@ public class AddEdit extends Observable {
         logger.debug("Time set to "+time);
     }
     
-    public Pair<String, Integer>[] getPlants() {
-        if (plants == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Plant p;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Plant.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Plant.TAXON);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                System.out.println("getPlants(): we got "+resultsCount+" results.");
-                records = database.more(resultid, 0, resultsCount-1);
-                plants = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    p = (Plant)((Object[])records[i])[0];
-                    plants[i] = new Pair(p.getTaxon(), p.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return plants;
-        } else
-            return plants;
-    }
-    
-    public Pair<String, Integer>[] getAuthors() {
-        if (authors == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Author a;
-            //FIXME:
-            try {
-                sq = database.createQuery(Author.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                authors = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    a = (Author)((Object[])records[i])[0];
-                    authors[i] = new Pair<String, Integer>(a.getWholeName(), a.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return authors;
-        } else
-            return authors;
-    }
-    
-    public String[] getAuthorRoles() {
-        if (authorRoles == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            AuthorOccurrence ao;
-            //FIXME:
-            try {
-                sq = database.createQuery(AuthorOccurrence.class);
-                sq.addProjection(PlantloreConstants.PROJ_DISTINCT,AuthorOccurrence.ROLE);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, AuthorOccurrence.ROLE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                authorRoles = new String[resultsCount];
-                String r;
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    r = (String)((Object[])records[i])[0];
-                    authorRoles[i] = r;
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return authorRoles;
-        } else
-            return authorRoles;
-    }
-
-    public Pair<String, Integer>[] getVillages() {
-        if (villages == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Village v;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Village.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                villages = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    v = (Village)((Object[])records[i])[0];
-                    villages[i] = new Pair<String, Integer>(v.getName(), v.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return villages;
-        } else
-            return villages;
-    }
-
-    public Pair<String, Integer>[] getTerritories() {
-        if (territories == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Territory t;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Territory.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Territory.NAME);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                territories = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    t = (Territory)((Object[])records[i])[0];
-                    territories[i] = new Pair<String,Integer>(t.getName(), t.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return territories;
-        } else
-            return territories;
-    }
-    
-    public Pair<String, Integer>[] getPhytNames() {
-        if (phytNames == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Phytochorion p;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Phytochorion.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.NAME);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                phytNames = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    p = (Phytochorion)((Object[])records[i])[0];
-                    phytNames[i] = new Pair<String,Integer>(p.getName(), p.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return phytNames;
-        } else
-            return phytNames;
-    }
-    
-    public Pair<String, Integer>[] getPhytCodes() {
-        if (phytCodes == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Phytochorion p;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Phytochorion.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.CODE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                phytCodes = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    p = (Phytochorion)((Object[])records[i])[0];
-                    phytCodes[i] = new Pair<String,Integer>(p.getCode(), p.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return phytCodes;
-        } else
-            return phytCodes;
-    }
-    
-    public String[] getCountries() {
-        if (countries == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            int uniqueCount = 0;
-            String[] countriesTemp;
-            Object[] records;
-            Habitat h;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Habitat.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Habitat.COUNTRY);
-                resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                countriesTemp = new String[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    h = (Habitat)((Object[])records[i])[0];
-                    if (h.getCountry() ==  null)
-                        System.out.println("\twas null");
-                    if (i == 0) {
-                        countriesTemp[0] = h.getCountry();
-                        uniqueCount++;
-                        continue;
-                    }
-                        
-                    if (h.getCountry()!=null && !h.getCountry().equals(countriesTemp[uniqueCount-1])) { //filter duplicates and null values
-                        countriesTemp[uniqueCount] = h.getCountry();
-                        uniqueCount++;
-                    }
-                }
-                
-                countries = new String[uniqueCount];
-                for (int i = 0; i < uniqueCount; i++) {
-                    countries[i] = countriesTemp[i];
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return countries;
-        } else
-            return countries;        
-    }
-    
-    public String[] getSources() {
-        if (sources == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Occurrence o;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Occurrence.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.DATASOURCE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                sources = new String[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    o = (Occurrence)((Object[])records[i])[0];
-                    sources[i] = o.getDataSource();
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return sources;
-        } else
-            return sources;
-    }
-    
-    public Pair<String, Integer>[] getPublications() {
-        if (publications == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Publication p;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Publication.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Publication.REFERENCECITATION);
-                //sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                publications = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    p = (Publication)((Object[])records[i])[0];
-                    publications[i] = new Pair(p.getReferenceCitation(), p.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return publications;
-        } else
-            return publications;
-    }
-
-    public Pair<String, Integer>[] getProjects() {
-        if (projects == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Metadata m;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Metadata.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Metadata.DATASETTITLE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                projects = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    m = (Metadata)((Object[])records[i])[0];
-                    projects[i] = new Pair(m.getDataSetTitle(), m.getId());
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return projects;
-        } else
-            return projects;
-    }
-
     public DBLayer getDatabase() {
         return database;
     }
@@ -1411,6 +1039,105 @@ public class AddEdit extends Observable {
         for (int i = 0; i < taxonList.size(); i++) {
             logger.debug("Taxon list contains plant #"+taxonList.get(i)+"#");
         }
+    }
+
+    public Pair<String, Integer>[] getPlants() {
+        return plants;
+    }
+
+    public void setPlants(Pair<String, Integer>[] plants) {
+        logger.debug(""+plants.length+" plants set.");
+        this.plants = plants;
+    }
+
+    public Pair<String, Integer>[] getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Pair<String, Integer>[] authors) {
+        logger.debug(""+authors.length+" authors set.");
+        this.authors = authors;
+    }
+
+    public String[] getAuthorRoles() {
+        return authorRoles;
+    }
+
+    public void setAuthorRoles(String[] authorRoles) {
+        logger.debug(""+authorRoles.length+" author roles set.");
+        this.authorRoles = authorRoles;
+    }
+
+    public Pair<String, Integer>[] getVillages() {
+        return villages;
+    }
+
+    public void setVillages(Pair<String, Integer>[] villages) {
+        logger.debug(""+villages.length+" villages set.");
+        this.villages = villages;
+    }
+
+    public Pair<String, Integer>[] getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Pair<String, Integer>[] territories) {
+        logger.debug(""+territories.length+" territories set.");
+        this.territories = territories;
+    }
+
+    public Pair<String, Integer>[] getPhytNames() {
+        return phytNames;
+    }
+
+    public void setPhytNames(Pair<String, Integer>[] phytNames) {
+        logger.debug(""+phytNames.length+" phytochorion names set.");
+        this.phytNames = phytNames;
+    }
+
+    public Pair<String, Integer>[] getPhytCodes() {
+        return phytCodes;
+    }
+
+    public void setPhytCodes(Pair<String, Integer>[] phytCodes) {
+        logger.debug(""+phytCodes.length+" phytochorion codes set.");
+        this.phytCodes = phytCodes;
+    }
+
+    public String[] getCountries() {
+        return countries;
+    }
+
+    public void setCountries(String[] countries) {
+        logger.debug(""+countries.length+" set.");
+        this.countries = countries;
+    }
+
+    public String[] getSources() {
+        return sources;
+    }
+
+    public void setSources(String[] sources) {
+        logger.debug(""+sources.length+" set.");
+        this.sources = sources;
+    }
+
+    public Pair<String, Integer>[] getPublications() {
+        return publications;
+    }
+
+    public void setPublications(Pair<String, Integer>[] publications) {
+        logger.debug(""+publications.length+" set.");
+        this.publications = publications;
+    }
+
+    public Pair<String, Integer>[] getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Pair<String, Integer>[] projects) {
+        logger.debug(""+projects.length+" set.");
+        this.projects = projects;
     }
 }
 
