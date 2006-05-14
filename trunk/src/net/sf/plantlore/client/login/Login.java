@@ -4,6 +4,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
+import net.sf.plantlore.client.MainConfig;
 import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
@@ -42,6 +43,7 @@ public class Login extends Observable {
 	
 	//private String  file = System.getProperty("user.home") + "/.plantlore/db.info.xml";
 	
+        private MainConfig mainConfig = null;
 	private DBLayerFactory factory = null;
 	private DBLayer dblayer;
 	private Logger logger;
@@ -56,8 +58,9 @@ public class Login extends Observable {
 	 *  
 	 * @param factory The factory that will be used to create a new DBLayer. 
 	 */
-	public Login(DBLayerFactory factory) {
+	public Login(DBLayerFactory factory, MainConfig mainConfig) {
 		this.factory = factory;
+                this.mainConfig = mainConfig;
 		logger = Logger.getLogger(this.getClass().getPackage().getName());
 		load();
 	}
@@ -78,12 +81,12 @@ public class Login extends Observable {
 						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
 						new String[] { "sysdba", null, null, null, null }));                
 */
-				dbinfo.add(new DBInfo("My Home Database", "", -1,
+/*				dbinfo.add(new DBInfo("My Home Database", "", -1,
 							"jdbc:firebirdsql:localhost/3050:c:/Kovo/PlantloreClean/plantloreHIBdataUTF.fdb", 
 							new String[] { "sysdba", null, null, null, null }));
-                                
+*/                                
                                 dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
-						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdataUTF.fdb", 
+						"jdbc:firebirdsql:localhost/3050:/data/plantloreHIBdataUTF.fdb", 
 						new String[] { "sysdba", null, null, null, null }));
 		
 				dbinfo.add(new DBInfo("Local Database", "localhost", -1,
@@ -91,7 +94,8 @@ public class Login extends Observable {
 							new String[] { "sysdba", null, null, null, null }));				
 
 		 // TEMPORARY CODE ENDS HERE
-		
+                                
+		//dbinfo = mainConfig.getDBinfos();
 		this.setChanged(); this.notifyObservers();
 	}
 	
@@ -102,7 +106,10 @@ public class Login extends Observable {
 	protected void save() {
 		logger.debug("Saving the list of databases.");
 		// TODO: JAKUB: ulozit kolekci dbinfo zpatky do XML souboru se jmenem `file`.
-		
+		mainConfig.setDBInfos(dbinfo);
+                
+                //ukladat uz tady?! spis ne - co kdyby se ukladani nepovedlo? bylo by divny to porad hlasit
+                //mainConfig.save();
 	}
 	
 
@@ -283,4 +290,5 @@ public class Login extends Observable {
 	public Right getAccessRights() {
 		return accessRights;
 	}
+        
 }

@@ -193,8 +193,9 @@ public class Column {
         return preferredSize;
     }
     
-    public void setPreferredSize(int size) {
-        preferredSize = size;
+    public void setPreferredSize(Integer size) {
+        if (size != null)
+            preferredSize = size;
     }
     
     public Type getType() {
@@ -207,6 +208,10 @@ public class Column {
     
     public String getL10nName() {
         return L10n.getString(l10nKey);
+    }
+    
+    public String toString() {
+        return type.toString();
     }
 }
 

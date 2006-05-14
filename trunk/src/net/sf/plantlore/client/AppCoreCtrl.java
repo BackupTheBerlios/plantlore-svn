@@ -14,6 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.lang.Integer;
 import java.rmi.RemoteException;
 import java.util.Observable;
@@ -21,6 +22,7 @@ import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -252,9 +254,13 @@ public class AppCoreCtrl
      * Maybe settings should be stored first?
      */
     class ExitListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent)
+        public void actionPerformed(ActionEvent actionEvent) 
         {
-            model.savePreferences();
+            try {
+                model.savePreferences();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(view, "Problem while saving configuration: "+ex.getMessage());
+            }
             System.exit(0);
         }
     }
@@ -495,7 +501,11 @@ public class AppCoreCtrl
     class AppWindowListener extends WindowAdapter {
         public void windowClosing(WindowEvent e)
         {
-            model.savePreferences();
+            try {
+                model.savePreferences();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(view, "Problem while saving configuration: "+ex.getMessage());
+            }
         }
     }
 
@@ -637,7 +647,7 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent arg0) {
                 // Reuse the existing dialogs, hide'em when they're no longer needed.
                 if(loginModel == null) {
-                	loginModel = new Login(new RMIDBLayerFactory());
+                	loginModel = new Login(new RMIDBLayerFactory(), model.getMainConfig());
                 	loginModel.addObserver(new DatabaseChange());
                 }
                 if(loginView == null) loginView = new LoginView(loginModel);

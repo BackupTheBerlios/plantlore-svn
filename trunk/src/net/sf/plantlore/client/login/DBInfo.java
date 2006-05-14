@@ -55,5 +55,25 @@ public class DBInfo {
 	public String toString() {
 		return alias;
 	}
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getDb() {
+        return db;
+    }
+
+    public String[] getUsers() {
+        return users;
+    }
+
+    public int getPort() {
+        return port;
+    }
 		
 }

@@ -458,12 +458,16 @@ public class Search extends Observable {
             if (isNotEmpty(fromDate) && isNotEmpty(toDate)) {
                 Calendar from = Calendar.getInstance(), to = Calendar.getInstance();
                 from.setTime(fromDate); to.setTime(toDate);
+                
+                //zero fields not set by the user so that the comparison below is correct
                 from.set(Calendar.HOUR,0);
                 from.set(Calendar.MINUTE, 0);
+                from.set(Calendar.SECOND, 0);
                 from.set(Calendar.MILLISECOND, 0);
                 
                 to.set(Calendar.HOUR,0);
                 to.set(Calendar.MINUTE, 0);
+                to.set(Calendar.SECOND, 0);
                 to.set(Calendar.MILLISECOND, 0);
                 
                 if (to.compareTo(from) < 0)
@@ -698,9 +702,25 @@ public class Search extends Observable {
                 }
                 
                 if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
+                    Calendar from = Calendar.getInstance(), to = Calendar.getInstance();
+                    from.setTime(fromDate); to.setTime(toDate);
+                    
+                    //set the begining of the day
+                    from.set(Calendar.HOUR_OF_DAY,0);
+                    from.set(Calendar.MINUTE, 0);
+                    from.set(Calendar.SECOND, 0);
+                    from.set(Calendar.MILLISECOND, 0);
+
+                    //set the end of the day
+                    to.set(Calendar.HOUR_OF_DAY,23);
+                    to.set(Calendar.MINUTE, 59);
+                    to.set(Calendar.SECOND, 59);
+                    to.set(Calendar.MILLISECOND, 999);
+                    
                     ArrayList a = new ArrayList();
-                    a.add(fromDate);
-                    a.add(toDate);
+                    a.add(from.getTime());
+                    a.add(to.getTime());
+                    System.out.println("Searching between "+from.getTime()+" and "+to.getTime());
                     sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
                 }
                 

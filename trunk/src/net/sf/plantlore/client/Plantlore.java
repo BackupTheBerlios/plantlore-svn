@@ -8,6 +8,7 @@
 package net.sf.plantlore.client;
 
 import java.awt.EventQueue;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -15,12 +16,14 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.dom4j.DocumentException;
 
 /** The main class of Plantlore. This is where all begins.
  *
@@ -30,9 +33,12 @@ public class Plantlore {
     AppCore model;
     AppCoreView view;
     AppCoreCtrl ctrl;
+    MainConfig mainConfig = null;
     Logger logger;
     private static SplashScreen splashScreen;   
     private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
+    private static final String PLANTLORE="plantlore";
+    private static final String MAIN_CONFIG_NAME=PLANTLORE+".xml";
     
     /**
      * Creates a new instance of Plantlore
@@ -75,25 +81,61 @@ public class Plantlore {
         plantlore.run();
     }
     
+    
+    private void loadConfiguration() throws IOException, DocumentException {
+        String userHome = System.getProperty("user.home");
+        String osName = System.getProperty("os.name");
+        String plantloreDirName;
+        if (osName.equals("Linux")) {
+            plantloreDirName = "."+PLANTLORE;
+        } else {
+            plantloreDirName = PLANTLORE;
+        }
+        String plantloreConfDir = userHome+File.separator+plantloreDirName;
+        File plantloreConfDirFile = new File(plantloreConfDir);
+        if (!plantloreConfDirFile.exists()) {
+            logger.info("Creating user configuration directory "+plantloreConfDir);
+            plantloreConfDirFile.mkdir();
+        }
+        
+        String mainConfig = plantloreConfDir + File.separator + MAIN_CONFIG_NAME;
+        File mainConfigFile = new File(mainConfig);
+        if (!mainConfigFile.exists()) {
+            logger.info("Creating main configuration file "+mainConfig);
+            MainConfig.createEmptyConfig(mainConfig);
+        }
+        
+        this.mainConfig = new MainConfig(mainConfig);
+        this.mainConfig.load();
+    }
+    
     /** Constructs the main MVC
      *
      */
     private void run() {
         try {
-        logger.info("Constructing AppCore MVC");
-        splashScreen = new SplashScreen("resources/splashscreen.gif");
-        splashScreen.splash();
-        model = new AppCore();
-        view = new AppCoreView(model);
-        ctrl = new AppCoreCtrl(model, view);
-        view.init();
-        view.setVisible(true);
-        EventQueue.invokeLater( new SplashScreenCloser() );
-        logger.info("AppCore MVC constructed. Plantlore client should be visible now.");
+            try {
+                loadConfiguration();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null,"Couldn't load configuration file: "+e.getMessage());
+            } catch (DocumentException e) {               
+                JOptionPane.showMessageDialog(null,"Problem while loading configuration file: "+e.getMessage());
+            }
+            
+            logger.info("Constructing AppCore MVC");
+            splashScreen = new SplashScreen("resources/splashscreen.gif");
+            splashScreen.splash();
+            model = new AppCore(mainConfig);
+            view = new AppCoreView(model);
+            ctrl = new AppCoreCtrl(model, view);
+            view.init();
+            view.setVisible(true);
+            EventQueue.invokeLater( new SplashScreenCloser() );
+            logger.info("AppCore MVC constructed. Plantlore client should be visible now.");
         } catch(RuntimeException e) {
             //new ExceptionDialog(view,"Some exception was thrown: "+e);
             e.printStackTrace();
-        }
+        } 
     }
     
     /**

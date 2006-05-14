@@ -7,10 +7,13 @@
 
 package net.sf.plantlore.client;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
@@ -39,6 +42,8 @@ import org.apache.log4j.Logger;
 public class AppCore extends Observable
 {
     private Preferences prefs;
+    private MainConfig mainConfig;
+    
     private int recordsPerPage = 30;
     private int currentPage = 1;
     private DBLayer database;  
@@ -63,10 +68,12 @@ public class AppCore extends Observable
     
     
     /** Creates a new instance of AppCore */
-    public AppCore()
+    public AppCore(MainConfig mainConfig)
     {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         prefs = Preferences.userNodeForPackage(this.getClass());
+        
+        this.mainConfig = mainConfig;
         
         // This is here in order to skip login procedure and connect to the database automatically
         // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
@@ -270,9 +277,15 @@ public class AppCore extends Observable
         return tableModel.getRow(selectedRow);
     }
     
-    public void savePreferences() {
+    public Integer getSelectedOccurrence() {
+        Object[] row = tableModel.getRow(selectedRow);
+        return (Integer)row[row.length-1];
+    }
+    
+    public void savePreferences() throws IOException {
         logger.info("Saving main window preferences.");
         prefs.putInt("recordsPerPage", recordsPerPage);
+        mainConfig.save();
     }
     
     public void setResultId(int resultId) {
@@ -628,6 +641,10 @@ public class AppCore extends Observable
             return projects;
         } else
             return projects;
+    }
+    
+    public MainConfig getMainConfig() {
+        return mainConfig;
     }
     
 }
