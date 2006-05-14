@@ -104,17 +104,22 @@ public class L10n
      * @trhows NullPointerException in case that <code>load()</code> wasn't called first or it failed.
      */
     public static int getMnemonic(String key) {
-        StringBuffer sb = new StringBuffer(resource.getString(key));
-        int i = sb.indexOf("&");
-        if (i < 0)
-            return -1;
-        if (i+1 == sb.length())
-            return -1;
-        Character c = sb.charAt(i+1);
-        if (i>=0)
-            sb.deleteCharAt(i);
-        
-        return Character.toUpperCase(c);
+        try {
+            StringBuffer sb = new StringBuffer(resource.getString(key));
+            int i = sb.indexOf("&");
+            if (i < 0)
+                return -1;
+            if (i+1 == sb.length())
+                return -1;
+            Character c = sb.charAt(i+1);
+            if (i>=0)
+                sb.deleteCharAt(i);
+
+            return Character.toUpperCase(c);
+        } catch (MissingResourceException e) {
+            logger.warn("The key \"" + key + "\" is not defined in the property file! Couldn't return mnemonic.");
+            return 0;
+        }
     }
     
     public static Locale getCurrentLocale() {
