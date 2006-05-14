@@ -49,6 +49,7 @@ import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
@@ -170,7 +171,6 @@ public class AppCoreCtrl
         view.addWindowListener(new AppWindowListener());
         view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
         
-        // TODO: Comb the code here KR@TER
         view.setLoginAction(new LoginAction());
         
         // This is here in order to skip login procedure and connect to the database automatically
@@ -308,7 +308,25 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("Export pressed");
+            // Create a new dialog if it already doesn't exist.
+            if(exportView == null) {
+            	try {
+            		exportModel = new ExportMng(model.getDatabase());
+            		exportProgressView = new ExportProgressView(exportModel);
+            		exportProgressCtrl = new ExportProgressCtrl(exportModel, exportProgressView);
+            		exportView = new ExportMngViewA(exportModel);
+            		exportCtrl = new ExportMngCtrlA(exportModel, exportView, exportProgressView);
+            	} catch(ExportException e) {
+            		logger.error("Export MVC cannot be created. " + e.getMessage());
+            		return;
+            	}
+            }
+            // Display the progress view if an export is already running.
+            if(exportModel.isExportInProgress())
+        		exportProgressView.setVisible(true);
+            // Display the first "Export dialog".
+        	else
+        		exportCtrl.setVisible(true);
         }
     }
 

@@ -135,6 +135,24 @@ public class ExportMng extends Observable implements Observer {
 	}
 	
 	/**
+	 * Create a new Export manager.
+	 * <b>Mark all records AND columns as selected</b>.
+	 * Note: This constructor is for the first initialization only. 
+	 * <b>You will have to specify the SelectQuery</b>
+	 * before you call <code>start()</code>. 
+	 * 
+	 * @param dblayer	The database layer mediating the access to the database.
+	 */
+	public ExportMng(DBLayer dblayer) 
+	throws ExportException {
+		setDBLayer(dblayer);
+		setTemplate(null);
+		
+		Selection select = new Selection(); select.all();
+		setSelection(select);
+	}
+	
+	/**
 	 * Create a new Export manager and <b>mark all records AND columns as selected</b>.
 	 * 
 	 * @param dblayer	The database layer mediating the access to the database.
