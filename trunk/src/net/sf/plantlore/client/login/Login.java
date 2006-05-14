@@ -50,7 +50,7 @@ public class Login extends Observable {
 	
 	
 	private Right accessRights;
-        private User plantloreUser;
+    private User plantloreUser;
 	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
@@ -81,10 +81,10 @@ public class Login extends Observable {
 						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
 						new String[] { "sysdba", null, null, null, null }));                
 */
-/*				dbinfo.add(new DBInfo("My Home Database", "", -1,
-							"jdbc:firebirdsql:localhost/3050:c:/Kovo/PlantloreClean/plantloreHIBdataUTF.fdb", 
+				dbinfo.add(new DBInfo("My Home Database", "", -1,
+							"jdbc:firebirdsql:localhost/3050:c:/downloaded/plutf.fdb", 
 							new String[] { "sysdba", null, null, null, null }));
-*/                                
+           
                                 dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
 						"jdbc:firebirdsql:localhost/3050:/data/plantloreHIBdataUTF.fdb", 
 						new String[] { "sysdba", null, null, null, null }));
@@ -268,8 +268,7 @@ public class Login extends Observable {
 	public void logout() throws RemoteException {
 		if(dblayer != null) {
 			factory.destroy(dblayer);
-			dblayer = null;
-			accessRights = null;
+			dblayer = null; accessRights = null; plantloreUser = null;
 			logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
 			this.setChanged(); this.notifyObservers();
 		}
@@ -281,6 +280,13 @@ public class Login extends Observable {
 	 */	
 	public DBLayer getDBLayer() { 
 		return dblayer; 
+	}
+	
+	/**
+	 * @return The currently logged user.
+	 */
+	public User getLoggedUser() {
+		return plantloreUser;
 	}
 	
 	/**

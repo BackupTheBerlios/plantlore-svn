@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import net.sf.plantlore.client.imports.Parser.Action;
 import net.sf.plantlore.common.exception.ImportException;
+import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
@@ -189,8 +190,13 @@ public class ImportMng extends Observable implements Observer {
 		}
 		
 		// Create a new parser according to the format.
-		//parser = new ...
-		
+			
+		try {
+			parser.initialize();
+		} catch(ParserException e) {
+			logger.fatal("The format of the file is corrupted!");
+			throw new ImportException(L10n.getString("error.FileFormatCorrupted"));
+		}
 
 		// Create a new Director and run it in a separate thread.
 		director = new DefaultDirector(db, parser, user);
@@ -209,15 +215,19 @@ public class ImportMng extends Observable implements Observer {
 		Thread monitor = new Thread(new Runnable() {
 			public void run() {
 				// Sleep until the thread is really dead.
-				while( !universeImploded )
+				while( !universeImploded ) {
 					try {
 						current.join();
 						break;
-					}catch(InterruptedException e) {} 
+					}catch(InterruptedException e) {}
+				}
+				// Perform the parser's final cleanup.	
+				parser.cleanup();
 				// Dispose of the reader.
 				try {
 					reader.close();
 				}catch(IOException e) {}
+				
 				importInProgress = false;
 				logger.debug("Environment cleaned up.");
 				// Notify observers the export has ended.
