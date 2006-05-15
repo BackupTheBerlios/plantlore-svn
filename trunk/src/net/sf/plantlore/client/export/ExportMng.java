@@ -224,6 +224,10 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	synchronized public void setDBLayer(DBLayer dblayer)
 	throws ExportException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change DBLayer while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
 		if(dblayer == null) { 
 			logger.error("The database layer is null!");
 			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
@@ -235,8 +239,14 @@ public class ExportMng extends Observable implements Observer {
 	/**
 	 * Store a copy of the <code>template</code>.
 	 * <b>Null means everything is selected!</b>
+	 * @throws ExportException 
 	 */
-	synchronized public void setTemplate(Template template) {
+	synchronized public void setTemplate(Template template) 
+	throws ExportException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change the Template while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
 		if(template == null) {
 			logger.info("The list of selected columns is empty! Creating a new Template where every column is selected.");
 			this.template = new Template();
@@ -248,7 +258,12 @@ public class ExportMng extends Observable implements Observer {
 	/**
 	 * Store a copy of the <code>selection</code>.
 	 */
-	synchronized public void setSelection(Selection selection) {
+	synchronized public void setSelection(Selection selection)
+	throws ExportException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change the Selection while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
 		if(selection == null || selection.isEmpty()) {
 			logger.info("The list of selected records is empty! Creating a new Selection where everything is selected.");
 			select = new Selection();
@@ -286,7 +301,12 @@ public class ExportMng extends Observable implements Observer {
 	/**
 	 * Set another result identificator of a Result Set. 
 	 */
-	synchronized public void setResultId(Integer result) { 
+	synchronized public void setResultId(Integer result)
+	throws ExportException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change Resultset Identifier while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
 		if(result < 0) 
 			logger.warn("The result set identificator is a negative integer!");
 
@@ -302,6 +322,10 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	synchronized public void setSelectQuery(SelectQuery query) 
 	throws ExportException, DBLayerException, RemoteException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change the SelectQuery while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
 		if(query == null)
 			logger.warn("The select query is not valid - it is null!");
 

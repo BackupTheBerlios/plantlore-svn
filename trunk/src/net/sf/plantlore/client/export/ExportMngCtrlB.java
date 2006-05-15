@@ -32,8 +32,8 @@ public class ExportMngCtrlB {
 				    JOptionPane.WARNING_MESSAGE);
 			else {
 				view.setVisible(false);
-				model.setTemplate( t ); // Set the new template.
 				try {
+					model.setTemplate( t ); // Set the new template.
 					model.start();
 					progressView.setVisible(true);
 				}
