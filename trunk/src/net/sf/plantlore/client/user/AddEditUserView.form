@@ -18,33 +18,32 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
-              <Component id="operationButton" min="-2" pref="110" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-              <Component id="closeButton" min="-2" pref="101" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-              <Component id="helpButton" min="-2" pref="109" max="-2" attributes="0"/>
-              <EmptySpace pref="198" max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="102" attributes="1">
+                      <Component id="helpButton" min="-2" pref="109" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="operationButton" min="-2" pref="110" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                      <Component id="closeButton" min="-2" pref="101" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jPanel1" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="operationButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="operationButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -65,124 +64,103 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="createWhenuser" min="-2" max="-2" attributes="0"/>
+                      <Component id="dropWhenLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="loginLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="addressLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="emailLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="surnameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="firstNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="createWhenuser" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="dropWhenLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="noteLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jScrollPane1" max="32767" attributes="1"/>
-                      <Component id="addressText" alignment="1" max="32767" attributes="1"/>
-                      <Component id="emailText" alignment="1" max="32767" attributes="1"/>
-                      <Component id="surnameText" alignment="1" max="32767" attributes="1"/>
-                      <Component id="firstNameText" alignment="1" max="32767" attributes="1"/>
-                      <Component id="loginText" alignment="0" pref="261" max="32767" attributes="1"/>
-                      <Component id="passwordtext" alignment="1" max="32767" attributes="1"/>
-                      <Component id="createWhenText" alignment="0" max="32767" attributes="1"/>
-                      <Component id="dropWhenText" alignment="0" max="32767" attributes="1"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="administratorCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="rightUserLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="editAllCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="editGroupLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="editGroupText" alignment="0" pref="211" max="32767" attributes="0"/>
-                      <Component id="seeColumnLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="seeColumnText" pref="211" max="32767" attributes="0"/>
-                      <Component id="addRightCheckBox" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jScrollPane1" max="32767" attributes="1"/>
+                              <Component id="addressText" alignment="0" max="32767" attributes="1"/>
+                              <Component id="surnameText" alignment="0" max="32767" attributes="1"/>
+                              <Component id="firstNameText" alignment="0" max="32767" attributes="1"/>
+                              <Component id="passwordtext" alignment="0" max="32767" attributes="1"/>
+                              <Component id="loginText" alignment="0" pref="280" max="32767" attributes="1"/>
+                              <Component id="emailText" alignment="0" max="32767" attributes="1"/>
+                          </Group>
+                          <EmptySpace min="41" pref="41" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="rightUserLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="editGroupLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="addRightCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="editAllCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="administratorCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jScrollPane3" min="-2" pref="180" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Component id="dropWhenValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="createWhenValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="19" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="loginLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="loginText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="rightUserLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="passwordtext" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="administratorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="firstNameText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="firstNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="editAllCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="surnameText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="surnameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="addRightCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="emailText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="emailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                                  <Component id="editGroupLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="editGroupText" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="addressText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="addressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="createWhenuser" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="createWhenText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="188" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="dropWhenLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="dropWhenText" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="loginLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="loginText" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="rightUserLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="passwordtext" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="administratorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="firstNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="firstNameText" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="editAllCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="surnameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="surnameText" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="addRightCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="emailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="emailText" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="addressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="addressText" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="editGroupLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="noteLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" max="32767" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                          <Component id="noteLabel" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jScrollPane3" min="-2" pref="73" max="-2" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="seeColumnLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="seeColumnText" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="createWhenValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="createWhenuser" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="dropWhenValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="dropWhenLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -229,6 +207,9 @@
               <Connection code="L10n.getString(&quot;user.createWhen&quot;)" type="code"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="loginText">
           <AuxValues>
@@ -286,6 +267,9 @@
               <Connection code="L10n.getString(&quot;user.dropWhen&quot;)" type="code"/>
             </Property>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="passwordtext">
           <AuxValues>
@@ -370,35 +354,49 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="editGroupText">
+        <Component class="javax.swing.JLabel" name="createWhenValueLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="&quot;&quot;" type="code"/>
+            </Property>
+          </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="seeColumnLabel">
+        <Component class="javax.swing.JLabel" name="dropWhenValueLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;right.seeColumn&quot;)" type="code"/>
+              <Connection code="&quot;&quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="seeColumnText">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JFormattedTextField" name="createWhenText">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JFormattedTextField(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale())); "/>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JFormattedTextField" name="dropWhenText">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JFormattedTextField(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale())); "/>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-          </AuxValues>
-        </Component>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTextArea" name="editGroupTextArea">
+                  <Properties>
+                    <Property name="columns" type="int" value="20"/>
+                    <Property name="rows" type="int" value="5"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoTextArea(choices, this);"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Pair&lt;String, Integer&gt;[] users = model.getUsers();&#xa;String[] choices = new String[users.length];&#xa;for (int i = 0; i &lt; users.length; i++) &#xa;    choices[i] = users[i].getFirst();"/>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Component class="javax.swing.JButton" name="operationButton">

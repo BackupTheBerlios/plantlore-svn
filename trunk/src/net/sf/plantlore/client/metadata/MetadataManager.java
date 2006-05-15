@@ -29,7 +29,7 @@ public class MetadataManager {
     /** Instance of a database management object */
     private DBLayer database;   
     /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 6;    
+    public static final int DEFAULT_DISPLAY_ROWS = 6;    
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;   
     /** Index of the first record shown in the table */

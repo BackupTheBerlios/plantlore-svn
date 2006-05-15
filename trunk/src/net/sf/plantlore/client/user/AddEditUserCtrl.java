@@ -11,7 +11,12 @@ package net.sf.plantlore.client.user;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
 import java.util.Date;
+import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Right;
 import org.apache.log4j.Logger;
@@ -35,16 +40,17 @@ public class AddEditUserCtrl {
         this.model = model;
         this.view = view;
         
-        view.closeButton.addActionListener(new closeButtonListener());
-        view.helpButton.addActionListener(new helpButtonListener());
-        view.operationButton.addActionListener(new operationButtonListener());
+        view.closeButton.addActionListener(new CloseButtonListener());
+        view.helpButton.addActionListener(new HelpButtonListener());
+        view.operationButton.addActionListener(new OperationButtonListener());
+        view.editGroupTextArea.addFocusListener(new UserAreaListener());
     }
     
    /**
     * On Cancel just hides the view.
     *
     */
-   class closeButtonListener implements ActionListener {
+   class CloseButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
     	   view.close();
@@ -55,18 +61,19 @@ public class AddEditUserCtrl {
     * On Help should call help.
     *
     */
-   class helpButtonListener implements ActionListener {
+   class HelpButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.USER_RIGHTS); 
        }
    }
    
    /*
     *
     */
-   class operationButtonListener implements ActionListener {
+   class OperationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent)
        {    	  
     	   // zeptame se modelu, co je treba provest za akci DETEIL, ADD, EDIT
@@ -91,8 +98,9 @@ public class AddEditUserCtrl {
                    //Right
                    Right right = new Right();
                    user.setRight(right);
-                   right.setEditGroup(view.editGroupText.getText());
-                   right.setSeeColumns(view.seeColumnText.getText());
+                   //FIXME:ulozeni dat EDITGROUP
+                   right.setEditGroup(model.getEditGroupID());
+                   //right.setEditGroup(view.editGroupTextArea.getText());                 
                    if (view.administratorCheckBox.isSelected()) {
                        right.setAdministrator(1);
                    } else {
@@ -110,8 +118,8 @@ public class AddEditUserCtrl {
                        right.setAdd(1);
                    } else {
                        right.setAdd(0);
-                   }
-                    
+                   }                                       
+                   
                     //mela by se tu vypsat nejaka informace pro uzivatele
                     //pridani zaznamu do tabulky User
                    
@@ -134,8 +142,8 @@ public class AddEditUserCtrl {
                    model.getSelectedRecord().setNote(view.noteText.getText());
                    //Right
                    Right right = model.getSelectedRecord().getRight();
-                   right.setEditGroup(view.editGroupText.getText());
-                   right.setSeeColumns(view.seeColumnText.getText());
+                   //FIXME: ulozeni EDITGROUP
+                   right.setEditGroup(view.editGroupTextArea.getText());                   
                    if (view.administratorCheckBox.isSelected()) {
                        right.setAdministrator(1);
                    } else {
@@ -165,5 +173,22 @@ public class AddEditUserCtrl {
            }           
         }
    }
+   
+    class UserAreaListener implements FocusListener {
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            ArrayList<String> userList = new ArrayList<String>();
+            AutoTextArea ta = (AutoTextArea) e.getSource();
+            int lineCount = ta.getLineCount();
+            for (int i=0; i < lineCount; i++) {
+                String tmp = ta.getLine(i);
+                if (tmp.length() > 1) //omit empty lines
+                    userList.add(tmp);
+            }
+            model.setEditGroup(userList);
+        }
+    }//taxonAreaListener
     
 }

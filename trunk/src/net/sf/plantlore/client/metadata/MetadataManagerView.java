@@ -71,10 +71,50 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             return 1;
         }
     }
+     
+         /**
+     *  Check whether the given field is emty or not. This is used for validating user input when searching
+     *  user.
+     *
+     *  @param field field we want to check
+     *  @return true if the field is empty, false otherwise
+     */
+    public boolean checkNonEmpty(String field) {
+        if (field.equals("sourceInstitutionId") && (sourceInstitutionIdText.getText().length() == 0)) {
+            return false;
+        }
+        if (field.equals("sourceId") && (sourceIdText.getText().length() == 0)) {
+            return false;
+        }
+        if (field.equals("dataSetTitle") && (dataSetTitleText.getText().length() == 0)) {
+            return false;
+        }              
+        return true;
+    }
     
-    public void messageSelection() {
-    	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
-    } 
+      /**
+     * Display error message saying that no row of table has been selected.
+     */
+    public void selectRowMessage() {
+    	JOptionPane.showMessageDialog(this, "Please select one metadata from the list", "Select metadata", JOptionPane.WARNING_MESSAGE);               
+    }             
+    
+     public int messageDelete(String message) {
+    	int okCancle = JOptionPane.showConfirmDialog(this, "Access for metadata "+message+ " will be prohibit.", "Drop metadata", JOptionPane.OK_CANCEL_OPTION);
+    	return okCancle;
+    }          
+    
+     /**
+     *  Display error message saying that no search field has been filled in.
+     */
+    public void showSearchErrorMessage() {
+        JOptionPane.showMessageDialog(this, "Please fill in at least one search field", "Missing search data", JOptionPane.ERROR_MESSAGE);       
+    }
+    
+    public void showSearchInfoMessage() {
+        JOptionPane.showMessageDialog(this, "No metadata with the given attributes were found. Please modify search criteria.",
+                                      "No search results", JOptionPane.INFORMATION_MESSAGE);                
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -112,7 +152,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         dataSortLabel = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
         dataSetTitleLabel = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        dataSetTitleText = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
@@ -163,12 +203,12 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 937, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 154, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 172, Short.MAX_VALUE)
                                 .add(totalResultLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(totalResultValueLabel)
@@ -295,7 +335,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jTextField4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                            .add(jTextField3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
+                            .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
                     .add(searchButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(60, 60, 60)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -310,7 +350,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(sourceInstitutionIdLabel)
                             .add(dataSetTitleLabel)
-                            .add(jTextField3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -335,7 +375,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(helpButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 757, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 775, Short.MAX_VALUE)
                         .add(closeButton)))
                 .addContainerGap())
         );
@@ -369,6 +409,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     protected javax.swing.JButton addButtons;
     protected javax.swing.JButton closeButton;
     private javax.swing.JLabel dataSetTitleLabel;
+    protected javax.swing.JTextField dataSetTitleText;
     private javax.swing.JLabel dataSortLabel;
     protected javax.swing.JButton deleteButton;
     protected javax.swing.JButton detailsButton;
@@ -382,7 +423,6 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     protected javax.swing.JButton nextButton;
     protected javax.swing.JButton previousButton;
@@ -398,7 +438,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     protected javax.swing.JTextField toDisplayValueTextField;
     private javax.swing.JLabel toDisplayedLabel;
     private javax.swing.JLabel totalResultLabel;
-    private javax.swing.JLabel totalResultValueLabel;
+    protected javax.swing.JLabel totalResultValueLabel;
     // End of variables declaration//GEN-END:variables
     
 }

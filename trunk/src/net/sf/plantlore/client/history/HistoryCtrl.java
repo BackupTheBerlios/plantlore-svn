@@ -6,6 +6,7 @@ package net.sf.plantlore.client.history;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import net.sf.plantlore.common.PlantloreHelp;
 
 
 
@@ -69,7 +70,8 @@ public class HistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {    	  
     	   // Display help viewer            
-    	   System.out.println("Tady se bude volat Help!");           
+    	   System.out.println("Tady se bude volat Help!");     
+           PlantloreHelp.showHelp(PlantloreHelp.HISTORY_MANAGER); 
        }
    }
    

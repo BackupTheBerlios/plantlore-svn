@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Date;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
 import org.apache.log4j.Logger;
@@ -74,6 +75,7 @@ public class UserManagerCtrl {
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.USER_MANAGER); 
        }
    }
    
@@ -172,7 +174,7 @@ public class UserManagerCtrl {
            //pozor: pri add se musi ohlidat, zda byly vyplneny povinne polozky
            AddEditUserView addView = new AddEditUserView(model, view,true);
            AddEditUserCtrl addCtrl = new AddEditUserCtrl(addView, model);
-           addView.setAddForm();
+//           addView.setAddForm();
            addView.setVisible(true);           
            //nacteni            
            model.searchUser();
@@ -288,6 +290,7 @@ public class UserManagerCtrl {
            } else {           
                //opet funkci pro vyzadani si dat postupne
                model.searchUser();
+               //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
                if (model.getDisplayRows() <= 0) {
                    model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
                }

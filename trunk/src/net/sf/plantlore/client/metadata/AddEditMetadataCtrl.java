@@ -12,6 +12,7 @@ package net.sf.plantlore.client.metadata;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Metadata;
 import org.apache.log4j.Logger;
 
@@ -57,6 +58,7 @@ public class AddEditMetadataCtrl {
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.METDATA_ADD); 
        }
    }
    

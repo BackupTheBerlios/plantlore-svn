@@ -9,7 +9,9 @@
 
 package net.sf.plantlore.client.metadata;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.l10n.L10n;
@@ -84,8 +86,10 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
             metadataData[ii][2] = ((Metadata)metadataDataList.get(i)).getDataSetTitle();
             metadataData[ii][3] = ((Metadata)metadataDataList.get(i)).getTechnicalContactName();    	    
             metadataData[ii][4] = ((Metadata)metadataDataList.get(i)).getContentContactName();                                 
-            metadataData[ii][5] = ((Metadata)metadataDataList.get(i)).getDateCreate();
-            metadataData[ii][6] = ((Metadata)metadataDataList.get(i)).getDateModified();            
+            Date dateCreate = ((Metadata)metadataDataList.get(i)).getDateCreate();
+            metadataData[ii][5] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(dateCreate);     	                               
+            Date dateModified = ((Metadata)metadataDataList.get(i)).getDateModified();            
+            metadataData[ii][5] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(dateModified);
     	    ii++;
     	}      	    	
     	this.data = metadataData;    	
@@ -126,5 +130,23 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
      */
     public String getColumnName(int column){
         return columnNames[column];
+    }
+    
+      /**
+     * Gets right Class - Date Object in the DATECREATE, DATEMODIFIED column and String Object in other columns. 
+     * @param column index of column
+     * @return the Class for Object instances in the specified column.
+     */
+    public Class getColumnClass(int column) {
+    	switch (column) {                        
+            case 0: return String.class;
+            case 1: return String.class;
+            case 2: return String.class;
+            case 3: return String.class;
+            case 4: return String.class;
+            case 5: return DateFormat.class;
+            case 6: return DateFormat.class;
+            default: return String.class;
+        }
     }
 }

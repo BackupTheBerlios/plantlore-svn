@@ -579,7 +579,7 @@ public class AppCoreCtrl
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
             //jmeno rosliny, jmeno autora a lokaci a idOccurrences
                                    
-            historyModel = new History(model.getDatabase(),"Adis Abeba", "Lada", "Praha východ", 1);
+            historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());
             historyView = new HistoryView(historyModel, view, true);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
             historyView.setVisible(true);                         

@@ -145,82 +145,44 @@ public class History {
     /**  
      *  Creates a new instance of History - history of specific occurrence 
      *  @param database Instance of a database management object
-     *  @param namePlant Name of plant for specified occurrence
-     *  @param nameAuthor Name of author for specified occurrence
-     *  @param location Informaciton about location for specified occurrence
+     *  @param idOcc
      * */
-    public History(DBLayer database, String namePlant, String nameAuthor, String location, int idOcc)
+    public History(DBLayer database, int idOcc)
     {
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
        this.database = database;       
        
- /*
-  *  v konstruktoru se bude predavat reference na OCCURRENCE pro ktery je vyvolana
-  *  histori, takze nasledujici cast kodu nebude potreba. 
-  */             
-       // Create new Select query
        SelectQuery query = null;
+       int resultId = 0;
+       Object[] objectOccurrence = null;
+       Object[] objHis = null;
+       
        try {
        	    query = database.createQuery(Occurrence.class);
-       	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, idOcc, null);
+       	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, 1, null);            
+            resultId = database.executeQuery(query);
+            objectOccurrence = database.more(resultId, 0, 0);       
+            objHis = (Object[])objectOccurrence[0];                            
        } catch(RemoteException e) {
        	    System.err.println("RemoteException - History(), createQuery");       	  
        } catch(DBLayerException e) {
        	    System.err.println("DBLayerException - History(), createQuery");       	  
-       }
-             
-       
-       int resultId = 0;
-       try {
-           // Execute query                    
-           resultId = database.executeQuery(query);        
-       } catch (DBLayerException e) {
-           // Log and set an error                   
-           logger.error("Searching occurence failed.");          
-       } catch (RemoteException e) {
-    	   System.err.println("RemoteException- History(), executeQuery");
-	   } 
-       
-	   Object[] objectOccurrence = null;
-	   Object[] objHis = null;
-       try {
-       	 // Retrieve selected row interval         	
-        	try {
-        		objectOccurrence = database.more(resultId, 0, 0);  
-        	} catch(RemoteException e) {            	  
-            	return;
-            }   
-        	objHis = (Object[])objectOccurrence[0];                            
-       } catch (DBLayerException e) {
-           // Log and set error in case of an exception
-           logger.error("Processing search occurrence results failed: "+e.toString());            
-       } 
-              
+            logger.error("Processing search occurrence results failed: "+e.toString());            
+       }                                          
+
+       //zjiskani zaznamu, pro ktery chceme historii
        occurrence = ((Occurrence)objHis[0]);
        
-       setNamePlant(namePlant);
-       setNameAuthor(nameAuthor);
-       setLocation(location);
-       try {
+       //FIXME: bude nutno dovyhledavat autory
+       setNameAuthor("Lada");
+       setNamePlant(occurrence.getPlant().getTaxon());       
+       setLocation(occurrence.getHabitat().getNearestVillage().getName());
+       
+       try {           
             database.closeQuery(query);
        } catch(RemoteException e) {
        	    System.err.println("RemoteException");
-       }
-
-/*
- * konec casti kodu, ktera bude dobudoucna nahrazena.
- * 
- * Konstruktor History(DBLayer database,Occurrence occurrenceRec, String[] nameAuthors)
- * 
- *     this.ocurrence = occurrenceRec;
- *     setNamePlant(occurrence.getPlant().getTaxon());       
- *     setLocation(occurrence.getHabitat().getNearestVillage().getName()); 
- *
- * 	   setNameAuthor(nameAuthors);	  
- *     ...musit to byt retezec autoru - muze jich byt vice
- *     ...v historii se editace autoru zaznamenavat nebude 
- */       
-        
+       }           
        
        //Searching for information about data entries concerned with specified occurrence
        searchInsertInfo();

@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.util.Date;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
@@ -76,6 +77,7 @@ public class WholeHistoryCtrl {
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.HISTORY_MANAGER); 
        }
    }
    

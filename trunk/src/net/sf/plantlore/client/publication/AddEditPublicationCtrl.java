@@ -12,6 +12,7 @@ package net.sf.plantlore.client.publication;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Publication;
 import org.apache.log4j.Logger;
 
@@ -59,6 +60,7 @@ public class AddEditPublicationCtrl {
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.PUBLICATION_ADD); 
        }
    }
    

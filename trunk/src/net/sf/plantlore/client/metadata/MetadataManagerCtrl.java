@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Metadata;
 import org.apache.log4j.Logger;
 
@@ -67,6 +68,7 @@ public class MetadataManagerCtrl {
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.METDATA_MANAGER); 
        }
    }
    
@@ -186,7 +188,7 @@ public class MetadataManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableMetadataList.getSelectedRow() < 0) {    
-               view.messageSelection();
+               view.selectRowMessage();
            } else {
                //v modelu nastavim informaci o tom, ze jde o EDIT
                model.setOperation("EDIT");
@@ -236,7 +238,7 @@ public class MetadataManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableMetadataList.getSelectedRow() < 0) {    
-               view.messageSelection();
+               view.selectRowMessage();
            } else {
                //v modelu nastavim informaci o tom, ze jde o DETAILS
                 model.setOperation("DETAILS");
@@ -279,7 +281,7 @@ public class MetadataManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
            if (view.tableMetadataList.getSelectedRow() < 0) {    
-               view.messageSelection();
+               view.selectRowMessage();
            } else {
                //smazani zaznamu
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1; 
@@ -300,7 +302,26 @@ public class MetadataManagerCtrl {
        {
            model.setSourceInstitutionId(view.sourceInstitutionIdText.getText());           
            model.setSourceId(view.sourceIdText.getText());
-           //FIXME: dopsat
+           model.setDataSetTitle(view.dataSetTitleText.getText());
+            if (!(view.checkNonEmpty("sourceInstitutionId") || view.checkNonEmpty("sourceId") ||
+               view.checkNonEmpty("dataSetTitle"))) {
+               view.showSearchErrorMessage();
+           } else {           
+               //opet funkci pro vyzadani si dat postupne
+               model.searchMetadata();
+               //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
+               if (model.getDisplayRows() <= 0) {
+                   model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
+               }
+               if (model.getResultRows() < 1) {
+                   view.showSearchInfoMessage();
+               }
+               model.processResult(1, model.getDisplayRows());
+               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
+               view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+           }
+           
        }
     }
     

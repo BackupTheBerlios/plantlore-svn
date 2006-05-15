@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Publication;
 import org.apache.log4j.Logger;
 
@@ -70,6 +71,7 @@ public class PublicationManagerCtrl {
        {    	  
     	   // Display help viewer            
     	   System.out.println("Tady se bude volat Help!");
+           PlantloreHelp.showHelp(PlantloreHelp.PUBLICATION_MANAGER); 
        }
    }
    

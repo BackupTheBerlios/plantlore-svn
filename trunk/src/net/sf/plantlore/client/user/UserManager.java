@@ -12,6 +12,7 @@ package net.sf.plantlore.client.user;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
@@ -71,6 +72,10 @@ public class UserManager {
     private Date dropWhen;
     private Right right;
     private String note;
+    private ArrayList<String> editGroup;
+    
+    /** list of all users - for dialog add, edit*/
+    private Pair<String, Integer>[] users = null;
     
     /** Constants used for identification of fields for sorting */
     public static final int SORT_LOGIN = 1;
@@ -144,6 +149,7 @@ public class UserManager {
                 } else {
                         query.addOrder(PlantloreConstants.DIRECT_DESC, field);
                 }
+                                
         } catch (RemoteException e) {
             System.err.println("RemoteException - searchUserData(), createQuery");
         } catch (DBLayerException e) {
@@ -249,11 +255,84 @@ public class UserManager {
             ex.printStackTrace();
         }
     }      
-           
+        
+    
+    /**nacteni vsech seznamu uzivatelu pro autoTextArea 
+     *
+     */
+    public Pair<String, Integer>[] getUsers() {
+        if (users == null)
+        {  
+            SelectQuery sq;
+            int resultid;
+            int resultsCount;
+            Object[] records;
+            Object[] row;
+            
+            //vyhledani vsech uzivatelu pro autoTextArea
+            try {
+                sq = database.createQuery(User.class);
+                sq.addOrder(PlantloreConstants.DIRECT_ASC, User.WHOLENAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, User.WHOLENAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, User.ID);
+                resultid = database.executeQuery(sq);
+                resultsCount = database.getNumRows(resultid);
+                System.out.println("getUsers(): we got "+resultsCount+" results.");
+                records = database.more(resultid, 0, resultsCount-1);
+                users = new Pair[resultsCount];
+                for (int i = 0; i < resultsCount; i++)
+                {
+                    row = (Object[])records[i];
+                    users[i] = new Pair((String)row[0], (Integer)row[1]);
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+            }            
+            return users;
+        } else
+            return users;
+     }
+    
     //****************************//
     //****Get and set metods*****//
     //**************************//
     
+    // seznam jmen uzivatelu, kteri smeji editovat nalezy vybraneho uzivatele
+    public void setEditGroup(ArrayList userList) {       
+        this.userList = userList;
+    }
+    
+    // podle seznamu id je nutne vygenerovat seznam jmen jednotlivych uzivatelu
+    public String getEditGroup(String editGroupId) {
+        
+        return "";
+    }
+    
+    //funkce vezme userList a users a vygeneruje String id1;id2;id3 pro ulozeni do databaze
+    //ohlidaji se i duplicity
+    public String getEditGroupID() {
+        ArrayList<Integer> tmpUserId = new ArrayList<Integer>();
+        for (int i=0 ; i < userList.size() ; i++) {
+            for (int j=0; j < users.length; j++) {
+                if (users[j].getFirst().equals(userList.get(i))) {
+                    Integer userId = users[j].getSecond();
+                    if (!tmpUserId.contains(userId)) {
+                        tmpUserId.add(userId);
+                    }
+                }
+            }
+        }
+        
+        String editGroupId="";
+        for (int i=0; i < tmpUserId.size(); i++) {
+            editGroupId = editGroupId + tmpUserId.get(i).toString() + ",";
+        }
+        logger.debug("EDITGROUPID: "+ editGroupId);
+        //vrati string pro ulozeni do databaze
+        return editGroupId;
+    }
     
     //id vysledku po vyhledavani v db
     public void setResultId(int resultId) {
