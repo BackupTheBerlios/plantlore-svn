@@ -15,14 +15,19 @@ import net.sf.plantlore.l10n.L10n;
  */
 
 /**
+ * The dialog displaying the checklist and several buttons 
+ * the allow the checklist to be saved or loaded. 
  *
- * @author  yaa
+ * @author  Erik Kratochvíl
  */
 public class ChecklistView extends javax.swing.JDialog {
 	
 	private AutoTextArea model;
     
-    /** Creates new form ChecklistView */
+    /**
+     * @param model	The model is an AutoTextArea - 
+     * the selected plants will be appended to the end of the AutoTextArea's contents.
+     */
     public ChecklistView(AutoTextArea model) {
     	this.model = model;
         initComponents();

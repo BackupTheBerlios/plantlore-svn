@@ -11,11 +11,23 @@ import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.l10n.L10n;
 
+/**
+ * Binding of the buttons to actions.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-05-16
+ */
 public class ChecklistCtrl {
 	
 	private ChecklistView view;
 	private AutoTextArea model;
 	
+	/**
+	 * Create a new Checklist Controller.
+	 * 
+	 * @param view	Actions will be bound to this ChecklistView's buttons.
+	 * @param model	The AutoTextArea that will receive the selected plants.
+	 */
 	public ChecklistCtrl(ChecklistView view, AutoTextArea model) {
 		this.view = view;
 		this.model = model;
@@ -25,6 +37,11 @@ public class ChecklistCtrl {
 		view.submit.setAction(new Submit());
 	}
 	
+	/**
+	 * Copy all selected plants from the checklist into the AutoTextArea
+	 * and hide the Checklist.
+	 * @see net.sf.plantlore.common.AutoTextArea#addLines(Object[])
+	 */
 	class Submit extends AbstractAction {
 		public Submit() {
 			putValue(NAME, L10n.getString("Checklist.Submit")); 
@@ -36,26 +53,40 @@ public class ChecklistCtrl {
 		}
 	}
 	
+	/**
+	 * Either create and save a new checklist (from the current selection),
+	 * or load a previously saved checklist from a file.
+	 */
 	class LoadCreate extends AbstractAction {
 		private int type;
 		
+		/**
+		 * Create a new Load/Create button controller.
+		 * @param type 0 = Load, 1 = Save (Create)
+		 */
 		public LoadCreate(int type) {
 			this.type = type;
+			ImageIcon icon;
 			switch(type){
 			case 0:
-				putValue(SMALL_ICON, Resource.createIcon("Load.gif"));
+				icon = Resource.createIcon("Load.gif");
+				if(icon == null) putValue(NAME, L10n.getString("Checklist.Load"));
+				else putValue(SMALL_ICON, icon);
 				putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.LoadTT"));
 				break;
 			case 1:
-				putValue(SMALL_ICON, Resource.createIcon("Save.gif"));
+				icon = Resource.createIcon("Save.gif");
+				if(icon == null) putValue(NAME, L10n.getString("Checklist.Save"));
+				else putValue(SMALL_ICON, icon);
 				putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.SaveTT"));
 				break;
 			}
 			
 		}
 		
-		public void actionPerformed(ActionEvent arg0) {
-			int result = view.choice.showDialog( null, type == 0 ? "Open" : "Create" );
+		public void actionPerformed(ActionEvent unused) {
+			int result = view.choice.showDialog( null, 
+					type == 0 ? L10n.getString("Checklist.Load") : L10n.getString("Checklist.Save") );
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				if(view.choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,
@@ -84,12 +115,15 @@ public class ChecklistCtrl {
 		}
 	}
 	
-	
+	/**
+	 * Deselect all plants in the checklist.
+	 */
 	class ClearSelection extends AbstractAction {
 		public ClearSelection() {
-			System.out.println(System.getProperty("user.dir"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.ClearTT"));
-            putValue(SMALL_ICON, Resource.createIcon("Clear.gif"));
+            ImageIcon icon = Resource.createIcon("Clear.gif");
+			if(icon == null) putValue(NAME, L10n.getString("Checklist.Clear"));
+			else putValue(SMALL_ICON, icon);
         } 
 		public void actionPerformed(ActionEvent arg0) {
 			view.checklist.clearSelection();
