@@ -15,7 +15,8 @@ import java.awt.event.KeyEvent;
  * JTextArea  area  = new JTextArea(..);
  * <b>new TabTransfersFocus( area );</b>
  * </pre>
- * This should do the trick. 
+ * This should do the trick. To transfer the focus from the TextArea to
+ * another component, you can always use <code>CTRL+TAB</code>.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-05-14
