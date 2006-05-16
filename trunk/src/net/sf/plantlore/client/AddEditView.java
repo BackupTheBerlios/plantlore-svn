@@ -28,6 +28,7 @@ import javax.swing.table.TableColumn;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.TabTransfersFocus;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.l10n.L10n;
 
@@ -60,6 +61,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         this.pack();        
     }
     
+           
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -899,7 +901,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextField quadrantTextField;
     protected javax.swing.JComboBox sourceCombo;
     protected javax.swing.JLabel sourceLabel;
-    protected javax.swing.JTextArea taxonTextArea;
+    protected AutoTextArea taxonTextArea;
     protected javax.swing.JComboBox territoryNameCombo;
     protected javax.swing.JFormattedTextField timeFormattedTextField;
     protected javax.swing.JComboBox townComboBox;

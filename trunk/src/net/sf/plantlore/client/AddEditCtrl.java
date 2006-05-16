@@ -21,6 +21,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Date;
+
+import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,10 +35,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
+
+import net.sf.plantlore.client.checklist.ChecklistCtrl;
+import net.sf.plantlore.client.checklist.ChecklistView;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.record.Occurrence;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -47,6 +53,10 @@ public class AddEditCtrl {
     private boolean inAddMode = true;
     private AddEdit model;
     private AddEditView view;
+    
+    //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
+    private ChecklistView checklistView;
+    
     
     /** Creates a new instance of AddEditCtrl */
     public AddEditCtrl(AddEdit model, AddEditView view, boolean edit) {
@@ -94,7 +104,25 @@ public class AddEditCtrl {
         view.okButton.addMouseListener(new OkButtonListener());
         view.cancelButton.addMouseListener(new CancelButtonListener());
         view.helpButton.addMouseListener(new HelpButtonListener());
+        view.checklistButton.setAction(new ChecklistAction());
     }
+    
+    
+    class ChecklistAction extends AbstractAction {
+    	public ChecklistAction() {
+    		putValue(NAME, L10n.getString("Checklist.Title")); 
+            putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.Description"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Checklist.Title"));
+    	}
+		public void actionPerformed(ActionEvent isUseless) {
+			if(checklistView == null) {
+				checklistView = new ChecklistView( view.taxonTextArea );
+				new ChecklistCtrl( checklistView, view.taxonTextArea );
+			}
+			checklistView.setVisible(true);			
+		}
+    }
+    
     
     class CommonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {

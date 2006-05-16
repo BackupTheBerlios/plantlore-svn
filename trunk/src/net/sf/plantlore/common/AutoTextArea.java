@@ -1,21 +1,11 @@
 package net.sf.plantlore.common;
 
-import java.awt.Container;
-import java.awt.Rectangle;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashSet;
 
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
+import javax.swing.*;
+import javax.swing.text.*;
 
 
 /**
@@ -84,7 +74,7 @@ import javax.swing.text.Position;
  * </ul>   
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @version 1.1
+ * @version 1.3
  */
 public class AutoTextArea extends JTextArea implements KeyListener, FocusListener, MouseListener {
 	
@@ -210,9 +200,10 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			case KeyEvent.VK_ENTER: // insert the current selection, switch to the FreeRoam
 				mode = Mode.FREE_ROAM;
 				assistant.setVisible(false);
-				String newline = (capacity <= this.getLineCount()) ? "" : "\n";
-				if(eoln) end++;
-				if(list.isSelectionEmpty()) replaceRange("", start, end);
+				String newline = "\n";
+				if( eoln || getLineCount() >= capacity ) newline = "";
+//				if(eoln) end++;
+				if(list.isSelectionEmpty()) replaceRange("", start, end + (eoln ? 1 : 0));
 				else {
 					Object value = list.getSelectedValue();
 					replaceRange(value.toString() + newline, start, end);
@@ -328,12 +319,48 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 		assistant = new Assistant(choices, container);
 		assistant.getList().addMouseListener(this);
 		addKeyListener(this); addFocusListener(this);
+		this.choices = choices;
+		this.values = new HashSet<Object>(choices.length);
+		for(Object obj : choices)
+			this.values.add(obj);
 	}
 	
-	@Deprecated
-	public void adjustOffset() {
-		assistant.adjustOffset(this);
+	/**
+	 * The list of choices, or "allowed values" - for fast searching.
+	 */
+	private HashSet<Object> values;
+	/**
+	 * The list of choices, or "allowed values" - to return.
+	 */
+	private Object[] choices;
+	
+	/**
+	 * 
+	 * @return The list of all allowed values.
+	 */
+	public Object[] getAllowedValues() {
+		return choices;
 	}
+
+	/**
+	 * Append new lines to the current text.
+	 * Only accepts records that are in the list of choices
+	 * and respects the capacity of the TextArea
+	 * (the capacity cannot be crossed).
+	 * 
+	 * @param record	The list of new records that are to be appended to the end of the text.
+	 */
+	public void addLines(Object[] record) {
+		keyPressed(escapeEmulator);
+		int line = getLineCount();
+		for(Object obj : record) {
+			if(line <= capacity && values.contains(obj)) {
+				append(obj.toString() + (line == capacity ? "" : "\n"));
+				line++;
+			}
+		}
+	}
+	
 	
 	/** Set the maximum number of records that can be inserted into this text area. */
 	public void setCapacity(int capacity) {
@@ -342,28 +369,75 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 
 
 	/**
+	 * Return the content of the specified line.
+	 * Trims the trailing newline character, if there's any. 
 	 * 
 	 * @param line	Line number (starts with 0).
 	 * @return	The string on the specified line.
 	 * @throws BadLocationException	If there is no such line.
 	 */
 	public String getLine(int line) {
-            int start, end;
-            String s;
-            try {
-		start = getLineStartOffset(line);
-                end = getLineEndOffset(line);
-                s = getText(start, end - start);
-            } catch (BadLocationException ble) {
-                throw new IndexOutOfBoundsException(""+line);
-            }
-            if (s.length() > 0 && s.charAt(s.length()-1) == '\n')
-                return s.substring(0,s.length()-1);
-            else
-                return s;
+		int start, end;
+		String s;
+		try {
+			start = getLineStartOffset(line);
+			end = getLineEndOffset(line);
+			s = getText(start, end - start);
+		} catch (BadLocationException ble) {
+			throw new IndexOutOfBoundsException(""+line);
+		}
+		if (s.length() > 0 && s.charAt(s.length()-1) == '\n')
+			return s.substring(0,s.length()-1);
+		else
+			return s;
 	}
+
 	
-	
+//	public static void main(String[] args) throws InterruptedException {
+//		String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+//        try { UIManager.setLookAndFeel(lookAndFeel); }
+//        catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
+//        
+//        String[]
+//        	ch = {"Anubis", "Apophis", "Ayiana", "Baal", "Baldur", "Camulus", "Cronus", "Daniel Jackson",
+//					"Elizabeth Weir", "Freir", "George Hammond", "Hallowed are the Ori", "Heimdall", "Hermiod",
+//					"Chaya Sar", "Imhotep", "Jack O'Neill", "John Sheppard", "Jonas Quinn", "Khalek", "Klorel",
+//					"Loki", "Martoufe", "Master Bra'tac", "Nerus", "Oma Desala", "Penegal", "Qetesh",
+//					"Ra", "Radek Zelenka", "Replicarter", "Rodney McKay", "Ronon Dex",
+//					"Samantha Carter", "Sokar", "Ševron", 
+//					"Teyla Emmagan", "The Eight", "The Fifth", "The First", "The Fourth",
+//					"The Second", "The Seventh", "The Sixth", "The Third", "Thor", "Ty'alc", "Vala Mal Doran", "Yu"};
+//        
+//		JFrame f = new JFrame();
+//		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		AutoTextArea a = new AutoTextArea(ch, f); 
+//		a.setPreferredSize(new Dimension(400, 300));
+//		a.setFont(new Font("Verdana", 0, 12));
+//		a.setCapacity(5);
+//		JScrollPane sp = new JScrollPane(a);
+//		sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		
+//		
+//		JPanel ugly = new JPanel(new BorderLayout());
+//		ugly.add(new JButton("foooooooo"), BorderLayout.WEST);
+//		ugly.add(new JButton("sue"), BorderLayout.NORTH);
+//		ugly.add(/*a*/sp, BorderLayout.CENTER);
+//		
+//				
+//		JButton b = new JButton("Done");
+//		f.getContentPane().add(new JLabel("be ugly and give some space"), BorderLayout.WEST);
+//		f.getContentPane().add(new JLabel("be ugly and give more space"), BorderLayout.NORTH);
+//		f.getContentPane().add(ugly/*a*/, BorderLayout.CENTER);
+//		f.getContentPane().add(b, BorderLayout.SOUTH);
+//		f.pack();
+//		f.setVisible(true);
+//		
+//		Thread.sleep(10000);
+//		a.addLines(new String[]{"Martoufe", "The Fourth",  "Baldur", "Chaya Sar", "Ygzotot"});
+//		
+//	}
+
+
 	
 	/*======================================================================
 	 	Unimplemented & uninteresting methods
