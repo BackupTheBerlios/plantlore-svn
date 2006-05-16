@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.l10n.L10n;
 
@@ -42,11 +43,11 @@ public class ChecklistCtrl {
 			this.type = type;
 			switch(type){
 			case 0:
-				putValue(SMALL_ICON, new ImageIcon("net/sf/plantlore/client/resources/Load.gif"));
+				putValue(SMALL_ICON, Resource.createIcon("Load.gif"));
 				putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.LoadTT"));
 				break;
 			case 1:
-				putValue(SMALL_ICON, new ImageIcon("net/sf/plantlore/client/resources/Save.gif"));
+				putValue(SMALL_ICON, Resource.createIcon("Save.gif"));
 				putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.SaveTT"));
 				break;
 			}
@@ -88,7 +89,7 @@ public class ChecklistCtrl {
 		public ClearSelection() {
 			System.out.println(System.getProperty("user.dir"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.ClearTT"));
-            putValue(SMALL_ICON, new ImageIcon("net/sf/plantlore/client/resources/Clear.gif"));
+            putValue(SMALL_ICON, Resource.createIcon("Clear.gif"));
         } 
 		public void actionPerformed(ActionEvent arg0) {
 			view.checklist.clearSelection();

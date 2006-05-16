@@ -21,6 +21,9 @@ import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.Position;
 
+import net.sf.plantlore.client.SplashScreen;
+import net.sf.plantlore.client.resources.Resource;
+
 /**
  * The checklist holds records. Save/load. Me good english!
  * 
@@ -120,13 +123,14 @@ public class Checklist extends JList {
 	
 	class CheckCellRenderer extends DefaultListCellRenderer {
 	    private Icon 
-	    	checked = new ImageIcon("checked.gif"), 
-	    	unchecked = new ImageIcon("unchecked.gif");
+	    	checked = Resource.createIcon("Checked.gif"), 
+	    	unchecked = Resource.createIcon("Unchecked.gif");
 	    private Font font;
 	    
 	    public CheckCellRenderer() {
 	    	font = getFont();
 	    	font = new Font(font.getName(), Font.BOLD, font.getSize());
+	    	
 	    }
 
 	    @Override
