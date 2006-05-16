@@ -86,6 +86,7 @@ public class ChecklistCtrl {
 	
 	class ClearSelection extends AbstractAction {
 		public ClearSelection() {
+			System.out.println(System.getProperty("user.dir"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.ClearTT"));
             putValue(SMALL_ICON, new ImageIcon("net/sf/plantlore/client/resources/Clear.gif"));
         } 

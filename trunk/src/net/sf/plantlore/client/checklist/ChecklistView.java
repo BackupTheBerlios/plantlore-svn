@@ -18,7 +18,7 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  yaa
  */
-public class ChecklistView extends javax.swing.JFrame {
+public class ChecklistView extends javax.swing.JDialog {
 	
 	private AutoTextArea model;
     
@@ -27,6 +27,8 @@ public class ChecklistView extends javax.swing.JFrame {
     	this.model = model;
         initComponents();
         choice = new JFileChooser();
+        setModal(true);
+        setLocationRelativeTo(null);
     }
     
     /** This method is called from within the constructor to

@@ -30,8 +30,9 @@ import javax.swing.text.Position;
 public class Checklist extends JList {
 	
 	public Checklist(Object[] values) {
-		for(int i = 0; i < values.length; i++) 
-			values[i] = values[i].toString();
+		if( !(values instanceof String[]) ) 
+			for(int i = 0; i < values.length; i++) 
+				values[i] = values[i].toString();
 		
 		setListData( (String[])values );
 		
@@ -49,29 +50,30 @@ public class Checklist extends JList {
 		for(Object listener : getListeners(MouseMotionListener.class))
 			removeMouseMotionListener((MouseMotionListener) listener);
 		
-		addKeyListener(new KeyHelper(true));	
+		addKeyListener(new KeyHelper());	
 	}
 	
 	
-	private int selectedIndex = -1;
+	private int highlighted = -1;
 	
-	
-	protected void redraw() {
-		if(selectedIndex >= 0) {
-			ensureIndexIsVisible(selectedIndex);
+	synchronized protected void setHighlighted(int index) {
+		if(index >= 0) {
+			highlighted = index;
+			ensureIndexIsVisible(highlighted);
 			repaint();
 		}
 	}
+	
+	synchronized protected int getHighlightedIndex() {
+		return highlighted;
+	}
+	
 	
 	
 	class KeyHelper extends KeyAdapter {
 		private long lastEvent = 0;
 		private StringBuilder cache = new StringBuilder(32);
-		private boolean selectMovesDown = false;
 		
-		public KeyHelper(boolean selectMovesDown) {
-			this.selectMovesDown = selectMovesDown;
-		}
 		
 		@Override
 		public void keyPressed(KeyEvent key) {
@@ -83,37 +85,34 @@ public class Checklist extends JList {
 			if(key.getKeyCode() > 64) {
 				cache.append(key.getKeyChar());
 				lastEvent = key.getWhen();
-//				System.out.println(cache.toString());
-				selectedIndex = getNextMatch(cache.toString(), 0, Position.Bias.Forward);
-				redraw();
-			} else 
+				int index = getNextMatch(cache.toString(), 0, Position.Bias.Forward);
+				setHighlighted(index);
+			} else {
+				int index = getHighlightedIndex();
 				switch(key.getKeyCode()) {
 				case KeyEvent.VK_SPACE:
-					setSelectionInterval(selectedIndex, selectedIndex);
-					if(!selectMovesDown) break;
+					setSelectionInterval(index, index);
+					break;
 				case KeyEvent.VK_DOWN:
-					if(selectedIndex < getModel().getSize() - 1) {
-						selectedIndex ++ ; 
-						redraw();
-					}
+					if(index < getModel().getSize() - 1)
+						setHighlighted(index + 1);
 					break;
 				case KeyEvent.VK_UP:
-					if(selectedIndex > 0) {
-						selectedIndex -- ; 
-						redraw();
-					}
+					if(index > 0 )
+						setHighlighted(index - 1);
 					break;
 				case KeyEvent.VK_LEFT:
-					selectedIndex -= getVisibleRowCount();
-					if(selectedIndex < 0) selectedIndex = 0;
-					redraw();
+					index -= getVisibleRowCount();
+					if(index < 0) index = 0;
+					setHighlighted(index);
 					break;
 				case KeyEvent.VK_RIGHT:
-					selectedIndex += getVisibleRowCount();
-					if(selectedIndex > getModel().getSize()) selectedIndex = getModel().getSize() - 1;
-					redraw();						
+					index += getVisibleRowCount();
+					if(index > getModel().getSize()) index = getModel().getSize() - 1;
+					setHighlighted(index);						
 					break;
 				}
+			}
 		}
 	}
 	
@@ -138,7 +137,7 @@ public class Checklist extends JList {
 	    		boolean selected,
 	    		boolean focus)   {
 
-	    	super.getListCellRendererComponent(list, value, index, false, index == selectedIndex);
+	    	super.getListCellRendererComponent(list, value, index, false, index == getHighlightedIndex());
 	    	if( selected ) {
 	    		setForeground( getSelectionBackground() );
 	    		setFont( font );
@@ -156,7 +155,7 @@ public class Checklist extends JList {
 	    		super.removeSelectionInterval(from, to);
 	    	else
 	    		super.addSelectionInterval(from, to);
-	    	selectedIndex = from;
+	    	setHighlighted(from);
 	    }
 	}
 	
