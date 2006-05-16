@@ -11,6 +11,7 @@ package net.sf.plantlore.client;
 
 import java.util.Date;
 import net.sf.plantlore.l10n.L10n;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -21,6 +22,13 @@ public class Column {
     public int preferredSize;
     public String l10nKey;
     public Class columnClass;
+    
+    private Logger logger;
+    private String nullString = "";
+    private Integer nullInteger = -1;
+    private Double nullDouble = new Double(-1);
+    private Date nullDate = new Date(0);
+    private Boolean nullBoolean = false;
     
     public enum Type {SELECTION,
     NUMBER,
@@ -50,136 +58,137 @@ public class Column {
     
     /** Creates a new instance of Column */
     public Column(Type type) {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.type = type;
         switch (type) {
             case AUTHOR:
                 preferredSize = 100;
-                l10nKey = "overviewColAuthor";
+                l10nKey = "Overview.ColumnAuthor";
                 columnClass = String.class;
                 break;
             case HABITAT_ALTITUDE:
                 preferredSize = 50;
-                l10nKey = "overviewColAltitude";
+                l10nKey = "Overview.ColumnAltitude";
                 columnClass = Double.class;
                 break;
             case HABITAT_COUNTRY:
                 preferredSize = 100;
-                l10nKey = "overviewColCountry";
+                l10nKey = "Overview.ColumnCountry";
                 columnClass = String.class;
                 break;
             case HABITAT_DESCRIPTION:
                 preferredSize = 150;
-                l10nKey = "overviewColPlace";
+                l10nKey = "Overview.ColumnPlace";
                 columnClass = String.class;
                 break;
             case HABITAT_LATITUDE:
                 preferredSize = 50;
-                l10nKey = "overviewColLatitude";
+                l10nKey = "Overview.ColumnLatitude";
                 columnClass = Double.class;
                 break;
             case HABITAT_LONGITUDE:
                 preferredSize = 50;
-                l10nKey = "overviewColLongitude";
+                l10nKey = "Overview.ColumnLongitude";
                 columnClass = Double.class;
                 break;
             case HABITAT_NEAREST_VILLAGE_NAME:
                 preferredSize = 100;
-                l10nKey = "overviewColVillage";
+                l10nKey = "Overview.ColumnVillage";
                 columnClass = String.class;
                 break;
             case HABITAT_NOTE:
                 preferredSize = 150;
-                l10nKey = "overviewColLocNote";
+                l10nKey = "Overview.ColumnLocNote";
                 columnClass = String.class;
                 break;
             case HABITAT_QUADRANT:
                 preferredSize = 50;
-                l10nKey = "overviewColQuadrant";
+                l10nKey = "Overview.ColumnQuadrant";
                 columnClass = String.class;
                 break;
             case METADATA_DATASETTITLE:
                 preferredSize = 100;
-                l10nKey = "overviewColMetadata";
+                l10nKey = "Overview.ColumnMetadata";
                 columnClass = String.class;
                 break;
             case NUMBER:
                 preferredSize = 50;
-                l10nKey = "overviewColNumber";
+                l10nKey = "Overview.ColumnNumber";
                 columnClass = Integer.class;
                 break;
             case OCCURRENCE_DATASOURCE:
                 preferredSize = 100;
-                l10nKey = "overviewColSource";
+                l10nKey = "Overview.ColumnSource";
                 columnClass = String.class;
                 break;
             case OCCURRENCE_DAYCOLLECTED:
                 preferredSize = 50;
-                l10nKey = "overviewColDay";
+                l10nKey = "Overview.ColumnDay";
                 columnClass = Integer.class;
                 break;
             case OCCURRENCE_HERBARIUM:
                 preferredSize = 50;
-                l10nKey = "overviewColHerbarium";
+                l10nKey = "Overview.ColumnHerbarium";
                 columnClass = String.class;
                 break;
             case OCCURRENCE_ID:
                 preferredSize = 50;
-                l10nKey = "overviewColOccurrenceId";
+                l10nKey = "Overview.ColumnOccurrenceId";
                 columnClass = Integer.class;
                 break;
             case OCCURRENCE_MONTHCOLLECTED:
                 preferredSize = 50;
-                l10nKey = "overviewColMonth";
+                l10nKey = "Overview.ColumnMonth";
                 columnClass = Integer.class;
                 break;
             case OCCURRENCE_NOTE:
                 preferredSize = 150;
-                l10nKey = "overviewColOccNote";
+                l10nKey = "Overview.ColumnOccNote";
                 columnClass = String.class;
                 break;
             case OCCURRENCE_TIMECOLLECTED:
                 preferredSize = 50;
-                l10nKey = "overviewColTime";
+                l10nKey = "Overview.ColumnTime";
                 columnClass = Date.class;
                 break;
             case OCCURRENCE_YEARCOLLECTED:
                 preferredSize = 50;
-                l10nKey = "overviewColYear";
+                l10nKey = "Overview.ColumnYear";
                 columnClass = Integer.class;
                 break;
             case PHYTOCHORION_CODE:
                 preferredSize = 50;
-                l10nKey = "overviewColPhytCode";
+                l10nKey = "Overview.ColumnPhytCode";
                 columnClass = String.class;
                 break;
             case PHYTOCHORION_NAME:
                 preferredSize = 100;
-                l10nKey = "overviewColPhyt";
+                l10nKey = "Overview.ColumnPhyt";
                 columnClass = String.class;
                 break;
             case PLANT_TAXON:
                 preferredSize = 100;
-                l10nKey = "overviewColName";
+                l10nKey = "Overview.ColumnName";
                 columnClass = String.class;
                 break;
             case PUBLICATION_COLLECTIONNAME:
                 preferredSize = 100;
-                l10nKey = "overviewColPublication";
+                l10nKey = "Overview.ColumnPublication";
                 columnClass = String.class;
                 break;
             case SELECTION:
                 preferredSize = 30;
-                l10nKey = "overviewColSelection";
+                l10nKey = "Overview.ColumnSelection";
                 columnClass = Boolean.class;
                 break;
             case TERRITORY_NAME:
                 preferredSize = 100;
-                l10nKey = "overviewColTerritory";
+                l10nKey = "Overview.ColumnTerritory";
                 columnClass = String.class;
                 break;
             default:
                 preferredSize = 100;
-                l10nKey = "overviewCol";
+                l10nKey = "Overview.Column";
                 columnClass = String.class;
         }
         
@@ -211,8 +220,40 @@ public class Column {
     }
     
     public String toString() {
-        return type.toString();
+        return L10n.getString(l10nKey);
     }
+    
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Column)) 
+            return false;
+        
+        Column col = (Column) obj;
+        
+        return type.equals(col.type);
+    }
+    
+    public Object getDefaultNullValue() {
+        assert columnClass != null;
+        
+        if (columnClass.equals(String.class))
+            return nullString;
+        
+        if (columnClass.equals(Integer.class))
+            return nullInteger;
+        
+        if (columnClass.equals(Double.class))
+            return nullDouble;
+        
+        if (columnClass.equals(Date.class))
+            return nullDate;
+        
+        if (columnClass.equals(Boolean.class))
+            return nullBoolean;
+        
+        logger.warn("Don't have default null value for class "+columnClass.getClass().getName());
+        return new Object();
+    }
+    
 }
 
 /*

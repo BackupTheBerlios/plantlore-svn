@@ -35,7 +35,7 @@ public class MainConfig {
     Logger logger;
     Document document;
     String file;
-    Column[] columns = null;
+    ArrayList<Column> columns = null;
     ArrayList<DBInfo> dbinfos = null;
     
     /** Creates a new instance of MainConfigParser */
@@ -67,7 +67,7 @@ public class MainConfig {
         return load();
     }
     
-    public Column[] getColumns() {
+    public ArrayList<Column> getColumns() {
         ArrayList<Column> columns = new ArrayList<Column>();
         
         List columnList = document.selectNodes("//config/overview/columns/column");
@@ -89,9 +89,7 @@ public class MainConfig {
                 columns.add(c);
             }
         }
-        Column[] tmp = new Column[columns.size()];
-        columns.toArray(tmp);
-        return tmp;
+        return columns;
     }
     
     public ArrayList<DBInfo> getDBinfos() {
@@ -122,7 +120,7 @@ public class MainConfig {
         return result;
     }
     
-    public void setColumns(Column[] columns) {
+    public void setColumns(ArrayList<Column> columns) {
         this.columns = columns;
     }
     
@@ -145,8 +143,8 @@ public class MainConfig {
         }
         Element e = overview.addElement("columns");
         
-        for (int i = 0; i < columns.length; i++) {
-            e.addElement("column").addAttribute("preferredSize",""+columns[i].getPreferredSize()).setText(columns[i].type.toString());
+        for (Column column : columns) {
+            e.addElement("column").addAttribute("preferredSize",""+column.getPreferredSize()).setText(column.type.toString());
         }        
     }
     

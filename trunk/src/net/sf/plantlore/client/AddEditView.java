@@ -161,6 +161,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
         descriptionArea.setLineWrap(true);
+        new TabTransfersFocus(descriptionArea);
         jScrollPane2.setViewportView(descriptionArea);
 
         taxonTextArea.setColumns(20);
@@ -460,6 +461,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         locationNoteArea.setColumns(20);
         locationNoteArea.setRows(5);
         locationNoteArea.setLineWrap(true);
+        new TabTransfersFocus(locationNoteArea);
         jScrollPane4.setViewportView(locationNoteArea);
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
@@ -573,6 +575,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         occurrenceNoteArea.setColumns(20);
         occurrenceNoteArea.setRows(5);
         occurrenceNoteArea.setLineWrap(true);
+        new TabTransfersFocus(occurrenceNoteArea);
         jScrollPane5.setViewportView(occurrenceNoteArea);
 
         org.jdesktop.layout.GroupLayout jPanel9Layout = new org.jdesktop.layout.GroupLayout(jPanel9);

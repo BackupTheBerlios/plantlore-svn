@@ -13,7 +13,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.Observable;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import net.sf.plantlore.l10n.L10n;
@@ -41,6 +44,11 @@ public class SettingsCtrl extends Observable
         view.englishRadioButton.addActionListener(new LanguagesListener());
         view.czechRadioButton.addActionListener(new LanguagesListener());
         view.defaultRadioButton.addActionListener(new LanguagesListener());
+        
+        view.addButton.addActionListener(new ButtonListener());
+        view.removeButton.addActionListener(new ButtonListener());
+        view.upButton.addActionListener(new ButtonListener());
+        view.downButton.addActionListener(new ButtonListener());
     }
     
     /** Handles clicks on languages radio buttons.
@@ -72,15 +80,88 @@ public class SettingsCtrl extends Observable
         {
             String s = actionEvent.getActionCommand();
             if (s.equals("OK")) {
+                DefaultListModel selectedModel = (DefaultListModel)view.selectedList.getModel();
+                ArrayList<Column> columns = new ArrayList<Column>(selectedModel.size());
+                
+                //!! Overview and Search expect that the first column is always Occurrence.ID!!
+                columns.add(new Column(Column.Type.OCCURRENCE_ID));
+                
+                for (int i = 0; i < selectedModel.size(); i++) {
+                    columns.add((Column) selectedModel.get(i));
+                }
+                model.setSelectedColumns(columns);                
                 model.store();
                 view.setVisible(false);
+                return;
             }
-            if (s.equals("HELP"))
+            if (s.equals("HELP")) {
                 System.out.println("Tady se bude volat Help!");
-            if (s.equals("CANCEL"))
+                return;
+            }
+            if (s.equals("CANCEL")) {
                 view.setVisible(false);
+                return;
+            }
+            
+            if (s.equals("ADD")) {
+                DefaultListModel availableModel = (DefaultListModel)view.availableList.getModel();
+                DefaultListModel selectedModel = (DefaultListModel)view.selectedList.getModel();
+                
+                Object[] columns = view.availableList.getSelectedValues();
+                for (Object c :  columns) {                    
+                    selectedModel.addElement(c);
+                    availableModel.removeElement(c);
+                }
+                return;
+            }
+            if (s.equals("REMOVE")) {
+                DefaultListModel availableModel = (DefaultListModel)view.availableList.getModel();
+                DefaultListModel selectedModel = (DefaultListModel)view.selectedList.getModel();
+                
+                Object[] columns = view.selectedList.getSelectedValues();
+                for (Object c :  columns) {
+                    Column col = (Column)c;
+                    switch (col.type) {
+                        case SELECTION:
+                            JOptionPane.showMessageDialog(view,"You can't remove the selection column.");
+                            continue;
+                    }
+                    availableModel.addElement(c);
+                    selectedModel.removeElement(c);
+                }
+                
+                return;
+            }
+            if (s.equals("UP")) {
+                DefaultListModel selectedModel = (DefaultListModel)view.selectedList.getModel();
+                int min = view.selectedList.getMinSelectionIndex();
+                int max = view.selectedList.getMaxSelectionIndex();
+                
+                if (min > 0) {
+                    Object o = selectedModel.remove(min-1);
+                    selectedModel.add(max,o);
+                }
+                
+                return;
+            }
+            if (s.equals("DOWN")) {
+                DefaultListModel selectedModel = (DefaultListModel)view.selectedList.getModel();
+                int min = view.selectedList.getMinSelectionIndex();
+                int max = view.selectedList.getMaxSelectionIndex();
+                
+                if (max < selectedModel.getSize() - 1) {
+                    Object o = selectedModel.getElementAt(max+1);
+                    
+                    for (int i = max; i >= min; i--) {
+                        selectedModel.set(i+1,selectedModel.getElementAt(i));
+                    }
+                    selectedModel.set(min,o);
+                    view.selectedList.setSelectionInterval(min+1,max+1);
+                }
+                
+                return;
+            }
         }
     }
-    
     
 }

@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
@@ -40,10 +41,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import net.sf.plantlore.common.ComponentAdjust;
 import net.sf.plantlore.common.StatusBarManager;
 
 import net.sf.plantlore.l10n.L10n;
+import org.apache.log4j.Logger;
 
 /** Application core view
  *
@@ -56,6 +59,7 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class AppCoreView extends JFrame implements Observer 
 {
+    private Logger logger;
     private Preferences prefs;
     private AppCore model;
     //private JFrame frame;
@@ -63,24 +67,24 @@ public class AppCoreView extends JFrame implements Observer
     private JPanel mainPane;
     private JMenuBar menuBar = new JMenuBar();
     private JMenu
-            fileMenu = new JMenu(L10n.getString("File")),
-            dataMenu = new JMenu(L10n.getString("Data")),
-            helpMenu = new JMenu(L10n.getString("Help")); 
-    private JMenuItem settings = new JMenuItem(L10n.getString("Settings"));
-    private JMenuItem print = new JMenuItem(L10n.getString("Print"));
-    private JMenuItem exit = new JMenuItem(L10n.getString("Exit"));
-    private JMenuItem helpContents = new JMenuItem(L10n.getString("helpContents"));
-    private JMenuItem helpAbout = new JMenuItem(L10n.getString("helpAbout"));
-    private JMenuItem dataAuthors = new JMenuItem(L10n.getString("authorMgr"));
-    private JMenuItem dataPublications = new JMenuItem(L10n.getString("publicationMgr")); 
-    private JMenuItem dataUser = new JMenuItem(L10n.getString("UserManager"));
-    private JMenuItem dataMetadata = new JMenuItem(L10n.getString("metadataManager"));
-    private JMenuItem dataHistory = new JMenuItem(L10n.getString("History"));
-    private JMenuItem dataWholeHistory = new JMenuItem(L10n.getString("wholeHistory"));
-    private JMenuItem dataImport = new JMenuItem(L10n.getString("dataImport"));
-    private JMenuItem dataExport = new JMenuItem(L10n.getString("dataExport"));
-    private JMenuItem dataSearch = new JMenuItem(L10n.getString("dataSearch"));
-    private JMenuItem login = new JMenuItem(L10n.getString("Login"));
+            fileMenu = new JMenu(L10n.getString("Overview.MenuFile")),
+            dataMenu = new JMenu(L10n.getString("Overview.MenuData")),
+            helpMenu = new JMenu(L10n.getString("Overview.MenuHelp")); 
+    private JMenuItem settings = new JMenuItem(L10n.getString("Overview.MenuSettings"));
+    private JMenuItem print = new JMenuItem(L10n.getString("Overview.MenuPrint"));
+    private JMenuItem exit = new JMenuItem(L10n.getString("Overview.MenuExit"));
+    private JMenuItem helpContents = new JMenuItem(L10n.getString("Overview.MenuHelpContents"));
+    private JMenuItem helpAbout = new JMenuItem(L10n.getString("Overview.MenuHelpAbout"));
+    private JMenuItem dataAuthors = new JMenuItem(L10n.getString("Overview.MenuAuthorManager"));
+    private JMenuItem dataPublications = new JMenuItem(L10n.getString("Overview.MenuPublicationManager")); 
+    private JMenuItem dataUser = new JMenuItem(L10n.getString("Overview.MenuUserManager"));
+    private JMenuItem dataMetadata = new JMenuItem(L10n.getString("Overview.MenuMetadataManager"));
+    private JMenuItem dataHistory = new JMenuItem(L10n.getString("Overview.MenuHistory"));
+    private JMenuItem dataWholeHistory = new JMenuItem(L10n.getString("Overview.MenuwholeHistory"));
+    private JMenuItem dataImport = new JMenuItem(L10n.getString("Overview.MenuDataImport"));
+    private JMenuItem dataExport = new JMenuItem(L10n.getString("Overview.MenuDataExport"));
+    private JMenuItem dataSearch = new JMenuItem(L10n.getString("Overview.MenuDataSearch"));
+    private JMenuItem login = new JMenuItem(L10n.getString("Overview.MenuLogin"));
     
     private JButton 
             importButton = new JButton(),
@@ -109,6 +113,7 @@ public class AppCoreView extends JFrame implements Observer
     /** Creates a new instance of AppCoreView */
     public AppCoreView(AppCore model)
     {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());                
         this.model = model;
         model.addObserver(this); 
         prefs = Preferences.userNodeForPackage(this.getClass());
@@ -118,7 +123,7 @@ public class AppCoreView extends JFrame implements Observer
     {
         if (object != null && object instanceof String) {
             String arg = (String) object;
-            if (arg.equals("PAGE_CHANGED")) {
+            if (arg.equals("PAGE_CHANGED")||arg.equals("RECORDS_PER_PAGE")) {
                 recordsCount.setText(""+model.getResultsCount());
                 pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
                 //FIXME: change selection only if really required
@@ -166,14 +171,14 @@ public class AppCoreView extends JFrame implements Observer
      */
     private void initMenu()
     {
-        fileMenu.setMnemonic(L10n.getMnemonic("File"));
+        fileMenu.setMnemonic(L10n.getMnemonic("Overview.MenuFile"));
         fileMenu.add(login);
         fileMenu.add(settings);
         fileMenu.add(print);
         fileMenu.addSeparator();
         fileMenu.add(exit);
         
-        dataMenu.setMnemonic(L10n.getMnemonic("Data"));
+        dataMenu.setMnemonic(L10n.getMnemonic("Overview.MenuData"));
         dataMenu.add(dataAuthors);
         dataMenu.add(dataPublications);  
         dataMenu.add(dataMetadata);
@@ -184,7 +189,7 @@ public class AppCoreView extends JFrame implements Observer
         dataMenu.add(dataWholeHistory); 
         dataMenu.add(dataUser);
 
-        helpMenu.setMnemonic(L10n.getMnemonic("Help"));
+        helpMenu.setMnemonic(L10n.getMnemonic("Overview.MenuHelp"));
         helpMenu.add(helpContents);
         helpMenu.addSeparator();
         helpMenu.add(helpAbout);
@@ -207,7 +212,7 @@ public class AppCoreView extends JFrame implements Observer
         mainToolBar.add(searchButton);
         container.add(mainToolBar, BorderLayout.NORTH);
         
-        sbm.add(searchButton, "Search for records");
+        sbm.add(searchButton, L10n.getString("Overview.SearchTT"));
     }
     
     /** Constructs the main status bar and initializes the <code>sbm StatusBarManager</code> appropriately.
@@ -280,9 +285,9 @@ public class AppCoreView extends JFrame implements Observer
         ca.add(invertSelected);
         ca.setMaxWidth();
         
-        sbm.add(prevPage, "Previous page");
-        sbm.add(nextPage, "Next page");
-        sbm.add(recordsPerPage, "Number of records per page");
+        sbm.add(prevPage, L10n.getString("Overview.PreviousPage"));
+        sbm.add(nextPage, L10n.getString("Overview.NextPage"));
+        sbm.add(recordsPerPage, L10n.getString("Overview.RecordsPerPage"));
     }
     
     /** This method should be called right after the user logs into some database.
@@ -292,8 +297,10 @@ public class AppCoreView extends JFrame implements Observer
     {
         TableColumn tc;
         OverviewTableModel otm = model.getTableModel();
+        TableSorter tableSorter = new TableSorter(otm);
         //FIXME: what if otm == null ????????????
-        overview.setModel(otm);
+        overview.setModel(tableSorter);
+        tableSorter.setTableHeader(overview.getTableHeader());
         
         // Comment to established db connection automatically without the login procedure        
         overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*25));
@@ -304,6 +311,16 @@ public class AppCoreView extends JFrame implements Observer
         }
         recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));        
         pack();
+        
+        ArrayList<Column> columns = model.getMainConfig().getColumns();
+        if (columns.size() > 1) {
+            logger.debug("Restoring columns loaded from the main config.");
+            Search search = new Search(model.getDatabase());
+            search.setColumns(columns);
+            search.constructQuery();
+            model.getTableModel().setColumns(columns);
+            model.setResultId(search.getNewResultId());
+        }
     }
     
     /** Returns the main window <code>StatusBarManager</code>.

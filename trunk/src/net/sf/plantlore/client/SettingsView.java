@@ -6,14 +6,18 @@
 
 package net.sf.plantlore.client;
 
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 
 /**
  *
  * @author  fraktalek
  */
-public class SettingsView extends javax.swing.JDialog {
+public class SettingsView extends javax.swing.JDialog implements Observer {
     Settings model;
     
     
@@ -22,6 +26,40 @@ public class SettingsView extends javax.swing.JDialog {
         super(parent, modal);
         this.model = model;
         initComponents();
+        loadValues();
+    }
+    
+    public void loadValues() {
+        switch (model.getLanguage()) {
+            case Settings.CZECH:
+                czechRadioButton.setSelected(true);
+                break;
+            case Settings.DEFAULT_LANGUAGE:
+                defaultRadioButton.setSelected(true);
+                break;
+            case Settings.ENGLISH:
+                englishRadioButton.setSelected(true);
+                break;
+            default:
+                defaultRadioButton.setSelected(true);                
+        }
+
+        DefaultListModel lm = (DefaultListModel)availableList.getModel();
+
+        ArrayList<Column> columns = model.getUnselectedColumns();
+        for (Column column : columns)
+            if (column.type.equals(Column.Type.OCCURRENCE_ID))
+                continue;
+            else
+                lm.addElement(column);        
+        
+        lm = (DefaultListModel)selectedList.getModel();
+        columns = model.getSelectedColumns();
+        for (Column column : columns)
+            if (column.type.equals(Column.Type.OCCURRENCE_ID))
+                continue;
+            else
+                lm.addElement(column);        
     }
     
     /** This method is called from within the constructor to
@@ -43,11 +81,13 @@ public class SettingsView extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         availableList = new JList(new DefaultListModel());
         jScrollPane2 = new javax.swing.JScrollPane();
-        selectedList = new javax.swing.JList();
+        selectedList = new JList(new DefaultListModel());
         availableLabel = new javax.swing.JLabel();
         selectedLabel = new javax.swing.JLabel();
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
+        upButton = new javax.swing.JButton();
+        downButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
@@ -81,7 +121,7 @@ public class SettingsView extends javax.swing.JDialog {
                     .add(englishRadioButton)
                     .add(czechRadioButton)
                     .add(defaultRadioButton))
-                .addContainerGap(475, Short.MAX_VALUE))
+                .addContainerGap(462, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -92,7 +132,7 @@ public class SettingsView extends javax.swing.JDialog {
                 .add(czechRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(defaultRadioButton)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -109,17 +149,14 @@ public class SettingsView extends javax.swing.JDialog {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(149, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab("tab1", jPanel1);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Displayed columns"));
-        DefaultListModel lm = (DefaultListModel)availableList.getModel();
-        Column.Type[] types = Column.Type.values();
-        for (int i=0; i < types.length; i++)
-        lm.addElement(types[i]);
         jScrollPane1.setViewportView(availableList);
 
+        selectedList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         jScrollPane2.setViewportView(selectedList);
 
         availableLabel.setText("Available:");
@@ -127,8 +164,21 @@ public class SettingsView extends javax.swing.JDialog {
         selectedLabel.setText("Displayed:");
 
         addButton.setText("Add");
+        addButton.setActionCommand("ADD");
 
         removeButton.setText("Remove");
+        removeButton.setActionCommand("REMOVE");
+
+        upButton.setText("Up");
+        upButton.setActionCommand("UP");
+        upButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                upButtonActionPerformed(evt);
+            }
+        });
+
+        downButton.setText("Down");
+        downButton.setActionCommand("DOWN");
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -137,20 +187,30 @@ public class SettingsView extends javax.swing.JDialog {
             .add(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(availableLabel)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(45, 45, 45)
+                    .add(jPanel4Layout.createSequentialGroup()
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 156, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(21, 21, 21)
+                        .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(addButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(removeButton)))
+                    .add(availableLabel))
+                .add(21, 21, 21)
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(removeButton)
-                    .add(addButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(53, 53, 53)
-                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(selectedLabel)
-                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(65, 65, 65))
+                    .add(jPanel4Layout.createSequentialGroup()
+                        .add(selectedLabel)
+                        .add(243, 243, 243))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4Layout.createSequentialGroup()
+                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(19, 19, 19)
+                        .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(upButton)
+                            .add(downButton))
+                        .add(45, 45, 45))))
         );
 
         jPanel4Layout.linkSize(new java.awt.Component[] {addButton, removeButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        jPanel4Layout.linkSize(new java.awt.Component[] {downButton, upButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         jPanel4Layout.linkSize(new java.awt.Component[] {jScrollPane1, jScrollPane2}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
@@ -160,17 +220,21 @@ public class SettingsView extends javax.swing.JDialog {
                 .addContainerGap()
                 .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel4Layout.createSequentialGroup()
+                        .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(availableLabel)
+                            .add(selectedLabel))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane2)
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 194, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(jPanel4Layout.createSequentialGroup()
+                        .add(upButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(downButton)
+                        .add(17, 17, 17)
                         .add(addButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(removeButton))
-                    .add(jPanel4Layout.createSequentialGroup()
-                        .add(availableLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 194, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4Layout.createSequentialGroup()
-                        .add(selectedLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)))
+                        .add(removeButton)))
                 .addContainerGap())
         );
 
@@ -180,14 +244,14 @@ public class SettingsView extends javax.swing.JDialog {
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+                .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTabbedPane1.addTab("tab2", jPanel3);
@@ -208,12 +272,12 @@ public class SettingsView extends javax.swing.JDialog {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(helpButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 334, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 321, Short.MAX_VALUE)
                 .add(cancelButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(okButton)
                 .addContainerGap())
-            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
+            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
         );
 
         layout.linkSize(new java.awt.Component[] {cancelButton, helpButton, okButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -221,7 +285,7 @@ public class SettingsView extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)
@@ -231,6 +295,10 @@ public class SettingsView extends javax.swing.JDialog {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+// TODO add your handling code here:
+    }//GEN-LAST:event_upButtonActionPerformed
     
     /**
      * @param args the command line arguments
@@ -242,14 +310,18 @@ public class SettingsView extends javax.swing.JDialog {
             }
         });
     }
+
+    public void update(Observable o, Object arg) {
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
+    protected javax.swing.JButton addButton;
     private javax.swing.JLabel availableLabel;
-    private javax.swing.JList availableList;
+    protected javax.swing.JList availableList;
     protected javax.swing.JButton cancelButton;
     protected javax.swing.JRadioButton czechRadioButton;
     protected javax.swing.JRadioButton defaultRadioButton;
+    protected javax.swing.JButton downButton;
     protected javax.swing.JRadioButton englishRadioButton;
     protected javax.swing.JButton helpButton;
     private javax.swing.JPanel jPanel1;
@@ -261,9 +333,10 @@ public class SettingsView extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.ButtonGroup languagesButtonGroup;
     protected javax.swing.JButton okButton;
-    private javax.swing.JButton removeButton;
+    protected javax.swing.JButton removeButton;
     private javax.swing.JLabel selectedLabel;
-    private javax.swing.JList selectedList;
+    protected javax.swing.JList selectedList;
+    protected javax.swing.JButton upButton;
     // End of variables declaration//GEN-END:variables
     
 }

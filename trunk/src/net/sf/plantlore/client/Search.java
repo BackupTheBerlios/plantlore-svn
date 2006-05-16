@@ -91,14 +91,17 @@ public class Search extends Observable {
     private int timeChoice = INTERVAL;
     private Boolean editMode = false;
     
-    private Column[] columns;
+    private ArrayList<Column> columns;
     private int newResultId = -1;
+    private SelectQuery exportQuery = null;
+    
     
     /** Creates a new instance of AddEdit */
     public Search(DBLayer database) {
         this.database = database;
         this.editMode = editMode;
-        logger = Logger.getLogger(this.getClass().getPackage().getName());                
+        logger = Logger.getLogger(this.getClass().getPackage().getName());         
+        clear();
     }
  
 
@@ -491,9 +494,9 @@ public class Search extends Observable {
             return new Pair<Boolean,String>(true,"");
     }
     
-    public SelectQuery constructQuery() {
+    public Pair<SelectQuery,SelectQuery> constructQuery() {
         DBLayerUtils dlu = new DBLayerUtils(database);
-        SelectQuery sq = null;
+        SelectQuery sq = null, exportQuery = null;
             //FIXME:
             try {
                 sq = database.createQuery(AuthorOccurrence.class);
@@ -509,8 +512,21 @@ public class Search extends Observable {
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
                 sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
                 
-                for (int i=0; i < columns.length; i++) {
-                    switch (columns[i].type) {
+                exportQuery = database.createQuery(AuthorOccurrence.class);
+                exportQuery.createAlias(AuthorOccurrence.AUTHOR,"author");
+                exportQuery.createAlias(AuthorOccurrence.OCCURRENCE,"occ");
+                exportQuery.createAlias("occ."+Occurrence.HABITAT,"habitat");
+                exportQuery.createAlias("occ."+Occurrence.PLANT,"plant");
+                exportQuery.createAlias("occ."+Occurrence.PUBLICATION,"publication");
+                exportQuery.createAlias("occ."+Occurrence.METADATA,"metadata");
+                exportQuery.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
+                exportQuery.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
+                exportQuery.createAlias("habitat."+Habitat.TERRITORY,"territory");
+                exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
+                exportQuery.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
+
+                for (Column column : columns) {
+                    switch (column.type) {
                         case AUTHOR:
                             sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
                             break;
@@ -590,6 +606,7 @@ public class Search extends Observable {
                 
                 if (isNotEmpty(village)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,dlu.getObjectFor(village.getSecond(),Village.class),null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,dlu.getObjectFor(village.getSecond(),Village.class),null);
                 }
                 
                 int notEmpty = 0;
@@ -622,6 +639,7 @@ public class Search extends Observable {
                         }
                     }
                     sq.addOrRestriction(args);
+                    exportQuery.addOrRestriction(args);
                 }
 
                 notEmpty = 0;
@@ -643,62 +661,77 @@ public class Search extends Observable {
                         }
                     }
                     sq.addOrRestriction(args);
+                    exportQuery.addOrRestriction(args);
                 }
                 if (isNotEmpty(localityDescription)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
                 }
                 
                 if (isNotEmpty(occurrenceNote)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
                 }
                 
                 if (isNotEmpty(habitatNote)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
                 }
                 
                 if (isNotEmpty(territoryName)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null,dlu.getObjectFor(territoryName.getSecond(),Territory.class),null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null,dlu.getObjectFor(territoryName.getSecond(),Territory.class),null);
                 }
                 
                 if (isNotEmpty(phytName)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,dlu.getObjectFor(phytName.getSecond(),Phytochorion.class),null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,dlu.getObjectFor(phytName.getSecond(),Phytochorion.class),null);
                 }
                 
                 if (isNotEmpty(phytCountry)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.COUNTRY,null,phytCountry,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.COUNTRY,null,phytCountry,null);
                 }
                 
                 if (isNotEmpty(quadrant)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.QUADRANT,null,quadrant,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.QUADRANT,null,quadrant,null);
                 }
                 
                 if (isNotEmpty(altitude)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.ALTITUDE,null,altitude,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.ALTITUDE,null,altitude,null);
                 }
                 
                 if (isNotEmpty(longitude)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LONGITUDE,null,longitude,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LONGITUDE,null,longitude,null);
                 }
 
                 if (isNotEmpty(latitude)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LATITUDE,null,latitude,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LATITUDE,null,latitude,null);
                 }
 
                 if (isNotEmpty(source)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.DATASOURCE,null,source,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.DATASOURCE,null,source,null);
                 }
                 
                 if (isNotEmpty(publication)) {
                     //FIXME: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,dlu.getObjectFor(publication.getSecond(),Publication.class),null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,dlu.getObjectFor(publication.getSecond(),Publication.class),null);
                 }
                 
                 if (isNotEmpty(herbarium)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HERBARIUM,null,herbarium,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HERBARIUM,null,herbarium,null);
                 }
                 
                 if (isNotEmpty(project)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,dlu.getObjectFor(project.getSecond(),Metadata.class),null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,dlu.getObjectFor(project.getSecond(),Metadata.class),null);
                 }
                 
                 if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
@@ -722,12 +755,15 @@ public class Search extends Observable {
                     a.add(to.getTime());
                     System.out.println("Searching between "+from.getTime()+" and "+to.getTime());
                     sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
                 }
                 
                 if (timeChoice == MONTH && isNotEmpty(month)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
+                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
                 }
                 
+                this.exportQuery = exportQuery;
                 int resultId = database.executeQuery(sq);
                 this.newResultId = resultId;
                 logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
@@ -739,7 +775,7 @@ public class Search extends Observable {
             } catch (DBLayerException ex) {
                 ex.printStackTrace();
             }
-        return sq;
+        return new Pair<SelectQuery,SelectQuery>(sq,exportQuery);
     }
     
     public void clear() {
@@ -838,7 +874,7 @@ public class Search extends Observable {
         return newResultId;
     }
 
-    public void setColumns(Column[] columns) {
+    public void setColumns(ArrayList<Column> columns) {
         logger.debug("Setting columns.");
         this.columns = columns;
     }
@@ -929,6 +965,10 @@ public class Search extends Observable {
 
     public void setProjects(Pair<String, Integer>[] projects) {
         this.projects = projects;
+    }
+    
+    public SelectQuery getExportQuery() {
+        return exportQuery;
     }
 }
 

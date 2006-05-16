@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+import javax.swing.table.TableModel;
 import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
@@ -49,8 +50,11 @@ public class AppCore extends Observable
     private DBLayer database;  
     private Right accessRights;
     private OverviewTableModel tableModel;
+    private TableSorter tableSorter;
     private Logger logger;
 
+    private SelectQuery exportQuery = null;
+    
     private int selectedRow = 0;
     
     /** data for dialogs */
@@ -190,12 +194,13 @@ public class AppCore extends Observable
             return 0;
     }
 
-    public void setRecordsPerPage(int recordsPerPage) {
+    public void setRecordsPerPage(int recordsPerPage) {        
         if (tableModel != null)
         {
+            logger.info("Setting records per page to "+recordsPerPage);
             tableModel.setPageSize(recordsPerPage);
             setChanged();
-            notifyObservers();        
+            notifyObservers("RECORDS_PER_PAGE");        
         }
     }
 
@@ -278,8 +283,9 @@ public class AppCore extends Observable
     }
     
     public Integer getSelectedOccurrence() {
-        Object[] row = tableModel.getRow(selectedRow);
-        return (Integer)row[row.length-1];
+        //Object[] row = tableModel.getRow(selectedRow);
+        //return (Integer)row[row.length-1];
+        return tableModel.getOccurrenceId(selectedRow);
     }
     
     public void savePreferences() throws IOException {
@@ -294,6 +300,14 @@ public class AppCore extends Observable
         notifyObservers("NEW_QUERY");
     }
 
+    public void setExportQuery(SelectQuery query) {
+        this.exportQuery = query;
+    }
+    
+    public SelectQuery getExportQuery() {
+        return exportQuery;
+    }
+    
     public Pair<String, Integer>[] getPlants() {
         if (plants == null)
         {

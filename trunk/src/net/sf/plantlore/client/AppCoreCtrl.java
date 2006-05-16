@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.lang.Integer;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
@@ -75,6 +76,8 @@ import org.apache.log4j.Logger;
 public class AppCoreCtrl
 {
     Logger logger;
+    Preferences prefs;
+    private final static int MAX_RECORDS_PER_PAGE = 1000;
     //--------------SUPPLIED MODELS AND VIEWS-----------------
     AppCore model;
     AppCoreView view;
@@ -94,7 +97,6 @@ public class AppCoreCtrl
     Settings settingsModel;
     SettingsView settingsView;
     SettingsCtrl settingsCtrl;
-    Preferences prefs;    
     
     // History of one occurrence
     History historyModel;
@@ -138,9 +140,10 @@ public class AppCoreCtrl
     public AppCoreCtrl(AppCore model, AppCoreView view)
     {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
+        prefs = Preferences.userNodeForPackage(this.getClass());
+
         this.model = model;
         this.view = view;
-        prefs = Preferences.userNodeForPackage(AppCoreView.class);
         view.setSettingsAction(new SettingsAction());
         view.setPrintAction(new PrintAction());
         view.addExitListener(new ExitListener());
@@ -191,15 +194,40 @@ public class AppCoreCtrl
         {
             logger.info("Settings selected");
             //If the dialog is already constructed then use it. Otherwise construct it first.
-            //if (settingsModel == null) {
+            if (settingsModel == null) {
                 settingsModel = new Settings();
+                settingsModel.setSelectedColumns(model.getTableModel().getColumns());
+                settingsModel.addObserver(new SettingsBridge());
                 settingsView = new SettingsView(view,true,settingsModel);
                 settingsCtrl = new SettingsCtrl(settingsModel, settingsView);
-                settingsView.setVisible(true);
-            /*} else {
-                settingsView.setVisible(true);
-            }*/
+            } 
+            //settingsView.loadValues();
+            settingsView.setVisible(true);
         }
+    }
+    
+    /** Assumes that user doesn't work with the Search dialog at time of the update.
+     *
+     */
+    class SettingsBridge implements Observer {
+        Search sm = new Search(model.getDatabase());
+        
+        public void update(Observable o, Object arg) {
+            System.out.println("Settings bridge update");
+            if (arg instanceof String) {                
+                String s = (String)arg;
+                System.out.println("got command : "+s);
+                if (s.equals("COLUMNS")) {
+                    ArrayList<Column> columns = settingsModel.getSelectedColumns();
+                    model.getTableModel().setColumns(columns);
+                    model.getMainConfig().setColumns(columns);
+                    
+                    sm.setColumns(columns);
+                    sm.constructQuery();
+                    model.setResultId(sm.getNewResultId());
+                }
+            }
+        }        
     }
     
     class PrintAction extends AbstractAction {
@@ -312,6 +340,20 @@ public class AppCoreCtrl
             if(exportView == null) {
             	try {
             		exportModel = new ExportMng(model.getDatabase());
+                        //FIXME:
+                    try {
+                        exportModel.setSelectQuery(model.getExportQuery());
+                    } catch (RemoteException ex) {
+                        JOptionPane.showMessageDialog(view,"Some remote error: "+ex);
+                        return;
+                    } catch (DBLayerException ex) {
+                        JOptionPane.showMessageDialog(view,"Some database error: "+ex);
+                        return;
+                    } catch (ExportException ex) {
+                        JOptionPane.showMessageDialog(view,"Some export error: "+ex);
+                        return;
+                    }
+                        exportModel.setSelection(model.getTableModel().getSelection());
             		exportProgressView = new ExportProgressView(exportModel);
             		exportProgressCtrl = new ExportProgressCtrl(exportModel, exportProgressView);
             		exportView = new ExportMngViewA(exportModel);
@@ -458,7 +500,7 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             if (searchModel == null) {
                 searchModel = new Search(model.getDatabase());
-                searchModel.setColumns(model.getTableModel().getColumns().clone());
+                searchModel.setColumns(model.getTableModel().getColumns());
                 searchModel.setAuthors(model.getAuthors());
                 searchModel.setAuthorRoles(model.getAuthorRoles());
                 searchModel.setPlants(model.getPlants());
@@ -487,6 +529,7 @@ public class AppCoreCtrl
             if (arg != null && arg instanceof Integer) {
                 logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
                 model.setResultId(searchModel.getNewResultId());
+                model.setExportQuery(searchModel.getExportQuery());
             }
         }
         
@@ -625,6 +668,16 @@ public class AppCoreCtrl
             if (e != null && e.getPropertyName().equals("value")) 
             {
                 int i = ((Number)tf.getValue()).intValue(); 
+                if (i > MAX_RECORDS_PER_PAGE) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Overview.Warning.MaxRecordsPerPage")+" "+MAX_RECORDS_PER_PAGE);
+                    Object obj = e.getOldValue();
+                    if (obj != null)
+                        tf.setValue(obj);
+                    else // either multiple properties changed or there was no previous value - the value should better be at least 1 anyway...
+                        tf.setValue(prefs.getInt("recordsPerPage", 30));
+                    return;
+                }
+                
                 if (i < 1)
                 {
                     Object obj = e.getOldValue();

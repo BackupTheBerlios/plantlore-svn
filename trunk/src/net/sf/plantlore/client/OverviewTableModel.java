@@ -13,6 +13,7 @@ import java.util.HashMap;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
@@ -41,9 +42,12 @@ public class OverviewTableModel extends AbstractTableModel {
     private int resultsCount = 0;
     private int pageSize = 30;
     private int currentPage = 1;
-    private ArrayList<Record999> recordsArray = new ArrayList<Record999>();
-    private HashMap<Integer, Record999> resultsMap = new HashMap<Integer, Record999>();
-    private Column[] columns;
+    private int selectionColumnIndex = -1;
+    
+//    private ArrayList<Record999> recordsArray = new ArrayList<Record999>();
+    private ArrayList<Column> columns;
+    
+    private Selection selection = new Selection();
     
     class Record999 {
         public Record999(int id, boolean selected, int number) {
@@ -92,8 +96,9 @@ public class OverviewTableModel extends AbstractTableModel {
         sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
         sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
         sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
-        sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.ID); //setridit podle roku
         sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
+        sq.addProjection(PlantloreConstants.PROJ_DISTINCT,"occ."+Occurrence.ID);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+Village.NAME);
@@ -101,7 +106,6 @@ public class OverviewTableModel extends AbstractTableModel {
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.ID);
         
         //FIXME:
         try {
@@ -109,21 +113,22 @@ public class OverviewTableModel extends AbstractTableModel {
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         }
-        loadData();
     }
     
     private void init() {
-        columns = new Column[10];
-        columns[0] = new Column(Column.Type.SELECTION);
-        columns[1] = new Column(Column.Type.NUMBER);
-        columns[2] = new Column(Column.Type.PLANT_TAXON);        
-        columns[3] = new Column(Column.Type.AUTHOR);
-        columns[4] = new Column(Column.Type.HABITAT_NEAREST_VILLAGE_NAME);
-        columns[5] = new Column(Column.Type.OCCURRENCE_YEARCOLLECTED);
-        columns[6] = new Column(Column.Type.PHYTOCHORION_NAME);
-        columns[7] = new Column(Column.Type.HABITAT_DESCRIPTION);
-        columns[8] = new Column(Column.Type.TERRITORY_NAME);
-        columns[9] = new Column(Column.Type.OCCURRENCE_ID);
+        columns = new ArrayList<Column>(10);
+        columns.add(new Column(Column.Type.OCCURRENCE_ID));
+        columns.add(new Column(Column.Type.SELECTION));
+        columns.add(new Column(Column.Type.NUMBER));
+        columns.add(new Column(Column.Type.PLANT_TAXON));        
+        columns.add(new Column(Column.Type.AUTHOR));
+        columns.add(new Column(Column.Type.HABITAT_NEAREST_VILLAGE_NAME));
+        columns.add(new Column(Column.Type.OCCURRENCE_YEARCOLLECTED));
+        columns.add(new Column(Column.Type.PHYTOCHORION_NAME));
+        columns.add(new Column(Column.Type.HABITAT_DESCRIPTION));
+        columns.add(new Column(Column.Type.TERRITORY_NAME));
+        selectionColumnIndex = columns.indexOf(new Column(Column.Type.SELECTION)) - 1; // we don't display the first column which is always Occurrence.ID
+                                                                                       // so the index as JTable sees it is -1
     }
     
     private Pair<String,Integer>[] getAuthorsOf(Occurrence o) {
@@ -169,24 +174,22 @@ public class OverviewTableModel extends AbstractTableModel {
 
             for (int i = 0; i < data.length ; i++) {
                 projArray = (Object[]) records[i];
-                Record999 r = new Record999(from + i + 1, false, from + i + 1);//we want to show the user numbers starting from 1 therefor the +1
-                if (from + i + 1 > recordsArray.size()) //most probably much faster than to ask recordsArray.contains(r)
-                    recordsArray.add(r);
-                else 
-                    r = recordsArray.get(from+i);
 
-                row = new Object[columns.length + 1]; //we'll store the record id in the last column
+                row = new Object[columns.size() + 1]; //we'll store the record id in the last column
                 int proj = 0;
-                for (int j = 0; j < columns.length; j++) {
-                    if (columns[j].type.equals(Column.Type.SELECTION)) {
-                        row[j] = r.selected;
+                Object occId = projArray[0] == null ? new Column(Column.Type.OCCURRENCE_ID).getDefaultNullValue() : projArray[0];
+                for (int j = 0; j < columns.size(); j++) {
+                    Object value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
+                    
+                    if (columns.get(j).type.equals(Column.Type.SELECTION)) {
+                        row[j] = selection.contains((Integer) occId);
                     } else 
-                    if (columns[j].type.equals((Column.Type.NUMBER))) {
-                        row[j] = r.number;
+                    if (columns.get(j).type.equals((Column.Type.NUMBER))) {
+                        row[j] = from + i + 1;
                     } else {
-                        if (columns[j].type.equals(Column.Type.OCCURRENCE_ID))
-                            row[row.length-1] = projArray[proj];
-                        row[j] = projArray[proj];
+                        if (columns.get(j).type.equals(Column.Type.OCCURRENCE_ID))
+                            row[row.length-1] = value;                        
+                        row[j] = value;
                         proj++;
                     }
                 }// for j                
@@ -209,35 +212,40 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public int getColumnCount() {
-        return columns.length;
+        return columns.size()-1; //the first column is Occurrence.Id, just for our internal purposes
     }
     
-    public Object getValueAt(int i, int i0) {
-        return data[i][i0];
+    public Object getValueAt(int row, int col) {
+        return data[row][col+1]; //col+1 because we need to skip the occurrence.id
     }
     
     public Class getColumnClass(int c) {
-        return columns[c].getColumnClass();
+        return columns.get(c+1).getColumnClass(); //c+1 --> skip the occurrence.id
     }
 
     public String getColumnName(int c){
-        return columns[c].getL10nName();
+        return columns.get(c+1).getL10nName(); //c+1 --> skip the occurrence.id
     }
     
     /* nepouziva se
      * primo v overview nelze editovat
      */
     public void setValueAt(Object value, int row, int column) {
-        data[row][column] = value;
-        if (column == 0)
+        data[row][column + 1] = value; //column+1 --> skip the occurrence.id
+        if (column == selectionColumnIndex)
             //displayed number of record starts from 1 --> we have to subtract 1 coz ArrayList is indexed from 0
-            recordsArray.get((Integer)data[row][1]-1).selected = (Boolean)value;
+            if ((Boolean)value)
+                selection.add((Integer) data[row][data[row].length-1]);
+            else
+                selection.remove((Integer) data[row][data[row].length-1]);
+            
+        //recordsArray.get((Integer)data[row][1]-1).selected = (Boolean)value;
         //repaint view - with new value
         this.fireTableCellUpdated(row, column);
     }
     
     public boolean isCellEditable(int row, int column) {
-        if (column == 0 ) {
+        if (column == selectionColumnIndex) {
             return true;
         }
         return false;
@@ -245,7 +253,7 @@ public class OverviewTableModel extends AbstractTableModel {
     
     public int getColumnSize(int col) {
         //return columnSizes[col];
-        return columns[col].getPreferredSize();
+        return columns.get(col+1).getPreferredSize();//col+1 --> skip the occurrence.id
     }
     
     public boolean isSimple() {
@@ -258,22 +266,22 @@ public class OverviewTableModel extends AbstractTableModel {
     
     public void selectAll() {
         for (int i = 0; i < data.length; i++) {
-            setValueAt(true,i,0);
+            setValueAt(true,i,selectionColumnIndex);
         }
     }
     
     public void selectNone() {
         for (int i = 0; i < data.length; i++) {
-            setValueAt(false, i, 0);
+            setValueAt(false, i, selectionColumnIndex);
         }
     }
     
     public void invertSelected() {
         for (int i = 0; i < data.length; i++) {
-            if ((Boolean)data[i][0] == true)
-                setValueAt(false, i, 0);
+            if ((Boolean)data[i][selectionColumnIndex+1] == true) //+1 --> skip the occurrence.id, the selectionColumnIndex is from the JTable's point of view
+                setValueAt(false, i, selectionColumnIndex);
             else
-                setValueAt(true, i, 0);
+                setValueAt(true, i, selectionColumnIndex);
         }
     }
     
@@ -352,7 +360,8 @@ public class OverviewTableModel extends AbstractTableModel {
         //FIXME
         try {
             loadData();
-            fireTableDataChanged(); //let the table compoment know it should redraw itself
+            //fireTableDataChanged(); //let the table compoment know it should redraw itself
+            fireTableStructureChanged();
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         } catch (RemoteException ex) {
@@ -373,12 +382,24 @@ public class OverviewTableModel extends AbstractTableModel {
         return ((Number)Math.ceil(resultsCount / (pageSize*1.0))).intValue();
     }
 
-    public Column[] getColumns() {
-        return columns;
+    public ArrayList<Column> getColumns() {
+        return (ArrayList<Column>) columns.clone();
     }
 
-    public void setColumns(Column[] columns) {
+    public void setColumns(ArrayList<Column> columns) {
+        logger.debug("Setting new overview columns.");
+        selectionColumnIndex = columns.indexOf(new Column(Column.Type.SELECTION)) - 1; // we don't display the first column which is always Occurrence.ID
+                                                                                       // so the index as JTable sees it is -1
+        
         this.columns = columns;
+    }
+    
+    public Selection getSelection() {
+        return selection.clone();
+    }
+    
+    public Integer getOccurrenceId(int row) {
+        return (Integer)data[row][data[row].length-1];
     }
 }
 
