@@ -80,15 +80,15 @@ public abstract class AbstractBuilder implements Builder {
 		}
 	}
 
-	/**
-	 * Call <code>part(Record)</code> repeatedly.
-	 * 
-	 * @see AbstractBuilder#part(Record)
-	 */
-	public void part(Record... records) throws IOException {
-		for(Record r : records) 
-			part( r );		
-	}
+//	/**
+//	 * Call <code>part(Record)</code> repeatedly.
+//	 * 
+//	 * @see AbstractBuilder#part(Record)
+//	 */
+//	public void part(Record... records) throws IOException {
+//		for(Record r : records) 
+//			part( r );		
+//	}
 
 	/** Empty. */
 	public void startRecord() throws IOException {

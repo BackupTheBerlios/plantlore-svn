@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import net.sf.plantlore.common.record.*;
+import net.sf.plantlore.middleware.SelectQuery;
+import static net.sf.plantlore.common.PlantloreConstants.PROJ_PROPERTY;
 
 
 /**
@@ -123,5 +125,27 @@ public class Template {
 		return columns.containsAll(t.columns); 
 	}
 	
+	
+	
+	/**
+	 * Add projections to the query according to the selected columns.
+	 * 
+	 * @param q	The query to be modified.
+	 * @param tables	The important tables. The first table is considered the root table.
+	 */
+	public void addProjections(SelectQuery q, Class...tables) {
+		for(int i = 0; i < tables.length; i++)
+			addProjections(q, tables[i], i == 0);
+	}
+	
+	
+	private void addProjections(SelectQuery q, Class table, boolean omitAlias) {
+		try {
+			Record r = (Record)table.newInstance();
+			for(String property : r.getProperties())
+				if( isSet(table, property) )
+					q.addProjection(PROJ_PROPERTY, (omitAlias ? property : Record.alias(table)+"."+property));
+		} catch(Exception e) {}
+	}
 	
 }

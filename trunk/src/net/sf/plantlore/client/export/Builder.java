@@ -44,16 +44,6 @@ public interface Builder {
 	 */
 	void part(Record arg) throws IOException;
 	
-	/**
-	 * Convenient passing of more records. 
-	 * A typical implementation should call <code>part(Record)</code> repeatedly.  
-	 * 
-	 * @param args An unempty list of records.
-	 * @throws IOException If the writer encounters an error.
-	 * @see Builder#part(Record)
-	 */
-	void part(Record... args) throws IOException;
-	
 	/** 
 	 * Make adjustments needed after the output of the current record is completed.
 	 * This method must be called right after the last call of <code>part()</code>. 

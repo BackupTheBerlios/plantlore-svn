@@ -28,7 +28,13 @@ import org.apache.log4j.Logger;
  * in a following manner:
  * <pre>
  * catch(AnException e) { setChanged(); notifyObservers( e ); }
- * </pre> 
+ * </pre>
+ *  
+ * <br/>
+ * The DefaultDirector can run in two "modes" - either using projections
+ * or regular records. 
+ * If projections are used, the records are reconstructed so that the
+ * same Builders can be used in both cases. 
  *
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
@@ -49,8 +55,10 @@ public class DefaultDirector extends Observable implements Runnable {
 	private int result;
 	
 	private boolean aborted = false;
+	private boolean useProjections = false;
 	
 	private int count = 0;
+
 
 	/**
 	 * Create a new export Director. The Director iterates over the results 
@@ -70,6 +78,25 @@ public class DefaultDirector extends Observable implements Runnable {
 		setDatabase(database); 
 		setSelection(selection); 
 	}
+	
+	/**
+	 * Create a new export Director. The Director iterates over the results 
+	 * of the <code>query</code> (<code>database.executeQuery(query)</code>)
+	 * and selected records (i.e. records in the <code>selection</code>)
+	 * passes to the <code>builder</code>.
+	 * 
+	 * @param builder	The particular builder used to construct the final output.
+	 * @param result	The result describing the resultset that will be iterated over.
+	 * @param database	The database layer that will quench the Director's thirst for more results.
+	 * @param selection	The set of selected records.
+	 * @param useProjections	Use projections instead of standard records.
+	 */
+	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection, boolean useProjections) 
+	throws ExportException {
+		this(builder, result, database, selection);
+		this.useProjections = useProjections;
+	}
+	
 	
 	/**
 	 * Set a new Builder

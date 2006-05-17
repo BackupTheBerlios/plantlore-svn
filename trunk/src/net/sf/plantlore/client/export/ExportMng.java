@@ -16,6 +16,14 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.common.record.Habitat;
+import net.sf.plantlore.common.record.Metadata;
+import net.sf.plantlore.common.record.Occurrence;
+import net.sf.plantlore.common.record.Phytochorion;
+import net.sf.plantlore.common.record.Plant;
+import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.Territory;
+import net.sf.plantlore.common.record.Village;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +41,6 @@ import org.apache.log4j.Logger;
  * <li><b>Builder</b> writes the records to the <i>output</i>.</li>
  * <li><b>Selection</b> stores the list of all selected records 
  * 					(<i>restriction</i> in the database terminology).</li>
- * <li><b>ResultID</b> identifies the result set.</li>
  * <li><b>SelectQuery</b> identifies the result set as well (in fact the resultId is derived from it).</li>
  * <li><b>Template</b> stores the list of all selected columns that should be 
  * 					exported (<i>projection</i> in the database terminology).</li>
@@ -59,7 +66,7 @@ public class ExportMng extends Observable implements Observer {
 	/**
 	 * List of all filters the Export Manager is capable to handle.
 	 */
-	private XFilter[] filters = new XFilter[] {
+	protected XFilter[] filters = new XFilter[] {
 			new XFilter(L10n.getString("FilterPlantloreNative"), ".xml", ".pln"),
 			new XFilter(L10n.getString("FilterXML"), true, ".xml"),
 			new XFilter(L10n.getString("FilterCSV"), true, ".txt", ".csv"),	
@@ -70,37 +77,24 @@ public class ExportMng extends Observable implements Observer {
 	
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
-	private DBLayer db ;
-	private Template template;
-	private Selection select;
-	private XFilter filter;
-	private String filename;
-	private Integer resultId;
-	private DefaultDirector director;
-	private Builder builder;
-	private boolean aborted = false, exportInProgress = false;
-	private int results = -1, selectedResults = -1;
-	private SelectQuery query = null;
+	protected DBLayer db ;
+	protected Template template;
+	protected Selection select;
+	protected XFilter filter;
+	protected String filename;
+	protected Integer resultId;
+	protected DefaultDirector director;
+	protected Builder builder;
+	protected boolean aborted = false, exportInProgress = false;
+	protected int results = -1, selectedResults = -1;
+	protected SelectQuery query = null;
 	
-	private Writer writer;
-	private Thread current;
+	protected Writer writer;
+	protected Thread current;
 		
 	
-	/**
-	 * Create a new Export Manager.
-	 * 
-	 * @param dblayer The database layer mediating the access to the database.
-	 * @param result	The result set identificator which is to be iterated over.
-	 * @param selection	The list of selected records. 
-	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
-	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template) 
-	throws ExportException {
-		setDBLayer(dblayer);
-		setResultId(result);
-		setSelection(selection);
-		setTemplate(template); 
-	}
+	protected boolean useProjections = false;
+	
 	
 	/**
 	 * Create a new Export Manager.
@@ -118,21 +112,6 @@ public class ExportMng extends Observable implements Observer {
 		setTemplate(template);
 	}
 
-	/**
-	 * Create a new Export manager and <b>mark all records AND columns as selected</b>.
-	 * 
-	 * @param dblayer	The database layer mediating the access to the database.
-	 * @param result	The result set identificator which is to be iterated over.
-	 */
-	public ExportMng(DBLayer dblayer, int result) 
-	throws ExportException {
-		setDBLayer(dblayer);
-		setResultId(result);
-		setTemplate(null);
-		
-		Selection select = new Selection(); select.all();
-		setSelection(select);
-	}
 	
 	/**
 	 * Create a new Export manager.
@@ -168,34 +147,6 @@ public class ExportMng extends Observable implements Observer {
 		setSelection(select);
 	}
 	
-	/**
-	 * Create a new Export manager and <b>mark all columns as selected</b>.
-	 * 
-	 * @param dblayer	The database layer mediating the access to the database. 
-	 * @param result	The result set identificator which is to be iterated over.
-	 * @param selection	The list of selected records. Shouldn't be empty.
-	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection) 
-	throws ExportException{
-		this(dblayer, result, selection, null);
-	}
-	
-	/**
-	 * Create a new Export manager.
-	 * 
-	 * @param dblayer	The database layer mediating the access to the database. Shouldn't be empty.
-	 * @param result	The result set identificator which is to be iterated over. Shouldn't be empty.
-	 * @param selection	The list of selected records. Shouldn't be empty.
-	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
-	 * @param filter	The filter which will be used to determine the appropriate builder of the output.
-	 * @param file	The name of the file where the output will be written.
-	 */
-	public ExportMng(DBLayer dblayer, int result, Selection selection, Template template, XFilter filter, String filename) 
-	throws ExportException {
-		this(dblayer, result, selection, template);
-		setSelectedFile(filename);
-		setActiveFileFilter(filter);
-	}
 	
 	/**
 	 * Create a new Export manager.
@@ -215,6 +166,23 @@ public class ExportMng extends Observable implements Observer {
 		setTemplate(template);
 		setSelectedFile(filename);
 		setActiveFileFilter(filter);
+	}
+	
+	
+	/**
+	 * Sadly, some database engines cannot deal with bigger queries,
+	 * which is why the Export Manager has to use projections.
+	 * 
+	 * @param useProjections	True if the Export manager shall use projections instead of regular records.
+	 * @throws ExportException
+	 */
+	synchronized public void useProjections(boolean useProjections) 
+	throws ExportException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change the usage of Projections while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
+		this.useProjections = useProjections;
 	}
 	
 	/**
@@ -239,6 +207,10 @@ public class ExportMng extends Observable implements Observer {
 	/**
 	 * Store a copy of the <code>template</code>.
 	 * <b>Null means everything is selected!</b>
+	 * <br/>
+	 * If projections are used, they will be added to the SelectQuery and
+	 * the SelectQuery will be executed here.
+	 * 
 	 * @throws ExportException 
 	 */
 	synchronized public void setTemplate(Template template) 
@@ -247,12 +219,43 @@ public class ExportMng extends Observable implements Observer {
 			logger.warn("Cannot change the Template while Export is still in progress!");
 			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
 		}
+		if(query == null && useProjections) {
+			logger.warn("Cannot set the Template before the Query is specified!");
+			throw new ExportException(L10n.getString("error.InvalidSelectQuery"));
+		}
 		if(template == null) {
 			logger.info("The list of selected columns is empty! Creating a new Template where every column is selected.");
 			this.template = new Template();
 			this.template.setEverything();
 		}
 		else this.template = template.clone();
+		
+		
+		
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		 * 
+		 * 		The Template defines the projections. 
+		 * 		It is vital that setSelectQuery is called PRIOR to the setTemplate!
+		 * 
+		 * 		The SelectQuery will be executed here, since it cannot be executed
+		 * 		unless the projections are added. 
+		 * 
+		 * 				We love you, Firebird!
+		 * 
+		 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		
+		if(useProjections) {
+			template.addProjections( query, 
+					Occurrence.class, Plant.class, Metadata.class, Publication.class, 
+					Habitat.class, Territory.class, Village.class, Phytochorion.class );
+			
+			//Execute the SelectQuery and update the resultId and the number of results.
+			try {
+				resultId = db.executeQuery( query );
+				results = db.getNumRows( resultId );
+				if(select != null) selectedResults = select.size( results );
+			} catch(Exception e) {}
+		}
 	}
 	
 	/**
@@ -298,27 +301,12 @@ public class ExportMng extends Observable implements Observer {
 		this.filename = filename; 
 	}
 	
-	/**
-	 * Set another result identificator of a Result Set. 
-	 */
-	synchronized public void setResultId(Integer result)
-	throws ExportException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change Resultset Identifier while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
-		if(result < 0) 
-			logger.warn("The result set identificator is a negative integer!");
-
-		this.resultId = result;
-		results = -1;
-		if(resultId >= 0)
-			try {	results = db.getNumRows(resultId); } catch(Exception e) {}
-	}
 	
 	/**
 	 * Set a particular select query. The manager will execute this select query
-	 * and update the <code>resultId</code>. 
+	 * and update the <code>resultId</code> if Projections are not used.
+	 * On the other hand, if Projections are used, it is the <code>setTemplate()</code>
+	 * that executes the query after it adds desired projections.
 	 */
 	synchronized public void setSelectQuery(SelectQuery query) 
 	throws ExportException, DBLayerException, RemoteException {
@@ -335,9 +323,13 @@ public class ExportMng extends Observable implements Observer {
 		
 		if(this.query != null) {
 			results = selectedResults = -1;
-			resultId = db.executeQuery( query );
-			results = db.getNumRows( resultId );
-			if(select != null) selectedResults = select.size( results );
+			if(useProjections) 
+				resultId = null;
+			else {
+				resultId = db.executeQuery( query );
+				results = db.getNumRows( resultId );
+				if(select != null) selectedResults = select.size( results );
+			}
 		}
 	}
 	
@@ -364,7 +356,6 @@ public class ExportMng extends Observable implements Observer {
 		
 		// Create a new file.
 		File file = new File( filter.suggestName(filename) );
-		System.out.println( ">>> " + file );
 		boolean append = ! file.createNewFile();
 		
 		// Create a new writer.
@@ -383,7 +374,7 @@ public class ExportMng extends Observable implements Observer {
 			builder = new TrainingBuilder(template);
 
 		// Create a new Director and run it in a separate thread.
-		director = new DefaultDirector(builder, resultId, db, select);
+		director = new DefaultDirector(builder, resultId, db, select, useProjections);
 		director.addObserver(this);
 		
 		current = new Thread( director, "Export" );
@@ -424,7 +415,7 @@ public class ExportMng extends Observable implements Observer {
 	
 	
 	/** Something that will not be true for a long time, at least the mankind hopes so. */
-	private boolean sunExploded = false;
+	private final boolean sunExploded = false;
 	
 
 	/**
