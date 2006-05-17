@@ -3,6 +3,7 @@ package net.sf.plantlore.common.record;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -27,18 +28,17 @@ public abstract class Record implements Serializable {
 	 * The other tables are database specific and are used by our System only
 	 * (concerns History, LastUpdate, User, AccessRights, and possibly more).
 	 */
-	public final static Class[] BASIC_TABLES = new Class[] { 
-		Author.class, AuthorOccurrence.class, Habitat.class,
-		Metadata.class, Occurrence.class, Phytochorion.class,
-		Plant.class, Publication.class, Territory.class,
-		Village.class 
+	public final static Class[] BASIC_TABLES = new Class[] {
+		Occurrence.class, Habitat.class, Territory.class, Village.class, Phytochorion.class,
+		Plant.class, Metadata.class, Publication.class, Author.class, AuthorOccurrence.class 
 	};
 	
 	
 	/**
 	 * A set of tables that cannot be changed.
 	 */
-	public final static HashSet<Class> IMMUTABLE = new HashSet( 10 );
+	public final static HashSet<Class> IMMUTABLE = new HashSet( Arrays.asList(
+			Plant.class, Territory.class, Village.class, Phytochorion.class, Metadata.class) );
 	
 	
 	/** The list of all getters (of all properties of all tables). */
@@ -47,13 +47,6 @@ public abstract class Record implements Serializable {
 	
 	/** Pre-load all getters. */
 	static {
-		
-		IMMUTABLE.add(Plant.class);
-		IMMUTABLE.add(Territory.class);
-		IMMUTABLE.add(Village.class);
-		IMMUTABLE.add(Phytochorion.class);
-		IMMUTABLE.add(Metadata.class);
-		
 		// Take all basic tables.
 		for( Class table : BASIC_TABLES)
 			try {
@@ -67,6 +60,15 @@ public abstract class Record implements Serializable {
 			catch(InstantiationException e) { e.printStackTrace(); }
 	}
 
+	
+	public String alias() {
+		return alias( getClass() );
+	}
+	
+	public static String alias(Class table) {
+		return "A" + table.getSimpleName();
+	}
+	
 
 	/**
 	 * Return the value in the specified column.
@@ -82,6 +84,29 @@ public abstract class Record implements Serializable {
 			return null; 
 		}
 	}
+	
+	/**
+	 * Return the value of the specified subrecord's column.
+	 *
+	 * @param table	The subrecord you are interested in.
+	 * @param column The name of the subrecord's column whose value you wish to obtain.
+	 */
+	public Object getValue(Class table, String column) {
+		Record subrecord = (  getClass().equals(table) ? this : findSubrecord(this, table)  );
+		return (subrecord == null) ? null : subrecord.getValue(column);
+	}
+	
+	private Record findSubrecord(Record base, Class type) {
+		for(String key : base.getForeignKeys()) {
+			Record sub = (Record)base.getValue(key);
+			if(sub == null) continue; // As a matter of fact this can happen - Publication can be NULL.
+			if(sub.getClass().equals(type)) return sub;
+			else sub = findSubrecord( sub, type); // dig deeper...
+			if(sub != null) return sub;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Set the value in the specified column.
