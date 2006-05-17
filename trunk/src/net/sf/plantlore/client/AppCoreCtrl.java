@@ -135,6 +135,32 @@ public class AppCoreCtrl
     ExportProgressView exportProgressView;
     ExportProgressCtrl exportProgressCtrl;
     
+    //Actions
+    AbstractAction settingsAction = new SettingsAction();
+    AbstractAction printAction = new PrintAction();
+    AbstractAction helpContentsAction = new HelpContentsAction();
+    AbstractAction helpAboutAction = new HelpAboutAction();
+    AbstractAction  exportAction = new ExportAction();
+    AbstractAction importAction = new ImportAction();
+    
+    AbstractAction dataAuthorsAction = new DataAuthorsAction();
+    AbstractAction dataPublicationsAction = new DataPublicationsAction();
+    AbstractAction dataMetadataAction = new DataMetadataAction();
+    AbstractAction dataHistoryAction = new DataHistoryAction();
+    AbstractAction dataWholeHistoryAction = new DataWholeHistoryAction();
+    AbstractAction dataUserAction = new DataUserAction();
+    
+    AbstractAction searchAction = new SearchAction();
+    AbstractAction addAction = new AddAction();
+    AbstractAction editAction = new EditAction();
+    AbstractAction deleteAction = new DeleteAction();
+    AbstractAction selectAllAction = new SelectAllAction();
+    AbstractAction selectNoneAction = new SelectNoneAction();
+    AbstractAction invertSelectedAction = new InvertSelectedAction();
+    AbstractAction nextPageAction = new NextPageAction();
+    AbstractAction prevPageAction = new PreviousPageAction();
+    
+    AbstractAction loginAction = new LoginAction();
     
     /** Creates a new instance of AppCoreCtrl */
     public AppCoreCtrl(AppCore model, AppCoreView view)
@@ -144,41 +170,68 @@ public class AppCoreCtrl
 
         this.model = model;
         this.view = view;
-        view.setSettingsAction(new SettingsAction());
-        view.setPrintAction(new PrintAction());
+        view.setSettingsAction(settingsAction);
+        view.setPrintAction(printAction);
         view.addExitListener(new ExitListener());
-        view.setHelpContentsAction(new HelpContentsAction());
-        view.setHelpAboutAction(new HelpAboutAction());
-        view.setExportAction(new ExportAction());
-        view.setImportAction(new ImportAction());
+        view.setHelpContentsAction(helpContentsAction);
+        view.setHelpAboutAction(helpAboutAction);
+        view.setExportAction(exportAction);
+        view.setImportAction(importAction);
         
-        view.addDataAuthorsListener(new DataAuthorsListener());
-        view.addDataPublicationsAction(new DataPublicationsAction());
-        view.addDataMetadataAction(new DataMetadataAction());
-        view.addDataHistoryListener(new DataHistoryListener());
-        view.addDataWholeHistoryAction(new DataWholeHistoryAction());
-        view.addDataUserAction(new DataUserAction());
+        view.addDataAuthorsAction(dataAuthorsAction);
+        view.addDataPublicationsAction(dataPublicationsAction);
+        view.addDataMetadataAction(dataMetadataAction);
+        view.addDataHistoryAction(dataHistoryAction);
+        view.addDataWholeHistoryAction(dataWholeHistoryAction);
+        view.addDataUserAction(dataUserAction);
         
-        view.setSearchAction(new SearchAction());
-        view.setAddAction(new AddAction());
-        view.setEditAction(new EditAction());
-        view.setDeleteAction(new DeleteAction());
+        view.setSearchAction(searchAction);
+        view.setAddAction(addAction);
+        view.setEditAction(editAction);
+        view.setDeleteAction(deleteAction);
 
-        view.setSelectAllAction(new SelectAllAction());
-        view.setSelectNoneAction(new SelectNoneAction());
-        view.setInvertSelectedAction(new InvertSelectedAction());
-        view.setNextPageAction(new NextPageAction());
-        view.setPrevPageAction(new PreviousPageAction());
+        view.setSelectAllAction(selectAllAction);
+        view.setSelectNoneAction(selectNoneAction);
+        view.setInvertSelectedAction(invertSelectedAction);
+        view.setNextPageAction(nextPageAction);
+        view.setPrevPageAction(prevPageAction);
         view.setSelectedRowListener(new OverviewSelectionListener());
 
         view.addWindowListener(new AppWindowListener());
         view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
         
-        view.setLoginAction(new LoginAction());
+        view.setLoginAction(loginAction);
         
         // This is here in order to skip login procedure and connect to the database automatically
         // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
         // view.initOverview();
+        
+        setDatabaseDependentCommandsEnabled(false);
+    }
+    
+    private void setDatabaseDependentCommandsEnabled(boolean enabled) {
+        settingsAction.setEnabled(enabled);
+        printAction.setEnabled(enabled);
+        exportAction.setEnabled(enabled);
+        importAction.setEnabled(enabled);
+        
+        dataAuthorsAction.setEnabled(enabled);
+        dataPublicationsAction.setEnabled(enabled);
+        dataMetadataAction.setEnabled(enabled);
+        dataHistoryAction.setEnabled(enabled);
+        dataWholeHistoryAction.setEnabled(enabled);
+        dataUserAction.setEnabled(enabled);
+        
+        searchAction.setEnabled(enabled);
+        addAction.setEnabled(enabled);
+        editAction.setEnabled(enabled);
+        deleteAction.setEnabled(enabled);
+
+        selectAllAction.setEnabled(enabled);
+        selectNoneAction.setEnabled(enabled);
+        invertSelectedAction.setEnabled(enabled);
+        nextPageAction.setEnabled(enabled);
+        prevPageAction.setEnabled(enabled);                
     }
     
     /** Handles click to menu item Settings.
@@ -570,20 +623,27 @@ public class AppCoreCtrl
         }
     }
 
-    class DataAuthorsListener implements ActionListener {
-        public void actionPerformed(ActionEvent actionEvent) {
+    class DataAuthorsAction extends AbstractAction {
+        public DataAuthorsAction() {
+            putValue(NAME, L10n.getString("Overview.MenuDataAuthors"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataAuthorsTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataAuthors"));                        
+        }
+        public void actionPerformed(ActionEvent e) {
             //try {
                 AuthorManager authModel = new AuthorManager(model.getDatabase());
                 AuthorManagerView authView = new AuthorManagerView(authModel, view, false);
                 AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
                 //authModel.pokus();
-                authView.show();                
+                authView.setVisible(true);                
             //} catch(RemoteException e) {
             //	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
             //}                
         }
-    }    
-
+        
+    }
+    
+    
     class DataPublicationsAction extends AbstractAction {
         public DataPublicationsAction() {
              putValue(NAME, L10n.getString("publicationMgr"));
@@ -614,9 +674,14 @@ public class AppCoreCtrl
         }
     }    
     
-    class DataHistoryListener implements ActionListener {
-    	public void actionPerformed(ActionEvent actionEvent)
-        {
+    class DataHistoryAction extends AbstractAction {
+        public DataHistoryAction() {
+            putValue(NAME, L10n.getString("Overview.MenuDataHistory"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataHistoryTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataHistory"));                        
+        }
+        
+        public void actionPerformed(ActionEvent e) {
             System.out.println("Undo selected");
             //toto volani historie nebude v menu, ale jako tlacitko pro vybrany zaznam        
             //o vybranem zaznamu predame informace, ktere chceme o nem v historii zobrazit
@@ -627,7 +692,9 @@ public class AppCoreCtrl
             historyCtrl = new HistoryCtrl(historyModel, historyView);
             historyView.setVisible(true);                         
         }
-    }    
+        
+    }
+    
     
     class DataWholeHistoryAction extends AbstractAction {
         public DataWholeHistoryAction() {
@@ -711,9 +778,9 @@ public class AppCoreCtrl
     
     class LoginAction extends AbstractAction {
         public LoginAction() {
-            putValue(NAME, L10n.getString("Login"));
-            //putValue(SHORT_DESCRIPTION, L10n.getString("nextButtonTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Login"));                        
+            putValue(NAME, L10n.getString("Overview.MenuFileLogin"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuFileLoginTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuFileLogin"));                        
         }
         public void actionPerformed(ActionEvent arg0) {
                 // Reuse the existing dialogs, hide'em when they're no longer needed.
@@ -737,6 +804,7 @@ public class AppCoreCtrl
     			model.setDatabase(dblayer);
     			model.setAccessRights( loginModel.getAccessRights() );
     			view.initOverview();
+                        setDatabaseDependentCommandsEnabled(true);
     		}
     	}
     }

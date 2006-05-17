@@ -463,8 +463,8 @@ public class AppCoreView extends JFrame implements Observer
     /** Adds a listener to the Author manager menu item.
      *
      */
-    public void addDataAuthorsListener(ActionListener a1) {
-        dataAuthors.addActionListener(a1);
+    public void addDataAuthorsAction(AbstractAction a) {
+        dataAuthors.setAction(a);
     }
     
     /** Adds a listener to the Publication manager menu item.
@@ -484,8 +484,8 @@ public class AppCoreView extends JFrame implements Observer
     /** Adds a listener to the HistoryData menu item.
     *
     */
-    public void addDataHistoryListener(ActionListener al) {
-        dataHistory.addActionListener(al);
+    public void addDataHistoryAction(AbstractAction a) {
+        dataHistory.setAction(a);
     }
     
     /** Sets an action to the MetadataData menu item.
