@@ -27,12 +27,14 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel2" alignment="1" max="32767" attributes="0"/>
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="helpButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="775" max="32767" attributes="0"/>
-                      <Component id="closeButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace pref="606" max="32767" attributes="0"/>
+                      <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -47,8 +49,8 @@
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -71,12 +73,12 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="937" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="770" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="previousButton" min="-2" pref="107" max="-2" attributes="0"/>
-                                  <EmptySpace pref="172" max="32767" attributes="0"/>
+                                  <Component id="previousButton" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <EmptySpace pref="17" max="32767" attributes="0"/>
                                   <Component id="totalResultLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="totalResultValueLabel" min="-2" max="-2" attributes="0"/>
@@ -90,19 +92,19 @@
                                   <Component id="displayedValueLabel" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="detailsButton" min="-2" pref="107" max="-2" attributes="1"/>
+                                  <Component id="detailsButton" min="-2" pref="100" max="-2" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="addButtons" min="-2" pref="107" max="-2" attributes="0"/>
+                                  <Component id="addButtons" min="-2" pref="100" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="editButtons" min="-2" pref="106" max="-2" attributes="1"/>
+                                  <Component id="editButtons" min="-2" pref="100" max="-2" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="deleteButton" min="-2" pref="99" max="-2" attributes="1"/>
+                                  <Component id="deleteButton" min="-2" pref="100" max="-2" attributes="1"/>
                               </Group>
-                              <Component id="nextButton" alignment="1" min="-2" max="-2" attributes="1"/>
+                              <Component id="nextButton" alignment="1" min="-2" pref="100" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -130,7 +132,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="editButtons" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="deleteButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="addButtons" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                      <Component id="addButtons" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="detailsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -315,8 +317,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="collectionNameSearchText" pref="177" max="32767" attributes="1"/>
-                              <Component id="collectionYearSearchText" pref="177" max="32767" attributes="1"/>
+                              <Component id="collectionNameSearchText" pref="103" max="32767" attributes="1"/>
+                              <Component id="collectionYearSearchText" pref="103" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -325,15 +327,15 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="journalAuthorNameSearchText" alignment="0" pref="203" max="32767" attributes="1"/>
-                              <Component id="journalNameSearchText" alignment="0" pref="203" max="32767" attributes="1"/>
+                              <Component id="journalAuthorNameSearchText" alignment="0" pref="128" max="32767" attributes="1"/>
+                              <Component id="journalNameSearchText" alignment="0" pref="128" max="32767" attributes="1"/>
                           </Group>
                       </Group>
-                      <Component id="searchButton" min="-2" pref="118" max="-2" attributes="1"/>
+                      <Component id="searchButton" min="-2" pref="120" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
                   <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

@@ -53,7 +53,7 @@ public class MetadataManager {
     
     //*********************Search - promenne podle,kterych se vyhledava************//
     /** Field to be used for sorting search query results */
-    private int sortField = 1;
+    private int sortField = 0;
     /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
     private int sortDirection = 0;
     
@@ -88,6 +88,7 @@ public class MetadataManager {
     	//  Select data from tMetadata table
         try {
                 query = database.createQuery(Metadata.class);     
+                query.addRestriction(PlantloreConstants.RESTR_EQ, Metadata.DELETED, null, 0, null);
                 
                 if (sourceInstitutionId != null && !sourceInstitutionId.equals("")) {
                     query.addRestriction(PlantloreConstants.RESTR_LIKE, Metadata.SOURCEINSTITUTIONID, null, "%" + sourceInstitutionId + "%", null);
@@ -100,27 +101,27 @@ public class MetadataManager {
                 }
                
                 
-                String field;
+                String field;                
                 switch (sortField) {
-                case 1:
+                case 0:
                         field = Metadata.SOURCEINSTITUTIONID;
                         break;
-                case 2:
+                case 1:
                         field = Metadata.SOURCEID;
                         break;
-                case 3:
+                case 2:
                         field = Metadata.DATASETTITLE;
                         break;
-                case 4:
+                case 3:
                         field = Metadata.TECHNICALCONTACTNAME;
                         break;                
-                case 5:
+                case 4:
                         field = Metadata.CONTENTCONTACTNAME;
                         break;
-                case 6:
+                case 5:
                         field = Metadata.DATECREATE;
                         break;
-                case 7:
+                case 6:
                         field = Metadata.DATEMODIFIED;
                         break;
                 default:
@@ -224,7 +225,8 @@ public class MetadataManager {
     
     public void deleteMetadataRecord() {
         try {
-            database.executeDelete(selectedRecord);
+            selectedRecord.setDeleted(1);
+            database.executeUpdate(selectedRecord);
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } catch (DBLayerException ex) {

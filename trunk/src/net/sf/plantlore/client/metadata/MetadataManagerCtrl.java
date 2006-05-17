@@ -165,7 +165,7 @@ public class MetadataManagerCtrl {
            model.setOperation("ADD");           
            //otevre se dialog addEdit s tim, ze mu rekneme, ze jde o ADD
            //pozor: pri add se musi ohlidat, zda byly vyplneny povinne polozky
-           AddEditMetadataView addView = new AddEditMetadataView(view,true);
+           AddEditMetadataView addView = new AddEditMetadataView(model, view,true);
            AddEditMetadataCtrl addCtrl = new AddEditMetadataCtrl(addView, model);
            addView.setAddForm();
            addView.setVisible(true);
@@ -195,29 +195,12 @@ public class MetadataManagerCtrl {
                //poznaceni si do modelu inforamce o vybranem radku pro dalsi praci
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1;  
                model.setSelectedRecord(resultNumber);
-               //nacteni dat do dialogu
-               Metadata metadata = model.getSelectedRecord();               
-               AddEditMetadataView editView = new AddEditMetadataView(view,true);
+               //vytvoreni dialogu
+               AddEditMetadataView editView = new AddEditMetadataView(model, view,true);
                AddEditMetadataCtrl editCtrl = new AddEditMetadataCtrl(editView, model);
                //nacteni dat
-               editView.technicalContactNameText.setText(metadata.getTechnicalContactName());
-               editView.technicalContactEmailText.setText(metadata.getTechnicalContactEmail());
-               editView.technicalContactAddressText.setText(metadata.getTechnicalContactAddress());
-               editView.contentContactNameText.setText(metadata.getContentContactName());
-               editView.contentContactEmailText.setText(metadata.getContentContactEmail());
-               editView.contectContactAddressText.setText(metadata.getContentContactAddress());
-               editView.dataSetTitleText.setText(metadata.getDataSetTitle());
-               editView.dataSetDetailsText.setText(metadata.getDataSetDetails());
-               editView.sourceInstirutionIdText.setText(metadata.getSourceInstitutionId());
-               editView.sourceIdText.setText(metadata.getSourceId());
-               editView.abbrevText.setText(metadata.getOwnerOrganizationAbbrev());
-               editView.dateCreateText.setText(metadata.getDateCreate().toString());
-               editView.dateModifiedText.setText(metadata.getDateModified().toString());
-               editView.recordbasisText.setText(metadata.getRecordBasis());
-               editView.biotopetextText.setText(metadata.getBiotopeText());            
-               //FIXME: vsechny Integery v DB nastavit defautlne na nulu,aby to pri prevodech na string nedelalo neplechu
-               //editView.versionPlantsFileText.setText(metadata.getVersionPlantsFile().toString());
-               //vytvoreni dialogu
+               editView.loadData();               
+               //nastaveni dialogu
                editView.setEditForm();               
                editView.setVisible(true);    
                //po editaci zaznamu se musi zobrazit zmena i v tabulce
@@ -245,29 +228,12 @@ public class MetadataManagerCtrl {
                //poznaceni si do modelu inforamce o vybranem radku pro dalsi praci
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1;  
                model.setSelectedRecord(resultNumber);
-               //nacteni dat do dialogu
-               Metadata metadata = model.getSelectedRecord();               
-               AddEditMetadataView detailsView = new AddEditMetadataView(view,true);
+               //vytvoreni dialogu
+               AddEditMetadataView detailsView = new AddEditMetadataView(model, view,true);
                AddEditMetadataCtrl detailsCtrl = new AddEditMetadataCtrl(detailsView, model);
                //nacteni dat
-               detailsView.technicalContactNameText.setText(metadata.getTechnicalContactName());
-               detailsView.technicalContactEmailText.setText(metadata.getTechnicalContactEmail());
-               detailsView.technicalContactAddressText.setText(metadata.getTechnicalContactAddress());
-               detailsView.contentContactNameText.setText(metadata.getContentContactName());
-               detailsView.contentContactEmailText.setText(metadata.getContentContactEmail());
-               detailsView.contectContactAddressText.setText(metadata.getContentContactAddress());
-               detailsView.dataSetTitleText.setText(metadata.getDataSetTitle());
-               detailsView.dataSetDetailsText.setText(metadata.getDataSetDetails());
-               detailsView.sourceInstirutionIdText.setText(metadata.getSourceInstitutionId());
-               detailsView.sourceIdText.setText(metadata.getSourceId());
-               detailsView.abbrevText.setText(metadata.getOwnerOrganizationAbbrev());
-               detailsView.dateCreateText.setText(metadata.getDateCreate().toString());
-               detailsView.dateModifiedText.setText(metadata.getDateModified().toString());
-               detailsView.recordbasisText.setText(metadata.getRecordBasis());
-               detailsView.biotopetextText.setText(metadata.getBiotopeText());  
-               //FIXME: vsechny Integery v DB nastavit defautlne na nulu,aby to pri prevodech na string nedelalo neplechu
-               //editView.versionPlantsFileText.setText(metadata.getVersionPlantsFile().toString());
-               //vytvoreni dialogu
+               detailsView.loadData();
+               //nastaveni dialogu
                detailsView.setDetailsForm();
                detailsView.setVisible(true); 
            }          
@@ -305,23 +271,22 @@ public class MetadataManagerCtrl {
            model.setDataSetTitle(view.dataSetTitleText.getText());
             if (!(view.checkNonEmpty("sourceInstitutionId") || view.checkNonEmpty("sourceId") ||
                view.checkNonEmpty("dataSetTitle"))) {
-               view.showSearchErrorMessage();
-           } else {           
-               //opet funkci pro vyzadani si dat postupne
-               model.searchMetadata();
-               //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
-               if (model.getDisplayRows() <= 0) {
-                   model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
-               }
-               if (model.getResultRows() < 1) {
-                   view.showSearchInfoMessage();
-               }
-               model.processResult(1, model.getDisplayRows());
-               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-               view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+               view.showSearchInfoFillMessage();
+               model.setSourceInstitutionId("%");
+           }          
+           //opet funkci pro vyzadani si dat postupne
+           model.searchMetadata();
+           //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
+           if (model.getDisplayRows() <= 0) {
+               model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
            }
-           
+           if (model.getResultRows() < 1) {
+               view.showSearchInfoMessage();
+           }
+           model.processResult(1, model.getDisplayRows());
+           view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
+           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());                      
        }
     }
     

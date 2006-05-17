@@ -55,7 +55,7 @@ public class UserManager {
     
     //*********************Search - promenne podle,kterych se vyhledava************//
     /** Field to be used for sorting search query results */
-    private int sortField = SORT_SURNAME;
+    private int sortField = SORT_LOGIN;
     /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
     private int sortDirection = 0;
     /** Direction of type user. 0 = All user,1 = Current user. Default is All user.*/
@@ -76,12 +76,14 @@ public class UserManager {
     
     /** list of all users - for dialog add, edit*/
     private Pair<String, Integer>[] users = null;
+    // seznam vsech aktualnich loginu
+    private ArrayList<String> userLogin = new ArrayList<String>(); 
     
     /** Constants used for identification of fields for sorting */
-    public static final int SORT_LOGIN = 1;
-    public static final int SORT_FIRST_NAME = 2;
-    public static final int SORT_SURNAME = 3;
-    public static final int SORT_CREATEWHEN = 4;
+    public static final int SORT_LOGIN = 0;
+    public static final int SORT_FIRST_NAME = 1;
+    public static final int SORT_SURNAME = 2;
+    public static final int SORT_CREATEWHEN = 3;
   
     /**
      * Creates a new instance of UserManager
@@ -127,23 +129,25 @@ public class UserManager {
                 }
                 
                 String field;
+                logger.debug("SortField: " + sortField);
                 switch (sortField) {
-                case 1:
+                case 0:
                         field = User.LOGIN;
                         break;
-                case 2:
+                case 1:
                         field = User.FIRSTNAME;
                         break;
-                case 3:
+                case 2:
                         field = User.SURNAME;
                         break;
-                case 4:
+                case 3:
                         field = User.CREATEWHEN;
                         break;                
                 default:
-                        field = User.SURNAME;
+                        field = User.LOGIN;
                 }
 
+                logger.debug("Order by: "+ field);
                 if (sortDirection == 0) {
                         query.addOrder(PlantloreConstants.DIRECT_ASC, field);
                 } else {
@@ -275,15 +279,20 @@ public class UserManager {
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, User.WHOLENAME);
                 sq.addProjection(PlantloreConstants.PROJ_PROPERTY, User.WHOLENAME);
                 sq.addProjection(PlantloreConstants.PROJ_PROPERTY, User.ID);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, User.LOGIN);
                 resultid = database.executeQuery(sq);
                 resultsCount = database.getNumRows(resultid);
-                System.out.println("getUsers(): we got "+resultsCount+" results.");
+                logger.debug("getUsers(): we got "+resultsCount+" results.");
                 records = database.more(resultid, 0, resultsCount-1);
                 users = new Pair[resultsCount];
+                userLogin.clear();
                 for (int i = 0; i < resultsCount; i++)
                 {
                     row = (Object[])records[i];
-                    users[i] = new Pair((String)row[0], (Integer)row[1]);
+                    users[i] = new Pair((String)row[0] + " (" + (String)row[2] + ")", (Integer)row[1]);
+                    //vytvoreni seznamu pouzitych loginu (vcetne neaktivnich uzivatelu)
+                    //oba seznamy je nutne updatovat i pri ADD a EDIT (pridat ci zmenit)
+                    userLogin.add((String)row[2]);
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -295,6 +304,24 @@ public class UserManager {
             return users;
      }
     
+    
+    /**
+     * nastaveni seznamu loginu na null, aby doslo k jeho opetovnemu nacteni
+     * bude se nastavovat po ADD, EDIT
+     */
+    public void setUsers() {
+        users = null;
+    }
+    
+    /** otestovani unikatonosti nove vkladaneho loginu v ADD
+     *  ?? dovoli se editovat login uzivatele... po inspiraci win, linux ZAKAZANO
+     */
+    public boolean uniqueLogin(String login) {
+        logger.debug("Login new: "+login);
+        logger.debug("All login: "+ userLogin.toString());        
+        return userLogin.contains(login);
+    }
+    
     //****************************//
     //****Get and set metods*****//
     //**************************//
@@ -305,9 +332,20 @@ public class UserManager {
     }
     
     // podle seznamu id je nutne vygenerovat seznam jmen jednotlivych uzivatelu
-    public String getEditGroup(String editGroupId) {
-        
-        return "";
+    public String getEditGroup(String editGroupId) {        
+            String[] tmpUserId = editGroupId.split(",");
+            logger.debug("tmpUserId: " + tmpUserId[0]);
+            logger.debug("editGroupId: "+editGroupId);
+           
+            String editGroup = "";
+            for (int i=0 ; i < tmpUserId.length ; i++) {
+                for (int j=0; j < users.length; j++) {                    
+                    if (users[j].getSecond() == Integer.parseInt(tmpUserId[i])) {
+                        editGroup = editGroup + users[j].getFirst() + "\n";
+                    }
+                }
+            }
+            return editGroup;        
     }
     
     //funkce vezme userList a users a vygeneruje String id1;id2;id3 pro ulozeni do databaze

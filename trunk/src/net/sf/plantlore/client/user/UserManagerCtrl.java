@@ -174,12 +174,13 @@ public class UserManagerCtrl {
            //pozor: pri add se musi ohlidat, zda byly vyplneny povinne polozky
            AddEditUserView addView = new AddEditUserView(model, view,true);
            AddEditUserCtrl addCtrl = new AddEditUserCtrl(addView, model);
-//           addView.setAddForm();
+           addView.setAddForm();
            addView.setVisible(true);           
            //nacteni            
            model.searchUser();
            //opet funkci pro vyzadani si dat postupne
            model.processResult(1, model.getDisplayRows());
+           model.setUsers();
            view.tableUserList.setModel(new UserManagerTableModel(model));                      
            view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());
            view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
@@ -213,6 +214,7 @@ public class UserManagerCtrl {
                model.searchUser();
                //opet funkci pro vyzadani si dat postupne
                model.processResult(1, model.getDisplayRows());
+               model.setUsers();
                view.tableUserList.setModel(new UserManagerTableModel(model));                      
                view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());                
            }          
@@ -286,22 +288,22 @@ public class UserManagerCtrl {
            model.setAddress(view.addressSearchText.getText());
            if (!(view.checkNonEmpty("login") || view.checkNonEmpty("name") ||
                view.checkNonEmpty("email") || view.checkNonEmpty("address"))) {
-               view.showSearchErrorMessage();
-           } else {           
-               //opet funkci pro vyzadani si dat postupne
-               model.searchUser();
-               //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
-               if (model.getDisplayRows() <= 0) {
-                   model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
-               }
-               if (model.getResultRows() < 1) {
-                   view.showSearchInfoMessage();
-               }
-               model.processResult(1, model.getDisplayRows());
-               view.tableUserList.setModel(new UserManagerTableModel(model));                      
-               view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+               view.showSearchInfoFillMessage();
+               model.setLogin("%");
+           }            
+           //opet funkci pro vyzadani si dat postupne
+           model.searchUser();
+           //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
+           if (model.getDisplayRows() <= 0) {
+               model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
            }
+           if (model.getResultRows() < 1) {
+               view.showSearchInfoMessage();
+           }
+           model.processResult(1, model.getDisplayRows());           
+           view.tableUserList.setModel(new UserManagerTableModel(model));                      
+           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());           
        }
     }
     

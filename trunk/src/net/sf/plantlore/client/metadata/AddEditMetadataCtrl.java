@@ -86,11 +86,9 @@ public class AddEditMetadataCtrl {
                     metadata.setDataSetDetails(view.dataSetDetailsText.getText());
                     metadata.setSourceInstitutionId(view.sourceInstirutionIdText.getText());
                     metadata.setSourceId(view.sourceIdText.getText());
-                    metadata.setOwnerOrganizationAbbrev(view.abbrevText.getText());
-                    //metadata.setDateCreate(view.dateCreateText.getText());
-                    metadata.setDateCreate(new Date());
-                    //metadata.setDateModified(view.dateModifiedText.getText());
-                    metadata.setDateModified(new Date());                            
+                    metadata.setOwnerOrganizationAbbrev(view.abbrevText.getText());                    
+                    metadata.setDateCreate(view.createDateChooser.getDate());                                        
+                    metadata.setDateModified(new Date());                                               
                     metadata.setRecordBasis(view.recordbasisText.getText());
                     metadata.setBiotopeText(view.biotopetextText.getText());
                     metadata.setDeleted(0);
@@ -116,8 +114,6 @@ public class AddEditMetadataCtrl {
                     model.getSelectedRecord().setSourceInstitutionId(view.sourceInstirutionIdText.getText());
                     model.getSelectedRecord().setSourceId(view.sourceIdText.getText());
                     model.getSelectedRecord().setOwnerOrganizationAbbrev(view.abbrevText.getText());
-                    //model.getSelectedRecord().setDateCreate(view.dateCreateText.getText());
-                    //model.getSelectedRecord().setDateModified(view.dateModifiedText.getText());
                     model.getSelectedRecord().setRecordBasis(view.recordbasisText.getText());
                     model.getSelectedRecord().setBiotopeText(view.biotopetextText.getText());
                     model.getSelectedRecord().setDeleted(0);

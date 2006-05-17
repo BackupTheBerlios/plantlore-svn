@@ -82,57 +82,63 @@ public class AddEditUserCtrl {
                logger.debug("Add of User.");
                //otestovani, zda jsou vyplneny povinne polozky
                 if (view.checkNotNull()) {
-                    //vytvorime novy rekord a ulozime do nej nactene hodnoty
-                    User user = new User();                    
-                     //nacteni hodnot                                       
-                   user.setLogin(view.loginText.getText());
-                   user.setPassword(view.passwordtext.getText());
-                   user.setFirstName(view.firstNameText.getText());
-                   user.setSurname(view.surnameText.getText());
-                   user.setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
-                   user.setEmail(view.emailText.getText());
-                   user.setAddress(view.addressText.getText());
-                   user.setCreateWhen(new Date());
-                   user.setDropWhen(null);
-                   user.setNote(view.noteText.getText());
-                   //Right
-                   Right right = new Right();
-                   user.setRight(right);
-                   //FIXME:ulozeni dat EDITGROUP
-                   right.setEditGroup(model.getEditGroupID());
-                   //right.setEditGroup(view.editGroupTextArea.getText());                 
-                   if (view.administratorCheckBox.isSelected()) {
-                       right.setAdministrator(1);
+                   //ovezeni, zda se neopakuje login (musi byt unikatni)
+                   if (model.uniqueLogin(view.loginText.getText())) {
+                       //message s informaci, ze je dany login jiz existuje 
+                       view.checUniqueLoginMessage(view.loginText.getText());
                    } else {
-                       right.setAdministrator(0);
-                   }
-                   if (view.editAllCheckBox.isSelected()) {
-                       right.setEditAll(1);
-                   } else {
-                       right.setEditAll(0);
-                   }
-                   //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
-                   //BUDE TO CHTIT CHYTRE OZNACOVANI
-                 
-                   if (view.addRightCheckBox.isSelected()) {
-                       right.setAdd(1);
-                   } else {
-                       right.setAdd(0);
-                   }                                       
-                   
-                    //mela by se tu vypsat nejaka informace pro uzivatele
-                    //pridani zaznamu do tabulky User
-                   
-                   //FIXME: PRIDANI PADA na vlozeni do tabulky tUser
-                    model.addUserRecord(user, right);                                                           
-                    view.close(); 
+                        //vytvorime novy rekord a ulozime do nej nactene hodnoty
+                        User user = new User();                    
+                         //nacteni hodnot                                       
+                       user.setLogin(view.loginText.getText());
+                       user.setPassword(view.passwordtext.getText());
+                       user.setFirstName(view.firstNameText.getText());
+                       user.setSurname(view.surnameText.getText());
+                       user.setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
+                       user.setEmail(view.emailText.getText());
+                       user.setAddress(view.addressText.getText());
+                       user.setCreateWhen(new Date());
+                       user.setDropWhen(null);
+                       user.setNote(view.noteText.getText());
+                       //Right
+                       Right right = new Right();
+                       user.setRight(right);
+
+                       right.setEditGroup(model.getEditGroupID());
+
+                       if (view.administratorCheckBox.isSelected()) {
+                           right.setAdministrator(1);
+                       } else {
+                           right.setAdministrator(0);
+                       }
+                       if (view.editAllCheckBox.isSelected()) {
+                           right.setEditAll(1);
+                       } else {
+                           right.setEditAll(0);
+                       }
+                       //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
+                       //BUDE TO CHTIT CHYTRE OZNACOVANI
+
+                       if (view.addRightCheckBox.isSelected()) {
+                           right.setAdd(1);
+                       } else {
+                           right.setAdd(0);
+                       }                                       
+
+                        //mela by se tu vypsat nejaka informace pro uzivatele
+                        //pridani zaznamu do tabulky User
+
+                       //FIXME: PRIDANI PADA na vlozeni do tabulky tUser
+                        model.addUserRecord(user, right);                                                                                  
+                        //zavreni pridavaciho dialogu
+                        view.close();
+                    }                                                           
                 }
            } else if (model.getOperation().equals("EDIT")) {  
                logger.debug("Edit of User.");
                 //otestovani, zda jsou vyplneny povinne polozky
                 if (view.checkNotNull()) {
-                    //nacteni hodnot                                       
-                   model.getSelectedRecord().setLogin(view.loginText.getText());
+                    //nacteni hodnot                                                          
                    model.getSelectedRecord().setPassword(view.passwordtext.getText());
                    model.getSelectedRecord().setFirstName(view.firstNameText.getText());
                    model.getSelectedRecord().setSurname(view.surnameText.getText());
@@ -142,8 +148,9 @@ public class AddEditUserCtrl {
                    model.getSelectedRecord().setNote(view.noteText.getText());
                    //Right
                    Right right = model.getSelectedRecord().getRight();
-                   //FIXME: ulozeni EDITGROUP
-                   right.setEditGroup(view.editGroupTextArea.getText());                   
+                   
+                   right.setEditGroup(model.getEditGroupID());
+                   
                    if (view.administratorCheckBox.isSelected()) {
                        right.setAdministrator(1);
                    } else {

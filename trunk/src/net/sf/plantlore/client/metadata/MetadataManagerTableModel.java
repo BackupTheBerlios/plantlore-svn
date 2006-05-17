@@ -87,9 +87,9 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
             metadataData[ii][3] = ((Metadata)metadataDataList.get(i)).getTechnicalContactName();    	    
             metadataData[ii][4] = ((Metadata)metadataDataList.get(i)).getContentContactName();                                 
             Date dateCreate = ((Metadata)metadataDataList.get(i)).getDateCreate();
-            metadataData[ii][5] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(dateCreate);     	                               
+            metadataData[ii][5] = DateFormat.getDateInstance(DateFormat.MEDIUM, L10n.getCurrentLocale()).format(dateCreate);     	                               
             Date dateModified = ((Metadata)metadataDataList.get(i)).getDateModified();            
-            metadataData[ii][5] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(dateModified);
+            metadataData[ii][6] = DateFormat.getDateInstance(DateFormat.MEDIUM, L10n.getCurrentLocale()).format(dateModified);
     	    ii++;
     	}      	    	
     	this.data = metadataData;    	
