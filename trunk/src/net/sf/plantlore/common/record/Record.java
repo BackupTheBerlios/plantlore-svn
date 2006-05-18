@@ -2,10 +2,7 @@ package net.sf.plantlore.common.record;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.*;
 
 
 /**
@@ -51,7 +48,7 @@ public abstract class Record implements Serializable {
 		for( Class table : BASIC_TABLES)
 			try {
 				// Take all their columns.
-				ArrayList<String> columns = ((Record) table.newInstance()).getColumns();
+				List<String> columns = ((Record) table.newInstance()).getColumns();
 				for(String column : columns)
 					// And store their getters. 
 					getters.put(table.getSimpleName()+"."+column, getter(table, column));
@@ -215,18 +212,18 @@ public abstract class Record implements Serializable {
 	/**
 	 * @return The set of names of all foreign keys (columns that refer to other tables).
 	 */
-	public ArrayList<String> getForeignKeys() { return new ArrayList(0); }
+	public List<String> getForeignKeys() { return new ArrayList(0); }
 	
 	/**
 	 * @return The set of names of all columns of the table.
 	 */
-	public ArrayList<String> getColumns() { return new ArrayList(0); }
+	public List<String> getColumns() { return new ArrayList(0); }
 	
 	/**
 	 * @return The set of names of columns that are not foreign keys.
 	 */
-	public ArrayList<String> getProperties() {
-		ArrayList<String> properties = getColumns();
+	public List<String> getProperties() {
+		List<String> properties = getColumns();
 		properties.removeAll(getForeignKeys());
 		return properties;
 	}
@@ -234,8 +231,8 @@ public abstract class Record implements Serializable {
 	/**
 	 * @return The set of names of all not-null columns (including foreign keys).
 	 */
-	public ArrayList<String> getNN() {
-		ArrayList<String> nn = getForeignKeys();
+	public List<String> getNN() {
+		List<String> nn = getForeignKeys();
 		return nn;
 	}
 	
@@ -288,7 +285,7 @@ public abstract class Record implements Serializable {
 	 * @param values	Varargs - strings.
 	 * @return	ArrayList containing all values.
 	 */
-	public static ArrayList<String> list(String... values) {
+	public static List<String> list(String... values) {
 		if(values == null) return new ArrayList<String>(0);
 		ArrayList<String> list = new ArrayList<String>(values.length);
 		for(String value : values) list.add(value);

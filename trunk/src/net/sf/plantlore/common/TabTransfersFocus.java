@@ -21,7 +21,9 @@ import java.awt.event.KeyEvent;
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-05-14
  * @version 1.0
+ * @see TransferFocus#patch(Component)
  */
+@Deprecated
 public class TabTransfersFocus extends KeyAdapter {
 	
 	private Component a;

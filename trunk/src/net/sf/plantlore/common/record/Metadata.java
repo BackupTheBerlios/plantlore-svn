@@ -7,7 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing TMETADATA table in the DB. This object is used as a data
@@ -63,7 +63,7 @@ public class Metadata extends Record {
     public Metadata() {
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
     			CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL, CONTENTCONTACTNAME,
     			DATASETDETAILS, DATASETTITLE, SOURCEID, SOURCEINSTITUTIONID,
@@ -71,7 +71,7 @@ public class Metadata extends Record {
     			DATECREATE,*//* DATEMODIFIED*/ ); // Damn this table!
     }
     
-    public ArrayList<String> getNN() {
+    public List<String> getNN() {
     	return list(TECHNICALCONTACTNAME, CONTENTCONTACTNAME, DATASETTITLE, 
     			SOURCEINSTITUTIONID, SOURCEID, DELETED/*, DATECREATE*//*, DATEMODIFIED*/);
     }

@@ -1,9 +1,9 @@
 package net.sf.plantlore.client.imports;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
@@ -597,7 +597,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		else {
 			logger.debug("The record belongs to a common table "+record.getClass().getSimpleName());
 			// Insert all of its sub-records.
-			ArrayList<String> keys = record.getForeignKeys();
+			List<String> keys = record.getForeignKeys();
 			// Inserting a new AuthorOccurrence MUSTN'T cause the insertion of the Occurrence.
 			if(record instanceof AuthorOccurrence)
 				keys.remove(AuthorOccurrence.OCCURRENCE); 
@@ -686,7 +686,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		 * mean INSERT or nothing :). 
 		 */
 		else {
-			ArrayList<String> keys = replacement.getForeignKeys();
+			List<String> keys = replacement.getForeignKeys();
 			boolean propertiesMatch = doPropertiesMatch(current, replacement);
 			
 			logger.debug("The record belongs to a common table "+current.getClass().getSimpleName());

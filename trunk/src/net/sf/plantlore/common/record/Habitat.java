@@ -7,7 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing THABITATS table in the DB. This object is used as a data holder
@@ -48,11 +48,11 @@ public class Habitat extends Record implements Deletable {
     public static final String NOTE = "note";
     
     @Override
-    public ArrayList<String> getForeignKeys() { 
+    public List<String> getForeignKeys() { 
     	return list( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }

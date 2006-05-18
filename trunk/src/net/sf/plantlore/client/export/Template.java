@@ -101,7 +101,7 @@ public class Template {
 	public void setAllNN(Class table) {
 		try {
 			Record record = ((Record)table.newInstance());
-			ArrayList<String> nnProperties = record.getNN();
+			List<String> nnProperties = record.getNN();
 			nnProperties.removeAll(record.getForeignKeys());
 			for( String column :  nnProperties )
 				set(table, column);

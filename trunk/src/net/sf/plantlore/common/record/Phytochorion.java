@@ -7,7 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing TPHYTOCHORIA table in the DB. This object is used as a data holder
@@ -36,11 +36,11 @@ public class Phytochorion extends Record {
         
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( CODE, NAME );
     }
     
-    public ArrayList<String> getNN() {
+    public List<String> getNN() {
     	return list(CODE, NAME);
     }
     

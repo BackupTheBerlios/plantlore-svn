@@ -6,7 +6,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing TAUTHORS table in the DB. This object is used as a data holder
@@ -48,7 +48,7 @@ public class Author extends Record implements Deletable {
     public Author() {
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
     }
 

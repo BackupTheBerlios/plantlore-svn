@@ -7,7 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing TVILLAGES table in the DB. This object is used as a data holder
@@ -39,11 +39,11 @@ public class Village extends Record {
         
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( NAME );
     }
     
-    public ArrayList<String> getNN() {
+    public List<String> getNN() {
     	return list(NAME);
     }
     

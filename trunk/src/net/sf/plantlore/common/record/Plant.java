@@ -7,7 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing TPLANTS table in the DB. This object is used as a data holder
@@ -46,12 +46,12 @@ public class Plant extends Record {
         
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR,
     			CZECHNAME, SYNONYMS, NOTE, SURVEYTAXID );
     }
     
-    public ArrayList<String> getNN() {
+    public List<String> getNN() {
     	return list( SURVEYTAXID, TAXON, SCIENTIFICNAMEAUTHOR );
     }
     

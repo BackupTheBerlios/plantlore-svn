@@ -7,7 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Data holder object representing TAUTHORSOCCURENCES table in the DB. This object is used as a 
@@ -36,11 +36,11 @@ public class AuthorOccurrence extends Record implements Deletable {
     public static final String DELETED = "deleted";
     
     @Override
-    public ArrayList<String> getForeignKeys() { 
+    public List<String> getForeignKeys() { 
     	return list( AUTHOR, OCCURRENCE ); 
     }
     
-    public ArrayList<String> getColumns() {
+    public List<String> getColumns() {
     	return list( AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED );
     }
     
