@@ -16,14 +16,7 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.common.record.Habitat;
-import net.sf.plantlore.common.record.Metadata;
-import net.sf.plantlore.common.record.Occurrence;
-import net.sf.plantlore.common.record.Phytochorion;
-import net.sf.plantlore.common.record.Plant;
-import net.sf.plantlore.common.record.Publication;
-import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.*;
 
 import org.apache.log4j.Logger;
 
@@ -54,10 +47,20 @@ import org.apache.log4j.Logger;
  * instead of creating the object partially using setters!
  * The participating entities may depend on each other and
  * therefore their setters must be called in a specific order.
+ * <br/>
+ * The most important is the order of these entities:
+ * <ol>
+ * <li>UseProjections</li>
+ * <li>RootTable</li>
+ * <li>DBLayer</li>
+ * <li>SelectQuery</li>
+ * <li>Template</li>
+ * </ol>
+ * The first two steps may be omited if projections are not to be used.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29 
- * @version 1.0
+ * @version 2.0
  * @see net.sf.plantlore.client.export.DefaultDirector
  * @see net.sf.plantlore.client.export.Builder
  */
@@ -67,34 +70,34 @@ public class ExportMng extends Observable implements Observer {
 	 * List of all filters the Export Manager is capable to handle.
 	 */
 	protected XFilter[] filters = new XFilter[] {
-			new XFilter(L10n.getString("FilterPlantloreNative"), ".xml", ".pln"),
-			new XFilter(L10n.getString("FilterXML"), true, ".xml"),
-			new XFilter(L10n.getString("FilterCSV"), true, ".txt", ".csv"),	
+			new XFilter(L10n.getString("FilterPlantloreNative"), false, false, ".xml", ".pln"),
+			new XFilter(L10n.getString("FilterXML"), true, true, ".xml"),
+			new XFilter(L10n.getString("FilterCSV"), true, true, ".txt", ".csv"),	
 			new XFilter(L10n.getString("FilterABCD"), ".xml"),	
 			new XFilter(L10n.getString("FilterDC"), ".xml"),
-			new XFilter(L10n.getString("FilterStdOut"), true, ".out")
+			new XFilter(L10n.getString("FilterStdOut"), true, false, ".out")
 	};
 	
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
-	protected DBLayer db ;
-	protected Template template;
-	protected Selection select;
-	protected XFilter filter;
-	protected String filename;
-	protected Integer resultId;
-	protected DefaultDirector director;
-	protected Builder builder;
-	protected boolean aborted = false, exportInProgress = false;
-	protected int results = -1, selectedResults = -1;
-	protected SelectQuery query = null;
+	private DBLayer db ;
+	private Template template;
+	private Selection select;
+	private XFilter filter;
+	private String filename;
+	private Integer resultId;
+	private DefaultDirector director;
+	private Builder builder;
+	private boolean aborted = false, exportInProgress = false;
+	private int results = -1, selectedResults = -1;
+	private SelectQuery query = null;
 	
-	protected Writer writer;
-	protected Thread current;
+	private Writer writer;
+	private Thread current;
 		
 	
-	protected boolean useProjections = false;
-	protected Class rootTable;
+	private boolean useProjections = false;
+	private Class rootTable = Occurrence.class;
 	
 	
 	/**
@@ -107,17 +110,13 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	public ExportMng(DBLayer dblayer, SelectQuery query, Selection selection, Template template) 
 	throws ExportException, DBLayerException, RemoteException {
-		setDBLayer(dblayer);
-		setSelectQuery(query);
-		setSelection(selection);
-		setTemplate(template);
+		this(dblayer, query, selection, template, null, null, false, null);
 	}
 
 	
 	/**
 	 * Create a new Export manager.
 	 * <b>Mark all records AND columns as selected</b>.
-	 * Note: This constructor is for the first initialization only. 
 	 * <b>You will have to specify the SelectQuery</b>
 	 * before you call <code>start()</code>. 
 	 * 
@@ -126,10 +125,6 @@ public class ExportMng extends Observable implements Observer {
 	public ExportMng(DBLayer dblayer) 
 	throws ExportException {
 		setDBLayer(dblayer);
-		setTemplate(null);
-		
-		Selection select = new Selection(); select.all();
-		setSelection(select);
 	}
 	
 	/**
@@ -158,9 +153,21 @@ public class ExportMng extends Observable implements Observer {
 	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
 	 * @param filter	The filter which will be used to determine the appropriate builder of the output.
 	 * @param file	The name of the file where the output will be written.
+	 * @param useProjections	Should projections be used.
+	 * @param rootTable	The root table (only if projections are used).
 	 */
-	public ExportMng(DBLayer dblayer, SelectQuery query, Selection selection, Template template, XFilter filter, String filename) 
+	public ExportMng(
+			DBLayer dblayer, 
+			SelectQuery query, 
+			Selection selection, 
+			Template template, 
+			XFilter filter, 
+			String filename,
+			boolean useProjections,
+			Class rootTable) 
 	throws ExportException, DBLayerException, RemoteException  {
+		useProjections( useProjections );
+		setRootTable( rootTable );
 		setDBLayer(dblayer);
 		setSelectQuery(query);
 		setSelection(selection);
@@ -175,7 +182,7 @@ public class ExportMng extends Observable implements Observer {
 	 * which is why the Export Manager has to use projections.
 	 * 
 	 * @param useProjections	True if the Export manager shall use projections instead of regular records.
-	 * @throws ExportException
+	 * @throws ExportException	If the export is already in progress.
 	 */
 	synchronized public void useProjections(boolean useProjections) 
 	throws ExportException {
@@ -186,7 +193,13 @@ public class ExportMng extends Observable implements Observer {
 		this.useProjections = useProjections;
 	}
 	
-	
+	/**
+	 * If projections are used, the root table must be specified explicitely.
+	 * The default root table is the Occurrence table.
+	 * 
+	 * @param rootTable	The root table (the table the query started with). 
+	 * @throws ExportException	If the export is already in progress.
+	 */
 	synchronized public void setRootTable(Class rootTable) 
 	throws ExportException {
 		if(isExportInProgress()) {
@@ -224,7 +237,7 @@ public class ExportMng extends Observable implements Observer {
 	 * If projections are used, they will be added to the SelectQuery and
 	 * the SelectQuery will be executed here.
 	 * 
-	 * @throws ExportException 
+	 * @throws ExportException	If the export is already in progress.
 	 */
 	synchronized public void setTemplate(Template template) 
 	throws ExportException {
@@ -258,10 +271,12 @@ public class ExportMng extends Observable implements Observer {
 		 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 		
 		if(useProjections) {
-			template.addProjections( query, 
+			if( rootTable == AuthorOccurrence.class || rootTable == Author.class )
+				template.addProjections( query, AuthorOccurrence.class, Author.class );
+			else
+				template.addProjections( query, 
 					Occurrence.class, Plant.class, Metadata.class, Publication.class, 
 					Habitat.class, Territory.class, Village.class, Phytochorion.class );
-			
 			//Execute the SelectQuery and update the resultId and the number of results.
 			try {
 				resultId = db.executeQuery( query );
@@ -362,6 +377,8 @@ public class ExportMng extends Observable implements Observer {
 			throw new ExportException(L10n.getString("error.InvalidFilter"));
 		if( filename == null || filename.length() == 0 ) 
 			throw new ExportException(L10n.getString("error.MissingFileName"));
+		if( useProjections && rootTable == null)
+			throw new ExportException(L10n.getString("error.InvalidRootTable"));
 			
 		
 		logger.debug("Initializing the export environment.");
@@ -387,7 +404,10 @@ public class ExportMng extends Observable implements Observer {
 			builder = new TrainingBuilder(template);
 
 		// Create a new Director and run it in a separate thread.
-		director = new DefaultDirector(builder, resultId, db, select, useProjections, template.getDescription(), rootTable);
+		director = new DefaultDirector(
+				builder, resultId, db, select, useProjections, 
+				template.getDescription(), rootTable);
+		director.ignoreDead( filter.ignoreDead() );
 		director.addObserver(this);
 		
 		current = new Thread( director, "Export" );

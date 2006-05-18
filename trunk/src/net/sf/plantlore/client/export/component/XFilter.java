@@ -23,6 +23,7 @@ public class XFilter extends FileFilter {
 	private String description;
 	private ArrayList<String> extensions;
 	private boolean columnSelection = false;
+	private boolean ignoreDead = true;
 	
 	/**
 	 * Create a new XFilter.
@@ -43,9 +44,10 @@ public class XFilter extends FileFilter {
 	 * @param columnSelectionEnabled	The format allows further modifications.
 	 * @param extensions	The list of extensions that are related to this filter.
 	 */
-	public XFilter(String description, boolean columnSelectionEnabled, String... extensions) {
+	public XFilter(String description, boolean columnSelectionEnabled, boolean ignoreDead, String... extensions) {
 		this(description, extensions);
 		this.columnSelection = columnSelectionEnabled;
+		this.ignoreDead = ignoreDead;
 	}
 
 	/**
@@ -53,6 +55,13 @@ public class XFilter extends FileFilter {
 	 */
 	public boolean isColumnSelectionEnabled() {
 		return this.columnSelection;
+	}
+	
+	/**
+	 *	@return True if dead records should be omited.
+	 */
+	public boolean ignoreDead() {
+		return ignoreDead;
 	}
 
 	/**

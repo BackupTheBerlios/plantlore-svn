@@ -38,34 +38,45 @@ public class Selection {
 	 * Add another record to the selection. 
 	 * @param id	The primary key of the record.
 	 */
-	public void add(Integer id) {
+	public Selection add(Integer id) {
 		if( !inverted ) selected.add(id);
 		else selected.remove(id);
+		return this;
 	}
 		
 	/**
 	 * Remove a selected record from the selection (deselect).
 	 * @param id Of the record that is deselected.
 	 */
-	public void remove(Integer id) {
+	public Selection remove(Integer id) {
 		if( !inverted ) selected.remove(id);
 		else selected.add(id);
+		return this;
 	}
 	
 	/**
 	 * Invert the current selection.
 	 */
-	public void invert() { inverted = !inverted; }
+	public Selection invert() { 
+		inverted = !inverted;
+		return this;
+	}
 
 	/**
 	 * Deselect all records.
 	 */
-	public void none() { selected.clear(); inverted = false; }
+	public Selection none() { 
+		selected.clear(); inverted = false;
+		return this;
+	}
 
 	/**
 	 * Select all records.
 	 */
-	public void all() { selected.clear(); inverted = true; }
+	public Selection all() { 
+		selected.clear(); inverted = true;
+		return this;
+	}
 
 	/**
 	 * @param id	The primary key of the record.

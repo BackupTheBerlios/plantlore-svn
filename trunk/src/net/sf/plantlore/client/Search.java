@@ -531,7 +531,11 @@ public class Search extends Observable {
                 // This restriction is in question; 
                 // sometimes you want to export deleted data from the source database
                 // so that they are deleted in the target database, too.
-                exportQuery.addRestriction(PlantloreConstants.RESTR_NE, Occurrence.DELETED, null, 1, null);
+                // The restriction doesn't apply here. Dead records may be exported, it is the Filter describing
+                // the file format that decides whether dead record shall be exported or not.
+                
+                //exportQuery.addRestriction(PlantloreConstants.RESTR_NE, Occurrence.DELETED, null, 1, null);
+                
                 //---------------------------------------------------------------------------------------
                 for (Column column : columns) {
                     switch (column.type) {

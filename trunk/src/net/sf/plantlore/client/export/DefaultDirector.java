@@ -41,7 +41,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
- * @version 1.0 RC 2
+ * @version 2.0
  *
  * @see net.sf.plantlore.client.common.Selection
  * @see net.sf.plantlore.client.export.Builder
@@ -65,7 +65,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	
 	private int count = 0;
 	
-	private Class rootTable;
+	//private Class rootTable;
 
 
 	/**
@@ -107,7 +107,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		this(builder, result, database, selection);
 		this.useProjections = useProjections;
 		this.description = description;
-		this.rootTable = rootTable;
+		//this.rootTable = rootTable;
 		if(rootTable != null) try { 
 			torso = (Record)rootTable.newInstance();
 			torso.createTorso();
@@ -254,7 +254,8 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				
 				logger.debug("New record No. "+i+" fetched: "+record);
-				if( !selection.contains( record ) ) continue; // Is the record selected?
+				if( !selection.contains( record ) || (ignoreDead && record.isDead()) ) 
+					continue; // Is the record selected?
 				
 				logger.debug("The record is in the selection. It will be exported.");
 			
@@ -294,9 +295,17 @@ public class DefaultDirector extends Observable implements Runnable {
 		aborted = true;
 	}
 	
-	
+	/**
+	 * The base of the record to be reconstructed.
+	 */
 	private Record torso;
 	
+	/**
+	 * Reconstruct the record from the given values. 
+	 * 
+	 * @param values	Values of columns (in the same order as in the Description).
+	 * @return	The reconstructed record.
+	 */
 	private Record reconstruct(Object[] values) {
 		for(int i = 0; i < description.size(); i++ ) {
 			Pair<Class, String> d = description.get(i);
