@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.lang.Integer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
@@ -27,6 +28,11 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 import net.sf.plantlore.client.export.ExportMng;
 import net.sf.plantlore.client.export.ExportMngCtrlA;
@@ -150,6 +156,7 @@ public class AppCoreCtrl
     AbstractAction dataWholeHistoryAction = new DataWholeHistoryAction();
     AbstractAction dataUserAction = new DataUserAction();
     
+    AbstractAction schedaAction = new SchedaAction();
     AbstractAction searchAction = new SearchAction();
     AbstractAction addAction = new AddAction();
     AbstractAction editAction = new EditAction();
@@ -189,6 +196,7 @@ public class AppCoreCtrl
         view.setAddAction(addAction);
         view.setEditAction(editAction);
         view.setDeleteAction(deleteAction);
+        view.setSchedaAction(schedaAction);
 
         view.setSelectAllAction(selectAllAction);
         view.setSelectNoneAction(selectNoneAction);
@@ -222,6 +230,7 @@ public class AppCoreCtrl
         dataWholeHistoryAction.setEnabled(enabled);
         dataUserAction.setEnabled(enabled);
         
+        schedaAction.setEnabled(enabled);
         searchAction.setEnabled(enabled);
         addAction.setEnabled(enabled);
         editAction.setEnabled(enabled);
@@ -586,6 +595,33 @@ public class AppCoreCtrl
             }
         }
         
+    }
+    
+    class SchedaAction extends AbstractAction {
+        public SchedaAction() {
+            putValue(NAME, L10n.getString("Overview.Scheda"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SchedaTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Scheda"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            try {
+          JasperReport jasperReport = JasperCompileManager.compileReport(
+              "Scheda.jrxml");
+            
+          HashMap params = new HashMap();
+          params.put("HEADER_ONE","HERBARIUM MUSEI REGIONALIS BOHEMIAE MERIDIONALIS");
+          params.put("HEADER_TWO","České Budějovice");
+          JasperPrint jasperPrint = JasperFillManager.fillReport(
+                  jasperReport, params, new JasperDataSource(
+                                        model.getDatabase(), model.getTableModel().getSelection() )
+                                        );
+          new SchedaView(view, true, jasperPrint).setVisible(true);  
+            } catch(JRException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(view, "Sorry, can't display scheda, the jasper form is perhaps broken:\n"+e.getMessage());
+            }
+        }
     }
     
     class PreviousPageAction extends AbstractAction {

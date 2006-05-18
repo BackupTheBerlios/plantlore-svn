@@ -97,7 +97,8 @@ public class AppCoreView extends JFrame implements Observer
             selectNone = new JButton(),
             invertSelected  = new JButton(),
             prevPage = new JButton(),
-            nextPage = new JButton();
+            nextPage = new JButton(),
+            schedaButton = new JButton();
     
     private JScrollPane overviewScrollPane;
     private JLabel statusLabel;
@@ -210,6 +211,7 @@ public class AppCoreView extends JFrame implements Observer
         mainToolBar.add(editButton);
         mainToolBar.add(deleteButton);
         mainToolBar.add(searchButton);
+        mainToolBar.add(schedaButton);
         container.add(mainToolBar, BorderLayout.NORTH);
         
         sbm.add(searchButton, L10n.getString("Overview.SearchTT"));
@@ -400,6 +402,13 @@ public class AppCoreView extends JFrame implements Observer
     public void setSearchAction(AbstractAction a) {
         dataSearch.setAction(a);
         searchButton.setAction(a);
+    }
+
+    /** Sets an action to the Data->Search menu item and to the Search toolbar button.
+     *
+     */
+    public void setSchedaAction(AbstractAction a) {
+        schedaButton.setAction(a);
     }
 
     /** Sets an action to the selectAll button.
