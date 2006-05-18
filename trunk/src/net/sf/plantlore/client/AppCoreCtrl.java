@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.Integer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -606,8 +607,12 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             try {
-          JasperReport jasperReport = JasperCompileManager.compileReport(
-              "Scheda.jrxml");
+                ClassLoader cl = this.getClass().getClassLoader();
+                InputStream is = cl.getResourceAsStream("net/sf/plantlore/client/Scheda.jrxml");
+
+//          JasperReport jasperReport = JasperCompileManager.compileReport(
+//              "Scheda.jrxml");
+          JasperReport jasperReport = JasperCompileManager.compileReport(is);
             
           HashMap params = new HashMap();
           params.put("HEADER_ONE","HERBARIUM MUSEI REGIONALIS BOHEMIAE MERIDIONALIS");
