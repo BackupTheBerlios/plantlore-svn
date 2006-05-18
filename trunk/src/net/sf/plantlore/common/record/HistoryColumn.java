@@ -26,6 +26,8 @@ public class HistoryColumn extends Record {
     public static final String TABLENAME = "tableName";    
     public static final String COLUMNNAME = "columnName";
 
+    //public enum Column {ID, TABLENAME, COLUMNNAME};
+    
     /**
      *   Default constructor to create new class HistoryColumn
      */

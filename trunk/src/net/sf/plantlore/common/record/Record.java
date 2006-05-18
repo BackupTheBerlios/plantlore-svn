@@ -30,8 +30,7 @@ public abstract class Record implements Serializable {
 		Occurrence.class, Habitat.class, Territory.class, Village.class, Phytochorion.class,
 		Plant.class, Metadata.class, Publication.class, Author.class, AuthorOccurrence.class 
 	};
-	
-	
+	        
 	/**
 	 * A set of tables that cannot be changed.
 	 */

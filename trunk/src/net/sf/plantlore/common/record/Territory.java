@@ -28,6 +28,7 @@ public class Territory extends Record {
     public static final String ID = "id";
     public static final String NAME = "name";    
     
+    //public enum Column {ID, NAME};
     
     @Override
     public void setValue(String column, Object value) {

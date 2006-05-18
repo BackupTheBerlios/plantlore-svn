@@ -46,6 +46,9 @@ public class Publication extends Record implements Deletable  {
     public static final String CREATEDWHO = "createdWho";    
     public static final String NOTE = "note";
     
+    //public enum Column {ID, COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME, JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL,
+    //URL, DELETED, CREATEDWHO, NOTE};    
+    
     /** Creates a new instance of PublicationRecord */
     public Publication() {
         

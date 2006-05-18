@@ -109,5 +109,8 @@ public class Selection {
 	public Selection clone() {
 		return new Selection( this );
 	}
-
+        
+        public Collection<Integer> values() {
+            return selected;
+        }
 }

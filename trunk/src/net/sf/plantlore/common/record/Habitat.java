@@ -48,6 +48,8 @@ public class Habitat extends Record implements Deletable {
     public static final String DELETED = "deleted";    
     public static final String NOTE = "note";
     
+    //public enum Column {ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, DELETED, NOTE};
+    
     @Override
     public List<String> getForeignKeys() { 
     	return Arrays.asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 

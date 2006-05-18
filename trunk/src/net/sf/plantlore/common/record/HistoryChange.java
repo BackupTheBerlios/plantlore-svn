@@ -41,6 +41,8 @@ public class HistoryChange extends Record {
     public static final String WHEN = "when";
     public static final String WHO = "who";    
     
+    //public enum Column {ID, OCCURRENCE, RECORDID, OLDRECORDID, OPERATION, WHEN, WHO};
+    
     /**
      *   Default constructor to create new class HistoryChange
      */

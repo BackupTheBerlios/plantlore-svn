@@ -14,21 +14,37 @@ package net.sf.plantlore.common;
 public class PlantloreConstants {
 
     /** Constants with names of entities */
-    public static final String ENTITY_AUTHOR            = "author";
-    public static final String ENTITY_AUTHOROCCURRENCE  = "authorOccurrence";            
-    public static final String ENTITY_HABITAT           = "habitat";
-    public static final String ENTITY_HISTORYCHANGE     = "historyChange";
-    public static final String ENTITY_HISTORYCOLUMN     = "historyColumn";
-    public static final String ENTITY_HISTORYRECORD     = "historyRecord";
-    public static final String ENTITY_METADATA          = "metadata";
-    public static final String ENTITY_OCCURRENCE        = "occurrence";
-    public static final String ENTITY_PHYTOCHORION      = "phytochorion";
-    public static final String ENTITY_PLANT             = "plant";
-    public static final String ENTITY_PUBLICATION       = "publication";
-    public static final String ENTITY_RIGHT             = "right";
-    public static final String ENTITY_TERRITORY         = "territory";
-    public static final String ENTITY_USER              = "user";
-    public static final String ENTITY_VILLAGE           = "village";
+    public static final String ENTITY_AUTHOR            = Table.AUTHOR.toString();
+    public static final String ENTITY_AUTHOROCCURRENCE  = Table.AUTHOROCCURRENCE.toString();            
+    public static final String ENTITY_HABITAT           = Table.HABITAT.toString();
+    public static final String ENTITY_HISTORYCHANGE     = Table.HISTORYCHANGE.toString();
+    public static final String ENTITY_HISTORYCOLUMN     = Table.HISTORYCOLUMN.toString();
+    public static final String ENTITY_HISTORYRECORD     = Table.HISTORYRECORD.toString();
+    public static final String ENTITY_METADATA          = Table.METADATA.toString();
+    public static final String ENTITY_OCCURRENCE        = Table.OCCURRENCE.toString();
+    public static final String ENTITY_PHYTOCHORION      = Table.PHYTOCHORION.toString();
+    public static final String ENTITY_PLANT             = Table.PLANT.toString();
+    public static final String ENTITY_PUBLICATION       = Table.PUBLICATION.toString();
+    public static final String ENTITY_RIGHT             = Table.RIGHT.toString();
+    public static final String ENTITY_TERRITORY         = Table.TERRITORY.toString();
+    public static final String ENTITY_USER              = Table.USER.toString();
+    public static final String ENTITY_VILLAGE           = Table.VILLAGE.toString();
+    
+    public enum Table {AUTHOR, 
+    AUTHOROCCURRENCE,
+    HABITAT,
+    HISTORYCHANGE,
+    HISTORYCOLUMN,
+    HISTORYRECORD,
+    METADATA,
+    OCCURRENCE,
+    PHYTOCHORION,
+    PLANT,
+    PUBLICATION,
+    RIGHT,
+    TERRITORY,
+    USER,
+    VILLAGE};
     
     /** Constants for restrictions in select query */
     public static final int RESTR_BETWEEN       = 1;

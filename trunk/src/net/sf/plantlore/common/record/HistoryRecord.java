@@ -24,6 +24,8 @@ public class HistoryRecord extends Record {
     public static final String OLDVALUE = "oldValue";    
     public static final String NEWVALUE = "newValue";
 
+    //public enum Column {ID, HISTORYCOLUMN, HISTORYCHANGE, OLDVALUE, NEWVALUE};
+    
     /** Creates a new instance of HistoryRecord */
     public HistoryRecord() {
         

@@ -32,6 +32,8 @@ public class Right extends Record {
     public static final String EDITGROUP = "editGroup";    
     public static final String SEECOLUMNS = "seeColumns";    
     public static final String ADD = "add";    
+
+    //public enum Column {ID, ADMINISTRATOR, EDITALL, EDITGROUP, SEECOLUMNS, ADD};
     
     /**
      *   Default constructor to create new class Right

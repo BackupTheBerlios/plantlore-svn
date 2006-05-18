@@ -28,6 +28,7 @@ public class Village extends Record {
     public static final String ID = "id";
     public static final String NAME = "name";    
 
+    //public enum Column {ID, NAME};
     
     @Override
     public void setValue(String column, Object value) {
@@ -43,7 +44,7 @@ public class Village extends Record {
     public List<String> getColumns() {
     	return Arrays.asList( NAME );
     }
-    
+        
     public List<String> getNN() {
     	return Arrays.asList(NAME);
     }

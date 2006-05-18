@@ -30,6 +30,8 @@ public class Phytochorion extends Record {
     public static final String CODE = "code";    
     public static final String NAME = "name";
     
+    //public enum Column {ID, CODE, NAME};
+    
     /**
      *   Default constructor to create new class Phytochoria
      */

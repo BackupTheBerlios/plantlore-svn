@@ -58,6 +58,10 @@ public class Metadata extends Record {
     public static final String BIOTOPETEXT = "biotopeText";    
     public static final String DELETED = "deleted";
     
+    
+    //public enum Column {ID, TECHNICALCONTACTNAME, TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, CONTENTCONTACTNAME, CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL,
+    //DATASETTITLE, DATASETDETAILS, SOURCEINSTITUTIONID, SOURCEID, OWNERORGANIZATIONABBREV, DATECREATE, DATEMODIFIED, RECORDBASIS, BIOTOPTEXT, DELETED};
+    
     /**
      *   Default constructor to create new class Metadata
      */

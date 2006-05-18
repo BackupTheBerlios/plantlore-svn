@@ -30,6 +30,8 @@ public class LastDataVersion extends Record {
     public static final String TERRITORYVERSION = "territoryVersion";
     public static final String PHYTOCHORIAVERSION = "phytochoriaVersion";
             
+    //public enum Column {ID, DATE, PLANTSVERSION, VILLAGEVERSION, TERRITORYVERSION, PHYTOCHORIAVERSION};
+    
     /**
      *   Default constructor to create new class LastDataVersion
      */

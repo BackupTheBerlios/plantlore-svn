@@ -65,6 +65,8 @@ public class Occurrence extends Record implements Deletable {
     public static final String DELETED = "deleted";
     public static final String NOTE = "note";        
     
+    //public enum Column {ID, UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED, MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, ISODATETIMEBEGIN, DATASOURCE, PUBLICATION,
+    //HERBARIUM, CREATEDWHEN, CREATEDWHO, UPDATEDWHEN, UPDATEDWHO, METADATA, DELETED, NOTE};
     
     @Override
     public List<String> getForeignKeys() { 

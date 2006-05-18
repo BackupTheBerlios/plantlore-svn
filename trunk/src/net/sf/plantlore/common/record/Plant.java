@@ -42,6 +42,8 @@ public class Plant extends Record {
     public static final String SYNONYMS = "synonyms";    
     public static final String NOTE = "note";
 
+    //public enum Column {ID, SURVEYTAXID, TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR, CZECHNAME, SYNONYMS, NOTE};
+    
     /** Creates a new instance of PlantRecord */
     public Plant() {
         

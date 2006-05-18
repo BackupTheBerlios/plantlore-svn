@@ -41,6 +41,8 @@ public class User extends Record {
     public static final String DROPWHEN = "dropWhen";    
     public static final String RIGHT = "right";    
     public static final String NOTE = "note";    
+
+    //public enum Column {ID, LOGIN, PASSWORD, FIRSTNAME, SURNAME, WHOLENAME, EMAIL, ADDRESS, CREATEWHEN, DROPWHEN, RIGHT, NOTE};
         
     /** Creates a new instance of UserRecord */
     public User() {

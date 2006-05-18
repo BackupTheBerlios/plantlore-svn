@@ -36,6 +36,8 @@ public class AuthorOccurrence extends Record implements Deletable {
     public static final String NOTE = "note";
     public static final String DELETED = "deleted";
     
+    //public enum Column {ID, AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED }
+    
     @Override
     public List<String> getForeignKeys() { 
     	return Arrays.asList( AUTHOR, OCCURRENCE ); 

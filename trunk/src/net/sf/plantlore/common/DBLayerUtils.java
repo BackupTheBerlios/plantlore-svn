@@ -11,6 +11,7 @@ package net.sf.plantlore.common;
 
 import java.rmi.RemoteException;
 import net.sf.plantlore.common.record.Author;
+import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.middleware.DBLayer;
@@ -56,6 +57,32 @@ public class DBLayerUtils {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public AuthorOccurrence[] getAuthorsOf(Occurrence o) {
+        AuthorOccurrence[] authorResults = null;
+        //FIXME:
+        try {
+            SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
+            sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
+            sq.addRestriction(PlantloreConstants.RESTR_NE,AuthorOccurrence.DELETED,null,1,null);
+            int resultid = db.executeQuery(sq);
+            int resultCount = db.getNumRows(resultid);
+            authorResults = new AuthorOccurrence[resultCount];
+            Object[] results = db.more(resultid, 0, resultCount-1);
+            Object[] tmp;
+            AuthorOccurrence ao;
+            for (int i = 0; i < resultCount; i++) {
+                tmp = (Object[]) results[i];
+                ao = (AuthorOccurrence)tmp[0];
+                authorResults[i] = ao;
+            }
+        } catch (DBLayerException ex) {
+            ex.printStackTrace();
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+        return authorResults;
     }
     
     public static void main(String[] args) throws DBLayerException, RemoteException {
