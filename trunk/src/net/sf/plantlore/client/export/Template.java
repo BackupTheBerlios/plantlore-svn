@@ -3,7 +3,9 @@ package net.sf.plantlore.client.export;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.middleware.SelectQuery;
 import static net.sf.plantlore.common.PlantloreConstants.PROJ_PROPERTY;
@@ -126,16 +128,24 @@ public class Template {
 	}
 	
 	
+	private List<Pair<Class, String>> plan;
+	
+	public List<Pair<Class, String>> getDescription() {
+		return plan;
+	}
 	
 	/**
 	 * Add projections to the query according to the selected columns.
 	 * 
 	 * @param q	The query to be modified.
 	 * @param tables	The important tables. The first table is considered the root table.
+	 * @return The column description.
 	 */
-	public void addProjections(SelectQuery q, Class...tables) {
+	public List<Pair<Class, String>> addProjections(SelectQuery q, Class...tables) {
+		plan = new ArrayList<Pair<Class,String>>(20);
 		for(int i = 0; i < tables.length; i++)
 			addProjections(q, tables[i], i == 0);
+		return plan;
 	}
 	
 	
@@ -143,8 +153,10 @@ public class Template {
 		try {
 			Record r = (Record)table.newInstance();
 			for(String property : r.getProperties())
-				if( isSet(table, property) )
+				if( isSet(table, property) ) {
 					q.addProjection(PROJ_PROPERTY, (omitAlias ? property : Record.alias(table)+"."+property));
+					plan.add(new Pair<Class, String>(table, property));
+				}
 		} catch(Exception e) {}
 	}
 	

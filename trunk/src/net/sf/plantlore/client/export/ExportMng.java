@@ -94,6 +94,7 @@ public class ExportMng extends Observable implements Observer {
 		
 	
 	protected boolean useProjections = false;
+	protected Class rootTable;
 	
 	
 	/**
@@ -184,6 +185,18 @@ public class ExportMng extends Observable implements Observer {
 		}
 		this.useProjections = useProjections;
 	}
+	
+	
+	synchronized public void setRootTable(Class rootTable) 
+	throws ExportException {
+		if(isExportInProgress()) {
+			logger.warn("Cannot change the Root Table while Export is still in progress!");
+			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
+		}
+		this.rootTable = rootTable;
+	}
+	
+	
 	
 	/**
 	 * Set a new DBLayer.
@@ -374,7 +387,7 @@ public class ExportMng extends Observable implements Observer {
 			builder = new TrainingBuilder(template);
 
 		// Create a new Director and run it in a separate thread.
-		director = new DefaultDirector(builder, resultId, db, select, useProjections);
+		director = new DefaultDirector(builder, resultId, db, select, useProjections, template.getDescription(), rootTable);
 		director.addObserver(this);
 		
 		current = new Thread( director, "Export" );

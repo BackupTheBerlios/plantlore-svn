@@ -2,8 +2,10 @@ package net.sf.plantlore.client.export;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Observable;
 
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.exception.ExportException;
@@ -54,10 +56,16 @@ public class DefaultDirector extends Observable implements Runnable {
 	private DBLayer database;
 	private int result;
 	
+	private boolean ignoreDead = true;
+	
 	private boolean aborted = false;
 	private boolean useProjections = false;
 	
+	private List<Pair<Class, String>> description;
+	
 	private int count = 0;
+	
+	private Class rootTable;
 
 
 	/**
@@ -90,11 +98,20 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @param database	The database layer that will quench the Director's thirst for more results.
 	 * @param selection	The set of selected records.
 	 * @param useProjections	Use projections instead of standard records.
+	 * @param description	The list of [Table, Column] - values of these columns will be returned 
+	 * by the database layer if projections are used
 	 */
-	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection, boolean useProjections) 
+	public DefaultDirector(Builder builder, int result, DBLayer database, Selection selection, 
+			boolean useProjections, List<Pair<Class, String>> description, Class rootTable) 
 	throws ExportException {
 		this(builder, result, database, selection);
 		this.useProjections = useProjections;
+		this.description = description;
+		this.rootTable = rootTable;
+		if(rootTable != null) try { 
+			torso = (Record)rootTable.newInstance();
+			torso.createTorso();
+		} catch (Exception e) {}
 	}
 	
 	
@@ -155,6 +172,15 @@ public class DefaultDirector extends Observable implements Runnable {
 		this.selection = selection.clone();
 	}
 	
+	/**
+	 * Set whether records marked as dead should be omited. Default is true.
+	 * 
+	 * @param ignore	True if dead records should be omited.
+	 */
+	public void ignoreDead(boolean ignore) {
+		this.ignoreDead = ignore;
+	}
+	
 	/** 
 	 * How many records have been exported.
 	 * 
@@ -192,6 +218,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			Object[] pulp = database.more( resultId, i, i );
 			AuthorOccurrence ao = (AuthorOccurrence) ((Object[])pulp[0])[0];
 			ao.setOccurrence( null ); // cut off the way back to the occurrence
+			if(ao.isDead() && ignoreDead) continue;
 			
 			logger.debug("New author-occurence record: " + ao);
 			
@@ -219,9 +246,12 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				logger.info("Fetching a new record from the database.");
 				
-				// Abandon the database.nect() Object[] records = database.next( result );
-				Object[] records = database.more( result, i, i );
-				Record record = (Record) ((Object[])records[0])[0]; // [0][0] since we use `more`
+				Record record;
+				if(useProjections) 
+					record = reconstruct( (Object[])database.more( result, i, i )[0] );
+				else
+					record = (Record)((Object[])database.more( result, i, i )[0])[0];
+				
 				
 				logger.debug("New record No. "+i+" fetched: "+record);
 				if( !selection.contains( record ) ) continue; // Is the record selected?
@@ -262,6 +292,17 @@ public class DefaultDirector extends Observable implements Runnable {
 	 */
 	public void abort() {
 		aborted = true;
+	}
+	
+	
+	private Record torso;
+	
+	private Record reconstruct(Object[] values) {
+		for(int i = 0; i < description.size(); i++ ) {
+			Pair<Class, String> d = description.get(i);
+			torso.setValue(d.getFirst(), d.getSecond(), values[i]);
+		}
+		return torso;
 	}
 
 }

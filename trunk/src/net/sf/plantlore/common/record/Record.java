@@ -60,11 +60,17 @@ public abstract class Record implements Serializable {
 			catch(InstantiationException e) { e.printStackTrace(); }
 	}
 
-	
+	/**
+	 * @return	Alias used for this table.
+	 */
 	public String alias() {
 		return alias( getClass() );
 	}
-	
+
+	/**
+	 * @param table	The table whose alias we need.
+	 * @return	The alias for that table.
+	 */
 	public static String alias(Class table) {
 		return "A" + table.getSimpleName();
 	}
@@ -95,8 +101,15 @@ public abstract class Record implements Serializable {
 		Record subrecord = (  getClass().equals(table) ? this : findSubrecord(this, table)  );
 		return (subrecord == null) ? null : subrecord.getValue(column);
 	}
-	
-	private Record findSubrecord(Record base, Class type) {
+
+	/**
+	 * Return the subrecord of the base record of the specified type.
+	 * 
+	 * @param base	The base record.
+	 * @param type	The type of the subrecord.
+	 * @return	The subrecord of the specified type.
+	 */
+	public Record findSubrecord(Record base, Class type) {
 		for(String key : base.getForeignKeys()) {
 			Record sub = (Record)base.getValue(key);
 			if(sub == null) continue; // As a matter of fact this can happen - Publication can be NULL.
@@ -107,6 +120,32 @@ public abstract class Record implements Serializable {
 		return null;
 	}
 	
+	
+	private final static String pckg = Record.class.getPackage().getName() + "."; 
+	
+	public Record createTorso() {
+		StringBuilder className;
+		for(String key : getForeignKeys()) {
+			if(key.equals(Habitat.NEARESTVILLAGE))
+				className = new StringBuilder("Village");
+			else {
+				className = new StringBuilder(key);
+				className.setCharAt(0, Character.toUpperCase(className.charAt(0)));
+			}
+			try {
+				Record subrecord = (Record)Class.forName(pckg+className).newInstance();
+				subrecord.createTorso();
+				setValue(key, subrecord);
+			} catch (Exception e) { e.printStackTrace(); }
+		}
+		return null;
+	}
+	
+	
+	public void setValue(Class table, String column, Object value) {
+		Record subrecord = (  getClass().equals(table) ? this : findSubrecord(this, table)  );
+		if(subrecord != null) subrecord.setValue(column, value);
+	}
 	
 	/**
 	 * Set the value in the specified column.
