@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public class Metadata extends Record {
     }
     
     public List<String> getColumns() {
-    	return list( TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
+    	return Arrays.asList( TECHNICALCONTACTADDRESS, TECHNICALCONTACTEMAIL, TECHNICALCONTACTNAME,
     			CONTENTCONTACTADDRESS, CONTENTCONTACTEMAIL, CONTENTCONTACTNAME,
     			DATASETDETAILS, DATASETTITLE, SOURCEID, SOURCEINSTITUTIONID,
     			OWNERORGANIZATIONABBREV, BIOTOPETEXT, RECORDBASIS, DELETED/*,
@@ -72,7 +73,7 @@ public class Metadata extends Record {
     }
     
     public List<String> getNN() {
-    	return list(TECHNICALCONTACTNAME, CONTENTCONTACTNAME, DATASETTITLE, 
+    	return Arrays.asList(TECHNICALCONTACTNAME, CONTENTCONTACTNAME, DATASETTITLE, 
     			SOURCEINSTITUTIONID, SOURCEID, DELETED/*, DATECREATE*//*, DATEMODIFIED*/);
     }
     

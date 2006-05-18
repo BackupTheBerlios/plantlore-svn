@@ -17,6 +17,7 @@ import java.util.*;
  *  
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
+ * @version 2.0
  */
 public abstract class Record implements Serializable {
 	
@@ -117,9 +118,15 @@ public abstract class Record implements Serializable {
 		return null;
 	}
 	
-	
+	/**
+	 * The name of the package where all records (holder objects) dwell.
+	 */
 	private final static String pckg = Record.class.getPackage().getName() + "."; 
 	
+	
+	/**
+	 * @return	The record with all subrecords (accessible via foreign keys) created.
+	 */
 	public Record createTorso() {
 		StringBuilder className;
 		for(String key : getForeignKeys()) {
@@ -138,7 +145,12 @@ public abstract class Record implements Serializable {
 		return null;
 	}
 	
-	
+	/**
+	 * Set a <code>value</code> of the <code>column</code> of the <code>subrecord</code>.
+	 * @param table	The type of the subrecord.
+	 * @param column	The name of the column.
+	 * @param value	The value to be set to that column.
+	 */
 	public void setValue(Class table, String column, Object value) {
 		Record subrecord = (  getClass().equals(table) ? this : findSubrecord(this, table)  );
 		if(subrecord != null) subrecord.setValue(column, value);
@@ -150,9 +162,8 @@ public abstract class Record implements Serializable {
 	 * @param column	The name of the column.
 	 * @param value	The new value.
 	 */
-	public void setValue(String column, Object value) {
-//		System.out.println(column + " = " + value);
-	}
+	@SuppressWarnings("unused")
+	public void setValue(String column, Object value) {}
 	
 	/**
 	 * Replace certain <code>columns</code> 
@@ -245,7 +256,7 @@ public abstract class Record implements Serializable {
 	public boolean areAllNNSet() {
 		for( String column : getNN() ) { 
 			Object value = getValue(column);
-			System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
+			//System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
 			if( value == null ) return false;
 			if( value instanceof Record && !((Record)value).areAllNNSet() ) return false;
 		}
@@ -278,21 +289,7 @@ public abstract class Record implements Serializable {
 		return true;
 	}
 	
-	
-	/**
-	 * Convert an array of strings to an ArrayList<String>.
-	 * 
-	 * @param values	Varargs - strings.
-	 * @return	ArrayList containing all values.
-	 */
-	public static List<String> list(String... values) {
-		if(values == null) return new ArrayList<String>(0);
-		ArrayList<String> list = new ArrayList<String>(values.length);
-		for(String value : values) list.add(value);
-		return list;
-	}
-		
-	
+
 	/**
 	 * Return the method that corresponds with the getter of <code>table.column</code>.  
 	 * 
@@ -309,17 +306,21 @@ public abstract class Record implements Serializable {
 		return null;
 	}
 	
-	
+
+	/**
+	 * Convert the record into a string. 
+	 * The list of values spans across subrecords as well.
+	 * For debug purposes mostly.
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sigma = new StringBuilder();
-		for(String property : this.getProperties()) {
-			sigma.append(property);
-			sigma.append(" = ");
-			sigma.append(this.getValue(property));
-			sigma.append("; ");
+		for(String property : this.getProperties())
+			sigma.append(property).append(" = ").append(this.getValue(property)).append("; ");
+		for(String key : getForeignKeys()) {
+			Record subrecord = (Record)getValue(key); 
+			if(subrecord != null)	sigma.append( subrecord.toString() );
 		}
-		
 		return sigma.toString();
 	}
 	

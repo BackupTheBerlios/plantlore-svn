@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,12 +48,12 @@ public class Plant extends Record {
     }
     
     public List<String> getColumns() {
-    	return list( TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR,
+    	return Arrays.asList( TAXON, GENUS, SPECIES, SCIENTIFICNAMEAUTHOR,
     			CZECHNAME, SYNONYMS, NOTE, SURVEYTAXID );
     }
     
     public List<String> getNN() {
-    	return list( SURVEYTAXID, TAXON, SCIENTIFICNAMEAUTHOR );
+    	return Arrays.asList( SURVEYTAXID, TAXON, SCIENTIFICNAMEAUTHOR );
     }
     
     

@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,11 +68,11 @@ public class Occurrence extends Record implements Deletable {
     
     @Override
     public List<String> getForeignKeys() { 
-    	return list( HABITAT, PLANT, PUBLICATION, METADATA ); 
+    	return Arrays.asList( HABITAT, PLANT, PUBLICATION, METADATA ); 
     }
     
     public List<String> getColumns() {
-    	return list( UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED,
+    	return Arrays.asList( UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED,
     			MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, ISODATETIMEBEGIN,
     			DATASOURCE, PUBLICATION, HERBARIUM, /*CREATEDWHEN,*/ 
     			/*UPDATEDWHEN,*/ METADATA, NOTE );
@@ -80,7 +81,7 @@ public class Occurrence extends Record implements Deletable {
     public List<String> getNN() {
     	List<String> nn = getForeignKeys();
     	nn.remove(PUBLICATION);
-    	nn.addAll( list(UNITIDDB, UNITVALUE, YEARCOLLECTED/*, CREATEDWHEN*//*, UPDATEDWHEN*/) );
+    	nn.addAll( Arrays.asList(UNITIDDB, UNITVALUE, YEARCOLLECTED/*, CREATEDWHEN*//*, UPDATEDWHEN*/) );
     	return nn;
     }
     

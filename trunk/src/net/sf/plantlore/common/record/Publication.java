@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,12 +52,12 @@ public class Publication extends Record implements Deletable  {
     }
     
     public List<String> getColumns() {
-    	return list( COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
+    	return Arrays.asList( COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME,
     			JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL, URL, NOTE, DELETED );
     }
     
     public List<String> getNN() {
-    	return list(REFERENCECITATION);
+    	return Arrays.asList(REFERENCECITATION);
     }
     
     @Override
