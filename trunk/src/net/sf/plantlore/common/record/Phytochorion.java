@@ -7,7 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,11 +39,11 @@ public class Phytochorion extends Record {
     }
     
     public List<String> getColumns() {
-    	return Arrays.asList( CODE, NAME );
+    	return asList( CODE, NAME );
     }
     
     public List<String> getNN() {
-    	return Arrays.asList(CODE, NAME);
+    	return asList(CODE, NAME);
     }
     
     

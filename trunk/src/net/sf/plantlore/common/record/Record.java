@@ -233,8 +233,10 @@ public abstract class Record implements Serializable {
 	 * @return The set of names of columns that are not foreign keys.
 	 */
 	public List<String> getProperties() {
-		List<String> properties = getColumns();
-		properties.removeAll(getForeignKeys());
+		List<String> properties = getColumns(),
+		keys = getForeignKeys();
+		
+		properties.removeAll( keys );
 		return properties;
 	}
 	
@@ -303,6 +305,11 @@ public abstract class Record implements Serializable {
 			return table.getMethod( s.toString(), new Class[0] );
 		} catch(NoSuchMethodException e) {}
 		return null;
+	}
+	
+	
+	protected List<String> asList(String...values) {
+		return new ArrayList<String>(Arrays.asList(values));
 	}
 	
 

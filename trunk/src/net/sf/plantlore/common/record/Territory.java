@@ -7,7 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,11 +43,11 @@ public class Territory extends Record {
     }
     
     public List<String> getColumns() {
-    	return Arrays.asList( NAME );
+    	return asList( NAME );
     }
     
     public List<String> getNN() {
-    	return Arrays.asList(NAME);
+    	return asList(NAME);
     }
     
     /**

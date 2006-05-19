@@ -7,7 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,11 +39,11 @@ public class AuthorOccurrence extends Record implements Deletable {
     
     @Override
     public List<String> getForeignKeys() { 
-    	return Arrays.asList( AUTHOR, OCCURRENCE ); 
+    	return asList( AUTHOR, OCCURRENCE ); 
     }
     
     public List<String> getColumns() {
-    	return Arrays.asList( AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED );
+    	return asList( AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED );
     }
     
     @Override

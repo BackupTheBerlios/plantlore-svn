@@ -7,7 +7,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,11 +51,11 @@ public class Habitat extends Record implements Deletable {
     
     @Override
     public List<String> getForeignKeys() { 
-    	return Arrays.asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
+    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
     }
     
     public List<String> getColumns() {
-    	return Arrays.asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     

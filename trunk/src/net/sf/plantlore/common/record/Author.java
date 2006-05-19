@@ -6,7 +6,6 @@
 
 package net.sf.plantlore.common.record;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +49,7 @@ public class Author extends Record implements Deletable {
     }
     
     public List<String> getColumns() {
-    	return Arrays.asList( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
+    	return asList( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
     }
 
     @Override
