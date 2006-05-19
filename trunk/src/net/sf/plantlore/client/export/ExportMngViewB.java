@@ -40,10 +40,10 @@ public class ExportMngViewB extends javax.swing.JDialog {
         next = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        setTitle(L10n.getString("export.SelectColumns"));
+        setTitle(L10n.getString("Export.SelectColumns"));
         jScrollPane1.setViewportView(tree);
 
-        next.setText(L10n.getString("export.Title"));
+        next.setText(L10n.getString("Export.Title"));
         
         tree.setSelectionModel( tsm );
 

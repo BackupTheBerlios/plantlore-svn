@@ -126,6 +126,7 @@ public class CSVBuilder implements Builder {
 				stream.write(NEWLINE);
 				firstColumnOnThisLine = true;
 			}
+		//stream.flush();
 	}
 	
 	/**

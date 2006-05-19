@@ -125,6 +125,7 @@ public class ExportMng extends Observable implements Observer {
 	public ExportMng(DBLayer dblayer) 
 	throws ExportException {
 		setDBLayer(dblayer);
+		setSelection(null);
 	}
 	
 	/**
@@ -138,9 +139,7 @@ public class ExportMng extends Observable implements Observer {
 		setDBLayer(dblayer);
 		setSelectQuery(query);
 		setTemplate(null);
-		
-		Selection select = new Selection(); select.all();
-		setSelection(select);
+		setSelection(null);
 	}
 	
 	
@@ -272,9 +271,9 @@ public class ExportMng extends Observable implements Observer {
 		
 		if(useProjections) {
 			if( rootTable == AuthorOccurrence.class || rootTable == Author.class )
-				template.addProjections( query, AuthorOccurrence.class, Author.class );
+				this.template.addProjections( query, AuthorOccurrence.class, Author.class ); // USE THIS.TEMPLATE!
 			else
-				template.addProjections( query, 
+				this.template.addProjections( query, 
 					Occurrence.class, Plant.class, Metadata.class, Publication.class, 
 					Habitat.class, Territory.class, Village.class, Phytochorion.class );
 			//Execute the SelectQuery and update the resultId and the number of results.
