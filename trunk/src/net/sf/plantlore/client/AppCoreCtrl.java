@@ -69,6 +69,7 @@ import net.sf.plantlore.client.login.LoginCtrl;
 import net.sf.plantlore.client.login.LoginView;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RMIDBLayerFactory;
 
@@ -403,25 +404,6 @@ public class AppCoreCtrl
             if(exportView == null) {
             	try {
             		exportModel = new ExportMng(model.getDatabase());
-                        //FIXME:
-                    try {
-                    	if(model.areProjectionsEnabled()) {
-                    		exportModel.useProjections(true);
-                    		exportModel.setRootTable(model.getRootTable());
-                    	}
-                        exportModel.setSelectQuery(model.getExportQuery());
-                    } catch (RemoteException ex) {
-                        JOptionPane.showMessageDialog(view,"Some remote error: "+ex);
-                        return;
-                    } catch (DBLayerException ex) {
-                        JOptionPane.showMessageDialog(view,"Some database error: "+ex);
-                        return;
-                    } catch (ExportException ex) {
-                        JOptionPane.showMessageDialog(view,"Some export error: "+ex);
-                        return;
-                    }
-                    
-                    exportModel.setSelection(model.getTableModel().getSelection());
             		exportProgressView = new ExportProgressView(exportModel);
             		exportProgressCtrl = new ExportProgressCtrl(exportModel, exportProgressView);
             		exportView = new ExportMngViewA(exportModel);
@@ -434,9 +416,32 @@ public class AppCoreCtrl
             // Display the progress view if an export is already running.
             if(exportModel.isExportInProgress())
         		exportProgressView.setVisible(true);
-            // Display the first "Export dialog".
-        	else
-        		exportCtrl.setVisible(true);
+            // Display the Export dialog.
+            else {
+            	try {
+            		// Update the database.
+            		exportModel.setDBLayer(model.getDatabase());
+            		
+            		Object[] queryParam = searchModel.constructExportQuery();
+            		SelectQuery query = (SelectQuery)queryParam[0];
+            		Boolean useProjections = (Boolean)queryParam[1];
+            		Class rootTable = (Class)queryParam[2];
+            		
+            		if(useProjections) {
+            			exportModel.useProjections(true);
+            			exportModel.setRootTable(rootTable);
+            		}
+            		exportModel.setSelectQuery( query );
+            		
+            		exportModel.setSelection(model.getTableModel().getSelection());
+            		
+            	} catch (Exception ex) {
+            		JOptionPane.showMessageDialog(view, ex);
+            		ex.printStackTrace();
+            		return;
+            	}
+            	exportCtrl.setVisible(true);
+            }
         }
     }
 
@@ -597,7 +602,7 @@ public class AppCoreCtrl
             if (arg != null && arg instanceof Integer) {
                 logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
                 model.setResultId(searchModel.getNewResultId());
-                model.setExportQuery(searchModel.getExportQuery(), false, Occurrence.class);
+                //model.setExportQuery(searchModel.getExportQuery(), false, Occurrence.class);
             }
         }
         

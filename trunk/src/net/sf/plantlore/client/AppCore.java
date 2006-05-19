@@ -301,15 +301,17 @@ public class AppCore extends Observable
         notifyObservers("NEW_QUERY");
     }
 
-    public void setExportQuery(SelectQuery query, boolean useProjections, Class rootTable) {
-        this.exportQuery = query;
-        this.usingProjections = useProjections;
-        this.rootTable = rootTable;
-    }
+    // The export query should not be stored - a new export query must be constructed each time!!
+//    public void setExportQuery(SelectQuery query, boolean useProjections, Class rootTable) {
+//        this.exportQuery = query;
+//        this.usingProjections = useProjections;
+//        this.rootTable = rootTable;
+//    }
     
-    public SelectQuery getExportQuery() {
-        return exportQuery;
-    }
+    // The export query should not be returned - a new export query must be constructed each time!!
+//    public SelectQuery getExportQuery() {
+//        return exportQuery;
+//    }
     
     public Class getRootTable() {
     	return rootTable;
@@ -680,7 +682,7 @@ public class AppCore extends Observable
         search.setColumns(columns);
         search.constructQuery();
         setResultId(search.getNewResultId());
-        setExportQuery(search.getExportQuery(), false, null);
+        //setExportQuery(search.getExportQuery(), false, null);
     }
     
 }

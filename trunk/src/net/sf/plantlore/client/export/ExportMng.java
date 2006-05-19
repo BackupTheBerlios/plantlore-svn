@@ -91,6 +91,7 @@ public class ExportMng extends Observable implements Observer {
 	private boolean aborted = false, exportInProgress = false;
 	private int results = -1, selectedResults = -1;
 	private SelectQuery query = null;
+	private boolean queryClosed = true;
 	
 	private Writer writer;
 	private Thread current;
@@ -345,7 +346,10 @@ public class ExportMng extends Observable implements Observer {
 			logger.warn("The select query is not valid - it is null!");
 
 		// Discontinue using the previous query
-		if(this.query != null) db.closeQuery(this.query);
+		if(!queryClosed && this.query != null) {
+			db.closeQuery(this.query);
+			queryClosed = true;
+		}
 		this.query = query;
 		
 		if(this.query != null) {
@@ -434,7 +438,10 @@ public class ExportMng extends Observable implements Observer {
 				exportInProgress = false;
 				// Dispose of the query.
 				try {
-				if(query != null) db.closeQuery( query );
+				if(!queryClosed && query != null) { 
+					db.closeQuery( query );
+					queryClosed = true;
+				}
 				}catch(RemoteException e) {}
 				logger.debug("Environment cleaned up.");
 				// Notify observers the export has ended.
