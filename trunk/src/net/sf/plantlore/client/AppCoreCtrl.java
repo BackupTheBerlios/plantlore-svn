@@ -405,6 +405,10 @@ public class AppCoreCtrl
             		exportModel = new ExportMng(model.getDatabase());
                         //FIXME:
                     try {
+                    	if(model.areProjectionsEnabled()) {
+                    		exportModel.useProjections(true);
+                    		exportModel.setRootTable(model.getRootTable());
+                    	}
                         exportModel.setSelectQuery(model.getExportQuery());
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(view,"Some remote error: "+ex);
@@ -416,7 +420,8 @@ public class AppCoreCtrl
                         JOptionPane.showMessageDialog(view,"Some export error: "+ex);
                         return;
                     }
-                        exportModel.setSelection(model.getTableModel().getSelection());
+                    
+                    exportModel.setSelection(model.getTableModel().getSelection());
             		exportProgressView = new ExportProgressView(exportModel);
             		exportProgressCtrl = new ExportProgressCtrl(exportModel, exportProgressView);
             		exportView = new ExportMngViewA(exportModel);
@@ -592,7 +597,7 @@ public class AppCoreCtrl
             if (arg != null && arg instanceof Integer) {
                 logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
                 model.setResultId(searchModel.getNewResultId());
-                model.setExportQuery(searchModel.getExportQuery());
+                model.setExportQuery(searchModel.getExportQuery(), false, Occurrence.class);
             }
         }
         

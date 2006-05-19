@@ -52,8 +52,10 @@ public class AppCore extends Observable
     private OverviewTableModel tableModel;
     private TableSorter tableSorter;
     private Logger logger;
-
+    
     private SelectQuery exportQuery = null;
+    private boolean usingProjections = false;
+    private Class rootTable = null;
     
     private int selectedRow = 0;
     
@@ -300,12 +302,22 @@ public class AppCore extends Observable
         notifyObservers("NEW_QUERY");
     }
 
-    public void setExportQuery(SelectQuery query) {
+    public void setExportQuery(SelectQuery query, boolean useProjections, Class rootTable) {
         this.exportQuery = query;
+        this.usingProjections = useProjections;
+        this.rootTable = rootTable;
     }
     
     public SelectQuery getExportQuery() {
         return exportQuery;
+    }
+    
+    public Class getRootTable() {
+    	return rootTable;
+    }
+    
+    public boolean areProjectionsEnabled() {
+    	return usingProjections;
     }
     
     public Pair<String, Integer>[] getPlants() {
