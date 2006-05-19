@@ -88,6 +88,11 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         removeButton = new javax.swing.JButton();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        headerOneLabel = new javax.swing.JLabel();
+        headerTwoLabel = new javax.swing.JLabel();
+        headerOneField = new javax.swing.JTextField();
+        headerTwoField = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
@@ -132,7 +137,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .add(czechRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(defaultRadioButton)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -149,7 +154,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(149, Short.MAX_VALUE))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab("tab1", jPanel1);
 
@@ -256,6 +261,46 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         );
         jTabbedPane1.addTab("tab2", jPanel3);
 
+        headerOneLabel.setText("Header one:");
+
+        headerTwoLabel.setText("Header two:");
+
+        headerOneField.setName("HEADER_ONE");
+
+        headerTwoField.setName("HEADER_TWO");
+
+        org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel5Layout.createSequentialGroup()
+                        .add(headerOneLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(headerOneField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE))
+                    .add(jPanel5Layout.createSequentialGroup()
+                        .add(headerTwoLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(headerTwoField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(headerOneLabel)
+                    .add(headerOneField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(headerTwoLabel)
+                    .add(headerTwoField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(240, Short.MAX_VALUE))
+        );
+        jTabbedPane1.addTab("tab3", jPanel5);
+
         cancelButton.setText("Cancel");
         cancelButton.setActionCommand("CANCEL");
 
@@ -323,11 +368,16 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JRadioButton defaultRadioButton;
     protected javax.swing.JButton downButton;
     protected javax.swing.JRadioButton englishRadioButton;
+    protected javax.swing.JTextField headerOneField;
+    protected javax.swing.JLabel headerOneLabel;
+    protected javax.swing.JTextField headerTwoField;
+    protected javax.swing.JLabel headerTwoLabel;
     protected javax.swing.JButton helpButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;

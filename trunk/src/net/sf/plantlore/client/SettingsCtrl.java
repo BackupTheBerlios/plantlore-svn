@@ -9,6 +9,8 @@ package net.sf.plantlore.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
@@ -18,6 +20,7 @@ import java.util.Observable;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
@@ -49,6 +52,9 @@ public class SettingsCtrl extends Observable
         view.removeButton.addActionListener(new ButtonListener());
         view.upButton.addActionListener(new ButtonListener());
         view.downButton.addActionListener(new ButtonListener());
+        
+        view.headerOneField.addFocusListener(new SchedaFieldListener());
+        view.headerTwoField.addFocusListener(new SchedaFieldListener());
     }
     
     /** Handles clicks on languages radio buttons.
@@ -159,6 +165,24 @@ public class SettingsCtrl extends Observable
                     view.selectedList.setSelectionInterval(min+1,max+1);
                 }
                 
+                return;
+            }
+        }
+    }//ButtonListener
+    
+    class SchedaFieldListener implements FocusListener {
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField jtf = (JTextField)e.getSource();
+            String s = jtf.getName();
+            if (s.equals("HEADER_ONE")) {
+                model.setHeaderOne(jtf.getText());
+                return;
+            }
+            if (s.equals("HEADER_TWO")) {
+                model.setHeaderTwo(jtf.getText());
                 return;
             }
         }

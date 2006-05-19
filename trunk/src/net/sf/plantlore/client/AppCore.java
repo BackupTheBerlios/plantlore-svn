@@ -52,6 +52,7 @@ public class AppCore extends Observable
     private OverviewTableModel tableModel;
     private TableSorter tableSorter;
     private Logger logger;
+    private ArrayList<Column> columns;
     
     private SelectQuery exportQuery = null;
     private boolean usingProjections = false;
@@ -80,6 +81,23 @@ public class AppCore extends Observable
         prefs = Preferences.userNodeForPackage(this.getClass());
         
         this.mainConfig = mainConfig;
+        ArrayList<Column> columns = mainConfig.getColumns();
+        if (columns.size() < 1) {
+            columns = new ArrayList<Column>(10);
+            columns.add(new Column(Column.Type.OCCURRENCE_ID));
+            columns.add(new Column(Column.Type.SELECTION));
+            columns.add(new Column(Column.Type.NUMBER));
+            columns.add(new Column(Column.Type.PLANT_TAXON));        
+            columns.add(new Column(Column.Type.AUTHOR));
+            columns.add(new Column(Column.Type.HABITAT_NEAREST_VILLAGE_NAME));
+            columns.add(new Column(Column.Type.OCCURRENCE_YEARCOLLECTED));
+            columns.add(new Column(Column.Type.PHYTOCHORION_NAME));
+            columns.add(new Column(Column.Type.HABITAT_DESCRIPTION));
+            columns.add(new Column(Column.Type.TERRITORY_NAME));            
+        }
+        this.columns = columns;
+        
+        tableModel =  new OverviewTableModel(prefs.getInt("recordsPerPage", 30), columns);
         
         // This is here in order to skip login procedure and connect to the database automatically
         // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
@@ -147,26 +165,7 @@ public class AppCore extends Observable
      * @return OverviewTableModel otherwise - creates a new one if it hasn't been created yet
      */
     public OverviewTableModel getTableModel() {
-        if (database != null)
-            if (tableModel == null) 
-            {
-            //FIXME:
-                try {
-                    tableModel = new OverviewTableModel(database, prefs.getInt("recordsPerPage", 30));
-                } catch (RemoteException ex) {
-                    ex.printStackTrace();
-                } catch (DBLayerException ex) {
-                    ex.printStackTrace();
-                }
-                logger.debug("tableModel created");
-                //FIXME: we should first return the model and *then* notifyObservers... :-/
-                setChanged();
-                notifyObservers();
-                return tableModel;
-            } else 
-                return tableModel;
-        else 
-            return null;
+        return tableModel;
     }
         
     public void selectAll() {
@@ -671,6 +670,17 @@ public class AppCore extends Observable
     
     public MainConfig getMainConfig() {
         return mainConfig;
+    }
+    
+    public void login() {
+        assert database != null;
+        
+        tableModel.setDatabase(database);
+        Search search = new Search(getDatabase());
+        search.setColumns(columns);
+        search.constructQuery();
+        setResultId(search.getNewResultId());
+        setExportQuery(search.getExportQuery(), false, null);
     }
     
 }

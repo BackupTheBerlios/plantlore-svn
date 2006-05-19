@@ -44,29 +44,8 @@ public class OverviewTableModel extends AbstractTableModel {
     private int currentPage = 1;
     private int selectionColumnIndex = -1;
     
-//    private ArrayList<Record999> recordsArray = new ArrayList<Record999>();
     private ArrayList<Column> columns;
-    
-    private Selection selection = new Selection();
-    
-    class Record999 {
-        public Record999(int id, boolean selected, int number) {
-            this.id = id;
-            this.selected = selected;
-            this.number = number;
-        }
-        public int id;
-        public boolean selected;
-        public int number;
-        
-        public boolean equals(Object o) {
-            if (!(o instanceof Record999))
-                return false;
-            Record999 r = (Record999)o;
-            return r.id == this.id;
-        }
-    }
-    
+    private Selection selection = new Selection();    
     private Object[][] data;
     
     /** Simple mode if true - only first three columns are displayed
@@ -79,85 +58,16 @@ public class OverviewTableModel extends AbstractTableModel {
     private int to = 1;
     
     /** Creates a new instance of OverviewTableModel */
-    public OverviewTableModel(DBLayer db, int pageSize) throws RemoteException, DBLayerException {
+    public OverviewTableModel(int pageSize, ArrayList<Column> columns) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
-        init();
-        
+        setColumns(columns);
+                
         this.pageSize = pageSize;
         resultsCount = 0;
         this.db = db;
-        SelectQuery sq = db.createQuery(AuthorOccurrence.class);
-        sq.createAlias(AuthorOccurrence.AUTHOR,"author");
-        sq.createAlias(AuthorOccurrence.OCCURRENCE,"occ");
-        sq.createAlias("occ."+Occurrence.HABITAT,"habitat");
-        sq.createAlias("occ."+Occurrence.PLANT,"plant");
-        sq.createAlias("occ."+Occurrence.PUBLICATION,"publication");
-        sq.createAlias("occ."+Occurrence.METADATA,"metadata");
-        sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
-        sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
-        sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
-        sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.ID); //setridit podle roku
-        sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
-        sq.addProjection(PlantloreConstants.PROJ_DISTINCT,"occ."+Occurrence.ID);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+Village.NAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.YEARCOLLECTED);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
+    }
         
-        //FIXME:
-        try {
-            setResultId(db.executeQuery(sq));
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-    private void init() {
-        columns = new ArrayList<Column>(10);
-        columns.add(new Column(Column.Type.OCCURRENCE_ID));
-        columns.add(new Column(Column.Type.SELECTION));
-        columns.add(new Column(Column.Type.NUMBER));
-        columns.add(new Column(Column.Type.PLANT_TAXON));        
-        columns.add(new Column(Column.Type.AUTHOR));
-        columns.add(new Column(Column.Type.HABITAT_NEAREST_VILLAGE_NAME));
-        columns.add(new Column(Column.Type.OCCURRENCE_YEARCOLLECTED));
-        columns.add(new Column(Column.Type.PHYTOCHORION_NAME));
-        columns.add(new Column(Column.Type.HABITAT_DESCRIPTION));
-        columns.add(new Column(Column.Type.TERRITORY_NAME));
-        selectionColumnIndex = columns.indexOf(new Column(Column.Type.SELECTION)) - 1; // we don't display the first column which is always Occurrence.ID
-                                                                                       // so the index as JTable sees it is -1
-    }
-    
-    private Pair<String,Integer>[] getAuthorsOf(Occurrence o) {
-        Pair<String,Integer>[] authorResults = null;
-        //FIXME:
-        try {
-            SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
-            sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
-            int resultid = db.executeQuery(sq);
-            int resultCount = db.getNumRows(resultid);
-            authorResults = new Pair[resultCount];
-            Object[] results = db.more(resultid, 0, resultCount-1);
-            Object[] tmp;
-            Author a;
-            for (int i = 0; i < resultCount; i++) {
-                tmp = (Object[]) results[i];
-                a = (Author)((AuthorOccurrence)tmp[0]).getAuthor();
-                authorResults[i] = new Pair<String,Integer>(a.getWholeName(), a.getId());
-            }
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
-        return authorResults;
-    }
-    
-    private void loadData() throws DBLayerException, RemoteException 
-    {
+    private void loadData() throws DBLayerException, RemoteException {
         resultsCount = db.getNumRows(getResultId());
         System.out.println("resultsCount="+resultsCount);
         Object[] records;
@@ -400,6 +310,11 @@ public class OverviewTableModel extends AbstractTableModel {
     
     public Integer getOccurrenceId(int row) {
         return (Integer)data[row][data[row].length-1];
+    }
+    
+    public void setDatabase(DBLayer database) {
+        this.db = database;
+        logger.debug("Database set.");
     }
 }
 

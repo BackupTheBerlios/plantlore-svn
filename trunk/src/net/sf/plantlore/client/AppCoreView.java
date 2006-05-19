@@ -129,10 +129,12 @@ public class AppCoreView extends JFrame implements Observer
                 pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
                 //FIXME: change selection only if really required
                 overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
+                return;
             }
             if (arg.equals("NEW_QUERY")) {
                 recordsCount.setText(""+model.getResultsCount());
                 pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());                
+                return;
             }
         }
     }
@@ -313,16 +315,6 @@ public class AppCoreView extends JFrame implements Observer
         }
         recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));        
         pack();
-        
-        ArrayList<Column> columns = model.getMainConfig().getColumns();
-        if (columns.size() > 1) {
-            logger.debug("Restoring columns loaded from the main config.");
-            Search search = new Search(model.getDatabase());
-            search.setColumns(columns);
-            search.constructQuery();
-            model.getTableModel().setColumns(columns);
-            model.setResultId(search.getNewResultId());
-        }
     }
     
     /** Returns the main window <code>StatusBarManager</code>.

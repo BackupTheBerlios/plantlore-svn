@@ -32,6 +32,9 @@ public class Settings extends Observable
     private ArrayList<Column> selectedColumns;
     private ArrayList<Column> unselectedColumns;
     
+    private String headerOne;
+    private String headerTwo;
+    
     /** Creates a new instance of Settings */
     public Settings()
     {
@@ -82,6 +85,11 @@ public class Settings extends Observable
             prefs.remove("locale");
         else
             prefs.put("locale",language);
+        
+        prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
+        prefs.put("HEADER_ONE",headerOne);
+        prefs.put("HEADER_TWO",headerTwo);
+        
         setChanged();
         notifyObservers("COLUMNS");        
     }//store()
@@ -106,6 +114,24 @@ public class Settings extends Observable
     
     public ArrayList<Column> getUnselectedColumns() {
         return unselectedColumns;
+    }
+
+    public String getHeaderOne() {
+        return headerOne;
+    }
+
+    public void setHeaderOne(String headerOne) {
+        this.headerOne = headerOne;
+        logger.debug("Header one set to: "+headerOne);
+    }
+
+    public String getHeaderTwo() {
+        return headerTwo;
+    }
+
+    public void setHeaderTwo(String headerTwo) {
+        this.headerTwo = headerTwo;
+        logger.debug("Header two set to: "+headerTwo);
     }
     
     

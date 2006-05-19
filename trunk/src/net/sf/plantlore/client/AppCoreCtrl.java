@@ -612,21 +612,30 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             try {
+                if (model.getTableModel().getSelection().values().size() < 1) {
+                    JOptionPane.showMessageDialog(view, "Check at least one occurrence, please.");
+                    return;
+                }
+                    
+                
                 ClassLoader cl = this.getClass().getClassLoader();
                 InputStream is = cl.getResourceAsStream("net/sf/plantlore/client/Scheda.jrxml");
 
-//          JasperReport jasperReport = JasperCompileManager.compileReport(
-//              "Scheda.jrxml");
-          JasperReport jasperReport = JasperCompileManager.compileReport(is);
-            
-          HashMap params = new HashMap();
-          params.put("HEADER_ONE","HERBARIUM MUSEI REGIONALIS BOHEMIAE MERIDIONALIS");
-          params.put("HEADER_TWO","České Budějovice");
-          JasperPrint jasperPrint = JasperFillManager.fillReport(
-                  jasperReport, params, new JasperDataSource(
-                                        model.getDatabase(), model.getTableModel().getSelection() )
-                                        );
-          new SchedaView(view, true, jasperPrint).setVisible(true);  
+    //          JasperReport jasperReport = JasperCompileManager.compileReport(
+    //              "Scheda.jrxml");
+                JasperReport jasperReport = JasperCompileManager.compileReport(is);
+
+                prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
+                String h1 = prefs.get("HEADER_ONE","Set the first header in settings, please.");
+                String h2 = prefs.get("HEADER_TWO","Set the second header in settings, please.");
+                HashMap params = new HashMap();
+                params.put("HEADER_ONE",h1);
+                params.put("HEADER_TWO",h2);
+                JasperPrint jasperPrint = JasperFillManager.fillReport(
+                      jasperReport, params, new JasperDataSource(
+                                            model.getDatabase(), model.getTableModel().getSelection() )
+                                            );
+              new SchedaView(view, true, jasperPrint).setVisible(true);  
             } catch(JRException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(view, "Sorry, can't display scheda, the jasper form is perhaps broken:\n"+e.getMessage());
@@ -849,6 +858,7 @@ public class AppCoreCtrl
     			DBLayer dblayer = loginModel.getDBLayer();
     			model.setDatabase(dblayer);
     			model.setAccessRights( loginModel.getAccessRights() );
+                        model.login();
     			view.initOverview();
                         setDatabaseDependentCommandsEnabled(true);
     		}
