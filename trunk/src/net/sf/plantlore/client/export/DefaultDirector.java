@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
  */
 public class DefaultDirector extends Observable implements Runnable {
 	
-	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
+	private Logger logger = Logger.getLogger(getClass().getPackage().getName());
 	
 	private Builder build;
 	private Selection selection;
@@ -213,7 +213,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		// Take all results and spit'em out.
 		int rows = database.getNumRows( resultId );
 		for(int i = 0; i < rows; i++) {
-			logger.info("Fetching associated data (Author, AuthorOccurrence).");
+			logger.debug("Fetching associated data (Author, AuthorOccurrence).");
 			
 			Object[] pulp = database.more( resultId, i, i );
 			AuthorOccurrence ao = (AuthorOccurrence) ((Object[])pulp[0])[0];
@@ -244,7 +244,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			int rows = database.getNumRows( result );
 			for(int i = 0; i < rows && !aborted; i++) {
 				
-				logger.info("Fetching a new record from the database.");
+				logger.debug("Fetching a new record from the database.");
 				
 				Record record;
 				if(useProjections) 
@@ -283,6 +283,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		catch(Exception e) {
 			logger.error("Export ended prematurely. Only "+count+" records exported.");
 			logger.error("The problem: "+e);
+			e.printStackTrace();
 			setChanged(); notifyObservers( e ); 
 		}
 		if(aborted) logger.info("Export aborted. " + count + " records sent to output.");

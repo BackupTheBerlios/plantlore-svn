@@ -133,6 +133,8 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 		} 
 		else if(!model.isExportInProgress()) {
 			setTitle(L10n.getString("Export.Completed"));
+			progress.setIndeterminate(false);
+    		progress.setStringPainted(true);
 			status.setText(count + " " + L10n.getString("Export.RecordsExported"));
 			progress.setMaximum(100);
 			progress.setValue(100);
