@@ -184,7 +184,8 @@ public class ExportMng implements Observer {
 	synchronized public void setTemplate(Template template) {
 		if(template == null)
 			this.template = null;
-		else this.template = template.clone();
+		else 
+			this.template = template.clone();
 	}
 	
 	/**
@@ -195,7 +196,7 @@ public class ExportMng implements Observer {
 		if(selection == null)
 			this.selection = null;
 		else 
-			selection = selection.clone();
+			this.selection = selection.clone();
 	}
 	
 	/**
@@ -244,7 +245,7 @@ public class ExportMng implements Observer {
 	 * @throws ExportException	If information provided is not complete.
 	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
 	 */
-	synchronized public ExportTask startExport() 
+	synchronized public ExportTask createExportTask() 
 	throws ExportException, IOException, DBLayerException {
 		if( exportTasks.size() > 4 )
 			throw new ExportException(L10n.getString("Error.TooManyTasks"));
@@ -306,7 +307,6 @@ public class ExportMng implements Observer {
 		ExportTask t = new ExportTask(db, query, director, writer, selection.size(0));
 		exportTasks.add(t);
 		t.addObserver(this);
-		t.execute();
 		
 		// Reset variables.
 		query = null;

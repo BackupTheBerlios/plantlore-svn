@@ -38,9 +38,11 @@ public class ExportMngCtrlB {
 				try {
 					model.setTemplate( t ); // Set the new template.
 
-					ExportTask task = model.startExport();
+					ExportTask task = model.createExportTask();
 					progressCtrl.setModel(task); 
 					progressView.setModel(task);
+					
+					task.execute();
 					
 					progressView.setVisible(true);
 				}

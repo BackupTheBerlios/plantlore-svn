@@ -46,9 +46,12 @@ public class ExportMngCtrlA {
 				if( filter.isColumnSelectionEnabled() )
 					viewB.setVisible(true);
 				else try {
-					ExportTask task = model.startExport();
+					ExportTask task = model.createExportTask();
 					progressCtrl.setModel(task); 
 					progressView.setModel(task);
+					
+					task.execute();
+					
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,

@@ -94,7 +94,7 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     @Override
     public void setVisible(boolean visible) {
     	status.setText(L10n.getString("Export.Initializing"));
-    	total = model.getNumberOfResults();
+    	total = (model == null) ? 0 : model.getNumberOfResults();
     	if(total > 0) {
     		progress.setIndeterminate(false);
     		progress.setMaximum( total );
@@ -106,9 +106,7 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     	}
     	
     	abort.setText(L10n.getString("Export.Abort"));
-    	
     	super.setVisible(visible);
-    	
     	update(null, null);
     }
     
@@ -123,11 +121,16 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 		if( parameter != null && parameter instanceof Exception ) {
 			Exception e = (Exception) parameter;
 			setTitle(L10n.getString("Export.Failed"));
+			progress.setIndeterminate(false);
+    		progress.setStringPainted(true);
 			status.setText(e.toString());
 			progress.setValue(0);
 			progress.setString("");
 			abort.setText(L10n.getString("Export.Hide"));
 			exceptionOccured = true;
+		}
+		else if(model == null) {
+			return;
 		}
 		else if(model.isAborted()) {
 			setTitle(L10n.getString("Export.Aborted"));
@@ -135,6 +138,8 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 				status.setText(count +"/" + total + " " + L10n.getString("Export.RecordsExported"));
 			else
 				status.setText(count + " " + L10n.getString("Export.RecordsExported"));
+			progress.setIndeterminate(false);
+    		progress.setStringPainted(true);
 			progress.setValue(0);
 			progress.setString("");
 			abort.setText(L10n.getString("Export.Hide"));

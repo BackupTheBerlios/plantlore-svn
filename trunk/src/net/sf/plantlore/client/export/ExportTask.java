@@ -2,6 +2,7 @@ package net.sf.plantlore.client.export;
 
 import java.io.Writer;
 import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.log4j.Logger;
 
@@ -9,7 +10,7 @@ import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 
 
-public class ExportTask extends Observable {
+public class ExportTask extends Observable implements Observer {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 	private DBLayer dblayer;
@@ -23,6 +24,7 @@ public class ExportTask extends Observable {
 	
 	public ExportTask(DBLayer dblayer, SelectQuery query, DefaultDirector director, Writer writer, int results) {
 		this.dblayer = dblayer; this.exportQuery = query; this.director = director; this.writer = writer; this.results = results;
+		director.addObserver(this);
 	}
 	
 	public boolean isExportInProgress() {
@@ -42,7 +44,6 @@ public class ExportTask extends Observable {
 	}
 	
 	public void abort() {
-		if(!exportInProgress) return;
 		aborted = true; exportInProgress = false;
 		director.abort();
 		setChanged(); notifyObservers(this);
@@ -77,5 +78,10 @@ public class ExportTask extends Observable {
 			}, "ExportMonitor");
 			monitor.start();
 		}
+	}
+
+	// Re-send notifications.
+	public void update(Observable source, Object arg) {
+		setChanged(); notifyObservers(arg);
 	}
 }

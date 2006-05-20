@@ -419,24 +419,30 @@ public class AppCoreCtrl
             // Display the Export dialog.
             else {
             	try {
-            		// Update the database.
-            		//exportModel.setDBLayer(model.getDatabase());
-            		
-            		Object[] queryParam = searchModel.constructExportQuery();
-            		SelectQuery query = (SelectQuery)queryParam[0];
-            		Boolean useProjections = (Boolean)queryParam[1];
-            		Class rootTable = (Class)queryParam[2];
-            		
-            		if(useProjections) {
-            			exportModel.useProjections(true);
-            			exportModel.setRootTable(rootTable);
+            		/*==============================================================
+            		 * Right after the startup the searchModel may not be initialized!
+            		 * (if Export is called prior to Search...)
+            		 * 
+            		 * FIXME: Solve this with Jakub.
+            		 *==============================================================*/
+            		SelectQuery query;
+            		if(searchModel == null) 
+            			query = model.getDatabase().createQuery(Occurrence.class); // fake the query
+            		else {
+            			Object[] queryParam = searchModel.constructExportQuery();
+            			query = (SelectQuery)queryParam[0];
+            			if( (Boolean)queryParam[1] ) { // use projections
+            				exportModel.useProjections(true);
+            				exportModel.setRootTable( (Class)queryParam[2] );
+            			}
             		}
             		exportModel.setSelectQuery( query );
-            		
             		exportModel.setSelection(model.getTableModel().getSelection());
-            		
-            	} catch (Exception ex) {
-            		JOptionPane.showMessageDialog(view, ex);
+            	} catch (DBLayerException e) {
+            		JOptionPane.showMessageDialog(view, "DBLayer Exception: "+e);
+            		return;
+            	} catch (RemoteException e) {
+            		JOptionPane.showMessageDialog(view, "Remote Exception: "+e);
             		return;
             	}
             	exportCtrl.setVisible(true);
