@@ -12,6 +12,7 @@ package net.sf.plantlore.client;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Observable;
 import javax.swing.text.PlainDocument;
@@ -33,6 +34,10 @@ import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import org.apache.log4j.Logger;
+
+import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
+import static net.sf.plantlore.common.PlantloreConstants.RESTR_BETWEEN;
+import static net.sf.plantlore.common.PlantloreConstants.RESTR_LIKE;
 
 /**
  *
@@ -94,7 +99,7 @@ public class Search extends Observable {
     
     private ArrayList<Column> columns;
     private int newResultId = -1;
-    private SelectQuery exportQuery = null;
+    
     
     
     /** Creates a new instance of AddEdit */
@@ -495,132 +500,68 @@ public class Search extends Observable {
             return new Pair<Boolean,String>(true,"");
     }
     
+    /**
+     * Hold parameters describing a restriction.
+     * 
+     * @author Erik Kratochvíl (discontinuum@gmail.com)
+     */
+    private class Restriction {
+    	int type; String column; Object arg;
+    	
+    	public Restriction(int type, String column, Object arg) {
+    		this.type = type; this.column = column; this.arg = arg;
+    	}
+    }
+    /**
+     * Bunch of restrictions that will be used to create a new ExportQuery.
+     */
+    private Collection<Restriction> restrictions;
     
-    public Object[] constructExportQuery() {
-    	try {
-    		DBLayerUtils dlu = new DBLayerUtils(database);
-    		
-            /*---------------------------------------------------------------------------------------
-             *  Prepare the ExportQuery and all its aliases.
-             *  Note that ExportQuery is built over the [Occurrence] table.
-             *---------------------------------------------------------------------------------------*/
-            String habitatAlias = Record.alias(Habitat.class) +".";
-            exportQuery = database.createQuery(Occurrence.class);
-            exportQuery.createAlias(Occurrence.HABITAT, Record.alias(Habitat.class));
-            exportQuery.createAlias(Occurrence.PLANT, Record.alias(Plant.class));
-            exportQuery.createAlias(Occurrence.METADATA, Record.alias(Metadata.class));
-            exportQuery.createAlias(Occurrence.PUBLICATION, Record.alias(Publication.class));
-            exportQuery.createAlias(habitatAlias+Habitat.TERRITORY, Record.alias(Territory.class));
-            exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(Village.class));
-            exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
-            exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED); //setridit podle roku
-            
-            if (isNotEmpty(village))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.NEARESTVILLAGE,null,dlu.getObjectFor(village.getSecond(),Village.class),null);
-            
-
-            int notEmpty = 0;
-            if (taxonList != null)
-                for (int i = 0; i < taxonList.size(); i++) {
-                    if (isNotEmpty(taxonList.get(i)))
-                        notEmpty++;
-                }
-            
-            if (notEmpty > 0) {
-                Object[] exportQueryArgs = new Object[notEmpty*4];
-                for (int i = 0; i < taxonList.size(); i++) {
-                    String taxon = taxonList.get(i);
-                    if (isNotEmpty(taxon)) {
-                        exportQueryArgs[4*i] = PlantloreConstants.RESTR_EQ;
-                        exportQueryArgs[4*i+1] = Occurrence.PLANT; 
-                        exportQueryArgs[4*i+2] = null;
-                        exportQueryArgs[4*i+3] = dlu.getObjectFor(lookupPlant(taxon),Plant.class);
-                    }
-                }
-                exportQuery.addOrRestriction(exportQueryArgs);
-            }
-            if (isNotEmpty(localityDescription))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,habitatAlias+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
-            
-            if (isNotEmpty(occurrenceNote))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
-            
-            if (isNotEmpty(habitatNote))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,habitatAlias+Habitat.NOTE,null,"%"+habitatNote+"%",null);
-            
-            if (isNotEmpty(territoryName)) 
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.TERRITORY,null,dlu.getObjectFor(territoryName.getSecond(),Territory.class),null);
-            
-            if (isNotEmpty(phytName))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.PHYTOCHORION,null,dlu.getObjectFor(phytName.getSecond(),Phytochorion.class),null);
-            
-            if (isNotEmpty(phytCountry))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.COUNTRY,null,phytCountry,null);
-            
-            if (isNotEmpty(quadrant))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.QUADRANT,null,quadrant,null);
-            
-            if (isNotEmpty(altitude))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.ALTITUDE,null,altitude,null);
-            
-            if (isNotEmpty(longitude))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.LONGITUDE,null,longitude,null);
-
-            if (isNotEmpty(latitude))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.LATITUDE,null,latitude,null);
-
-            if (isNotEmpty(source))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DATASOURCE,null,source,null);
-            
-            if (isNotEmpty(publication)) 
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.PUBLICATION,null,dlu.getObjectFor(publication.getSecond(),Publication.class),null);
-            
-            if (isNotEmpty(herbarium))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HERBARIUM,null,herbarium,null);
-           
-            if (isNotEmpty(project))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.METADATA,null,dlu.getObjectFor(project.getSecond(),Metadata.class),null);
-            
-            if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
-                Calendar from = Calendar.getInstance(), to = Calendar.getInstance();
-                from.setTime(fromDate); to.setTime(toDate);
-                
-                //set the begining of the day
-                from.set(Calendar.HOUR_OF_DAY,0);
-                from.set(Calendar.MINUTE, 0);
-                from.set(Calendar.SECOND, 0);
-                from.set(Calendar.MILLISECOND, 0);
-
-                //set the end of the day
-                to.set(Calendar.HOUR_OF_DAY,23);
-                to.set(Calendar.MINUTE, 59);
-                to.set(Calendar.SECOND, 59);
-                to.set(Calendar.MILLISECOND, 999);
-                
-                ArrayList a = new ArrayList();
-                a.add(from.getTime());
-                a.add(to.getTime());
-                
-                exportQuery.addRestriction(PlantloreConstants.RESTR_BETWEEN,Occurrence.ISODATETIMEBEGIN,null,null,a);
-            }
-            
-            if (timeChoice == MONTH && isNotEmpty(month))
-                exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.MONTHCOLLECTED,null,month,null);
-            
-            setChanged(); 
-            notifyObservers(exportQuery);
-        } catch (RemoteException ex) {                
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
+    /**
+     * ExportQuery must be constructed every time an Export is about to start, 
+     * because Export of the "same data" may be required several times
+     * (the User calls Search once and wants the same results to be exported twice -
+     * in another format perhaps).
+     * 
+     * @return	The triplet { [SelectQuery] ExportQuery, [Boolean] UseProjections, [Class] RootTable }.
+     * The ExportQuery is constructed according to the last known data from the Search dialog. 
+     */
+    public Object[] constructExportQuery() 
+    throws DBLayerException, RemoteException {
+    	String habitatAlias = Record.alias(Habitat.class) +".";
+    	SelectQuery exportQuery = database.createQuery(Occurrence.class);
+    	exportQuery.createAlias(Occurrence.HABITAT, Record.alias(Habitat.class));
+    	exportQuery.createAlias(Occurrence.PLANT, Record.alias(Plant.class));
+    	exportQuery.createAlias(Occurrence.METADATA, Record.alias(Metadata.class));
+    	exportQuery.createAlias(Occurrence.PUBLICATION, Record.alias(Publication.class));
+    	exportQuery.createAlias(habitatAlias+Habitat.TERRITORY, Record.alias(Territory.class));
+    	exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(Village.class));
+    	exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
+    	exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED);
+    	
+    	for( Restriction restriction : restrictions ) {
+    		if(restriction.type == RESTR_BETWEEN)
+    			exportQuery.addRestriction(restriction.type, restriction.column, null, null, (Collection)restriction.arg);
+    		else if(restriction.type < 0 && restriction.column == null)
+    			exportQuery.addOrRestriction( (Object[])restriction.arg );
+    		else
+    			exportQuery.addRestriction(restriction.type, restriction.column, null, restriction.arg, null);
+    	}
     	
     	return new Object[] { exportQuery, false, null };
     }
     
-    public Pair<SelectQuery,SelectQuery> constructQuery() {
+    
+    
+    
+    public SelectQuery constructQuery() {
         DBLayerUtils dlu = new DBLayerUtils(database);
-        SelectQuery sq = null, exportQuery = null;
+        SelectQuery sq = null;
+        // ExportQuery restriction storage requires these variables.
+        restrictions = new ArrayList<Restriction>(20);
+        Object arg;
+        String habitatAlias = Record.alias(Habitat.class) +".";
+        
             //FIXME:
             try {
                 sq = database.createQuery(AuthorOccurrence.class);
@@ -636,30 +577,6 @@ public class Search extends Observable {
                 sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
                 sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
                 
-                /*---------------------------------------------------------------------------------------
-                 *  Prepare the ExportQuery and all its aliases.
-                 *  Note that ExportQuery is built over the [Occurrence] table.
-                 *---------------------------------------------------------------------------------------*/
-                String habitatAlias = Record.alias(Habitat.class) +".";
-                exportQuery = database.createQuery(Occurrence.class);
-                exportQuery.createAlias(Occurrence.HABITAT, Record.alias(Habitat.class));
-                exportQuery.createAlias(Occurrence.PLANT, Record.alias(Plant.class));
-                exportQuery.createAlias(Occurrence.METADATA, Record.alias(Metadata.class));
-                exportQuery.createAlias(Occurrence.PUBLICATION, Record.alias(Publication.class));
-                exportQuery.createAlias(habitatAlias+Habitat.TERRITORY, Record.alias(Territory.class));
-                exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(Village.class));
-                exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
-                exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED); //setridit podle roku
-                //---------------------------------------------------------------------------------------
-                // This restriction is in question; 
-                // sometimes you want to export deleted data from the source database
-                // so that they are deleted in the target database, too.
-                // The restriction doesn't apply here. Dead records may be exported, it is the Filter describing
-                // the file format that decides whether dead record shall be exported or not.
-                
-                //exportQuery.addRestriction(PlantloreConstants.RESTR_NE, Occurrence.DELETED, null, 1, null);
-                
-                //---------------------------------------------------------------------------------------
                 for (Column column : columns) {
                     switch (column.type) {
                         case AUTHOR:
@@ -740,8 +657,9 @@ public class Search extends Observable {
                 }
                 
                 if (isNotEmpty(village)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,dlu.getObjectFor(village.getSecond(),Village.class),null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.NEARESTVILLAGE,null,dlu.getObjectFor(village.getSecond(),Village.class),null);
+                	arg = dlu.getObjectFor(village.getSecond(),Village.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,arg,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.NEARESTVILLAGE, arg));
                 }
                 
                 int notEmpty = 0;
@@ -796,77 +714,81 @@ public class Search extends Observable {
                         }
                     }
                     sq.addOrRestriction(args);
-                    exportQuery.addOrRestriction(exportQueryArgs);
+                    restrictions.add(new Restriction(-1, null, exportQueryArgs));
                 }
                 if (isNotEmpty(localityDescription)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,habitatAlias+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
+                    restrictions.add(new Restriction(RESTR_LIKE, habitatAlias+Habitat.DESCRIPTION, "%"+localityDescription+"%"));
                 }
                 
                 if (isNotEmpty(occurrenceNote)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
+                    restrictions.add(new Restriction(RESTR_LIKE, Occurrence.NOTE, "%"+occurrenceNote+"%"));
                 }
                 
                 if (isNotEmpty(habitatNote)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_LIKE,habitatAlias+Habitat.NOTE,null,"%"+habitatNote+"%",null);
+                    restrictions.add(new Restriction(RESTR_LIKE, habitatAlias+Habitat.NOTE, "%"+habitatNote+"%"));
                 }
                 
                 if (isNotEmpty(territoryName)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null,dlu.getObjectFor(territoryName.getSecond(),Territory.class),null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.TERRITORY,null,dlu.getObjectFor(territoryName.getSecond(),Territory.class),null);
+                	arg = dlu.getObjectFor(territoryName.getSecond(),Territory.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null, arg, null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.TERRITORY, arg));
                 }
                 
                 if (isNotEmpty(phytName)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,dlu.getObjectFor(phytName.getSecond(),Phytochorion.class),null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.PHYTOCHORION,null,dlu.getObjectFor(phytName.getSecond(),Phytochorion.class),null);
+                	arg = dlu.getObjectFor(phytName.getSecond(),Phytochorion.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,arg,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.PHYTOCHORION, arg));
                 }
                 
                 if (isNotEmpty(phytCountry)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.COUNTRY,null,phytCountry,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.COUNTRY,null,phytCountry,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.COUNTRY, phytCountry));
                 }
                 
                 if (isNotEmpty(quadrant)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.QUADRANT,null,quadrant,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.QUADRANT,null,quadrant,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.QUADRANT, quadrant));
                 }
                 
                 if (isNotEmpty(altitude)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.ALTITUDE,null,altitude,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.ALTITUDE,null,altitude,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.ALTITUDE, altitude));
                 }
                 
                 if (isNotEmpty(longitude)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LONGITUDE,null,longitude,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.LONGITUDE,null,longitude,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.LONGITUDE, longitude));
                 }
 
                 if (isNotEmpty(latitude)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LATITUDE,null,latitude,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,habitatAlias+Habitat.LATITUDE,null,latitude,null);
+                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.LATITUDE, latitude));
                 }
 
                 if (isNotEmpty(source)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.DATASOURCE,null,source,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DATASOURCE,null,source,null);
+                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.DATASOURCE, source));
                 }
                 
                 if (isNotEmpty(publication)) {
                     //FIXME: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,dlu.getObjectFor(publication.getSecond(),Publication.class),null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.PUBLICATION,null,dlu.getObjectFor(publication.getSecond(),Publication.class),null);
+                	arg = dlu.getObjectFor(publication.getSecond(),Publication.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,arg,null);
+                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.PUBLICATION, arg));
                 }
                 
                 if (isNotEmpty(herbarium)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HERBARIUM,null,herbarium,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HERBARIUM,null,herbarium,null);
+                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.HERBARIUM, herbarium));
                 }
                 
                 if (isNotEmpty(project)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,dlu.getObjectFor(project.getSecond(),Metadata.class),null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.METADATA,null,dlu.getObjectFor(project.getSecond(),Metadata.class),null);
+                	arg = dlu.getObjectFor(project.getSecond(),Metadata.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,arg,null);
+                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.METADATA, arg));
                 }
                 
                 if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
@@ -890,15 +812,15 @@ public class Search extends Observable {
                     a.add(to.getTime());
                     System.out.println("Searching between "+from.getTime()+" and "+to.getTime());
                     sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_BETWEEN,Occurrence.ISODATETIMEBEGIN,null,null,a);
+                    
+                    restrictions.add(new Restriction(RESTR_BETWEEN, Occurrence.ISODATETIMEBEGIN, a));
                 }
                 
                 if (timeChoice == MONTH && isNotEmpty(month)) {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
-                    exportQuery.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.MONTHCOLLECTED,null,month,null);
+                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.MONTHCOLLECTED, month));
                 }
                 
-                this.exportQuery = exportQuery;
                 int resultId = database.executeQuery(sq);
                 this.newResultId = resultId;
                 logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
@@ -910,7 +832,7 @@ public class Search extends Observable {
             } catch (DBLayerException ex) {
                 ex.printStackTrace();
             }
-        return new Pair<SelectQuery,SelectQuery>(sq,exportQuery);
+        return sq;
     }
     
     public void clear() {
