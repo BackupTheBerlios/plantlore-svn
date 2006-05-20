@@ -55,6 +55,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	private Selection selection;
 	private DBLayer database;
 	private int result;
+	private int totalNumberOfRecords = Integer.MAX_VALUE;
 	
 	private boolean ignoreDead = true;
 	
@@ -181,6 +182,11 @@ public class DefaultDirector extends Observable implements Runnable {
 		this.ignoreDead = ignore;
 	}
 	
+	
+	public void setExpectedNumberOfRecords(int total) {
+		this.totalNumberOfRecords = total;
+	}
+	
 	/** 
 	 * How many records have been exported.
 	 * 
@@ -242,7 +248,8 @@ public class DefaultDirector extends Observable implements Runnable {
 			
 			// Iterate over the result of the query.
 			int rows = database.getNumRows( result );
-			for(int i = 0; i < rows && !aborted; i++) {
+			count = 0;
+			for(int i = 0; i < rows && !aborted && count < totalNumberOfRecords; i++) {
 				
 				logger.debug("Fetching a new record from the database.");
 				

@@ -302,6 +302,8 @@ public class ExportMng implements Observer {
 				builder, resultId, db, selection, useProjections, 
 				template.getDescription(), rootTable);
 		director.ignoreDead( filter.ignoreDead() );
+		if(selection.size(0) > 0) 
+			director.setExpectedNumberOfRecords(selection.size(0));
 		
 		// Start a new task.
 		ExportTask t = new ExportTask(db, query, director, writer, selection.size(0));
