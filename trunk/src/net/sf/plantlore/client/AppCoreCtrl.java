@@ -420,7 +420,7 @@ public class AppCoreCtrl
             else {
             	try {
             		// Update the database.
-            		exportModel.setDBLayer(model.getDatabase());
+            		//exportModel.setDBLayer(model.getDatabase());
             		
             		Object[] queryParam = searchModel.constructExportQuery();
             		SelectQuery query = (SelectQuery)queryParam[0];
