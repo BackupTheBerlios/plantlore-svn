@@ -404,17 +404,17 @@ public class AppCoreCtrl
             if(exportView == null) {
             	try {
             		exportModel = new ExportMng(model.getDatabase());
-            		exportProgressView = new ExportProgressView(exportModel);
-            		exportProgressCtrl = new ExportProgressCtrl(exportModel, exportProgressView);
+            		exportProgressView = new ExportProgressView(null);
+            		exportProgressCtrl = new ExportProgressCtrl(null, exportProgressView);
             		exportView = new ExportMngViewA(exportModel);
-            		exportCtrl = new ExportMngCtrlA(exportModel, exportView, exportProgressView);
+            		exportCtrl = new ExportMngCtrlA(exportModel, exportView, exportProgressView, exportProgressCtrl);
             	} catch(ExportException e) {
             		logger.error("Export MVC cannot be created. " + e.getMessage());
             		return;
             	}
             }
             // Display the progress view if an export is already running.
-            if(exportModel.isExportInProgress())
+            if(exportModel.isAnExportInProgress())
         		exportProgressView.setVisible(true);
             // Display the Export dialog.
             else {
@@ -437,7 +437,6 @@ public class AppCoreCtrl
             		
             	} catch (Exception ex) {
             		JOptionPane.showMessageDialog(view, ex);
-            		ex.printStackTrace();
             		return;
             	}
             	exportCtrl.setVisible(true);

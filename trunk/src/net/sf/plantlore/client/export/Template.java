@@ -56,15 +56,15 @@ public class Template {
 	
 	
 	/** Select the <code>table.column</code>. */
-	public void set(Class table, String column) { 
+	public Template set(Class table, String column) { 
 		columns.add(table.getSimpleName()+ (column == null ? "" : "."+column));
-		//System.out.println(" + " + table.getSimpleName() + (column == null ? "" : "." + column));
+		return this;
 	}
 	
 	/** Unselect the <code>table.column</code>. */
-	public void unset(Class table, String column) { 
+	public Template unset(Class table, String column) { 
 		columns.remove(table.getSimpleName()+ (column == null ? "" : "."+column));
-		//System.out.println(" - " + table.getSimpleName() + (column == null ? "" : "." + column));
+		return this;
 	}
 	
 	/** @return true if the <code>table.column</code> is set.*/
@@ -73,14 +73,16 @@ public class Template {
 	}
 	
 	/** Unselect all columns of all tables. */
-	public void unsetEverything() { 
-		columns.clear(); 
+	public Template unsetEverything() { 
+		columns.clear();
+		return this;
 	}
 	
 	/** Select all columns (properties) of all tables. */
-	public void setEverything() {
+	public Template setEverything() {
 		for(Class table : Record.BASIC_TABLES)
 			setAllProperties(table);
+		return this;
 	}
 	
 	/** Select all not null columns (properties). */
@@ -89,24 +91,24 @@ public class Template {
 	}
 	
 	/** Select all properties of this <code>table</code>. */
-	public void setAllProperties(Class table) {
+	public Template setAllProperties(Class table) {
 		try {
 			for( String column : ((Record)table.newInstance()).getProperties() )
 				set(table, column);
-		} catch(IllegalAccessException e) {}
-		catch(InstantiationException e) {}
+		} catch(Exception e) {}
+		return this;
 	}
 	
 	/** Select all not-null properties of the specified <code>table</code>. */
-	public void setAllNN(Class table) {
+	public Template setAllNN(Class table) {
 		try {
 			Record record = ((Record)table.newInstance());
 			List<String> nnProperties = record.getNN();
 			nnProperties.removeAll(record.getForeignKeys());
 			for( String column :  nnProperties )
 				set(table, column);
-		} catch(IllegalAccessException e) {}
-		catch(InstantiationException e) {}
+		} catch(Exception e) {}
+		return this;
 	}
 	
 	/**

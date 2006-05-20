@@ -11,19 +11,23 @@ import net.sf.plantlore.l10n.L10n;
 
 public class ExportProgressCtrl {
 	
-	private ExportMng model;
+	private ExportTask model;
 	private ExportProgressView view;
 	
+	
+	public void setModel(ExportTask newModel) {
+		model = newModel;
+	}
 		
 	
-	public ExportProgressCtrl(ExportMng model, ExportProgressView view) {
-		this.model = model; this.view = view;
+	public ExportProgressCtrl(ExportTask model, ExportProgressView view) {
+		setModel(model); this.view = view;
 		view.abort.addActionListener( new Abort() );
 	}
 	
 	class Abort extends AbstractAction {
 		public void actionPerformed(ActionEvent arg0) {
-			if(model.isExportInProgress()) {
+			if(model != null && model.isExportInProgress()) {
 				int response =
 					JOptionPane.showOptionDialog(view,
 							L10n.getString("question.AbortImport"),

@@ -15,9 +15,12 @@ public class ExportMngCtrlB {
 	private ExportMng model;
 	private ExportMngViewB view;
 	private ExportProgressView progressView;
+	private ExportProgressCtrl progressCtrl;
 	
-	public ExportMngCtrlB(ExportMng model, ExportMngViewB view, ExportProgressView progressView) {
-		this.model = model; this.view = view; this.progressView = progressView;
+	public ExportMngCtrlB(ExportMng model, ExportMngViewB view, 
+			ExportProgressView progressView,  ExportProgressCtrl progressCtrl) {
+		this.model = model; this.view = view; 
+		this.progressView = progressView; this.progressCtrl = progressCtrl;
 		view.next.addActionListener( new Next() );
 	}
 	
@@ -34,7 +37,11 @@ public class ExportMngCtrlB {
 				view.setVisible(false);
 				try {
 					model.setTemplate( t ); // Set the new template.
-					model.start();
+
+					ExportTask task = model.startExport();
+					progressCtrl.setModel(task); 
+					progressView.setModel(task);
+					
 					progressView.setVisible(true);
 				}
 				catch(Exception e) {

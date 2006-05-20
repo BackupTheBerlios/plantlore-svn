@@ -17,16 +17,24 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class ExportProgressView extends javax.swing.JFrame implements Observer {
 	
-	private ExportMng model;
+	private ExportTask model;
 	private int total, count;
+	
+	
+	public void setModel(ExportTask newModel) {
+		if(model != null) 
+			model.deleteObserver(this);
+		model = newModel;
+		if(model != null)
+			model.addObserver(this);
+	}
+	
     
     /** Creates new form ExportProgressView */
-    public ExportProgressView(ExportMng model) {
-    	this.model = model;
+    public ExportProgressView(ExportTask model) {
+    	setModel(model);
         initComponents();
         setLocationRelativeTo(null); // center of the screen
-        
-        model.addObserver(this);
     }
     
     /** This method is called from within the constructor to

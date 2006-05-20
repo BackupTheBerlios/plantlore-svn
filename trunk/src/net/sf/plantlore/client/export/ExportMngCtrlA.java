@@ -15,12 +15,15 @@ public class ExportMngCtrlA {
 	private ExportMngViewB viewB;
 	//private ExportMngCtrlB ctrlB;
 
-	private ExportProgressView  progressView;
+	private ExportProgressView progressView;
+	private ExportProgressCtrl progressCtrl;
 	
-	public ExportMngCtrlA(ExportMng model, ExportMngViewA view, ExportProgressView progressView) {
-		this.model = model; this.view = view; this.progressView = progressView;
+	public ExportMngCtrlA(ExportMng model, ExportMngViewA view, 
+			ExportProgressView progressView, ExportProgressCtrl progressCtrl) {
+		this.model = model; this.view = view; 
+		this.progressView = progressView; this.progressCtrl = progressCtrl;
 		viewB = new ExportMngViewB();
-		/*ctrlB = */new ExportMngCtrlB(model, viewB, progressView);
+		/*ctrlB = */new ExportMngCtrlB(model, viewB, progressView, progressCtrl);
 	}
 	
 	public void setVisible(boolean visible) {
@@ -43,7 +46,9 @@ public class ExportMngCtrlA {
 				if( filter.isColumnSelectionEnabled() )
 					viewB.setVisible(true);
 				else try {
-					model.start();
+					ExportTask task = model.startExport();
+					progressCtrl.setModel(task); 
+					progressView.setModel(task);
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,

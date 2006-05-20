@@ -5,8 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import net.sf.plantlore.client.export.builders.*;
 import net.sf.plantlore.client.export.component.XFilter;
@@ -42,21 +44,6 @@ import org.apache.log4j.Logger;
  * 					and is used to determine which <i>builder</i> will be used
  * 					to produce the output.</li>
  * </ul>
- * <br/>
- * It is strongly recommended to <b>use one of the constructors</b>
- * instead of creating the object partially using setters!
- * The participating entities may depend on each other and
- * therefore their setters must be called in a specific order.
- * <br/>
- * The most important is the order of these entities:
- * <ol>
- * <li>UseProjections</li>
- * <li>RootTable</li>
- * <li>DBLayer</li>
- * <li>SelectQuery</li>
- * <li>Template</li>
- * </ol>
- * The first two steps may be omited if projections are not to be used.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29 
@@ -64,7 +51,7 @@ import org.apache.log4j.Logger;
  * @see net.sf.plantlore.client.export.DefaultDirector
  * @see net.sf.plantlore.client.export.Builder
  */
-public class ExportMng extends Observable implements Observer {
+public class ExportMng implements Observer {
 	
 	/**
 	 * List of all filters the Export Manager is capable to handle.
@@ -82,21 +69,10 @@ public class ExportMng extends Observable implements Observer {
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 	private DBLayer db ;
 	private Template template;
-	private Selection select;
+	private Selection selection;
 	private XFilter filter;
 	private String filename;
-	private Integer resultId;
-	private DefaultDirector director;
-	private Builder builder;
-	private boolean aborted = false, exportInProgress = false;
-	private int results = -1, selectedResults = -1;
 	private SelectQuery query = null;
-	private boolean queryClosed = true;
-	
-	private Writer writer;
-	private Thread current;
-		
-	
 	private boolean useProjections = false;
 	private Class rootTable = Occurrence.class;
 	
@@ -137,10 +113,7 @@ public class ExportMng extends Observable implements Observer {
 	 */
 	public ExportMng(DBLayer dblayer, SelectQuery query) 
 	throws ExportException, DBLayerException, RemoteException {
-		setDBLayer(dblayer);
-		setSelectQuery(query);
-		setTemplate(null);
-		setSelection(null);
+		this(dblayer, query, null, null, null, null, false, null);
 	}
 	
 	
@@ -178,18 +151,9 @@ public class ExportMng extends Observable implements Observer {
 	
 	
 	/**
-	 * Sadly, some database engines cannot deal with bigger queries,
-	 * which is why the Export Manager has to use projections.
-	 * 
 	 * @param useProjections	True if the Export manager shall use projections instead of regular records.
-	 * @throws ExportException	If the export is already in progress.
 	 */
-	synchronized public void useProjections(boolean useProjections) 
-	throws ExportException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change the usage of Projections while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
+	synchronized public void useProjections(boolean useProjections) {
 		this.useProjections = useProjections;
 	}
 	
@@ -198,113 +162,40 @@ public class ExportMng extends Observable implements Observer {
 	 * The default root table is the Occurrence table.
 	 * 
 	 * @param rootTable	The root table (the table the query started with). 
-	 * @throws ExportException	If the export is already in progress.
 	 */
-	synchronized public void setRootTable(Class rootTable) 
-	throws ExportException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change the Root Table while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
+	synchronized public void setRootTable(Class rootTable) {
 		this.rootTable = rootTable;
 	}
 	
-	
-	
 	/**
 	 * Set a new DBLayer.
-	 * <b>Forget the current result set identificator AND/OR selection query</b>
-	 * - those objects most probably refered to a result set of the previous dblayer! 
 	 */
-	synchronized public void setDBLayer(DBLayer dblayer)
-	throws ExportException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change DBLayer while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
-		if(dblayer == null) { 
-			logger.error("The database layer is null!");
-			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
-		}
+	synchronized public void setDBLayer(DBLayer dblayer) {
+		if(query != null) try {
+			db.closeQuery(query);
+		} catch(RemoteException e) {}
 		db = dblayer;
-		results = selectedResults = resultId = -1;
 	}
 	
 	/**
-	 * Store a copy of the <code>template</code>.
-	 * <b>Null means everything is selected!</b>
-	 * <br/>
-	 * If projections are used, they will be added to the SelectQuery and
-	 * the SelectQuery will be executed here.
-	 * 
-	 * @throws ExportException	If the export is already in progress.
+	 * Store a copy of the <code>template</code>. 
+	 * Null means all columns are selected.
 	 */
-	synchronized public void setTemplate(Template template) 
-	throws ExportException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change the Template while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
-		if(query == null && useProjections) {
-			logger.warn("Cannot set the Template before the Query is specified!");
-			throw new ExportException(L10n.getString("error.InvalidSelectQuery"));
-		}
-		if(template == null) {
-			logger.info("The list of selected columns is empty! Creating a new Template where every column is selected.");
-			this.template = new Template();
-			this.template.setEverything();
-		}
+	synchronized public void setTemplate(Template template) {
+		if(template == null)
+			this.template = null;
 		else this.template = template.clone();
-		
-		
-		
-		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		 * 
-		 * 		The Template defines the projections. 
-		 * 		It is vital that setSelectQuery is called PRIOR to the setTemplate!
-		 * 
-		 * 		The SelectQuery will be executed here, since it cannot be executed
-		 * 		unless the projections are added. 
-		 * 
-		 * 				We love you, Firebird!
-		 * 
-		 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-		
-		if(useProjections) {
-			if( rootTable == AuthorOccurrence.class || rootTable == Author.class )
-				this.template.addProjections( query, AuthorOccurrence.class, Author.class ); // USE THIS.TEMPLATE!
-			else
-				this.template.addProjections( query, 
-					Occurrence.class, Plant.class, Metadata.class, Publication.class, 
-					Habitat.class, Territory.class, Village.class, Phytochorion.class );
-			//Execute the SelectQuery and update the resultId and the number of results.
-			try {
-				resultId = db.executeQuery( query );
-				results = db.getNumRows( resultId );
-				if(select != null) selectedResults = select.size( results );
-			} catch(Exception e) {}
-		}
 	}
 	
 	/**
 	 * Store a copy of the <code>selection</code>.
+	 * Null means all rows are selected.
 	 */
-	synchronized public void setSelection(Selection selection)
-	throws ExportException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change the Selection while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
-		if(selection == null || selection.isEmpty()) {
-			logger.info("The list of selected records is empty! Creating a new Selection where everything is selected.");
-			select = new Selection();
-			select.all();
-		}
-		else select = selection.clone();
-
-		selectedResults = -1;
-		if(resultId >= 0 && results >= 0)
-			selectedResults = selection.size(results);
+	synchronized public void setSelection(Selection selection) {
+		if(selection == null)
+			this.selection = null;
+		else 
+			selection = selection.clone();
 	}
 	
 	/**
@@ -314,8 +205,6 @@ public class ExportMng extends Observable implements Observer {
 	 * filter represents). 
 	 */
 	synchronized public void setActiveFileFilter(XFilter filter) {
-		if(filter == null)
-			logger.warn("The filter is set to null!");
 		this.filter = filter; 
 	}
 	
@@ -324,8 +213,6 @@ public class ExportMng extends Observable implements Observer {
 	 * spit its output. 
 	 */
 	synchronized public void setSelectedFile(String filename) { 
-		if(filename == null || filename.length() == 0)
-			logger.warn("The supplied file name is either null or an empty string!");
 		this.filename = filename; 
 	}
 	
@@ -336,33 +223,19 @@ public class ExportMng extends Observable implements Observer {
 	 * On the other hand, if Projections are used, it is the <code>setTemplate()</code>
 	 * that executes the query after it adds desired projections.
 	 */
-	synchronized public void setSelectQuery(SelectQuery query) 
-	throws ExportException, DBLayerException, RemoteException {
-		if(isExportInProgress()) {
-			logger.warn("Cannot change the SelectQuery while Export is still in progress!");
-			throw new ExportException(L10n.getString("error.CannotChangeDuringExport"));
-		}
-		if(query == null)
-			logger.warn("The select query is not valid - it is null!");
-
-		// Discontinue using the previous query
-		if(!queryClosed && this.query != null) {
-			db.closeQuery(this.query);
-			queryClosed = true;
-		}
+	synchronized public void setSelectQuery(SelectQuery query) { 
+		// Close the previous query!
+		if(this.query != null) try {
+			db.closeQuery(this.query); 
+		} catch (RemoteException e) {}
 		this.query = query;
-		
-		if(this.query != null) {
-			results = selectedResults = -1;
-			if(useProjections) 
-				resultId = null;
-			else {
-				resultId = db.executeQuery( query );
-				results = db.getNumRows( resultId );
-				if(select != null) selectedResults = select.size( results );
-			}
-		}
 	}
+	
+	
+	
+	
+	
+	private Set<ExportTask> exportTasks = new HashSet<ExportTask>(8);
 	
 	
 	/**
@@ -371,34 +244,51 @@ public class ExportMng extends Observable implements Observer {
 	 * @throws ExportException	If information provided is not complete.
 	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
 	 */
-	synchronized public void start() 
-	throws ExportException, IOException {
-		// Check if we have all necessary components ready.
+	synchronized public ExportTask startExport() 
+	throws ExportException, IOException, DBLayerException {
+		if( exportTasks.size() > 4 )
+			throw new ExportException(L10n.getString("Error.TooManyTasks"));
+		// Check if all necessary components are valid.
 		if( db == null )
-			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
+			throw new ExportException(L10n.getString("Error.InvalidDBLayer"));
+		if( query == null)
+			throw new ExportException(L10n.getString("Error.InvalidQuery"));
 		if( filter == null ) 
-			throw new ExportException(L10n.getString("error.InvalidFilter"));
+			throw new ExportException(L10n.getString("Error.InvalidFilter"));
 		if( filename == null || filename.length() == 0 ) 
-			throw new ExportException(L10n.getString("error.MissingFileName"));
+			throw new ExportException(L10n.getString("Error.MissingFileName"));
 		if( useProjections && rootTable == null)
-			throw new ExportException(L10n.getString("error.InvalidRootTable"));
+			throw new ExportException(L10n.getString("Error.InvalidRootTable"));
+		if(template == null)
+			template = new Template().setEverything();
+		if(selection == null)
+			selection = new Selection().all();
 			
 		
 		logger.debug("Initializing the export environment.");
-		aborted = false;
 		
-		// Create a new file.
-		File file = new File( filter.suggestName(filename) );
-		boolean append = ! file.createNewFile();
+		// Prepare the query for projections.
+		if(useProjections) {
+			if( rootTable == AuthorOccurrence.class || rootTable == Author.class )
+				template.addProjections( query, AuthorOccurrence.class, Author.class );
+			else
+				template.addProjections( query, 
+					Occurrence.class, Plant.class, Metadata.class, Publication.class, 
+					Habitat.class, Territory.class, Village.class, Phytochorion.class );
+		}
 		
-		// Create a new writer.
-		writer = new FileWriter( file, append );
+		// Execute the query.
+		Integer resultId = db.executeQuery( query );
+		
+		// Create a new file and writer (wrapper).
+		Writer writer = new FileWriter( new File( filter.suggestName(filename) ) );
 		if(writer == null) {
 			logger.fatal("Unable to create a new Writer.");
-			throw new ExportException(L10n.getString("error.WriterNotCreated"));
+			throw new ExportException(L10n.getString("Error.WriterNotCreated"));
 		}
 		
 		// Create a new builder according to the selected format.
+		Builder builder;
 		if(filter.getDescription().equals(L10n.getString("FilterCSV")))
 			builder = new CSVBuilder(writer, template);
 		else if(filter.getDescription().equals(L10n.getString("FilterXML")))
@@ -407,93 +297,45 @@ public class ExportMng extends Observable implements Observer {
 			builder = new TrainingBuilder(template);
 
 		// Create a new Director and run it in a separate thread.
-		director = new DefaultDirector(
-				builder, resultId, db, select, useProjections, 
+		DefaultDirector director = new DefaultDirector(
+				builder, resultId, db, selection, useProjections, 
 				template.getDescription(), rootTable);
 		director.ignoreDead( filter.ignoreDead() );
-		director.addObserver(this);
 		
-		current = new Thread( director, "Export" );
-		if(current == null) {
-			logger.fatal("Unable to create a new thread.");
-			throw new ExportException(L10n.getString("error.ThreadFailed"));
+		// Start a new task.
+		ExportTask t = new ExportTask(db, query, director, writer, selection.size(0));
+		exportTasks.add(t);
+		t.addObserver(this);
+		t.execute();
+		
+		// Reset variables.
+		query = null;
+		template = null;
+		selection = null;
+		filter = null;
+		filename = null;
+		useProjections = false;
+		rootTable = Occurrence.class;
+		
+		return t;
+	}
+	
+	
+		
+	/**
+	 * Abort every running Export. 
+	 */
+	synchronized public void abortAllTasks() {
+		for(ExportTask task : exportTasks) {
+			task.abort();
+			task.deleteObserver(this);
 		}
-		current.start();
-		
-		exportInProgress = true;
-		
-		// Register a cleanup procedure
-		Thread monitor = new Thread(new Runnable() {
-			public void run() {
-				// Sleep until the thread is really dead.
-				while( !sunExploded )
-					try {
-						current.join();
-						break;
-					}catch(InterruptedException e) {}
-				// Dispose of the writer.
-				try {
-					writer.close();
-				}catch(IOException e) {}
-				exportInProgress = false;
-				// Dispose of the query.
-				try {
-				if(!queryClosed && query != null) { 
-					db.closeQuery( query );
-					queryClosed = true;
-				}
-				}catch(RemoteException e) {}
-				logger.debug("Environment cleaned up.");
-				// Notify observers the export has ended.
-				update(null, null);
-				
-			}
-		}, "ExportMonitor");
-		monitor.start();
+		exportTasks.clear();
 	}
 	
 	
-	/** Something that will not be true for a long time, at least the mankind hopes so. */
-	private final boolean sunExploded = false;
-	
-
-	/**
-	 * Abort the current export. 
-	 */
-	synchronized public void abort() {
-		if(!exportInProgress) return;
-		aborted = true; exportInProgress = false;
-		if(director != null) director.abort();
-		setChanged(); notifyObservers();
-	}
-	
-	/**
-	 * @return True if the export was aborted.
-	 */
-	public boolean isAborted() {
-		return aborted;
-	}
-	
-	/**
-	 * @return True if an export procedure already runs.
-	 */
-	public boolean isExportInProgress() {
-		return exportInProgress;
-	}
-	
-	/**
-	 * @return The total number of results to be exported.
-	 */
-	public int getNumberOfResults() {
-		return selectedResults;
-	}
-	
-	/**
-	 * @return The number of results that have already been exported.
-	 */
-	public int getNumberOfExported() {
-		if(director == null) return 0;
-		return director.exportedRecords();
+	synchronized public boolean isAnExportInProgress() {
+		return exportTasks.size() != 0;
 	}
 	
 	/**
@@ -503,14 +345,12 @@ public class ExportMng extends Observable implements Observer {
 		return filters.clone();
 	}
 
-	
-	/**
-	 * Notify the observers - some of our components has changed its state.
-	 * The parameter can carry either information about progress
-	 * or an exception that has to be dealt with.
-	 */
-	public void update(Observable source, Object parameter) {
-		setChanged(); notifyObservers( parameter );
-	}
 
+	synchronized public void update(Observable source, Object arg) {
+		if( !((ExportTask)source).isExportInProgress() ) {
+			exportTasks.remove( source );
+			source.deleteObserver(this);
+		}
+	}
+	
 }
