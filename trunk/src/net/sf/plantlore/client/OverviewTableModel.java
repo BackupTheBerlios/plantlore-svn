@@ -195,6 +195,10 @@ public class OverviewTableModel extends AbstractTableModel {
         }
     }
     
+    public void invertSelected(int row) {
+        setValueAt(!(Boolean)getValueAt(row, selectionColumnIndex), row, selectionColumnIndex);
+    }
+    
     public int getPageSize() {
         return pageSize;
     }
@@ -267,6 +271,7 @@ public class OverviewTableModel extends AbstractTableModel {
         logger.debug("Setting resultid to "+resultId);
         this.resultId = resultId;
         from = 0;
+        currentPage = 1;
         //FIXME
         try {
             loadData();
