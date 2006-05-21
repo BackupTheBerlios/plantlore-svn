@@ -77,6 +77,7 @@ public class Plant extends Record {
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }    
     
@@ -95,6 +96,7 @@ public class Plant extends Record {
      *   @see setSurveyTaxId
      */
     public String getSurveyTaxId() {
+        //obligatory
         return this.surveyTaxId;
     }
     
@@ -113,6 +115,7 @@ public class Plant extends Record {
      *   @see setTaxon
      */
     public String getTaxon() {
+        //obligatory
         return this.taxon;
     }
     
@@ -131,6 +134,8 @@ public class Plant extends Record {
      *   @see setGenus
      */
     public String getGenus() {
+        if (this.genus == null)
+            return "";
         return this.genus;
     }
     
@@ -149,6 +154,8 @@ public class Plant extends Record {
      *   @see setSpecies
      */
     public String getSpecies() {
+        if (this.species == null)
+            return "";
         return this.species;
     }
     
@@ -167,6 +174,7 @@ public class Plant extends Record {
      *   @see setScientificNameAuthor
      */
     public String getScientificNameAuthor() {
+        //obligatory
         return this.scientificNameAuthor;
     }
     
@@ -185,6 +193,8 @@ public class Plant extends Record {
      *   @see setCzechName
      */
     public String getCzechName() {
+        if (this.czechName == null) 
+            return "";
         return this.czechName;
     }
     
@@ -203,6 +213,8 @@ public class Plant extends Record {
      *   @see setSynonyms
      */
     public String getSynonyms() {
+        if (this.synonyms == null)
+            return "";
         return this.synonyms;
     }
     
@@ -221,6 +233,8 @@ public class Plant extends Record {
      *   @see setNote
      */
     public String getNote() {
+        if (this.note == null)
+            return "";
         return this.note;
     }
     

@@ -95,6 +95,7 @@ public class Habitat extends Record implements Deletable {
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
@@ -113,6 +114,7 @@ public class Habitat extends Record implements Deletable {
      *   @see setTerritory
      */
     public Territory getTerritory() {
+        //obligatory
         return this.territory;
     }
     
@@ -131,6 +133,7 @@ public class Habitat extends Record implements Deletable {
      *   @see setPhytochorion
      */
     public Phytochorion getPhytochorion() {
+        //obligatory
         return this.phytochorion;
     }
     
@@ -149,6 +152,7 @@ public class Habitat extends Record implements Deletable {
      *   @see setNearestVillage
      */
     public Village getNearestVillage() {
+        //obligatory
         return this.nearestVillage;
     }
     
@@ -168,6 +172,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setQuadrant
      */
     public String getQuadrant() {
+        if (this.quadrant == null)
+            return "";
         return this.quadrant;
     }
     
@@ -186,6 +192,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setDescription
      */
     public String getDescription() {
+        if (this.description == null)
+            return "";
         return this.description;
     }
     
@@ -204,6 +212,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setCountry
      */
     public String getCountry() {
+        if (this.country == null)
+            return "";
         return this.country;
     }
     
@@ -222,6 +232,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setAltitude
      */
     public Double getAltitude() {
+        if (this.altitude == null)
+            return new Double(-1);
         return this.altitude;
     }
     
@@ -240,6 +252,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setLatitude
      */
     public Double getLatitude() {
+        if (this.latitude == null)
+            return new Double(-1);
         return this.latitude;
     }
     
@@ -258,6 +272,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setLongitude
      */
     public Double getLongitude() {
+        if (this.longitude == null)
+            return new Double(-1);
         return this.longitude;
     }
     
@@ -276,6 +292,7 @@ public class Habitat extends Record implements Deletable {
      *   @see setDeleted
      */
     public Integer getDeleted() {
+        //obligatory
     	return this.deleted;
     }
     
@@ -294,6 +311,8 @@ public class Habitat extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        if (this.note == null)
+            return "";
         return this.note;
     }
     

@@ -71,11 +71,12 @@ public class AuthorOccurrence extends Record implements Deletable {
     }
     
     /**
-     *   Get AuthorOccurrence id
+     *   Get AuthorOccurrence id 
      *   @return id of the AuthorOccurrence
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
@@ -94,6 +95,7 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setAuthor
      */
     public Author getAuthor() {
+        //obligatory
         return this.author;
     }
     
@@ -112,6 +114,7 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setOccurrence
      */
     public Occurrence getOccurrence() {
+        //obligatory
         return this.occurrence;
     }
     
@@ -130,6 +133,8 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setRole
      */
     public String getRole() {
+        if ( this.role == null)
+            return "";
         return this.role;
     }
     
@@ -148,6 +153,8 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        if (this.note == null)
+            return "";
         return this.note;
     }
     
@@ -166,6 +173,7 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setDeleted
      */
     public Integer getDeleted() {
+        //obligatory
     	return this.deleted;
     }
     

@@ -288,14 +288,21 @@ public class ExportMng implements Observer {
 			throw new ExportException(L10n.getString("Error.WriterNotCreated"));
 		}
 		
-		// Create a new builder according to the selected format.
+                logger.debug("filename: "+ filename);
+                logger.debug("filename2: "+ filter.suggestName(filename));
+                
+                // Create a new builder according to the selected format.
 		Builder builder;
 		if(filter.getDescription().equals(L10n.getString("FilterCSV")))
 			builder = new CSVBuilder(writer, template);
-		else if(filter.getDescription().equals(L10n.getString("FilterXML")))
-			builder = new TrainingBuilder(template);
+		else if(filter.getDescription().equals(L10n.getString("FilterDC")))                        
+			builder = new DarwinCoreBuilder(filter.suggestName(filename));
+                else if(filter.getDescription().equals(L10n.getString("FilterABCD"))) 
+                        builder = new ABCDBuilder(filter.suggestName(filename));
+              //  else if(filter.getDescription().equals(L10n.getString("FilterXML")))
+                       // builder = new XMLBuilder(filter.suggestName(filename), template);                       
 		else 
-			builder = new TrainingBuilder(template);
+			builder = new DarwinCoreBuilder(filter.suggestName(filename));
 
 		// Create a new Director and run it in a separate thread.
 		DefaultDirector director = new DefaultDirector(

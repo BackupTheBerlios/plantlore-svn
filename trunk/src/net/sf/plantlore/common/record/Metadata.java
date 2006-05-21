@@ -107,6 +107,7 @@ public class Metadata extends Record {
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
@@ -125,6 +126,7 @@ public class Metadata extends Record {
      *   @see setTechnicalContactName
      */
     public String getTechnicalContactName() {
+        //obligatory
         return this.technicalContactName;
     }
     
@@ -143,6 +145,8 @@ public class Metadata extends Record {
      *   @see setTechnicalContactAddress
      */
     public String getTechnicalContactAddress() {
+        if (this.technicalContactAddress == null)
+            return "";
         return this.technicalContactAddress;
     }
     
@@ -161,6 +165,8 @@ public class Metadata extends Record {
      *   @see setTechnicalContactEmail
      */
     public String getTechnicalContactEmail() {
+        if (this.technicalContactEmail == null)
+            return "";
         return this.technicalContactEmail;
     }
     
@@ -179,6 +185,7 @@ public class Metadata extends Record {
      *   @see setContentContactName
      */
     public String getContentContactName() {
+        //obligatory
         return this.contentContactName;
     }
     
@@ -197,6 +204,8 @@ public class Metadata extends Record {
      *   @see setContentContactAddress
      */
     public String getContentContactAddress() {
+        if (this.contentContactAddress == null)
+            return "";
         return this.contentContactAddress;
     }
     
@@ -215,6 +224,8 @@ public class Metadata extends Record {
      *   @see setContentContactEmail
      */
     public String getContentContactEmail() {
+        if (this.contentContactEmail == null)
+            return "";
         return this.contentContactEmail;
     }
     
@@ -233,6 +244,7 @@ public class Metadata extends Record {
      *   @see setDataSetTitle
      */
     public String getDataSetTitle() {
+        //obligatory
         return this.dataSetTitle;
     }
     
@@ -251,6 +263,8 @@ public class Metadata extends Record {
      *   @see setDataSetDetails
      */
     public String getDataSetDetails() {
+        if (this.dataSetDetails == null)
+            return "";
         return this.dataSetDetails;
     }
     
@@ -269,6 +283,7 @@ public class Metadata extends Record {
      *   @see setSourceInstitutionId
      */
     public String getSourceInstitutionId() {
+        //obligatory
         return this.sourceInstitutionId;
     }
     
@@ -287,6 +302,7 @@ public class Metadata extends Record {
      *   @see setSourceId
      */
     public String getSourceId() {
+        //obligatory
         return this.sourceId;
     }
     
@@ -305,6 +321,8 @@ public class Metadata extends Record {
      *   @see setOwnerOrganizationAbbrev
      */
     public String getOwnerOrganizationAbbrev() {
+        if (this.ownerOrganizationAbbrev == null)
+            return "";
         return this.ownerOrganizationAbbrev;
     }
     
@@ -323,6 +341,8 @@ public class Metadata extends Record {
      *   @see setRecordBasis
      */
     public String getRecordBasis() {
+        if (this.recordBasis == null)
+            return "";
         return this.recordBasis;
     }
     
@@ -341,6 +361,7 @@ public class Metadata extends Record {
      *   @see setDateCreate
      */
     public java.util.Date getDateCreate() {
+        //obligatory
         return this.dateCreate;
     }
     
@@ -359,6 +380,7 @@ public class Metadata extends Record {
      *   @see setDateModified
      */
     public java.util.Date getDateModified() {
+        //obligatory
         return this.dateModified;
     }
     
@@ -377,6 +399,8 @@ public class Metadata extends Record {
      *   @see setBiotopeText
      */
     public String getBiotopeText() {
+        if (this.biotopeText == null)
+            return "";
         return this.biotopeText;
     }
     
@@ -395,6 +419,7 @@ public class Metadata extends Record {
      *   @see setDeleted
      */
     public Integer getDeleted() {
+        //obligatory
         return this.deleted;
     }
     

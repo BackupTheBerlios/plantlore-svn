@@ -90,6 +90,7 @@ public class Publication extends Record implements Deletable  {
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
@@ -108,6 +109,8 @@ public class Publication extends Record implements Deletable  {
      *   @see setCollectionName
      */
     public String getCollectionName() {
+         if (this.collectionName == null)
+             return "";
         return this.collectionName;
     }
     
@@ -126,7 +129,10 @@ public class Publication extends Record implements Deletable  {
      *   @see setCollectionYearPublication
      */
     public Integer getCollectionYearPublication() {
-        return this.collectionYearPublication;
+        
+        if (this.collectionYearPublication == null)
+             return -1;
+        return this.collectionYearPublication;        
     }
     
     /**
@@ -144,6 +150,9 @@ public class Publication extends Record implements Deletable  {
      *   @see setJournalName
      */
     public String getJournalName() {
+        
+        if (this.journalName == null)
+             return "";
         return this.journalName;
     }
     
@@ -162,6 +171,9 @@ public class Publication extends Record implements Deletable  {
      *   @see setJournalAuthorName
      */
     public String getJournalAuthorName() {
+        
+        if (this.journalAuthorName == null)
+             return "";
         return this.journalAuthorName;
     }
     
@@ -170,7 +182,7 @@ public class Publication extends Record implements Deletable  {
      *   @param journalAuthorName author of the journal
      *   @see getJournalAuthorName
      */
-    public void setJournalAuthorName(String journalAuthorName) {
+    public void setJournalAuthorName(String journalAuthorName) {        
         this.journalAuthorName = journalAuthorName;
     }
         
@@ -180,6 +192,7 @@ public class Publication extends Record implements Deletable  {
      *   @see setReferenceCitation
      */
     public String getReferenceCitation() {
+        //obligatory
         return this.referenceCitation;
     }
     
@@ -198,6 +211,8 @@ public class Publication extends Record implements Deletable  {
      *   @see setReferenceDetail
      */
     public String getReferenceDetail() {
+        if (this.referenceDetail == null)
+            return "";
         return this.referenceDetail;
     }
     
@@ -216,6 +231,8 @@ public class Publication extends Record implements Deletable  {
      *   @see setUrl
      */
     public String getUrl() {
+        if (this.url == null)
+            return "";
         return this.url;
     }
     
@@ -270,6 +287,8 @@ public class Publication extends Record implements Deletable  {
      *   @see setNote
      */
     public String getNote() {
+        if (this.note == null)
+            return "";
         return this.note;
     }
     

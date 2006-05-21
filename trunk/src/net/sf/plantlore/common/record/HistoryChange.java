@@ -57,6 +57,7 @@ public class HistoryChange extends Record {
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
@@ -74,7 +75,7 @@ public class HistoryChange extends Record {
      *  @return occurrence associated with this record
      *  @see setOccurrence
      */
-    public Occurrence getOccurrence() {
+    public Occurrence getOccurrence() {        
         return this.occurrence;
     }
     

@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -127,6 +128,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setId
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
@@ -145,6 +147,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setUnitIdDb
      */
     public String getUnitIdDb() {
+        //obligatory
         return this.unitIdDb;
     }
     
@@ -163,6 +166,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setUnitValue
      */
     public String getUnitValue() {
+        //obligatory
         return this.unitValue;
     }
     
@@ -181,6 +185,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setHabitat
      */
     public Habitat getHabitat() {
+        //obligatory
         return this.habitat;
     }
     
@@ -199,6 +204,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setPlant
      */
     public Plant getPlant() {        
+        //obligatory
         return this.plant;
     }
     
@@ -217,6 +223,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setYearCollected
      */
     public Integer getYearCollected() {
+        //obligatory
         return this.yearCollected;
     }
     
@@ -235,6 +242,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setMonthCollected
      */
     public Integer getMonthCollected() {
+        if (this.monthCollected == null)
+            return -1;
         return this.monthCollected;
     }
     
@@ -253,6 +262,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setDayCollected
      */
     public Integer getDayCollected() {
+        if (this.dayCollected == null)
+            return -1;
         return this.dayCollected;
     }
     
@@ -271,6 +282,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setTimeCollected
      */
     public java.util.Date getTimeCollected() {
+        if (this.isoDateTimeBegin == null) 
+            return new Date(0);
         return this.timeCollected;
     }
     
@@ -289,6 +302,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setIsoDateTimeBegin
      */
     public java.util.Date getIsoDateTimeBegin() {
+        if (this.isoDateTimeBegin == null) 
+            return new Date(0);
         return this.isoDateTimeBegin;
     }
     
@@ -307,6 +322,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setDataSource
      */
     public String getDataSource() {
+        if (this.dataSource == null)
+            return "";
         return this.dataSource;
     }
     
@@ -325,6 +342,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setPublication
      */
     public Publication getPublication() {
+        //FK
         return this.publication;
     }
     
@@ -343,6 +361,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setHerbarium
      */
     public String getHerbarium() {
+        if (this.herbarium == null)
+            return "";
         return this.herbarium;
     }
     
@@ -361,6 +381,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setCreatedWhen
      */
     public java.util.Date getCreatedWhen() {
+        //obligatory
         return this.createdWhen;
     }
     
@@ -379,6 +400,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setUpdatedWhen
      */
     public java.util.Date getUpdatedWhen() {
+        //obligatory
         return this.updatedWhen;
     }
     
@@ -397,6 +419,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setCreatedWho
      */
     public User getCreatedWho() {
+        //obligatory
         return this.createdWho;
     }
     
@@ -406,7 +429,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see getCreatedWho
      */
     public void setCreatedWho(User createdWho) {
-        this.createdWho = createdWho;
+          this.createdWho = createdWho;
     }
     
     /**
@@ -415,6 +438,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setUpdatedWho
      */
     public User getUpdatedWho() {
+        //obligatory
         return this.updatedWho;
     }
     
@@ -433,6 +457,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setMetadata
      */
     public Metadata getMetadata() {
+        //obligatory
         return this.metadata;
     }
     
@@ -451,6 +476,7 @@ public class Occurrence extends Record implements Deletable {
      *   @see setDeleted
      */
     public Integer getDeleted() {
+        //obligatory
         return this.deleted;
     }
     
@@ -469,6 +495,8 @@ public class Occurrence extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        if (this.note == null)
+            return "";
         return this.note;
     }
     

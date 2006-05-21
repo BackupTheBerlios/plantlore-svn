@@ -84,20 +84,22 @@ public class Author extends Record implements Deletable {
     }
     
     /**
-     *   Get unique id of the author
+     *   Get unique id of the author 
      *   @return int unique id of the user
      *   @see setID
      */
     public Integer getId() {
+        //obligatory
         return this.id;
     }
     
     /**
-     *   Get whole name of the author
+     *   Get whole name of the author 
      *   @return string containing whole name of the author
      *   @see setWholeName
      */
     public String getWholeName() {
+        //obligatory
         return this.wholeName;
     }
     
@@ -125,6 +127,8 @@ public class Author extends Record implements Deletable {
      *   @see setOrganization
      */
     public String getOrganization() {
+        if (this.organization == null)
+            return "";
         return this.organization;
     }
     
@@ -143,6 +147,8 @@ public class Author extends Record implements Deletable {
      *   @see setRole
      */
     public String getRole() {
+        if (this.role == null) 
+            return "";        
         return this.role;
     }
     
@@ -152,6 +158,8 @@ public class Author extends Record implements Deletable {
      *   @see setAddress
      */
     public String getAddress() {
+        if (this.address == null)
+            return "";
         return this.address;
     }
     
@@ -170,6 +178,8 @@ public class Author extends Record implements Deletable {
      *   @see setPhoneNumber
      */
     public String getPhoneNumber() {
+        if (this.phoneNumber == null)
+            return "";
         return this.phoneNumber;
     }
     
@@ -188,6 +198,8 @@ public class Author extends Record implements Deletable {
      *   @see setEmail
      */
     public String getEmail() {
+        if (this.email == null)
+            return "";
         return this.email;
     }
     
@@ -206,6 +218,8 @@ public class Author extends Record implements Deletable {
      *   @see setUrl
      */
     public String getUrl() {
+        if (this.url == null)
+            return "";
         return this.url;
     }
     
@@ -224,6 +238,7 @@ public class Author extends Record implements Deletable {
      *   @see setDeleted
      */
     public Integer getDeleted() {
+        //obligatory
         return this.deleted;
     }
     
@@ -237,11 +252,12 @@ public class Author extends Record implements Deletable {
     }       
     
     /**
-     *  Get user who created this author
+     *  Get user who created this author 
      *  @return User who created this Author
      *  @see setCreatedWho
      */
-    public User getCreatedWho() {
+    public User getCreatedWho() {        
+        //obligatory
         return this.createdWho;
     }
     
@@ -260,6 +276,8 @@ public class Author extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        if (this.note == null)
+            return "";
         return this.note;
     }
     
