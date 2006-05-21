@@ -7,9 +7,14 @@
 
 package net.sf.plantlore.client;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -24,11 +29,13 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellRenderer;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -53,6 +60,7 @@ import net.sf.plantlore.client.publication.PublicationManagerView;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
+import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -105,6 +113,10 @@ public class AppCoreCtrl
     Settings settingsModel;
     SettingsView settingsView;
     SettingsCtrl settingsCtrl;
+    
+    Print printModel;
+    PrintView printView;
+    PrintCtrl printCtrl;
     
     // History of one occurrence
     History historyModel;
@@ -206,6 +218,22 @@ public class AppCoreCtrl
         view.setNextPageAction(nextPageAction);
         view.setPrevPageAction(prevPageAction);
         view.setSelectedRowListener(new OverviewSelectionListener());
+        view.overview.addMouseListener(new OverviewMouseListener());
+        
+        DefaultCellEditor dce = (DefaultCellEditor) view.overview.getDefaultEditor(String.class);
+        Component c = dce.getComponent();
+        FocusListener[] fl = c.getFocusListeners();
+        System.out.println("========== Got "+fl.length+" focus listeners.");
+        for (FocusListener listener : fl)
+            c.removeFocusListener(listener);
+        KeyListener[] okl = view.overview.getKeyListeners();
+        okl = c.getKeyListeners();
+        System.out.println("========== Got "+okl.length+" key listeners.");
+        for (KeyListener kl : okl) {
+            view.overview.removeKeyListener(kl);
+            System.out.println("Removed key listener "+kl);
+        }
+        view.overview.addKeyListener(new OverviewKeyListener());
 
         view.addWindowListener(new AppWindowListener());
         view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
@@ -302,41 +330,18 @@ public class AppCoreCtrl
         }
         public void actionPerformed(ActionEvent actionEvent)
         {
-            System.out.println("Print selected");
-            DBLayer dbl = new HibernateDBLayer();
-            try
-            {
-                dbl.initialize(null, null, null); // FIXME inicializace DB na dvou mistech?? zjistit proc
-            } catch (DBLayerException ex)
-            {
-                System.out.println("Exception while initializing DBLayer: "+ex.getMessage());
-                ex.printStackTrace();
-            } catch(RemoteException e) {
-            	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+            if (printModel == null) {
+                printModel = new Print();
+                printView = new PrintView(view, true, printModel);
+                printCtrl = new PrintCtrl(printModel, printView);
             }
-            /*
-            Query sq = new SelectQuery();
-            try
-            {
-                sq.setType(DBMapping.PLANTRECORD);
-                Result qr = dbl.executeQuery(sq);
-                System.out.println("There are "+qr.getNumRows()+" plants in the db.");
-                Plant p = (Plant) dbl.next(qr);
-                do {
-                    System.out.println("-----------------");
-                System.out.println("Plant is "+p.getPublishableName());
-                System.out.println("Czech name "+p.getCzechName());
-                System.out.println("Abbrev. "+p.getAbbreviation());
-                System.out.println("Adopted name "+p.getAdoptedName());
-                System.out.println("Note "+p.getNote());
-                p = (Plant) dbl.next(qr);
-                } while (p!=null);
-            } catch (DBLayerException ex)
-            {
-                System.out.println("Msg: "+ex.getMessage());
-                ex.printStackTrace();
+            Selection sel = model.getTableModel().getSelection();
+            if (sel.values().size() < 1) {
+                JOptionPane.showMessageDialog(view, "Please check at least one record.");
+                return;
             }
-            */
+            printModel.setSource(model.getDatabase(), sel);
+            printView.setVisible(true);
         }
     }
     
@@ -839,6 +844,48 @@ public class AppCoreCtrl
                 //selectedRow is selected
             }
         }
+    }
+    
+    class OverviewMouseListener implements MouseListener {
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                JOptionPane.showMessageDialog(view,"Double click! On row #"+model.getSelectedRowNumber());
+            }
+            System.out.println("Click count = "+e.getClickCount());
+        }
+
+        public void mousePressed(MouseEvent e) {
+        }
+
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        public void mouseExited(MouseEvent e) {
+        }
+        
+    }
+    
+    class OverviewKeyListener implements KeyListener {
+        public void keyTyped(KeyEvent e) {
+            System.out.println("Typed key: char="+e.getKeyChar()+" code="+e.getKeyCode()+" text="+e.getKeyText(e.getKeyChar())+" modif="+e.getKeyModifiersText(e.getModifiers()));
+            if (e.getKeyText(e.getKeyChar()).equals("Space"))
+                model.invertSelectedOnCurrentRow();
+            if (e.getKeyText(e.getKeyChar()).equals("Enter")) {
+                JOptionPane.showMessageDialog(view,"Detail of #"+model.getSelectedRowNumber());
+                e.consume();
+            }
+        }
+
+        public void keyPressed(KeyEvent e) {
+            
+        }
+
+        public void keyReleased(KeyEvent e) {
+        }
+        
     }
     
     class LoginAction extends AbstractAction {

@@ -43,6 +43,10 @@ public class Settings extends Observable
         language = prefs.get("locale","xxx");
         if (language.equals("xxx"))
             language = L10n.DEFAULT_LANGUAGE;
+        
+        prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
+        headerOne = prefs.get("HEADER_ONE","Set header one in settings.");
+        headerTwo = prefs.get("HEADER_TWO","Set header two in settings.");
     }
     
     /** Returns currently set language in this model.
@@ -85,10 +89,13 @@ public class Settings extends Observable
             prefs.remove("locale");
         else
             prefs.put("locale",language);
+            
         
         prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
-        prefs.put("HEADER_ONE",headerOne);
-        prefs.put("HEADER_TWO",headerTwo);
+        if (headerOne != null)
+            prefs.put("HEADER_ONE",headerOne);
+        if (headerTwo != null)
+            prefs.put("HEADER_TWO",headerTwo);
         
         setChanged();
         notifyObservers("COLUMNS");        

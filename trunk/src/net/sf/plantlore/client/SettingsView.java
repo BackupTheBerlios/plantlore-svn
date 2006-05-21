@@ -30,6 +30,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     }
     
     public void loadValues() {
+        //--- LOCALE TAB        
         switch (model.getLanguage()) {
             case Settings.CZECH:
                 czechRadioButton.setSelected(true);
@@ -44,6 +45,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 defaultRadioButton.setSelected(true);                
         }
 
+        //--- COLUMN TAB
         DefaultListModel lm = (DefaultListModel)availableList.getModel();
 
         ArrayList<Column> columns = model.getUnselectedColumns();
@@ -60,6 +62,10 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 continue;
             else
                 lm.addElement(column);        
+        
+        //--- SCHEDA TAB
+        headerOneField.setText(model.getHeaderOne());
+        headerTwoField.setText(model.getHeaderTwo());
     }
     
     /** This method is called from within the constructor to

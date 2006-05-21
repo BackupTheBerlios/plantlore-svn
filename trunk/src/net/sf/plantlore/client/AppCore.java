@@ -267,6 +267,10 @@ public class AppCore extends Observable
             return 0;
     }
     
+    public void invertSelectedOnCurrentRow() {
+        tableModel.invertSelected(selectedRow);
+    }
+    
     public void setSelectedRow(int i) 
     {
         selectedRow = i;
