@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -111,10 +112,12 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
 
         addressArea.setColumns(20);
         addressArea.setRows(5);
+        TransferFocus.patch(addressArea);
         jScrollPane1.setViewportView(addressArea);
 
         noteArea.setColumns(20);
         noteArea.setRows(5);
+        TransferFocus.patch(noteArea);
         jScrollPane2.setViewportView(noteArea);
 
         helpBtn.setText(L10n.getString("helpBtn"));
