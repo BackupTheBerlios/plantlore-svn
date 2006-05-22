@@ -2,9 +2,50 @@
 <head>
 <meta http-equiv="Content-Language" content="cs-CZ" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Vyhled�v�n� n�lez�</title>
+<title>Vyhledávání v nálezových datech</title>
 </head>
 <body>
-<h1>Vyhled�v�n� n�lez�</h1>
+<h1>Vyhledávání v nálezových datech</h1>
+<p>Dialog pro vyhledávání se velmi podobá dialogům pro přidávání a editaci nálezu, 
+obsahuje ovšem i několik odlišností. Těmi hlavními je nemožnost zadávat taxony ze 
+škrtáku, a naopak možnost vyhledávat podle měsíce v roce nebo časového intervalu. Další 
+odlišnosti spočívají v chování dialogu.</p>
+
+<p>Dialog se otevírá prázdný. Pokud jej prázdný necháte a rovnou stisknete Ok, tak
+se v <a href="overview.html">Přehledu nálezů</a> objeví seznam všech nálezů. Což je tedy
+způsob, jak se vrátit ke zobrazení všech nálezů.</p>
+
+<p>Je možné zadat jakoukoliv kombinaci zobrazených vyplnitelných položek, kterou
+dialog povolí. Nepovolí například současné zadání časového intervalu a měsíce. Stejně
+jako dialogy pro přidávání a editaci kontroluje správnost zadaných hodnot. Tj. například, že 
+nadmořská výška obsahuje číselný údaj.</p>
+
+<h2>Přidávání autorů</h2>
+<p>Zadání autora, role či poznámky u autora se provádí stejně jako u Přidávacího a editovacího dialogu.
+Pro přidání autora klikněte na tlačítko Přidej/Add v levé horní části základního formuláře.
+Objeví se nový řádek. Zde je možné vyplnit jméno autora nebo roli autora nebo poznámku
+autora k nálezu. Pokud zadáte jak autora, roli i poznámku autora, tak se nebude hledat tato trojice,
+ale budou hledány nálezy buď se zadaným autorem nebo se zadanou rolí nebo se zadanou poznámkou. Tj.
+údaje se při vyhledávání spojují logickou spojkou NEBO. Přidáte-li další řádek, opět se bude vyhledávat
+pomocí spojky NEBO. Pro názornost malý příklad. Uživatel v prvním řádku zadá jako autora "Nováka" a jako
+roli "collect". V druhém řádku zadá autora "Široký" a roli "revised". Pokud poté klikne na Ok, tak
+se v přehledu nálezů objeví všechny nálezy u nichž je jako jeden z autorů uveden buď Novák nebo Široký
+a také se zobrazí všechny nálezy, u kterých existuje autor v roli "collect" nebo autor v roli "revised".</p>
+
+<h2>Logika vyhledávání</h2>
+<p>Jak funguje dotaz v případě autorů, rolí a poznámek autorů k nálezům jsme si již popsali. 
+Zbytek už je přímočarý. Pokud zadáte dva nebo více taxonů, například Pampelišku a Heřmánek, tak se vyhledávají nálezy
+zadaných taxonů spojených spojkou NEBO, tedy v našem příkladu  se hledají nálezy buď Pampelišek 
+nebo Heřmánků.</p>
+<p>Ostatní vyplněné položky se do dotazu přidávají logickou spojkou A Zároveň. Například tedy po zadání
+Heřmánku a Pampelišky jako taxonů a po vybrání Bohemia centralis se po stisku Ok v Přehledu zobrazí nálezy Heřmánků v 
+teritoriu Bohemia centralis a nálezy Pampelišek v teritoriu Bohemia centralis.</p>
+<p>Za zmínku ještě stojí vyhledávání v poznámkách. Nehledá se přesná shoda se 
+zadaným textem, ale hledá se zadaný text jako podřetězec poznámky nebo popisu 
+místa. Zadáte-li tedy do popisu místa slovo louka a stisknete Ok, zobrazí se v
+ přehledu všechny nálezy, které v popisu místa nálezu obsahují řetězec "louka".
+ Stejně je tomu u hledání v poznámce k nálezu a v poznámce k místu.</p>
+ 
+</p>
 </body>
 </html>

@@ -32,22 +32,26 @@ import javax.swing.event.ChangeListener;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author reimei
  */
 public class SearchCtrl {
+    private Logger logger;
     private Search model;
     private SearchView view;
     
     /** Creates a new instance of AddEditCtrl */
     public SearchCtrl(Search model, SearchView view) {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = model;
         this.view = view;
         
@@ -321,7 +325,8 @@ public class SearchCtrl {
 
     class HelpButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            System.out.println("Help");
+            logger.info("Help inovked from the Search dialog.");
+            PlantloreHelp.showHelp(PlantloreHelp.SEARCH_OCCURRENCE);            
         }
     }//HelpButtonListener
     
