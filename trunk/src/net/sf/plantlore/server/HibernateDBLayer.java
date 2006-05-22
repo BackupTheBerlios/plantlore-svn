@@ -80,8 +80,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             
     private static final int INITIAL_POOL_SIZE = 8;
     private static final int INSERT = 1;
-    private static final int DELETE = 2;
-    private static final int UPDATE = 3;
+    private static final int UPDATE = 2;
+    private static final int DELETE = 3;
     
     /**
      * Creates a new instance of HibernateDBLayer.
@@ -222,11 +222,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Begin transaction
             tx = session.beginTransaction();            
             // Save item into the database
-            if (data instanceof Habitat)
-            System.out.println("HABITAT ID: "+((Habitat)data).getId());
             recordId = (Integer)session.save(data);            
             // Save data to history tables - only for selected tables
-            // saveHistory(session, data, INSERT, recordId);
+            saveHistory(session, data, INSERT, recordId);
             // Commit transaction
             tx.commit();                                      
         } catch (HibernateException e) {
@@ -1216,10 +1214,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         String tableId = "";
         Class updated = null;
         Integer updatedId = null;
-
+        ScrollableResults sr;
+        
         // Update tMetaData.cDateModified for any operation on Occurrences and Habitats
         if ((data instanceof Occurrence) || (data instanceof Habitat)) {
-            ScrollableResults sr;
             if (data instanceof Occurrence) {
                 // Read the associated metadata
                 sr = sess.createCriteria(Occurrence.class)
@@ -1267,7 +1265,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 historyChange.setRecordId(recordId);
             }
             historyChange.setOldRecordId(0);
-            historyChange.setOperation(PlantloreConstants.INSERT);
+            historyChange.setOperation(INSERT);
             historyChange.setWho(this.plantloreUser);
             historyChange.setWhen(new java.util.Date());
             // Load record from THistoryColumn table
@@ -1300,12 +1298,69 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Saving history when new record is inserted        
         if (type == UPDATE){            
             HistoryChange historyChange = new HistoryChange();                        
+            // Check whether we are dealing with delete (seting CDELETE to 0)
+            if ((data instanceof Author) || (data instanceof Publication) || 
+                (data instanceof Metadata) || (data instanceof Occurrence)) {
+                Integer delete = 0;
+                historyChange.setOccurrence(null);                
+                if (data instanceof Author) {
+                    delete = ((Author)data).getDeleted();
+                    id = ((Author)data).getId();
+                    table = PlantloreConstants.ENTITY_AUTHOR;
+                } else
+                if (data instanceof Publication) {
+                    delete = ((Publication)data).getDeleted();                    
+                    id = ((Publication)data).getId();         
+                    table = PlantloreConstants.ENTITY_PUBLICATION;                    
+                } else 
+                if (data instanceof Occurrence) {
+                    delete = ((Occurrence)data).getDeleted();                    
+                    id = ((Occurrence)data).getId();         
+                    table = PlantloreConstants.ENTITY_OCCURRENCE;                    
+                    historyChange.setOccurrence((Occurrence)data);                    
+                } else {                    
+                    delete = ((Metadata)data).getDeleted();
+                    id = ((Metadata)data).getId();               
+                    table = PlantloreConstants.ENTITY_METADATA;                    
+                }
+                if (delete == 1) {
+                    // CDELETE was set to 1, we are deleting record
+                    historyChange.setOldRecordId(0);
+                    historyChange.setOperation(DELETE);
+                    historyChange.setRecordId(id);
+                    historyChange.setWhen(new java.util.Date());
+                    historyChange.setWho(this.plantloreUser);
+                    HistoryRecord hist = new HistoryRecord();
+                    // Save historyChange object
+                    sess.save(historyChange);
+                    // Read HistoryColumn table
+                    sr = sess.createCriteria(HistoryColumn.class)
+                        .add(Restrictions.eq(HistoryColumn.TABLENAME, table))
+                        .add(Restrictions.isNull(HistoryColumn.COLUMNNAME))
+                        .scroll();
+                    if (!sr.next()) {
+                        logger.error("tHistoryColumn doesn't contain required data");
+                        DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
+                        ex.setError(ex.ERROR_DB, table);
+                        throw ex;                                                        
+                    }
+                    Object[] hc = sr.get();
+                    hist.setHistoryChange(historyChange);
+                    hist.setNewValue(null);
+                    hist.setOldValue(null);
+                    hist.setHistoryColumn((HistoryColumn)hc[0]);
+                    // Save History record
+                    sess.save(hist);
+                    return;                    
+                }
+            }
             if ((data instanceof Author) || (data instanceof Publication) ||
                 (data instanceof Territory) || (data instanceof Phytochorion) ||
                 (data instanceof Village)) {            
+                
                 historyChange.setOccurrence(null);
                 historyChange.setOldRecordId(0);                
-                historyChange.setOperation(PlantloreConstants.UPDATE);
+                historyChange.setOperation(UPDATE);
                 historyChange.setWhen(new java.util.Date());
                 historyChange.setWho(this.plantloreUser);
                 if (data instanceof Author) {
@@ -1494,7 +1549,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             if (data instanceof Occurrence) {
                 historyChange.setOccurrence((Occurrence)data);
                 historyChange.setRecordId(((Occurrence)data).getId());
-                historyChange.setOperation(PlantloreConstants.UPDATE);
+                historyChange.setOperation(UPDATE);
                 historyChange.setWhen(new java.util.Date());
                 historyChange.setWho(this.plantloreUser);                
                 // Read the original occurrence
@@ -1542,59 +1597,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 sess.save(historyChange);
             }
         }
-        // Saving history when record is deleted
-        if (type == DELETE) {
-            HistoryChange historyChange = new HistoryChange();
-            if (data instanceof Occurrence) {
-                historyChange.setOccurrence((Occurrence)data);
-                historyChange.setRecordId(0);
-                table = PlantloreConstants.ENTITY_OCCURRENCE;
-            } else {
-                historyChange.setOccurrence(null);
-                if (data instanceof Publication) {
-                    id = ((Publication)data).getId();
-                    table = PlantloreConstants.ENTITY_PUBLICATION;
-                } else if (data instanceof Author) {
-                    id = ((Author)data).getId();
-                    table = PlantloreConstants.ENTITY_AUTHOR;                        
-                } else {
-                    id = 0;
-                    table = "";
-                }
-                historyChange.setRecordId(id);
-            }
-            historyChange.setOldRecordId(0);
-            historyChange.setOperation(PlantloreConstants.DELETE);
-            historyChange.setWho(this.plantloreUser);
-            historyChange.setWhen(new java.util.Date());
-
-            // Load record from THistoryColumn table
-            try {
-                SelectQuery sq = this.createQuery(HistoryColumn.class);
-                sq.addRestriction(PlantloreConstants.RESTR_EQ, HistoryColumn.TABLENAME, null, table, null);
-                sq.addRestriction(PlantloreConstants.RESTR_IS_NULL, HistoryColumn.COLUMNNAME, null, null, null);
-                result = this.executeQuery(sq);
-                objCol = next(result);                
-            } catch (RemoteException e) {
-                logger.error("Remote exception caught in DBLayer. This should never happen. Details: "+e.getMessage());
-            }
-            if (objCol == null) {                
-                logger.error("tHistoryColumn doesn't contain required data");
-                DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
-                ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_HISTORYCOLUMN);
-                throw ex;
-            } else {
-                column = (HistoryColumn)objCol[0];
-            }                
-            HistoryRecord history = new HistoryRecord();
-            history.setHistoryChange(historyChange);
-            history.setHistoryColumn(column);
-            history.setNewValue(null);
-            history.setOldValue(null);
-            // Save into the database
-            sess.save(historyChange);
-            sess.save(history);           
-        }    
     }
     
     
