@@ -17,42 +17,41 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="102" alignment="0" attributes="1">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
+                  <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+                  <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
+                  <Group type="102" alignment="1" attributes="0">
                       <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="459" max="32767" attributes="0"/>
+                      <EmptySpace pref="498" max="32767" attributes="0"/>
                       <Component id="okButton" min="-2" pref="100" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
-                  <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
-                  <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="0" max="-2" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                      <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="helpButton" alignment="1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="24" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -85,7 +84,7 @@
                       <Component id="authorValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="taxonValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="515" max="32767" attributes="0"/>
+                  <EmptySpace pref="554" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -191,7 +190,7 @@
                       <Component id="whoInsertValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="whenInsertValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="518" max="32767" attributes="0"/>
+                  <EmptySpace pref="557" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -263,67 +262,45 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="jScrollPane1" alignment="1" pref="788" max="32767" attributes="1"/>
               <Group type="102" alignment="1" attributes="0">
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Component id="previousButton" min="-2" pref="100" max="-2" attributes="1"/>
-                          <EmptySpace pref="56" max="32767" attributes="0"/>
-                          <Component id="totalResultLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="totalResultValueLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                          <Component id="toDisplayLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                          <Component id="toDisplayValueTextField" min="-2" pref="25" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                          <Component id="displayedLabel" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="undoButton" min="-2" pref="110" max="-2" attributes="2"/>
-                      </Group>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Component id="displayedValueLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="selectAllButton" min="-2" pref="110" max="-2" attributes="1"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="unselectAllButton" min="-2" pref="110" max="-2" attributes="1"/>
-                      <Component id="nextButton" min="-2" pref="100" max="-2" attributes="1"/>
-                  </Group>
+                  <Component id="previousButton" min="-2" pref="100" max="-2" attributes="1"/>
+                  <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
+                  <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="nextButton" min="-2" pref="100" max="-2" attributes="1"/>
               </Group>
-              <Component id="jScrollPane1" alignment="1" pref="749" max="32767" attributes="1"/>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="-2" pref="446" max="-2" attributes="0"/>
+                  <Component id="undoButton" min="-2" pref="110" max="-2" attributes="2"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="selectAllButton" min="-2" pref="110" max="-2" attributes="2"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="unselectAllButton" min="-2" pref="110" max="-2" attributes="1"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" max="-2" attributes="0">
                   <Component id="jScrollPane1" min="-2" pref="214" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="displayedLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="displayedValueLabel" alignment="3" min="-2" pref="14" max="-2" attributes="0"/>
-                      <Component id="nextButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="previousButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="totalResultLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="toDisplayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="toDisplayValueTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="totalResultValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" max="-2" attributes="0">
-                      <Component id="unselectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="undoButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="selectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                          <Component id="previousButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                          <Component id="nextButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jPanel4" alignment="1" min="-2" pref="36" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="unselectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="selectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="undoButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -351,55 +328,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="L10n.getString(&quot;prevButton&quot;)" type="code"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JLabel" name="totalResultLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;totalResult&quot;)" type="code"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="totalResultValueLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="((Integer)model.getResultRows()).toString()" type="code"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="displayedLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;displayed&quot;)" type="code"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="displayedValueLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="model.getCurrentDisplayRows()" type="code"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="toDisplayLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;toDisplay&quot;)" type="code"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="toDisplayValueTextField">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="((Integer)model.getDisplayRows()).toString()" type="code"/>
-            </Property>
-            <Property name="autoscrolls" type="boolean" value="false"/>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[16, 19]"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -446,6 +374,97 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
+        <Container class="javax.swing.JPanel" name="jPanel4">
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="totalResultLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="totalResultValueLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                      <Component id="toDisplayLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="toDisplayValueTextField" min="-2" pref="25" max="-2" attributes="0"/>
+                      <EmptySpace pref="21" max="32767" attributes="0"/>
+                      <Component id="displayedLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="displayedValueLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="totalResultLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="totalResultValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="toDisplayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="toDisplayValueTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="displayedLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="displayedValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="totalResultLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="L10n.getString(&quot;totalResult&quot;)" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="totalResultValueLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="((Integer)model.getResultRows()).toString()" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="toDisplayLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="L10n.getString(&quot;toDisplay&quot;)" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="toDisplayValueTextField">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="((Integer)model.getDisplayRows()).toString()" type="code"/>
+                </Property>
+                <Property name="autoscrolls" type="boolean" value="false"/>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[16, 19]"/>
+                </Property>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JLabel" name="displayedLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="L10n.getString(&quot;displayed&quot;)" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="displayedValueLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="model.getCurrentDisplayRows()" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Component class="javax.swing.JButton" name="okButton">

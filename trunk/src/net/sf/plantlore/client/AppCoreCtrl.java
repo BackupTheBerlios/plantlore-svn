@@ -170,6 +170,7 @@ public class AppCoreCtrl
     AbstractAction dataWholeHistoryAction = new DataWholeHistoryAction();
     AbstractAction dataUserAction = new DataUserAction();
     
+    AbstractAction historyAction = new DataHistoryAction();
     AbstractAction schedaAction = new SchedaAction();
     AbstractAction searchAction = new SearchAction();
     AbstractAction addAction = new AddAction();
@@ -211,6 +212,7 @@ public class AppCoreCtrl
         view.setEditAction(editAction);
         view.setDeleteAction(deleteAction);
         view.setSchedaAction(schedaAction);
+        view.setHistoryRecordAction(historyAction);
 
         view.setSelectAllAction(selectAllAction);
         view.setSelectNoneAction(selectNoneAction);
@@ -260,6 +262,7 @@ public class AppCoreCtrl
         dataWholeHistoryAction.setEnabled(enabled);
         dataUserAction.setEnabled(enabled);
         
+        historyAction.setEnabled(enabled);
         schedaAction.setEnabled(enabled);
         searchAction.setEnabled(enabled);
         addAction.setEnabled(enabled);
@@ -616,6 +619,7 @@ public class AppCoreCtrl
             }
         }
         
+        
     }
     
     class SchedaAction extends AbstractAction {
@@ -764,8 +768,7 @@ public class AppCoreCtrl
         }
         
     }
-    
-    
+        
     class DataWholeHistoryAction extends AbstractAction {
         public DataWholeHistoryAction() {
              putValue(NAME, L10n.getString("wholeHistory"));

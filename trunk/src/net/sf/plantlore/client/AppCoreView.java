@@ -98,7 +98,8 @@ public class AppCoreView extends JFrame implements Observer
             invertSelected  = new JButton(),
             prevPage = new JButton(),
             nextPage = new JButton(),
-            schedaButton = new JButton();
+            schedaButton = new JButton(),
+            historyButton = new JButton();
     
     private JScrollPane overviewScrollPane;
     private JLabel statusLabel;
@@ -214,6 +215,7 @@ public class AppCoreView extends JFrame implements Observer
         mainToolBar.add(deleteButton);
         mainToolBar.add(searchButton);
         mainToolBar.add(schedaButton);
+        mainToolBar.add(historyButton);
         container.add(mainToolBar, BorderLayout.NORTH);
         
         sbm.add(searchButton, L10n.getString("Overview.SearchTT"));
@@ -403,6 +405,13 @@ public class AppCoreView extends JFrame implements Observer
         schedaButton.setAction(a);
     }
 
+     /** Sets an action to the History toolbar button.
+     *
+     */
+    public void setHistoryRecordAction(AbstractAction a) {
+        historyButton.setAction(a);
+    }
+    
     /** Sets an action to the selectAll button.
      *
      */
