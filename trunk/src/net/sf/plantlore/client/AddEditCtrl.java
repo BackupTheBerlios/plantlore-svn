@@ -116,8 +116,8 @@ public class AddEditCtrl {
     	}
 		public void actionPerformed(ActionEvent isUseless) {
 			if(checklistView == null) {
-				checklistView = new ChecklistView( view.taxonTextArea );
-				new ChecklistCtrl( checklistView, view.taxonTextArea );
+				checklistView = new ChecklistView( (AutoTextArea) view.taxonTextArea );
+				new ChecklistCtrl( checklistView, (AutoTextArea) view.taxonTextArea );
 			}
 			checklistView.setVisible(true);			
 		}
@@ -131,6 +131,8 @@ public class AddEditCtrl {
             c  = (JComboBox) e.getSource();
             
             String command = e.getActionCommand();
+            
+            System.out.println("command: "+command);
             
             //------- ComboBoxes --------            
 //            if (command.equals("authorComboBox"))
@@ -146,6 +148,7 @@ public class AddEditCtrl {
                 model.setPhytName((Pair<String, Integer>) c.getSelectedItem());
            
             if (command.equals("phytCodeCombo"))
+                System.out.println("c.getSelectedItem(): "+c.getSelectedItem());
                 model.setPhytCode((Pair<String, Integer>) c.getSelectedItem());
            
             if (command.equals("phytCountryCombo"))

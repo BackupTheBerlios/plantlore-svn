@@ -57,11 +57,11 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="yearSpinner" min="-2" pref="73" max="-2" attributes="0"/>
-                          <EmptySpace pref="157" max="32767" attributes="0"/>
+                          <EmptySpace pref="197" max="32767" attributes="0"/>
                           <Component id="checklistButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jScrollPane3" alignment="0" pref="322" max="32767" attributes="1"/>
-                      <Component id="jScrollPane1" alignment="0" pref="322" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" alignment="0" pref="347" max="32767" attributes="1"/>
+                      <Component id="jScrollPane1" alignment="0" pref="347" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
@@ -70,12 +70,12 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="townComboBox" pref="223" max="32767" attributes="1"/>
+                      <Component id="townComboBox" pref="248" max="32767" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="extendedButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jScrollPane2" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jScrollPane2" alignment="0" pref="248" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -139,9 +139,9 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getVillages());"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getVillages(), true);"/>
             <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="//items = new Object[] {&quot;Praha&quot;, &quot;Brno&quot;, &quot;Turnov&quot;, &quot;Trebic&quot;};"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)townComboBox).setStrict(true);&#xa;townComboBox.setActionCommand(&quot;townComboBox&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="townComboBox.setActionCommand(&quot;townComboBox&quot;);"/>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
@@ -374,7 +374,7 @@
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="timeFormattedTextField" min="-2" pref="69" max="-2" attributes="0"/>
-                      <EmptySpace pref="44" max="32767" attributes="0"/>
+                      <EmptySpace pref="107" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -468,8 +468,8 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="phytCountryCombo" pref="173" max="32767" attributes="1"/>
-                                  <Component id="phytNameCombo" alignment="0" pref="173" max="32767" attributes="1"/>
+                                  <Component id="phytCountryCombo" pref="177" max="32767" attributes="1"/>
+                                  <Component id="phytNameCombo" alignment="0" pref="177" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="1">
@@ -574,8 +574,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getTerritories()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)territoryNameCombo).setStrict(true);&#xa;territoryNameCombo.setActionCommand(&quot;territoryNameCombo&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getTerritories(), true); "/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="territoryNameCombo.setActionCommand(&quot;territoryNameCombo&quot;);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -586,8 +586,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getPhytNames()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytNameCombo).setStrict(true);&#xa;phytNameCombo.setActionCommand(&quot;phytNameCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getPhytNames(), true); "/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="phytNameCombo.setActionCommand(&quot;phytNameCombo&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -598,8 +598,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getPhytCodes()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytCodeCombo).setStrict(true);&#xa;phytCodeCombo.setActionCommand(&quot;phytCodeCombo&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getPhytCodes(), true); "/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="phytCodeCombo.setActionCommand(&quot;phytCodeCombo&quot;);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -610,8 +610,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getCountries()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytCountryCombo).setStrict(false);&#xa;phytCountryCombo.setActionCommand(&quot;phytCountryCombo&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getCountries(), false); "/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="phytCountryCombo.setActionCommand(&quot;phytCountryCombo&quot;);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -666,7 +666,7 @@
                           <Component id="sourceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sourceCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="11" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="publicationLabel" min="-2" max="-2" attributes="0"/>
                           <Component id="publicationCombo" min="-2" max="-2" attributes="0"/>
@@ -732,8 +732,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getSources()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)sourceCombo).setStrict(false);&#xa;sourceCombo.setActionCommand(&quot;sourceCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getSources(), false); "/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="sourceCombo.setActionCommand(&quot;sourceCombo&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -744,8 +744,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getPublications());"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)publicationCombo).setStrict(true);&#xa;publicationCombo.setActionCommand(&quot;publicationCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getPublications(), true);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="publicationCombo.setActionCommand(&quot;publicationCombo&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -756,8 +756,8 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getProjects());"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)projectCombo).setStrict(true);&#xa;projectCombo.setActionCommand(&quot;projectCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getProjects(), true);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="projectCombo.setActionCommand(&quot;projectCombo&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -782,7 +782,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane4" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="287" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -790,7 +790,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane4" pref="96" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="89" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -889,7 +889,7 @@
                               <Component id="SJTSKButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="42" max="32767" attributes="0"/>
+                      <EmptySpace pref="33" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1049,7 +1049,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane5" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="287" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1100,7 +1100,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="helpButton" linkSize="12" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="598" max="32767" attributes="0"/>
+                  <EmptySpace pref="626" max="32767" attributes="0"/>
                   <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>

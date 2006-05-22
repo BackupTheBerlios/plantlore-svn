@@ -25,7 +25,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-import net.sf.plantlore.common.AutoComboBox;
+import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.TabTransfersFocus;
@@ -73,7 +73,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel2 = new javax.swing.JPanel();
         TownLabel = new javax.swing.JLabel();
         //items = new Object[] {"Praha", "Brno", "Turnov", "Trebic"};
-        townComboBox = new AutoComboBox(model.getVillages());
+        townComboBox = new AutoComboBoxNG3(model.getVillages(), true);
         TaxonLabel = new javax.swing.JLabel();
         YearLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -106,10 +106,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jLabel11 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        territoryNameCombo = new AutoComboBox(model.getTerritories());
-        phytNameCombo = new AutoComboBox(model.getPhytNames());
-        phytCodeCombo = new AutoComboBox(model.getPhytCodes());
-        phytCountryCombo = new AutoComboBox(model.getCountries());
+        territoryNameCombo = new AutoComboBoxNG3(model.getTerritories(), true);
+        phytNameCombo = new AutoComboBoxNG3(model.getPhytNames(), true);
+        phytCodeCombo = new AutoComboBoxNG3(model.getPhytCodes(), true);
+        phytCountryCombo = new AutoComboBoxNG3(model.getCountries(), false);
         quadrantTextField = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         publicationLabel = new javax.swing.JLabel();
@@ -117,9 +117,9 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         projectLabel = new javax.swing.JLabel();
         herbariumTextField = new javax.swing.JTextField();
         sourceLabel = new javax.swing.JLabel();
-        sourceCombo = new AutoComboBox(model.getSources());
-        publicationCombo = new AutoComboBox(model.getPublications());
-        projectCombo = new AutoComboBox(model.getProjects());
+        sourceCombo = new AutoComboBoxNG3(model.getSources(), false);
+        publicationCombo = new AutoComboBoxNG3(model.getPublications(), true);
+        projectCombo = new AutoComboBoxNG3(model.getProjects(), true);
         jPanel7 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         locationNoteArea = new javax.swing.JTextArea();
@@ -149,7 +149,6 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel2.setPreferredSize(new java.awt.Dimension(700, 200));
         TownLabel.setText("Nearest bigger seat:");
 
-        ((AutoComboBox)townComboBox).setStrict(true);
         townComboBox.setActionCommand("townComboBox");
 
         TaxonLabel.setText("Taxon:");
@@ -212,22 +211,22 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(yearSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 157, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 197, Short.MAX_VALUE)
                         .add(checklistButton))
-                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
+                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
                 .add(85, 85, 85)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(TownLabel)
                     .add(jLabel2))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(townComboBox, 0, 223, Short.MAX_VALUE)
+                    .add(townComboBox, 0, 248, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(extendedButton)
-                            .add(jScrollPane2))))
+                            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -295,7 +294,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .add(jLabel5)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(timeFormattedTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         jPanel4Layout.linkSize(new java.awt.Component[] {daySpinner, monthSpinner}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -325,16 +324,12 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         jLabel14.setText("Phytochoria code:");
 
-        ((AutoComboBox)territoryNameCombo).setStrict(true);
         territoryNameCombo.setActionCommand("territoryNameCombo");
 
-        ((AutoComboBox)phytNameCombo).setStrict(true);
         phytNameCombo.setActionCommand("phytNameCombo");
 
-        ((AutoComboBox)phytCodeCombo).setStrict(true);
         phytCodeCombo.setActionCommand("phytCodeCombo");
 
-        ((AutoComboBox)phytCountryCombo).setStrict(false);
         phytCountryCombo.setActionCommand("phytCountryCombo");
 
         quadrantTextField.setActionCommand("quadrantTextField");
@@ -352,8 +347,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                             .add(jLabel13))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(phytCountryCombo, 0, 173, Short.MAX_VALUE)
-                            .add(phytNameCombo, 0, 173, Short.MAX_VALUE)))
+                            .add(phytCountryCombo, 0, 177, Short.MAX_VALUE)
+                            .add(phytNameCombo, 0, 177, Short.MAX_VALUE)))
                     .add(jPanel5Layout.createSequentialGroup()
                         .add(19, 19, 19)
                         .add(jLabel11)
@@ -408,13 +403,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         sourceLabel.setText("Source:");
 
-        ((AutoComboBox)sourceCombo).setStrict(false);
         sourceCombo.setActionCommand("sourceCombo");
 
-        ((AutoComboBox)publicationCombo).setStrict(true);
         publicationCombo.setActionCommand("publicationCombo");
 
-        ((AutoComboBox)projectCombo).setStrict(true);
         projectCombo.setActionCommand("projectCombo");
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
@@ -442,7 +434,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(sourceLabel)
                     .add(sourceCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 11, Short.MAX_VALUE)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(publicationLabel)
                     .add(publicationCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -470,13 +462,13 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane4)
+                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
-                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -568,7 +560,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .add(S42Button)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(SJTSKButton)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ocurrence note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
@@ -584,7 +576,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane5)
+                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -655,7 +647,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(helpButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 598, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 626, Short.MAX_VALUE)
                 .add(okButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(cancelButton)
@@ -713,9 +705,9 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         TableColumn tc3 = authorTable.getColumnModel().getColumn(2);
         TableColumn tc4 = authorTable.getColumnModel().getColumn(3);
 
-        JComboBox cb = new AutoComboBox(model.getAuthors());
+        JComboBox cb = new AutoComboBoxNG3(model.getAuthors());
         tc1.setCellEditor(new DefaultCellEditor(cb));  
-        cb = new AutoComboBox(model.getAuthorRoles());
+        cb = new AutoComboBoxNG3(model.getAuthorRoles());
         tc2.setCellEditor(new DefaultCellEditor(cb));
         
         ButtonEditor be = new ButtonEditor(model);
@@ -904,7 +896,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextField quadrantTextField;
     protected javax.swing.JComboBox sourceCombo;
     protected javax.swing.JLabel sourceLabel;
-    protected AutoTextArea taxonTextArea;
+    protected javax.swing.JTextArea taxonTextArea;
     protected javax.swing.JComboBox territoryNameCombo;
     protected javax.swing.JFormattedTextField timeFormattedTextField;
     protected javax.swing.JComboBox townComboBox;
