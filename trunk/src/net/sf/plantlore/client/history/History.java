@@ -160,7 +160,7 @@ public class History {
        
        try {
        	    query = database.createQuery(Occurrence.class);
-       	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, 1, null);            
+       	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, idOcc, null);            
             resultId = database.executeQuery(query);
             objectOccurrence = database.more(resultId, 0, 0);       
             objHis = (Object[])objectOccurrence[0];                            
