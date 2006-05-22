@@ -299,10 +299,10 @@ public class ExportMng implements Observer {
 			builder = new DarwinCoreBuilder(filter.suggestName(filename));
                 else if(filter.getDescription().equals(L10n.getString("FilterABCD"))) 
                         builder = new ABCDBuilder(filter.suggestName(filename));
-              //  else if(filter.getDescription().equals(L10n.getString("FilterXML")))
-                       // builder = new XMLBuilder(filter.suggestName(filename), template);                       
+                else if(filter.getDescription().equals(L10n.getString("FilterXML")))                        
+                        builder = new XMLBuilder(template, filter.suggestName(filename));                       
 		else 
-			builder = new DarwinCoreBuilder(filter.suggestName(filename));
+			builder = new TrainingBuilder(template);
 
 		// Create a new Director and run it in a separate thread.
 		DefaultDirector director = new DefaultDirector(
