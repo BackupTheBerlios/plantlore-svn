@@ -107,10 +107,7 @@ public class AddAuthorCtrl {
     class SaveAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {            
             // Check whether all the required fields are present
-            if (view.checkNonEmpty("name") &&
-                view.checkNonEmpty("organization") && view.checkNonEmpty("role") &&
-                view.checkNonEmpty("address") && view.checkNonEmpty("phone") &&
-                view.checkNonEmpty("email") && view.checkNonEmpty("url")) {
+            if (view.checkNonEmpty("name")) {
                 if (model.getEditAuthor() == null) {
                     // Save new author
                     model.saveAuthor();                
@@ -208,5 +205,5 @@ public class AddAuthorCtrl {
         public void focusGained(FocusEvent e) {
             // Empty
         }
-    }                
+    }                    
 }

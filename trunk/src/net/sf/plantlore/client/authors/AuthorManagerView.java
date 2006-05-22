@@ -373,13 +373,6 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
     
     /**
-     *  Display error message saying that no search field has been filled in.
-     */
-    public void showSearchErrorMessage() {
-        JOptionPane.showMessageDialog(this, "Please fill in at least one search field", "Missing search data", JOptionPane.ERROR_MESSAGE);       
-    }
-    
-    /**
      *  Display generic error message.
      *  @param message Message we want to display
      */
@@ -689,15 +682,6 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         JOptionPane.showMessageDialog(this, "Please select at least one author from the list",
                                       "Select author", JOptionPane.WARNING_MESSAGE);        
     }
-
-    /**
-     *  Display dialoge with message saying that the result of the search is empty
-     */
-    public void showSearchInfoMessage() {
-        JOptionPane.showMessageDialog(this, "No authors with the given attributes were found. Please modify search criteria.",
-                                      "No search results", JOptionPane.INFORMATION_MESSAGE);                
-    }
-    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton addBtn;

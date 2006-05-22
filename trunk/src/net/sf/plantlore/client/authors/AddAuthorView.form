@@ -187,32 +187,32 @@
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="nameField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="nameField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="nameField.setValue(&quot;&quot;);&#xa;nameField.setDocument(new FieldLengthLimit(50));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="organizationField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="organizationField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="organizationField.setValue(&quot;&quot;);&#xa;organizationField.setDocument(new FieldLengthLimit(50));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="roleField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="roleField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="roleField.setValue(&quot;&quot;);&#xa;roleField.setDocument(new FieldLengthLimit(30));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="phoneField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="phoneField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="phoneField.setValue(&quot;&quot;);&#xa;phoneField.setDocument(new FieldLengthLimit(20));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="emailField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="emailField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="emailField.setValue(&quot;&quot;);&#xa;emailField.setDocument(new FieldLengthLimit(100));"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="urlField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="urlField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="urlField.setValue(&quot;&quot;);&#xa;urlField.setDocument(new FieldLengthLimit(255));"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

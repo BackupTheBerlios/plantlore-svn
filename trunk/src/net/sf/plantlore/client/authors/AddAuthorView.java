@@ -14,6 +14,9 @@ import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import net.sf.plantlore.l10n.L10n;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 /**
  * Dialog used for adding / editing authors.
@@ -89,16 +92,22 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
         jLabel9.setText(L10n.getString("requiredFieldLbl"));
 
         nameField.setValue("");
+        nameField.setDocument(new FieldLengthLimit(50));
 
         organizationField.setValue("");
+        organizationField.setDocument(new FieldLengthLimit(50));
 
         roleField.setValue("");
+        roleField.setDocument(new FieldLengthLimit(30));
 
         phoneField.setValue("");
+        phoneField.setDocument(new FieldLengthLimit(20));
 
         emailField.setValue("");
+        emailField.setDocument(new FieldLengthLimit(100));
 
         urlField.setValue("");
+        urlField.setDocument(new FieldLengthLimit(255));
 
         addressArea.setColumns(20);
         addressArea.setRows(5);
@@ -441,6 +450,28 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
     public String getNote() {
         return noteArea.getText();        
     }        
+    
+    class FieldLengthLimit extends PlainDocument {
+        private int limit;
+        // optional uppercase conversion
+        private boolean toUppercase = false;
+        
+        FieldLengthLimit(int limit) {
+            super();
+            this.limit = limit;
+        }
+        
+        @Override
+        public void insertString(int offset, String  str, AttributeSet attr) throws BadLocationException {
+            if (str == null) return;
+            if ((getLength() + str.length()) <= limit) {
+                super.insertString(offset, str, attr);
+            } else {
+                super.insertString(offset, str.substring(0, limit), attr);
+            }
+        }
+    }    
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea addressArea;

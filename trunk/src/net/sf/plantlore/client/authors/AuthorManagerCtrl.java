@@ -75,9 +75,6 @@ public class AuthorManagerCtrl {
                     view.setDialogEnabled(true);    // Enable view dialog                
                     // Check for errors which might have occured. If none occured, tell model to process the result
                     if (model.processErrors() == false) {
-                        if (model.getResultRows() == 0) {
-                            view.showSearchInfoMessage();
-                        }
                         model.setCurrentFirstRow(1);                                                    
                         // Display first n rows (n = model.getDisplayRows())                        
                         model.processResults(1, model.getDisplayRows());                        
@@ -217,21 +214,14 @@ public class AuthorManagerCtrl {
      */    
     class SearchAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // Check whether at least one search field is non-empty
-            if (view.checkNonEmpty("name") || view.checkNonEmpty("organization") ||
-                view.checkNonEmpty("role") || view.checkNonEmpty("email")) {
-                // Run DB search
-                model.searchAuthor();
-                // Disable current view and run timer
-                view.setDialogEnabled(false);                                
-                timerSearch.start();                
-                // Display dialog with progress bar
-                progress = new ProgressDialog(view.getDialog(), true);
-                progress.show();                                                
-            } else {
-                // Show error message - no search criteria
-                view.showSearchErrorMessage();
-            }
+            // Run DB search
+            model.searchAuthor();
+            // Disable current view and run timer
+            view.setDialogEnabled(false);                                
+            timerSearch.start();                
+            // Display dialog with progress bar
+            progress = new ProgressDialog(view.getDialog(), true);
+            progress.show();                                                
         }
     }        
     
@@ -295,7 +285,6 @@ public class AuthorManagerCtrl {
     class NameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
             model.setSearchName(view.getName());
-            System.out.println("Name set: "+view.getName());
         }        
     }
 

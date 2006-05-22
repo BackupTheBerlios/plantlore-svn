@@ -94,6 +94,7 @@ public class AuthorManager extends Observable {
     
     public static final String ERROR_SEARCH = L10n.getString("authorSearchFailed");
     public static final String ERROR_SAVE = L10n.getString("authorSaveFailed");
+    public static final String ERROR_RIGHTS = "You don't have sufficient rights for this operation";
     public static final String ERROR_UPDATE = L10n.getString("authorUpdateFailed");    
     public static final String ERROR_DELETE = L10n.getString("authorDeleteFailed");
     public static final String ERROR_PROCESS = L10n.getString("authorProcessResultsFailed");
@@ -117,7 +118,7 @@ public class AuthorManager extends Observable {
                 // The operation is not finished yet
                 done = false;
                 // Create Author object for author we want to add
-/*                Author author = new Author();
+                Author author = new Author();
                 author.setWholeName(name);
                 author.setOrganization(organization);
                 author.setRole(role);
@@ -125,15 +126,28 @@ public class AuthorManager extends Observable {
                 author.setPhoneNumber(phoneNumber);
                 author.setEmail(email);
                 author.setUrl(url);
+                author.setDeleted(0);
                 author.setNote(note);
                 int rowId = -1;
                 try {
                     // Execute query
                     rowId = database.executeInsert(author);
                 } catch (DBLayerException e) {
-                    // Log and set an error
-                    logger.error("Saving author failed. Unable to execute insert query");
-                    setError(ERROR_SAVE);
+                    // Check the type of an exception
+                    int errorCode = e.getErrorCode();
+                    switch (errorCode) {
+                        case DBLayerException.ERROR_RIGHTS:
+                            logger.info("Insufficient rights for the operation");
+                            setError(ERROR_RIGHTS);
+                            break;
+                        case DBLayerException.ERROR_SAVE:
+                            logger.error("Saving author failed. Unable to execute insert query");
+                            setError(ERROR_SAVE);                            
+                            break;
+                        default:
+                            logger.error("Saving author failed. An error occurred");                            
+                            setError(ERROR_SAVE);                            
+                    }
                     // Set operation state to finished
                     done = true;
                     return null;
@@ -143,32 +157,7 @@ public class AuthorManager extends Observable {
                 logger.info("Author "+name+" saved successfuly.");
                 if (isResultAvailable()) {
                     searchAuthor();
-                }
-*/
-                int rowId = 0;                
-                try {
-                    database.conditionDelete(HistoryRecord.class, HistoryRecord.ID, ">", 10);
-                    
-/*                    SelectQuery query = database.createQuery(Occurrence.class);
-                    System.out.println("Created SelectQuery");
-                    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, 8, null);
-                    System.out.println("Going to execute select query");
-                    int id = database.executeQuery(query);
-                    System.out.println("Select query executed");
-                    Object[] res = database.more(id, 0, 0);
-                    Object[] resres = (Object[])res[0];
-                    Occurrence occ = (Occurrence)resres[0];
-                    occ.getPublication().setCollectionName("Nove collection name");
-                    database.executeUpdate(occ);
- */
-                } catch (DBLayerException e2) {
-                    e2.printStackTrace();
-                } catch (RemoteException e3) {
-                    e3.printStackTrace();
-                }
-
-               
-                
+                }                
                 done = true;
                 return rowId;
             }
@@ -187,11 +176,24 @@ public class AuthorManager extends Observable {
                 done = false;
                 try {
                     // Execute query
-                    database.executeDelete((Author)data.get(getAuthorIndex()));
+                    Author delAuthor = (Author)data.get(getAuthorIndex());
+                    delAuthor.setDeleted(1);
+                    database.executeUpdate(delAuthor);
                 } catch (DBLayerException e) {
-                    // Log and set an error
-                    logger.error("Deleting author failed. Unable to execute delete query.");
-                    setError(ERROR_DELETE);
+                    int errorCode = e.getErrorCode();
+                    switch (errorCode) {
+                        case DBLayerException.ERROR_RIGHTS:
+                            logger.info("Insufficient rights for the operation");
+                            setError(ERROR_RIGHTS);
+                            break;
+                        case DBLayerException.ERROR_DELETE:
+                            logger.error("Deleting author failed. Unable to execute delete query");
+                            setError(ERROR_DELETE);
+                            break;
+                        default:
+                            logger.error("Deleting author failed. An error occurred");                            
+                            setError(ERROR_DELETE);                            
+                    }                    
                     // Set operation state to finished
                     done = true;
                     return false;
@@ -232,9 +234,20 @@ public class AuthorManager extends Observable {
                     // Execute query
                     database.executeUpdate(author);
                 } catch (DBLayerException e) {
-                    // Log and set an error
-                    logger.error("Saving author failed. Unable to execute insert query");
-                    setError(ERROR_UPDATE);
+                    int errorCode = e.getErrorCode();
+                    switch (errorCode) {
+                        case DBLayerException.ERROR_RIGHTS:
+                            logger.info("Insufficient rights for the operation");
+                            setError(ERROR_RIGHTS);
+                            break;
+                        case DBLayerException.ERROR_UPDATE:
+                            logger.error("Updating author failed. Unable to execute update query");
+                            setError(ERROR_UPDATE);                            
+                            break;
+                        default:
+                            logger.error("Updating author failed. An error occurred");                            
+                            setError(ERROR_UPDATE);                            
+                    }                    
                     // Set operation state to finished
                     done = true;
                     return false;
@@ -265,16 +278,17 @@ public class AuthorManager extends Observable {
                 try {
                     // Create new Select query                    
                     query = database.createQuery(Author.class);                    
-                    System.out.println("ROLE:"+searchRole);
+                    // Display only authors who haven't been deleted
+                    query.addRestriction(PlantloreConstants.RESTR_EQ, Author.DELETED, null, 0, null);
                     // Add given restrictions (WHERE clause)
                     if ((searchName != null) && (searchName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.WHOLENAME, null, "%" + searchName + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.WHOLENAME, null, "%" + searchName + "%", null);
                     if ((searchOrganization != null) && (searchOrganization != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ORGANIZATION, null, "%" + searchOrganization + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.ORGANIZATION, null, "%" + searchOrganization + "%", null);
                     if ((searchRole != null) && (searchRole != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.ROLE, null, "%" + searchRole + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.ROLE, null, "%" + searchRole + "%", null);
                     if ((searchEmail != null) && (searchEmail != null))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Author.EMAIL, null, "%" + searchEmail + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.EMAIL, null, "%" + searchEmail + "%", null);
                     String field;
                     // Add ORDER BY clause
                     switch (sortField) {
@@ -298,26 +312,21 @@ public class AuthorManager extends Observable {
                     } else {
                         query.addOrder(PlantloreConstants.DIRECT_DESC, field);
                     }
-                    Object[] args = new Object[8];
-                    args[0] = PlantloreConstants.RESTR_EQ_PROPERTY;
-                    args[1] = Author.WHOLENAME;
-                    args[2] = Author.EMAIL;
-                    args[3] = null;                    
-                    args[4] = PlantloreConstants.RESTR_EQ_PROPERTY;
-                    args[5] = Author.WHOLENAME;
-                    args[6] = Author.ORGANIZATION;
-                    args[7] = null;
-                    query.addOrRestriction(args);
                     int resultId = 0;
                     try {
                         // Execute query
                         resultId = database.executeQuery(query);
                     } catch (DBLayerException e) {
-                        // Log and set an error
-                        logger.error("Searching authors failed. Unable to execute search query.");
-                        setError(ERROR_SEARCH);
-                        // setError("Searching authors failed. Please contact
-                        // your administrator.");
+                        int errorCode = e.getErrorCode();
+                        switch (errorCode) {
+                            case DBLayerException.ERROR_SELECT:
+                                logger.error("Searching authors failed. Unable to execute search query.");
+                                setError(ERROR_SEARCH);
+                                break;
+                            default:
+                                logger.error("Saving author failed. An error occurred");                            
+                                setError(ERROR_SEARCH);
+                        }                        
                     } finally {
                         // Set operation state to finished
                         done = true;
