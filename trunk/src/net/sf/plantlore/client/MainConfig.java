@@ -57,7 +57,8 @@ public class MainConfig {
     public Document load() throws DocumentException {
         SAXReader reader = new SAXReader();
         logger.info("Loading main configuration file "+file);
-        Document document = reader.read(file);
+        File fajl = new File(file);
+        Document document = reader.read(fajl);
         this.document = document;
         return document;        
     }
