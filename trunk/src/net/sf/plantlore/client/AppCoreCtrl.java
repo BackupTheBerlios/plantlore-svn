@@ -304,9 +304,7 @@ public class AppCoreCtrl
     /** Assumes that user doesn't work with the Search dialog at time of the update.
      *
      */
-    class SettingsBridge implements Observer {
-        Search sm = new Search(model.getDatabase());
-        
+    class SettingsBridge implements Observer {        
         public void update(Observable o, Object arg) {
             System.out.println("Settings bridge update");
             if (arg instanceof String) {                
@@ -317,9 +315,9 @@ public class AppCoreCtrl
                     model.getTableModel().setColumns(columns);
                     model.getMainConfig().setColumns(columns);
                     
-                    sm.setColumns(columns);
-                    sm.constructQuery();
-                    model.setResultId(sm.getNewResultId());
+                    searchModel.setColumns(columns);
+                    searchModel.constructQuery();
+                    model.setResultId(searchModel.getNewResultId());
                 }
             }
         }        
@@ -576,14 +574,7 @@ public class AppCoreCtrl
         }
     }
 
-    class SearchAction extends AbstractAction {
-        public SearchAction() {
-            putValue(NAME, L10n.getString("dataSearch"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("dataSearchTooltip"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("dataSearch"));            
-        } 
-
-        public void actionPerformed(ActionEvent actionEvent) {
+    private void constructSearchMVC() {
             if (searchModel == null) {
                 searchModel = new Search(model.getDatabase());
                 searchModel.setColumns(model.getTableModel().getColumns());
@@ -603,7 +594,17 @@ public class AppCoreCtrl
                 searchView.setTitle("Search");
                 searchCtrl = new SearchCtrl(searchModel, searchView);
                 searchModel.addObserver(new SearchBridge());
-            }
+            }        
+    }
+    
+    class SearchAction extends AbstractAction {
+        public SearchAction() {
+            putValue(NAME, L10n.getString("dataSearch"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("dataSearchTooltip"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("dataSearch"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
             searchModel.clear();
             searchView.clearComponentData();
             searchView.setVisible(true);
@@ -919,6 +920,12 @@ public class AppCoreCtrl
     			model.setDatabase(dblayer);
     			model.setAccessRights( loginModel.getAccessRights() );
                         model.login();
+                        
+                        constructSearchMVC();
+                        searchModel.setDatabase(model.getDatabase());
+                        searchModel.constructQuery();
+                        model.setResultId(searchModel.getNewResultId());
+                        
     			view.initOverview();
                         setDatabaseDependentCommandsEnabled(true);
     		}

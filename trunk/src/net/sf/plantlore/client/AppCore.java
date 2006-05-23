@@ -687,10 +687,10 @@ public class AppCore extends Observable
         assert database != null;
         
         tableSorter.setDatabase(database);
-        Search search = new Search(getDatabase());
+        /*Search search = new Search(getDatabase());
         search.setColumns(columns);
         search.constructQuery();
-        setResultId(search.getNewResultId());
+        setResultId(search.getNewResultId()); */
         //setExportQuery(search.getExportQuery(), false, null);
     }
     
