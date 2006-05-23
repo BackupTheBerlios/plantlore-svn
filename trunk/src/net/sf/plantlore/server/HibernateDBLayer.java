@@ -201,7 +201,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (data instanceof Occurrence) {
             Occurrence occ = (Occurrence)data;
             occ.setCreatedWhen(new java.util.Date());
+            occ.setUpdatedWhen(new java.util.Date());
             occ.setCreatedWho(this.plantloreUser);
+            occ.setUpdatedWho(this.plantloreUser);
             data = occ;
         }
         if (data instanceof Publication) {
@@ -232,6 +234,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 tx.rollback();
             }
             logger.fatal("Saving record into the database failed. Details: "+e.getMessage());
+            e.printStackTrace();
             DBLayerException ex = new DBLayerException("Saving record into the database failed. Details: "+e.getMessage());
             ex.setError(ex.ERROR_SAVE, null);
             throw ex;            
@@ -403,6 +406,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         try {
             tx = session.beginTransaction();            
             // Save records into the history
+            System.out.println("GOING TO SAVE HISTORY");
             saveHistory(session, data, UPDATE, null);            
             // Save item into the database
             session.update(data);
@@ -757,7 +761,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return this.rights;
     }
 
-    public boolean beginTransaction() throws DBLayerException, RemoteException {
+    synchronized public boolean beginTransaction() throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
@@ -790,6 +794,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // Commit the transaction
         this.longTx.commit();
+        // Set the transaction object to null
+        this.longTx = null;
         return true;
     }
     
@@ -807,6 +813,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // Rollback the transaction
         this.longTx.rollback();
+        // Set the transaction object to null
+        this.longTx = null;        
         return true;        
     }
     
@@ -1216,30 +1224,34 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Integer updatedId = null;
         ScrollableResults sr;
         
+        System.out.println(">>>>>>>>>>>> ENTERING saveHistory()");
         // Update tMetaData.cDateModified for any operation on Occurrences and Habitats
-        if ((data instanceof Occurrence) || (data instanceof Habitat)) {
+/*        if ((data instanceof Occurrence) || (data instanceof Habitat)) {
             if (data instanceof Occurrence) {
                 // Read the associated metadata
                 sr = sess.createCriteria(Occurrence.class)
-                    .add(Restrictions.eq(Occurrence.ID, ((Occurrence)data).getId()))
+                    .add(Restrictions.eq(Occurrence.ID, recordId))
                     .scroll();
             } else {
                 // Read the associated occurrence and metadata
+                // System.out.println(">>>>>>> GOT HABITAT: "+data.toString());
                 sr = sess.createCriteria(Occurrence.class)
-                    .add(Restrictions.eq(Occurrence.HABITAT, ((Habitat)data).getId()))
+                    .add(Restrictions.eq(Occurrence.HABITAT, recordId))
                     .scroll();                    
-             }
+            }
             if (!sr.next()) {
                 logger.error("Occurrence record for the given Metadata not found");
                 DBLayerException ex = new DBLayerException("Occurrence record for the given Metadata not found");
                 ex.setError(ex.ERROR_OTHER, null);
                 throw ex;                    
             }
+            System.out.println(">>>>>>>>>>>>> We got the Occurrence!");
             Object[] res = sr.get();
             Occurrence occ = (Occurrence)res[0];
             occ.getMetadata().setDateModified(new java.util.Date());
             sess.update(occ.getMetadata());
         }
+ */
         // Saving history when new record is inserted
         if (type == INSERT) {
             HistoryChange historyChange = new HistoryChange();            
@@ -1259,6 +1271,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     table = PlantloreConstants.ENTITY_VILLAGE;
                 } else if (data instanceof Territory) {
                     table = PlantloreConstants.ENTITY_TERRITORY;                        
+                } else if (data instanceof Metadata) {
+                    table = PlantloreConstants.ENTITY_METADATA;                    
                 } else {
                     return;
                 }
@@ -1356,8 +1370,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             if ((data instanceof Author) || (data instanceof Publication) ||
                 (data instanceof Territory) || (data instanceof Phytochorion) ||
-                (data instanceof Village)) {            
-                
+                (data instanceof Village) || (data instanceof Metadata)) {                
                 historyChange.setOccurrence(null);
                 historyChange.setOldRecordId(0);                
                 historyChange.setOperation(UPDATE);
@@ -1385,7 +1398,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     updated = Phytochorion.class;
                     updatedId = ((Phytochorion)data).getId();                    
                     tableId = Phytochorion.ID;
-                    historyChange.setRecordId(((Phytochorion)data).getId());                    
+                    historyChange.setRecordId(((Phytochorion)data).getId());
+                } else
+                if (data instanceof Metadata) {
+                    updated = Metadata.class;
+                    updatedId = ((Metadata)data).getId();                    
+                    tableId = Metadata.ID;
+                    historyChange.setRecordId(((Metadata)data).getId());                    
                 } else
                 if (data instanceof Village) {
                     updated = Village.class;
@@ -1394,6 +1413,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     historyChange.setRecordId(((Village)data).getId());                    
                 }                    
                 // Save the HistoryChange object
+                System.out.println("GOING TO SAVE HISTORY RECORD");
                 sess.save(historyChange);
                 // Read the to-be-updated object
                 Session tempSess = this.sessionFactory.openSession(); 
@@ -1490,6 +1510,33 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             sess.save(hist);                            
                         }
                     }
+                } else if (data instanceof Metadata) {
+                    Metadata origRec = (Metadata)original[0];                    
+                    Metadata newRec = (Metadata)data;
+                    ArrayList cols = (ArrayList)origRec.getColumns();
+                    for (int i=0;i<cols.size();i++) {
+                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                            // Read record from THISTORYCOLUMN first
+                            res = sess.createCriteria(HistoryColumn.class)
+                                .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_METADATA))
+                                .add(Restrictions.eq(HistoryColumn.COLUMNNAME, (String)cols.get(i)))
+                                .scroll();
+                            if (!res.next()) {
+                                logger.error("tHistoryColumn doesn't contain required data");
+                                DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
+                                ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_METADATA);
+                                throw ex;                                
+                            }
+                            Object[] colNames = res.get();
+                            // Save record into THISTORY
+                            HistoryRecord hist = new HistoryRecord();
+                            hist.setHistoryChange(historyChange);
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
+                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
+                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            sess.save(hist);
+                        }
+                    }                    
                 } else if (data instanceof Phytochorion) {
                     Phytochorion origRec = (Phytochorion)original[0];                    
                     Phytochorion newRec = (Phytochorion)data;
