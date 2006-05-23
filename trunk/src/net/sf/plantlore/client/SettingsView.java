@@ -12,6 +12,7 @@ import java.util.Observer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -68,6 +69,24 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         headerTwoField.setText(model.getHeaderTwo());
     }
     
+    
+    private void setLabels() {
+        okButton.setText(L10n.getString("Common.Ok"));
+        cancelButton.setText(L10n.getString("Common.Cancel"));
+        helpButton.setText(L10n.getString("Common.Help"));
+        
+        englishRadioButton.setText(L10n.getString("Settings.English"));
+        czechRadioButton.setText(L10n.getString("Settings.Czech"));
+        defaultRadioButton.setText(L10n.getString("Settings.Default"));
+        
+        availableLabel.setText(L10n.getString("Settings.Available"));
+        selectedLabel.setText(L10n.getString("Settings.Selected"));
+        addButton.setText(L10n.getString("Common.Add"));
+        removeButton.setText(L10n.getString("Common.Remove"));
+        upButton.setText(L10n.getString("Common.Up"));
+        downButton.setText(L10n.getString("Common.Down"));
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -103,7 +122,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Language"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Settings.LanguagePanel")));
         languagesButtonGroup.add(englishRadioButton);
         englishRadioButton.setText("English");
         englishRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -132,7 +151,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                     .add(englishRadioButton)
                     .add(czechRadioButton)
                     .add(defaultRadioButton))
-                .addContainerGap(462, Short.MAX_VALUE))
+                .addContainerGap(473, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -164,7 +183,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         );
         jTabbedPane1.addTab("tab1", jPanel1);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Displayed columns"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Settings.Columns")));
         jScrollPane1.setViewportView(availableList);
 
         selectedList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -255,7 +274,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -285,11 +304,11 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                     .add(jPanel5Layout.createSequentialGroup()
                         .add(headerOneLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(headerOneField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE))
+                        .add(headerOneField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
                     .add(jPanel5Layout.createSequentialGroup()
                         .add(headerTwoLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(headerTwoField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)))
+                        .add(headerTwoField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -323,12 +342,12 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(helpButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 321, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 332, Short.MAX_VALUE)
                 .add(cancelButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(okButton)
                 .addContainerGap())
-            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
         );
 
         layout.linkSize(new java.awt.Component[] {cancelButton, helpButton, okButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);

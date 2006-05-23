@@ -879,12 +879,40 @@ public class AddEdit extends Observable {
             ex.printStackTrace();
         }        
     }//createRecord()
+
+    public boolean isNotEmpty(String s) {
+        if (s != null && !s.equals(""))
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isNotEmpty(Pair<String,Integer> p) {
+        if (p != null && p.getFirst() != null &&!p.getFirst().equals(""))
+            return true;
+        else
+            return false;
+    }
+    
+    public boolean isNotEmpty(Number i) {
+        if (i != null && !i.equals(0))
+            return true;
+        else
+            return false;
+    }
+    
+    public boolean isNotEmpty(Date d) {
+        if (d != null && !d.equals(new Date(0)))
+            return true;
+        else
+            return false;
+    }
     
     public Pair<Boolean,String> checkData() {
         //TODO: check that the author set contains reasonable (not null) values
         if (authorList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one author!");
-        if (taxonList.size() < 1)
+        if (taxonList == null || taxonList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one taxon!");
         
         Pair<Pair<String,Integer>,String> ai, aj;
@@ -902,6 +930,22 @@ public class AddEdit extends Observable {
             }
         }
         
+        if (!isNotEmpty(village)) {
+            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the nearest village.");
+        }
+        
+        if (!isNotEmpty(territoryName)) {
+            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the territory name.");            
+        }
+        
+        if (!isNotEmpty(phytCode)) {
+            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the phytochoria code or name.");            
+        }
+
+        if (!isNotEmpty(project)) {
+            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the project.");            
+        }
+
         return new Pair<Boolean,String>(true,"");
     }
     

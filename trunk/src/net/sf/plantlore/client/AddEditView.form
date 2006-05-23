@@ -27,6 +27,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Basic data">
+              <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.BasicData" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
               <Font PropertyName="font" name="Dialog" size="12" style="0"/>
             </TitledBorder>
           </Border>
@@ -50,32 +51,32 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="TaxonLabel" min="-2" max="-2" attributes="0"/>
-                      <Component id="YearLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="taxonLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="yearLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="yearSpinner" min="-2" pref="73" max="-2" attributes="0"/>
-                          <EmptySpace pref="197" max="32767" attributes="0"/>
+                          <EmptySpace pref="164" max="32767" attributes="0"/>
                           <Component id="checklistButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jScrollPane3" alignment="0" pref="347" max="32767" attributes="1"/>
-                      <Component id="jScrollPane1" alignment="0" pref="347" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" alignment="0" pref="329" max="32767" attributes="1"/>
+                      <Component id="jScrollPane1" alignment="0" pref="329" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="TownLabel" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <Component id="townLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="placeDescriptionLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="townComboBox" pref="248" max="32767" attributes="1"/>
+                      <Component id="townComboBox" pref="216" max="32767" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="extendedButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jScrollPane2" alignment="0" pref="248" max="32767" attributes="1"/>
+                              <Component id="jScrollPane2" alignment="0" pref="216" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -90,11 +91,11 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="townComboBox" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
-                              <Component id="TownLabel" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                              <Component id="townLabel" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                              <Component id="placeDescriptionLabel" min="-2" max="-2" attributes="0"/>
                               <Component id="jScrollPane2" alignment="0" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
@@ -102,14 +103,14 @@
                           <Component id="jScrollPane1" min="-2" pref="69" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="TaxonLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="taxonLabel" min="-2" max="-2" attributes="0"/>
                               <Component id="jScrollPane3" min="-2" pref="53" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="yearSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="YearLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="yearLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                                   <Component id="checklistButton" alignment="3" min="-2" max="-2" attributes="1"/>
@@ -124,7 +125,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="TownLabel">
+        <Component class="javax.swing.JLabel" name="townLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Nearest bigger seat:"/>
           </Properties>
@@ -145,7 +146,7 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="TaxonLabel">
+        <Component class="javax.swing.JLabel" name="taxonLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Taxon:"/>
           </Properties>
@@ -153,7 +154,7 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="YearLabel">
+        <Component class="javax.swing.JLabel" name="yearLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Year:"/>
           </Properties>
@@ -161,7 +162,7 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="placeDescriptionLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Place description:"/>
           </Properties>
@@ -271,6 +272,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Extended data">
+              <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.ExtendedData" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
               <Font PropertyName="font" name="Dialog" size="12" style="0"/>
             </TitledBorder>
           </Border>
@@ -349,6 +351,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Time">
+                  <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.TimePanel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                   <Font PropertyName="font" name="Dialog" size="12" style="0"/>
                 </TitledBorder>
               </Border>
@@ -363,18 +366,18 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="monthLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="monthSpinner" linkSize="11" min="-2" pref="39" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                      <Component id="dayLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="daySpinner" linkSize="11" min="-2" pref="36" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                      <Component id="timeLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="timeFormattedTextField" min="-2" pref="69" max="-2" attributes="0"/>
-                      <EmptySpace pref="107" max="32767" attributes="0"/>
+                      <EmptySpace pref="44" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -383,10 +386,10 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="monthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="timeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="monthSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="dayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="daySpinner" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="timeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -402,7 +405,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
+            <Component class="javax.swing.JLabel" name="monthLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Month:"/>
               </Properties>
@@ -410,7 +413,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
+            <Component class="javax.swing.JLabel" name="dayLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Day:"/>
               </Properties>
@@ -424,7 +427,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel5">
+            <Component class="javax.swing.JLabel" name="timeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Time:"/>
               </Properties>
@@ -446,6 +449,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Location">
+                  <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.LocationPanel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                   <Font PropertyName="font" name="Dialog" size="12" style="0"/>
                 </TitledBorder>
               </Border>
@@ -463,8 +467,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jLabel10" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel13" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="countryLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="phytNameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -474,15 +478,15 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="1">
                               <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                              <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                              <Component id="territoryNameLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="territoryNameCombo" pref="173" max="32767" attributes="0"/>
+                              <Component id="territoryNameCombo" pref="177" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel9" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel14" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="quadrantLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="phytCodeLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -500,25 +504,25 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="territoryNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="territoryNameCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="phytNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="phytNameCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="phytCodeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="phytCodeCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="countryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="phytCountryCombo" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="quadrantLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="quadrantTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -527,7 +531,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel9">
+            <Component class="javax.swing.JLabel" name="quadrantLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Quadrant:"/>
               </Properties>
@@ -535,7 +539,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel10">
+            <Component class="javax.swing.JLabel" name="countryLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Country:"/>
               </Properties>
@@ -543,7 +547,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel11">
+            <Component class="javax.swing.JLabel" name="territoryNameLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Territory name:"/>
               </Properties>
@@ -551,7 +555,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel13">
+            <Component class="javax.swing.JLabel" name="phytNameLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Phytochoria name:"/>
               </Properties>
@@ -559,7 +563,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel14">
+            <Component class="javax.swing.JLabel" name="phytCodeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Phytochoria code:"/>
               </Properties>
@@ -628,6 +632,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Other">
+                  <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.OtherPanel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                   <Font PropertyName="font" name="Dialog" size="12" style="0"/>
                 </TitledBorder>
               </Border>
@@ -666,7 +671,7 @@
                           <Component id="sourceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sourceCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="11" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="publicationLabel" min="-2" max="-2" attributes="0"/>
                           <Component id="publicationCombo" min="-2" max="-2" attributes="0"/>
@@ -768,6 +773,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Location note">
+                  <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.LocationNotePanel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                   <Font PropertyName="font" name="Dialog" size="12" style="0"/>
                 </TitledBorder>
               </Border>
@@ -782,7 +788,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane4" pref="287" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="219" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -790,7 +796,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane4" pref="89" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="96" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -823,6 +829,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="GPS">
+                  <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.GPSPanel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                   <Font PropertyName="font" name="Dialog" size="10" style="0"/>
                 </TitledBorder>
               </Border>
@@ -839,10 +846,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                              <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="altitudeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="latitudeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jLabel8" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="longitudeLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -868,17 +875,17 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="altitudeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="altitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="latitudeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="latitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="longitudeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="longitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -889,13 +896,13 @@
                               <Component id="SJTSKButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="33" max="32767" attributes="0"/>
+                      <EmptySpace pref="42" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel6">
+            <Component class="javax.swing.JLabel" name="altitudeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Altitude:"/>
               </Properties>
@@ -928,7 +935,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel7">
+            <Component class="javax.swing.JLabel" name="latitudeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Latitude:"/>
               </Properties>
@@ -936,7 +943,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel8">
+            <Component class="javax.swing.JLabel" name="longitudeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Longitude:"/>
               </Properties>
@@ -1034,7 +1041,8 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Ocurrence note">
+                <TitledBorder title="Occurrence note">
+                  <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="AddEdit.OccurrenceNotePanel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                   <Font PropertyName="font" name="Dialog" size="12" style="0"/>
                 </TitledBorder>
               </Border>
@@ -1049,7 +1057,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane5" pref="287" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="219" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1100,7 +1108,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="helpButton" linkSize="12" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="626" max="32767" attributes="0"/>
+                  <EmptySpace pref="598" max="32767" attributes="0"/>
                   <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>
