@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.client;
 
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +69,9 @@ public class Plantlore {
     public static void main(String[] args) {
         
         // Set beautiful system look & feel.
-        //try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
+        try { 
+            UIManager.setLookAndFeel(new PlasticXPLookAndFeel()); 
+        } catch (Exception e) { e.printStackTrace(); JFrame.setDefaultLookAndFeelDecorated(true); }
         
         
         //BasicConfigurator.configure();
