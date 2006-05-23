@@ -67,7 +67,7 @@ public class AddEdit extends Observable {
     private ArrayList<String> taxonList;
     private String taxonOriginal;
     
-    private String localityDescription;
+    private String habitatDescription;
     private Integer year;
     private String habitatNote;
     private String occurrenceNote;
@@ -147,7 +147,7 @@ public class AddEdit extends Observable {
         taxonOriginal = o.getPlant().getTaxon();
         taxonList.add(taxonOriginal);
         
-        localityDescription = o.getHabitat().getDescription();
+        habitatDescription = o.getHabitat().getDescription();
         year = o.getYearCollected();
         
         occurrenceNote = o.getNote();
@@ -207,16 +207,18 @@ public class AddEdit extends Observable {
         return (String) taxonList.get(i);
     }
 
-    public String getLocalityDescription() {
-        return localityDescription;
+    public String getHabitatDescription() {
+        return habitatDescription;
     }
 
-    public void setLocalityDescription(String localityDescription) {
-        this.localityDescription = localityDescription;
-        logger.debug("LocalityDescription set to "+localityDescription);
+    public void setHabitatDescription(String habitatDescription) {
+        this.habitatDescription = habitatDescription;
+        logger.debug("HabitatDescription set to "+habitatDescription);
     }
 
     public Integer getYear() {
+        if (year == null)
+            year = Calendar.getInstance().get(Calendar.YEAR);
         return year;
     }
 
@@ -553,7 +555,7 @@ public class AddEdit extends Observable {
 
         h.setAltitude(altitude);
         h.setCountry(phytCountry);
-        h.setDescription(localityDescription);
+        h.setDescription(habitatDescription);
         h.setLatitude(latitude);
         h.setLongitude(longitude);
         h.setNearestVillage(v);
@@ -841,7 +843,7 @@ public class AddEdit extends Observable {
                     t = (Territory)dlu.getObjectFor(territoryName.getSecond(),Territory.class);                    
                     h.setAltitude(altitude);
                     h.setCountry(phytCountry);
-                    h.setDescription(localityDescription);
+                    h.setDescription(habitatDescription);
                     h.setLatitude(latitude);
                     h.setLongitude(longitude);
                     h.setNearestVillage(v);
@@ -1184,6 +1186,31 @@ public class AddEdit extends Observable {
         logger.debug(""+projects.length+" set.");
         this.projects = projects;
     }
+
+    //for add mode
+    //we need to clear, create default values for all values that can be null
+    //the not null values are forced by calling checkData before store()
+    public void clear() {
+        clearAuthors();
+        habitatDescription = "";
+        year = Calendar.getInstance().get(Calendar.YEAR);
+        habitatNote = "";
+        occurrenceNote = "";
+        phytCountry = "";
+        quadrant = "";
+        altitude = 0.0;
+        longitude = 0.0;
+        latitude = 0.0;
+        source = "";
+        publication = new Pair<String,Integer>("",-1);
+        
+        herbarium = "";
+        
+        month = Calendar.getInstance().get(Calendar.MONTH);
+        day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        time = new Date(0);
+    }
+    
 }
 
 

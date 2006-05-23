@@ -204,7 +204,7 @@ public class AddEditCtrl {
 
         public void focusLost(FocusEvent e) {
             JTextArea ta = (JTextArea) e.getSource();
-            model.setLocalityDescription(ta.getText());
+            model.setHabitatDescription(ta.getText());
         }
     }//placeAreaListener
 

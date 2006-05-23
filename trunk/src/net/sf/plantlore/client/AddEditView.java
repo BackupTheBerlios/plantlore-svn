@@ -748,7 +748,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         
         townComboBox.setSelectedItem(model.getVillage());
         taxonTextArea.setText(model.getTaxon(0));
-        descriptionArea.setText(model.getLocalityDescription());
+        descriptionArea.setText(model.getHabitatDescription());
         yearSpinner.setValue(model.getYear());
         
         locationNoteArea.setText(model.getHabitatNote());
@@ -772,26 +772,26 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     }
     
     public void clearComponentData() {
-        model.clearAuthors(); resetAuthorModel(); initAuthorTable();
+        resetAuthorModel(); initAuthorTable();
         townComboBox.setSelectedIndex(-1);
         taxonTextArea.setText("");
-        descriptionArea.setText("");
-        yearSpinner.setValue(Calendar.getInstance().get(Calendar.YEAR));
+        descriptionArea.setText(model.getHabitatDescription());
+        yearSpinner.setValue(model.getYear());
         
-        locationNoteArea.setText("");
-        occurrenceNoteArea.setText("");
+        locationNoteArea.setText(model.getHabitatNote());
+        occurrenceNoteArea.setText(model.getOccurrenceNote());
         territoryNameCombo.setSelectedIndex(-1);
         phytNameCombo.setSelectedIndex(-1);
         phytCodeCombo.setSelectedIndex(-1);
         phytCountryCombo.setSelectedIndex(-1);
-        quadrantTextField.setText("");
+        quadrantTextField.setText(model.getQuadrant());
         
-        altitudeFormattedTextField.setText("");
-        longitudeFormattedTextField.setText("");
-        latitudeFormattedTextField.setText("");
+        altitudeFormattedTextField.setValue(model.getAltitude());
+        longitudeFormattedTextField.setValue(model.getLongitude());
+        latitudeFormattedTextField.setValue(model.getLatitude());
         sourceCombo.setSelectedIndex(-1);
         publicationCombo.setSelectedIndex(-1);
-        herbariumTextField.setText("");
+        herbariumTextField.setText(model.getHerbarium());
         
         monthSpinner.setValue(Calendar.getInstance().get(Calendar.MONTH));
         daySpinner.setValue(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));

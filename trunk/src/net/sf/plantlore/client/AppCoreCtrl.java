@@ -483,6 +483,8 @@ public class AppCoreCtrl
                 addView.setTitle("Add a new occurrence");
                 addCtrl = new AddEditCtrl(addModel, addView, false);
             }
+            addModel.clear();
+            //fixme: should be automatic via observer/observable
             addView.clearComponentData();
             addView.setVisible(true);
         }
