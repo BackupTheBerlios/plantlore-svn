@@ -303,7 +303,8 @@ public class AppCoreView extends JFrame implements Observer
     {
         TableColumn tc;
         OverviewTableModel otm = model.getTableModel();
-        TableSorter tableSorter = new TableSorter(otm);
+        TableSorter tableSorter = model.getTableSorter();
+
         //FIXME: what if otm == null ????????????
         overview.setModel(tableSorter);
         tableSorter.setTableHeader(overview.getTableHeader());

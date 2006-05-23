@@ -98,6 +98,7 @@ public class AppCore extends Observable
         this.columns = columns;
         
         tableModel =  new OverviewTableModel(prefs.getInt("recordsPerPage", 30), columns);
+        tableSorter = new TableSorter(tableModel);
         
         // This is here in order to skip login procedure and connect to the database automatically
         // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
@@ -135,7 +136,7 @@ public class AppCore extends Observable
     }
     
     public void loadDialogData() {
-        logger.debug("Loading dialog data ...");
+        logger.info("Loading dialog data ...");
         plants = null; getPlants();
         authors = null; getAuthors();
         authorRoles = null; getAuthorRoles();
@@ -167,50 +168,54 @@ public class AppCore extends Observable
     public OverviewTableModel getTableModel() {
         return tableModel;
     }
+    
+    public TableSorter getTableSorter() {
+        return tableSorter;
+    }
         
     public void selectAll() {
-        if (tableModel != null)
-            tableModel.selectAll();
+        if (tableSorter != null)
+            tableSorter.selectAll();
         //setChanged();
         //notifyObservers();
     }
 
     public void selectNone() {
-        if (tableModel != null)
-            tableModel.selectNone();
+        if (tableSorter != null)
+            tableSorter.selectNone();
         //setChanged();
         //notifyObservers();
     }
     public void invertSelected() {
-        if (tableModel != null)
-            tableModel.invertSelected();
+        if (tableSorter != null)
+            tableSorter.invertSelected();
         //setChanged();
         //notifyObservers();
     }
 
     public int getRecordsPerPage() {
-        if (tableModel != null)
-            return tableModel.getPageSize();
+        if (tableSorter != null)
+            return tableSorter.getPageSize();
         else 
             return 0;
     }
 
     public void setRecordsPerPage(int recordsPerPage) {        
-        if (tableModel != null)
+        if (tableSorter != null)
         {
             logger.info("Setting records per page to "+recordsPerPage);
-            tableModel.setPageSize(recordsPerPage);
+            tableSorter.setPageSize(recordsPerPage);
             setChanged();
             notifyObservers("RECORDS_PER_PAGE");        
         }
     }
 
     public void nextPage() {
-        if (tableModel != null)
+        if (tableSorter != null)
         {
             //FIXME:
             try {
-                tableModel.nextPage();
+                tableSorter.nextPage();
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             } catch (DBLayerException ex) {
@@ -222,11 +227,11 @@ public class AppCore extends Observable
     }
     
     public void prevPage() {
-        if (tableModel != null)
+        if (tableSorter != null)
         {
             //FIXME:
             try {
-                tableModel.prevPage();
+                tableSorter.prevPage();
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             } catch (DBLayerException ex) {
@@ -238,37 +243,37 @@ public class AppCore extends Observable
     }
 
     public int getCurrentPage() {
-        if (tableModel != null)
-            return tableModel.getCurrentPage();
+        if (tableSorter != null)
+            return tableSorter.getCurrentPage();
         else
             return 0;
     }
 
     public void setCurrentPage(int currentPage) {
-        if (tableModel != null)
+        if (tableSorter != null)
         {
-            tableModel.setCurrentPage(currentPage);
+            tableSorter.setCurrentPage(currentPage);
             setChanged();
             notifyObservers();
         }
     }
     
     public int getResultsCount() {
-        if (tableModel != null)        
-            return tableModel.getResultsCount();
+        if (tableSorter != null)        
+            return tableSorter.getResultsCount();
         else
             return 0;
     }
     
     public int getPagesCount() {
-        if (tableModel != null)
-            return tableModel.getPagesCount();
+        if (tableSorter != null)
+            return tableSorter.getPagesCount();
         else
             return 0;
     }
     
     public void invertSelectedOnCurrentRow() {
-        tableModel.invertSelected(selectedRow);
+        tableSorter.invertSelected(selectedRow);
     }
     
     public void setSelectedRow(int i) 
@@ -284,13 +289,13 @@ public class AppCore extends Observable
     
     public Object[] getSelectedRow()
     {
-        return tableModel.getRow(selectedRow);
+        return tableSorter.getRow(selectedRow);
     }
     
     public Integer getSelectedOccurrence() {
-        //Object[] row = tableModel.getRow(selectedRow);
+        //Object[] row = tableSorter.getRow(selectedRow);
         //return (Integer)row[row.length-1];
-        return tableModel.getOccurrenceId(selectedRow);
+        return tableSorter.getOccurrenceId(selectedRow);
     }
     
     public void savePreferences() throws IOException {
@@ -300,7 +305,7 @@ public class AppCore extends Observable
     }
     
     public void setResultId(int resultId) {
-        tableModel.setResultId(resultId);
+        tableSorter.setResultId(resultId);
         setChanged();
         notifyObservers("NEW_QUERY");
     }
@@ -681,7 +686,7 @@ public class AppCore extends Observable
     public void login() {
         assert database != null;
         
-        tableModel.setDatabase(database);
+        tableSorter.setDatabase(database);
         Search search = new Search(getDatabase());
         search.setColumns(columns);
         search.constructQuery();

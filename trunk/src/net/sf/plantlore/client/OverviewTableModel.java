@@ -321,5 +321,9 @@ public class OverviewTableModel extends AbstractTableModel {
         this.db = database;
         logger.debug("Database set.");
     }
+
+    public int getSelectionColumnIndex() {
+        return selectionColumnIndex;
+    }
 }
 

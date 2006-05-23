@@ -2,6 +2,7 @@ package net.sf.plantlore.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.middleware.DBLayer;
 
 /**
  * TableSorter is a decorator for TableModels; adding sorting
@@ -63,7 +66,7 @@ import javax.swing.table.*;
  */
 
 public class TableSorter extends AbstractTableModel {
-    protected TableModel tableModel;
+    protected OverviewTableModel tableModel;
 
     public static final int DESCENDING = -1;
     public static final int NOT_SORTED = 0;
@@ -96,12 +99,12 @@ public class TableSorter extends AbstractTableModel {
         this.tableModelListener = new TableModelHandler();
     }
 
-    public TableSorter(TableModel tableModel) {
+    public TableSorter(OverviewTableModel tableModel) {
         this();
         setTableModel(tableModel);
     }
 
-    public TableSorter(TableModel tableModel, JTableHeader tableHeader) {
+    public TableSorter(OverviewTableModel tableModel, JTableHeader tableHeader) {
         this();
         setTableHeader(tableHeader);
         setTableModel(tableModel);
@@ -116,7 +119,7 @@ public class TableSorter extends AbstractTableModel {
         return tableModel;
     }
 
-    public void setTableModel(TableModel tableModel) {
+    public void setTableModel(OverviewTableModel tableModel) {
         if (this.tableModel != null) {
             this.tableModel.removeTableModelListener(tableModelListener);
         }
@@ -480,4 +483,72 @@ public class TableSorter extends AbstractTableModel {
             this.direction = direction;
         }
     }
+    
+    //-------- Methods delegating commands to the actual table model
+    
+    public void selectAll() {
+        tableModel.selectAll();
+    }
+    
+    public void selectNone() {
+        tableModel.selectNone();
+    }
+    
+    public void invertSelected() {
+        tableModel.invertSelected();
+    }
+    
+    public int getPageSize() {
+        return tableModel.getPageSize();
+    }
+    
+    public void setPageSize(int size) {
+        tableModel.setPageSize(size);
+    }
+    
+    public boolean nextPage() throws DBLayerException, RemoteException {
+        return tableModel.nextPage();
+    }
+    
+    public boolean prevPage() throws DBLayerException, RemoteException {
+        return tableModel.prevPage();
+    }
+    
+    public int getCurrentPage() {
+        return tableModel.getCurrentPage();
+    }
+    
+    public void setCurrentPage(int page) {
+        tableModel.setCurrentPage(page);
+    }
+    
+    public int getResultsCount() {
+        return tableModel.getResultsCount();
+    }
+    
+    public int getPagesCount() {
+        return tableModel.getPagesCount();
+    }
+    
+    public void invertSelected(int row) {
+            setValueAt(!(Boolean)getValueAt(row, tableModel.getSelectionColumnIndex()), row, tableModel.getSelectionColumnIndex());
+    }
+    
+    public Object[] getRow(int row) {
+        return tableModel.getRow(modelIndex(row));
+    }
+    
+    public int getOccurrenceId(int row) {
+        return tableModel.getOccurrenceId(modelIndex(row));
+    }
+    
+    public void setResultId(int resultId) {
+        tableModel.setResultId(resultId);
+    }
+    
+    public void setDatabase(DBLayer db) {
+        tableModel.setDatabase(db);
+    }
 }
+
+

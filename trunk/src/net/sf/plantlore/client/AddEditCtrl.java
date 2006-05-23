@@ -148,7 +148,7 @@ public class AddEditCtrl {
                 model.setPhytName((Pair<String, Integer>) c.getSelectedItem());
            
             if (command.equals("phytCodeCombo"))
-                System.out.println("c.getSelectedItem(): "+c.getSelectedItem());
+                //System.out.println("c.getSelectedItem(): "+c.getSelectedItem());
                 model.setPhytCode((Pair<String, Integer>) c.getSelectedItem());
            
             if (command.equals("phytCountryCombo"))
