@@ -6,5 +6,54 @@
 </head>
 <body>
 <h1>Author manager</h1>
+Author manager allows users to add, search, modify and delete authors of the occurrence records.
+It can be invoked by <strong>Data|Author Manager</strong>.
+<p/>
+The Author Manager window consists of two main parts:
+<ul>
+    <li><strong>The list of authors</strong> - where the results of the search are displayed</li>
+    <li><strong>The search criteria</strong> - where you can specify search parameters</li>    
+</ul>
+<h3>The list of authors</h3>
+After a succcessful search results are displayed in the list of authors, although not all of them can
+be seen immediately. Initially, only the first page of the results is displayed. To see the rest
+of the pages use <strong>Next</strong> and <strong>Previous</strong> buttons which can be found 
+directly under the list.
+<p/>
+This part also includes buttons for adding, editing and deleting authors. The <strong>Add</strong> and
+<strong>Edit</strong> buttons open the Add/Edit Author Dialog (see below), the <strong>Delete</strong>
+button removes the author after the confirmation. When <strong>Edit</strong> or </strong>Delete</strong>
+button is pressed, an author must be selected in the list in order to proceed with the operation.
+<h3>The search criteria</h3>
+Author manager allows users to search the data using 4 parameters: name, organization, role and
+email. Results can be ordered by name, organization, role, email, phone number and URL in either 
+ascending or descending direction. Search string for any of the parameters doesn't have to match 
+the item in the database exactly and any substring will be sufficient (although it might yield more 
+results).
+<p/>
+The search is by default case insensitive.
+<p/>
+After the manager window is opened, all available authors are displayed. If you've executed a search
+but you want to display and browse all available authors again, press the <strong>Search</strong>
+button while all of the search fields are left blank.
+<p/>
+<h2>Adding new author</h2>
+Window for adding new authors can be opened from the main Author Manager window using <string>Add 
+author</strong> button. This window contains the following fields:
+<ul>
+    <li><strong>Name</strong> - Whole name of the author. This field is compulsory and cannot be left blank.</li>
+    <li><strong>Organization</strong> - Organization or institution to which the author belongs.</li>
+    <li><strong>Role</strong> - Role of the author in the given institution.</li>
+    <li><strong>Address</strong> - Address of the author</li>
+    <li><strong>Phone</strong> - Phone number of the author.</li>
+    <li><strong>Email</strong> - Email address of the author.</li>
+    <li><strong>URL</strong> - URL address (webpage) of the author</li>
+    <li><strong>Note</strong> - Any other information can be stored here. This field can hold up to 4096 characters.</li>
+</ul>
+New author can be saved using the <strong>Save</strong> button in the bottom of the window.
+<p/>
+<h2>Editing an existing author</h2>
+When author is selected in the list of authors user can edit parameters of the selected author by
+pressing <strong>Edit author</strong> button. All of the fields can be modified.
 </body>
 </html>
