@@ -68,6 +68,8 @@ public class AutoComboBoxNG3 extends JComboBox {
 	 */
 	protected boolean strict = true;
 	
+	protected final int CAPACITY = 32;
+	
 	
 	/**
 	 * Create the AutoComboBox with given array of values.
@@ -103,6 +105,18 @@ public class AutoComboBoxNG3 extends JComboBox {
 	public void setPopupVisible(boolean visibility) {
 		if(isShowing()) // popup cannot be displayed while the component is invisible
 			super.setPopupVisible(visibility);
+	}
+	
+	
+	public AutoComboBoxNG3() {
+		this(new String[] { null });		
+	} 
+	
+	
+	public void addItems(Object[] items) {
+		for(Object item : items)
+			if(item != null) 
+				this.addItem(item);
 	}
 	
 
@@ -189,7 +203,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 						}
 					}
 				
-					if(!strict && !prefix.equals(previousPrefix)) { // non-strict mode allows entering an unknown value 
+					if(!strict && !prefix.equals(previousPrefix) && prefix.length() < CAPACITY) { // non-strict mode allows entering an unknown value 
 						super.remove(0, getLength());
 						super.insertString(0, prefix, null);
 						previousPrefix = prefix;
@@ -210,7 +224,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 		public void remove(int offset, int length) throws BadLocationException {
 			if(!deflect) {
 				deflect = true;
-				setPopupVisible(true);
+				if(keyPressed) setPopupVisible(true);
 				setMatch(getText(0, offset));
 				deflect = false;
 			}
@@ -220,7 +234,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 		public void replace(int offset, int length, String text, AttributeSet attr) throws BadLocationException {
 			if(!deflect) {
 				deflect = true;
-				setPopupVisible(true);
+				if(keyPressed) setPopupVisible(true);
 				setMatch(getText(0,offset) + text);
 				deflect = false;
 			}

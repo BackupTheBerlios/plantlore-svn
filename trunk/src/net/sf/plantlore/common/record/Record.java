@@ -141,7 +141,7 @@ public abstract class Record implements Serializable {
 				setValue(key, subrecord);
 			} catch (Exception e) { e.printStackTrace(); }
 		}
-		return null;
+		return this;
 	}
 	
 	/**

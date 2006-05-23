@@ -57,12 +57,12 @@ public class ExportMng implements Observer {
 	 * List of all filters the Export Manager is capable to handle.
 	 */
 	protected XFilter[] filters = new XFilter[] {
-			new XFilter(L10n.getString("FilterPlantloreNative"), false, false, ".xml", ".pln"),
-			new XFilter(L10n.getString("FilterXML"), true, true, ".xml"),
-			new XFilter(L10n.getString("FilterCSV"), true, true, ".txt", ".csv"),	
-			new XFilter(L10n.getString("FilterABCD"), ".xml"),	
-			new XFilter(L10n.getString("FilterDC"), ".xml"),
-			new XFilter(L10n.getString("FilterStdOut"), true, false, ".out")
+			new XFilter(L10n.getString("Format.PlantloreNative"), false, false, ".xml", ".pln"),
+			new XFilter(L10n.getString("Format.XML"), true, true, ".xml"),
+			new XFilter(L10n.getString("Format.CSV"), true, true, ".txt", ".csv"),	
+			new XFilter(L10n.getString("Format.ABCD"), ".xml"),	
+			new XFilter(L10n.getString("Format.DC"), ".xml"),
+			new XFilter(L10n.getString("Format.StdOut"), true, false, ".out")
 	};
 	
 	
@@ -262,7 +262,7 @@ public class ExportMng implements Observer {
 			throw new ExportException(L10n.getString("Error.InvalidRootTable"));
 		if(template == null)
 			template = new Template().setEverything();
-		if(selection == null)
+		if(selection == null || selection.isEmpty())
 			selection = new Selection().all();
 			
 		
@@ -280,6 +280,7 @@ public class ExportMng implements Observer {
 		
 		// Execute the query.
 		Integer resultId = db.executeQuery( query );
+		int results  = db.getNumRows( resultId );
 		
 		// Create a new file and writer (wrapper).
 		Writer writer = new FileWriter( new File( filter.suggestName(filename) ) );
@@ -288,32 +289,33 @@ public class ExportMng implements Observer {
 			throw new ExportException(L10n.getString("Error.WriterNotCreated"));
 		}
 		
-                logger.debug("filename: "+ filename);
-                logger.debug("filename2: "+ filter.suggestName(filename));
-                
-                // Create a new builder according to the selected format.
+		logger.debug("filename: "+ filename);
+		logger.debug("filename2: "+ filter.suggestName(filename));
+		
+		// Create a new builder according to the selected format.
 		Builder builder;
-		if(filter.getDescription().equals(L10n.getString("FilterCSV")))
+		if(filter.getDescription().equals(L10n.getString("Format.CSV")))
 			builder = new CSVBuilder(writer, template);
-		else if(filter.getDescription().equals(L10n.getString("FilterDC")))                        
+		else if(filter.getDescription().equals(L10n.getString("Format.DC")))                        
 			builder = new DarwinCoreBuilder(filter.suggestName(filename));
-                else if(filter.getDescription().equals(L10n.getString("FilterABCD"))) 
-                        builder = new ABCDBuilder(filter.suggestName(filename));
-                else if(filter.getDescription().equals(L10n.getString("FilterXML")))                        
-                        builder = new XMLBuilder(template, filter.suggestName(filename));                       
-		else 
+		else if(filter.getDescription().equals(L10n.getString("Format.ABCD"))) 
+			builder = new ABCDBuilder(filter.suggestName(filename));
+		else if(filter.getDescription().equals(L10n.getString("Format.XML")))                        
+			builder = new XMLBuilder(template, filter.suggestName(filename));                       
+		else {
 			builder = new TrainingBuilder(template);
+		}
 
 		// Create a new Director and run it in a separate thread.
 		DefaultDirector director = new DefaultDirector(
 				builder, resultId, db, selection, useProjections, 
 				template.getDescription(), rootTable);
 		director.ignoreDead( filter.ignoreDead() );
-		if(selection.size(0) > 0) 
-			director.setExpectedNumberOfRecords(selection.size(0));
+		if( selection.size(results) > 0 ) 
+			director.setExpectedNumberOfRecords( selection.size(results) );
 		
 		// Start a new task.
-		ExportTask t = new ExportTask(db, query, director, writer, selection.size(0));
+		ExportTask t = new ExportTask(db, query, director, writer, selection.size(results));
 		exportTasks.add(t);
 		t.addObserver(this);
 		

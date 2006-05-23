@@ -125,7 +125,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(builder == null) {
 			logger.warn("The builder is null!");
-			throw new ExportException(L10n.getString("error.InvalidBuilder"));
+			throw new ExportException(L10n.getString("Error.InvalidBuilder"));
 		}
 		build = builder;
 	}
@@ -140,7 +140,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(result < 0) {
 			logger.warn("The result set is probably not valid!");
-			throw new ExportException(L10n.getString("error.InvalidResultset"));
+			throw new ExportException(L10n.getString("Error.InvalidResultset"));
 		}
 		this.result =  result;
 	}
@@ -154,7 +154,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(db == null) {
 			logger.error("The database layer is null!");
-			throw new ExportException(L10n.getString("error.InvalidDBLayer"));
+			throw new ExportException(L10n.getString("Error.InvalidDBLayer"));
 		}
 		this.database = db;
 	}
@@ -168,7 +168,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ExportException {
 		if(selection == null || selection.isEmpty()) {
 			logger.warn("The selection is null or empty!");
-			throw new ExportException(L10n.getString("error.InvalidSelection"));
+			throw new ExportException(L10n.getString("Error.InvalidSelection"));
 		}
 		this.selection = selection.clone();
 	}

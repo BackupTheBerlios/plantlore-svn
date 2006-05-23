@@ -13,6 +13,8 @@ import net.sf.plantlore.client.export.Template;
 /**
  * CSV Builder.
  * 
+ * The first line is the list of names of exported columns.
+ *  
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
  * @version 1.2
@@ -56,34 +58,24 @@ public class CSVBuilder implements Builder {
 	}
 	
 	/**
-	 * Make a note that the header is yet to be created.
+	 * Create the header - comma separated list of names of columns.
 	 */
 	public void header() throws IOException {
 		firstColumnOnThisLine = true;
 		
-		Occurrence sample = new Occurrence();
-		sample.setMetadata(new Metadata());
-		sample.setPublication(new Publication());
-		sample.setHabitat(new Habitat());
-		Habitat habitat = sample.getHabitat();
-		habitat.setPhytochorion(new Phytochorion());
-		habitat.setTerritory(new Territory());
-		habitat.setNearestVillage(new Village());
-		sample.setPlant(new Plant());
-		
+		AuthorOccurrence sample = (AuthorOccurrence) new AuthorOccurrence().createTorso();
+		constructHeader( sample.getOccurrence() );
+		sample.setOccurrence(null);
 		constructHeader(sample);
-		
-		AuthorOccurrence associated = new AuthorOccurrence();
-		associated.setAuthor(new Author());
-		
-		constructHeader(associated);
-		
-//		stream.write(NEWLINE);
-//		stream.write("====================================================");
 		stream.write(NEWLINE);
 	}
 	
-	
+	/**
+	 * Traverse the record and send names of relevant columns to the output. 
+	 * 
+	 * @param record	The record to be traversed.
+	 * @throws IOException
+	 */
 	private void constructHeader(Record record) throws IOException {
 		if(record == null) return;
 		Class table = record.getClass();

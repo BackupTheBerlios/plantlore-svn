@@ -1,18 +1,9 @@
 package net.sf.plantlore.client.checklist;
 
-import java.awt.Dimension;
-
 import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
 
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.l10n.L10n;
-
-/*
- * ChecklistView.java
- *
- * Created on 15. květen 2006, 22:26
- */
 
 /**
  * The dialog displaying the checklist and several buttons 
@@ -47,12 +38,14 @@ public class ChecklistView extends javax.swing.JDialog {
         load = new javax.swing.JButton();
         save = new javax.swing.JButton();
         clear = new javax.swing.JButton();
+        restore = new javax.swing.JButton();
         scrollpane = new javax.swing.JScrollPane();
         checklist = new Checklist( model.getAllowedValues() );
         submit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle(L10n.getString("Checklist.Title"));
+        
         load.setText("Load");
         jToolBar1.add(load);
 
@@ -62,12 +55,10 @@ public class ChecklistView extends javax.swing.JDialog {
         clear.setText("Clear");
         jToolBar1.add(clear);
 
+        restore.setText("Restore");
+        jToolBar1.add(restore);
+
         scrollpane.setViewportView(checklist);
-        scrollpane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollpane.setPreferredSize( 
-				new Dimension( 2*checklist.getFixedCellWidth() + 2, 
-						checklist.getVisibleRowCount()*checklist.getFixedCellHeight() + 30) );
 
         submit.setText("Submit");
 
@@ -101,10 +92,11 @@ public class ChecklistView extends javax.swing.JDialog {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    protected Checklist checklist;
+    protected javax.swing.JList checklist;
     protected javax.swing.JButton clear;
     private javax.swing.JToolBar jToolBar1;
     protected javax.swing.JButton load;
+    protected javax.swing.JButton restore;
     protected javax.swing.JButton save;
     protected javax.swing.JScrollPane scrollpane;
     protected javax.swing.JButton submit;

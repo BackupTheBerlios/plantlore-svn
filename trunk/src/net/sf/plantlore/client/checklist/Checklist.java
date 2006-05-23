@@ -36,6 +36,8 @@ import net.sf.plantlore.client.resources.Resource;
  */
 public class Checklist extends JList {
 	
+	private String[] original;
+	
 	/**
 	 * Create a new checklist. Displayes the supplied values in several rows and columns.
 	 * 
@@ -48,6 +50,8 @@ public class Checklist extends JList {
 				values[i] = values[i].toString();
 		// Insert the values to the list.
 		setListData( (String[])values );
+		// Remember the list.
+		original = (String[])values;
 		// Specify the default looks.
 		setCellRenderer( new CheckCellRenderer() );
 		setSelectionModel( new ToggleSelectionModel() );
@@ -66,6 +70,21 @@ public class Checklist extends JList {
 		// Install the keyboard search.
 		addKeyListener(new KeyHelper());	
 	}
+	
+	/**
+	 * Reset the list of items.
+	 *
+	 */
+	public void restore() {
+		Object[] selected = getSelectedValues();
+		clearSelection();
+		
+		setListData( original );
+		
+		for(Object r : selected)
+			setSelectedValue(r, false);
+	}
+	
 	
 	/**
 	 * Index of the record that is highlighted.

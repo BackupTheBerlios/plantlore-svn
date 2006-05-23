@@ -35,6 +35,7 @@ public class ChecklistCtrl {
 		view.save.setAction(new LoadCreate(1));
 		view.clear.setAction(new ClearSelection());
 		view.submit.setAction(new Submit());
+		view.restore.setAction(new Restore());
 	}
 	
 	/**
@@ -90,24 +91,24 @@ public class ChecklistCtrl {
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				if(view.choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,
-							L10n.getString("error.MissingFileName"),
-							L10n.getString("error.NothingSelected"),
+							L10n.getString("Error.MissingFileName"),
+							L10n.getString("Error.NothingSelected"),
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				try {
 					switch(type) {
 					case 0:
-						view.checklist.load(view.choice.getSelectedFile().getAbsolutePath());
+						((Checklist)view.checklist).load(view.choice.getSelectedFile().getAbsolutePath());
 						break;
 					case 1:
-						view.checklist.save(view.choice.getSelectedFile().getAbsolutePath());
+						((Checklist)view.checklist).save(view.choice.getSelectedFile().getAbsolutePath());
 						break;
 					}
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,
-							L10n.getString("error.InvalidChecklist"),
-							L10n.getString("error.NothingSelected"),
+							L10n.getString("Error.InvalidChecklist"),
+							L10n.getString("Error.NothingSelected"),
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -127,6 +128,21 @@ public class ChecklistCtrl {
         } 
 		public void actionPerformed(ActionEvent arg0) {
 			view.checklist.clearSelection();
+		}
+	}
+	
+	/**
+	 * Restore the checklist to its original state (right after creation).
+	 */
+	class Restore extends AbstractAction {
+		public Restore() {
+            putValue(SHORT_DESCRIPTION, L10n.getString("Checklist.RestoreTT"));
+            ImageIcon icon = Resource.createIcon("Restore.gif");
+			if(icon == null) putValue(NAME, L10n.getString("Checklist.Restore"));
+			else putValue(SMALL_ICON, icon);
+        } 
+		public void actionPerformed(ActionEvent arg0) {
+			((Checklist)view.checklist).restore();
 		}
 	}
 }

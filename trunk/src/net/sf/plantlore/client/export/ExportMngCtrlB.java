@@ -30,8 +30,8 @@ public class ExportMngCtrlB {
 			Template t = view.tsm.getTemplate();
 			if( t.isEmpty() )
 				JOptionPane.showMessageDialog(view,
-					L10n.getString("error.NoColumnsSelected"),
-				    L10n.getString("error.NothingSelected"),
+					L10n.getString("Error.NoColumnsSelected"),
+				    L10n.getString("Error.NothingSelected"),
 				    JOptionPane.WARNING_MESSAGE);
 			else {
 				view.setVisible(false);
@@ -48,8 +48,8 @@ public class ExportMngCtrlB {
 				}
 				catch(Exception e) {
 					JOptionPane.showMessageDialog(view,
-							L10n.getString("error.ExportFailed") + e,
-							L10n.getString("export.Failed"),
+							L10n.getString("Error.ExportFailed") + e,
+							L10n.getString("Export.Failed"),
 						    JOptionPane.WARNING_MESSAGE);
 				}
 			}

@@ -83,7 +83,7 @@ public class XTree extends javax.swing.JTree {
 	 * The Default Hierarchy Model of the Database Model.
 	 */
 	public static Object[] DefaultHierarchy = {
-		new XNode(XTree.class, "Plantlore DB"),
+		new XNode(XTree.class, "Plantlore"),
 		new Object[] { // OCCURENCE
 			new XNode(Occurrence.class, null),
 			new XNode(Occurrence.class, Occurrence.UNITIDDB, true),
