@@ -107,7 +107,7 @@ public class AppCoreView extends JFrame implements Observer
     protected JTable overview = new JTable();
     private JToolBar mainToolBar;
     private JToolBar pageToolBar;
-    private JFormattedTextField recordsPerPage = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    protected JFormattedTextField recordsPerPage = new JFormattedTextField(NumberFormat.getIntegerInstance());
     private JLabel pageStatus = new JLabel("-/-");
     private JLabel recordsCount = new JLabel("-");
     private StatusBarManager sbm;

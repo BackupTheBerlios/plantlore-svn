@@ -273,7 +273,8 @@ public class AppCoreCtrl
         selectNoneAction.setEnabled(enabled);
         invertSelectedAction.setEnabled(enabled);
         nextPageAction.setEnabled(enabled);
-        prevPageAction.setEnabled(enabled);                
+        prevPageAction.setEnabled(enabled);  
+        view.recordsPerPage.setEnabled(enabled);
     }
     
     /** Handles click to menu item Settings.
