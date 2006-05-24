@@ -83,7 +83,7 @@ public class ImportMng extends Observable implements Observer {
 	throws ImportException {
 		if(dblayer == null) { 
 			logger.error("The database layer is null!");
-			throw new ImportException(L10n.getString("error.InvalidDBLayer"));
+			throw new ImportException(L10n.getString("Error.InvalidDBLayer"));
 		}
 		db = dblayer;
 	}
@@ -97,7 +97,7 @@ public class ImportMng extends Observable implements Observer {
 	throws ImportException {
 		if(user == null) { 
 			logger.error("The user is null!");
-			throw new ImportException(L10n.getString("error.InvalidUser"));
+			throw new ImportException(L10n.getString("Error.InvalidUser"));
 		}
 		this.user = user;
 	}
@@ -173,9 +173,9 @@ public class ImportMng extends Observable implements Observer {
 	throws ImportException, IOException {
 		// Check if we have all necessary components ready.
 		if( db == null )
-			throw new ImportException(L10n.getString("error.InvalidDBLayer"));
+			throw new ImportException(L10n.getString("Error.InvalidDBLayer"));
 		if( filename == null ) 
-			throw new ImportException(L10n.getString("error.MissingFileName"));
+			throw new ImportException(L10n.getString("Error.MissingFileName"));
 			
 		
 		logger.debug("Initializing the import environment.");
@@ -186,7 +186,7 @@ public class ImportMng extends Observable implements Observer {
 		reader = new FileReader( file );
 		if(reader == null) {
 			logger.fatal("Unable to create a new Reader.");
-			throw new ImportException(L10n.getString("error.ReaderNotCreated"));
+			throw new ImportException(L10n.getString("Error.ReaderNotCreated"));
 		}
 		
 		// Create a new parser according to the format.
@@ -195,7 +195,7 @@ public class ImportMng extends Observable implements Observer {
 			parser.initialize();
 		} catch(ParserException e) {
 			logger.fatal("The format of the file is corrupted!");
-			throw new ImportException(L10n.getString("error.FileFormatCorrupted"));
+			throw new ImportException(L10n.getString("Error.FileFormatCorrupted"));
 		}
 
 		// Create a new Director and run it in a separate thread.
@@ -205,7 +205,7 @@ public class ImportMng extends Observable implements Observer {
 		current = new Thread( director, "Import" );
 		if(current == null) {
 			logger.fatal("Unable to create a new thread.");
-			throw new ImportException(L10n.getString("error.ThreadFailed"));
+			throw new ImportException(L10n.getString("Error.ThreadFailed"));
 		}
 		current.start();
 		
@@ -347,8 +347,8 @@ public class ImportMng extends Observable implements Observer {
 			value[0] = new ArrayList<String>(20);
 			value[1] = new ArrayList<String>(20);
 			columnNames = new String[] { 
-					L10n.getString("record.Property"), 
-					L10n.getString("record.Value") };
+					L10n.getString("Record.Property"), 
+					L10n.getString("Record.Value") };
 			traverse(record);
 		}
 		
@@ -365,9 +365,9 @@ public class ImportMng extends Observable implements Observer {
 			value[1] = new ArrayList<String>(20);
 			value[2] = new ArrayList<String>(20);
 			columnNames = new String[] { 
-					L10n.getString("record.Property"), 
-					L10n.getString("record.InDatabase"), 
-					L10n.getString("record.FromFile") };
+					L10n.getString("Record.Property"), 
+					L10n.getString("Record.InDatabase"), 
+					L10n.getString("Record.FromFile") };
 			traverse(a, b);
 		}
 		

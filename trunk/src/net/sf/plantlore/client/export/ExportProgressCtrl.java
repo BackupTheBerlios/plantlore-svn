@@ -30,7 +30,7 @@ public class ExportProgressCtrl {
 			if(model != null && model.isExportInProgress()) {
 				int response =
 					JOptionPane.showOptionDialog(view,
-							L10n.getString("Question.AbortImport"),
+							L10n.getString("Question.AbortExport"),
 							L10n.getString("Export.Aborted"),
 							JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.WARNING_MESSAGE,

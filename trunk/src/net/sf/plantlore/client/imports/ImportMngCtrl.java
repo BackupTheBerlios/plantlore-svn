@@ -19,13 +19,13 @@ public class ImportMngCtrl {
 	
 	public void setVisible(boolean visible) {
 		if(visible) {
-			int result = view.choice.showDialog(null, L10n.getString("import.Title"));
+			int result = view.choice.showDialog(null, L10n.getString("Import.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				
 				if(view.choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,
-							L10n.getString("error.MissingFileName"),
-							L10n.getString("error.NothingSelected"),
+							L10n.getString("Error.MissingFileName"),
+							L10n.getString("Error.NothingSelected"),
 						    JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -36,8 +36,8 @@ public class ImportMngCtrl {
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,
-							L10n.getString("error.ImportFailed") + e,
-							L10n.getString("import.Failed"),
+							L10n.getString("Error.ImportFailed") + e,
+							L10n.getString("Import.Failed"),
 							JOptionPane.WARNING_MESSAGE);
 				}
 			}

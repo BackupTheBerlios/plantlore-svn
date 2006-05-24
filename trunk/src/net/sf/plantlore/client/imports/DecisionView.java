@@ -44,7 +44,7 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
         update = new javax.swing.JButton();
         remember = new javax.swing.JCheckBox();
 
-        setTitle(L10n.getString("import.DecisionExpected"));
+        setTitle(L10n.getString("Import.DecisionExpected"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         question.setText("It does not do to dwell on dreams and forget to live.");
 
@@ -62,7 +62,7 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
 
         update.setText("Update");
 
-        remember.setText(L10n.getString("import.RememberDecision"));
+        remember.setText(L10n.getString("Import.RememberDecision"));
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
@@ -123,19 +123,19 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
 		if(parameter instanceof Record)
 			// The record in the database is newer than the one in the file.
 			if(parameter instanceof Occurrence) {
-				question.setText(L10n.getString("question.NewerRecord"));
+				question.setText(L10n.getString("Question.NewerRecord"));
 				recordView.setModel( model.getProcessedRecords() );
-				leave.setText(L10n.getString("import.Skip"));
-				update.setText(L10n.getString("import.Replace"));
+				leave.setText(L10n.getString("Import.Skip"));
+				update.setText(L10n.getString("Import.Replace"));
 				remember.setSelected(false);
 				setVisible(true);
 			}
 			// There is a shared record in the database that is to be updated.
 			else {
-				question.setText(L10n.getString("question.SharedRecord"));
+				question.setText(L10n.getString("Question.SharedRecord"));
 				recordView.setModel( model.getProblematicRecord() );
-				leave.setText(L10n.getString("import.Insert"));
-				update.setText(L10n.getString("import.Update"));
+				leave.setText(L10n.getString("Import.Insert"));
+				update.setText(L10n.getString("Import.Update"));
 				remember.setSelected(false);
 				setVisible(true);
 			}

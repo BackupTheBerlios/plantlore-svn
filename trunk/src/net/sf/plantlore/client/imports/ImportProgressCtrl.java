@@ -26,8 +26,8 @@ public class ImportProgressCtrl {
 			if(model.isImportInProgress()) {
 				int response =
 					JOptionPane.showOptionDialog(view,
-							L10n.getString("question.AbortImport"),
-							L10n.getString("import.Aborted"),
+							L10n.getString("Question.AbortImport"),
+							L10n.getString("Import.Aborted"),
 							JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.WARNING_MESSAGE,
 							null,

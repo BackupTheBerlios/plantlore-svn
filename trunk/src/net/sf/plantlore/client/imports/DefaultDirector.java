@@ -135,7 +135,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ImportException {
 		if(db == null) {
 			logger.error("The database layer is null!");
-			throw new ImportException(L10n.getString("error.InvalidDBLayer"));
+			throw new ImportException(L10n.getString("Error.InvalidDBLayer"));
 		}
 		this.db = db;
 	}
@@ -150,7 +150,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ImportException {
 		if(parser == null) {
 			logger.error("The Parser is null!");
-			throw new ImportException(L10n.getString("error.InvalidParser"));
+			throw new ImportException(L10n.getString("Error.InvalidParser"));
 		}
 		this.parser = parser;
 	}
@@ -166,7 +166,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	throws ImportException {
 		if(user == null) {
 			logger.error("The User is null!");
-			throw new ImportException(L10n.getString("error.InvalidUser"));
+			throw new ImportException(L10n.getString("Error.InvalidUser"));
 		}
 		this.user = user;
 	}
@@ -333,7 +333,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				// Begin a new transaction.
 				transactionInProgress = db.beginTransaction();
 				if( !transactionInProgress )
-					throw new ImportException(L10n.getString("Error.RaceConditions"));
+					throw new ImportException(L10n.getString("Error.TransactionRaceConditions"));
 				
 				
 				try {
@@ -677,7 +677,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			if( counterpart == null ) {
 				logger.fatal("The counterpart for the record (in the immutable table " +
 						record.getClass().getSimpleName()	+ ") was not found!");
-				throw new ImportException(L10n.getString("error.RecordNotFound"), record);
+				throw new ImportException(L10n.getString("Error.RecordNotFound"), record);
 			}
 			return counterpart;
 		} 
@@ -765,7 +765,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			if( counterpart == null ) {
 				logger.fatal("The counterpart for the record (in the immutable table " +
 						current.getClass().getSimpleName()	+ ") was not found!");
-				throw new ImportException(L10n.getString("error.RecordNotFound"), replacement);
+				throw new ImportException(L10n.getString("Error.RecordNotFound"), replacement);
 			}
 			return counterpart;
 		}
@@ -843,7 +843,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						currentSubrecord = current.getValue(key),
 						replacementSubrecord = replacement.getValue(key);
 					if(currentSubrecord == null || replacementSubrecord == null)
-						throw new ImportException(L10n.getString("error.FKIsNull"));
+						throw new ImportException(L10n.getString("Error.FKIsNull"));
 					
 					Record 
 						suggestion =  update( 
