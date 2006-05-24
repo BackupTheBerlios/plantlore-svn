@@ -260,7 +260,7 @@ public class ExportMng implements Observer {
 			throw new ExportException(L10n.getString("Error.MissingFileName"));
 		if( useProjections && rootTable == null)
 			throw new ExportException(L10n.getString("Error.InvalidRootTable"));
-		if(template == null)
+		if(template == null || template.isEmpty())
 			template = new Template().setEverything();
 		if(selection == null || selection.isEmpty())
 			selection = new Selection().all();
