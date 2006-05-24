@@ -227,12 +227,16 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel3.setMinimumSize(new java.awt.Dimension(800, 395));
         jPanel3.setPreferredSize(new java.awt.Dimension(800, 415));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Time", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        fromDateChooser.setLocale(L10n.getCurrentLocale());
+
+        toDateChooser.setLocale(L10n.getCurrentLocale());
 
         fromLabel.setText("From:");
 
         toLabel.setText("To:");
 
         ((JComboBox)monthChooser.getComboBox()).addItem("");
+        monthChooser.setLocale(L10n.getCurrentLocale());
 
         monthLabel.setText("Month:");
 

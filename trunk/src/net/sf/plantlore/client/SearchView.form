@@ -363,11 +363,13 @@
           <SubComponents>
             <Component class="com.toedter.calendar.JDateChooser" name="fromDateChooser">
               <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="fromDateChooser.setLocale(L10n.getCurrentLocale());"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="toDateChooser">
               <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="toDateChooser.setLocale(L10n.getCurrentLocale());"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -389,7 +391,7 @@
             </Component>
             <Component class="com.toedter.calendar.JMonthChooser" name="monthChooser">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((JComboBox)monthChooser.getComboBox()).addItem(&quot;&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((JComboBox)monthChooser.getComboBox()).addItem(&quot;&quot;);&#xa;monthChooser.setLocale(L10n.getCurrentLocale());"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>

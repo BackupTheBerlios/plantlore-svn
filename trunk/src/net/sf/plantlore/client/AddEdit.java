@@ -34,6 +34,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -47,6 +48,8 @@ public class AddEdit extends Observable {
     public static final int WGS84 = 1;
     public static final int S42 = 2;
     public static final int SJTSK = 3;
+    public static final String EMPTY_STRING = L10n.getString("Common.ComboboxNothingSelected");
+    public static final Pair<String,Integer> EMPTY_PAIR = new Pair<String,Integer>(EMPTY_STRING,-1);
     
     private Logger logger;
     private DBLayer database;      
@@ -69,23 +72,23 @@ public class AddEdit extends Observable {
     
     private String habitatDescription;
     private Integer year;
-    private String habitatNote;
-    private String occurrenceNote;
+    private String habitatNote = null;
+    private String occurrenceNote = null;
     private Pair<String, Integer> territoryName;
     private Pair<String, Integer> phytName;
     private Pair<String, Integer> phytCode;
     private String phytCountry;
-    private String quadrant;
-    private Double altitude;
-    private Double longitude;
-    private Double latitude;
-    private String source;
+    private String quadrant = null;
+    private Double altitude = null;
+    private Double longitude = null;
+    private Double latitude = null;
+    private String source = null;
     private Pair<String,Integer> publication;
-    private String herbarium;
+    private String herbarium = null;
     private Pair<String,Integer> project;
-    private Integer month;
-    private Integer day;
-    private Date time;
+    private Integer month = null;
+    private Integer day = null;
+    private Date time = null;
     private Occurrence[] habitatSharingOccurrences = null;
     
     private Pair<String, Integer>[] plants = null;
@@ -386,6 +389,8 @@ public class AddEdit extends Observable {
     public void setMonth(Integer month) {
         this.month = month;
         logger.debug("Month set to "+month);
+        setChanged();
+        notifyObservers("updateDayChooser");
     }
 
     public Integer getDay() {
@@ -478,50 +483,57 @@ public class AddEdit extends Observable {
         occ = new Occurrence();
         
         m = new Metadata();
-        if (project != null)
-            m = (Metadata)dlu.getObjectFor(project.getSecond(),Metadata.class);
+        m = (Metadata)dlu.getObjectFor(project.getSecond(),Metadata.class);
+        occ.setMetadata(m);
 
         plant = new Plant();
         Integer id = lookupPlant(taxon);
         if (!id.equals(-1))
             plant = (Plant)dlu.getObjectFor(id,Plant.class);
 
-        publ = new Publication();
-        if (publication != null && !publication.getSecond().equals(-1))
+        if (publication != null && !publication.getSecond().equals(-1)) {
             publ = (Publication)dlu.getObjectFor(publication.getSecond(),Publication.class);
+            occ.setPublication(publ);
+        }
             
-        occ.setDayCollected(day);
+        if (day != null) occ.setDayCollected(day);
         occ.setHabitat(h);
-        occ.setHerbarium(herbarium);
+        if (herbarium != null) occ.setHerbarium(herbarium);
         
         //cIsoDateTimeBegin construction
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH,day);
-        Calendar temp = Calendar.getInstance();
-        temp.setTime(time);
-        c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
-        c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+        if (!month.equals(12)) { //there is empty string at the 12th position in the monthChooser
+            c.set(Calendar.MONTH, month);
+            c.set(Calendar.DAY_OF_MONTH,day);
+        } else {
+            c.set(Calendar.MONTH, 0);
+            c.set(Calendar.DAY_OF_MONTH,1);
+        }
+
+        if (time != null) {
+            //set the time itself
+            occ.setTimeCollected(time);
+            
+            //and prepare it for cIsoDateTimeBegin
+            Calendar temp = Calendar.getInstance();
+            temp.setTime(time);
+            c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
+            c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+        } else {
+            c.set(Calendar.HOUR_OF_DAY,0);
+            c.set(Calendar.MINUTE,1); //so that we avoid possible problems with strong inequality when searching - we set the from minute in search by default to 0
+        }
         occ.setIsoDateTimeBegin(c.getTime());
         
-        occ.setMetadata(m);
-        occ.setMonthCollected(month);
-        occ.setNote(occurrenceNote);
+        if (!month.equals(12)) occ.setMonthCollected(month); // 12 ... see a few lines above
+        if (occurrenceNote != null) occ.setNote(occurrenceNote);
         occ.setPlant(plant);
-        if (publication != null)
-            occ.setPublication(publ);
-        occ.setTimeCollected(time);
         occ.setYearCollected(year);
         
         occ.setDeleted(0);
         
-        //#### 2BE REMOVED
-        occ.setCreatedWhen(new Date());
-        occ.setUpdatedWhen(new Date());
-        occ.setCreatedWho((User) dlu.getObjectFor(2,User.class));
-        occ.setUpdatedWho((User) dlu.getObjectFor(2,User.class));        
-        //----------
+        //FIXME #### 2BE REMOVED
         occ.setUnitIdDb("docasna unitIdDb");
         occ.setUnitValue("docasna unit value");
         //####        
@@ -842,15 +854,15 @@ public class AddEdit extends Observable {
                     v = (Village)dlu.getObjectFor(village.getSecond(),Village.class);
                     p = (Phytochorion)dlu.getObjectFor(phytCode.getSecond(),Phytochorion.class);
                     t = (Territory)dlu.getObjectFor(territoryName.getSecond(),Territory.class);                    
-                    h.setAltitude(altitude);
-                    h.setCountry(phytCountry);
-                    h.setDescription(habitatDescription);
-                    h.setLatitude(latitude);
-                    h.setLongitude(longitude);
+                    if (altitude != null) h.setAltitude(altitude);
+                    if (phytCountry != null) h.setCountry(phytCountry);
+                    if (habitatDescription != null) h.setDescription(habitatDescription);
+                    if (latitude != null) h.setLatitude(latitude);
+                    if (longitude != null) h.setLongitude(longitude);
                     h.setNearestVillage(v);
-                    h.setNote(habitatNote);
+                    if (habitatNote != null)h.setNote(habitatNote);
                     h.setPhytochorion(p);
-                    h.setQuadrant(quadrant);
+                    if (quadrant != null) h.setQuadrant(quadrant);
                     h.setTerritory(t);
                     h.setDeleted(0);
                     logger.info("Creating a shared habitat");
@@ -912,9 +924,14 @@ public class AddEdit extends Observable {
     }
     
     public Pair<Boolean,String> checkData() {
-        //TODO: check that the author set contains reasonable (not null) values
         if (authorList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one author!");
+        else {
+            for (Pair<Pair<String,Integer>,String> author : authorList) {
+                if (author.getFirst().getFirst().equals(""))
+                    return new Pair<Boolean,String>(false, "Some of the authors is empty. Enter it or remove it please.");
+            }
+        }
         if (taxonList == null || taxonList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one taxon!");
         
@@ -1194,22 +1211,22 @@ public class AddEdit extends Observable {
     public void clear() {
         logger.debug("Clearing add model");
         clearAuthors();
-        habitatDescription = "";
+        habitatDescription = null;
         year = Calendar.getInstance().get(Calendar.YEAR);
-        habitatNote = "";
-        occurrenceNote = "";
-        phytCountry = "";
-        quadrant = "";
-        altitude = 0.0;
-        longitude = 0.0;
-        latitude = 0.0;
-        source = "";
-        publication = new Pair<String,Integer>("",-1);
-        herbarium = "";
+        habitatNote = null;
+        occurrenceNote = null;
+        phytCountry = null;
+        quadrant = null;
+        altitude = null;
+        longitude = null;
+        latitude = null;
+        source = null;
+        publication = null;//new Pair<String,Integer>("",-1);
+        herbarium = null;
         
         month = Calendar.getInstance().get(Calendar.MONTH);
         day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        time = new Date(0);
+        time = null;
     }
     
 }

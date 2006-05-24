@@ -574,8 +574,8 @@ public class Search extends Observable {
                 sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
                 sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
                 sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
-                sq.addRestriction(PlantloreConstants.RESTR_NE, "occ."+Occurrence.DELETED, null, 1, null);
+                sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
+                //sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
                 
                 for (Column column : columns) {
                     switch (column.type) {
