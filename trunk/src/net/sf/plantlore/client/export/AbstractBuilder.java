@@ -42,14 +42,14 @@ public abstract class AbstractBuilder implements Builder {
 	 * @param template The new template. <b>Mustn't be <i>null</i></b>.
 	 */
 	public void setTemplate(Template template) {
-		this.template = template.clone();
+		this.template = (template == null) ? null : template.clone();
 	}
 	
 	/**
 	 * @return A clone of the template this Builder currently uses.
 	 */
 	public Template getTemplate() {
-		return template.clone();
+		return (template == null) ? null : template.clone();
 	}
 	
 	/**
@@ -80,15 +80,6 @@ public abstract class AbstractBuilder implements Builder {
 		}
 	}
 
-//	/**
-//	 * Call <code>part(Record)</code> repeatedly.
-//	 * 
-//	 * @see AbstractBuilder#part(Record)
-//	 */
-//	public void part(Record... records) throws IOException {
-//		for(Record r : records) 
-//			part( r );		
-//	}
 
 	/** Empty. */
 	public void startRecord() throws IOException {

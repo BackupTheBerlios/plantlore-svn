@@ -1,9 +1,7 @@
 package net.sf.plantlore.client.imports;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Observable;
@@ -12,7 +10,6 @@ import org.apache.log4j.Logger;
 
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_IS_NULL;
-import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
@@ -256,7 +253,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			// Go through the whole file.
 			while( !aborted && parser.hasNextRecord() ) {
 				
-				boolean atLeastOneAuthorRemains = false;
+				int numberOfUndeadAuthors = 0; 
 				
 				logger.info("Fetching a new record from the Parser.");
 				// What is supposed to happen with the occurrence.
@@ -401,13 +398,19 @@ public class DefaultDirector extends Observable implements Runnable {
 				// If the Occurrence record should have been DELETED, all associated AuthorOccurrences should be deleted as well.
 				if( intention == Action.DELETE && sharers != null ) {
 					logger.debug("Deleting all associated data (Author, AuthorOccurrence).");
-					atLeastOneAuthorRemains = true; // so that the transaction is confirmed
+					numberOfUndeadAuthors = 1; // so that the transaction is confirmed
 					
 					for(AuthorOccurrence ao : sharers) 
 						delete( ao );					
 				}
-				// The intention was to ADD or UPDATE the existing record.  
+				// The intention was to ADD or UPDATE the existing Occurrence record.  
 				else {
+					// Compute the number of undead authors (authors, that are not marked as deleted) 
+					// the Occurrence record has in the database.
+					// We must make sure that every Occurrence record has at least one (undead) author! 
+					for(AuthorOccurrence ao : sharers)
+						if( !ao.isDead() ) numberOfUndeadAuthors++ ;
+					
 					while( parser.hasNextPart(AuthorOccurrence.class) ) {
 						// Get the AuthorOccurrence from the Parser.
 						AuthorOccurrence ao;
@@ -442,7 +445,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						logger.debug("Intention: " + intention);
 						
 						try {
-							// AO is not in the database.
+							// [A] AO is not in the database.
 							if(aoInDB == null)
 								switch(intention) {
 								case DELETE:
@@ -467,19 +470,19 @@ public class DefaultDirector extends Observable implements Runnable {
 									// Now the AuthorOccurrence is complete.
 									db.executeInsertInTransaction(ao);	
 									
-									atLeastOneAuthorRemains = true;
+									numberOfUndeadAuthors++;
 								}
-							// AO is in the database already.
+							// [B] AO is in the database already.
 							else
 								switch(intention) {
 								case DELETE:
 									delete(aoInDB);
+									numberOfUndeadAuthors--;
 									break;
 								case UNKNOWN:
 								case INSERT:
 								case UPDATE:
 									// AO is already in the database (with the same properties a FKs!)
-									atLeastOneAuthorRemains = true;
 									break;
 								}
 						} catch (DBLayerException e) {
@@ -491,11 +494,15 @@ public class DefaultDirector extends Observable implements Runnable {
 					}
 				}
 				
-				// Transaction is valid iff everything went fine and the 
-				if( atLeastOneAuthorRemains )
+				// Transaction is valid iff everything went fine and the number of undead authors is positive. 
+				if( numberOfUndeadAuthors > 0 ) {
 					transactionInProgress = ! db.commitTransaction();
-				else
+					logger.debug("Transaction commited.");
+				}
+				else {
 					transactionInProgress = ! db.rollbackTransaction();
+					logger.warn("The current Occurrence record was not added - it would not have any Author left in the database!");
+				}
 					
 				imported++;
 				setChanged(); notifyObservers( imported );

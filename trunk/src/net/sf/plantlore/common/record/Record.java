@@ -72,7 +72,7 @@ public abstract class Record implements Serializable {
 		return "A" + table.getSimpleName();
 	}
 	
-
+	
 	/**
 	 * Return the value in the specified column.
 	 * 
@@ -97,6 +97,17 @@ public abstract class Record implements Serializable {
 	public Object getValue(Class table, String column) {
 		Record subrecord = (  getClass().equals(table) ? this : findSubrecord(this, table)  );
 		return (subrecord == null) ? null : subrecord.getValue(column);
+	}
+	
+	
+	/**
+	 * Return the subrecord of this record of the specified type.
+	 * 
+	 * @param type	The type of the subrecord.
+	 * @return	The subrecord of the specified type.
+	 */
+	public Record findSubrecord(Class type) {
+		return getClass().equals(type) ? this : findSubrecord(this, type);
 	}
 
 	/**
