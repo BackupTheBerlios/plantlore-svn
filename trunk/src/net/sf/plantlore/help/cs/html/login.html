@@ -1,10 +1,117 @@
 <html>
-<head>
-<meta http-equiv="Content-Language" content="cs-CZ" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>P�ihl�en�</title>
-</head>
+	
+	<head>
+		<meta http-equiv="Content-Language" content="cs-CZ" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Přihlašování</title>
+	</head>
+
 <body>
-<h1>P�ihl�en�</h1>
+
+	<h1>Přihlašování k databázi</h1>
+
+	<p>
+	První krok, který po spuštění Plantlore musíte učinit, je přihlášení k databázi, se kterou chcete pracovat.
+	Přihlášení k databázi je snadné a intuitivní, probíhá ve dvou krocích.
+	</p>
+
+	<h3>1. Výběr databáze</h3>
+
+	<p>
+	Pokud jste se k nějaké databázi dříve přihlašovali, pravděpodobně už máte seznam neprázdný.
+	Není-li tomu tak, postupte na sekci "Přidávání, mazání a editace záznamů".
+	</p>
+
+	<p>
+	V opačném případě vyberte jednu z databází v seznamu a pokračujte kliknutím na tlačítko "Pokračovat".
+	</p>
+
+	<div style="position: relative; left: 30; top: 10"><br>
+	<img src="picture/LoginDBSelection.jpg" alt="Volba databáze.">
+	</div>
+
+	<p>
+	Chcete-li se v budoucnu vždycky přihlašovat k vybrané databázi, zaškrtněte políčko
+	"Vybrat automaticky". Tuto možnost lze vybrat pouze v případě, že je v seznamu 
+	k disposici pouze jeden záznam.
+	</p>
+
+
+	<h3>2. Autentifikace</h3>
+
+	<p>
+	Pro přihlášení k databázi je potřeba se prokázat přihlašovacími údaji 
+	- uživatelským jménem a heslem.
+	</p>
+	
+	<div style="position: relative; left: 30; top: 10"><br>
+	<img src="picture/LoginAuthentication2.jpg" alt="Vkládání přihlašovacích údajů.">
+	</div>
+
+	<p>
+	Po zadání údajů stiskněte tlačítko "Přihlásit". 
+	Pokud se přihlášení z nějakého důvodu nezdaří, budete o tom informováni krátkou zprávou.
+	V opačném případě Plantlore zobrazí základní <a href="./overview.html">Přehled</a>.
+	</p>
+
+	<p>
+	Poznámka: Přihlašujete-li se ke vzdálené databázi, může přihlašování trvat delší dobu.
+	</p>
+
+
+	<h2>Přidávání, mazání a editace záznamů</h2>
+
+	<p>
+	V seznamu databází, k nimž se lze přihlásit, lze provádět následující operace:
+	<ul>
+		<li>Přidat nový záznam</li>
+		<li>Editovat vybraný záznam</li>
+		<li>Smazat označený záznam</li>
+	</ul>
+	</p>
+
+	<p>
+	K těmto operacím lze přistupovat pomocí kontextového menu (stiskem pravého tlačítka myši).
+	</p>
+
+	<div style="position: relative; left: 30; top: 10"><br>
+	<img src="picture/LoginContextMenu.jpg" alt="Kontextové menu s operacemi.">
+	</div>
+
+	<p>
+	Přidání nového záznamu nebo editace stávajícího záznamu používají stejný dialog.
+	</p>
+
+	<div style="position: relative; left: 30; top: 10"><br>
+	<img src="picture/LoginAddRecord.jpg" alt="Přidání záznamu.">
+	</div>
+
+	<p>
+	Dialog obsahuje tyto tři položky:
+	<ul>
+		<li><b>Alias</b>.
+		Alias je jméno pro záznam, které se bude zobrazovat v seznamu databází.
+		Typicky se jedná o výstižný popis dané databáze, například "Moje domácí databáze"
+		nebo "Vzdálená databáze na serveru ČBS".
+		</li>
+		<li><b>Host</b>.
+		Jméno počítače, kde je databáze uložena. Jedná-li se o lokální databázi, tj. 
+		databázi nacházející se na vašem počítači, nechejte políčko prázdné.
+		</li>
+		<li><b>Databáze</b>.
+		Identifikátor databáze na počítači. TODO: jak přesně bude identifikátor vypadat se ještě řeší,
+		ale je to detail.
+		</li>
+	</ul>
+	Přidáváte-li nový záznam, žádná nová databáze se ve skutečnosti nevytváří; vytváří se pouze
+	reference na nějakou existující databázi.
+	</p>
+
+	<p>
+	Editační dialog mění ony tři vlastnosti vybraného záznamu. Lze jej využít v případě, že se
+	např. změnilo jméno počítače, kde je DB hostována.
+	</p>
+
+
 </body>
 </html>

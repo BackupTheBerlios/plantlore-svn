@@ -1,10 +1,154 @@
 <html>
-<head>
-<meta http-equiv="Content−Language" content="en−US" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Export</title>
-</head>
+	
+	<head>
+		<meta http-equiv="Content-Language" content="cs-CZ" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Export of the Occurrence Data</title>
+	</head>
+
 <body>
-Export
+
+	<h1>Export of the Occurrence Data</h1>
+
+	<p>
+	Your Occurrence data are stored in the Plantlore's database.
+	This database cannot be accessed directly. 
+	If you want to transfer your data to other computers, you will have to use the Export.
+	Export allows you to "take" the occurrence data from the database 
+	and store them in a file on your hard drive.
+	</p>
+
+	<p>
+	The Export can be conducted with any database after logging in - even with a remote database.
+	If you are connected to a remote database and want to export some occurrence data,
+	bear in mind that the total amount of data may flood the transfer capacity and the whole
+	process may become painfully slow.
+	</p>
+
+	<p>
+	You have to take several steps to Export your data.
+	These steps are described in detail below.
+	</p>
+
+
+	<h2>Before you will start exporting the data</h2>
+
+	<p>
+	It is necessary to search/select some Occurrence data before you start exporting them.
+	You can do it in the <a href="./search.html">Search</a> dialog.
+	You must fill in the desired criteria - let's say, you want to search all occurrence data
+	related to a certain project in a certain year.
+	All relevant occurrence data in the database will be displayed 
+	in the <a href="./overview.html">Overview</a> 
+	
+	You can explicitly select some of these records. If you leave the selection empty
+	(ie. if you select no record at all) Plantlore will act as if you selected them all.
+	This feature should greatly simplify the Export of all records.
+	</p>
+
+
+	<h2>The Export</h2>
+
+	<p>
+	Exporting the occurrence data involves three steps:
+	</p>
+
+	<h3>1. Specifying the name of the file and its format</h3>
+
+	<p>
+	Type in the name of the file and choose its format
+	from the list of several basic formats:
+	<ul>
+		<li>PlantloreNative is a format designed for a convenient transfer of occurrence
+		data among many Plantlore programs. If you don't know, which format you should choose,
+		we recommend this one.
+		</li>
+		<li>XML is a format relying on the Extensible Markup Language (XML).
+		The occurrence data is stored in a well-arranged tree structure.
+		This format allows you to specify which attributes of the records you are
+		interested in. This format is suitable for data transfer as well as their visualization
+		in the Internet Explorer, for instance.
+		</li>
+		<li>ABCD Schema is a XML based format. However, the structure is different and conforms
+		to the ABCD Schema requirements.
+		</li>
+		<li>DarwinCore is a XML based format. Its structure is different and conforms
+		to the DarwinCore requirements.
+		</li>
+		<li>CSV - known as Comma Separated Values - is a simple format that contains 
+		one occurrence per line. Values of attributes of the record are separated by commas.
+		The first line contains the names of those attribues.
+		The structure of the file therefore resembles a table, and this format is particularly
+		suitable for table processors, such as Microsoft Excel.
+		</li>
+		<li>StdOut doesn't store the records in a file but sends them into the standard output.
+		The records are parsed and sent in a very legible form: table.column = value.
+		
+		This "format" is intented for stream processing in a command line or a shell, such
+		as bash on Linux or PowerShell on Windows.
+		</li>
+	</ul>
+	If you are unsure which format to choose, we recommend you use the PlantloreNative
+	which is most suitable for both data transfer and visualization.
+	</p>
+
+	<div style="position: relative; left: 300; top: 10"><br>
+	<img src="images/ExportFileFormat.jpg" alt="Selecting the name of the file and its format.">
+	</div>
+
+
+	<h3>2. Selecting records' attributes</h3>
+
+	<p>
+	This step is optional. Only the XML, CSV and StdOut support this option.
+	The other formats export the record with all its attributes.
+	<br/>
+	You can specify the desired attributes by selecting them in the tree.
+	The attributes marked red are compulsory if you are planning to
+	<a href="./import.html">Import</a> the exported data back into Plantlore.
+	</p>
+	
+	<p>
+	If you do not select any column, Plantlore acts as if you selected them all.
+	</p>
+
+	<div style="position: relative; left: 300; top: 10"><br>
+	<img src="images/ExportColumns.jpg" alt="Selecting attributes.">
+	</div>
+
+
+	<h3>3. The Export</h3>
+
+	<p>
+	After the selection of attributes if completed, the Export starts.
+	You can follow the progress in the window.
+	Closing the window won't abort the procedure, it will just hide the window.
+	The window can be re-opened if you click on the Export in the main menu -
+	that is, if the Export wasn't completed yet.
+	</p>
+
+	<p>
+	You can cancel the Export by clicking the "Abort" button.
+	</p>
+
+	<div style="position: relative; left: 300; top: 10"><br>
+	<img src="images/ExportProgress.jpg" alt="Export in progress.">
+	</div>
+
+
+
+
+	<h2>Restrictions and limits</h2>
+
+	<p>
+	You can export any selected occurrence data.
+	Remember: "nothing means everyting" - if you do not explicitly select some records or attributes,
+	Plantlore automatically assumes, that you wanted to select them all.
+	</p>
+
+	<p>
+	There can run only one Export at a time.
+	</p>
+
 </body>
 </html>
