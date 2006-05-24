@@ -130,23 +130,23 @@ public class AppCore extends Observable
         return this.database;
     }    
     
-    protected void setDatabase(DBLayer dblayer) {
+    protected void setDatabase(DBLayer dblayer) throws RemoteException, DBLayerException {
     	this.database = dblayer;
         loadDialogData();
     }
     
-    public void loadDialogData() {
+    public void loadDialogData() throws RemoteException, DBLayerException {
         logger.info("Loading dialog data ...");
-        plants = null; getPlants();
-        authors = null; getAuthors();
-        authorRoles = null; getAuthorRoles();
-        villages = null; getVillages();
-        phytNames = null; getPhytNames(); //loads phytCodes too
-        territories = null; getTerritories();
-        countries = null; getCountries();
-        sources = null; getSources();
-        publications = null; getPublications();
-        projects = null; getProjects();
+        loadPlants();
+        loadAuthors();
+        loadAuthorRoles();
+        loadVillages();
+        loadPhytNames(); //loads phytCodes too
+        loadTerritories();
+        loadCountries();
+        loadSources();
+        loadPublications();
+        loadProjects();
         logger.debug("Dialog data loaded.");
     }
     
@@ -330,353 +330,250 @@ public class AppCore extends Observable
     	return usingProjections;
     }
     
-    public Pair<String, Integer>[] getPlants() {
-        if (plants == null)
+    public Pair<String, Integer>[] loadPlants() throws RemoteException, DBLayerException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
+        Object[] row;
+
+        sq = database.createQuery(Plant.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Plant.TAXON);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.TAXON);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.ID);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        plants = new Pair[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Object[] row;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Plant.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Plant.TAXON);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.TAXON);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.ID);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                System.out.println("getPlants(): we got "+resultsCount+" results.");
-                records = database.more(resultid, 0, resultsCount-1);
-                plants = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    plants[i] = new Pair((String)row[0], (Integer)row[1]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return plants;
-        } else
-            return plants;
+            row = (Object[])records[i];
+            plants[i] = new Pair((String)row[0], (Integer)row[1]);
+        }
+        logger.info("Loaded: "+resultsCount+" plants.");
+        return plants;
     }
     
-    public Pair<String, Integer>[] getAuthors() {
-        if (authors == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Object[] row;
+    public Pair<String, Integer>[] loadAuthors() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
+        Object[] row;
 
-            //FIXME:
-            try {
-                sq = database.createQuery(Author.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.WHOLENAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.ID);
-                
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                authors = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    authors[i] = new Pair<String, Integer>((String)row[0], (Integer)row[1]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return authors;
-        } else
-            return authors;
+        sq = database.createQuery(Author.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.WHOLENAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.ID);
+
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        authors = new Pair[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
+        {
+            row = (Object[])records[i];
+            authors[i] = new Pair<String, Integer>((String)row[0], (Integer)row[1]);
+        }
+        logger.info("Loaded: "+resultsCount+" authors.");
+        return authors;
     }
     
-    public String[] getAuthorRoles() {
-        if (authorRoles == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
+    public String[] loadAuthorRoles() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
 
-            //FIXME:
-            try {
-                sq = database.createQuery(AuthorOccurrence.class);
-                sq.addProjection(PlantloreConstants.PROJ_DISTINCT,AuthorOccurrence.ROLE);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, AuthorOccurrence.ROLE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                authorRoles = new String[resultsCount];
-                String r;
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    r = (String)((Object[])records[i])[0];
-                    authorRoles[i] = r;
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return authorRoles;
-        } else
-            return authorRoles;
+        sq = database.createQuery(AuthorOccurrence.class);
+        sq.addProjection(PlantloreConstants.PROJ_DISTINCT,AuthorOccurrence.ROLE);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, AuthorOccurrence.ROLE);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        authorRoles = new String[resultsCount];
+        String r;
+        for (int i = 0; i < resultsCount; i++)
+        {
+            r = (String)((Object[])records[i])[0];
+            authorRoles[i] = r;
+        }
+        logger.info("Loaded: "+resultsCount+" author roles.");
+        return authorRoles;
     }
 
-    public Pair<String, Integer>[] getVillages() {
-        if (villages == null)
+    public Pair<String, Integer>[] loadVillages() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
+        Object[] row;
+
+        sq = database.createQuery(Village.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.ID);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        villages = new Pair[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Object[] row;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Village.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.NAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.ID);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                villages = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    villages[i] = new Pair<String, Integer>((String)row[0],(Integer)row[1]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return villages;
-        } else
-            return villages;
+            row = (Object[])records[i];
+            villages[i] = new Pair<String, Integer>((String)row[0],(Integer)row[1]);
+        }
+        logger.info("Loaded: "+resultsCount+" villages.");
+        return villages;
     }
 
-    public Pair<String, Integer>[] getTerritories() {
-        if (territories == null)
+    public Pair<String, Integer>[] loadTerritories() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
+        Object[] row;
+
+        sq = database.createQuery(Territory.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Territory.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.ID);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        territories = new Pair[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Object[] row;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Territory.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Territory.NAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.NAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.ID);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                territories = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    territories[i] = new Pair<String,Integer>((String)row[0],(Integer)row[1]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return territories;
-        } else
-            return territories;
+            row = (Object[])records[i];
+            territories[i] = new Pair<String,Integer>((String)row[0],(Integer)row[1]);
+        }
+        logger.info("Loaded: "+resultsCount+" territories.");
+        return territories;
     }
     
-    public Pair<String, Integer>[] getPhytNames() {
-        if (phytNames == null)
+    public Pair<String, Integer>[] loadPhytNames() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records, row;
+
+        sq = database.createQuery(Phytochorion.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.CODE);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.ID);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        phytNames = new Pair[resultsCount];
+        phytCodes = new Pair[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records, row;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Phytochorion.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.NAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.NAME);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.CODE);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.ID);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                phytNames = new Pair[resultsCount];
-                phytCodes = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    phytNames[i] = new Pair<String,Integer>((String)row[0], (Integer)row[2]);
-                    phytCodes[i] = new Pair<String,Integer>((String)row[1], (Integer)row[2]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return phytNames;
-        } else
-            return phytNames;
+            row = (Object[])records[i];
+            phytNames[i] = new Pair<String,Integer>((String)row[0], (Integer)row[2]);
+            phytCodes[i] = new Pair<String,Integer>((String)row[1], (Integer)row[2]);
+        }
+        logger.info("Loaded: "+resultsCount+" phytochoria.");
+        return phytNames;
     }
     
-    public Pair<String, Integer>[] getPhytCodes() {
-        if (phytCodes == null)
-        {
-            getPhytNames();
-            return phytCodes;
-        } else
-            return phytCodes;
+    public Pair<String, Integer>[] loadPhytCodes() throws DBLayerException, RemoteException {
+        loadPhytNames();
+        return phytCodes;
     }
     
-    public String[] getCountries() {
-        if (countries == null)
+    public String[] loadCountries() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        int uniqueCount = 0;
+        Object[] records;
+        String country;
+
+        sq = database.createQuery(Habitat.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Habitat.COUNTRY);
+        sq.addProjection(PlantloreConstants.PROJ_DISTINCT, Habitat.COUNTRY);
+        resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        countries = new String[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            int uniqueCount = 0;
-            Object[] records;
-            String country;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Habitat.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Habitat.COUNTRY);
-                sq.addProjection(PlantloreConstants.PROJ_DISTINCT, Habitat.COUNTRY);
-                resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                countries = new String[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    country = (String)((Object[])records[i])[0];
-                    countries[i] = country;
-                }
-                
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return countries;
-        } else
-            return countries;        
+            country = (String)((Object[])records[i])[0];
+            countries[i] = country;
+        }
+
+        logger.info("Loaded: "+resultsCount+" countries.");
+        return countries;
     }
     
-    public String[] getSources() {
-        if (sources == null)
-        {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Occurrence.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.DATASOURCE);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.DATASOURCE);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                sources = new String[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    sources[i] = (String)((Object[])records[i])[0];
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return sources;
-        } else
-            return sources;
+    public String[] loadSources() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
+
+        sq = database.createQuery(Occurrence.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.DATASOURCE);
+        sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Occurrence.DATASOURCE);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        sources = new String[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
+            sources[i] = (String)((Object[])records[i])[0];
+
+        logger.info("Loaded: "+resultsCount+" sources.");
+        return sources;
     }
     
-    public Pair<String, Integer>[] getPublications() {
-        if (publications == null)
+    public Pair<String, Integer>[] loadPublications() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records;
+        Object[] row;
+
+        sq = database.createQuery(Publication.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Publication.REFERENCECITATION);
+        sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Publication.ID);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        publications = new Pair[resultsCount+1];
+        publications[0] = new Pair<String,Integer>("",-1); //allow the user to enter a null value
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records;
-            Object[] row;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Publication.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Publication.REFERENCECITATION);
-                sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Publication.ID);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                publications = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    publications[i] = new Pair(row[0], row[1]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return publications;
-        } else
-            return publications;
+            row = (Object[])records[i];
+            publications[i] = new Pair(row[0], row[1]);
+        }
+
+        logger.info("Loaded: "+resultsCount+" publications.");
+        return publications;
     }
 
-    public Pair<String, Integer>[] getProjects() {
-        if (projects == null)
+    public Pair<String, Integer>[] loadProjects() throws DBLayerException, RemoteException {
+        SelectQuery sq;
+        int resultid;
+        int resultsCount;
+        Object[] records,row;
+
+        sq = database.createQuery(Metadata.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, Metadata.DATASETTITLE);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.DATASETTITLE);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.ID);
+        resultid = database.executeQuery(sq);
+        resultsCount = database.getNumRows(resultid);
+        records = database.more(resultid, 0, resultsCount-1);
+        projects = new Pair[resultsCount];
+        for (int i = 0; i < resultsCount; i++)
         {
-            SelectQuery sq;
-            int resultid;
-            int resultsCount;
-            Object[] records,row;
-            
-            //FIXME:
-            try {
-                sq = database.createQuery(Metadata.class);
-                sq.addOrder(PlantloreConstants.DIRECT_ASC, Metadata.DATASETTITLE);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.DATASETTITLE);
-                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.ID);
-                resultid = database.executeQuery(sq);
-                resultsCount = database.getNumRows(resultid);
-                records = database.more(resultid, 0, resultsCount-1);
-                projects = new Pair[resultsCount];
-                for (int i = 0; i < resultsCount; i++)
-                {
-                    row = (Object[])records[i];
-                    projects[i] = new Pair(row[0], row[1]);
-                }
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }            
-            return projects;
-        } else
-            return projects;
+            row = (Object[])records[i];
+            projects[i] = new Pair(row[0], row[1]);
+        }
+
+        logger.info("Loaded: "+resultsCount+" projects.");
+        return projects;
     }
     
     public MainConfig getMainConfig() {
@@ -687,11 +584,94 @@ public class AppCore extends Observable
         assert database != null;
         
         tableSorter.setDatabase(database);
-        /*Search search = new Search(getDatabase());
-        search.setColumns(columns);
-        search.constructQuery();
-        setResultId(search.getNewResultId()); */
-        //setExportQuery(search.getExportQuery(), false, null);
+    }
+
+    public Pair<String, Integer>[] getPlants() {
+        return plants;
+    }
+
+    public void setPlants(Pair<String, Integer>[] plants) {
+        this.plants = plants;
+    }
+
+    public Pair<String, Integer>[] getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Pair<String, Integer>[] authors) {
+        this.authors = authors;
+    }
+
+    public String[] getAuthorRoles() {
+        return authorRoles;
+    }
+
+    public void setAuthorRoles(String[] authorRoles) {
+        this.authorRoles = authorRoles;
+    }
+
+    public Pair<String, Integer>[] getVillages() {
+        return villages;
+    }
+
+    public void setVillages(Pair<String, Integer>[] villages) {
+        this.villages = villages;
+    }
+
+    public Pair<String, Integer>[] getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Pair<String, Integer>[] territories) {
+        this.territories = territories;
+    }
+
+    public Pair<String, Integer>[] getPhytNames() {
+        return phytNames;
+    }
+
+    public void setPhytNames(Pair<String, Integer>[] phytNames) {
+        this.phytNames = phytNames;
+    }
+
+    public Pair<String, Integer>[] getPhytCodes() {
+        return phytCodes;
+    }
+
+    public void setPhytCodes(Pair<String, Integer>[] phytCodes) {
+        this.phytCodes = phytCodes;
+    }
+
+    public String[] getCountries() {
+        return countries;
+    }
+
+    public void setCountries(String[] countries) {
+        this.countries = countries;
+    }
+
+    public String[] getSources() {
+        return sources;
+    }
+
+    public void setSources(String[] sources) {
+        this.sources = sources;
+    }
+
+    public Pair<String, Integer>[] getPublications() {
+        return publications;
+    }
+
+    public void setPublications(Pair<String, Integer>[] publications) {
+        this.publications = publications;
+    }
+
+    public Pair<String, Integer>[] getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Pair<String, Integer>[] projects) {
+        this.projects = projects;
     }
     
 }

@@ -18,6 +18,7 @@ import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
+import org.apache.log4j.Logger;
 
 /** Class offering convenience methods for DBLayer.
  *
@@ -25,9 +26,12 @@ import net.sf.plantlore.server.HibernateDBLayer;
  */
 public class DBLayerUtils {
     DBLayer db;
+    Logger logger;
     
     /** Creates a new instance of TempClass */
     public DBLayerUtils(DBLayer db) {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());
+        
         this.db = db;
     }
     
@@ -39,6 +43,7 @@ public class DBLayerUtils {
      * @return null in case an exception is thrown or no row with that id exists
      */
     public Record getObjectFor(int id, Class c) {
+        logger.debug("Looking up "+c.getName()+" object in the database for id "+id);
         //FIXME:
         try {
             SelectQuery sq = db.createQuery(c);

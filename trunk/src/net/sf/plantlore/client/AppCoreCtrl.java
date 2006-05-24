@@ -920,7 +920,17 @@ public class AppCoreCtrl
     		if(parameter != null && parameter instanceof DBLayer) {
     			System.out.println("[!] DBLayer retrieval.");
     			DBLayer dblayer = loginModel.getDBLayer();
-    			model.setDatabase(dblayer);
+
+                        //FIXME: neni potreba zresetovat stav treba loginModelu, pokdu neco takhle selze? pripadne stav jinyho objektu?
+                        try {
+                            model.setDatabase(dblayer);
+                        } catch (RemoteException ex) {
+                            JOptionPane.showMessageDialog(view,"Remote problem","Some remote problem occurred:\n"+ex,JOptionPane.WARNING_MESSAGE);
+                            return;
+                        } catch (DBLayerException ex) {
+                            JOptionPane.showMessageDialog(view,"Database problem","Some database problem occurred:\n"+ex,JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
     			model.setAccessRights( loginModel.getAccessRights() );
                         model.login();
                         

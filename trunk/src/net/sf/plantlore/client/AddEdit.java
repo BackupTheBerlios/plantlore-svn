@@ -487,7 +487,7 @@ public class AddEdit extends Observable {
             plant = (Plant)dlu.getObjectFor(id,Plant.class);
 
         publ = new Publication();
-        if (publication != null)
+        if (publication != null && !publication.getSecond().equals(-1))
             publ = (Publication)dlu.getObjectFor(publication.getSecond(),Publication.class);
             
         occ.setDayCollected(day);
@@ -509,7 +509,8 @@ public class AddEdit extends Observable {
         occ.setMonthCollected(month);
         occ.setNote(occurrenceNote);
         occ.setPlant(plant);
-        occ.setPublication(publ);
+        if (publication != null)
+            occ.setPublication(publ);
         occ.setTimeCollected(time);
         occ.setYearCollected(year);
         
@@ -1191,6 +1192,7 @@ public class AddEdit extends Observable {
     //we need to clear, create default values for all values that can be null
     //the not null values are forced by calling checkData before store()
     public void clear() {
+        logger.debug("Clearing add model");
         clearAuthors();
         habitatDescription = "";
         year = Calendar.getInstance().get(Calendar.YEAR);
@@ -1203,7 +1205,6 @@ public class AddEdit extends Observable {
         latitude = 0.0;
         source = "";
         publication = new Pair<String,Integer>("",-1);
-        
         herbarium = "";
         
         month = Calendar.getInstance().get(Calendar.MONTH);

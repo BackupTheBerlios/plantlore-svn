@@ -155,7 +155,7 @@ public class SettingsCtrl extends Observable
                 int min = view.selectedList.getMinSelectionIndex();
                 int max = view.selectedList.getMaxSelectionIndex();
                 
-                if (max < selectedModel.getSize() - 1) {
+                if (max < selectedModel.getSize() - 1 && max != -1) {
                     Object o = selectedModel.getElementAt(max+1);
                     
                     for (int i = max; i >= min; i--) {
