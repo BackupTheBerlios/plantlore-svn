@@ -147,6 +147,15 @@ public class Metadata extends Record {
      *   @see setTechnicalContactAddress
      */
     public String getTechnicalContactAddress() {
+        return this.technicalContactAddress;
+    }
+    
+    /**
+     *   Get technical contact address
+     *   @return technical contact address, return "" instead of null
+     *   @see setTechnicalContactAddress
+     */
+    public String getTechnicalContactAddressNN() {
         if (this.technicalContactAddress == null)
             return "";
         return this.technicalContactAddress;
@@ -167,6 +176,15 @@ public class Metadata extends Record {
      *   @see setTechnicalContactEmail
      */
     public String getTechnicalContactEmail() {
+        return this.technicalContactEmail;
+    }
+    
+    /**
+     *   Get technical contact email address
+     *   @return technical contact email address, returns "" instead of null
+     *   @see setTechnicalContactEmail
+     */
+    public String getTechnicalContactEmailNN() {
         if (this.technicalContactEmail == null)
             return "";
         return this.technicalContactEmail;
@@ -206,6 +224,15 @@ public class Metadata extends Record {
      *   @see setContentContactAddress
      */
     public String getContentContactAddress() {
+        return this.contentContactAddress;
+    }
+    
+    /**
+     *   Get content contact address
+     *   @return content contact address, returns "" instead of null
+     *   @see setContentContactAddress
+     */
+    public String getContentContactAddressNN() {
         if (this.contentContactAddress == null)
             return "";
         return this.contentContactAddress;
@@ -226,6 +253,15 @@ public class Metadata extends Record {
      *   @see setContentContactEmail
      */
     public String getContentContactEmail() {
+        return this.contentContactEmail;
+    }
+    
+    /**
+     *   Get content contact email address
+     *   @return content contact email address, returns "" instead of null
+     *   @see setContentContactEmail
+     */
+    public String getContentContactEmailNN() {
         if (this.contentContactEmail == null)
             return "";
         return this.contentContactEmail;
@@ -265,6 +301,15 @@ public class Metadata extends Record {
      *   @see setDataSetDetails
      */
     public String getDataSetDetails() {
+        return this.dataSetDetails;
+    }
+    
+    /**
+     *   Get free-form text containing a longer description of the project
+     *   @return longer description of the project, returns "" instead of null
+     *   @see setDataSetDetails
+     */
+    public String getDataSetDetailsNN() {
         if (this.dataSetDetails == null)
             return "";
         return this.dataSetDetails;
@@ -323,6 +368,15 @@ public class Metadata extends Record {
      *   @see setOwnerOrganizationAbbrev
      */
     public String getOwnerOrganizationAbbrev() {
+        return this.ownerOrganizationAbbrev;
+    }
+    
+    /**
+     *   Get abbreviation of the owner's organization. Restricted to 50 characters, including blanks.
+     *   @return abbreviation of the owner's organization, returns "" instead of null
+     *   @see setOwnerOrganizationAbbrev
+     */
+    public String getOwnerOrganizationAbbrevNN() {
         if (this.ownerOrganizationAbbrev == null)
             return "";
         return this.ownerOrganizationAbbrev;
@@ -343,6 +397,15 @@ public class Metadata extends Record {
      *   @see setRecordBasis
      */
     public String getRecordBasis() {
+        return this.recordBasis;
+    }
+    
+    /**
+     *   Get indication of what the unit record describes
+     *   @return indication of what the unit record describes, returns "" instead of null
+     *   @see setRecordBasis
+     */
+    public String getRecordBasisNN() {
         if (this.recordBasis == null)
             return "";
         return this.recordBasis;
@@ -401,6 +464,15 @@ public class Metadata extends Record {
      *   @see setBiotopeText
      */
     public String getBiotopeText() {
+        return this.biotopeText;
+    }
+    
+    /**
+     *   Get
+     *   @return returns Biotope text, returns "" instead of null
+     *   @see setBiotopeText
+     */
+    public String getBiotopeTextNN() {
         if (this.biotopeText == null)
             return "";
         return this.biotopeText;
@@ -434,3 +506,4 @@ public class Metadata extends Record {
     	this.deleted = deleted;
     }    
 }
+

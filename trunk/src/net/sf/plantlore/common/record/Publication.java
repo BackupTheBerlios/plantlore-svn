@@ -113,6 +113,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setCollectionName
      */
     public String getCollectionName() {
+        return this.collectionName;
+    }
+    
+    /**
+     *   Get name of the collection
+     *   @return name of the collection, returns "" instead of null
+     *   @see setCollectionName
+     */
+    public String getCollectionNameNN() {
          if (this.collectionName == null)
              return "";
         return this.collectionName;
@@ -133,6 +142,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setCollectionYearPublication
      */
     public Integer getCollectionYearPublication() {
+        return this.collectionYearPublication;        
+    }
+    
+    /**
+     *   Get year when the collection was published
+     *   @return year when the collection was published, returns -1 instead of null
+     *   @see setCollectionYearPublication
+     */
+    public Integer getCollectionYearPublicationNN() {
         
         if (this.collectionYearPublication == null)
              return -1;
@@ -154,6 +172,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setJournalName
      */
     public String getJournalName() {
+        return this.journalName;
+    }
+    
+    /**
+     *   Get name of the journal
+     *   @return name of the journal, returns "" instead of null
+     *   @see setJournalName
+     */
+    public String getJournalNameNN() {
         
         if (this.journalName == null)
              return "";
@@ -175,6 +202,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setJournalAuthorName
      */
     public String getJournalAuthorName() {
+        return this.journalAuthorName;
+    }
+    
+    /**
+     *   Get author of the journal
+     *   @return author of the journal, returns "" instead of null
+     *   @see setJournalAuthorName
+     */
+    public String getJournalAuthorNameNN() {
         
         if (this.journalAuthorName == null)
              return "";
@@ -215,6 +251,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setReferenceDetail
      */
     public String getReferenceDetail() {
+        return this.referenceDetail;
+    }
+    
+    /**
+     *   Get reference detail
+     *   @return reference detail, returns "" instead of null
+     *   @see setReferenceDetail
+     */
+    public String getReferenceDetailNN() {
         if (this.referenceDetail == null)
             return "";
         return this.referenceDetail;
@@ -235,6 +280,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setUrl
      */
     public String getUrl() {
+        return this.url;
+    }
+    
+    /**
+     *   Get URL of electronic publication
+     *   @return URL of electronic publication, returns "" instead of null
+     *   @see setUrl
+     */
+    public String getUrlNN() {
         if (this.url == null)
             return "";
         return this.url;
@@ -291,6 +345,15 @@ public class Publication extends Record implements Deletable  {
      *   @see setNote
      */
     public String getNote() {
+        return this.note;
+    }
+    
+    /**
+     *   Get note for the publication
+     *   @return note for the publication, returns "" instead of null
+     *   @see setNote
+     */
+    public String getNoteNN() {
         if (this.note == null)
             return "";
         return this.note;

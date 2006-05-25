@@ -84,3 +84,4 @@ public class Village extends Record {
         this.name = name;
     }    
 }
+

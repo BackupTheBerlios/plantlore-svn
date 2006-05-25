@@ -185,6 +185,15 @@ public class Habitat extends Record implements Deletable {
      *   @see setQuadrant
      */
     public String getQuadrant() {
+        return this.quadrant;
+    }
+    
+    /**
+     *   Get quadrant
+     *   @return quadrant, returns empty String instead of null
+     *   @see setQuadrant
+     */
+    public String getQuadrantNN() {
         if (this.quadrant == null)
             return "";
         return this.quadrant;
@@ -205,6 +214,15 @@ public class Habitat extends Record implements Deletable {
      *   @see setDescription
      */
     public String getDescription() {
+        return this.description;
+    }
+    
+    /**
+     *   Get descripton of the place where plant was found
+     *   @return description of the place where plant was found, returns empty string instead of null
+     *   @see setDescription
+     */
+    public String getDescriptionNN() {
         if (this.description == null)
             return "";
         return this.description;
@@ -225,11 +243,21 @@ public class Habitat extends Record implements Deletable {
      *   @see setCountry
      */
     public String getCountry() {
+        return this.country;
+    }
+    
+    /**
+     *   Get country where the plant was found
+     *   @return country country where the plant was foun, returns an empty string instead of null
+     *   @see setCountry
+     */
+    public String getCountryNN() {
         if (this.country == null)
             return "";
         return this.country;
     }
     
+
     /**
      *   Set country where the plant was foun
      *   @param country  country where the plant was foun
@@ -245,6 +273,15 @@ public class Habitat extends Record implements Deletable {
      *   @see setAltitude
      */
     public Double getAltitude() {
+        return this.altitude;
+    }
+    
+    /**
+     *   Get altitude
+     *   @return altitude, returns -1 instead of null
+     *   @see setAltitude
+     */
+    public Double getAltitudeNN() {
         if (this.altitude == null)
             return new Double(-1);
         return this.altitude;
@@ -265,6 +302,15 @@ public class Habitat extends Record implements Deletable {
      *   @see setLatitude
      */
     public Double getLatitude() {
+        return this.latitude;
+    }
+    
+    /**
+     *   Get latitude
+     *   @return latitude, returns -1 instead of null
+     *   @see setLatitude
+     */
+    public Double getLatitudeNN() {
         if (this.latitude == null)
             return new Double(-1);
         return this.latitude;
@@ -285,6 +331,15 @@ public class Habitat extends Record implements Deletable {
      *   @see setLongitude
      */
     public Double getLongitude() {
+        return this.longitude;
+    }
+    
+    /**
+     *   Get longitude
+     *   @return longitude, returns -1 instead of null
+     *   @see setLongitude
+     */
+    public Double getLongitudeNN() {
         if (this.longitude == null)
             return new Double(-1);
         return this.longitude;
@@ -324,6 +379,15 @@ public class Habitat extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        return this.note;
+    }
+    
+    /**
+     *   Get note about habitat
+     *   @return string containing note about habitat, returns "" instead of null
+     *   @see setNote
+     */
+    public String getNoteNN() {
         if (this.note == null)
             return "";
         return this.note;

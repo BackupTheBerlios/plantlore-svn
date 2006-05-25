@@ -135,11 +135,20 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setRole
      */
     public String getRole() {
+        return this.role;
+    }
+    
+    /**
+     *   Get 
+     *   @return returns the role of the author in this occurrence, returns empty string instead of null
+     *   @see setRole
+     */
+    public String getRoleNN() {
         if ( this.role == null)
             return "";
         return this.role;
     }
-    
+
     /**
      *   Set
      *   @param role
@@ -155,11 +164,20 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        return this.note;
+    }
+    
+    /**
+     *   Get
+     *   @return authors note or result revision, returns empty string instead of null
+     *   @see setNote
+     */
+    public String getNoteNN() {
         if (this.note == null)
             return "";
         return this.note;
     }
-    
+
     /**
      *   Set
      *   @param authors note or resutl revision

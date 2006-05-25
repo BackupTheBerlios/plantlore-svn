@@ -134,6 +134,15 @@ public class Plant extends Record {
      *   @see setGenus
      */
     public String getGenus() {
+        return this.genus;
+    }
+    
+    /**
+     *   Get genus of the plant
+     *   @return genus of the plant, returns "" instead of null
+     *   @see setGenus
+     */
+    public String getGenusNN() {
         if (this.genus == null)
             return "";
         return this.genus;
@@ -154,6 +163,15 @@ public class Plant extends Record {
      *   @see setSpecies
      */
     public String getSpecies() {
+        return this.species;
+    }
+    
+    /**
+     *   Get species of the plant
+     *   @return species of the plant, returns "" instead of null
+     *   @see setSpecies
+     */
+    public String getSpeciesNN() {
         if (this.species == null)
             return "";
         return this.species;
@@ -193,6 +211,15 @@ public class Plant extends Record {
      *   @see setCzechName
      */
     public String getCzechName() {
+        return this.czechName;
+    }
+    
+    /**
+     *   Get czech name of the plant
+     *   @return czech name of the plant, returns "" instead of null
+     *   @see setCzechName
+     */
+    public String getCzechNameNN() {
         if (this.czechName == null) 
             return "";
         return this.czechName;
@@ -213,6 +240,15 @@ public class Plant extends Record {
      *   @see setSynonyms
      */
     public String getSynonyms() {
+        return this.synonyms;
+    }
+    
+    /**
+     *   Get synonyms of the plant name
+     *   @return synonyms of the plant name, returns "" instead of null
+     *   @see setSynonyms
+     */
+    public String getSynonymsNN() {
         if (this.synonyms == null)
             return "";
         return this.synonyms;
@@ -233,6 +269,15 @@ public class Plant extends Record {
      *   @see setNote
      */
     public String getNote() {
+        return this.note;
+    }
+    
+    /**
+     *   Get note about the plant
+     *   @return string containing note about the plant, returns "" instead of null
+     *   @see setNote
+     */
+    public String getNoteNN() {
         if (this.note == null)
             return "";
         return this.note;

@@ -267,6 +267,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setMonthCollected
      */
     public Integer getMonthCollected() {
+        return this.monthCollected;
+    }
+    
+    /**
+     *   Get month when plant was collected
+     *   @return month when plant was collected, returns -1 instead of null
+     *   @see setMonthCollected
+     */
+    public Integer getMonthCollectedNN() {
         if (this.monthCollected == null)
             return -1;
         return this.monthCollected;
@@ -287,6 +296,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setDayCollected
      */
     public Integer getDayCollected() {
+        return this.dayCollected;
+    }
+    
+    /**
+     *   Get day when plant was collected
+     *   @return day when plant was collected, returns -1 instead of null
+     *   @see setDayCollected
+     */
+    public Integer getDayCollectedNN() {
         if (this.dayCollected == null)
             return -1;
         return this.dayCollected;
@@ -307,6 +325,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setTimeCollected
      */
     public java.util.Date getTimeCollected() {
+        return this.timeCollected;
+    }
+    
+    /**
+     *   Get time when the occurrence was recorded
+     *   @return time when the occurrence was recorded, returns new Date(0) instead of null
+     *   @see setTimeCollected
+     */
+    public java.util.Date getTimeCollectedNN() {
         if (this.isoDateTimeBegin == null) 
             return new Date(0);
         return this.timeCollected;
@@ -327,6 +354,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setIsoDateTimeBegin
      */
     public java.util.Date getIsoDateTimeBegin() {
+        return this.isoDateTimeBegin;
+    }
+    
+    /**
+     *   Get time/date when the plant was collected
+     *   @return time/date when the plant was collected, returns new Date(0) instead of null
+     *   @see setIsoDateTimeBegin
+     */
+    public java.util.Date getIsoDateTimeBeginNN() {
         if (this.isoDateTimeBegin == null) 
             return new Date(0);
         return this.isoDateTimeBegin;
@@ -347,6 +383,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setDataSource
      */
     public String getDataSource() {
+        return this.dataSource;
+    }
+    
+    /**
+     *   Get dataSource
+     *   @return dataSource  returns "" instead of null
+     *   @see setDataSource
+     */
+    public String getDataSourceNN() {
         if (this.dataSource == null)
             return "";
         return this.dataSource;
@@ -386,6 +431,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setHerbarium
      */
     public String getHerbarium() {
+        return this.herbarium;
+    }
+    
+    /**
+     *   Get herbarium
+     *   @return herbarium, returns "" instead of null
+     *   @see setHerbarium
+     */
+    public String getHerbariumNN() {
         if (this.herbarium == null)
             return "";
         return this.herbarium;
@@ -520,6 +574,15 @@ public class Occurrence extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        return this.note;
+    }
+    
+    /**
+     *   Get note about occurrence
+     *   @return string containing note about occurrence, returns "" instead of null
+     *   @see setNote
+     */
+    public String getNoteNN() {
         if (this.note == null)
             return "";
         return this.note;

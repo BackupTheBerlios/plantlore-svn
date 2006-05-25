@@ -129,11 +129,20 @@ public class Author extends Record implements Deletable {
      *   @see setOrganization
      */
     public String getOrganization() {
+        return this.organization;
+    }
+    
+    /**
+     *   Get organization the author belongs to
+     *   @return string containing organization the author belongs to, returns empty string instead of null
+     *   @see setOrganization
+     */
+    public String getOrganizationNN() {
         if (this.organization == null)
             return "";
         return this.organization;
     }
-    
+
     /**
      *   Set role of the author
      *   @param role string containing role of the author
@@ -149,22 +158,40 @@ public class Author extends Record implements Deletable {
      *   @see setRole
      */
     public String getRole() {
+        return this.role;
+    }
+    
+    /**
+     *   Get role of the author
+     *   @return string representation of author's role, returns empty string instead of null
+     *   @see setRole
+     */
+    public String getRoleNN() {
         if (this.role == null) 
             return "";        
         return this.role;
     }
-    
+
     /**
      *   Get address of the author
      *   @return string containing address of the author
      *   @see setAddress
      */
     public String getAddress() {
+        return this.address;
+    }
+    
+    /**
+     *   Get address of the author
+     *   @return string containing address of the author, returns empty string instead of null
+     *   @see setAddress
+     */
+    public String getAddressNN() {
         if (this.address == null)
             return "";
         return this.address;
     }
-    
+
     /**
      *   Set address of the author
      *   @param address string containing address of the author
@@ -180,11 +207,20 @@ public class Author extends Record implements Deletable {
      *   @see setPhoneNumber
      */
     public String getPhoneNumber() {
+        return this.phoneNumber;
+    }
+    
+    /**
+     *   Get phone number of the author
+     *   @return string containing phone number of the author, returns empty string instead of null
+     *   @see setPhoneNumber
+     */
+    public String getPhoneNumberNN() {
         if (this.phoneNumber == null)
             return "";
         return this.phoneNumber;
     }
-    
+
     /**
      *   Set email of the author
      *   @param phoneNumber string containing phone number of the author
@@ -200,11 +236,20 @@ public class Author extends Record implements Deletable {
      *   @see setEmail
      */
     public String getEmail() {
+        return this.email;
+    }
+    
+    /**
+     *   Get email of the author
+     *   @return string containing email of the author, returns empty string instead of null
+     *   @see setEmail
+     */
+    public String getEmailNN() {
         if (this.email == null)
             return "";
         return this.email;
     }
-    
+
     /**
      *   Set email of the author
      *   @param email string containing email of the author
@@ -220,11 +265,20 @@ public class Author extends Record implements Deletable {
      *   @see setUrl
      */
     public String getUrl() {
+        return this.url;
+    }
+    
+    /**
+     *   Get URL of the author
+     *   @return URL of the author's webpage, returns empty sring instead of null
+     *   @see setUrl
+     */
+    public String getUrlNN() {
         if (this.url == null)
             return "";
         return this.url;
     }
-    
+
     /**
      *   Set URL of the author
      *   @param url URL of the author's webpage
@@ -278,11 +332,20 @@ public class Author extends Record implements Deletable {
      *   @see setNote
      */
     public String getNote() {
+        return this.note;
+    }
+    
+    /**
+     *   Get note about the author
+     *   @return string containing note about the author, returns empty string instead of null
+     *   @see setNote
+     */
+    public String getNoteNN() {
         if (this.note == null)
             return "";
         return this.note;
     }
-    
+
     /**
      *   Set note about the author
      *   @param contact string containing note about the author
