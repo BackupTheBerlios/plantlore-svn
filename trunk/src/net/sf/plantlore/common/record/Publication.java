@@ -66,13 +66,17 @@ public class Publication extends Record implements Deletable  {
     public void setValue(String column, Object value) {
 		if(column.equals(ID)) setId((Integer)value);
 		else if(column.equals(COLLECTIONNAME)) setCollectionName((String)value);
-		else if(column.equals(COLLECTIONYEARPUBLICATION)) setCollectionYearPublication((Integer)value);
+		else if(column.equals(COLLECTIONYEARPUBLICATION)) 
+                    if (value.getClass() == String.class)setCollectionYearPublication(Integer.parseInt((String) value));
+                    else setCollectionYearPublication((Integer)value);
 		else if(column.equals(JOURNALNAME)) setJournalName((String)value);
 		else if(column.equals(JOURNALAUTHORNAME)) setJournalAuthorName((String)value);
 		else if(column.equals(REFERENCECITATION)) setReferenceCitation((String)value);
 		else if(column.equals(REFERENCEDETAIL)) setReferenceDetail((String)value);
 		else if(column.equals(URL)) setUrl((String)value);
-		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(DELETED)) 
+                    if (value.getClass() == String.class) setDeleted(Integer.parseInt((String) value));
+                    else setDeleted((Integer)value);
 		else if(column.equals(CREATEDWHO)) setCreatedWho((User)value);                
 		else if(column.equals(NOTE)) setNote((String)value);
     }

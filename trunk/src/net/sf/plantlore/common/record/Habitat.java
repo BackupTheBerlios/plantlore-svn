@@ -80,10 +80,18 @@ public class Habitat extends Record implements Deletable {
 		else if(column.equals(QUADRANT)) setQuadrant((String)value);
 		else if(column.equals(DESCRIPTION)) setDescription((String)value);
 		else if(column.equals(COUNTRY)) setCountry((String)value);
-		else if(column.equals(ALTITUDE)) setAltitude((Double)value);
-		else if(column.equals(LATITUDE)) setLatitude((Double)value);
-		else if(column.equals(LONGITUDE)) setLongitude((Double)value);
-		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(ALTITUDE)) 
+                    if (value.getClass() == String.class) setAltitude(Double.parseDouble((String) value));
+                    else setAltitude((Double)value);
+		else if(column.equals(LATITUDE)) 
+                    if (value.getClass() == String.class) setLatitude(Double.parseDouble((String) value));
+                    else setLatitude((Double)value);
+		else if(column.equals(LONGITUDE)) 
+                    if (value.getClass() == String.class) setLongitude(Double.parseDouble((String) value));
+                    else setLongitude((Double)value);
+		else if(column.equals(DELETED)) 
+                    if (value.getClass() == String.class) setDeleted(Integer.parseInt((String) value));
+                    else setDeleted((Integer)value);
 		else if(column.equals(NOTE)) setNote((String)value);
     }
     

@@ -96,7 +96,9 @@ public class Metadata extends Record {
 		else if(column.equals(OWNERORGANIZATIONABBREV)) setOwnerOrganizationAbbrev((String)value);
 		else if(column.equals(BIOTOPETEXT)) setBiotopeText((String)value);
 		else if(column.equals(RECORDBASIS)) setRecordBasis((String)value);
-		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(DELETED)) 
+                    if (value.getClass() == String.class) setDeleted(Integer.parseInt((String) value));
+                    else setDeleted((Integer)value);
 		else if(column.equals(DATECREATE)) setDateCreate((java.util.Date)value);
 		else if(column.equals(DATEMODIFIED)) setDateModified((java.util.Date)value);
     }

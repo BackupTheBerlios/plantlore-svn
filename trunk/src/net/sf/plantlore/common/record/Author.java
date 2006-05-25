@@ -64,7 +64,9 @@ public class Author extends Record implements Deletable {
     	else if(column.equals(URL)) setUrl((String)value);
     	else if(column.equals(NOTE)) setNote((String)value);
         else if(column.equals(CREATEDWHO)) setCreatedWho((User)value);                        
-    	else if(column.equals(DELETED)) setDeleted((Integer)value);
+    	else if(column.equals(DELETED)) 
+            if (value.getClass() == String.class) setDeleted(Integer.parseInt((String) value));
+            else setDeleted((Integer)value);
 	}
     
     @Override 

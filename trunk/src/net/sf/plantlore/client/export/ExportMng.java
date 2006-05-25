@@ -292,7 +292,7 @@ public class ExportMng implements Observer {
 		logger.debug("filename: "+ filename);
 		logger.debug("filename2: "+ filter.suggestName(filename));
 		
-		// Create a new builder according to the selected format.
+		// Create a new builder according to the selected format. 
 		Builder builder;
 		if(filter.getDescription().equals(L10n.getString("Format.CSV")))
 			builder = new CSVBuilder(writer, template);
@@ -302,6 +302,8 @@ public class ExportMng implements Observer {
 			builder = new ABCDBuilder(filter.suggestName(filename));
 		else if(filter.getDescription().equals(L10n.getString("Format.XML")))                        
 			builder = new XMLBuilder(template, filter.suggestName(filename));                       
+                else if(filter.getDescription().equals(L10n.getString("Format.PlantloreNative")))                        
+			builder = new XMLBuilder(filter.suggestName(filename));                       
 		else {
 			builder = new TrainingBuilder(template);
 		}

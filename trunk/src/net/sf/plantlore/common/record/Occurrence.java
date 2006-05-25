@@ -7,6 +7,9 @@
 
 package net.sf.plantlore.common.record;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -99,16 +102,22 @@ public class Occurrence extends Record implements Deletable {
 		else if(column.equals(UNITVALUE)) setUnitValue((String)value);
 		else if(column.equals(HABITAT)) setHabitat((Habitat)value);
 		else if(column.equals(PLANT)) setPlant((Plant)value);
-		else if(column.equals(YEARCOLLECTED)) setYearCollected((Integer)value);
-		else if(column.equals(MONTHCOLLECTED)) setMonthCollected((Integer)value);
-		else if(column.equals(DAYCOLLECTED)) setDayCollected((Integer)value);
-		else if(column.equals(TIMECOLLECTED)) setTimeCollected((java.util.Date)value);
-		else if(column.equals(ISODATETIMEBEGIN)) setIsoDateTimeBegin((java.util.Date)value);
+		else if(column.equals(YEARCOLLECTED))
+                    if (value.getClass() == String.class)  setYearCollected(Integer.parseInt((String) value));
+                    else setYearCollected((Integer)value);               
+		else if(column.equals(MONTHCOLLECTED))
+                    if (value.getClass() == String.class) setMonthCollected(Integer.parseInt((String) value));
+                    else setMonthCollected((Integer)value);
+		else if(column.equals(DAYCOLLECTED)) 
+                    if (value.getClass() == String.class) setDayCollected(Integer.parseInt((String) value));
+                    else  setDayCollected((Integer)value);
+		else if(column.equals(TIMECOLLECTED)) setTimeCollected(checkDate(value));
+		else if(column.equals(ISODATETIMEBEGIN)) setIsoDateTimeBegin(checkDate(value));
 		else if(column.equals(DATASOURCE)) setDataSource((String)value);
 		else if(column.equals(PUBLICATION)) setPublication((Publication)value);
 		else if(column.equals(HERBARIUM)) setHerbarium((String)value);
-		else if(column.equals(CREATEDWHEN)) setCreatedWhen((java.util.Date)value);
-		else if(column.equals(UPDATEDWHEN)) setUpdatedWhen((java.util.Date)value);
+		else if(column.equals(CREATEDWHEN)) setCreatedWhen(checkDate(value));
+		else if(column.equals(UPDATEDWHEN)) setUpdatedWhen(checkDate(value));
 		else if(column.equals(METADATA)) setMetadata((Metadata)value);
 		else if(column.equals(NOTE)) setNote((String)value);
 		else if(column.equals(DELETED)) setDeleted((Integer)value);
@@ -121,6 +130,17 @@ public class Occurrence extends Record implements Deletable {
     	else return c != 0;
     }
     
+    public Date checkDate(Object value) {
+        if (value.getClass() == String.class) {
+             DateFormat myDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");                          
+            try {
+                return myDateFormat.parse((String) value);
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }                          
+        }
+        return (Date) value;            
+    }
     
     /** Creates a new instance of OccurrenceRecord */
     public Occurrence() {

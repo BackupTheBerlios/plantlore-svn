@@ -52,12 +52,14 @@ public class XMLBuilder implements Builder {
     private Element habitat;
     private Element authors;
     private Element author;
+    private Element authorOccurrence;
     private Element metadata;
     private Element publication;
     private Element plant;
     private Element phytochorion;
-    private int authorActual;
+    private int authorCurrent;
     private int authorCount = 0;
+    private boolean isPlantloreNative;
 
     
     /** Creates a new instance of XMLBuilder */
@@ -66,6 +68,18 @@ public class XMLBuilder implements Builder {
         document = DocumentHelper.createDocument(); 
         this.file = fileName;
         this.template = template;
+        this.isPlantloreNative = false;
+    }
+    
+    /** Creates a new instance of XMLBuilder 
+     *     
+     * @parem fileName
+     */
+    public XMLBuilder(String fileName) {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());          
+        document = DocumentHelper.createDocument(); 
+        this.file = fileName;
+        this.isPlantloreNative = true;
     }
     
     public void header() throws IOException {
@@ -91,6 +105,7 @@ public class XMLBuilder implements Builder {
     public void startRecord() throws IOException {        
         occurrence = document.getRootElement().addElement("occurrence");          
         authors = null;    
+        authorOccurrence = null;
         author = null;
         habitat = null;
         metadata = null;
@@ -102,12 +117,18 @@ public class XMLBuilder implements Builder {
     public void part(Record record) throws IOException {
         if(record == null) return;        
         if (record.getClass().equals(AuthorOccurrence.class))
-            authorActual = authorCount + 1;
+            authorCurrent = authorCount + 1;
         // Build this part of the record.
         Class table = record.getClass();
         for( String property : record.getProperties() ) 
+            if (isPlantloreNative) {
+                //Format PlantloreNative
+                output( table, property, record.getValue(property) );
+            } else {
+                //Format XML with selected column
                 if( template.isSet(table, property) )
                         output( table, property, record.getValue(property) );
+            }
         // Now look at all children of this record.
         for(String key : record.getForeignKeys()) {
                 // And build'em too.
@@ -132,18 +153,20 @@ public class XMLBuilder implements Builder {
         } else if (table.getSimpleName().equals(Author.class.getSimpleName())) {
             if (authors == null) 
                 authors = occurrence.addElement("authors");
-            if (authorActual != authorCount) {
-                authorCount = authorActual;
+            if (authorCurrent != authorCount) {
+                authorCount = authorCurrent;
                 author = authors.addElement("author");
-            }
-            author.addElement(column).setText((String) value);
+            }            
+                authorOccurrence.addElement(column).setText((String) value);
         } else if (table.getSimpleName().equals(AuthorOccurrence.class.getSimpleName())) {
             if (authors == null) 
                 authors = occurrence.addElement("authors");
-            if (authorActual != authorCount) {
-                authorCount = authorActual;
+            if (authorCurrent != authorCount) {
+                authorCount = authorCurrent;
                 author = authors.addElement("author");
             }
+            if (authorOccurrence == null) 
+                authorOccurrence = author.addElement("authorOccurrence");
             author.addElement(column).setText((String) value);
         } else if (table.getSimpleName().equals(Metadata.class.getSimpleName())) {
             if (metadata == null)
