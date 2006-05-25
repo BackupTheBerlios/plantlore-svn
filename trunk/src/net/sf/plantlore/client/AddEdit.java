@@ -164,8 +164,7 @@ public class AddEdit extends Observable {
         month = o.getMonthCollected();
         day = o.getDayCollected();
         time = o.getTimeCollected();
-        
-        System.out.println("+++++++++ phytCountry = "+phytCountry+" publication = "+publication+" source = "+source);
+        project = new Pair<String,Integer>(o.getMetadata().getDataSetTitle(), o.getMetadata().getId());
         
         //we also must determine (again) who shares habitat data with us
         loadHabitatSharingOccurrences();

@@ -779,6 +779,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             publicationCombo.setSelectedItem(model.getPublication());
         else
             publicationCombo.setSelectedIndex(0);
+        
+        projectCombo.setSelectedItem(model.getProject());
         herbariumTextField.setText(model.getHerbarium());
         
         if (model.getMonth() != null) {
