@@ -415,7 +415,14 @@ public class AddEditCtrl {
     
     class MonthChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            model.setMonth((Integer) evt.getNewValue());
+            Integer i = (Integer) evt.getNewValue();
+            if (!i.equals(12)) { //there is an empty string at the 12th position in the combobox
+                model.setMonth(i);
+                view.dayChooser.setEnabled(true);
+            } else {
+                model.setMonth(null);
+                view.dayChooser.setEnabled(false);
+            }
         } 
     }
     

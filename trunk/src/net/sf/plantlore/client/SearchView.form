@@ -121,7 +121,7 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getVillages());"/>
             <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="//items = new Object[] {&quot;Praha&quot;, &quot;Brno&quot;, &quot;Turnov&quot;, &quot;Trebic&quot;};"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)townComboBox).setStrict(true);&#xa;townComboBox.setActionCommand(&quot;townComboBox&quot;);"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)townComboBox).setStrict(true);&#xa;townComboBox.setActionCommand(&quot;townComboBox&quot;);&#xa;townComboBox.insertItemAt(model.EMPTY_PAIR,0);"/>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
           </AuxValues>
         </Component>
@@ -277,8 +277,8 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel9" max="32767" attributes="1"/>
                       <Component id="jPanel6" max="32767" attributes="1"/>
+                      <Component id="jPanel9" max="32767" attributes="1"/>
                       <Component id="jPanel1" alignment="1" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
@@ -577,7 +577,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getTerritories()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)territoryNameCombo).setStrict(true);&#xa;territoryNameCombo.setActionCommand(&quot;territoryNameCombo&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)territoryNameCombo).setStrict(true);&#xa;territoryNameCombo.setActionCommand(&quot;territoryNameCombo&quot;);&#xa;territoryNameCombo.insertItemAt(model.EMPTY_PAIR,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -589,7 +589,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getPhytNames()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytNameCombo).setStrict(true);&#xa;phytNameCombo.setActionCommand(&quot;phytNameCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytNameCombo).setStrict(true);&#xa;phytNameCombo.setActionCommand(&quot;phytNameCombo&quot;);&#xa;phytNameCombo.insertItemAt(model.EMPTY_PAIR,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -601,7 +601,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getPhytCodes()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytCodeCombo).setStrict(true);&#xa;phytCodeCombo.setActionCommand(&quot;phytCodeCombo&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytCodeCombo).setStrict(true);&#xa;phytCodeCombo.setActionCommand(&quot;phytCodeCombo&quot;);&#xa;phytCodeCombo.insertItemAt(model.EMPTY_PAIR,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -613,7 +613,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getCountries()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytCountryCombo).setStrict(false);&#xa;phytCountryCombo.setActionCommand(&quot;phytCountryCombo&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)phytCountryCombo).setStrict(false);&#xa;phytCountryCombo.setActionCommand(&quot;phytCountryCombo&quot;);&#xa;phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -657,7 +657,7 @@
                           <Component id="herbariumTextField" alignment="0" pref="113" max="32767" attributes="1"/>
                           <Component id="sourceCombo" alignment="0" pref="171" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="30" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -668,7 +668,7 @@
                           <Component id="sourceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sourceCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="12" max="32767" attributes="0"/>
+                      <EmptySpace pref="24" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="publicationLabel" min="-2" max="-2" attributes="0"/>
                           <Component id="publicationCombo" min="-2" max="-2" attributes="0"/>
@@ -735,7 +735,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getSources()); "/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)sourceCombo).setStrict(false);&#xa;sourceCombo.setActionCommand(&quot;sourceCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)sourceCombo).setStrict(false);&#xa;sourceCombo.setActionCommand(&quot;sourceCombo&quot;);&#xa;sourceCombo.insertItemAt(model.EMPTY_STRING,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -747,7 +747,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getPublications());"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)publicationCombo).setStrict(true);&#xa;publicationCombo.setActionCommand(&quot;publicationCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)publicationCombo).setStrict(true);&#xa;publicationCombo.setActionCommand(&quot;publicationCombo&quot;);&#xa;publicationCombo.insertItemAt(model.EMPTY_PAIR,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -759,7 +759,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBox(model.getProjects());"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)projectCombo).setStrict(true);&#xa;projectCombo.setActionCommand(&quot;projectCombo&quot;);&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoComboBox)projectCombo).setStrict(true);&#xa;projectCombo.setActionCommand(&quot;projectCombo&quot;);&#xa;projectCombo.insertItemAt(model.EMPTY_PAIR,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -840,19 +840,29 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                              <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="12" pref="12" max="12" attributes="0"/>
+                                  <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jLabel8" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="longitudeFormattedTextField" alignment="1" max="32767" attributes="1"/>
-                          <Component id="latitudeFormattedTextField" alignment="1" min="0" pref="0" max="32767" attributes="1"/>
-                          <Component id="altitudeFormattedTextField" alignment="1" min="-2" pref="63" max="-2" attributes="1"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="latitudeTextField" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="altitudeTextField" alignment="0" pref="64" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="longitudeTextField" min="-2" pref="64" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="S42Button" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="WGS84Button" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -866,32 +876,24 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="altitudeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="latitudeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="longitudeFormattedTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="WGS84Button" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                              <Component id="S42Button" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="SJTSKButton" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="WGS84Button" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="altitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="48" max="32767" attributes="0"/>
+                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="S42Button" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="latitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="SJTSKButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="longitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="60" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -902,31 +904,6 @@
                 <Property name="text" type="java.lang.String" value="Altitude:"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-              </AuxValues>
-            </Component>
-            <Component class="javax.swing.JFormattedTextField" name="altitudeFormattedTextField">
-              <Properties>
-                <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="latitudeFormattedTextField"/>
-                </Property>
-              </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JFormattedTextField(nf);"/>
-                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="NumberFormat nf = NumberFormat.getNumberInstance(L10n.getCurrentLocale());&#xa;nf.setMaximumFractionDigits(3);"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="altitudeFormattedTextField.setActionCommand(&quot;altitudeFormattedTextField&quot;);"/>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-              </AuxValues>
-            </Component>
-            <Component class="javax.swing.JFormattedTextField" name="latitudeFormattedTextField">
-              <Properties>
-                <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="longitudeFormattedTextField"/>
-                </Property>
-              </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JFormattedTextField(nf);"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="latitudeFormattedTextField.setActionCommand(&quot;latitudeFormattedTextField&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -943,18 +920,6 @@
                 <Property name="text" type="java.lang.String" value="Longitude:"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-              </AuxValues>
-            </Component>
-            <Component class="javax.swing.JFormattedTextField" name="longitudeFormattedTextField">
-              <Properties>
-                <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="WGS84Button"/>
-                </Property>
-              </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JFormattedTextField(nf);"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="longitudeFormattedTextField.setActionCommand(&quot;longitudeFormattedTextField&quot;);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -1030,6 +995,21 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
+            <Component class="javax.swing.JTextField" name="altitudeTextField">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JTextField" name="latitudeTextField">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JTextField" name="longitudeTextField">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel9">
@@ -1059,7 +1039,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane5" pref="115" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="127" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

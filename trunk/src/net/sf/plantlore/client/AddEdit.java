@@ -120,6 +120,8 @@ public class AddEdit extends Observable {
      * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
      */
     public void setRecord(Integer occurrenceId) {
+        logger.debug("Loading AddEdit data for occurrence id "+occurrenceId);
+        
         DBLayerUtils dlu = new DBLayerUtils(database);
         this.o = (Occurrence) dlu.getObjectFor(occurrenceId, Occurrence.class);
         coordinateSystem = WGS84;
@@ -136,14 +138,7 @@ public class AddEdit extends Observable {
                         
             originalAuthors.add(new Pair<Integer,String>(id,role));
         }
-        
-        Iterator it = originalAuthors.iterator();
-        System.out.println("Original authors are: ");
-        while (it.hasNext()) {
-            Pair<Integer,String> pOA = (Pair<Integer,String>)it.next();
-            System.out.println(""+pOA.getFirst()+":"+pOA.getSecond());
-        }
-        
+                
         village = new Pair(o.getHabitat().getNearestVillage().getName(), o.getHabitat().getNearestVillage().getId());
         
         taxonList = new ArrayList();
@@ -169,7 +164,9 @@ public class AddEdit extends Observable {
         month = o.getMonthCollected();
         day = o.getDayCollected();
         time = o.getTimeCollected();
-                
+        
+        System.out.println("+++++++++ phytCountry = "+phytCountry+" publication = "+publication+" source = "+source);
+        
         //we also must determine (again) who shares habitat data with us
         loadHabitatSharingOccurrences();
     }
@@ -315,8 +312,13 @@ public class AddEdit extends Observable {
     }
 
     public void setPhytCountry(String phytCountry) {
-        this.phytCountry = phytCountry;
-        logger.debug("PhytCountry set to "+phytCountry);
+        if (phytCountry != null && !phytCountry.equals(EMPTY_STRING)) {
+            this.phytCountry = phytCountry;
+            logger.debug("PhytCountry set to "+phytCountry);
+        } else {
+            this.phytCountry = null;
+            logger.debug("PhytCountry set to null");
+        }
     }
 
     public String getQuadrant() {
@@ -360,8 +362,13 @@ public class AddEdit extends Observable {
     }
 
     public void setSource(String source) {
-        this.source = source;
-        logger.debug("Source set to "+source);
+        if (source != null && !source.equals(EMPTY_STRING)) {
+            this.source = source;
+            logger.debug("Source set to "+source);
+        } else {
+            this.source = null;
+            logger.debug("Source set to null.");
+        }
     }
 
     public Pair<String, Integer> getPublication() {
@@ -369,8 +376,13 @@ public class AddEdit extends Observable {
     }
 
     public void setPublication(Pair<String, Integer> publication) {
-        this.publication = publication;
-        logger.debug("Publication set to "+publication);
+        if (publication != null && !publication.equals(EMPTY_PAIR)) {
+            this.publication = publication;
+            logger.debug("Publication set to "+publication);
+        } else {
+            this.publication = null;
+            logger.debug("Publication set to null");
+        }
     }
 
     public String getHerbarium() {
@@ -503,7 +515,7 @@ public class AddEdit extends Observable {
         //cIsoDateTimeBegin construction
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, year);
-        if (!month.equals(12)) { //there is empty string at the 12th position in the monthChooser
+        if (month != null) { 
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH,day);
         } else {
@@ -526,7 +538,7 @@ public class AddEdit extends Observable {
         }
         occ.setIsoDateTimeBegin(c.getTime());
         
-        if (!month.equals(12)) occ.setMonthCollected(month); // 12 ... see a few lines above
+        if (month != null) occ.setMonthCollected(month); 
         if (occurrenceNote != null) occ.setNote(occurrenceNote);
         occ.setPlant(plant);
         occ.setYearCollected(year);
@@ -605,16 +617,27 @@ public class AddEdit extends Observable {
         //cIsoDateTimeBegin construction
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH,day);
+        if (month != null) { //user entered month
+            c.set(Calendar.MONTH, month);
+            c.set(Calendar.DAY_OF_MONTH,day);
+        } else { //user didn't enter month, however we still have to compose cIsoDateTimeBegin column
+            c.set(Calendar.MONTH, 0);
+            c.set(Calendar.DAY_OF_MONTH,1);            
+        }
         Calendar temp = Calendar.getInstance();
-        temp.setTime(time);
-        c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
-        c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+        if (time != null) {
+            temp.setTime(time);
+            c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
+            c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+        } else {
+            c.set(Calendar.HOUR_OF_DAY,0);
+            c.set(Calendar.MINUTE,1); //to avoid problems with possible strong inequality in search
+        }
         o.setIsoDateTimeBegin(c.getTime());
         
         o.setMetadata(m);
         o.setMonthCollected(month);
+        
         o.setNote(occurrenceNote);
         o.setPlant(plant);
         o.setPublication(publ);
@@ -657,15 +680,7 @@ public class AddEdit extends Observable {
         occTmp.setUnitValue(o.getUnitValue());
         occTmp.setYearCollected(o.getYearCollected());
         occTmp.setDeleted(0);
-        
-        //#### 2BE REMOVED
-        DBLayerUtils dlu = new DBLayerUtils(database);
-        occTmp.setCreatedWhen(new Date());
-        occTmp.setUpdatedWhen(new Date());
-        occTmp.setCreatedWho((User) dlu.getObjectFor(2,User.class));
-        occTmp.setUpdatedWho((User) dlu.getObjectFor(2,User.class));        
-        //####
-        
+                
         return occTmp;
     }
     
@@ -706,12 +721,10 @@ public class AddEdit extends Observable {
                     boolean originalTaxonSurvived = false;
                     
                     for (int t = 0; t < taxonList.size(); t++) {
-                        System.out.print("#"+taxonOriginal + "# vs #"+taxonList.get(t)+"#");
                         if (taxonOriginal.equals(taxonList.get(t))) {
                             originalTaxonSurvived = true;
                             break;
                         }
-                        System.out.println(" NO");
                     }
 
                     prepareOccurrenceUpdate(updateAllPlants);

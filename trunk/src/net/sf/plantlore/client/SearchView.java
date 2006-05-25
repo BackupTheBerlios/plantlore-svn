@@ -110,16 +110,14 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         locationNoteArea = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        NumberFormat nf = NumberFormat.getNumberInstance(L10n.getCurrentLocale());
-        nf.setMaximumFractionDigits(3);
-        altitudeFormattedTextField = new JFormattedTextField(nf);
-        latitudeFormattedTextField = new JFormattedTextField(nf);
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        longitudeFormattedTextField = new JFormattedTextField(nf);
         WGS84Button = new javax.swing.JRadioButton();
         S42Button = new javax.swing.JRadioButton();
         SJTSKButton = new javax.swing.JRadioButton();
+        altitudeTextField = new javax.swing.JTextField();
+        latitudeTextField = new javax.swing.JTextField();
+        longitudeTextField = new javax.swing.JTextField();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         occurrenceNoteArea = new javax.swing.JTextArea();
@@ -136,6 +134,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
         ((AutoComboBox)townComboBox).setStrict(true);
         townComboBox.setActionCommand("townComboBox");
+        townComboBox.insertItemAt(model.EMPTY_PAIR,0);
 
         TaxonLabel.setText("Taxon:");
 
@@ -312,15 +311,19 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
         ((AutoComboBox)territoryNameCombo).setStrict(true);
         territoryNameCombo.setActionCommand("territoryNameCombo");
+        territoryNameCombo.insertItemAt(model.EMPTY_PAIR,0);
 
         ((AutoComboBox)phytNameCombo).setStrict(true);
         phytNameCombo.setActionCommand("phytNameCombo");
+        phytNameCombo.insertItemAt(model.EMPTY_PAIR,0);
 
         ((AutoComboBox)phytCodeCombo).setStrict(true);
         phytCodeCombo.setActionCommand("phytCodeCombo");
+        phytCodeCombo.insertItemAt(model.EMPTY_PAIR,0);
 
         ((AutoComboBox)phytCountryCombo).setStrict(false);
         phytCountryCombo.setActionCommand("phytCountryCombo");
+        phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);
 
         quadrantTextField.setActionCommand("quadrantTextField");
 
@@ -395,12 +398,15 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
         ((AutoComboBox)sourceCombo).setStrict(false);
         sourceCombo.setActionCommand("sourceCombo");
+        sourceCombo.insertItemAt(model.EMPTY_STRING,0);
 
         ((AutoComboBox)publicationCombo).setStrict(true);
         publicationCombo.setActionCommand("publicationCombo");
+        publicationCombo.insertItemAt(model.EMPTY_PAIR,0);
 
         ((AutoComboBox)projectCombo).setStrict(true);
         projectCombo.setActionCommand("projectCombo");
+        projectCombo.insertItemAt(model.EMPTY_PAIR,0);
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -419,7 +425,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     .add(publicationCombo, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(herbariumTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                     .add(sourceCombo, 0, 171, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -427,7 +433,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(sourceLabel)
                     .add(sourceCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 24, Short.MAX_VALUE)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(publicationLabel)
                     .add(publicationCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -468,18 +474,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "GPS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10)));
         jLabel6.setText("Altitude:");
 
-        altitudeFormattedTextField.setNextFocusableComponent(latitudeFormattedTextField);
-        altitudeFormattedTextField.setActionCommand("altitudeFormattedTextField");
-
-        latitudeFormattedTextField.setNextFocusableComponent(longitudeFormattedTextField);
-        latitudeFormattedTextField.setActionCommand("latitudeFormattedTextField");
-
         jLabel7.setText("Latitude:");
 
         jLabel8.setText("Longitude:");
-
-        longitudeFormattedTextField.setNextFocusableComponent(WGS84Button);
-        longitudeFormattedTextField.setActionCommand("longitudeFormattedTextField");
 
         convertCoordinatesGroup.add(WGS84Button);
         WGS84Button.setText("WGS84");
@@ -515,15 +512,21 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(jLabel6)
-                        .add(jLabel7))
-                    .add(jLabel8))
+                        .add(jPanel1Layout.createSequentialGroup()
+                            .add(12, 12, 12)
+                            .add(jLabel7))
+                        .add(jLabel8))
+                    .add(jLabel6))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(longitudeFormattedTextField)
-                    .add(latitudeFormattedTextField, 0, 0, Short.MAX_VALUE)
-                    .add(altitudeFormattedTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(25, 25, 25)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(latitudeTextField)
+                            .add(altitudeTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
+                        .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(S42Button)
                     .add(WGS84Button)
@@ -534,26 +537,21 @@ public class SearchView extends javax.swing.JDialog implements Observer {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(altitudeFormattedTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel6))
-                        .add(6, 6, 6)
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(latitudeFormattedTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel7))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(longitudeFormattedTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel8)))
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(WGS84Button)
-                        .add(6, 6, 6)
-                        .add(S42Button)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(SJTSKButton)))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(WGS84Button)
+                    .add(jLabel6)
+                    .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(6, 6, 6)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(S42Button)
+                    .add(jLabel7)
+                    .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(SJTSKButton)
+                    .add(jLabel8)
+                    .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ocurrence note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
@@ -575,7 +573,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
-                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -608,8 +606,8 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .add(0, 0, 0)
                 .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -713,25 +711,26 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         
     public void clearComponentData() {
         model.clearAuthors(); resetAuthorModel(); initAuthorTable();
-        townComboBox.setSelectedIndex(-1);
+        townComboBox.setSelectedIndex(0);
         taxonTextArea.setText("");
         descriptionArea.setText("");
         
         locationNoteArea.setText("");
         occurrenceNoteArea.setText("");
-        territoryNameCombo.setSelectedIndex(-1);
-        phytNameCombo.setSelectedIndex(-1);
-        phytCodeCombo.setSelectedIndex(-1);
-        phytCountryCombo.setSelectedIndex(-1);
+        territoryNameCombo.setSelectedIndex(0);
+        phytNameCombo.setSelectedIndex(0);
+        phytCodeCombo.setSelectedIndex(0);
+        phytCountryCombo.setSelectedIndex(0);
         quadrantTextField.setText("");
         
-        altitudeFormattedTextField.setText("");
-        longitudeFormattedTextField.setText("");
-        latitudeFormattedTextField.setText("");
-        sourceCombo.setSelectedIndex(-1);
-        publicationCombo.setSelectedIndex(-1);
+        altitudeTextField.setText("");
+        longitudeTextField.setText("");
+        latitudeTextField.setText("");
+        sourceCombo.setSelectedIndex(0);
+        publicationCombo.setSelectedIndex(0);
+        projectCombo.setSelectedIndex(0);
         herbariumTextField.setText("");
-        ((JComboBox)monthChooser.getComboBox()).setSelectedItem("");
+        ((JComboBox)monthChooser.getComboBox()).setSelectedIndex(12);
         
         intervalRadioButton.setSelected(true);        
         monthLabel.setEnabled(false);
@@ -788,7 +787,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel TaxonLabel;
     protected javax.swing.JLabel TownLabel;
     protected javax.swing.JRadioButton WGS84Button;
-    protected javax.swing.JFormattedTextField altitudeFormattedTextField;
+    protected javax.swing.JTextField altitudeTextField;
     protected javax.swing.JTable authorTable;
     protected javax.swing.JButton cancelButton;
     private javax.swing.ButtonGroup convertCoordinatesGroup;
@@ -823,9 +822,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    protected javax.swing.JFormattedTextField latitudeFormattedTextField;
+    protected javax.swing.JTextField latitudeTextField;
     protected javax.swing.JTextArea locationNoteArea;
-    protected javax.swing.JFormattedTextField longitudeFormattedTextField;
+    protected javax.swing.JTextField longitudeTextField;
     protected com.toedter.calendar.JMonthChooser monthChooser;
     protected javax.swing.JLabel monthLabel;
     protected javax.swing.JRadioButton monthRadioButton;

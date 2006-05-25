@@ -7,6 +7,7 @@
 package net.sf.plantlore.client;
 
 import java.awt.Dimension;
+import java.awt.event.FocusListener;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -275,12 +276,16 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         dayLabel.setText("Day:");
 
+        monthChooser.setNextFocusableComponent(dayChooser);
         ((JComboBox)monthChooser.getComboBox()).addItem("");
         monthChooser.setLocale(L10n.getCurrentLocale());
 
+        dayChooser.setNextFocusableComponent(okButton);
         dayChooser.setLocale(L10n.getCurrentLocale());
 
         timeLabel.setText("Time:");
+
+        timeTextField.setNextFocusableComponent(okButton);
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -472,7 +477,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -514,6 +519,12 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         SJTSKButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         SJTSKButton.setNextFocusableComponent(sourceCombo);
         SJTSKButton.setActionCommand("SJTSK");
+
+        altitudeTextField.setNextFocusableComponent(latitudeTextField);
+
+        latitudeTextField.setNextFocusableComponent(longitudeTextField);
+
+        longitudeTextField.setNextFocusableComponent(WGS84Button);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -574,7 +585,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -751,19 +762,31 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         territoryNameCombo.setSelectedItem(model.getTerritoryName());
         phytNameCombo.setSelectedItem(model.getPhytName());
         phytCodeCombo.setSelectedItem(model.getPhytCode());
-        phytCountryCombo.setSelectedItem(model.getPhytCountry());
+        if (model.getPhytCountry() != null) 
+            phytCountryCombo.setSelectedItem(model.getPhytCountry());
+        else
+            phytCountryCombo.setSelectedIndex(0);
         quadrantTextField.setText(model.getQuadrant());
         
-        altitudeTextField.setText(""+model.getAltitude());
-        longitudeTextField.setText(""+model.getLongitude());
-        latitudeTextField.setText(""+model.getLatitude());
-        sourceCombo.setSelectedItem(model.getSource());
-        publicationCombo.setSelectedItem(model.getPublication());
+        if (model.getAltitude() != null) altitudeTextField.setText(""+model.getAltitude());
+        if (model.getLongitude() != null) longitudeTextField.setText(""+model.getLongitude());
+        if (model.getLatitude() != null) latitudeTextField.setText(""+model.getLatitude());
+        if (model.getSource() != null) 
+            sourceCombo.setSelectedItem(model.getSource());
+        else
+            sourceCombo.setSelectedIndex(0);
+        if (model.getPublication() != null)
+            publicationCombo.setSelectedItem(model.getPublication());
+        else
+            publicationCombo.setSelectedIndex(0);
         herbariumTextField.setText(model.getHerbarium());
         
-        monthChooser.setMonth(model.getMonth());
-        dayChooser.setDay(model.getDay());     
-        dayChooser.setMonth(model.getMonth());
+        if (model.getMonth() != null) {
+            monthChooser.setMonth(model.getMonth());
+            dayChooser.setDay(model.getDay());     
+            dayChooser.setMonth(model.getMonth());
+        } else
+            ((JComboBox)monthChooser.getComboBox()).setSelectedIndex(12);
     }
     
     public void clearComponentData() {
@@ -876,7 +899,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         if (arg instanceof String) {
             String s = (String)arg;
             if (s.equals("updateDayChooser")) {
-                dayChooser.setMonth(model.getMonth());
+                if (model.getMonth() != null)
+                    dayChooser.setMonth(model.getMonth());
             }
         }
     }

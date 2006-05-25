@@ -20,8 +20,11 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
@@ -36,6 +39,7 @@ import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import org.apache.log4j.Logger;
@@ -68,9 +72,9 @@ public class SearchCtrl {
         //------- TextFields --------        
         view.herbariumTextField.addFocusListener(new HerbariumListener());
         view.quadrantTextField.addFocusListener(new QuadrantListener());
-        view.altitudeFormattedTextField.addPropertyChangeListener("value",new AltitudeListener());
-        view.longitudeFormattedTextField.addPropertyChangeListener("value",new LongitudeListener());
-        view.latitudeFormattedTextField.addPropertyChangeListener("value",new LatitudeListener());
+        view.altitudeTextField.addFocusListener(new AltitudeListener());
+        view.longitudeTextField.addFocusListener(new LongitudeListener());
+        view.latitudeTextField.addFocusListener(new LatitudeListener());
         
         //------- TextAreas --------        
         view.taxonTextArea.addFocusListener(new TaxonAreaListener());
@@ -165,7 +169,11 @@ public class SearchCtrl {
 
     class MonthChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            model.setMonth((Integer) evt.getNewValue());
+            Integer i = (Integer) evt.getNewValue();
+            if (!i.equals(12))
+                model.setMonth(i);
+            else
+                model.setMonth(null);
         } 
     }
     
@@ -267,35 +275,116 @@ public class SearchCtrl {
         }
     }//QuadrantListener
     
-    class MonthListener implements ChangeListener {
-        public void stateChanged(ChangeEvent e) {
-            JSpinner s = (JSpinner) e.getSource();
-            model.setMonth((Integer)s.getValue());
+    class AltitudeListener implements FocusListener {
+        NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
+        NumberFormat nfUS = NumberFormat.getNumberInstance( Locale.US );
+
+        public void focusGained(FocusEvent e) {
         }
-    }//MonthListener
-    
-    
-    class AltitudeListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getNewValue() != null)
-                model.setAltitude(((Number)evt.getNewValue()).doubleValue());
-        }        
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            if (tf.getText().trim().equals("")) {
+                model.setAltitude(null);
+                return;
+            }
+            
+            Double value;
+            try {
+                value = nf.parse(tf.getText()).doubleValue();
+                String s = nf.format(value);
+                if (!s.equals(tf.getText().trim()))
+                    throw new ParseException("Parsing could stop at decimal point. Take a closer look.",0);
+                model.setAltitude(value);
+            } catch (ParseException ex) {
+                try {
+                    value = nfUS.parse(tf.getText()).doubleValue();
+                    model.setAltitude(value);
+                    tf.setText(nf.format(value)); //print the number using proper decimal point
+                } catch (ParseException ex2) {
+                    if (model.getAltitude() != null) {
+                        tf.setText(""+nf.format(model.getAltitude()));
+                    } else
+                        tf.setText("");
+                    return;
+                }
+            }
+        }
     }//AltitudeListener
 
-    class LongitudeListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getNewValue() != null)
-                model.setLongitude(((Number)evt.getNewValue()).doubleValue());
-        }        
-    }//LongitudeListener
+    class LatitudeListener implements FocusListener {
+        NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
+        NumberFormat nfUS = NumberFormat.getNumberInstance( Locale.US );
 
-    class LatitudeListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getNewValue() != null)
-                model.setLatitude(((Number)evt.getNewValue()).doubleValue());
-        }        
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            if (tf.getText().trim().equals("")) {
+                model.setLatitude(null);
+                return;
+            }
+            
+            Double value;
+            try {
+                value = nf.parse(tf.getText()).doubleValue();
+                String s = nf.format(value);
+                if (!s.equals(tf.getText().trim()))
+                    throw new ParseException("Parsing could stop at decimal point. Take a closer look.",0);
+                model.setLatitude(value);
+            } catch (ParseException ex) {
+                try {
+                    value = nfUS.parse(tf.getText()).doubleValue();
+                    tf.setText(nf.format(value)); //print the number using proper decimal point
+                    model.setLatitude(value);                    
+                } catch (ParseException ex2) {
+                    if (model.getLatitude() != null)
+                        tf.setText(""+model.getLatitude());
+                    else
+                        tf.setText("");
+                    return;
+                }
+            }
+        }
     }//LatitudeListener
 
+    class LongitudeListener implements FocusListener {
+        NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
+        NumberFormat nfUS = NumberFormat.getNumberInstance( Locale.US );
+        
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            if (tf.getText().trim().equals("")) {
+                model.setLongitude(null);
+                return;
+            }
+            
+            Double value;
+            try {
+                value = nf.parse(tf.getText()).doubleValue();
+                String s = nf.format(value);
+                if (!s.equals(tf.getText().trim()))
+                    throw new ParseException("Parsing could stop at decimal point. Take a closer look.",0);
+                model.setLongitude(value);
+            } catch (ParseException ex) {
+                try {
+                    value = nfUS.parse(tf.getText()).doubleValue();
+                    tf.setText(nf.format(value)); //print the number using proper decimal point
+                    model.setLongitude(value);                    
+                } catch (ParseException ex2) {
+                    if (model.getLongitude() != null)
+                        tf.setText(""+model.getLongitude());
+                    else
+                        tf.setText("");
+                    return;
+                }
+            }
+        }
+    }//LongitudeListener
     
     class ExtendedButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {

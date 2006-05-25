@@ -31,6 +31,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import org.apache.log4j.Logger;
@@ -46,6 +47,8 @@ import static net.sf.plantlore.common.PlantloreConstants.RESTR_LIKE;
 public class Search extends Observable {
     public static final int INTERVAL = 1;
     public static final int MONTH = 2;
+    public static final String EMPTY_STRING = L10n.getString("Common.ComboboxNothingSelected");
+    public static final Pair<String,Integer> EMPTY_PAIR = new Pair<String,Integer>(EMPTY_STRING,-1);
     
     private Logger logger;
     private DBLayer database;      
@@ -365,14 +368,14 @@ public class Search extends Observable {
     }
     
     public boolean isNotEmpty(String s) {
-        if (s != null && !s.equals(""))
+        if (s != null && !s.equals("") && !s.equals(EMPTY_STRING))
             return true;
         else
             return false;
     }
 
     public boolean isNotEmpty(Pair<String,Integer> p) {
-        if (p != null && p.getFirst() != null &&!p.getFirst().equals(""))
+        if (p != null && p.getFirst() != null &&!p.getFirst().equals("") && !p.equals(EMPTY_PAIR))
             return true;
         else
             return false;
@@ -575,7 +578,7 @@ public class Search extends Observable {
                 sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
                 sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
                 sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
-                //sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
                 
                 for (Column column : columns) {
                     switch (column.type) {
