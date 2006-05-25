@@ -59,6 +59,11 @@ public class Habitat extends Record implements Deletable {
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     
+    public List<String> getHistoryColumns() {
+        return asList(  TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+                        QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE);
+    }
+    
     @Override 
     public boolean isDead() {
     	Integer c = getDeleted();

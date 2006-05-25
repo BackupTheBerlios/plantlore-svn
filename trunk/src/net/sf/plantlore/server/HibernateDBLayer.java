@@ -137,8 +137,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // TODO: this should be loaded from a configuration file on the server
         // We are temporarily using this for DB authetication and user athentication as well
-        System.out.println("USER: "+user);
-        System.out.println("PASSWORD: "+password); 
         cfg.setProperty("hibernate.connection.url", dbID);
         cfg.setProperty("hibernate.connection.username", user);
         cfg.setProperty("hibernate.connection.password", password);        
@@ -264,7 +262,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (data instanceof Occurrence) {
             Occurrence occ = (Occurrence)data;
             occ.setCreatedWhen(new java.util.Date());
+            occ.setUpdatedWhen(new java.util.Date());
             occ.setCreatedWho(this.plantloreUser);
+            occ.setUpdatedWho(this.plantloreUser);
             data = occ;
         }
         if (data instanceof Publication) {
@@ -406,7 +406,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         try {
             tx = session.beginTransaction();            
             // Save records into the history
-            System.out.println("GOING TO SAVE HISTORY");
             saveHistory(session, data, UPDATE, null);            
             // Save item into the database
             session.update(data);
@@ -417,6 +416,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 tx.rollback();
             }
             logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
+            e.printStackTrace();
             DBLayerException ex = new DBLayerException("Updating record in the database failed. Details: "+e.getMessage());
             ex.setError(ex.ERROR_UPDATE, null);
             throw ex;            
@@ -1106,10 +1106,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 }
                 Object[] res = sc.get();
                 Habitat hab = (Habitat)res[0];
+                sess.close();
+                sess = this.sessionFactory.openSession();                
                 boolean equal = false;
                 // Check for direct ownership first. Find owner of associated occurrence
                 sc = sess.createCriteria(Occurrence.class)
-                    .add(Restrictions.eq(Occurrence.HABITAT, hab.getId()))
+                    .add(Restrictions.eq(Occurrence.HABITAT, hab))
                     .scroll();
                 // If no occurrence was found
                 if (!sc.next()) {
@@ -1117,12 +1119,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     ex = new DBLayerException("No occurrence references selected habitat. Habitat ID:"+hab.getId());
                     ex.setError(ex.ERROR_DB, null);
                     throw ex;                          
-                }                
+                }    
                 res = sc.get();
                 Occurrence occ = (Occurrence)res[0];
                 if (occ.getCreatedWho().equals(this.plantloreUser)) {
                     equal = true;
-                }                
+                }       
                 // Check for administrator rights
                 // TODO: This should be done at the beginning to save one query if the user is admin
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
@@ -1161,7 +1163,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             if ((type == DELETE) || (type == UPDATE)) {
                 // Only data of the user and those listed in CEDITGROUP
                 sess = this.sessionFactory.openSession();
-                ScrollableResults sc = sess.createCriteria(Occurrence.class)
+                ScrollableResults sc = sess.createCriteria(AuthorOccurrence.class)
                     .add(Restrictions.eq(AuthorOccurrence.ID, ((AuthorOccurrence)data).getId()))
                     .scroll();
                 // If we haven't found the occurrence in the database, raise exception
@@ -1224,34 +1226,25 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Integer updatedId = null;
         ScrollableResults sr;
         
-        System.out.println(">>>>>>>>>>>> ENTERING saveHistory()");
         // Update tMetaData.cDateModified for any operation on Occurrences and Habitats
-/*        if ((data instanceof Occurrence) || (data instanceof Habitat)) {
-            if (data instanceof Occurrence) {
-                // Read the associated metadata
-                sr = sess.createCriteria(Occurrence.class)
-                    .add(Restrictions.eq(Occurrence.ID, recordId))
-                    .scroll();
-            } else {
-                // Read the associated occurrence and metadata
-                // System.out.println(">>>>>>> GOT HABITAT: "+data.toString());
-                sr = sess.createCriteria(Occurrence.class)
-                    .add(Restrictions.eq(Occurrence.HABITAT, recordId))
-                    .scroll();                    
-            }
+        if (data instanceof Occurrence) {
+            Integer occId = ((Occurrence)data).getId();
+            // Read the associated metadata
+            sr = sess.createCriteria(Occurrence.class)
+                .add(Restrictions.eq(Occurrence.ID, occId))
+                .scroll();
             if (!sr.next()) {
                 logger.error("Occurrence record for the given Metadata not found");
                 DBLayerException ex = new DBLayerException("Occurrence record for the given Metadata not found");
                 ex.setError(ex.ERROR_OTHER, null);
                 throw ex;                    
             }
-            System.out.println(">>>>>>>>>>>>> We got the Occurrence!");
             Object[] res = sr.get();
             Occurrence occ = (Occurrence)res[0];
             occ.getMetadata().setDateModified(new java.util.Date());
             sess.update(occ.getMetadata());
         }
- */
+ 
         // Saving history when new record is inserted
         if (type == INSERT) {
             HistoryChange historyChange = new HistoryChange();            
@@ -1413,7 +1406,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     historyChange.setRecordId(((Village)data).getId());                    
                 }                    
                 // Save the HistoryChange object
-                System.out.println("GOING TO SAVE HISTORY RECORD");
                 sess.save(historyChange);
                 // Read the to-be-updated object
                 Session tempSess = this.sessionFactory.openSession(); 
@@ -1480,7 +1472,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
                             hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
                             hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
-                            sess.save(hist);                            
+                            sess.save(hist);     
                         }
                     }
                 } else if (data instanceof Territory) {
@@ -1612,7 +1604,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 Object[] original = res.get();
                 Occurrence origRec = (Occurrence)original[0];
                 Occurrence newRec = (Occurrence)data;
-                ArrayList cols = (ArrayList)origRec.getColumns();
+                // Save the historyChange
+                sess.save(historyChange);                
+                ArrayList cols = (ArrayList)origRec.getHistoryColumns();
                 for (int i=0;i<cols.size();i++) {
                     if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
                         // Read record from THISTORYCOLUMN first
@@ -1628,20 +1622,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                         }
                         Object[] colNames = res.get();
                         // Save OldRecordId if neccessary
-                        if ((((String)cols.get(i)).equals(Occurrence.PLANT)) || (((String)cols.get(i)).equals(Occurrence.PUBLICATION))) {
-                            historyChange.setOldRecordId((Integer)newRec.getValue((String)cols.get(i)));
-                        }
+                        
+// TODO: Save oldRecordId                        
+//                        if ((((String)cols.get(i)).equals(Occurrence.PLANT)) || (((String)cols.get(i)).equals(Occurrence.PUBLICATION))) {
+//                            historyChange.setOldRecordId((Integer)newRec.getValue((String)cols.get(i)));
+//                        }
                         // Save record into THISTORY
                         HistoryRecord hist = new HistoryRecord();
                         hist.setHistoryChange(historyChange);
                         hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                        hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                        hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                        hist.setOldValue(origRec.getValue((String)cols.get(i)).toString());
+                        hist.setNewValue(newRec.getValue((String)cols.get(i)).toString());
                         sess.save(hist);
                     }
                 }
-                // Save the historyChange
-                sess.save(historyChange);
             }
         }
     }

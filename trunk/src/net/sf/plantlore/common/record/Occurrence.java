@@ -80,6 +80,11 @@ public class Occurrence extends Record implements Deletable {
     			/*UPDATEDWHEN,*/ METADATA, NOTE );
     }
     
+    public List<String> getHistoryColumns() {
+        return asList(  PLANT, YEARCOLLECTED, MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, 
+                        ISODATETIMEBEGIN, DATASOURCE, PUBLICATION, HERBARIUM, METADATA, NOTE);
+    }
+            
     public List<String> getNN() {
     	List<String> nn = getForeignKeys();
     	nn.remove(PUBLICATION);
