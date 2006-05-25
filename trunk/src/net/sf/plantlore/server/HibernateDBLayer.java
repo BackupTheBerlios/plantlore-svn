@@ -1230,7 +1230,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (data instanceof Occurrence) {
             Integer occId = ((Occurrence)data).getId();
             // Read the associated metadata
-            sr = sess.createCriteria(Occurrence.class)
+            Session tmpSess = this.sessionFactory.openSession();
+            sr = tmpSess.createCriteria(Occurrence.class)
                 .add(Restrictions.eq(Occurrence.ID, occId))
                 .scroll();
             if (!sr.next()) {
@@ -1240,6 +1241,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 throw ex;                    
             }
             Object[] res = sr.get();
+            tmpSess.close();
             Occurrence occ = (Occurrence)res[0];
             occ.getMetadata().setDateModified(new java.util.Date());
             sess.update(occ.getMetadata());
@@ -1592,7 +1594,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 historyChange.setWhen(new java.util.Date());
                 historyChange.setWho(this.plantloreUser);                
                 // Read the original occurrence
-                ScrollableResults res = sess.createCriteria(Occurrence.class)
+                Session tempSess = this.sessionFactory.openSession();
+                ScrollableResults res = tempSess.createCriteria(Occurrence.class)
                     .add(Restrictions.eq(Occurrence.ID, ((Occurrence)data).getId()))
                     .scroll();
                 if (!res.next()) {
@@ -1602,6 +1605,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     throw ex;
                 }
                 Object[] original = res.get();
+                tempSess.close();
                 Occurrence origRec = (Occurrence)original[0];
                 Occurrence newRec = (Occurrence)data;
                 // Save the historyChange
@@ -1609,6 +1613,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 ArrayList cols = (ArrayList)origRec.getHistoryColumns();
                 for (int i=0;i<cols.size();i++) {
                     if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                        System.out.println("COLUMN: "+(String)cols.get(i));
                         // Read record from THISTORYCOLUMN first
                         res = sess.createCriteria(HistoryColumn.class)
                             .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_OCCURRENCE))
