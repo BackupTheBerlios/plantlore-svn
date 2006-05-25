@@ -2,9 +2,101 @@
 <head>
 <meta http-equiv="Content-Language" content="cs-CZ" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Spr�va u�ivatel�</title>
+<title>Správa uživatelů</title>
 </head>
 <body>
-<h1>Spr�va u�ivatel�</h1>
+<h1>Správa uživatelů</h1>
+
+Správce uživatelů umožňuje administrátorovi přidávat a editovat uživatele, nastavovat práva uživatelů a také ukončovat jejich přístup do aplikace. 
+Správce uživatelů otevřete z menu <b>Data/User</b>.
+<br><br>
+<img src="picture/userDialog.JPG">
+<br><br>
+Dialog pro správu uživatelských účtů je rozdělen do dvou částí:
+<ul>
+  <li><b>Seznam uživatelů</b> - zobrazení seznamu uživatelů podle kriterií zadaných pro vyhledávání a setřízení 
+  <li><b>Vyhledávání</b> - zadání požadavků pro vyhledávání a setřízení uživatelů
+</ul>
+
+<h2>Seznam uživatelů</h2>
+
+Po úspěšném vyhledávání je v této části zobrazen seznam vyhledaných uživatelů. Uživatelů můžebýt více než je nastavený počet záznamů pro zobrazení na 
+jedné stránce. Pro zobrazení dalších uživatelů můžete použít tlačítka NEXT a PREV nebo nastavit větší počet záznamů pro zobrazení.
+<br><br>
+V této části jsou také tlačítka přidání, editování uživatele, zobrazení detailu o uživatelovi a tlačítko pro zrušení přístupu do aplikace.
+Tlačítka ADD, EDIT a DETAILS zobrazí add/edit/details dialog (viz. níže), tlačítko DROP zruší uživatelovi přístup do aplikace a v pložce
+DATE OF DROP se objeví datum a čas provedení této operace. Při použití tlačítek EDIT, DETAILS  a DROP musí být vybrán některý ze zobrazených uživatelů.
+Vybraný uživatel je ten, jehož řádek je zvýrazněn odlišnou barvou. 
+  
+<h2>Vyhledávání</h2>
+
+Správce uživatelů nábízí administrátorovi možnost vyhledávat podle čtyř parametrů: login, jméno, email a adresa. Výsledek může být setřízen podle loginu,
+křesního jména, příjmení a datumu vytvoření uživatele a to sestupně, nebo vzestupně. Dalším kritériem pro vyhledávání je požadavek zobrazení všech 
+uživatelů, nebo jen uživatelů s platným přístupem do aplikace (hodnota položky DATE OF DROP je u těchto uživatelů nevyplněna). Pokud nejsou zadány, 
+žadné parametry a omezení budou vyhledáni všichni uživatelé. 
+<br><br>
+<b>Pozor:</b>  při vyhledávání jsou rozlišévána velká a malá písmena (case insensitive).
+
+<br><br>
+<img src="picture/userDetais.JPG">
+<br><br>
+
+<h2>Přidání uživatele</h2>
+  
+  Dialog pro přidání nového uživatele můžete otevřít ze Správce Uživatelů. V zobrazeném okně jsou k vyplnění následující položky:
+  <ul>
+    <li><b>Login</b> - login uživatele, který bude používat k přihlašování do aplikace. Tato položka je povinná a bez jejího vyplnění vám aplikace nedovolí
+    živatele přidat. Login musi být v rámci databáze jednoznačný a není po uložení uživatele editovatelný.</li>
+    <li><b>Heslo</b> - přihlašovací heslo uživatele. Tato položka je povinná.</li>
+    <li><b>Jméno</b> - křesní jméno uživatele. Tato položka je povinná.</li>
+    <li><b>Příjmení</b> - příjmení uživatele. Tato položka je povinná.</li>
+    <li><b>Email</b> - email uživatele. Tato položka je povinná.</li>
+    <li><b>Adresa</b> - adresa uživatele.</li>    
+    <li><b>Poznámka</b> - poznámka administrátora o uživateli</li>
+    <li><b>Datum vytvoření</b> - datum a čas informující o vytvoření uživatele. Needitovatelná položka. </li>
+    <li><b>Datum zrušení</b> - datum a čas informující o zrušení přístupu uživatele do aplikace. Needitovatelná položka.</li>
+    <li><b>Právo administrátor</b> - jeho označením získá uživatel stejná práva jako administrátor</li>
+    <li><b>Právo editovat vše</b> - jeho označením získá uživatel právo editovat všechny nálezy v databázy</li>
+    <li><b>Právo přidávat</b> - jeho označením získá uživatel právo pro přidávání nových nálezů</li>
+    <li><b>Pravo editGroup</b> - tato položka obsahuje seznam uživatelů, jejichž nálezy bude moci daný uživatel editovat</li>    
+  
+<h2>Editace uživatele</h2>
+
+  Dialog pro editaci existujícího uživatele otevřete ze Správce uživatelů. Nezapomeňte, že pro otevření dialogu musíte mít označeného uživatele.
+  Vzhled edit dialogu je téměř totožný s add dialogem. Povinné položky jsou: login, heslo, jméno, příjmení, email. Needitovatelené položky jsou: datum vytvoření, 
+  datum zrušení a nově přibyla položka login. 
+
+<h2>Detailní data a práva uživatele</h2>
+
+  Dialog zobrazující detailní informaci o uživatelovi a jeho právech otevřete ze Správce uživatelů. Pro otevření tohoto dialogu je nutné 
+  označit požadovaného uživatele v seznamu uživatelů. Dialog je téměř totožný s add dialogem. Všechny položky jsou needitovatelné, mají jen 
+  informační charakter.
+  
+<h2>Zrušení přístupu uživatele</h2>
+
+  Pro zrušení přístupu uživatele do aplikace se použije tlačítko DROP USE ve strávci uživatelů. Před stisknutím tohoto tlačítka je nutné
+  označi požadovaného uživatele v seznamu uživatelů. Po provedení operace DROP USER bude uživatelovi nastaven aktualní čas do položky DATE OF DROP.   
+  <br><br>
+  Obnovení přístupu pro zrušeného uživate znamená přidání nového uživatele. V databázi tak zůstává přehled o obdobích, kdy měl který uživatel 
+  přístup do aplikace.  
+
+<h2>Práva uživatele</h2>
+  
+  Administrátor při přidávání uživatele nastavuje práva pro práci s daty aplikace.<br> 
+  Jaká práva může uživatel mít?
+  <ul>
+    <li><b>právo prohlížení dat</b> - toto právo se nikde nenastavuje a uživatel je získává automaticky s vytvořením přístupu do aplikace</li>
+    <li><b>právo přidávat data</b> - nastavením tohoto práva má uživatel možnost přídávat nálezy, autory a publikace. Zároveň má automaticky právo
+    editovat záznamy, které přidal. Dále má právo na zobrazení historie nálezu, který přidal.</li>
+    <li><b>právo editace dat jiných uživatelů</b> - uživatel (Pepa) po domluvě s jiným uživatelem (Frantou) může požadat administrátora o přidání 
+    uživatele Frantu do senamu EDITGROU. Po přidání Franty do EDITGROUP bude moci Pepa kromě svých nálezu editovat i Frantovy nálezy a bude mít  
+    přístup k jejich historii.</li>
+    <li><b>právo editovat vše</b></li> - uživatel s tímto právem muže editovat jakýkoliv nález, autora a publikace bez ohledu na vlastníka záznamu. 
+    Má právo na práci s hisotorií jakéhokoliv nálezu, ale stále nemá právo na práci s celkovou historií.
+    <li><b>právo administrátora</b> - uživatel s právem administrátora má ty nejvyšší práva, může editovat nálezy, metadata, publikace, autory, 
+    rostliny, uživatele, atd. Má právo na historii jednotlivých záznamů i na celkovou historii.
+    </li>
+  </ul>   
+  
 </body>
 </html>

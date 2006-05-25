@@ -1,111 +1,167 @@
 <html>
 <head>
 <meta http-equiv="Content-Language" content="cs-CZ" />
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1250" />
-<title>Historie úprav</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Historie Ăşprav</title>
 </head>
 <body>
-<h1>Historie úprav</h1>
+<h1>Historie Ăşprav</h1>
+
+Plantlore vĂˇm nabĂ­zĂ­ moĹľnost sledovat historii zmÄ›n jednotlivĂ˝ch nĂˇlezĹŻ a celkovou historii zmÄ›n tĂ˝kajĂ­cĂ­ se metadat, nĂˇlezĹŻ, autorĹŻ a publikacĂ­. 
+Mezi zĂˇkladnĂ­ zaznamenĂ©vĂˇnĂ© informace o zmÄ›nÄ› patĹ™Ă­:
+<ul> 
+ <li>datum a ÄŤas zmÄ›ny
+ <li>typ operace (vloĹľenĂ­, editovĂˇnĂ­, smazĂˇnĂ­)
+ <li>uĹľivatel, kterĂ˝ zmÄ›nu provedl 
+ <li>editovanĂˇ poloĹľka nebo informace zĂˇznamu
+ <li>starĂˇ hodnota editovanĂ© poloĹľky
+ <li>novĂˇ hodnota editovanĂ© poloĹľky
+</ul>
+  
+Plantlore kromÄ› moĹľnosti sledovat zmĂ­nÄ›nĂ© zmÄ›ny v nĂˇlezovĂ˝ch datech vĂˇm umoĹľnĂ­ zruĹˇit nÄ›kterĂ© zmÄ›ny a vrĂˇtit se tak dĹ™Ă­vÄ›jĹˇĂ­m hodnotĂˇm. PrĂˇce
+s historiĂ­ je z bezpeÄŤnostnĂ­ch dĹŻvodĹŻ omezena jen na uĹľivatele, kteĹ™Ă­ majĂ­ dostateÄŤnĂ© oprĂˇvnÄ›nĂ­ (viz. <a href="./user.html">PrĂˇva uĹľivatelĹŻ</a>).  
 
 <p>
-Zajímavou možností, kterou aplikace uživatelovi nabízí, je sledovat historii změn jednotlivých nálezů a celkovou historii změn týkající se metadat, 
-nálezů, autorů a publikací. Základní informace, které jsou při sledování změn zaznamenávány jsou "čas změny", "typ změny", "uživatel, který změnu provedl", "položka, které se změna týká", 
-"hodnota položky před změnou" a "hodnota položky po změně". 
-<br><br>
-Nejde však jen o sledování změn dat v databázi, ale i o možnost návratu provedených změn. Historie tedy nabízí silný nástroj pro zásah do dat v 
-databázi a proto je zobrazena jen uživatelům, kteří mají dostatečná práva (viz. <a href="./user.html">Práva uživatelů</a>).  
-
+ExitujĂ­ dva odliĹˇnĂ© zpĹŻsoby prĂˇce s historiĂ­ Ăşprav: 
 </p>
+
+<a href="#historyRecord">Historie nĂˇlezu</a> - dĂˇvĂˇ uĹľivatelovi moĹľnost sledovat historii zmÄ›n vybranĂ©ho nĂˇlezu a pouĹľĂ­t operaci UNDO na vybranĂ© poloĹľky nĂˇlezu<br> 
+<a href="#historyData">CelkovĂˇ historie</a> - dĂˇvĂˇ administrĂˇtorovi nĂˇstroj pro kontrolu provedenĂ˝ch zmÄ›n v datech a moĹľnost provĂ©st operaci UNDO ke konkrĂ©tnĂ­mu datumu a ÄŤasu
+
+<br><br>
+<a name="historyRecord"><h2>Historie nĂˇlezu</h2></a>
+
+<img src="picture/historyEnter.jpg" alt="History occurence - enter">
+
 <p>
-Exitují dva odlišné typy sledovaní histori: 
+Pro pĹ™Ă­stup k historii vybranĂ©ho nĂˇlezu staÄŤĂ­ jen oznaÄŤit tento nĂˇlez a kliknout na tlaÄŤĂ­tko HISTORY. Pokud je tlaÄŤĂ­tko HISTORY neaktivnĂ­ a
+pĹ™Ă­stup k hsitorii Ăşprav vĂˇm byl tĂ­mto znemoĹľnÄ›n, tak nemĂˇte prĂˇvo na prĂˇci s vybranĂ˝m nĂˇlezem. UrÄŤitÄ› nebude naĹˇkodu  
+zmĂ­nit, kdy mĂˇte prĂˇvo pracovat s historiĂ­ nĂˇlezu.
 </p>
 <br>
-<a href="#historyRecord">Historie nálezu</a> - dává uživatelovi možnost sledovat historii vybraného nálezu a vrátit se ke starým hodnotám<br> 
-<a href="#historyData">Celková historie</a> - dává administrátorovi nástroj pro kontrolu provedených změn v datech a možnost zrušení  
-těchto změn ke konkrétnímu datumu
+Historie nĂˇlezu je pĹ™Ă­stupnĂˇ:
+<ul>
+   <li>uĹľivatelovi, kterĂ˝ danĂ˝ nĂˇlez vloĹľil do databĂˇze</li>
+   <li>uĹľivatelovi, kterĂ˝ mĂˇ prĂˇvo editovat zĂˇznamy uĹľivatele,kterĂ˝ tento nĂˇlez vloĹľil do databĂˇze</li>
+   <li>uĹľivatelovi, kterĂ˝ mĂˇ prĂˇvo editovat vĹˇechny nĂˇlezy uloĹľenĂ© v databĂˇzi</li>
+   <li>uĹľivatelovi, kterĂ˝ mĂˇ prĂˇvo administrĂˇtora</li>   
+</ul>    
 
-<a name="historyRecord"><h2>Historie nálezu</h2></a>
-
-<div style="position: relative; left: 300; top: 10"><br>
-<img src="picture/historyEnter.jpg" alt="History occurence - enter">
-</div>
-
-<p>
-K historii nálezu se dostanete označením konkrétního nálezu a volbou tlačítka "History" (viz. obr). Jak již bylo zmíněno, tak přístup k historii je 
-ošetřen pomocí práv uživatele. K historii nálezu má právo přistupovat uživatel, který ho vytvořil. Dále uživale s právem editovat všechny záznamy,
-uživatel s administrátorskými právy a uživatel, který má práva na editaci nálezů daného uživatele (viz. <a href="./user.html">Práva uživatelů</a>).
-</p>
+Pokud nemĂˇte pĹ™Ă­stup k historii nĂˇlezu a chtÄ›li byste ho zĂ­skat, tak kontaktujte administrĂˇtora Plantlore.<br>
+PodrobnÄ›jĹˇĂ­ informace o prĂˇvech uĹľivatelĹŻ mĹŻĹľete nastudovat v ÄŤasti <a href="./user.html">PrĂˇva uĹľivatelĹŻ</a>.
 
 <br><br>
 <img src="picture/historyOccurrence3.jpg">
 <br><br>
 
-Dialog pro historii nálezu je rozdělen do tří částí. V první části "Details of the record" jsou uvedeny základní informace o nálezu. 
-V druhé části "Record created" jsou informace týkající se vložení tohoto nálezu do databáze - kdy a kým byl do databáze vložen. Nejzajímavější je
-třetí část "List of Changes", která zobrazuje informace o změnách v tabulce, kde sloupek:
+Dialog historie nĂˇlezu je rozdÄ›len do tĹ™Ă­ ÄŤĂˇstĂ­. 
 <ul>
-<li><b>X</b> slouží pro výběr jednotlivých změn</li>
-<li><b>Date/Time</b> informuje o době, kdy ke změně došlo</li>
-<li><b>user</b> odpovídá uživatelovi, který změnu provedl</li>
-<li><b>Item</b> informuje o položce, která byla změněna</li>
-<li><b>Old value</b> obsahuje hodnotu položky před změnou </li>
-<li><b>New value</b> obseahuje novou hodnotu položky </li>
+  <li><b>Detaily nĂˇlezu</b> - zde jsou zobrazeny zĂˇkladnĂ­ informace o nĂˇlezu (taxon, autoĹ™i nĂˇlezu a lokalita)
+  <li><b>VytvoĹ™enĂ­ nĂˇlezu</b> - zde jsou zobrazeny informace o vloĹľenĂ­ nĂˇlezu do databĂˇze (datum/ÄŤas a uĹľivatel, kterĂ˝ zĂˇznam vloĹľil do databĂˇze)
+  <li><b>Seznam zmÄ›n</b> - zde jsou zobrazeny zĂˇkladnĂ­ informace o jednotlivĂ˝ch zmÄ›nĂˇch nĂˇlezu 
+</ul>
+  
+<h2>Seznam zmÄ›n</h2>
+
+Seznam zmÄ›n nĂˇlezu je setĹ™Ă­zen od ÄŤasovÄ› nejmladĹˇĂ­ch po ÄŤasovÄ› nejstarĹˇĂ­ zmÄ›nu a je zobrazen v tabulce, kterĂˇ obsahuje nĂˇsledujĂ­cĂ­ Ăşdaje:  
+  
+<ul>
+<li><b>X</b> - slouĹľĂ­ pro vĂ˝bÄ›r jednotlivĂ˝ch zmÄ›n</li>
+<li><b>Datum/ÄŤas</b> - informuje o dobÄ›, kdy ke zmÄ›nÄ› doĹˇlo</li>
+<li><b>UĹľivatel</b> - odpovĂ­dĂˇ uĹľivatelovi, kterĂ˝ zmÄ›nu provedl</li>
+<li><b>PoloĹľka</b> - informuje o poloĹľce, kterĂˇ byla zmÄ›nÄ›na</li>
+<li><b>StarĂˇ hodnota</b> - obsahuje hodnotu poloĹľky pĹ™ed zmÄ›nou </li>
+<li><b>NovĂˇ hodnota</b> - obseahuje novou hodnotu poloĹľky </li>
 </ul>
 
-Data v tabulce jsou setřízeny od nejmladších změn po nejstarší.
 
+<h2>Operace UNDO na vybranĂ© poloĹľky</h2>
 
-<h2><i>Návrat vybraných změn</i></h2>
+V historii nĂˇlezu si mĹŻĹľete vybrat zmÄ›nu <b>jen konkrĂ©tnĂ­ poloĹľky</b> v zĂˇznamu a vrĂˇtit se k jejĂ­ starĂ© hodnotÄ›. LiĹˇĂ­ se tedy od klasickĂ© UNDO operace, 
+kde se provedenĂ© zmÄ›ny v zĂˇznamu vracĂ­ od nejmladĹˇĂ­ po nejstarĹˇĂ­ v ÄŤasovĂ©m sledu v jakĂ©m k nim doĹˇlo. UveÄŹmÄ› si pĹ™Ă­klad, kdy vyuĹľijeme zmĂ­nÄ›nĂ©ho 
+vylepĹˇenĂ­ operace UNDO: 
+<i> UdÄ›lĂˇte opravy poloĹľek "Popis oblasti", "VĂ˝sledek revize", "NadmoĹ™skĂˇ vĂ˝Ĺˇka" a po tÄ›chto opravĂˇch udÄ›lĂˇte jeĹˇtÄ› dalĹˇĂ­ch dvacet zmÄ›nĂˇm v nĂˇlezu. 
+UĹľ si nepamatujete pĹ™esnĂ© prvnĂ­ uloĹľenĂ© znÄ›nĂ­ vĂ˝sledku revize, ale chcete se k nÄ›mu vrĂˇtit. U klasickĂ©ho operace UNDO byste museli zruĹˇit postupnÄ› vĹˇechny 
+poslednĂ­ zmÄ›n, abyste nastavili zpÄ›t prvnĂ­ znÄ›nĂ­ vĂ˝sledku revize. V dialogu historie je splnÄ›nĂ­ vaĹˇeho poĹľadavku jednoduchĂ©. Pokud budete chtĂ­t jen
+zjistit prvnĂ­ znÄ›nĂ­ vĂ˝sledku revize staÄŤĂ­ si v seznamu zmÄ›n najĂ­t nejstarĹˇĂ­ znÄ›mu vĂ˝sledku revize a v sloupku STARĂ HODNOTA uĹľ vidĂ­te poĹľadovanĂ˝ text.
+Pokud chcete hodnotu vĂ˝sledku revize nastavit na jeho prvnĂ­ uloĹľenou hodnotu, tak staÄŤĂ­ najĂ­t nejstarĹˇĂ­ zmÄ›nu vĂ˝sledku revize, vybrat danĂ˝ Ĺ™Ăˇdek pomocĂ­
+sloupku X a kliknout na tlaÄŤĂ­tko UNDO SELECTED. NeleknÄ›te se, Ĺľe vĂ˝bÄ›rem danĂ©ho Ĺ™Ăˇdku se vĂˇm vyberou i Ĺ™Ăˇdky, v kterĂ˝ch je zaznamenĂˇna mladĹˇĂ­
+zmÄ›na vĂ˝sledku revize, toto chovĂˇnĂ­ vychĂˇzĂ­ z logiky oznaÄŤovĂˇnĂ­ zmÄ›n (popsĂˇno nĂ­Ĺľe).</i> 
 
-V historii nálezu si můžete vybrat změnu jen konkrétní položky a vrátit se k její staré hodnotě. Proti klasické UNDO operaci, kdy se provedené změny v záznamu
-vrací od nejmladší po nejstarší v časovém sledu v jakém k nim došlo, prináší vám tento návrat vybraných změn nové možnosti. Například
-provedete opravy položek "Popis oblasti", "Výsledek revize", "Nadmořská výška" a po těchto opravách uděláte ještě dalších dvacet změnám v záznamu. 
-U klasického operace UNDO byste museli zrušit postupně všechny poslední změn, abyste mohli vratit starší hodnoty vybraných položek. Pravda je, že byste
-mohli zvolit i pracnější způsob a to znovu editovat nález a přepsat požadované položky na staré hodnoty, které možná už ani neznáte. Dialog historie nálezu
-vám nabízí jednoduchý a rychlý návrat k vybraným hodnotám položek. 
 <br><br>
-Pomocí sloubku "x" vyberte změny, které chcete vrátit. Označení či odznačení lze provést myší kliknutím v sloubku "x" konkrétního řádku tabulky nebo můžete
-využít tlačítek SELECT ALL a UNSELECT ALL. Při použití tlačítek NEXT a PREV pro přechod na následující nebo předchozí seznam změn nedojde k 
-odznačení již označených řádků. Myslete na to, že když pro danou položku je zaznamenáno více změn a vy se rozhodnete vrátit k 
-té nejstarší změně budou automaticky zrušeny časově mladší změny. V dialogu se tedy po označení řádku se změnou starší položky automaticky označí i řádky s mladšími
-změnami této položky. Naopak při odznačení mladší změny se zruší označení starší změn (viz. Logika označování změn).
+Jak jiĹľ bylo zmĂ­nÄ›no, tak pomocĂ­ sloubku X vybĂ­rĂˇte Ăşpravy, kterĂ© chcete vrĂˇtit. OznaÄŤenĂ­ ÄŤi odznaÄŤenĂ­ lze provĂ©st myĹˇĂ­ kliknutĂ­m v sloubku X poĹľadovanĂ©ho
+Ĺ™Ăˇdku. Pro oznaÄŤovĂˇnĂ­ mĹŻĹľete vyuĹľĂ­t i tlaÄŤĂ­tka SELECT ALL a UNSELECT ALL, kterĂ© oznaÄŤĂ­ nebo odznaÄŤĂ­ vĹˇechny zmÄ›ny nĂˇlezu (<b>pozor:</b> 
+oznaÄŤĂ­/odznaÄŤĂ­ se vĹˇechny zmÄ›ny nĂˇlezu, i ty kterĂ© nejsou zobrazeny). PoÄŤet poloĹľek zobrazenĂ˝ch v tabulce si mĹŻĹľete sami nastavit pĹ™epsĂˇnĂ­m hodnoty pro
+"Zobrazit Ĺ™ĂˇdkĹŻ" a potvrzenĂ­m novĂ© hodnoty klĂˇvesovĂ˝m tlaÄŤĂ­tkem ENTER. V tabulce se pĹ™epĂ­nĂˇte na dalĹˇĂ­ nebo pĹ™edchozĂ­ seznam zmÄ›n pomocĂ­ tlaÄŤĂ­tek NEXT a PREV. 
+Informace o aktuĂˇlnÄ› zobrazovanĂ˝ch zmÄ›nĂˇch jsou uvedeny v ÄŤĂˇsti pod tabulkou.
+
 <br><br> 
-Stiskněte tlačítko UNDO SELECTED, zobrazí se informace se seznamem změn, které budou provedeny. Volbou tlačítka CANCLE zrušíte operaci. Volbou tlačítka OK potvrdíte návrat změn nálezu, nález bude změněn a z historie bude promazána o tyto 
-navrácené změny.
+Po stisknutĂ­ tlaÄŤĂ­tko UNDO SELECTED se zobrazĂ­ informace se seznamem zmÄ›n, kterĂ© budou provedeny. Volbou tlaÄŤĂ­tka CANCLE zruĹˇĂ­te operaci. 
+Volbou tlaÄŤĂ­tka OK naopak potvrdĂ­te operaci a provede se nĂˇvrat vybranĂ˝ch zmÄ›n nĂˇlezu. Z historie budou smazĂˇny vĹˇechny oznaÄŤenĂ© Ĺ™Ăˇdky v dobÄ› zavolĂˇnĂ­
+operace UNDO SELECTED (na oznaÄŤenĂ© Ĺ™Ăˇdky byla provedena operace UNDO). 
+
 <br><br>
 <img src="picture/hitoryUndo.JPG">
 <br><br>
 
-<h2><i>Logika označování změn</i></h2>
+<h2><i>Logika oznaÄŤovĂˇnĂ­ zmÄ›n</i></h2>
 
-Položky v záznamu můžou být upravovány vícekrát, proto je při označování změn v dialogu historie nutné ošetřit následující situace:<br>
-Předpokládejme, že položka TAXON byla n-krát změněna. V dialogu historie existuje n řádků, které informují o změně položky TAXON. Ve výše 
-uvedeném obrázku jsou vidět změna 30.4.2006 z hodnoty javor3 na hodnotu javor4 a nejmladší změna 2.5.2006 z hodnoty javor4 na hodnotu javor5.
+PoloĹľky v zĂˇznamu mĹŻĹľou bĂ˝t upravovĂˇny vĂ­cekrĂˇt, proto je pĹ™i oznaÄŤovĂˇnĂ­ zmÄ›n v dialogu historie nutnĂ© oĹˇetĹ™it nÄ›kolik situacĂ­ (viz. nĂ­Ĺľe).<br>
+Pro lepĹˇĂ­ nĂˇzornÄ›jĹˇĂ­ vysvÄ›tlenĂ­ si to uveÄŹme na pĹ™Ă­kladu:<br> 
+<i>PĹ™edpoklĂˇdejme, Ĺľe poloĹľka TAXON byla n-krĂˇt zmÄ›nÄ›na. V dialogu historie existuje n Ĺ™ĂˇdkĹŻ, kterĂ© informujĂ­ o zmÄ›nÄ› poloĹľky TAXON. Ve vĂ˝Ĺˇe 
+uvedenĂ©m obrĂˇzku je vidÄ›t zmÄ›na TOXONU 30.4.2006 z hodnoty javor3 na hodnotu javor4 a mladĹˇĂ­ zmÄ›na TAXONU 2.5.2006 z hodnoty javor4 na hodnotu javor5.
+PĹ™i oznaÄŤovĂˇnĂ­ a odznaÄŤovĂˇnĂ­ tÄ›chto zmÄ›n mĹŻĹľe dojĂ­t k nĂˇsledujĂ­cĂ­m situacĂ­m.
 <ul> 
-<li> Uživatel chce se vrátit k situaci, kdy položka TAXON měla hodnotu javor3. Musí tedy označit řádek se změnou z 30.4.2006. Protože exituje ještě
-mladší změna položky TAXON a to z 2.5.2006 bude označena i tato změna. Po zavolání operace UNDO SELECTED bude v položce TAXON daného nálezu nastavena
-hodnota javor3 a z historie budou smazány obě informace.  
-<li> Uživatel má v dialogu označené změny položky TAXON z 30.4.2006 a 2.5.2006 a rozhodl se jen pro návrat změny z 2.5.2006 k hodnotě javor4. V této situaci
-musí odznačit změnu z 30.4.2006. Pokud by byly označeny i starší změny (s datem starším jak 30.4.2006) pložky TAXON, budou odznačením změny z 30.4.2006 
-automaticky odznačeny. 
-<li> Uživatel má v dialogu označené změny položky TAXON z 30.4.2006 a 2.5.2006 a rozhodl se tyto změny neprovést. K odznačení všech změn položky TAXON 
-stačí odznačit nejmladší změnu a automaticky buou odznačny změny starší. Uživatel odznačením mladší změny řekne, že chce zachovat tuto změnu položky TAXON.  
+<li> UĹľivatel se chce vrĂˇtit k situaci, kdy poloĹľka TAXON mÄ›la hodnotu javor3. MusĂ­ tedy oznaÄŤit Ĺ™Ăˇdek se zmÄ›nou z 30.4.2006. ProtoĹľe exituje jeĹˇtÄ›
+mladĹˇĂ­ zmÄ›na poloĹľky TAXON a to z 2.5.2006 bude oznaÄŤena i tato zmÄ›na. Po zavolĂˇnĂ­ operace UNDO SELECTED bude v poloĹľce TAXON danĂ©ho nĂˇlezu nastavena
+hodnota javor3 a z historie budou smazĂˇny obÄ› informace.  
+<li> UĹľivatel mĂˇ v dialogu oznaÄŤenĂ© zmÄ›ny poloĹľky TAXON z 30.4.2006 a 2.5.2006 a rozhodl se jen pro nĂˇvrat zmÄ›ny z 2.5.2006 k hodnotÄ› javor4. V tĂ©to situaci
+musĂ­ odznaÄŤit zmÄ›nu z 30.4.2006. Pokud by byly oznaÄŤeny i starĹˇĂ­ zmÄ›ny (s datem starĹˇĂ­m jak 30.4.2006) poloĹľky TAXON, budou odznaÄŤenĂ­m zmÄ›ny z 30.4.2006 
+automaticky odznaÄŤeny. 
+<li> UĹľivatel mĂˇ v dialogu oznaÄŤenĂ© zmÄ›ny poloĹľky TAXON z 30.4.2006 a 2.5.2006 a rozhodl se tyto zmÄ›ny neprovĂ©st. K odznaÄŤenĂ­ vĹˇech zmÄ›n poloĹľky TAXON 
+staÄŤĂ­ odznaÄŤit nejmladĹˇĂ­ zmÄ›nu a automaticky buou odznaÄŤny zmÄ›ny starĹˇĂ­. UĹľivatel odznaÄŤenĂ­m mladĹˇĂ­ zmÄ›ny Ĺ™ekne, Ĺľe chce zachovat tuto zmÄ›nu poloĹľky TAXON.  
 </ul>
+</i>
 
-
-<a name="historyData"><h2>Celková historie</h2></a> 
+<a name="historyData"><h2>CelkovĂˇ historie</h2></a> 
 
 <br><br>
 <img src="picture/wholeHistoryMenu.JPG">
 <br><br>
 
-Dialog celkové historie sledovaných změn je přístupný pouze uživatelovi s právem administrátora. Pokud máte požadovaná práva můžete tento dialog vyvolat z menu DATA -> WHOLE HISTORY.
+Dialog celkovĂ© historie sledovanĂ˝ch zmÄ›n je pĹ™Ă­stupnĂ˝ pouze uĹľivatelovi s prĂˇvem administrĂˇtora. Pokud mĂˇte administrĂˇtorskĂˇ prĂˇva mĹŻĹľete tento 
+dialog otevĹ™Ă­ z menu <b>Data/Whole History</b>. Pokud administrĂˇtorskĂˇ prĂˇva nemĂˇte bude poloĹľka v menu pro vĂˇs nepĹ™Ă­stupnĂˇ.
 
 <br><br>
 <img src="picture/wholeHistoryDialog.JPG">
 <br><br>
 
+V dialogu je zobrazen seznam vĹˇech zmÄ›n tĂ˝kajĂ­cĂ­ch se metadat, nĂˇlezĹŻ, autorĹŻ a publikacĂ­. Tento seznam je setĹ™Ă­zen od ÄŤasovÄ› nejmladĹˇĂ­ch po 
+ÄŤasovÄ› nejstarĹˇĂ­ zmÄ›nu a je zobrazen v tabulce, kterĂˇ obsahuje nĂˇsledujĂ­cĂ­ Ăşdaje:  
+  
+<ul>
+<li><b>Datum/ÄŤas</b> - informuje o dobÄ›, kdy ke zmÄ›nÄ› doĹˇlo</li>
+<li><b>Operace</b> - informuje o operaci, kterĂˇ byla provedena (vloĹľenĂ­, editovĂˇnĂ­, smazĂˇnĂ­)</li>
+<li><b>UĹľivatel</b> - odpovĂ­dĂˇ uĹľivatelovi, kterĂ˝ zmÄ›nu provedl</li>
+<li><b>PoloĹľka</b> - informuje o poloĹľce, kterĂˇ byla zmÄ›nÄ›na</li>
+<li><b>StarĂˇ hodnota</b> - obsahuje hodnotu poloĹľky pĹ™ed zmÄ›nou (vyplnÄ›na jen pro operaci edit)</li>
+<li><b>NovĂˇ hodnota</b> - obseahuje novou hodnotu poloĹľky (vyplnÄ›na jen pro operaci edit)</li>
+</ul>
 
+Pokud chcete zjistit podrobnÄ›jĹˇĂ­ informace o nĂˇlezu, metadatech, autorovi nebo publikaci, tak oznaÄŤte Ĺ™Ăˇdek tabulky se zmÄ›nou, pro kterou se 
+zajĂ­mate o podrobnÄ›jĹˇĂ­ informace, a stisknÄ›te tlaÄŤĂ­tko DETAIL. 
+
+<h2>Operace UNDO ke zvolenĂ©mu datumu a ÄŤasu</h2>
+
+Operace UNDO TO DATE vracĂ­ postupnÄ› zmÄ›ny provedenĂ© v databĂˇzi a to od ÄŤasovÄ› nejmladĹˇĂ­ po ÄŤasovÄ› nejstarĹˇĂ­ zmÄ›nu. PĹ™ed stisknutĂ­m tlaÄŤĂ­tka
+UNTO TO DATE je nutnĂ© oznaÄŤit Ĺ™Ăˇdek tabulky, do kterĂ©ho (i vÄŤetnÄ› nÄ›j) se mĂˇ provĂ©st nĂˇvrat zmÄ›n v databĂˇzi. Po stisknutĂ­ tlaÄŤĂ­tka UNDO TO DATE 
+se zobrazĂ­ informace o zvolenĂ©m datumu/ÄŤase pro tuto operaci. NĂˇslednĂ˝m potvrzenĂ­m tlaÄŤĂ­tkem OK dojde k provedenĂ­ operace UNDO a zĂˇroveĹ smazĂˇnĂ­ 
+vrĂˇcenĂ˝ch zmÄ›n z historie.   
+
+<h2>Operace SMAZĂNĂŤ HISTORIE</h2>
+
+Stiskem tlaÄŤĂ­tka CLEAR HISTORY dojde ke smazĂˇnĂ­ vĹˇech dat z historie zmÄ›n aniĹľ by doĹˇlo k nĂˇvratu tÄ›chto zmÄ›n v databazi. <br>
+<b><i>Pozor:</i></b> po potvrzenĂ­ tĂ©to operace jiĹľ navĹľdy ztratĂ­te historii zmÄ›n zaznamenanou v databazi do zavolĂˇnĂ­ operace CLEAR HISTORY.
 
 </body>
 </html>
