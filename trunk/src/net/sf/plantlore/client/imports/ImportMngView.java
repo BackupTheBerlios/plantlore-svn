@@ -1,6 +1,7 @@
 package net.sf.plantlore.client.imports;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 
 public class ImportMngView {
@@ -17,6 +18,9 @@ public class ImportMngView {
 	
 	private void initComponents() {
 		choice = new JFileChooser();
+		choice.setAcceptAllFileFilterUsed(false);
+		for( FileFilter filter: model.getFilters() )
+			choice.addChoosableFileFilter(filter);
 	}
 	
 	

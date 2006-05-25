@@ -13,6 +13,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
 
+import net.sf.plantlore.client.export.component.XFilter;
 import net.sf.plantlore.client.imports.Parser.Action;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
@@ -41,6 +42,15 @@ public class ImportMng extends Observable implements Observer {
 	
 	private Reader reader;
 	private Thread current;
+	
+	
+	/**
+	 * List of all filters the Export Manager is capable to handle.
+	 */
+	protected XFilter[] formats = new XFilter[] {
+			new XFilter(L10n.getString("Format.XML"), true, true, ".xml"),
+			new XFilter(L10n.getString("Format.PlantloreNative"), false, false, ".xml", ".pln"),
+	};
 	
 	
 	/**
@@ -183,13 +193,34 @@ public class ImportMng extends Observable implements Observer {
 		
 		// Create a new reader.
 		File file = new File( filename );
+		if( file.isDirectory() ) {
+			logger.error("Cannot import data from a directory - you must select a file.");
+			throw new ImportException(L10n.getString("Error.InvalidFileName"));
+		}
 		reader = new FileReader( file );
 		if(reader == null) {
-			logger.fatal("Unable to create a new Reader.");
+			logger.error("Unable to create a new Reader.");
 			throw new ImportException(L10n.getString("Error.ReaderNotCreated"));
 		}
 		
 		// Create a new parser according to the format.
+		// The format is guessed based on the extension.
+		XFilter format = null;
+		for(XFilter f : formats)
+			if( f.accept(file) ) {
+				format = f;
+				break;
+			}
+		
+		if( format == null) {
+			logger.error("Unknown file format. The import cannot proceed.");
+			throw new ImportException(L10n.getString("Error.InvalidFileFormat"));
+		}
+		else if( format.getDescription().equals(L10n.getString("Format.XML")) )
+			parser = null;
+		else if( format.getDescription().equals(L10n.getString("Format.PlantloreNative")) )
+			parser = null;
+		
 			
 		try {
 			parser.initialize();
@@ -413,5 +444,12 @@ public class ImportMng extends Observable implements Observer {
 		
 	}
 
+	
+	/**
+	 * @return The list of filters describing formats this Import Manager can handle.
+	 */
+	public XFilter[] getFilters() {
+		return formats.clone();
+	}
 
 }
