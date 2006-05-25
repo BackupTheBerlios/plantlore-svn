@@ -82,7 +82,7 @@ public class Occurrence extends Record implements Deletable {
     
     public List<String> getHistoryColumns() {
         return asList(  PLANT, YEARCOLLECTED, MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, 
-                        ISODATETIMEBEGIN, DATASOURCE, PUBLICATION, HERBARIUM, METADATA, NOTE);
+                        DATASOURCE, PUBLICATION, HERBARIUM, METADATA, NOTE);
     }
             
     public List<String> getNN() {
