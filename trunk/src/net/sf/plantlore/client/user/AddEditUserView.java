@@ -187,7 +187,6 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         addRightCheckBox = new javax.swing.JCheckBox();
         editGroupLabel = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
         Pair<String, Integer>[] users = model.getUsers();
         String[] choices = new String[users.length];
         for (int i = 0; i < users.length; i++) {
@@ -251,9 +250,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
 
         editGroupTextArea.setColumns(20);
         editGroupTextArea.setRows(5);
-        jScrollPane2.setViewportView(editGroupTextArea);
-
-        jScrollPane3.setViewportView(jScrollPane2);
+        jScrollPane3.setViewportView(editGroupTextArea);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -279,7 +276,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(addRightCheckBox)
                 .add(12, 12, 12)
-                .add(editGroupLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
+                .add(editGroupLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -439,7 +436,6 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel loginLabel;
     protected javax.swing.JTextField loginText;

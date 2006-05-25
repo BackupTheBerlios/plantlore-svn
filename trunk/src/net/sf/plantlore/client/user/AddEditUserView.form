@@ -328,7 +328,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="addRightCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                      <Component id="editGroupLabel" pref="16" max="32767" attributes="0"/>
+                      <Component id="editGroupLabel" pref="28" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane3" min="-2" pref="73" max="-2" attributes="1"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -403,26 +403,17 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+                <Component class="javax.swing.JTextArea" name="editGroupTextArea">
+                  <Properties>
+                    <Property name="columns" type="int" value="20"/>
+                    <Property name="rows" type="int" value="5"/>
+                  </Properties>
                   <AuxValues>
-                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoTextArea(choices, this);"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Pair&lt;String, Integer&gt;[] users = model.getUsers();&#xa;String[] choices = new String[users.length];&#xa;for (int i = 0; i &lt; users.length; i++) {&#xa;    choices[i] = users[i].getFirst();&#xa;}"/>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                  <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="editGroupTextArea">
-                      <Properties>
-                        <Property name="columns" type="int" value="20"/>
-                        <Property name="rows" type="int" value="5"/>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoTextArea(choices, this);"/>
-                        <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Pair&lt;String, Integer&gt;[] users = model.getUsers();&#xa;String[] choices = new String[users.length];&#xa;for (int i = 0; i &lt; users.length; i++) {&#xa;    choices[i] = users[i].getFirst();&#xa;}"/>
-                        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                      </AuxValues>
-                    </Component>
-                  </SubComponents>
-                </Container>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>
