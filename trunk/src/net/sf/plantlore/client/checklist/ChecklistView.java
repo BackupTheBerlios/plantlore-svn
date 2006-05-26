@@ -23,7 +23,6 @@ public class ChecklistView extends javax.swing.JDialog {
     	this.model = model;
         initComponents();
         choice = new JFileChooser();
-        setModal(true);
         setLocationRelativeTo(null);
     }
     
@@ -43,24 +42,23 @@ public class ChecklistView extends javax.swing.JDialog {
         checklist = new Checklist( model.getAllowedValues() );
         submit = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle(L10n.getString("Checklist.Title"));
-        
-        load.setText("Load");
+        setModal(true);
+        load.setText(L10n.getString("Checklist.Load"));
         jToolBar1.add(load);
 
-        save.setText("Save");
+        save.setText(L10n.getString("Checklist.Save"));
         jToolBar1.add(save);
 
-        clear.setText("Clear");
+        clear.setText(L10n.getString("Checklist.Clear"));
         jToolBar1.add(clear);
 
-        restore.setText("Restore");
+        restore.setText(L10n.getString("Checklist.Restore"));
         jToolBar1.add(restore);
 
         scrollpane.setViewportView(checklist);
 
-        submit.setText("Submit");
+        submit.setText(L10n.getString("Checklist.Submit"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
