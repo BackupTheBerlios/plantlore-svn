@@ -10,7 +10,6 @@
 package net.sf.plantlore.client.imports;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.Author;
@@ -28,10 +27,8 @@ import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -41,7 +38,6 @@ public class XMLParser implements Parser {
 
     private Logger logger;
     private Document document;
-    private File fXML;
     private String file;
     private Integer currentNumberOcc = 0;
     private Integer currentNumberAuthor = 0;
@@ -81,33 +77,27 @@ public class XMLParser implements Parser {
         SAXReader reader = new SAXReader();        
         File fXML = new File(file);
         try {            
-            Document doc = reader.read(fXML);
-            this.document = doc;
+            this.document = reader.read(fXML);
         } catch (DocumentException ex) {
             throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
         }        
         occurrenceList = document.selectNodes("//occurrence");
-        setNumberOccurrence(occurrenceList.size());        
+        setNumberOfOccurrences(occurrenceList.size());        
     }
 
     public void cleanup() {
     }
 
     public boolean hasNextRecord() {        
-        if (getNumberOccurrence() > 0)
-            return true;
-        return false;
+        return getNumberOfOccurrences() > 0;
     }
 
     public Parser.Action fetchNextRecord() {
-        //FIXME        
         return Parser.Action.UNKNOWN;
     }
 
     public Record nextPart(Class table) throws ParserException {        
-        //return object
         if (table == Occurrence.class) {
-                                    
             //OCC_NODE
             setOccurrenceNode(occurrenceList);            
             List habList = occNode.selectNodes("habitat");
@@ -129,7 +119,7 @@ public class XMLParser implements Parser {
                         
             //set list of author`s node
             authorsList = occNode.selectNodes("authors");
-            setNumberAuthor(authorsList.size());
+            setNumberOfAuthors(authorsList.size());
             
             //create Records       
             occurrence = new Occurrence();            
@@ -189,28 +179,21 @@ public class XMLParser implements Parser {
     }
     
      public void part(Record record, Node node){
-        if(record == null) return;        
-        if(node == null) return;
-
+        if(record == null || node == null) return;        
         // Build this part of the record.
-        Class table = record.getClass();
-        for( String property : record.getProperties() ) {                                                
-                //set data to record
-                //output for testing
-                System.out.println(table +" -- "+ property+ "--" + node.valueOf(property));                
-                record.setValue(property, node.valueOf(property));
-            }      
+        for( String property : record.getProperties() )                                                 
+        	record.setValue(property, node.valueOf(property));
     }
 
      
     public boolean hasNextPart(Class table) {
-        if (getNumberAuthor() > 0) 
-            return true;      
-        return false;
+    	if(table == AuthorOccurrence.class) 
+    		return getNumberOfAuthors() > 0;
+    	else 
+    		return false;
     }
 
     public Parser.Action intentedFor() {
-        //FIXME
         return Parser.Action.UNKNOWN;
     }
    
@@ -239,7 +222,7 @@ public class XMLParser implements Parser {
      *  Set count of no process occurrence record in file.
      *  @param i count of occurrence record for processing
      */
-    private void setNumberOccurrence(int i) {
+    private void setNumberOfOccurrences(int i) {
         this.currentNumberOcc = i;
     }
 
@@ -247,7 +230,7 @@ public class XMLParser implements Parser {
      * Get count of no process occurrence record in file
      *
      */
-    private int getNumberOccurrence() {
+    private int getNumberOfOccurrences() {
         return this.currentNumberOcc;
     }
  
@@ -255,7 +238,7 @@ public class XMLParser implements Parser {
      *  Set count of no process author record in file.
      *  @param i count of author record for processing
      */
-     private void setNumberAuthor(int i) {
+     private void setNumberOfAuthors(int i) {
         this.currentNumberAuthor = i;
     }
 
@@ -263,7 +246,7 @@ public class XMLParser implements Parser {
      * Get count of no process author record in file
      *
      */
-    private int getNumberAuthor() {
+    private int getNumberOfAuthors() {
         return this.currentNumberAuthor;
     }
 
@@ -271,10 +254,9 @@ public class XMLParser implements Parser {
      *  
      */
     private void setOccurrenceNode(List occurrenceList) {
-        int num = getNumberOccurrence();
-        setNumberOccurrence(num - 1);   
-        Node node = (Node)occurrenceList.get(occurrenceList.size()- num);   
-        this.occNode = node;
+        int num = getNumberOfOccurrences();
+        setNumberOfOccurrences(num - 1);   
+        this.occNode = (Node)occurrenceList.get(occurrenceList.size()- num); 
     }
 
     private void setHabitatNode(List habList) 
@@ -354,8 +336,8 @@ public class XMLParser implements Parser {
            throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
             
        } else {
-         int num = getNumberAuthor();
-         setNumberAuthor(num - 1);
+         int num = getNumberOfAuthors();
+         setNumberOfAuthors(num - 1);
          Node node =(Node) authorsList.get(authorsList.size() - num);
          this.authorsNode = node;        
        }
