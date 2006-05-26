@@ -1,21 +1,21 @@
 package net.sf.plantlore.client.login;
 
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.client.MainConfig;
+import net.sf.plantlore.common.SwingWorker;
 import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
 
 import net.sf.plantlore.common.record.Right;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.DBLayerFactory;
-import net.sf.plantlore.common.exception.DBLayerException;
 
 /**
- * Login is responsible for the following:
+ * Login is responsible for the following tasks:
  * <ul>
  * <li><b>management of the list of databases</b> - 
  * 			adding, editing, removing records from the list, and the persistent storage of that list,</li>
@@ -25,12 +25,14 @@ import net.sf.plantlore.common.exception.DBLayerException;
  * 
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author Jakub Kotowski
  * @version 1.0
  */
 public class Login extends Observable {
 	
 	/** The maximum number of usernames the System will store for each database record.*/
 	public static final int MAX_NAMES = 5;
+	public static final Object UPDATE_LIST = new Object();
 
 	/** 
 	 * The list of databases the User has accessed. This list is unique for every User
@@ -48,6 +50,8 @@ public class Login extends Observable {
 	private DBLayer dblayer;
 	private Logger logger;
 	
+	private String username;
+	private String passcode;
 	
 	private Right accessRights;
     private User plantloreUser;
@@ -96,7 +100,9 @@ public class Login extends Observable {
 		 // TEMPORARY CODE ENDS HERE
                                 
 		//dbinfo = mainConfig.getDBinfos();
-		this.setChanged(); this.notifyObservers();
+				System.out.println("DBUPD " + UPDATE_LIST);
+				
+		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 	}
 	
 	/**
@@ -127,7 +133,7 @@ public class Login extends Observable {
 		dbinfo.add(r);
 		logger.debug("New database record has been created " + r);
 		save();
-		setChanged(); notifyObservers();
+		setChanged(); notifyObservers(UPDATE_LIST);
 	}
 	
 	/**
@@ -140,7 +146,7 @@ public class Login extends Observable {
 		logger.debug("The selected record has been removed " + selected);
 		selected = null;
 		save();
-		this.setChanged(); this.notifyObservers();
+		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 	}
 	
 	/**
@@ -155,7 +161,7 @@ public class Login extends Observable {
 		if(selected == null) return;
 		selected.alias = alias; selected.host = host; selected.port = port; selected.db = db;
 		logger.debug("The selected record has been updated " + selected);
-		this.setChanged(); this.notifyObservers();
+		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 	}
 	
 	/**
@@ -166,6 +172,8 @@ public class Login extends Observable {
 		return dbinfo.toArray(new DBInfo[0]);
 	}
 	
+	private int lastIndex = Integer.MIN_VALUE;
+	
 	/**
 	 * Set the selected record.
 	 * 
@@ -173,8 +181,12 @@ public class Login extends Observable {
 	 * Negative means nothing gets selected (deselect).
 	 */
 	public void setSelected(int index) {
+		if(index == lastIndex) 
+			return;
 		if(index >= 0) selected = dbinfo.get(index); 
 		else selected = null;
+		
+		lastIndex = index;
 		
 		logger.debug("Selected database is " + selected);
 		this.setChanged(); 
@@ -189,7 +201,7 @@ public class Login extends Observable {
 		 *    would be called which will in turn trigger 
 		 *    ListSelectionEvent -> 2.
 		 *------------------------------------------------------------*/
-		this.notifyObservers("[!] recursion won't be tolerated");
+		this.notifyObservers( selected );
 	}
 	
 	/**
@@ -210,52 +222,66 @@ public class Login extends Observable {
 	 * 	  
 	 * @param name The account name (used to access the database).  
 	 * @param password The password to the account.
-	 * @return The created and initialized DBLayer.
-	 * @throws NotBoundException if the server is unreachable (most likely because it is not running). 
-	 * @throws RemoteException if the RMI encounters an error.  
-	 * @throws DBLayerException if the initialization of the DBLayer failed - most common reasons are:
-	 * 		wrong username or password, or incorrect database model (server and client have different versions).
 	 */
-	public DBLayer connectToSelected(String name, String password) throws NotBoundException, RemoteException, DBLayerException {
+	public void connectToSelected(String name, String password) {
+		this.username = name; this.passcode = password;
 		if(selected == null) {
 			logger.debug("The System cannot create a connection when nothing was selected!");
-			return null;
+			return;
 		}
 		
-		try {
-			logout();
-		} catch (RemoteException e) { logger.info("Unable to disconnect from the server. " + e); }
-		
-		// The current username is moved to the top of the list of names :) Nice feature.
-		selected.promoteUser(name);
-		// Save the current state.
-		save();
-		
-		// Create a new database layer.
-		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selected.host + ":" + selected.port);
-		dblayer = factory.create(selected.host, selected.port);
-		
-		// Initialize the database layer.
-		logger.debug("Initializing that DBLayer (" + selected.db + ", " + name + ", " + password + "...");
-		try {
-			Object[] init = dblayer.initialize(selected.db,name, password);
-                        plantloreUser = (User)init[0];
-                        accessRights = (Right)init[1];
-		} 
-		catch (DBLayerException exception) {
-			logger.error("The initialization of the DBLayer failed! Here's why: " + exception);
-                        exception.printStackTrace();
-			// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
-			// If it is not, the server's policy may not allow another connection from this client!
-			factory.destroy(dblayer);
-			throw exception; // rethrow that exception [so that the User also knows what happened]
-		}
+		 final SwingWorker worker = new SwingWorker() {
+	            public Object construct() {
+	            	
+	            	try {
+	            		logout();
+	            	} catch (RemoteException e) { logger.info("Unable to disconnect from the server. " + e); }
+	            	
+	            	try {
+	            		// The current username is moved to the top of the list of names :) Nice feature.
+	            		selected.promoteUser(username);
+	            		// Save the current state.
+	            		save();
+	            		
+	            		// Create a new database layer.
+	            		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selected.host + ":" + selected.port);
+	            		setChanged(); notifyObservers(L10n.getString("Login.Connecting"));
+	            		dblayer = factory.create(selected.host, selected.port);
+	            		
+	            		logger.debug("Connection successful.");
+	            		setChanged(); notifyObservers(L10n.getString("Login.Connected"));
+	            		
+	            		// Initialize the database layer.
+	            		setChanged(); notifyObservers(L10n.getString("Login.InitializingDBLayer"));
+	            		logger.debug("Initializing that DBLayer (" + selected.db + ", " + username + ", " + passcode + "...");
 
-		logger.debug("DBLayer initialized.");
-		
-		// Everything went fine.
-		this.setChanged(); this.notifyObservers(dblayer);
-		return dblayer;
+	            		Object[] init = dblayer.initialize(selected.db, username, passcode);
+	            		plantloreUser = (User)init[0];
+	            		accessRights = (Right)init[1];
+	            	} 
+	            	catch (Exception exception) {
+	            		logger.error("The initialization of the DBLayer failed! " + exception);
+	            		// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
+	            		// If it is not, the server's policy may not allow another connection from this client!
+	            		try {
+	            			factory.destroy(dblayer);
+	            		} catch(RemoteException re) {}
+	            		setChanged();
+            			notifyObservers( exception );
+	            		return null;
+	            	}
+	            	
+	            	setChanged(); 
+	            	notifyObservers(L10n.getString("Login.DBLayerInitialized"));
+	            	logger.debug("DBLayer initialized.");
+	            	
+	            	// Everything went fine.
+	            	setChanged(); notifyObservers(dblayer);
+	            	return null;
+	            }
+		 };
+		 
+		 worker.start();
 	}
 	
 	

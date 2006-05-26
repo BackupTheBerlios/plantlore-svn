@@ -33,10 +33,10 @@ public class LoginCtrl {
 		
 		
 		view.choice.addListSelectionListener(new ChoiceChanged());
-		view.add.addActionListener(new AddRecord());
-		view.edit.addActionListener(new EditRecord());
-		view.remove.addActionListener(new RemoveRecord());
-		view.next.addActionListener(new Next());
+		view.add.setAction(new AddRecord());
+		view.edit.setAction(new EditRecord());
+		view.remove.setAction(new RemoveRecord());
+		view.next.setAction(new Next());
 		
 		// Select something.
 		view.choice.setSelectedIndex(0);
@@ -50,13 +50,13 @@ public class LoginCtrl {
 		}
 		
 		//UNCOMMENT THIS:      
-		//dialog.setVisible(visible);
+		dialog.setVisible(visible);
 		
-		// TEMPORARY CODE STARTS HERE
-			System.out.println("HYPERACTIVE-LOGIN");
-			authView.password.setText("masterkey");
-			authView.next.doClick(); 
-		// TEMPORARY CODE ENDS HERE
+//		// TEMPORARY CODE STARTS HERE
+//			System.out.println("HYPERACTIVE-LOGIN");
+//			authView.password.setText("masterkey");
+//			authView.next.doClick(); 
+//		// TEMPORARY CODE ENDS HERE
 	}
 	
 	
@@ -77,6 +77,10 @@ public class LoginCtrl {
 	}
 	
 	class AddRecord extends AbstractAction {
+		public AddRecord() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Login.AddRecordTT"));
+			putValue(NAME, L10n.getString("Login.AddRecord"));
+		}
 		public void actionPerformed(ActionEvent arg0) {
 			itemCtrl.setMode(ItemCtrl.Mode.ADD);
 			itemView.setVisible(true);
@@ -84,17 +88,25 @@ public class LoginCtrl {
 	}
 	
 	class  RemoveRecord extends AbstractAction {
+		public RemoveRecord() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Login.RemoveRecordTT"));
+			putValue(NAME, L10n.getString("Login.RemoveRecord"));
+		}
 		public void actionPerformed(ActionEvent arg0) {
 			model.deleteSelectedRecord();
 		}
 	}
 	
 	class EditRecord extends AbstractAction {
+		public EditRecord() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Login.EditRecordTT"));
+			putValue(NAME, L10n.getString("Login.EditRecord"));
+		}
 		public void actionPerformed(ActionEvent arg0) {
 			if(model.getSelected() == null)
 				JOptionPane.showMessageDialog(view,
-						L10n.getString("warningEmptySelection"),
-					    L10n.getString("warningEmptySelectionTitle"),
+						L10n.getString("Error.NothingSelected"),
+					    L10n.getString("Error.Missing"),
 					    JOptionPane.WARNING_MESSAGE);
 			else {
 				itemCtrl.setMode(ItemCtrl.Mode.EDIT);
@@ -104,11 +116,15 @@ public class LoginCtrl {
 	}
 	
 	class Next extends AbstractAction {
+		public Next() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Login.NextTT"));
+			putValue(NAME, L10n.getString("Login.Next"));
+		}
 		public void actionPerformed(ActionEvent arg0) {
 			if(model.getSelected() == null)
 				JOptionPane.showMessageDialog(view,
-						L10n.getString("warningEmptySelection"),
-					    L10n.getString("warningEmptySelectionTitle"),
+						L10n.getString("Error.NothingSelected"),
+					    L10n.getString("Error.Missing"),
 					    JOptionPane.WARNING_MESSAGE);
 			else
 				authView.setVisible(true);

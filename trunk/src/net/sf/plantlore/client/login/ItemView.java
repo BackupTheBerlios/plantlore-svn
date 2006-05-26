@@ -25,9 +25,7 @@ public class ItemView extends javax.swing.JDialog implements Observer {
 		this.model = model;
 		model.addObserver(this);
 		initComponents();
-		setResizable(false);
 		setLocationRelativeTo(null);
-		setModal(true);
     }
     
     /** This method is called from within the constructor to
@@ -45,14 +43,17 @@ public class ItemView extends javax.swing.JDialog implements Observer {
         db = new javax.swing.JTextField();
         next = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        jLabel1.setText(L10n.getString("Alias") + ":");
+        setTitle(L10n.getString("Login.Change"));
+        setTitle(L10n.getString("Login.Add"));
+        setModal(true);
+        setResizable(false);
+        jLabel1.setText(L10n.getString("Login.Alias"));
 
-        jLabel2.setText(L10n.getString("Hostname") + ":");
+        jLabel2.setText(L10n.getString("Login.HostName"));
 
-        jLabel3.setText(L10n.getString("Database") + ":");
+        jLabel3.setText(L10n.getString("Login.Database"));
 
-        next.setText(L10n.getString("Change"));
+        next.setText(L10n.getString("Login.Change"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -68,9 +69,9 @@ public class ItemView extends javax.swing.JDialog implements Observer {
                             .add(jLabel3))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(db, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                            .add(alias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)))
+                            .add(db, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .add(alias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, next))
                 .addContainerGap())
         );
@@ -112,10 +113,10 @@ public class ItemView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextField alias;
     protected javax.swing.JTextField db;
     protected javax.swing.JTextField host;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     protected javax.swing.JButton next;
-    protected javax.swing.JLabel jLabel1;
-    protected javax.swing.JLabel jLabel2;
-    protected javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
     
 }

@@ -21,13 +21,17 @@ public class ItemCtrl {
 		this.mode = m;
 		switch(m) {
 		case ADD:
-			view.setTitle(L10n.getString("AddTitle"));
+			view.setTitle(L10n.getString("Login.AddTitle"));
 			view.alias.setText(""); 
 			view.host.setText("");
 			view.db.setText("");
+			view.next.setText(L10n.getString("Login.Add"));
+			view.next.setToolTipText(L10n.getString("Login.AddTT"));
 			break;
 		case EDIT:
-			view.setTitle(L10n.getString("EditTitle"));
+			view.setTitle(L10n.getString("Login.EditTitle"));
+			view.next.setText(L10n.getString("Login.Change"));
+			view.next.setToolTipText(L10n.getString("Login.ChangeTT"));
 			break;
 		}
 	}
@@ -35,10 +39,14 @@ public class ItemCtrl {
 	
 	public ItemCtrl(Login login, ItemView itemview) {
 		this.model = login; this.view = itemview;
-		view.next.addActionListener(new Next());
+		view.next.setAction(new Next());
 	}
 	
 	class Next extends AbstractAction {
+		public Next() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Login.ChangeTT"));
+			putValue(NAME, L10n.getString("Login.Change"));
+		}
 		public void actionPerformed(ActionEvent arg0) {
 			int t = view.host.getText().indexOf(':');
 			int port = (t < 0) ? 1099 : Integer.parseInt(view.host.getText().substring(t));

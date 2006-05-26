@@ -26,10 +26,8 @@ public class LoginView extends javax.swing.JDialog implements Observer {
 		model.addObserver(this);
         initComponents();
         setLocationRelativeTo(null); // center of the screen
-        
-        setModal(true);
         // See what's new.
-        update(null, null);
+        update(null, Login.UPDATE_LIST);
     }
     
     /** This method is called from within the constructor to
@@ -48,28 +46,29 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         choice = new javax.swing.JList();
         remember = new javax.swing.JCheckBox();
 
-        
-        add.setText(L10n.getString("loginAdd"));
+        popup.setName("popup");
+        add.setText(L10n.getString("Login.AddRecord"));
         popup.add(add);
 
-        edit.setText(L10n.getString("loginEdit"));
+        edit.setText(L10n.getString("Login.EditRecord"));
         popup.add(edit);
 
-        remove.setText(L10n.getString("loginRemove"));
+        remove.setText(L10n.getString("Login.RemoveRecord"));
         popup.add(remove);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        next.setText(L10n.getString("Continue"));
-        
+        setTitle(L10n.getString("Login.SelectDB"));
+        setTitle(L10n.getString("Login.SelectDB"));
+        setModal(true);
+        next.setText(L10n.getString("Login.Next"));
+        next.setName("");
 
         choice.setComponentPopupMenu(popup);
         choice.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(choice);
 
-        remember.setText(L10n.getString("AutoSelect"));
+        remember.setText(L10n.getString("Login.SelectAutomatically"));
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        //remember.setSelected(true);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -81,7 +80,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(remember)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 157, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 151, Short.MAX_VALUE)
                         .add(next)))
                 .addContainerGap())
         );
@@ -106,7 +105,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
      */
     public void update(Observable source, Object parameter) {
     	// Ignore setSelected() event
-    	if(parameter == null) {
+    	if(parameter == Login.UPDATE_LIST) {
     		// Every item of the list will - after being added to the list - 
     		// cause a ListSelectionEvent (valueChange) event!
     		// This is probably because every time an item is inserted 
@@ -122,9 +121,9 @@ public class LoginView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JMenuItem add;
     protected javax.swing.JList choice;
     protected javax.swing.JMenuItem edit;
-    protected javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JButton next;
-    protected javax.swing.JPopupMenu popup;
+    private javax.swing.JPopupMenu popup;
     protected javax.swing.JCheckBox remember;
     protected javax.swing.JMenuItem remove;
     // End of variables declaration//GEN-END:variables
