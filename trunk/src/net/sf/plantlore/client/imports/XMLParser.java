@@ -24,6 +24,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -34,7 +35,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author Lada
+ * @author Lada Oberreiterova
  */
 public class XMLParser implements Parser {
 
@@ -79,13 +80,11 @@ public class XMLParser implements Parser {
     public void initialize() throws ParserException {
         SAXReader reader = new SAXReader();        
         File fXML = new File(file);
-        try {
-            //FIXME: pokud bude spatny soubor XML (neuzavrene tagy, nekorektne pouzito &, atd..)
-            //spadne, zde s vyjimkou --> odchytavat
+        try {            
             Document doc = reader.read(fXML);
             this.document = doc;
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
         }        
         occurrenceList = document.selectNodes("//occurrence");
         setNumberOccurrence(occurrenceList.size());        
@@ -94,8 +93,7 @@ public class XMLParser implements Parser {
     public void cleanup() {
     }
 
-    public boolean hasNextRecord() {
-        //vrati true pokud existuje jeste <OCCURRENCE></OCCURRENCE>
+    public boolean hasNextRecord() {        
         if (getNumberOccurrence() > 0)
             return true;
         return false;
@@ -107,54 +105,32 @@ public class XMLParser implements Parser {
     }
 
     public Record nextPart(Class table) throws ParserException {        
-        //vrati objekt
+        //return object
         if (table == Occurrence.class) {
-            int num = getNumberOccurrence();
-            setNumberOccurrence(num - 1);                       
-            occNode = (Node)occurrenceList.get(occurrenceList.size()- num);            
-            //Create lists with node. Each list should has only one node. 
-            //We have to check not null value of list
+                                    
             //OCC_NODE
+            setOccurrenceNode(occurrenceList);            
             List habList = occNode.selectNodes("habitat");
             List metadataList = occNode.selectNodes("metadata");
             List plantList =   occNode.selectNodes("plant");
-            List pubList = occNode.selectNodes("publication");                                    
-            if (habList.size() <= 0) 
-                System.out.println("Bad XML file - element HABITAT don`t exist");
-            else
-                habNode = (Node) habList.get(0);
-            if (metadataList.size() <= 0 ) 
-                System.out.println("Bad XML file - element METADATA don`t exist");
-            else
-                metadataNode = (Node) metadataList.get(0);
-            if (plantList.size() <= 0) 
-                System.out.println("Bad XML file - element PLANT don`t exist");
-            else
-                planNode = (Node) plantList.get(0);
-            if (pubList.size() <= 0 ) 
-                System.out.println("Bad XML file - element PUBLICATION don`t exist");
-            else
-                pubNode = (Node) pubList.get(0);
+            List pubList = occNode.selectNodes("publication");  
+            setHabitatNode(habList);
+            setMetadataNode(metadataList);
+            setPlantNode(plantList);
+            setPubNode(pubList);
+                       
             //HAB_NODE
             List terrList =  habNode.selectNodes("territory");
             List villList = habNode.selectNodes("village");
             List phyList = habNode.selectNodes("phytochorion");
-            if (terrList.size() <= 0) 
-                System.out.println("Bad XML file - element TERRITORY don`t exist");
-            else                
-                terrNode = (Node) terrList.get(0);
-            if (villList.size() <= 0) 
-                System.out.println("Bad XML file - element VILLAGE don`t exist");
-            else
-                villNode = (Node) villList.get(0);
-            if (phyList.size() <= 0) 
-                System.out.println("Bad XML file - element PHYTOCHORION don`t exist");
-            else
-                phytNode = (Node) phyList.get(0);
-            
+            setTerrNode(terrList);
+            setVillNode(villList);
+            setPhyNode(phyList);
+                        
             //set list of author`s node
             authorsList = occNode.selectNodes("authors");
             setNumberAuthor(authorsList.size());
+            
             //create Records       
             occurrence = new Occurrence();            
             habitat = new Habitat();
@@ -165,19 +141,6 @@ public class XMLParser implements Parser {
             territory = new Territory();
             phytochorion = new Phytochorion();
             
-            try {                
-                part((Record)occurrence, occNode);
-                part((Record)habitat, habNode);
-                part((Record)metadata, metadataNode);
-                part((Record)plant, planNode);
-                part((Record)publication, pubNode);
-                part((Record)territory, terrNode);
-                part((Record)village, villNode);
-                part((Record)phytochorion, phytNode);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }       
-            
             //set FK of Records
             occurrence.setHabitat(habitat);
             occurrence.setPlant(plant);
@@ -187,46 +150,45 @@ public class XMLParser implements Parser {
             habitat.setPhytochorion(phytochorion);
             habitat.setNearestVillage(village);            
             
+            //load data to record
+            part((Record)occurrence, occNode);
+            part((Record)habitat, habNode);
+            part((Record)metadata, metadataNode);
+            part((Record)plant, planNode);
+            part((Record)publication, pubNode);
+            part((Record)territory, terrNode);
+            part((Record)village, villNode);
+            part((Record)phytochorion, phytNode);                                          
+            
             return occurrence;
         } else if (table == AuthorOccurrence.class) {
-            //create NODE         
-            int num = getNumberAuthor();
-            setNumberAuthor(num - 1);
-            authorsNode = (Node) authorsList.get(authorsList.size() - num);
-            //List with author node
+            
+            //create NODE                    
+            setAuthorsNode(authorsList);            
+            //List with author`s node
             List autList = authorsNode.selectNodes("author");
             //Set author node
-            if (autList.size() <= 0)
-                System.out.println("Bad XML file - element AUTHOR don`t exist");
-            else
-                autNode = (Node) autList.get(0);
+            setAutNode(autList);            
             //List with authorOccurrence
             List autOccList = autNode.selectNodes("authorOccurrence");
             //Set authorOccurrence node
-            if (autOccList.size() <= 0)
-                System.out.println("Bad XML file - element AUTHOROCCURRENCE don`t exist");
-            else
-                autOccNode = (Node) autOccList.get(0);            
+            setAutOccNode(autOccList);
             //create Records
             authorOccurrence = new AuthorOccurrence();
             author = new Author();
             //set FK of Records
             authorOccurrence.setAuthor(author);
             authorOccurrence.setOccurrence(occurrence);
-                       
-            try {
-                part((Record)author, autNode);
-                part((Record)authorOccurrence, autOccNode);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+                                  
+            part((Record)author, autNode);
+            part((Record)authorOccurrence, autOccNode);
             
             return authorOccurrence;
         }        
         return null;
     }
     
-     public void part(Record record, Node node) throws IOException {
+     public void part(Record record, Node node){
         if(record == null) return;        
         if(node == null) return;
 
@@ -234,6 +196,8 @@ public class XMLParser implements Parser {
         Class table = record.getClass();
         for( String property : record.getProperties() ) {                                                
                 //set data to record
+                //output for testing
+                System.out.println(table +" -- "+ property+ "--" + node.valueOf(property));                
                 record.setValue(property, node.valueOf(property));
             }      
     }
@@ -252,18 +216,18 @@ public class XMLParser implements Parser {
    
     //FOR TESTING
    public static void main(String[] args) {
-       XMLParser xmlParser = new XMLParser("c:/Documents and Settings/Lada/Dokumenty/native.xml");       
+       XMLParser xmlParser = new XMLParser("c:/Documents and Settings/Lada/Dokumenty/test.xml");       
         try {
             System.out.println("test");
             xmlParser.initialize();
             while (xmlParser.hasNextRecord()) {
                 Occurrence occMain = (Occurrence) xmlParser.nextPart(Occurrence.class);
                 //Test of output
-                System.out.println("1:" + occMain.getHabitat().getCountry());
-                System.out.println("2: " + occMain.getHerbarium());
-                System.out.println("3: "+ occMain.getPlant().getTaxon());
+                System.out.println("1:" + occMain.getHabitat().getCountry());                
                 while (xmlParser.hasNextPart(AuthorOccurrence.class)) {
                     AuthorOccurrence aoMain =  (AuthorOccurrence) xmlParser.nextPart(AuthorOccurrence.class);
+                    //Test of output
+                    System.out.println("2: "+ aoMain.getAuthor().getWholeName());
                 }                
             }
         } catch (ParserException ex) {
@@ -272,7 +236,7 @@ public class XMLParser implements Parser {
    }
 
     /**
-     *  Set count of don`t process occurrence record in file.
+     *  Set count of no process occurrence record in file.
      *  @param i count of occurrence record for processing
      */
     private void setNumberOccurrence(int i) {
@@ -280,7 +244,7 @@ public class XMLParser implements Parser {
     }
 
     /**
-     * Get count of don`t process occurrence record in file
+     * Get count of no process occurrence record in file
      *
      */
     private int getNumberOccurrence() {
@@ -288,7 +252,7 @@ public class XMLParser implements Parser {
     }
  
     /**
-     *  Set count of don`t process author record in file.
+     *  Set count of no process author record in file.
      *  @param i count of author record for processing
      */
      private void setNumberAuthor(int i) {
@@ -296,10 +260,124 @@ public class XMLParser implements Parser {
     }
 
      /**
-     * Get count of don`t process author record in file
+     * Get count of no process author record in file
      *
      */
     private int getNumberAuthor() {
         return this.currentNumberAuthor;
+    }
+
+    /**
+     *  
+     */
+    private void setOccurrenceNode(List occurrenceList) {
+        int num = getNumberOccurrence();
+        setNumberOccurrence(num - 1);   
+        Node node = (Node)occurrenceList.get(occurrenceList.size()- num);   
+        this.occNode = node;
+    }
+
+    private void setHabitatNode(List habList) 
+    throws ParserException {
+       if (habList.size() <= 0) {
+           logger.error("Bad XML file - element HABITAT doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+           
+       } else     
+            habNode = (Node) habList.get(0);               
+    }
+
+    private void setMetadataNode(List metadataList) 
+     throws ParserException {
+       if (metadataList.size() <= 0) {
+           logger.error("Bad XML file - element METADATA doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+           metadataNode = (Node) metadataList.get(0);
+    }
+
+    private void setPlantNode(List plantList) 
+     throws ParserException {
+       if (plantList.size() <= 0) {
+           logger.error("Bad XML file - element PLANT doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            planNode = (Node) plantList.get(0);
+    }
+
+    private void setPubNode(List pubList)  
+    throws ParserException {
+       if (pubList.size() <= 0) {
+           logger.error("Bad XML file - element PUBLICATION doesn`t exist. Elements for all NOT NULL column must exist.");
+          throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            pubNode = (Node) pubList.get(0);
+    }      
+
+    private void setTerrNode(List terrList) 
+     throws ParserException {
+       if (terrList.size() <= 0) {
+           logger.error("Bad XML file - element TERRITORY doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            terrNode = (Node) terrList.get(0);
+    }
+
+    private void setVillNode(List villList) 
+     throws ParserException {
+       if (villList.size() <= 0) {
+           logger.error("Bad XML file - element VILLAGE doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            villNode = (Node) villList.get(0);
+    }
+
+    private void setPhyNode(List phyList) 
+     throws ParserException {
+       if (phyList.size() <= 0) {
+           logger.error("Bad XML file - element PHYTOCHORION doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            phytNode = (Node) phyList.get(0);        
+    }
+
+    private void setAuthorsNode(List authorsList) 
+    throws ParserException {
+       if (authorsList.size() <= 0) {
+           logger.error("Bad XML file - element AUTHORS doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else {
+         int num = getNumberAuthor();
+         setNumberAuthor(num - 1);
+         Node node =(Node) authorsList.get(authorsList.size() - num);
+         this.authorsNode = node;        
+       }
+    }
+
+    private void setAutNode(List autList) 
+    throws ParserException {
+       if (autList.size() <= 0) {
+           logger.error("Bad XML file - element AUTHOR doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            autNode = (Node) autList.get(0);        
+    }         
+
+    private void setAutOccNode(List autOccList) 
+    throws ParserException {
+       if (autOccList.size() <= 0) {
+           logger.error("Bad XML file - element AUTHOROCCURRENCE doesn`t exist. Elements for all NOT NULL column must exist.");
+           throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
+            
+       } else
+            autOccNode = (Node) autOccList.get(0);        
     }
 }

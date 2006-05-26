@@ -157,7 +157,7 @@ public class XMLBuilder implements Builder {
                 authorCount = authorCurrent;
                 author = authors.addElement("author");
             }            
-                authorOccurrence.addElement(column).setText((String) value);
+                author.addElement(column).setText((String) value);
         } else if (table.getSimpleName().equals(AuthorOccurrence.class.getSimpleName())) {
             if (authors == null) 
                 authors = occurrence.addElement("authors");
@@ -167,7 +167,7 @@ public class XMLBuilder implements Builder {
             }
             if (authorOccurrence == null) 
                 authorOccurrence = author.addElement("authorOccurrence");
-            author.addElement(column).setText((String) value);
+            authorOccurrence.addElement(column).setText((String) value);
         } else if (table.getSimpleName().equals(Metadata.class.getSimpleName())) {
             if (metadata == null)
                 metadata = occurrence.addElement("metadata");

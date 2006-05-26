@@ -95,30 +95,30 @@ public class DarwinCoreBuilder implements Builder {
         Element record = document.getRootElement().addElement("record");
         setActualREcordElement(record);                
                
-        record.addElement("institutionCode").setText(occurrence.getMetadata().getOwnerOrganizationAbbrev());
+        record.addElement("institutionCode").setText(occurrence.getMetadata().getOwnerOrganizationAbbrevNN());
         record.addElement("collectionCode").setText(occurrence.getMetadata().getDataSetTitle());
-        record.addElement("basisOfRecord").setText(occurrence.getMetadata().getRecordBasis());
+        record.addElement("basisOfRecord").setText(occurrence.getMetadata().getRecordBasisNN());
         record.addElement("dateLastModified").setText(occurrence.getMetadata().getDateModified().toString());
         
-        record.addElement("genus").setText(occurrence.getPlant().getGenus());
+        record.addElement("genus").setText(occurrence.getPlant().getGenusNN());
         record.addElement("identifiedBy").setText(occurrence.getPlant().getScientificNameAuthor());
         record.addElement("scientificName").setText(occurrence.getPlant().getTaxon());
         record.addElement("specificNameAuthorYear").setText(occurrence.getPlant().getScientificNameAuthor());
         
         record.addElement("catalogNumber").setText(occurrence.getId().toString());
-        record.addElement("dayCollected").setText(occurrence.getDayCollected().toString());
-        record.addElement("monthCollected").setText(occurrence.getMonthCollected().toString());
+        record.addElement("dayCollected").setText(occurrence.getDayCollectedNN().toString());
+        record.addElement("monthCollected").setText(occurrence.getMonthCollectedNN().toString());
         record.addElement("yearCollected").setText(occurrence.getYearCollected().toString());
-        record.addElement("timeOfDay").setText(occurrence.getTimeCollected().toString());
-        record.addElement("notes").setText(occurrence.getNote());
+        record.addElement("timeOfDay").setText(occurrence.getTimeCollectedNN().toString());
+        record.addElement("notes").setText(occurrence.getNoteNN());
         
-        record.addElement("country").setText(occurrence.getHabitat().getCountry());
+        record.addElement("country").setText(occurrence.getHabitat().getCountryNN());
         record.addElement("county").setText(occurrence.getHabitat().getNearestVillage().getName());
         record.addElement("stateProvince").setText(occurrence.getHabitat().getTerritory().getName());
-        record.addElement("locality").setText(occurrence.getHabitat().getDescription());
-        record.addElement("latitude").setText(occurrence.getHabitat().getLatitude().toString());
-        record.addElement("longitude").setText(occurrence.getHabitat().getLongitude().toString());
-        record.addElement("minimumElevation").setText(occurrence.getHabitat().getAltitude().toString());
+        record.addElement("locality").setText(occurrence.getHabitat().getDescriptionNN());
+        record.addElement("latitude").setText(occurrence.getHabitat().getLatitudeNN().toString());
+        record.addElement("longitude").setText(occurrence.getHabitat().getLongitudeNN().toString());
+        record.addElement("minimumElevation").setText(occurrence.getHabitat().getAltitudeNN().toString());
   
     }
 

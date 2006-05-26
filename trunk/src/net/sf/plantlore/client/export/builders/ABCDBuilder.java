@@ -126,27 +126,27 @@ public class ABCDBuilder implements Builder {
                         
         //save data
         unit.addElement("dateLastEdit").setText(occurrence.getMetadata().getDateModified().toString());
-        unit.addElement("recordBasis").setText(occurrence.getMetadata().getRecordBasis());
+        unit.addElement("recordBasis").setText(occurrence.getMetadata().getRecordBasisNN());
         unit.addElement("sourceId").setText(occurrence.getMetadata().getSourceId());
         unit.addElement("sourceInstitutionId").setText(occurrence.getMetadata().getSourceInstitutionId());
         unit.addElement("unitId").setText(occurrence.getId().toString());        
         
-        gathering.addElement("localityText").setText(occurrence.getHabitat().getDescription());
-        gathering.addElement("notes").setText(occurrence.getHabitat().getNote());
-        measurementOrFactAtomised.addElement("lowerValue").setText(occurrence.getHabitat().getAltitude().toString());
-        country.addElement("name").setText(occurrence.getHabitat().getCountry());
-        dateTime.addElement("isoDateTimeBegin").setText(occurrence.getIsoDateTimeBegin().toString());
+        gathering.addElement("localityText").setText(occurrence.getHabitat().getDescriptionNN());
+        gathering.addElement("notes").setText(occurrence.getHabitat().getNoteNN());
+        measurementOrFactAtomised.addElement("lowerValue").setText(occurrence.getHabitat().getAltitudeNN().toString());
+        country.addElement("name").setText(occurrence.getHabitat().getCountryNN());
+        dateTime.addElement("isoDateTimeBegin").setText(occurrence.getIsoDateTimeBeginNN().toString());
         project.addElement("projectTitle").setText(occurrence.getMetadata().getDataSetTitle());
-        coordinatesLatLong.addElement("latitudeDecimal").setText(occurrence.getHabitat().getLatitude().toString());
-        coordinatesLatLong.addElement("longitudeDecimal").setText(occurrence.getHabitat().getLongitude().toString());
-        herbariumUnit.addElement("exsiccatum").setText(occurrence.getHerbarium());
-        specificName.addElement("fullSpecificNameString").setText(occurrence.getPlant().getSpecies());
-        bacterial.addElement("genusOrMonomial").setText(occurrence.getPlant().getGenus());        
+        coordinatesLatLong.addElement("latitudeDecimal").setText(occurrence.getHabitat().getLatitudeNN().toString());
+        coordinatesLatLong.addElement("longitudeDecimal").setText(occurrence.getHabitat().getLongitudeNN().toString());
+        herbariumUnit.addElement("exsiccatum").setText(occurrence.getHerbariumNN());
+        specificName.addElement("fullSpecificNameString").setText(occurrence.getPlant().getSpeciesNN());
+        bacterial.addElement("genusOrMonomial").setText(occurrence.getPlant().getGenusNN());        
         
         //FIXME: nutno osetrit polozky, co mohou byt NULL - hlavne FK
-        unitReference.addElement("citationDetail").setText(occurrence.getPublication().getReferenceDetail());
+        unitReference.addElement("citationDetail").setText(occurrence.getPublication().getReferenceDetailNN());
         unitReference.addElement("titleCitation").setText(occurrence.getPublication().getReferenceCitation());
-        unitReference.addElement("url").setText(occurrence.getPublication().getUrl());
+        unitReference.addElement("url").setText(occurrence.getPublication().getUrlNN());
         
         //set element AGENTS 
         setActualAgentsElement(agents);
@@ -171,16 +171,16 @@ public class ABCDBuilder implements Builder {
         
         Metadata metadataRecord = occurrence.getMetadata();    
         
-        contentContact.addElement("address").setText(metadataRecord.getContentContactAddress());
-        contentContact.addElement("email").setText(metadataRecord.getContentContactEmail());
+        contentContact.addElement("address").setText(metadataRecord.getContentContactAddressNN());
+        contentContact.addElement("email").setText(metadataRecord.getContentContactEmailNN());
         contentContact.addElement("name").setText(metadataRecord.getContentContactName());
         
-        technicalContact.addElement("address").setText(metadataRecord.getTechnicalContactAddress());
-        technicalContact.addElement("email").setText(metadataRecord.getTechnicalContactEmail());
+        technicalContact.addElement("address").setText(metadataRecord.getTechnicalContactAddressNN());
+        technicalContact.addElement("email").setText(metadataRecord.getTechnicalContactEmailNN());
         technicalContact.addElement("name").setText(metadataRecord.getTechnicalContactName());                
         
         representation.addElement("title").setText(metadataRecord.getDataSetTitle());
-        representation.addElement("details").setText(metadataRecord.getDataSetDetails());
+        representation.addElement("details").setText(metadataRecord.getDataSetDetailsNN());
         revisionData.addElement("creators").setText(metadataRecord.getSourceInstitutionId());
         revisionData.addElement("creators").setText(metadataRecord.getSourceId());
         revisionData.addElement("dateCreated").setText(metadataRecord.getDateCreate().toString());
@@ -199,7 +199,7 @@ public class ABCDBuilder implements Builder {
 
         //save data
         person.addElement("fullName").setText(authorOccurrence.getAuthor().getWholeName());  
-        representation.addElement("text").setText(authorOccurrence.getAuthor().getOrganization());
+        representation.addElement("text").setText(authorOccurrence.getAuthor().getOrganizationNN());
     }
     
     public void part(Record record) throws IOException {
