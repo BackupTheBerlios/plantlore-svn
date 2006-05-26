@@ -70,11 +70,11 @@ public class XMLBuilder extends AbstractBuilder {
         File fXML= new File(filename);
         if (!fXML.exists()) fXML.createNewFile();
         
-        // Pretty print the document.        
         FileOutputStream out = new FileOutputStream(fXML);
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter writer = new XMLWriter( out, format );
         writer.write( document );
+        writer.close();
     }
 
     /**
