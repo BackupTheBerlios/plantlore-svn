@@ -36,7 +36,7 @@ public class ImportMngCtrl {
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,
-							L10n.getString("Error.ImportFailed") + e,
+							L10n.getString("Error.ImportFailed") + e.getMessage(),
 							L10n.getString("Import.Failed"),
 							JOptionPane.WARNING_MESSAGE);
 				}

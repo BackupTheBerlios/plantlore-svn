@@ -97,20 +97,32 @@ public class Occurrence extends Record implements Deletable {
     
     @Override
     public void setValue(String column, Object value) {
+    	if(value instanceof String && "".equals(value))
+        	value = null;
+    	
 		if(column.equals(ID)) setId((Integer)value);
 		else if(column.equals(UNITIDDB)) setUnitIdDb((String)value);
 		else if(column.equals(UNITVALUE)) setUnitValue((String)value);
 		else if(column.equals(HABITAT)) setHabitat((Habitat)value);
 		else if(column.equals(PLANT)) setPlant((Plant)value);
-		else if(column.equals(YEARCOLLECTED))
-                    if (value.getClass() == String.class)  setYearCollected(Integer.parseInt((String) value));
-                    else setYearCollected((Integer)value);               
-		else if(column.equals(MONTHCOLLECTED))
-                    if (value.getClass() == String.class) setMonthCollected(Integer.parseInt((String) value));
-                    else setMonthCollected((Integer)value);
-		else if(column.equals(DAYCOLLECTED)) 
-                    if (value.getClass() == String.class) setDayCollected(Integer.parseInt((String) value));
-                    else  setDayCollected((Integer)value);
+		else if(column.equals(YEARCOLLECTED)) {
+			if (value != null && value instanceof String)  
+				setYearCollected(Integer.parseInt((String) value));
+			else 
+				setYearCollected((Integer)value);
+		}
+		else if(column.equals(MONTHCOLLECTED)) {
+			if (value != null && value instanceof String) 
+				setMonthCollected(Integer.parseInt((String) value));
+			else 
+				setMonthCollected((Integer)value);
+		}
+		else if(column.equals(DAYCOLLECTED)) { 
+			if (value != null && value instanceof String) 
+				setDayCollected(Integer.parseInt((String) value));
+			else  
+				setDayCollected((Integer)value);
+		}
 		else if(column.equals(TIMECOLLECTED)) setTimeCollected(checkDate(value));
 		else if(column.equals(ISODATETIMEBEGIN)) setIsoDateTimeBegin(checkDate(value));
 		else if(column.equals(DATASOURCE)) setDataSource((String)value);

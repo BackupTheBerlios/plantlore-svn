@@ -279,7 +279,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				boolean isValid = occ.areAllNNSet();
 				if( !isValid ) {
-					logger.info("The record No. "+count+" is not valid! Some of the not-null values are not specified!");
+					logger.info("Rejecting the record No. "+count+"! Some of the not-null values are not specified!");
 					continue;
 				}
 				logger.debug("The record is valid.");
@@ -509,8 +509,9 @@ public class DefaultDirector extends Observable implements Runnable {
 			}
 		} 
 		catch(Exception e) {
-			logger.error("The import ended prematurely. "+imported+" records imported into the database.");
-			logger.error("The problem: " + e);
+			logger.error("The import ended prematurely. "+imported+" records imported into the database. " + e);
+
+			e.printStackTrace();
 			
 			if( transactionInProgress ) 
 				try {
@@ -518,6 +519,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				} catch (Exception e2) {}
 			
 			setChanged(); notifyObservers(e);
+			return;
 		}
 		
 		logger.info("Import completed. " + imported + " records were imported into the database.");
@@ -606,7 +608,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		// Look in the cache.
 		if(cacheEnabled) {
 			Record cachedRecord = cache.remove(table);
-			if(record.equals(cachedRecord))
+			if( cachedRecord != null && record.equals(cachedRecord))
 				return cachedRecord; // hooray, one select has been saved!
 		}
 				

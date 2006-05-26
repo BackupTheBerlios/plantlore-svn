@@ -36,7 +36,6 @@ import javax.swing.text.PlainDocument;
  * @version 1.1 jlist doesn't get updated when the user types
  * @since The beginning of time.
  */
-@Deprecated
 public class AutoComboBox extends JComboBox {
 	
 	protected boolean allowNew = false;

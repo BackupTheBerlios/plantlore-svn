@@ -31,6 +31,9 @@ public class Village extends Record {
     
     @Override
     public void setValue(String column, Object value) {
+    	if(value instanceof String && "".equals(value))
+        	value = null;
+    	
 		if(column.equals(ID)) setId((Integer)value);
 		else if(column.equals(NAME)) setName((String)value);
     }

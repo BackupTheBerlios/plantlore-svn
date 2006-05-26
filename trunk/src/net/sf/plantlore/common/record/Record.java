@@ -268,7 +268,7 @@ public abstract class Record implements Serializable {
 	public boolean areAllNNSet() {
 		for( String column : getNN() ) { 
 			Object value = getValue(column);
-			//System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
+			System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
 			if( value == null ) return false;
 			if( value instanceof Record && !((Record)value).areAllNNSet() ) return false;
 		}
@@ -287,7 +287,7 @@ public abstract class Record implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if( getClass() != obj.getClass() ) return false;
+		if( obj == null || getClass() != obj.getClass() ) return false;
 		Record record = (Record) obj;
 		for( String column : getColumns() ) {
 			Object 

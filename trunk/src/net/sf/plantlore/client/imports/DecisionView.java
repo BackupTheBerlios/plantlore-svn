@@ -23,7 +23,9 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
 
 	
     /** Creates new form DecisionView */
-    public DecisionView() {
+    public DecisionView(ImportMng model) {
+    	this.model = model;
+    	
         initComponents();
         
         setLocationRelativeTo(null); // center of the screen

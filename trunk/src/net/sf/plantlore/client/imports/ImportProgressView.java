@@ -98,7 +98,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 		if( parameter != null && parameter instanceof Exception ) {
 			Exception e = (Exception) parameter;
 			setTitle(L10n.getString("Import.Failed"));
-			status.setText(e.toString());
+			status.setText(e.getMessage());
 			progress.setValue(0);
 			abort.setText(L10n.getString("Import.Hide"));
 			exceptionOccured = true;

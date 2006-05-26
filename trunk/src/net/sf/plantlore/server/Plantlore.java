@@ -9,7 +9,12 @@ import java.rmi.registry.Registry;
 */
 import java.util.Properties;
 
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+
 import org.apache.log4j.PropertyConfigurator;
+
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.manager.*;
@@ -61,6 +66,11 @@ public class Plantlore {
 	 * 		start|stop|who|kick=id [host] [port]
 	 */
 	public static void main(String[] args) {
+		
+		// Set beautiful system look & feel.
+        try { 
+            UIManager.setLookAndFeel(new PlasticXPLookAndFeel()); 
+        } catch (Exception e) { e.printStackTrace(); JFrame.setDefaultLookAndFeelDecorated(true); }
 		
 		new Plantlore().run();
 		

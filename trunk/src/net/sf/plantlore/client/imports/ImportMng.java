@@ -58,14 +58,12 @@ public class ImportMng extends Observable implements Observer {
 	 * This manager is primarily intented for import of the occurrence data.
 	 * 
 	 * @param db	The database layer.
-	 * @param user	The User that is currently logged in.
-	 * @param filename	The name of the file where the data reside.
+	 * 	@param filename	The name of the file where the data reside.
 	 * @throws ImportException	If some of the parameters are not valid.
 	 */
-	public ImportMng(DBLayer db, User user, String filename) 
+	public ImportMng(DBLayer db, String filename) 
 	throws ImportException {
 		setDBLayer(db);
-		setUser(user);
 		setSelectedFile(filename);
 	}
 	
@@ -74,12 +72,11 @@ public class ImportMng extends Observable implements Observer {
 	 * This manager is primarily intented for import of the occurrence data.
 	 * 
 	 * @param db	The database layer.
-	 * @param user	The User that is currently logged in.
 	 * @throws ImportException	If some of the parameters are not valid.
 	 */
-	public ImportMng(DBLayer db, User user) 
+	public ImportMng(DBLayer db) 
 	throws ImportException {
-		this(db, user, null);
+		this(db, null);
 	}
 	
 	
@@ -96,20 +93,15 @@ public class ImportMng extends Observable implements Observer {
 			throw new ImportException(L10n.getString("Error.InvalidDBLayer"));
 		}
 		db = dblayer;
-	}
-	
-	/**
-	 * Set another user.
-	 * @param user	The new User.
-	 * @throws ImportException	If the parameter is not valid.
-	 */
-	synchronized public void setUser(User user) 
-	throws ImportException {
-		if(user == null) { 
-			logger.error("The user is null!");
-			throw new ImportException(L10n.getString("Error.InvalidUser"));
+		try { 
+			user = db.getUser();
+			if(user == null) {
+				user = new User();
+				user.setLogin("to su ja ne");
+			}
+		} catch (Exception e)  {
+			user = new User();
 		}
-		this.user = user;
 	}
 	
 	
@@ -217,10 +209,9 @@ public class ImportMng extends Observable implements Observer {
 			throw new ImportException(L10n.getString("Error.InvalidFileFormat"));
 		}
 		else if( format.getDescription().equals(L10n.getString("Format.XML")) )
-			parser = null;
+			parser = new XMLParser(filename);
 		else if( format.getDescription().equals(L10n.getString("Format.PlantloreNative")) )
-			parser = null;
-		
+			parser = new XMLParser(filename);
 			
 		try {
 			parser.initialize();

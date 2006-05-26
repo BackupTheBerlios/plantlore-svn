@@ -60,6 +60,9 @@ public class Plant extends Record {
     
     @Override
     public void setValue(String column, Object value) {
+    	if(value instanceof String && "".equals(value))
+        	value = null;
+    	
 		if(column.equals(ID)) setId((Integer)value);
 		else if(column.equals(SURVEYTAXID)) setSurveyTaxId((String)value);
 		else if(column.equals(TAXON)) setTaxon((String)value);

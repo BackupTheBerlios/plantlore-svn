@@ -51,9 +51,17 @@ public class Author extends Record implements Deletable {
     public List<String> getColumns() {
     	return asList( WHOLENAME, ORGANIZATION, ROLE, ADDRESS, PHONENUMBER, EMAIL, URL, NOTE, DELETED );
     }
+    
+    @Override
+    public List<String> getNN() {
+    	return asList( WHOLENAME );
+    }
 
     @Override
     public void setValue(String column, Object value) {
+    	if(value instanceof String && "".equals(value) )
+    		value = null;
+    	
     	if(column.equals(ID)) setId((Integer)value);
     	else if(column.equals(WHOLENAME)) setWholeName((String)value);
     	else if(column.equals(ORGANIZATION)) setOrganization((String)value);
@@ -64,10 +72,13 @@ public class Author extends Record implements Deletable {
     	else if(column.equals(URL)) setUrl((String)value);
     	else if(column.equals(NOTE)) setNote((String)value);
         else if(column.equals(CREATEDWHO)) setCreatedWho((User)value);                        
-    	else if(column.equals(DELETED)) 
-            if (value.getClass() == String.class) setDeleted(Integer.parseInt((String) value));
-            else setDeleted((Integer)value);
-	}
+        else if(column.equals(DELETED)) { 
+        	if (value != null && value instanceof String) 
+        		setDeleted(Integer.parseInt((String) value));
+        	else 
+        		setDeleted((Integer)value);
+        }
+    }
     
     @Override 
     public boolean isDead() {

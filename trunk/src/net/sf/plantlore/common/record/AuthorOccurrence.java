@@ -48,14 +48,20 @@ public class AuthorOccurrence extends Record implements Deletable {
     
     @Override
     public void setValue(String column, Object value) {
+    	if(value instanceof String && "".equals(value) )
+    		value = null;
+    	
 		if(column.equals(ID)) setId((Integer)value);
 		else if(column.equals(AUTHOR)) setAuthor((Author)value);
 		else if(column.equals(OCCURRENCE)) setOccurrence((Occurrence)value);
 		else if(column.equals(ROLE)) setRole((String)value);
 		else if(column.equals(NOTE)) setNote((String)value);
-		else if(column.equals(DELETED)) 
-                    if (value.getClass() == String.class) setDeleted(Integer.parseInt((String) value));
-                    else setDeleted((Integer)value);
+		else if(column.equals(DELETED)) {
+			if(value != null && value instanceof String) 
+				setDeleted(Integer.parseInt((String) value));
+			else 
+				setDeleted((Integer)value);
+		}
     }
     
     @Override
