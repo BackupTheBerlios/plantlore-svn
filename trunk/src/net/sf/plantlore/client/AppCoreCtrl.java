@@ -66,12 +66,20 @@ import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.exception.ExportException;
+import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
+import net.sf.plantlore.client.imports.DecisionCtrl;
+import net.sf.plantlore.client.imports.DecisionView;
+import net.sf.plantlore.client.imports.ImportMng;
+import net.sf.plantlore.client.imports.ImportMngCtrl;
+import net.sf.plantlore.client.imports.ImportMngView;
+import net.sf.plantlore.client.imports.ImportProgressCtrl;
+import net.sf.plantlore.client.imports.ImportProgressView;
 import net.sf.plantlore.client.login.Login;
 import net.sf.plantlore.client.login.LoginCtrl;
 import net.sf.plantlore.client.login.LoginView;
@@ -154,6 +162,15 @@ public class AppCoreCtrl
     ExportMngCtrlA exportCtrl;
     ExportProgressView exportProgressView;
     ExportProgressCtrl exportProgressCtrl;
+    
+    // Import
+    ImportMng importModel;
+    ImportMngView importView;
+    ImportMngCtrl importCtrl;
+    ImportProgressView importProgressView;
+    ImportProgressCtrl importProgressCtrl;
+    DecisionView importDecisionView;
+    DecisionCtrl importDecisionCtrl;
     
     //Actions
     AbstractAction settingsAction = new SettingsAction();
@@ -395,7 +412,28 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("Import pressed");
+        	if(importModel == null) {
+        		try {
+        			importModel = new ImportMng(model.getDatabase());
+        			importProgressView = new ImportProgressView(importModel);
+        			importProgressCtrl = new ImportProgressCtrl(importModel, importProgressView);
+        			
+        			importView = new ImportMngView(importModel);
+        			importCtrl = new ImportMngCtrl(importModel, importView, importProgressView);
+        			
+        			importDecisionView = new DecisionView(importModel);
+        			importDecisionCtrl = new DecisionCtrl(importModel, importDecisionView);
+        		} catch(ImportException e) {
+        			logger.error("Import MVC cannot be created. " + e.getMessage());
+        			return;
+        		}
+        	}
+        	
+        	if(importModel.isImportInProgress())
+        		importProgressView.setVisible(true);
+        	else
+        		importCtrl.setVisible(true);
+        	
         }
     }
     
@@ -408,7 +446,7 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             // Create a new dialog if it already doesn't exist.
-            if(exportView == null) {
+            if(exportModel == null) {
             	try {
             		exportModel = new ExportMng(model.getDatabase());
             		exportProgressView = new ExportProgressView(null);
