@@ -480,7 +480,7 @@ public class AppCoreCtrl
                 addModel.setTerritories(model.getTerritories());
                 
                 addView = new AddEditView(view, true, addModel, false);
-                addView.setTitle("Add a new occurrence");
+                addView.setTitle(L10n.getString("AddEdit.AddDialogTitle"));
                 addCtrl = new AddEditCtrl(addModel, addView, false);
             }
             addModel.clear();
@@ -515,7 +515,7 @@ public class AppCoreCtrl
                 Object[] row = model.getSelectedRow();
                 editModel.setRecord((Integer) row[row.length-1]);
                 editView = new AddEditView(view, true, editModel, true);
-                editView.setTitle("Edit occurrence");
+                editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
                 editCtrl = new AddEditCtrl(editModel, editView, true);
                 editView.loadComponentData();
                 editView.setVisible(true);                
@@ -594,7 +594,7 @@ public class AppCoreCtrl
                 searchModel.setTerritories(model.getTerritories());
                 
                 searchView = new SearchView(view, true, searchModel);
-                searchView.setTitle("Search");
+                searchView.setTitle(L10n.getString("Search.DialogTitle"));
                 searchCtrl = new SearchCtrl(searchModel, searchView);
                 searchModel.addObserver(new SearchBridge());
             }        

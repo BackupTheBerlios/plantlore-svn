@@ -8,6 +8,7 @@
 package net.sf.plantlore.l10n;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -96,6 +97,30 @@ public class L10n
     	}
     }
     
+    /** Gets string for the given key and formats it using given array of arguments
+     *
+     *
+     * @param key Key of the required value
+     * @param arg The array of arguments to be used to format the string.
+     * @throws NullPointerException in case that <code>load()</code> wasn't called first or it failed.
+     */
+    public static String getFormattedString(String key, Object[] arg) {
+        String value = "";
+    	try {
+                value = resource.getString(key);
+                String formattedValue;
+                MessageFormat mf = new MessageFormat(value);
+                formattedValue = mf.format(arg);
+    		return formattedValue;
+    	} catch( MissingResourceException e ) {
+    		logger.warn("The key \"" + key + "\" is not defined in the property file!");
+    		return key; // nothing else we can do...
+    	} catch (IllegalArgumentException e ) {
+                logger.warn("Property "+key+" has probably wrong format.");
+                return value; // nothing else we can do...
+        }
+    }
+
     /** Returns mnemonic for the given key.
      *
      * If the mnemonic wasn't set in the string for the key then returns -1.

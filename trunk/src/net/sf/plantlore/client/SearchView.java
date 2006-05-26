@@ -42,6 +42,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        
+        setLabels();
+        
         jPanel3.setVisible(visible);
         jPanel2.setPreferredSize(new Dimension(DIALOG_WIDTH,210));
         jPanel8.setPreferredSize(new Dimension(DIALOG_WIDTH,50));
@@ -58,11 +61,11 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         convertCoordinatesGroup = new javax.swing.ButtonGroup();
         timeButtonGroup = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
-        TownLabel = new javax.swing.JLabel();
+        townLabel = new javax.swing.JLabel();
         //items = new Object[] {"Praha", "Brno", "Turnov", "Trebic"};
         townComboBox = new AutoComboBox(model.getVillages());
-        TaxonLabel = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        taxonLabel = new javax.swing.JLabel();
+        placeDescriptionLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         descriptionArea = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -86,11 +89,11 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         intervalRadioButton = new javax.swing.JRadioButton();
         monthRadioButton = new javax.swing.JRadioButton();
         jPanel5 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
+        quadrantLabel = new javax.swing.JLabel();
+        countryLabel = new javax.swing.JLabel();
+        territoryLabel = new javax.swing.JLabel();
+        phytNameLabel = new javax.swing.JLabel();
+        phytCodeLabel = new javax.swing.JLabel();
         territoryNameCombo = new AutoComboBox(model.getTerritories());
         phytNameCombo = new AutoComboBox(model.getPhytNames());
         phytCodeCombo = new AutoComboBox(model.getPhytCodes());
@@ -109,9 +112,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jScrollPane4 = new javax.swing.JScrollPane();
         locationNoteArea = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        altitudeLabel = new javax.swing.JLabel();
+        latitudeLabel = new javax.swing.JLabel();
+        longitudeLabel = new javax.swing.JLabel();
         WGS84Button = new javax.swing.JRadioButton();
         S42Button = new javax.swing.JRadioButton();
         SJTSKButton = new javax.swing.JRadioButton();
@@ -128,17 +131,17 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Basic data", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.BasicData"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         jPanel2.setPreferredSize(new java.awt.Dimension(700, 200));
-        TownLabel.setText("Nearest bigger seat:");
+        townLabel.setText("Nearest bigger seat:");
 
         ((AutoComboBox)townComboBox).setStrict(true);
         townComboBox.setActionCommand("townComboBox");
         townComboBox.insertItemAt(model.EMPTY_PAIR,0);
 
-        TaxonLabel.setText("Taxon:");
+        taxonLabel.setText("Taxon:");
 
-        jLabel2.setText("Place description:");
+        placeDescriptionLabel.setText("Place description:");
 
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
@@ -182,15 +185,15 @@ public class SearchView extends javax.swing.JDialog implements Observer {
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(TaxonLabel)
+                .add(taxonLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                     .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
                 .add(85, 85, 85)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(TownLabel)
-                    .add(jLabel2))
+                    .add(townLabel)
+                    .add(placeDescriptionLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, townComboBox, 0, 300, Short.MAX_VALUE)
@@ -204,12 +207,12 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(TownLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(townLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(townComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(19, 19, 19)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel2))
+                            .add(placeDescriptionLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(extendedButton))
                     .add(jPanel2Layout.createSequentialGroup()
@@ -217,15 +220,15 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                         .add(14, 14, 14)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
-                            .add(TaxonLabel))))
+                            .add(taxonLabel))))
                 .addContainerGap())
         );
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Extended data", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.ExtendedData"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         jPanel3.setMinimumSize(new java.awt.Dimension(800, 395));
         jPanel3.setPreferredSize(new java.awt.Dimension(800, 415));
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Time", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.TimePanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         fromDateChooser.setLocale(L10n.getCurrentLocale());
 
         toDateChooser.setLocale(L10n.getCurrentLocale());
@@ -298,16 +301,16 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Location", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
-        jLabel9.setText("Quadrant:");
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.LocationPanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        quadrantLabel.setText("Quadrant:");
 
-        jLabel10.setText("Country:");
+        countryLabel.setText("Country:");
 
-        jLabel11.setText("Territory name:");
+        territoryLabel.setText("Territory name:");
 
-        jLabel13.setText("Phytochoria name:");
+        phytNameLabel.setText("Phytochoria name:");
 
-        jLabel14.setText("Phytochoria code:");
+        phytCodeLabel.setText("Phytochoria code:");
 
         ((AutoComboBox)territoryNameCombo).setStrict(true);
         territoryNameCombo.setActionCommand("territoryNameCombo");
@@ -336,21 +339,21 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel5Layout.createSequentialGroup()
                         .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(jLabel10)
-                            .add(jLabel13))
+                            .add(countryLabel)
+                            .add(phytNameLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(phytCountryCombo, 0, 173, Short.MAX_VALUE)
                             .add(phytNameCombo, 0, 173, Short.MAX_VALUE)))
                     .add(jPanel5Layout.createSequentialGroup()
                         .add(19, 19, 19)
-                        .add(jLabel11)
+                        .add(territoryLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(territoryNameCombo, 0, 173, Short.MAX_VALUE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel9)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel14))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, quadrantLabel)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, phytCodeLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel5Layout.createSequentialGroup()
@@ -366,26 +369,26 @@ public class SearchView extends javax.swing.JDialog implements Observer {
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel11)
+                    .add(territoryLabel)
                     .add(territoryNameCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(jLabel13)
+                        .add(phytNameLabel)
                         .add(phytNameCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(jLabel14)
+                        .add(phytCodeLabel)
                         .add(phytCodeCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel10)
+                    .add(countryLabel)
                     .add(phytCountryCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel9)
+                    .add(quadrantLabel)
                     .add(quadrantTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Other", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.OtherPanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         publicationLabel.setText("Publication:");
 
         herbariumLabel.setText("Herbarium:");
@@ -448,7 +451,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Location note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.LocationNotePanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         locationNoteArea.setColumns(20);
         locationNoteArea.setRows(5);
         locationNoteArea.setLineWrap(true);
@@ -471,12 +474,12 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "GPS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10)));
-        jLabel6.setText("Altitude:");
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.GPSPanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10)));
+        altitudeLabel.setText("Altitude:");
 
-        jLabel7.setText("Latitude:");
+        latitudeLabel.setText("Latitude:");
 
-        jLabel8.setText("Longitude:");
+        longitudeLabel.setText("Longitude:");
 
         convertCoordinatesGroup.add(WGS84Button);
         WGS84Button.setText("WGS84");
@@ -514,9 +517,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                         .add(jPanel1Layout.createSequentialGroup()
                             .add(12, 12, 12)
-                            .add(jLabel7))
-                        .add(jLabel8))
-                    .add(jLabel6))
+                            .add(latitudeLabel))
+                        .add(longitudeLabel))
+                    .add(altitudeLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel1Layout.createSequentialGroup()
@@ -539,22 +542,22 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(WGS84Button)
-                    .add(jLabel6)
+                    .add(altitudeLabel)
                     .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(6, 6, 6)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(S42Button)
-                    .add(jLabel7)
+                    .add(latitudeLabel)
                     .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(SJTSKButton)
-                    .add(jLabel8)
+                    .add(longitudeLabel)
                     .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(60, Short.MAX_VALUE))
         );
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ocurrence note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.OccurrenceNotePanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         occurrenceNoteArea.setColumns(20);
         occurrenceNoteArea.setRows(5);
         occurrenceNoteArea.setLineWrap(true);
@@ -744,6 +747,39 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel8.setPreferredSize(new Dimension(DIALOG_WIDTH,50));
         this.pack();        
     }
+
+    private void setLabels() {
+        townLabel.setText(L10n.getString("AddEdit.TownLabel"));
+        placeDescriptionLabel.setText(L10n.getString("AddEdit.PlaceDescriptionLabel"));
+        taxonLabel.setText(L10n.getString("AddEdit.TaxonLabel"));
+        
+        territoryLabel.setText(L10n.getString("AddEdit.TerritoryNameLabel"));
+        phytNameLabel.setText(L10n.getString("AddEdit.PhytNameLabel"));
+        phytCodeLabel.setText(L10n.getString("AddEdit.PhytCodeLabel"));
+        quadrantLabel.setText(L10n.getString("AddEdit.QuadrantLabel"));
+        countryLabel.setText(L10n.getString("AddEdit.CountryLabel"));
+        
+        altitudeLabel.setText(L10n.getString("AddEdit.AltitudeLabel"));
+        latitudeLabel.setText(L10n.getString("AddEdit.LatitudeLabel"));
+        longitudeLabel.setText(L10n.getString("AddEdit.LongitudeLabel"));
+        
+        sourceLabel.setText(L10n.getString("AddEdit.SourceLabel"));
+        publicationLabel.setText(L10n.getString("AddEdit.PublicationLabel"));
+        herbariumLabel.setText(L10n.getString("AddEdit.HerbariumLabel"));
+        projectLabel.setText(L10n.getString("AddEdit.ProjectLabel"));
+        
+        monthLabel.setText(L10n.getString("AddEdit.MonthLabel"));
+        fromLabel.setText(L10n.getString("Search.FromLabel"));
+        toLabel.setText(L10n.getString("Search.ToLabel"));
+        
+        helpButton.setText(L10n.getString("Common.Help"));
+        helpButton.setMnemonic(L10n.getMnemonic("Common.Help"));
+        okButton.setText(L10n.getString("Common.Ok"));
+        okButton.setMnemonic(L10n.getMnemonic("Common.Ok"));
+        cancelButton.setText(L10n.getString("Common.Cancel"));
+        cancelButton.setMnemonic(L10n.getMnemonic("Common.Cancel"));
+        
+    }
     
     /**
      * @param args the command line arguments
@@ -784,13 +820,13 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JRadioButton S42Button;
     protected javax.swing.JRadioButton SJTSKButton;
-    protected javax.swing.JLabel TaxonLabel;
-    protected javax.swing.JLabel TownLabel;
     protected javax.swing.JRadioButton WGS84Button;
+    protected javax.swing.JLabel altitudeLabel;
     protected javax.swing.JTextField altitudeTextField;
     protected javax.swing.JTable authorTable;
     protected javax.swing.JButton cancelButton;
     private javax.swing.ButtonGroup convertCoordinatesGroup;
+    protected javax.swing.JLabel countryLabel;
     protected javax.swing.JTextArea descriptionArea;
     protected javax.swing.JToggleButton extendedButton;
     protected com.toedter.calendar.JDateChooser fromDateChooser;
@@ -799,15 +835,6 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel herbariumLabel;
     protected javax.swing.JTextField herbariumTextField;
     protected javax.swing.JRadioButton intervalRadioButton;
-    protected javax.swing.JLabel jLabel10;
-    protected javax.swing.JLabel jLabel11;
-    protected javax.swing.JLabel jLabel13;
-    protected javax.swing.JLabel jLabel14;
-    protected javax.swing.JLabel jLabel2;
-    protected javax.swing.JLabel jLabel6;
-    protected javax.swing.JLabel jLabel7;
-    protected javax.swing.JLabel jLabel8;
-    protected javax.swing.JLabel jLabel9;
     protected javax.swing.JPanel jPanel1;
     protected javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -822,8 +849,10 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    protected javax.swing.JLabel latitudeLabel;
     protected javax.swing.JTextField latitudeTextField;
     protected javax.swing.JTextArea locationNoteArea;
+    protected javax.swing.JLabel longitudeLabel;
     protected javax.swing.JTextField longitudeTextField;
     protected com.toedter.calendar.JMonthChooser monthChooser;
     protected javax.swing.JLabel monthLabel;
@@ -831,21 +860,28 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextArea occurrenceNoteArea;
     protected javax.swing.JButton okButton;
     protected javax.swing.JComboBox phytCodeCombo;
+    protected javax.swing.JLabel phytCodeLabel;
     protected javax.swing.JComboBox phytCountryCombo;
     protected javax.swing.JComboBox phytNameCombo;
+    protected javax.swing.JLabel phytNameLabel;
+    protected javax.swing.JLabel placeDescriptionLabel;
     protected javax.swing.JComboBox projectCombo;
     protected javax.swing.JLabel projectLabel;
     protected javax.swing.JComboBox publicationCombo;
     protected javax.swing.JLabel publicationLabel;
+    protected javax.swing.JLabel quadrantLabel;
     protected javax.swing.JTextField quadrantTextField;
     protected javax.swing.JComboBox sourceCombo;
     protected javax.swing.JLabel sourceLabel;
+    protected javax.swing.JLabel taxonLabel;
     protected javax.swing.JTextArea taxonTextArea;
+    protected javax.swing.JLabel territoryLabel;
     protected javax.swing.JComboBox territoryNameCombo;
     private javax.swing.ButtonGroup timeButtonGroup;
     protected com.toedter.calendar.JDateChooser toDateChooser;
     protected javax.swing.JLabel toLabel;
     protected javax.swing.JComboBox townComboBox;
+    protected javax.swing.JLabel townLabel;
     // End of variables declaration//GEN-END:variables
     
 }

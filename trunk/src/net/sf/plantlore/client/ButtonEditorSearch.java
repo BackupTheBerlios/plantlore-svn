@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import net.sf.plantlore.l10n.L10n;
 
 /** Button Editor and Renderer used by the author table in AddEdit dialog.
  *
@@ -29,6 +30,9 @@ import javax.swing.table.TableModel;
  * @author reimei
  */
 public class ButtonEditorSearch extends AbstractCellEditor implements TableCellEditor, TableCellRenderer  {
+    private final static String ADD = L10n.getString("AddEdit.AuthorAdd");
+    private final static String REMOVE = L10n.getString("AddEdit.AuthorRemove");
+
     HashMap<Integer,JButton> editors = new HashMap<Integer,JButton>();
     JButton addButton, removeButton;
     Search aemodel;
@@ -45,7 +49,7 @@ public class ButtonEditorSearch extends AbstractCellEditor implements TableCellE
 
         public void actionPerformed(ActionEvent actionEvent) {
             JButton btn = (JButton) actionEvent.getSource();
-            if (btn.getText().equals("Add"))
+            if (btn.getText().equals(ADD))
                 aemodel.addAuthorRow();
             else
                 aemodel.removeAuthorRow(Integer.parseInt(actionEvent.getActionCommand()));     
@@ -56,13 +60,12 @@ public class ButtonEditorSearch extends AbstractCellEditor implements TableCellE
     /** Creates a new instance of ButtonEditor */
     public ButtonEditorSearch(Search aemodel) {
         this.aemodel = aemodel;
-        addButton = new JButton("Add");
-        removeButton = new JButton("Remove");
+        addButton = new JButton(ADD);
+        removeButton = new JButton(REMOVE);
     }
 
     public Object getCellEditorValue() {
-        System.out.println("ButtonEditor.java: returning cell editor value");
-        return "Kdo vi co a jak";
+        return "";
     }
     public Component getTableCellEditorComponent(JTable table, Object value,
                                                  boolean isSelected,
@@ -79,10 +82,10 @@ public class ButtonEditorSearch extends AbstractCellEditor implements TableCellE
         
         JButton button = editors.get(row);
         if (row == (rowCount-1)) {
-            button.setText("Add");
+            button.setText(ADD);
             button.setActionCommand("");
         } else {
-            button.setText("Remove");
+            button.setText(REMOVE);
             button.setActionCommand(""+row);
         }
         

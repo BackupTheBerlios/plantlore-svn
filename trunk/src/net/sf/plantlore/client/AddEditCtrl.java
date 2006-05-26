@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -46,14 +47,17 @@ import net.sf.plantlore.client.checklist.ChecklistView;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author reimei
  */
 public class AddEditCtrl {
+    private Logger logger;
     private boolean inEditMode = false;
     private boolean inAddMode = true;
     private AddEdit model;
@@ -70,6 +74,8 @@ public class AddEditCtrl {
         this.model = model;
         this.view = view;
         
+        logger = Logger.getLogger(this.getClass().getPackage().getName());                
+
         //------- ComboBoxes --------
         view.townComboBox.addActionListener(new CommonActionListener());
         view.territoryNameCombo.addActionListener(new CommonActionListener());
@@ -439,6 +445,11 @@ public class AddEditCtrl {
     }//ExtendedButtonListener
     
     class OkButtonListener extends MouseAdapter {
+        private String ALL = L10n.getString("AddEdit.All");
+        private String JUST_THIS = L10n.getString("AddEdit.JustThis");
+        private String CANCEL = L10n.getString("Common.Cancel");
+        private String TITLE = L10n.getString("AddEdit.QuestionDialogTitle");
+        
         public void mouseClicked(MouseEvent e) {
             int choice=-1;
             Pair<Boolean,String> check = model.checkData();
@@ -449,16 +460,18 @@ public class AddEditCtrl {
             if (inEditMode) {
                 Occurrence[] sharedOcc = model.getHabitatSharingOccurrences();
                 if (sharedOcc.length > 1) {
-                    Object[] options = {"All","Just this","Cancel"};
+                    Object[] arg = {""+(sharedOcc.length-1)};
+                    String formattedQuestion = L10n.getFormattedString("AddEdit.OkQuestion",arg);
+                    
+                    Object[] options = {ALL,JUST_THIS,CANCEL};
                     choice = JOptionPane.showOptionDialog(view, 
-                            "This plant's habitat is shared by "+sharedOcc.length+" other occurrences. \nDo you want to edit all the plants or just this one?",
-                            "Multiple plants share the same habitat",
+                            formattedQuestion,
+                            TITLE,
                             JOptionPane.YES_NO_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
                             options,
                             options[0]);
-                    System.out.println("User selected "+options[choice]);
                     switch (choice) {
                         case 0:
                             model.storeRecord(true);
@@ -492,7 +505,8 @@ public class AddEditCtrl {
 
     class HelpButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            System.out.println("Help");
+            logger.info("Help inovked from the AddEdit dialog.");
+            PlantloreHelp.showHelp(PlantloreHelp.ADD_OCCURRENCE);            
         }
     }//HelpButtonListener
     

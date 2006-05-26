@@ -20,17 +20,21 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.l10n.L10n;
+import org.apache.log4j.Logger;
 
 
 /** Table model for the authors table in AddEditView.
  *
  */
 public class AuthorTableModel extends AbstractTableModel {
+    Logger logger;
     ArrayList<Object[]> data = new ArrayList<Object[]>();
     Object[] row;
     AddEdit aemodel;
     
     public AuthorTableModel(AddEdit aemodel) {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());
+        
         this.aemodel = aemodel;
         row = new Object[4];
         row[0] = new Pair("",0);
@@ -97,7 +101,7 @@ public class AuthorTableModel extends AbstractTableModel {
     }
     
     public void removeRow(int i) {
-        System.out.println("AuthorTableModel: removing row #"+i);
+        logger.debug("AuthorTableModel: removing row #"+i);
         Object[] row = data.remove(i);
 
 /*        JButton b = (JButton)row[2];
@@ -174,13 +178,13 @@ public class AuthorTableModel extends AbstractTableModel {
     public String getColumnName(int col) {
         switch (col) {
             case 0:
-                return "Name";
+                return L10n.getString("AddEdit.NameColumn");
             case 1:
-                return "Role";
+                return L10n.getString("AddEdit.RoleColumn");
             case 2:
                 return "";
             case 3:
-                return "Revision";
+                return L10n.getString("AddEdit.RevisionColumn");
             default:
                 return "";
         }

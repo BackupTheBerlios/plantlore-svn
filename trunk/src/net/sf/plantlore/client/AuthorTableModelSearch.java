@@ -174,13 +174,13 @@ public class AuthorTableModelSearch extends AbstractTableModel {
     public String getColumnName(int col) {
         switch (col) {
             case 0:
-                return "Name";
+                return L10n.getString("AddEdit.NameColumn");
             case 1:
-                return "Role";
+                return L10n.getString("AddEdit.RoleColumn");
             case 2:
                 return "";
             case 3:
-                return "Revision";
+                return L10n.getString("AddEdit.RevisionColumn");
             default:
                 return "";
         }

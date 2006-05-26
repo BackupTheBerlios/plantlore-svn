@@ -843,17 +843,14 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         timeLabel.setText(L10n.getString("AddEdit.TimeLabel"));
         
         helpButton.setText(L10n.getString("Common.Help"));
+        helpButton.setMnemonic(L10n.getMnemonic("Common.Help"));
         okButton.setText(L10n.getString("Common.Ok"));
+        okButton.setMnemonic(L10n.getMnemonic("Common.Ok"));
         cancelButton.setText(L10n.getString("Common.Cancel"));
+        cancelButton.setMnemonic(L10n.getMnemonic("Common.Cancel"));
         
-        MessageFormat mf = new MessageFormat(L10n.getString("AddEdit.RequiredInfoLabel"));
-        try {
-            Object[] arg = {REQUIRED_STRING};
-            requiredInfoLabel.setText(mf.format(arg));
-        } catch (IllegalArgumentException ex) {
-            requiredInfoLabel.setText("");//pretend nothing happend
-            logger.warn("Property AddEdit.RequiredInfoLabel has probably wrong format.");
-        }
+        Object[] arg = {REQUIRED_STRING};
+        requiredInfoLabel.setText(L10n.getFormattedString("AddEdit.RequiredInfoLabel",arg));
     }
     
     public void switchExtended() {

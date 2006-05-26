@@ -400,7 +400,6 @@ public class SearchCtrl {
                 return;
             }
             
-            System.out.println("Would create a query!");
             model.constructQuery();
             view.setVisible(false);
         }

@@ -34,15 +34,15 @@ public class AuthorRevisionEditor extends AbstractCellEditor implements TableCel
     
     class RevisionAction extends AbstractAction {
         public RevisionAction() {
-            putValue(NAME, L10n.getString("addEditRevision"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("addEditRevisionTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("addEditRevision"));            
+            putValue(NAME, L10n.getString("AddEdit.Revision"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("AddEdit.RevisionTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("AddEdit.Revision"));            
         } 
 
         public void actionPerformed(ActionEvent e) {
             JButton button = (JButton)e.getSource();
             int row = buttonMapInverted.get(button);
-            String s = (String)JOptionPane.showInputDialog(null,"Enter the note, please","AuthorOccurrence note",JOptionPane.QUESTION_MESSAGE,null,null,e.getActionCommand());
+            String s = (String)JOptionPane.showInputDialog(null,L10n.getString("AddEdit.RevisionDialogMessage"),L10n.getString("AddEdit.RevisionDialogTitle"),JOptionPane.QUESTION_MESSAGE,null,null,e.getActionCommand());
             value = s;
             if (s != null) {
                 aemodel.setResultRevision(row,s);
