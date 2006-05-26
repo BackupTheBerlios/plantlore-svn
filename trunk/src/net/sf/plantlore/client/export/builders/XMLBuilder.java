@@ -1,32 +1,12 @@
-/*
- * XMLBuilder.java
- *
- * Created on 22. květen 2006, 9:29
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package net.sf.plantlore.client.export.builders;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import net.sf.plantlore.client.export.AbstractBuilder;
-import net.sf.plantlore.client.export.Builder;
 import net.sf.plantlore.client.export.Template;
-import net.sf.plantlore.common.record.Author;
-import net.sf.plantlore.common.record.AuthorOccurrence;
-import net.sf.plantlore.common.record.Habitat;
-import net.sf.plantlore.common.record.Metadata;
-import net.sf.plantlore.common.record.Occurrence;
-import net.sf.plantlore.common.record.Phytochorion;
-import net.sf.plantlore.common.record.Plant;
-import net.sf.plantlore.common.record.Publication;
-import net.sf.plantlore.common.record.Record;
-import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
-import org.apache.log4j.Logger;
+import net.sf.plantlore.common.record.*;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -35,169 +15,103 @@ import org.dom4j.io.XMLWriter;
 
 
 /**
+ * XML Builder.
  *
- * @author Lada Oberreiterova
- * 
+ * @author Lada Oberreiterová
+ * @author Erik Kratochvíl
  */
-public class XMLBuilder implements Builder {
-    
-    private Logger logger;
+public class XMLBuilder extends AbstractBuilder {
 
-    private Template template;
     private Document document;
-    private File fXML;
-    private String file = "XMLexport.xml";        
-    private Element root;
-    private Element occurrence;       
-    private Element habitat;
+    private String filename;
     private Element authors;
-    private Element author;
-    private Element authorOccurrence;
-    private Element metadata;
-    private Element publication;
-    private Element plant;
-    private Element phytochorion;
-    private int authorCurrent;
-    private int authorCount = 0;
-    private boolean isPlantloreNative;
-
     
-    /** Creates a new instance of XMLBuilder */
-    public XMLBuilder(Template template, String fileName) {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());          
-        document = DocumentHelper.createDocument(); 
-        this.file = fileName;
+    /**
+     * Create a new XML Builder.
+     * The builder receives records (holder objects from the database)
+     * decomposes them, creates an XML tree, and stores it in the specified
+     * file.
+     * <br/>
+     * The template holds the set of important attributes (columns) of the record
+     * that will be exported.
+     * 
+     * @param template	Description of important attributes of  the whole record. 
+     * @param filename	The name of the file where the output should be saved.
+     * @see net.sf.plantlore.client.export.Template
+     */
+    public XMLBuilder(Template template, String filename) {
+    	super(template);
+        document = DocumentHelper.createDocument();
+        document.addElement("occurrences");
+        this.filename = filename;
         this.template = template;
-        this.isPlantloreNative = false;
     }
     
-    /** Creates a new instance of XMLBuilder 
-     *     
-     * @parem fileName
+    /**
+     * Create a new XML Builder.
+     * The builder receives records (holder objects from the database)
+     * decomposes them, creates an XML tree, and stores it in the specified
+     * file.
+     * <br/>
+     * Every attribute (column) of the whole record will be exported.
+     * 
+     * @param filename	The name of the file where the output should be saved.
+     * @see net.sf.plantlore.client.export.Template
      */
     public XMLBuilder(String fileName) {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());          
-        document = DocumentHelper.createDocument(); 
-        this.file = fileName;
-        this.isPlantloreNative = true;
+    	this(new Template().setEverything(), fileName);
     }
     
-    public void header() throws IOException {
-        logger.debug("XML Builder - header.");	
-        document.addElement("occurrences");
-        root = document.getRootElement();
-    }
-
+    /**
+     * Generate the footer of this format.
+     */
+    @Override
     public void footer() throws IOException {
-         System.out.println("XML Builder disengaged.");
-        
-        fXML= new File(file);
+        File fXML= new File(filename);
         if (!fXML.exists()) fXML.createNewFile();
         
-        // Pretty print the document to System.out        
+        // Pretty print the document.        
         FileOutputStream out = new FileOutputStream(fXML);
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter writer = new XMLWriter( out, format );
         writer.write( document );
-        logger.debug("XML doc: "+ document.toString());
     }
 
-    public void startRecord() throws IOException {        
-        occurrence = document.getRootElement().addElement("occurrence");          
-        authors = null;    
-        authorOccurrence = null;
-        author = null;
-        habitat = null;
-        metadata = null;
-        plant = null;
-        publication = null;
-        phytochorion = null;
-    }
-
-    public void part(Record record) throws IOException {
-        if(record == null) return;        
-        if (record.getClass().equals(AuthorOccurrence.class))
-            authorCurrent = authorCount + 1;
-        // Build this part of the record.
-        Class table = record.getClass();
-        for( String property : record.getProperties() ) 
-            if (isPlantloreNative) {
-                //Format PlantloreNative
-                output( table, property, record.getValue(property) );
-            } else {
-                //Format XML with selected column
-                if( template.isSet(table, property) )
-                        output( table, property, record.getValue(property) );
-            }
-        // Now look at all children of this record.
-        for(String key : record.getForeignKeys()) {
-                // And build'em too.
-                part( (Record) record.getValue(key) );
-        }
-    }
-
-    protected void output(Class table, String column, Object value) throws IOException {                        
-        
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toString();
-        }        
-        
-        if (table.getSimpleName().equals(Occurrence.class.getSimpleName())) {            
-            occurrence.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Habitat.class.getSimpleName())) {
-            if (habitat == null)
-                habitat = occurrence.addElement("habitat");
-            habitat.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Author.class.getSimpleName())) {
-            if (authors == null) 
-                authors = occurrence.addElement("authors");
-            if (authorCurrent != authorCount) {
-                authorCount = authorCurrent;
-                author = authors.addElement("author");
-            }            
-                author.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(AuthorOccurrence.class.getSimpleName())) {
-            if (authors == null) 
-                authors = occurrence.addElement("authors");
-            if (authorCurrent != authorCount) {
-                authorCount = authorCurrent;
-                author = authors.addElement("author");
-            }
-            if (authorOccurrence == null) 
-                authorOccurrence = author.addElement("authorOccurrence");
-            authorOccurrence.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Metadata.class.getSimpleName())) {
-            if (metadata == null)
-                metadata = occurrence.addElement("metadata");
-            metadata.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Plant.class.getSimpleName())) {
-            if (plant == null)
-                plant = occurrence.addElement("plant");
-            plant.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Publication.class.getSimpleName())) {
-            if (publication == null) 
-                publication = occurrence.addElement("publication");
-            publication.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Territory.class.getSimpleName())) {
-            if (habitat == null) 
-                habitat = occurrence.addElement("habitat");
-            habitat.addElement("territory").setText((String) value);            
-        } else if (table.getSimpleName().equals(Phytochorion.class.getSimpleName())) {
-            if (habitat == null)
-                habitat = occurrence.addElement("habitat");
-            if (phytochorion == null)
-                phytochorion = habitat.addElement("phytochorion");
-            phytochorion.addElement(column).setText((String) value);
-        } else if (table.getSimpleName().equals(Village.class.getSimpleName())) {
-            if (habitat == null) 
-                habitat = occurrence.addElement("habitat");
-            habitat.addElement("village").setText((String) value);
-        }
+    /**
+     * Build part of the whole record.
+     */
+    @Override
+    public void part(Record record) 
+    throws IOException {
+    	// One Occurrence can have many AuthorOccurrences [AOs]. 
+    	// All those AOs are in their own special node <authors></authors>.
+    	decompose( (record instanceof AuthorOccurrence) ? authors : document.getRootElement(), record);
     }
     
-    public void finishRecord() throws IOException {
+    /**
+     * Decompose the given <code>record</code> and build the XML tree appropriately.
+     *  
+     * @param father	Father element of the currently processed <code>record</code>.
+     * @param record	Part of the whole record corresponding to a certain table in the database.
+     */
+    protected void decompose(Element father, Record record) 
+    throws IOException {
+    	if(record == null) return;
+    	Element current = father.addElement(record.getClass().getSimpleName().toLowerCase());
+    	// Every occurrence may have 0..N associated AuthorOccurrences.
+    	if(record instanceof Occurrence) 
+    		authors = current.addElement("authors");
+    	
+    	for( String property : record.getProperties() ) {
+    		String value = record.getValue(property) == null ? "" : record.getValue(property).toString();
+    		current.addElement(property.toLowerCase()).setText(value);
+    	}
+    	// Decompose all subrecords of this record.
+    	for(String key : record.getForeignKeys())
+    		decompose( current, (Record) record.getValue(key) );
     }
-    
+
+	@Override
+	protected void output(Class table, String column, Object value) throws IOException {}
+
 }
