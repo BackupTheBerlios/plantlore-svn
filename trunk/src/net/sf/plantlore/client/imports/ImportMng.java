@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import net.sf.plantlore.client.export.component.XFilter;
 import net.sf.plantlore.client.imports.Parser.Action;
+import net.sf.plantlore.client.imports.parsers.*;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.Record;
@@ -209,9 +210,9 @@ public class ImportMng extends Observable implements Observer {
 			throw new ImportException(L10n.getString("Error.InvalidFileFormat"));
 		}
 		else if( format.getDescription().equals(L10n.getString("Format.XML")) )
-			parser = new XMLParser(filename);
+			parser = new XMLParser(reader);
 		else if( format.getDescription().equals(L10n.getString("Format.PlantloreNative")) )
-			parser = new XMLParser(filename);
+			parser = new XMLParser(reader);
 			
 		try {
 			parser.initialize();
