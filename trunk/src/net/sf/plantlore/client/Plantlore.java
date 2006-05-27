@@ -131,7 +131,7 @@ public class Plantlore {
             model = new AppCore(mainConfig);
             view = new AppCoreView(model);
             ctrl = new AppCoreCtrl(model, view);
-            view.init();
+            //view.init();
             view.setVisible(true);
             EventQueue.invokeLater( new SplashScreenCloser() );
             logger.info("AppCore MVC constructed. Plantlore client should be visible now.");

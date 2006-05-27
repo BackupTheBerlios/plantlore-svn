@@ -1,128 +1,341 @@
 /*
- * AppCoreView.java
+ * AppCoreViewMatisse.java
  *
- * Created on 14. leden 2006, 17:58
- *
+ * Created on 26. květen 2006, 17:45
  */
 
 package net.sf.plantlore.client;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import net.sf.plantlore.common.ComponentAdjust;
 import net.sf.plantlore.common.StatusBarManager;
-
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
+import org.dom4j.DocumentException;
 
-/** Application core view
+/**
  *
- * Creates the main application window and its contents like data overview, menu,
- * toolbars, etc.
- * Listeners of the components are set by the <code>AppCoreCtrl</code> class.
- * Sets itself as observer of AppCore.
- *
- * @author Jakub
+ * @author  fraktalek
  */
-public class AppCoreView extends JFrame implements Observer 
-{
-    private Logger logger;
-    private Preferences prefs;
-    private AppCore model;
-    //private JFrame frame;
-    private Container container;
-    private JPanel mainPane;
-    private JMenuBar menuBar = new JMenuBar();
-    private JMenu
-            fileMenu = new JMenu(L10n.getString("Overview.MenuFile")),
-            dataMenu = new JMenu(L10n.getString("Overview.MenuData")),
-            helpMenu = new JMenu(L10n.getString("Overview.MenuHelp")); 
-    private JMenuItem settings = new JMenuItem(L10n.getString("Overview.MenuSettings"));
-    private JMenuItem print = new JMenuItem(L10n.getString("Overview.MenuPrint"));
-    private JMenuItem exit = new JMenuItem(L10n.getString("Overview.MenuExit"));
-    private JMenuItem helpContents = new JMenuItem(L10n.getString("Overview.MenuHelpContents"));
-    private JMenuItem helpAbout = new JMenuItem(L10n.getString("Overview.MenuHelpAbout"));
-    private JMenuItem dataAuthors = new JMenuItem(L10n.getString("Overview.MenuAuthorManager"));
-    private JMenuItem dataPublications = new JMenuItem(L10n.getString("Overview.MenuPublicationManager")); 
-    private JMenuItem dataUser = new JMenuItem(L10n.getString("Overview.MenuUserManager"));
-    private JMenuItem dataMetadata = new JMenuItem(L10n.getString("Overview.MenuMetadataManager"));
-    private JMenuItem dataHistory = new JMenuItem(L10n.getString("Overview.MenuHistory"));
-    private JMenuItem dataWholeHistory = new JMenuItem(L10n.getString("Overview.MenuwholeHistory"));
-    private JMenuItem dataImport = new JMenuItem(L10n.getString("Overview.MenuDataImport"));
-    private JMenuItem dataExport = new JMenuItem(L10n.getString("Overview.MenuDataExport"));
-    private JMenuItem dataSearch = new JMenuItem(L10n.getString("Overview.MenuDataSearch"));
-    private JMenuItem login = new JMenuItem(L10n.getString("Overview.MenuLogin"));
-    
-    private JButton 
-            importButton = new JButton(),
-            exportButton = new JButton(), 
-            searchButton = new JButton(),
-            addButton = new JButton(),
-            editButton = new JButton(),
-            deleteButton = new JButton(),
-            selectAll = new JButton(),
-            selectNone = new JButton(),
-            invertSelected  = new JButton(),
-            prevPage = new JButton(),
-            nextPage = new JButton(),
-            schedaButton = new JButton(),
-            historyButton = new JButton();
-    
-    private JScrollPane overviewScrollPane;
-    private JLabel statusLabel;
-    
-    protected JTable overview = new JTable();
-    private JToolBar mainToolBar;
-    private JToolBar pageToolBar;
-    protected JFormattedTextField recordsPerPage = new JFormattedTextField(NumberFormat.getIntegerInstance());
-    private JLabel pageStatus = new JLabel("-/-");
-    private JLabel recordsCount = new JLabel("-");
+public class AppCoreView extends javax.swing.JFrame implements Observer {
+    AppCore model;
+    Logger logger;
+    Preferences prefs;
     private StatusBarManager sbm;
     
-    /** Creates a new instance of AppCoreView */
-    public AppCoreView(AppCore model)
-    {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());                
+    /** Creates new form AppCoreViewMatisse */
+    public AppCoreView(AppCore model) {
         this.model = model;
+        prefs = Preferences.userNodeForPackage(this.getClass());        
+        logger = Logger.getLogger(this.getClass().getPackage().getName());                
+        initComponents();
+        sbm = new StatusBarManager(statusLabel);    
+        sbm.setDefaultText(L10n.getString("Overview.StatusReady"));
+
+        initOverview();
+        
         model.addObserver(this); 
-        prefs = Preferences.userNodeForPackage(this.getClass());
+    }
+    
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        mainToolBar = new javax.swing.JToolBar();
+        addButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
+        schedaButton = new javax.swing.JButton();
+        historyButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        statusLabel = new javax.swing.JLabel();
+        pageToolBar = new javax.swing.JToolBar();
+        selectAll = new javax.swing.JButton();
+        selectNone = new javax.swing.JButton();
+        invertSelected = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        prevPage = new javax.swing.JButton();
+        nextPage = new javax.swing.JButton();
+        recordsPerPage = new javax.swing.JFormattedTextField();
+        jPanel2 = new javax.swing.JPanel();
+        overviewScrollPane = new javax.swing.JScrollPane();
+        overview = new javax.swing.JTable();
+        jPanel4 = new javax.swing.JPanel();
+        recordsCount = new javax.swing.JLabel();
+        pageStatus = new javax.swing.JLabel();
+        recordsCountLabel = new javax.swing.JLabel();
+        pageStatusLabel = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        fileLogin = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        dataImport = new javax.swing.JMenuItem();
+        dataExport = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
+        fileSettings = new javax.swing.JMenuItem();
+        filePrint = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        fileExit = new javax.swing.JMenuItem();
+        dataMenu = new javax.swing.JMenu();
+        dataAuthors = new javax.swing.JMenuItem();
+        dataPublication = new javax.swing.JMenuItem();
+        dataMetadata = new javax.swing.JMenuItem();
+        dataUser = new javax.swing.JMenuItem();
+        dataWholeHistory = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        helpContents = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JSeparator();
+        helpAbout = new javax.swing.JMenuItem();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        mainToolBar.setFloatable(false);
+        mainToolBar.setRollover(true);
+        addButton.setText("Add");
+        mainToolBar.add(addButton);
+
+        editButton.setText("Edit");
+        mainToolBar.add(editButton);
+
+        deleteButton.setText("Delete");
+        mainToolBar.add(deleteButton);
+
+        searchButton.setText("Search");
+        mainToolBar.add(searchButton);
+
+        schedaButton.setText("Scheda");
+        mainToolBar.add(schedaButton);
+
+        historyButton.setText("History");
+        mainToolBar.add(historyButton);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        statusLabel.setText(L10n.getString("Overview.StatusReady"));
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(statusLabel)
+                .addContainerGap(551, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(statusLabel)
+        );
+
+        pageToolBar.setFloatable(false);
+        pageToolBar.setRollover(true);
+        selectAll.setText("All");
+        pageToolBar.add(selectAll);
+
+        selectNone.setText("None");
+        pageToolBar.add(selectNone);
+
+        invertSelected.setText("Invert");
+        pageToolBar.add(invertSelected);
+
+        jPanel3.setPreferredSize(new java.awt.Dimension(100, 70));
+        prevPage.setText("Prev");
+
+        nextPage.setText("Next");
+
+        recordsPerPage.setText("jFormattedTextField1");
+
+        org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel3Layout.createSequentialGroup()
+                .add(prevPage)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(recordsPerPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(nextPage)
+                .addContainerGap(338, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel3Layout.createSequentialGroup()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(prevPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(recordsPerPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(nextPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        pageToolBar.add(jPanel3);
+
+        overview.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        overviewScrollPane.setViewportView(overview);
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+        );
+
+        recordsCount.setText("-");
+
+        pageStatus.setText("-/-");
+
+        recordsCountLabel.setText(L10n.getString("Overview.RecordsCount"));
+
+        pageStatusLabel.setText(L10n.getString("Overview.PageStatus"));
+
+        org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(506, Short.MAX_VALUE)
+                .add(recordsCountLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(recordsCount)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(pageStatusLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(pageStatus)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(pageStatusLabel)
+                    .add(pageStatus)
+                    .add(recordsCount)
+                    .add(recordsCountLabel))
+                .addContainerGap())
+        );
+
+        fileMenu.setText("File");
+        fileLogin.setText("Item");
+        fileMenu.add(fileLogin);
+
+        fileMenu.add(jSeparator2);
+
+        dataImport.setText("Item");
+        fileMenu.add(dataImport);
+
+        dataExport.setText("Item");
+        fileMenu.add(dataExport);
+
+        fileMenu.add(jSeparator3);
+
+        fileSettings.setText("Item");
+        fileMenu.add(fileSettings);
+
+        filePrint.setText("Item");
+        fileMenu.add(filePrint);
+
+        fileMenu.add(jSeparator1);
+
+        fileExit.setText("Item");
+        fileMenu.add(fileExit);
+
+        jMenuBar1.add(fileMenu);
+
+        dataMenu.setText("Data");
+        dataAuthors.setText("Item");
+        dataMenu.add(dataAuthors);
+
+        dataPublication.setText("Item");
+        dataMenu.add(dataPublication);
+
+        dataMetadata.setText("Item");
+        dataMenu.add(dataMetadata);
+
+        dataUser.setText("Item");
+        dataMenu.add(dataUser);
+
+        dataWholeHistory.setText("Item");
+        dataMenu.add(dataWholeHistory);
+
+        jMenuBar1.add(dataMenu);
+
+        helpMenu.setText("Help");
+        helpContents.setText("Item");
+        helpMenu.add(helpContents);
+
+        helpMenu.add(jSeparator4);
+
+        helpAbout.setText("Item");
+        helpMenu.add(helpAbout);
+
+        jMenuBar1.add(helpMenu);
+
+        setJMenuBar(jMenuBar1);
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(mainToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(pageToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(mainToolBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(pageToolBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[])  throws DocumentException {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    new AppCoreView(new AppCore(new MainConfig("xx")));
+                } catch (DocumentException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
-    public void update(Observable observable, Object object)
-    {
+    public void update(Observable observable, Object object) {
         if (object != null && object instanceof String) {
             String arg = (String) object;
             if (arg.equals("PAGE_CHANGED")||arg.equals("RECORDS_PER_PAGE")) {
@@ -137,168 +350,9 @@ public class AppCoreView extends JFrame implements Observer
                 pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());                
                 return;
             }
-        }
-    }
-    
-    /** Calls all the constructing init methods.
-     *
-     */
-    public void init()
-    {
-        initFrame();
-        initStatusBar();
-        initMenu();
-        constructOverview();
-        initMainToolBar();
-        this.pack();
+        }        
     }
 
-    /** Constructs the main Plantlore JFrame.
-     *
-     */
-    public void initFrame() 
-    {
-//        frame = new JFrame(L10n.getString("plantlore"));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        this.setVisible(false);
-        this.setJMenuBar(menuBar);
-        container = this.getContentPane();
-        container.setLayout(new BorderLayout());
-        mainPane = new JPanel();
-        mainPane.setLayout(new BorderLayout());
-        container.add(mainPane, BorderLayout.CENTER);
-    }
-
-    /** Constructs main menu. Mnemonics should be fixed according to L10n!
-     *
-     */
-    private void initMenu()
-    {
-        fileMenu.setMnemonic(L10n.getMnemonic("Overview.MenuFile"));
-        fileMenu.add(login);
-        fileMenu.add(settings);
-        fileMenu.add(print);
-        fileMenu.addSeparator();
-        fileMenu.add(exit);
-        
-        dataMenu.setMnemonic(L10n.getMnemonic("Overview.MenuData"));
-        dataMenu.add(dataAuthors);
-        dataMenu.add(dataPublications);  
-        dataMenu.add(dataMetadata);
-        dataMenu.add(dataImport);
-        dataMenu.add(dataExport);
-        dataMenu.add(dataSearch);
-        dataMenu.add(dataHistory); 
-        dataMenu.add(dataWholeHistory); 
-        dataMenu.add(dataUser);
-
-        helpMenu.setMnemonic(L10n.getMnemonic("Overview.MenuHelp"));
-        helpMenu.add(helpContents);
-        helpMenu.addSeparator();
-        helpMenu.add(helpAbout);
-        
-        menuBar.add(fileMenu);
-        menuBar.add(dataMenu);
-        menuBar.add(helpMenu);
-    }
-
-
-    /** Constructs the main toolbar.
-     *
-     */
-    private void initMainToolBar()
-    {
-        mainToolBar = new JToolBar();
-        mainToolBar.add(addButton);
-        mainToolBar.add(editButton);
-        mainToolBar.add(deleteButton);
-        mainToolBar.add(searchButton);
-        mainToolBar.add(schedaButton);
-        mainToolBar.add(historyButton);
-        container.add(mainToolBar, BorderLayout.NORTH);
-        
-        sbm.add(searchButton, L10n.getString("Overview.SearchTT"));
-    }
-    
-    /** Constructs the main status bar and initializes the <code>sbm StatusBarManager</code> appropriately.
-     *
-     */
-    private void initStatusBar() 
-    {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        statusLabel = new JLabel(L10n.getString("statusReady"));
-        panel.add(statusLabel, BorderLayout.CENTER);
-        panel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        container.add(panel, BorderLayout.SOUTH);
-        sbm = new StatusBarManager(statusLabel);    
-        sbm.setDefaultText(L10n.getString("statusReady"));
-    }
-    
-    /** Constructs the data overview and adds it to the <code>mainPane</code>.
-     *
-     */
-    private void constructOverview()
-    {
-        overview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BorderLayout());
-        overviewScrollPane = new JScrollPane(tablePanel);
-        tablePanel.add(overview.getTableHeader(), BorderLayout.PAGE_START);
-        tablePanel.add(overview, BorderLayout.CENTER);
-        mainPane.add(overviewScrollPane, BorderLayout.CENTER);
-        
-        pageToolBar = new JToolBar();
-        recordsPerPage.setPreferredSize(new Dimension(40, 10));
-        recordsPerPage.setHorizontalAlignment(JTextField.CENTER);
-        pageToolBar.setFloatable(false);
-        pageToolBar.setRollover(true);
-
-        JToolBar selectToolBar = new JToolBar();
-        JButton refresh = new JButton("Refresh");
-        pageToolBar.add(selectAll);
-        pageToolBar.add(selectNone);
-        pageToolBar.add(invertSelected);
-        pageToolBar.addSeparator();        
-        pageToolBar.add(invertSelected);
-        pageToolBar.addSeparator();        
-        pageToolBar.add(prevPage);
-        pageToolBar.add(recordsPerPage);
-        pageToolBar.add(nextPage);
-        
-        recordsCount.setToolTipText(L10n.getString("overviewRecordsCountTT"));
-        pageStatus.setToolTipText(L10n.getString("overviewPageStatusTT"));
-        JPanel controlPane = new JPanel(new BorderLayout());
-        JPanel topControlPane = new JPanel(new FlowLayout());
-        JPanel toolBarPane = new JPanel(new FlowLayout());
-//        toolBarPane.add(selectToolBar);
-        toolBarPane.add(pageToolBar);
-        topControlPane.add(new JLabel(L10n.getString("overviewRecordsCount")));
-        topControlPane.add(recordsCount);
-        topControlPane.add(new JLabel(L10n.getString("overviewPageStatus")));
-        topControlPane.add(pageStatus);
-        controlPane.add(topControlPane, BorderLayout.NORTH);
-        controlPane.add(toolBarPane, BorderLayout.SOUTH);
-        mainPane.add(controlPane, BorderLayout.SOUTH);
-        ComponentAdjust ca = new ComponentAdjust();
-        ca.add(prevPage);
-        ca.add(nextPage);
-        ca.setMaxWidth();
-        ca.clear();
-        ca.add(selectAll);
-        ca.add(selectNone);
-        ca.add(invertSelected);
-        ca.setMaxWidth();
-        
-        sbm.add(prevPage, L10n.getString("Overview.PreviousPage"));
-        sbm.add(nextPage, L10n.getString("Overview.NextPage"));
-        sbm.add(recordsPerPage, L10n.getString("Overview.RecordsPerPage"));
-    }
-    
-    /** This method should be called right after the user logs into some database.
-     *
-     */
     public void initOverview()
     {
         TableColumn tc;
@@ -310,16 +364,15 @@ public class AppCoreView extends JFrame implements Observer
         tableSorter.setTableHeader(overview.getTableHeader());
         
         // Comment to established db connection automatically without the login procedure        
-        overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*25));
+        //overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*19));
        
         for (int i = 0; i < otm.getColumnCount(); i++) {
             tc = overview.getColumnModel().getColumn(i);
             tc.setPreferredWidth(otm.getColumnSize(i));
         }
         recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));        
-        pack();
     }
-    
+
     /** Returns the main window <code>StatusBarManager</code>.
      *
      */
@@ -335,26 +388,26 @@ public class AppCoreView extends JFrame implements Observer
      * @param a The action that should be called when clicked on this menuitem.
      */
     public void setLoginAction(Action a) {
-    	login.setAction(a);
+    	fileLogin.setAction(a);
     }
     
     /** Sets an action to the settings menu item.
      *
      */
     public void setSettingsAction(AbstractAction a) {
-        settings.setAction(a);
+        fileSettings.setAction(a);
     }
     /** Sets an action to the print menu item.
      *
      */
     public void setPrintAction(AbstractAction a) {
-        print.setAction(a);
+        filePrint.setAction(a);
     }
     /** Adds listener to the exit menu item.
      *
      */
     public void addExitListener(ActionListener al) {
-        exit.addActionListener(al);
+        fileExit.addActionListener(al);
     }
     /** Adds listener to the HelpContents menu item.
      *
@@ -395,7 +448,6 @@ public class AppCoreView extends JFrame implements Observer
      *
      */
     public void setSearchAction(AbstractAction a) {
-        dataSearch.setAction(a);
         searchButton.setAction(a);
     }
 
@@ -439,7 +491,6 @@ public class AppCoreView extends JFrame implements Observer
      */
     public void setImportAction(AbstractAction a) {
         dataImport.setAction(a);
-        importButton.setAction(a);
     }
 
     /** Sets an action to the Data->export menu item and to the Export toolbar button.
@@ -447,7 +498,6 @@ public class AppCoreView extends JFrame implements Observer
      */
     public void setExportAction(AbstractAction a) {
         dataExport.setAction(a);
-        exportButton.setAction(a);
     }
 
     /** Sets an action to the previous page button.
@@ -482,7 +532,7 @@ public class AppCoreView extends JFrame implements Observer
      *
      */
     public void addDataPublicationsAction(AbstractAction a) {
-        dataPublications.setAction(a);
+        dataPublication.setAction(a);
     }    
     
     /** Adds a listener to the User manager menu item.
@@ -496,7 +546,7 @@ public class AppCoreView extends JFrame implements Observer
     *
     */
     public void addDataHistoryAction(AbstractAction a) {
-        dataHistory.setAction(a);
+        historyButton.setAction(a);
     }
     
     /** Sets an action to the MetadataData menu item.
@@ -524,10 +574,53 @@ public class AppCoreView extends JFrame implements Observer
         overview.getSelectionModel().addListSelectionListener(l);
     }
     
-    /** Returns the frame of the main window.
-     *
-     */
-/*    protected JFrame getFrame() {
-        return this.frame;
-    }     */
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton addButton;
+    protected javax.swing.JMenuItem dataAuthors;
+    private javax.swing.JMenuItem dataExport;
+    private javax.swing.JMenuItem dataImport;
+    protected javax.swing.JMenu dataMenu;
+    protected javax.swing.JMenuItem dataMetadata;
+    protected javax.swing.JMenuItem dataPublication;
+    protected javax.swing.JMenuItem dataUser;
+    protected javax.swing.JMenuItem dataWholeHistory;
+    protected javax.swing.JButton deleteButton;
+    protected javax.swing.JButton editButton;
+    private javax.swing.JMenuItem fileExit;
+    private javax.swing.JMenuItem fileLogin;
+    protected javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem filePrint;
+    private javax.swing.JMenuItem fileSettings;
+    protected javax.swing.JMenuItem helpAbout;
+    protected javax.swing.JMenuItem helpContents;
+    protected javax.swing.JMenu helpMenu;
+    protected javax.swing.JButton historyButton;
+    private javax.swing.JButton invertSelected;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    protected javax.swing.JSeparator jSeparator4;
+    private javax.swing.JToolBar mainToolBar;
+    private javax.swing.JButton nextPage;
+    protected javax.swing.JTable overview;
+    private javax.swing.JScrollPane overviewScrollPane;
+    private javax.swing.JLabel pageStatus;
+    private javax.swing.JLabel pageStatusLabel;
+    private javax.swing.JToolBar pageToolBar;
+    private javax.swing.JButton prevPage;
+    private javax.swing.JLabel recordsCount;
+    private javax.swing.JLabel recordsCountLabel;
+    protected javax.swing.JFormattedTextField recordsPerPage;
+    protected javax.swing.JButton schedaButton;
+    protected javax.swing.JButton searchButton;
+    private javax.swing.JButton selectAll;
+    private javax.swing.JButton selectNone;
+    private javax.swing.JLabel statusLabel;
+    // End of variables declaration//GEN-END:variables
+    
 }
