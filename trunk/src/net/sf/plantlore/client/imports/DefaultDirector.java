@@ -262,7 +262,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				Occurrence occ;
 				try {
 					count++;
-					occ = (Occurrence) parser.nextPart(Occurrence.class);
+					occ = (Occurrence) parser.getNextPart(Occurrence.class);
 				} catch( ParserException e) {
 					logger.warn("The record is not valid (probably incomplete). " + e);
 					logger.info("Skipping the record No. " + count);
@@ -416,7 +416,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						AuthorOccurrence ao;
 						logger.debug("Fetching associated data (Author, AuthorOccurrence).");
 						try {
-							ao = (AuthorOccurrence)parser.nextPart(AuthorOccurrence.class);
+							ao = (AuthorOccurrence)parser.getNextPart(AuthorOccurrence.class);
 						} catch (ParserException e) {
 							logger.warn("The associated record is not valid. " + e);
 							continue;

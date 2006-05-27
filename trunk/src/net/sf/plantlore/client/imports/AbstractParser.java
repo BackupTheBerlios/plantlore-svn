@@ -5,28 +5,38 @@ import java.io.Reader;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.*;
 
-public abstract class AbstractParser implements Parser {
+public class AbstractParser implements Parser {
 	
 	protected Reader reader;
-	protected AuthorOccurrence ao;
+	
 	
 	public AbstractParser(Reader reader) {
 		this.reader = reader;
 	}
 	
 	
+	public void initialize() throws ParserException {}
+	
+	public void cleanup() {}
+	
 	public boolean hasNextRecord() {
 		return false;
 	}
 	
+	public Action fetchNextRecord() throws ParserException {
+		return Action.UNKNOWN;
+	}
+
+	public boolean hasNextPart(Class table) {
+		return false;
+	}
 	
-	public Record nextPart(Class table) 
-	throws ParserException {
+	public Record getNextPart(Class table) throws ParserException {
 		return null;
 	}
 	
 	public Action intentedFor() {
-		return Parser.Action.UNKNOWN;
+		return Action.UNKNOWN;
 	}
 
 

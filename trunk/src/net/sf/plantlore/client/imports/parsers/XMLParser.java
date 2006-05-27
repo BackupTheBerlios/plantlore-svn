@@ -1,7 +1,5 @@
 package net.sf.plantlore.client.imports.parsers;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
@@ -12,23 +10,23 @@ import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
 //import org.apache.log4j.Logger;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 
 /**
  *
- * @author Lada Oberreiterova
+ * @author Lada Oberreiterová
+ * @author Erik Kratochvíl
  */
 public class XMLParser extends AbstractParser {
 
     private Document document;
-    private List occurrences;
+    private int occurrences;
     private Iterator occIterator, aoIterator;
     private Node currentOccurrence;
     
+    private AuthorOccurrence ao;
     private Occurrence occ;
    
 
@@ -39,44 +37,39 @@ public class XMLParser extends AbstractParser {
     
     
     public int getNumberOfRecords() {
-    	return occurrences.size();
+    	return occurrences;
     }
 
-    
+    @Override
     public void initialize() 
     throws ParserException {
-        SAXReader saxReader = new SAXReader();        
-        try {            
+        try {
+        	SAXReader saxReader = new SAXReader();
             document = saxReader.read( reader );
-        } catch (DocumentException ex) {
+            occIterator = document.selectNodes("//occurrence").iterator();
+        } catch (Exception ex) {
             throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
         } 
-        occurrences = document.selectNodes("//occurrence");
-        occIterator = occurrences.iterator();
     }
 
-    
-    public void cleanup() {}
 
-    
+    @Override
     public boolean hasNextRecord() {        
         return occIterator.hasNext();
     }
 
-    
+
+    @Override
     public Action fetchNextRecord() 
     throws ParserException {
     	currentOccurrence = (Node) occIterator.next();
-    	List authors = currentOccurrence.selectNodes(AuthorOccurrence.class.getSimpleName());
-    	
+    	List authors = currentOccurrence.selectNodes(AuthorOccurrence.class.getSimpleName().toLowerCase());
     	if(authors == null || authors.size() <= 0)
     		throw new ParserException("Error.IncompleteRecord");
-    		
-    	aoIterator = authors.iterator();    	
-    	    	
+    	aoIterator = authors.iterator();
+    	
     	ao = (AuthorOccurrence) new AuthorOccurrence().createTorso();
     	occ = ao.getOccurrence();
-    	
     	reconstruct( occ, currentOccurrence );
     	
         return Action.UNKNOWN;
@@ -87,15 +80,15 @@ public class XMLParser extends AbstractParser {
     	if(part == null || node == null)
     		return;
     	// Retrieve properties.
-    	for(String property : part.getProperties()) {
-    		part.setValue(property, node.valueOf(property));
-    	}
+    	for(String property : part.getProperties()) 
+    		part.setValue(property, node.valueOf(property.toLowerCase()));
+    	
     	// Reconstruct subrecords as well.
     	List<String> foreignKeys = part.getForeignKeys();
     	if(part instanceof AuthorOccurrence)
-    		foreignKeys.remove(AuthorOccurrence.OCCURRENCE); // Occurrence is already reconstructed.
+    		foreignKeys.remove(AuthorOccurrence.OCCURRENCE); // Occurrence has already been reconstructed.
     	for(String key : foreignKeys) {
-    		Node subNode = node.selectSingleNode(key);
+    		Node subNode = node.selectSingleNode(key.toLowerCase());
     		if(subNode != null)
     			reconstruct( (Record)part.getValue(key), subNode );
     		else
@@ -103,7 +96,9 @@ public class XMLParser extends AbstractParser {
     	}
     }
     
-    public Record nextPart(Class table) 
+    
+    @Override
+    public Record getNextPart(Class table) 
     throws ParserException {
     	if(table == AuthorOccurrence.class) {
     		Node currentAO = (Node) aoIterator.next();
@@ -115,37 +110,12 @@ public class XMLParser extends AbstractParser {
     }
     
     
+    @Override
     public boolean hasNextPart(Class table) {
     	if(table == AuthorOccurrence.class && aoIterator.hasNext())
     		return true;
     	else
     		return false;
     }
-
-    
-    
-    public static void main(String[] args) 
-    throws FileNotFoundException {
-        XMLParser xmlParser = new XMLParser(new FileReader("c:/Documents and Settings/yaa/Dokumenty/Plantlore/part.OK.xml"));       
-         try {
-             xmlParser.initialize();
-             while (xmlParser.hasNextRecord()) {
-            	 xmlParser.fetchNextRecord();
-            	 
-                 Occurrence occ = (Occurrence) xmlParser.nextPart(Occurrence.class);
-                 System.out.println("===========================================");
-                 System.out.println(occ);
-                 System.out.println("   -------------------------------------------------------");
-                 while (xmlParser.hasNextPart(AuthorOccurrence.class)) {
-                	 System.out.println("   -------------------------------------------------------");
-                	 AuthorOccurrence ao =  (AuthorOccurrence) xmlParser.nextPart(AuthorOccurrence.class);
-                	 System.out.println("   " + ao);
-                 }  
-                 
-                 System.out.println("===========================================");
-             }
-         } catch (ParserException ex) {
-             ex.printStackTrace();
-         }
-    }
+   
 }

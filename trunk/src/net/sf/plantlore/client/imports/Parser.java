@@ -90,7 +90,7 @@ public interface Parser {
 	 * obtained via <code>nextPart()</code>.
 	 * 
 	 * @return	The action the whole record is supposed to undergo.
-	 * @see #nextPart(Class)
+	 * @see #getNextPart(Class)
 	 */
 	Action fetchNextRecord() throws ParserException;
 	
@@ -106,7 +106,7 @@ public interface Parser {
 	 * @return	The next part of the whole record, or null if there is none.
 	 * @throw ParserException if the record is not valid.
 	 */
-	Record nextPart(Class table) throws ParserException;
+	Record getNextPart(Class table) throws ParserException;
 	
 	/**
 	 * Are there any other subrecords of this type (from this table)?

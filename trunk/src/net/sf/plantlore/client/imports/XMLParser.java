@@ -96,7 +96,7 @@ public class XMLParser implements Parser {
         return Parser.Action.UNKNOWN;
     }
 
-    public Record nextPart(Class table) throws ParserException {        
+    public Record getNextPart(Class table) throws ParserException {        
         if (table == Occurrence.class) {
             //OCC_NODE
             setOccurrenceNode(occurrenceList);            
@@ -204,11 +204,11 @@ public class XMLParser implements Parser {
             System.out.println("test");
             xmlParser.initialize();
             while (xmlParser.hasNextRecord()) {
-                Occurrence occMain = (Occurrence) xmlParser.nextPart(Occurrence.class);
+                Occurrence occMain = (Occurrence) xmlParser.getNextPart(Occurrence.class);
                 //Test of output
                 System.out.println("1:" + occMain.getHabitat().getCountry());                
                 while (xmlParser.hasNextPart(AuthorOccurrence.class)) {
-                    AuthorOccurrence aoMain =  (AuthorOccurrence) xmlParser.nextPart(AuthorOccurrence.class);
+                    AuthorOccurrence aoMain =  (AuthorOccurrence) xmlParser.getNextPart(AuthorOccurrence.class);
                     //Test of output
                     System.out.println("2: "+ aoMain.getAuthor().getWholeName());
                 }                
