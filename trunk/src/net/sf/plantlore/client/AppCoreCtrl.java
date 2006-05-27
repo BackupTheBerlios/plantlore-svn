@@ -61,6 +61,7 @@ import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
 import net.sf.plantlore.common.Selection;
+import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -618,7 +619,10 @@ public class AppCoreCtrl
     private void constructSearchMVC() {
             if (searchModel == null) {
                 searchModel = new Search(model.getDatabase());
+                StatusBarManager sbm = view.getSBM();
+                
                 searchModel.setColumns(model.getTableModel().getColumns());
+                
                 searchModel.setAuthors(model.getAuthors());
                 searchModel.setAuthorRoles(model.getAuthorRoles());
                 searchModel.setPlants(model.getPlants());

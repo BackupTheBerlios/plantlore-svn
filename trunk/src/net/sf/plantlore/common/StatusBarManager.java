@@ -12,8 +12,11 @@ import java.awt.Container;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.WeakHashMap;
 import javax.swing.JLabel;
+import net.sf.plantlore.l10n.L10n;
 
 /** Status bar convenience class.
  *
@@ -26,7 +29,7 @@ import javax.swing.JLabel;
  *
  * @author Jakub
  */
-public class StatusBarManager implements MouseListener
+public class StatusBarManager implements MouseListener, Observer
 {
     private JLabel statusLabel;
     private Map<Component, String> map;
@@ -60,6 +63,14 @@ public class StatusBarManager implements MouseListener
         defaultText = text;
     }
     
+    /** Displays given text immediately on the status bar. In case it is rewritten thanks to mouse over some component, it won't be restored.
+     *
+     * @param text The text to be displayed.
+     */
+    public void display(String text) {
+        this.statusLabel.setText(text);
+    }
+    
     public void mouseClicked(MouseEvent mouseEvent)
     {
     }
@@ -88,6 +99,56 @@ public class StatusBarManager implements MouseListener
     public void mouseExited(MouseEvent mouseEvent)
     {
         statusLabel.setText(defaultText);
+    }
+
+    /** Processes messages from observables to that this is registered and updates status bar accordingly.
+     *
+     */
+    public void update(Observable o, Object arg) {
+        if (arg instanceof String) {
+            String msg = (String)arg;
+            
+            if (msg.equals("LOADING_PLANTS")) {
+                display(L10n.getString("Message.LoadingPlants"));
+            }
+            
+            if (msg.equals("LOADING_AUTHORS")) {
+                display(L10n.getString("Message.LoadingAuthors"));
+            }
+            
+            if (msg.equals("LOADING_AUTHOR_ROLES")) {
+                display(L10n.getString("Message.LoadingAuthorRoles"));
+            }
+            
+            if (msg.equals("LOADING_VILLAGES")) {
+                display(L10n.getString("Message.LoadingVillages"));
+            }
+
+            if (msg.equals("LOADING_TERRITORIES")) {
+                display(L10n.getString("Message.LoadingTerritories"));
+            }
+            
+            if (msg.equals("LOADING_PHYTOCHORIA")) {
+                display(L10n.getString("Message.LoadingPhytochoria"));
+            }
+            
+            if (msg.equals("LOADING_SOURCES")) {
+                display(L10n.getString("Message.LoadingSources"));
+            }
+            
+            if (msg.equals("LOADING_PUBLICATIONS")) {
+                display(L10n.getString("Message.LoadingPublications"));
+            }
+            
+            if (msg.equals("LOADING_PROJECTS")) {
+                display(L10n.getString("Message.LoadingProjects"));
+            }
+            
+            
+            if (msg.equals("LOADED")) {
+                display(defaultText);
+            }
+        }
     }
     
 }

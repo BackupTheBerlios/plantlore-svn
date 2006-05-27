@@ -336,7 +336,10 @@ public class AppCore extends Observable
         int resultsCount;
         Object[] records;
         Object[] row;
-
+        
+        setChanged();
+        notifyObservers("LOADING_PLANTS");
+                
         sq = database.createQuery(Plant.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Plant.TAXON);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.TAXON);
@@ -350,6 +353,8 @@ public class AppCore extends Observable
             row = (Object[])records[i];
             plants[i] = new Pair((String)row[0], (Integer)row[1]);
         }
+        setChanged();
+        notifyObservers("LOADED");
         logger.info("Loaded: "+resultsCount+" plants.");
         return plants;
     }
@@ -361,6 +366,8 @@ public class AppCore extends Observable
         Object[] records;
         Object[] row;
 
+        setChanged(); notifyObservers("LOADING_AUTHORS");
+        
         sq = database.createQuery(Author.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.WHOLENAME);
@@ -376,6 +383,7 @@ public class AppCore extends Observable
             authors[i] = new Pair<String, Integer>((String)row[0], (Integer)row[1]);
         }
         logger.info("Loaded: "+resultsCount+" authors.");
+        setChanged(); notifyObservers("LOADED");
         return authors;
     }
     
@@ -385,6 +393,8 @@ public class AppCore extends Observable
         int resultsCount;
         Object[] records;
 
+        setChanged(); notifyObservers("LOADING_AUTHOR_ROLES");
+        
         sq = database.createQuery(AuthorOccurrence.class);
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT,AuthorOccurrence.ROLE);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, AuthorOccurrence.ROLE);
@@ -399,6 +409,7 @@ public class AppCore extends Observable
             authorRoles[i] = r;
         }
         logger.info("Loaded: "+resultsCount+" author roles.");
+        setChanged(); notifyObservers("LOADED");
         return authorRoles;
     }
 
@@ -409,6 +420,7 @@ public class AppCore extends Observable
         Object[] records;
         Object[] row;
 
+        setChanged(); notifyObservers("LOADING_VILLAGES");
         sq = database.createQuery(Village.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.NAME);
@@ -423,6 +435,7 @@ public class AppCore extends Observable
             villages[i] = new Pair<String, Integer>((String)row[0],(Integer)row[1]);
         }
         logger.info("Loaded: "+resultsCount+" villages.");
+        setChanged(); notifyObservers("LOADED");
         return villages;
     }
 
@@ -433,6 +446,7 @@ public class AppCore extends Observable
         Object[] records;
         Object[] row;
 
+        setChanged(); notifyObservers("LOADING_TERRITORIES");
         sq = database.createQuery(Territory.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Territory.NAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.NAME);
@@ -447,6 +461,7 @@ public class AppCore extends Observable
             territories[i] = new Pair<String,Integer>((String)row[0],(Integer)row[1]);
         }
         logger.info("Loaded: "+resultsCount+" territories.");
+        setChanged(); notifyObservers("LOADED");
         return territories;
     }
     
@@ -456,6 +471,7 @@ public class AppCore extends Observable
         int resultsCount;
         Object[] records, row;
 
+        setChanged(); notifyObservers("LOADING_PHYTOCHORIA");
         sq = database.createQuery(Phytochorion.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Phytochorion.NAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.NAME);
@@ -473,6 +489,7 @@ public class AppCore extends Observable
             phytCodes[i] = new Pair<String,Integer>((String)row[1], (Integer)row[2]);
         }
         logger.info("Loaded: "+resultsCount+" phytochoria.");
+        setChanged(); notifyObservers("LOADED");
         return phytNames;
     }
     
@@ -489,6 +506,7 @@ public class AppCore extends Observable
         Object[] records;
         String country;
 
+        setChanged(); notifyObservers("LOADING_COUNTRIES");
         sq = database.createQuery(Habitat.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Habitat.COUNTRY);
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT, Habitat.COUNTRY);
@@ -503,6 +521,7 @@ public class AppCore extends Observable
         }
 
         logger.info("Loaded: "+resultsCount+" countries.");
+        setChanged(); notifyObservers("LOADED");
         return countries;
     }
     
@@ -512,6 +531,7 @@ public class AppCore extends Observable
         int resultsCount;
         Object[] records;
 
+        setChanged(); notifyObservers("LOADING_SOURCES");
         sq = database.createQuery(Occurrence.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.DATASOURCE);
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Occurrence.DATASOURCE);
@@ -523,6 +543,7 @@ public class AppCore extends Observable
             sources[i] = (String)((Object[])records[i])[0];
 
         logger.info("Loaded: "+resultsCount+" sources.");
+        setChanged(); notifyObservers("LOADED");
         return sources;
     }
     
@@ -533,6 +554,7 @@ public class AppCore extends Observable
         Object[] records;
         Object[] row;
 
+        setChanged(); notifyObservers("LOADING_PUBLICATIONS");
         sq = database.createQuery(Publication.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Publication.REFERENCECITATION);
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
@@ -549,6 +571,7 @@ public class AppCore extends Observable
         }
 
         logger.info("Loaded: "+resultsCount+" publications.");
+        setChanged(); notifyObservers("LOADED");
         return publications;
     }
 
@@ -558,6 +581,7 @@ public class AppCore extends Observable
         int resultsCount;
         Object[] records,row;
 
+        setChanged(); notifyObservers("LOADING_PROJECTS");
         sq = database.createQuery(Metadata.class);
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Metadata.DATASETTITLE);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.DATASETTITLE);
@@ -573,6 +597,7 @@ public class AppCore extends Observable
         }
 
         logger.info("Loaded: "+resultsCount+" projects.");
+        setChanged(); notifyObservers("LOADED");
         return projects;
     }
     

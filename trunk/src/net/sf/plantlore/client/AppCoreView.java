@@ -43,6 +43,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         initOverview();
         
         model.addObserver(this); 
+        model.addObserver(sbm);
     }
     
     /** This method is called from within the constructor to
