@@ -143,7 +143,7 @@ public class Occurrence extends Record implements Deletable {
     }
     
     public Date checkDate(Object value) {
-        if (value.getClass() == String.class) {
+        if (value instanceof String) {
              DateFormat myDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");                          
             try {
                 return myDateFormat.parse((String) value);

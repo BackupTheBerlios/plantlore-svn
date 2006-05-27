@@ -24,7 +24,7 @@ public class XMLBuilder extends AbstractBuilder {
 
     private Document document;
     private String filename;
-    private Element authors;
+    private Element occurrence;
     
     /**
      * Create a new XML Builder.
@@ -85,7 +85,7 @@ public class XMLBuilder extends AbstractBuilder {
     throws IOException {
     	// One Occurrence can have many AuthorOccurrences [AOs]. 
     	// All those AOs are in their own special node <authors></authors>.
-    	decompose( (record instanceof AuthorOccurrence) ? authors : document.getRootElement(), record);
+    	decompose( (record instanceof AuthorOccurrence) ? occurrence : document.getRootElement(), record);
     }
     
     /**
@@ -100,7 +100,7 @@ public class XMLBuilder extends AbstractBuilder {
     	Element current = father.addElement(record.getClass().getSimpleName().toLowerCase());
     	// Every occurrence may have 0..N associated AuthorOccurrences.
     	if(record instanceof Occurrence) 
-    		authors = current.addElement("authors");
+    		occurrence = current;
     	
     	for( String property : record.getProperties() ) {
     		String value = record.getValue(property) == null ? "" : record.getValue(property).toString();

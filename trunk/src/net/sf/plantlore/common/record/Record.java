@@ -268,8 +268,11 @@ public abstract class Record implements Serializable {
 	public boolean areAllNNSet() {
 		for( String column : getNN() ) { 
 			Object value = getValue(column);
-			System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
-			if( value == null ) return false;
+			//System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
+			if( value == null ) {
+				System.out.println(getClass().getSimpleName()+"."+column+" = 0");
+				return false;
+			}
 			if( value instanceof Record && !((Record)value).areAllNNSet() ) return false;
 		}
 		return true;

@@ -8,12 +8,10 @@ import net.sf.plantlore.common.record.*;
 public abstract class AbstractParser implements Parser {
 	
 	protected Reader reader;
-	protected Record torso;
-	
+	protected AuthorOccurrence ao;
 	
 	public AbstractParser(Reader reader) {
 		this.reader = reader;
-		torso = new AuthorOccurrence().createTorso();
 	}
 	
 	
@@ -24,12 +22,9 @@ public abstract class AbstractParser implements Parser {
 	
 	public Record nextPart(Class table) 
 	throws ParserException {
-		return torso.findSubrecord( table );
-		// + nacteni dalsiho zaznamu k teto tabulce - tyka se jenom AO
+		return null;
 	}
 	
-
-
 	public Action intentedFor() {
 		return Parser.Action.UNKNOWN;
 	}

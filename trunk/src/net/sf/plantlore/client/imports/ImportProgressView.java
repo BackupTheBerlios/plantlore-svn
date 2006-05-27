@@ -99,6 +99,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 			Exception e = (Exception) parameter;
 			setTitle(L10n.getString("Import.Failed"));
 			status.setText(e.getMessage());
+			progress.setIndeterminate(false);
 			progress.setValue(0);
 			abort.setText(L10n.getString("Import.Hide"));
 			exceptionOccured = true;
@@ -107,6 +108,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 			setTitle(L10n.getString("Import.Aborted"));
 			count = model.getNumberOfImported();
 			status.setText(count + L10n.getString("Import.RecordsImported"));
+			progress.setIndeterminate(false);
 			progress.setValue(0);
 			abort.setText(L10n.getString("Import.Hide"));
 		} 
@@ -116,6 +118,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 			setTitle(L10n.getString("Import.Completed"));
 			status.setText(count + L10n.getString("Import.RecordsImported") + ", " 
 					+ rejected + L10n.getString("Import.RecordsRejected"));
+			progress.setIndeterminate(false);
 			progress.setMaximum(100);
 			progress.setValue(100);
 			abort.setText(L10n.getString("Import.Hide"));

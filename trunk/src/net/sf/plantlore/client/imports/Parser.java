@@ -92,7 +92,7 @@ public interface Parser {
 	 * @return	The action the whole record is supposed to undergo.
 	 * @see #nextPart(Class)
 	 */
-	Action fetchNextRecord();
+	Action fetchNextRecord() throws ParserException;
 	
 	/**
 	 * Get a part of the whole record. 
