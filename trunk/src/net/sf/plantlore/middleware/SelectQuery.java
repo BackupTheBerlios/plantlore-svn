@@ -30,6 +30,8 @@ public interface SelectQuery extends Serializable, Remote {
      */    
     void createAlias(String propertyName, String aliasName) throws RemoteException;
 
+    void createAlias(String propertyName, String aliasName, int joinType) throws RemoteException;    
+    
     /**
      *  Make the rows of the results to be distinct from each other. This checks whether whole rows
      *  are distinct from each other. The check is done by Hibernate after the results are retrieved

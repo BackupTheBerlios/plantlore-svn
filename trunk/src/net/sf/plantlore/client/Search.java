@@ -567,16 +567,25 @@ public class Search extends Observable {
         
             //FIXME:
             try {
+                // Create subquery first
+                SelectQuery subQuery = database.createSubQuery(AuthorOccurrence.class, "ao");
+                // In the subquery select authors for the given occurrence (occurrence comes from the main query)
+                subQuery.addRestriction(PlantloreConstants.RESTR_EQ_PROPERTY, "ao."+AuthorOccurrence.OCCURRENCE, "occ."+Occurrence.ID, null, null);
+                subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY, AuthorOccurrence.AUTHOR);
+                // create the main query
                 sq = database.createQuery(AuthorOccurrence.class);
                 sq.createAlias(AuthorOccurrence.AUTHOR,"author");
-                sq.createAlias(AuthorOccurrence.OCCURRENCE,"occ");
+                sq.createAlias(AuthorOccurrence.OCCURRENCE,"occ");                
                 sq.createAlias("occ."+Occurrence.HABITAT,"habitat");
                 sq.createAlias("occ."+Occurrence.PLANT,"plant");
-                sq.createAlias("occ."+Occurrence.PUBLICATION,"publication");
+                // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well
+                sq.createAlias("occ."+Occurrence.PUBLICATION,"publication", PlantloreConstants.LEFT_OUTER_JOIN);
                 sq.createAlias("occ."+Occurrence.METADATA,"metadata");
                 sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
                 sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
                 sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
+                // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
+                sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);                
                 sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
                 sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
                 
@@ -823,7 +832,6 @@ public class Search extends Observable {
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
                     restrictions.add(new Restriction(RESTR_EQ, Occurrence.MONTHCOLLECTED, month));
                 }
-                
                 int resultId = database.executeQuery(sq);
                 this.newResultId = resultId;
                 logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));

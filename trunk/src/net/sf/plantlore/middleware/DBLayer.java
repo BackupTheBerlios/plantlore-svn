@@ -131,6 +131,8 @@ public interface DBLayer extends Remote, Serializable {
      */
     public SelectQuery createQuery(Class classname) throws DBLayerException, RemoteException;
 
+    public SelectQuery createSubQuery(Class classname, String alias) throws DBLayerException, RemoteException;
+    
     /**
      *  Execute constructed SELECT query. Only executes query, for retrieving results use next() and more()
      *

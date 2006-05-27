@@ -68,6 +68,9 @@ public class PlantloreConstants {
     public static final int RESTR_NE            = 19;
     public static final int RESTR_NE_PROPERTY   = 20;    
     
+    public static final int SUBQUERY_GEALL      = 30;
+    public static final int SUBQUERY_LEALL      = 31;    
+    
     /** Constants for projections in select query */
     public static final int PROJ_AVG            = 40;
     public static final int PROJ_COUNT          = 41;
@@ -83,6 +86,12 @@ public class PlantloreConstants {
     /** Constants for fetch mode of associated entities */
     public static final int FETCH_JOIN            = 50;
     public static final int FETCH_SELECT          = 51;
+    
+    /** Constants for JOIN type in createAlias() */
+    public static final int FULL_JOIN             = 55;
+    public static final int INNER_JOIN            = 56;
+    public static final int LEFT_OUTER_JOIN       = 57;
+    public static final int RIGHT_OUTER_JOIN      = 58;    
     
     /** Constants for the direction of results ordering */
     public static final int DIRECT_ASC            = 60;

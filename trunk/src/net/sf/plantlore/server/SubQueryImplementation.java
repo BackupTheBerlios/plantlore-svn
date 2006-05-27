@@ -1,10 +1,3 @@
-/*
- * Selectcriteria.java
- *
- * Created on 24. březen 2006, 20:53
- *
- */
-
 package net.sf.plantlore.server;
 
 
@@ -22,36 +15,36 @@ import net.sf.plantlore.middleware.SelectQuery;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinFragment;
 
 /**
- * Implemetation of SelectQuery using Hibernate OR Mapping for database querying. Creates Hibernate
+ * Implemetation of SubQuery using Hibernate OR Mapping for database querying. Creates Hibernate
  * "criteria query" and sets projections, restrictions and order by clause. Also allows selecting
  * data from joined tables. For detailed explanation refer to Plantlore documentation and Hibernate 
  * reference manual.
  *
- *  FIXME: Malo by to hadzat DBLayerException...
- *  
- *  TODO: Nezapominat generovat stub! (rmic net.sf.plantlore.server.SelectQueryImplementation)
+ *  TODO: Nezapominat generovat stub! (rmic net.sf.plantlore.server.SubQueryImplementation)
+ *  TODO: Update JavaDOC
  *
- * @author Tomáš Kovařík, Erik Kratochvíl
+ * @author Tomas Kovarik
  */
-public class SelectQueryImplementation implements SelectQuery {
+public class SubQueryImplementation implements SelectQuery {
     // Hibernate criteria used in criteria query
-    private Criteria criteria;
+    private DetachedCriteria criteria;
     /* List of projections for the query */
     private ArrayList projections = new ArrayList();
     
     /** Creates a new instance of SelectQueryImplementation */
-    public SelectQueryImplementation(Criteria criteria) {
-        this.criteria = criteria;
+    public SubQueryImplementation(Class classname, String alias) {
+        this.criteria = DetachedCriteria.forClass(classname, alias);
     }
     
     /**
@@ -59,7 +52,7 @@ public class SelectQueryImplementation implements SelectQuery {
      *
      *  @return insatnce of Hibernate criteria object representing this query
      */
-    Criteria getCriteria() {
+    DetachedCriteria getCriteria() {
         return this.criteria;
     }
     
@@ -76,20 +69,7 @@ public class SelectQueryImplementation implements SelectQuery {
     }
 
     public void createAlias(String propertyName, String aliasName, int joinType) throws RemoteException {
-        switch (joinType) {
-            case PlantloreConstants.FULL_JOIN:
-                criteria.createAlias(propertyName, aliasName, JoinFragment.FULL_JOIN);
-                break;
-            case PlantloreConstants.INNER_JOIN:
-                criteria.createAlias(propertyName, aliasName, JoinFragment.INNER_JOIN);
-                break;
-            case PlantloreConstants.LEFT_OUTER_JOIN:
-                criteria.createAlias(propertyName, aliasName, JoinFragment.LEFT_OUTER_JOIN);
-                break;
-            case PlantloreConstants.RIGHT_OUTER_JOIN:
-                criteria.createAlias(propertyName, aliasName, JoinFragment.RIGHT_OUTER_JOIN);
-                break;                
-        }
+        throw new RemoteException("Method not implemented");
     }
     
     /**
@@ -175,12 +155,6 @@ public class SelectQueryImplementation implements SelectQuery {
             case PlantloreConstants.RESTR_NE_PROPERTY:
                 criteria.add(Restrictions.neProperty(firstPropertyName, secondPropertyName));
                 break;
-            case PlantloreConstants.SUBQUERY_GEALL:
-                criteria.add(Subqueries.propertyGeAll(firstPropertyName, ((SubQueryImplementation)value).getCriteria()));
-                break;
-            case PlantloreConstants.SUBQUERY_LEALL:
-                criteria.add(Subqueries.propertyLeAll(firstPropertyName, ((SubQueryImplementation)value).getCriteria()));
-                break;                
             default:
                 
         }
@@ -274,65 +248,37 @@ public class SelectQueryImplementation implements SelectQuery {
     }
     
     /**
-     *  Add projection to constructed criteria. Projections are columns we want to select
+     *  Add projection to constructed criteria. Projections are columns we want to select. Only one projection 
+     *  (projected column) is allowed.
      *  
      *  @param type type of projection (not only columns, but also aggregate and other functions)
      *  @param propertyName name of the column for the projection
      *  @see PlantloreConstants
      */
     public void addProjection(int type, String propertyName) throws RemoteException {
-        ArrayList proj = new ArrayList(2);
-        proj.add(type);
-        proj.add(propertyName);
-        this.projections.add(proj);
-    }
-    
-    /**
-     *  Add the list of projections to the query. This method is only called by DBLayer method 
-     *  executeQuery() when executing Select query. Clients should add projections using 
-     *  addProjection() method.
-     */
-    void setProjectionList() {        
-        ProjectionList pList = Projections.projectionList();
-        if (projections.isEmpty()) {
-            return;
+        switch (type) {
+            case PlantloreConstants.PROJ_AVG:
+                criteria.setProjection(Property.forName(propertyName).avg());
+                break;
+            case PlantloreConstants.PROJ_COUNT:
+                criteria.setProjection(Property.forName(propertyName).count());
+                break;
+            case PlantloreConstants.PROJ_GROUP:
+                criteria.setProjection(Property.forName(propertyName).group());
+                break;
+            case PlantloreConstants.PROJ_MAX:
+                criteria.setProjection(Property.forName(propertyName).max());
+                break;
+            case PlantloreConstants.PROJ_MIN:
+                criteria.setProjection(Property.forName(propertyName).min());
+                break;
+            case PlantloreConstants.PROJ_PROPERTY:
+                criteria.setProjection(Property.forName(propertyName));
+                break;
+            case PlantloreConstants.PROJ_ROW_COUNT:
+                criteria.setProjection(Projections.rowCount());
+                break;
         }
-        for (Iterator projIter = projections.iterator(); projIter.hasNext(); ) {
-            ArrayList proj = (ArrayList)projIter.next();
-            System.out.println("Processing projection for: "+proj.get(1));
-            switch ((Integer)proj.get(0)) {
-                case PlantloreConstants.PROJ_AVG:
-                    pList.add(Projections.avg((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_COUNT:
-                    pList.add(Projections.count((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_COUNT_DISTINCT:
-                    pList.add(Projections.countDistinct((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_GROUP:
-                    pList.add(Projections.groupProperty((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_MAX:
-                    pList.add(Projections.max((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_MIN:
-                    pList.add(Projections.min((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_PROPERTY:
-                    pList.add(Projections.property((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_ROW_COUNT:
-                    pList.add(Projections.rowCount());
-                    break;
-                case PlantloreConstants.PROJ_SUM:
-                    pList.add(Projections.sum((String)proj.get(1)));
-                    break;
-                case PlantloreConstants.PROJ_DISTINCT:
-                    pList.add(Projections.distinct(Projections.property((String)proj.get(1))));
-            }
-        }
-        criteria.setProjection(pList);
     }
     
     /**

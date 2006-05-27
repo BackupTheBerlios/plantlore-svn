@@ -137,9 +137,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // TODO: this should be loaded from a configuration file on the server
         // We are temporarily using this for DB authetication and user athentication as well
+        System.out.println("USER: "+user);        
+        System.out.println("PASSWORD: "+password);
+        // password = "test";
         cfg.setProperty("hibernate.connection.url", dbID);
         cfg.setProperty("hibernate.connection.username", user);
-        cfg.setProperty("hibernate.connection.password", password);        
+        cfg.setProperty("hibernate.connection.password", password);
         try {
             // Build session factory
             sessionFactory = cfg.buildSessionFactory();
@@ -637,6 +640,25 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return stub;
     }    
     
+    public SelectQuery createSubQuery(Class classname, String alias) throws DBLayerException, RemoteException {
+        // Check whether we are connected to the database
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            ex.setError(ex.ERROR_CONNECT, null);
+            throw ex;
+        }
+        System.out.println("CREATE NEW SUBQUERY");
+        SelectQuery query = new SubQueryImplementation(classname, alias), 
+        	stub = query;
+        
+        if(undertaker != null)
+        	stub = (SelectQuery) UnicastRemoteObject.exportObject(query); 
+        
+        queries.put(stub, query);
+        return stub;        
+    }
+    
     /**
      *  Execute constructed SELECT query. Only executes query, for retrieving results use next() and more()
      *
@@ -644,13 +666,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when selecting records from the database fails
      */
     public int executeQuery(SelectQuery query) throws DBLayerException, RemoteException {
-
-    	SelectQuery selectQuery = queries.remove(query);
+    	SelectQuery selectQuery = queries.get(query);
     	if(selectQuery == null) throw new DBLayerException("You can only pass queries created by this DBLayer!");
-    	
-    	if(undertaker != null) 
-    		try { UnicastRemoteObject.unexportObject(selectQuery, true); }
-                catch(NoSuchObjectException e) {}
     	
     	assert(selectQuery instanceof SelectQueryImplementation);
     	SelectQueryImplementation sq = (SelectQueryImplementation) selectQuery;
@@ -740,9 +757,19 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @param query query we want to close
      */
     public void closeQuery(SelectQuery query) throws RemoteException {
-        Session session = sessions.get(query);
-        session.close();
-        sessions.remove(query);
+        
+        // TODO: Problem - we don't have any session for subqueries
+        
+        Session session = sessions.remove(query);
+        session.close();     
+    	// Remove the query from the list of opened queries
+        SelectQuery selectQuery = queries.remove(query);        
+        // Unexport the SelectQuery object
+        if(undertaker != null) {
+            try {
+                UnicastRemoteObject.unexportObject(selectQuery, true);
+            } catch(NoSuchObjectException e) {}
+        }
     }
     
     /**
@@ -878,6 +905,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (data instanceof Author) {
             if ((type == DELETE) || (type == UPDATE)) {
                 // Only data of the user and those listed in CEDITGROUP
+                System.out.println("UPDATE or DELETE of AUTHOR");
                 sess = this.sessionFactory.openSession();
                 ScrollableResults sc = sess.createCriteria(Author.class)
                     .add(Restrictions.eq(Author.ID, ((Author)data).getId()))
@@ -895,10 +923,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 // Check for administrator rights
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
+                    System.out.println("USER IS ADMIN");                    
                 }                
                 // Check for direct ownership first                
-                if (aut.getCreatedWho().equals(this.plantloreUser)) {
+                if (aut.getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
+                    System.out.println("USER IS OWNER");
+                    System.out.println("USERNAME: "+aut.getCreatedWho().getLogin());
+                    System.out.println("LOGGED IN NAME: "+this.plantloreUser.getLogin());
                 }
                 // Then check for indirect (group) ownership
                 if (this.rights.getEditGroup() != null) {
@@ -906,6 +938,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     String strId = aut.getCreatedWho().getId().toString();
                     for (int i=0;i<group.length;i++) {
                         if (strId.equals(group[i])) {
+                            System.out.println("USER IS IN THE GROUP");
                             equal = true;
                             break;
                         }
@@ -1227,6 +1260,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         ScrollableResults sr;
         
         // Update tMetaData.cDateModified for any operation on Occurrences and Habitats
+/*        
         if (data instanceof Occurrence) {
             Integer occId = ((Occurrence)data).getId();
             // Read the associated metadata
@@ -1246,7 +1280,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.getMetadata().setDateModified(new java.util.Date());
             sess.update(occ.getMetadata());
         }
- 
+*/ 
         // Saving history when new record is inserted
         if (type == INSERT) {
             HistoryChange historyChange = new HistoryChange();            
