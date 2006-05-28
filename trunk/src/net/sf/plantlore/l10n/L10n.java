@@ -104,7 +104,7 @@ public class L10n
      * @param arg The array of arguments to be used to format the string.
      * @throws NullPointerException in case that <code>load()</code> wasn't called first or it failed.
      */
-    public static String getFormattedString(String key, Object[] arg) {
+    public static String getFormattedString(String key, Object... arg) {
         String value = "";
     	try {
                 value = resource.getString(key);
