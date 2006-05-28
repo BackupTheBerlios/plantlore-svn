@@ -255,7 +255,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				int numberOfUndeadAuthors = 0; 
 				
-				logger.info("Fetching a new record from the Parser.");
+				logger.debug("Fetching a new record from the Parser.");
 				// What is supposed to happen with the occurrence.
 				Action intention = parser.fetchNextRecord(); 
 				// Get a new Occurrence.
@@ -375,7 +375,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				}
 				catch(ImportException ie) {
 					logger.error("The import of the record No. " + count + " was unsuccessful!");
-					logger.error("This exception occured during insert/update/delete: " + ie);
+					logger.error("This exception occured during insert/update/delete: " + ie.getMessage());
 					// Roll back the transaction.
 					db.rollbackTransaction();
 					transactionInProgress = false;
@@ -418,7 +418,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						try {
 							ao = (AuthorOccurrence)parser.getNextPart(AuthorOccurrence.class);
 						} catch (ParserException e) {
-							logger.warn("The associated record is not valid. " + e);
+							logger.warn("The associated record is not valid. " + e.getMessage());
 							continue;
 						}
 						
@@ -486,7 +486,7 @@ public class DefaultDirector extends Observable implements Runnable {
 									break;
 								}
 						} catch (DBLayerException e) {
-							logger.error("The associated record was not processed properly. "  + e );
+							logger.error("The associated record was not processed properly. "  + e.getMessage() );
 							continue;
 						}
 						
@@ -509,7 +509,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			}
 		} 
 		catch(Exception e) {
-			logger.error("The import ended prematurely. "+imported+" records imported into the database. " + e);
+			logger.error("The import ended prematurely. "+imported+" records imported into the database. " + e.getMessage());
 
 			e.printStackTrace();
 			
@@ -606,11 +606,11 @@ public class DefaultDirector extends Observable implements Runnable {
 		Class table = record.getClass();
 		
 		// Look in the cache.
-		if(cacheEnabled) {
-			Record cachedRecord = cache.remove(table);
-			if( cachedRecord != null && record.equals(cachedRecord))
-				return cachedRecord; // hooray, one select has been saved!
-		}
+//		if(cacheEnabled) {
+//			Record cachedRecord = cache.remove(table);
+//			if( cachedRecord != null && record.equals(cachedRecord))
+//				return cachedRecord; // hooray, one select has been saved!
+//		}
 				
 		// Create a query that will look for the record with the same properties.
 		SelectQuery query = db.createQuery( table );
@@ -618,6 +618,14 @@ public class DefaultDirector extends Observable implements Runnable {
 		// Equal properties.
 		for(String property : record.getProperties()) {
 			Object value = record.getValue(property);
+			
+			System.out.println(" + "+table.getSimpleName()+"."+property+"="+value);
+			
+//			String newValue = null;
+//			try {
+//				newValue = new String(value.toString().getBytes(), "UTF-8");
+//			}catch(Exception e) {}
+			
 			if( value == null ) // use the database null
 				query.addRestriction(RESTR_IS_NULL, property, null, null, null);
 			else
@@ -643,8 +651,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		db.closeQuery( query );
 		
 		// Update the cache appropriately - store the record for future generations.
-		if( record != null && cacheEnabled ) 
-			cache.put(table, record);
+//		if( record != null && cacheEnabled ) 
+//			cache.put(table, record);
 		
 		
 		return record;
@@ -668,8 +676,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		
 		// Is this part of the record from an immutable table?
 		boolean immutable = user.isAdmin() ?
-				Record.IMMUTABLE.contains( record.getClass() ) :
-				record instanceof Plant;
+				record instanceof Plant :
+				Record.IMMUTABLE.contains( record.getClass() ) ;
 		
 		// This part of the record is from an immutable table -
 		// try to find it in the table.

@@ -1,8 +1,10 @@
 package net.sf.plantlore.client.imports;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -18,10 +20,10 @@ import net.sf.plantlore.client.imports.Parser.Action;
 import net.sf.plantlore.client.imports.parsers.*;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
-import net.sf.plantlore.common.record.Record;
-import net.sf.plantlore.common.record.User;
+import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
+import static net.sf.plantlore.client.export.ExportMng.ENCODING;
 
 /**
  * The Import Manager.
@@ -98,7 +100,12 @@ public class ImportMng extends Observable implements Observer {
 			user = db.getUser();
 			if(user == null) {
 				user = new User();
+				Right right = new Right();
 				user.setLogin("to su ja ne");
+				user.setRight(right);
+				right.setAdd(1);
+				right.setAdministrator(0);
+				right.setEditAll(1);
 			}
 		} catch (Exception e)  {
 			user = new User();
@@ -190,7 +197,9 @@ public class ImportMng extends Observable implements Observer {
 			logger.error("Cannot import data from a directory - you must select a file.");
 			throw new ImportException(L10n.getString("Error.InvalidFileName"));
 		}
-		reader = new FileReader( file );
+		reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(file),
+				ENCODING));
 		if(reader == null) {
 			logger.error("Unable to create a new Reader.");
 			throw new ImportException(L10n.getString("Error.ReaderNotCreated"));

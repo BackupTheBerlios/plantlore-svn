@@ -47,20 +47,22 @@ public class Habitat extends Record implements Deletable {
     public static final String DELETED = "deleted";    
     public static final String NOTE = "note";
     
+    public static final String VILLAGE = "village";
+    
     //public enum Column {ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, DELETED, NOTE};
     
     @Override
     public List<String> getForeignKeys() { 
-    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
+    	return asList( TERRITORY, PHYTOCHORION, VILLAGE ); 
     }
     
     public List<String> getColumns() {
-    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+    	return asList( TERRITORY, PHYTOCHORION, VILLAGE, 
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     
     public List<String> getHistoryColumns() {
-        return asList(  TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+        return asList(  TERRITORY, PHYTOCHORION, VILLAGE, 
                         QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE);
     }
     
@@ -79,7 +81,7 @@ public class Habitat extends Record implements Deletable {
 		if(column.equals(ID)) setId((Integer)value);
 		else if(column.equals(TERRITORY)) setTerritory((Territory)value);
 		else if(column.equals(PHYTOCHORION)) setPhytochorion((Phytochorion)value);
-		else if(column.equals(NEARESTVILLAGE)) setNearestVillage((Village)value);
+		else if(column.equals(NEARESTVILLAGE) || column.equals(VILLAGE)) setNearestVillage((Village)value);
 		else if(column.equals(QUADRANT)) setQuadrant((String)value);
 		else if(column.equals(DESCRIPTION)) setDescription((String)value);
 		else if(column.equals(COUNTRY)) setCountry((String)value);
@@ -185,12 +187,32 @@ public class Habitat extends Record implements Deletable {
     }
     
     /**
+     *   Get associated Village record
+     *   @return associated Village record
+     *   @see setNearestVillage
+     */
+    public Village getVillage() {
+        //obligatory
+        return getNearestVillage();
+    }
+    
+    /**
      *   Set associated Village record
      *   @param nearestVillage associated Village record
      *   @see getNearestVillage
      */
     public void setNearestVillage(Village nearestVillage) {
         this.nearestVillage = nearestVillage;
+    }
+    
+    /**
+     *   Set associated Village record
+     *   @param nearestVillage associated Village record
+     *   @see getNearestVillage
+     */
+    public void setVillage(Village nearestVillage) {
+        //obligatory
+        setNearestVillage(nearestVillage);
     }
     
     

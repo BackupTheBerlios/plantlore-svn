@@ -1,5 +1,8 @@
 package net.sf.plantlore.client.imports.parsers;
 
+//import java.io.BufferedReader;
+//import java.io.FileInputStream;
+//import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
@@ -80,8 +83,10 @@ public class XMLParser extends AbstractParser {
     	if(part == null || node == null)
     		return;
     	// Retrieve properties.
-    	for(String property : part.getProperties()) 
+    	for(String property : part.getProperties()) {
+//    		System.out.println(" > "+part.getClass().getSimpleName()+"."+property+" = "+node.valueOf(property.toLowerCase()));
     		part.setValue(property, node.valueOf(property.toLowerCase()));
+    	}
     	
     	// Reconstruct subrecords as well.
     	List<String> foreignKeys = part.getForeignKeys();
@@ -117,5 +122,29 @@ public class XMLParser extends AbstractParser {
     	else
     		return false;
     }
+    
+    
+//    public static void main(String[] args) 
+//    throws java.io.IOException, ParserException {
+//    	
+//    	XMLParser p = new XMLParser(
+//    			new BufferedReader(
+//    					new InputStreamReader(new FileInputStream("c:/documents and settings/yaa/dokumenty/plantlore/this.xml"),
+//    					"UTF-8"))
+//    	);
+//    	p.initialize();
+//    	while(p.hasNextRecord()) {
+//    		System.out.println("=============");
+//    		p.fetchNextRecord();
+//    		Record r = p.getNextPart(Occurrence.class);
+//    		System.out.println(r.areAllNNSet());
+//    		for(int i = 0; p.hasNextPart(AuthorOccurrence.class); i++) {
+//    			r = p.getNextPart(AuthorOccurrence.class);
+//    			System.out.print("("+i+")");
+//    		}
+//    		System.out.println("");
+//    	}
+//    	p.cleanup();
+//    }
    
 }

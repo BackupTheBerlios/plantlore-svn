@@ -1,8 +1,7 @@
 package net.sf.plantlore.client.export.builders;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Writer;
 
 import net.sf.plantlore.client.export.AbstractBuilder;
 import net.sf.plantlore.client.export.Template;
@@ -23,7 +22,7 @@ import org.dom4j.io.XMLWriter;
 public class XMLBuilder extends AbstractBuilder {
 
     private Document document;
-    private String filename;
+    private Writer outputWriter;
     private Element occurrence;
     
     /**
@@ -36,14 +35,14 @@ public class XMLBuilder extends AbstractBuilder {
      * that will be exported.
      * 
      * @param template	Description of important attributes of  the whole record. 
-     * @param filename	The name of the file where the output should be saved.
+     * @param writer	The writer that will create the file.
      * @see net.sf.plantlore.client.export.Template
      */
-    public XMLBuilder(Template template, String filename) {
+    public XMLBuilder(Template template, Writer writer) {
     	super(template);
         document = DocumentHelper.createDocument();
         document.addElement("occurrences");
-        this.filename = filename;
+        this.outputWriter = writer;
         this.template = template;
     }
     
@@ -55,11 +54,11 @@ public class XMLBuilder extends AbstractBuilder {
      * <br/>
      * Every attribute (column) of the whole record will be exported.
      * 
-     * @param filename	The name of the file where the output should be saved.
+     * @param writer	The writer that will create the file.
      * @see net.sf.plantlore.client.export.Template
      */
-    public XMLBuilder(String fileName) {
-    	this(new Template().setEverything(), fileName);
+    public XMLBuilder(Writer writer) {
+    	this(new Template().setEverything(), writer);
     }
     
     /**
@@ -67,14 +66,10 @@ public class XMLBuilder extends AbstractBuilder {
      */
     @Override
     public void footer() throws IOException {
-        File fXML= new File(filename);
-        if (!fXML.exists()) fXML.createNewFile();
-        
-        FileOutputStream out = new FileOutputStream(fXML);
         OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer = new XMLWriter( out, format );
-        writer.write( document );
-        writer.close();
+        XMLWriter xmlwriter = new XMLWriter( outputWriter, format );
+        xmlwriter.write( document );
+        xmlwriter.close();
     }
 
     /**

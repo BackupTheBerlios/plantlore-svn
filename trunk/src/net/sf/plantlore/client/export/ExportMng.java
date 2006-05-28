@@ -1,8 +1,9 @@
 package net.sf.plantlore.client.export;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -52,6 +53,10 @@ import org.apache.log4j.Logger;
  * @see net.sf.plantlore.client.export.Builder
  */
 public class ExportMng implements Observer {
+	
+	
+	public static final String ENCODING = "UTF-8";
+	
 	
 	/**
 	 * List of all filters the Export Manager is capable to handle.
@@ -283,14 +288,15 @@ public class ExportMng implements Observer {
 		int results  = db.getNumRows( resultId );
 		
 		// Create a new file and writer (wrapper).
-		Writer writer = new FileWriter( new File( filter.suggestName(filename) ) );
+		Writer writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(filter.suggestName(filename)),
+					ENCODING));
 		if(writer == null) {
 			logger.fatal("Unable to create a new Writer.");
 			throw new ExportException(L10n.getString("Error.WriterNotCreated"));
 		}
 		
-		logger.debug("filename: "+ filename);
-		logger.debug("filename2: "+ filter.suggestName(filename));
+		logger.debug("Filename: "+ filename);
 		
 		// Create a new builder according to the selected format. 
 		Builder builder;
@@ -301,9 +307,9 @@ public class ExportMng implements Observer {
 		else if(filter.getDescription().equals(L10n.getString("Format.ABCD"))) 
 			builder = new ABCDBuilder(filter.suggestName(filename));
 		else if(filter.getDescription().equals(L10n.getString("Format.XML")))                        
-			builder = new XMLBuilder(template, filter.suggestName(filename));                       
+			builder = new XMLBuilder(template, writer);                       
                 else if(filter.getDescription().equals(L10n.getString("Format.PlantloreNative")))                        
-			builder = new XMLBuilder(filter.suggestName(filename));                       
+			builder = new XMLBuilder(writer);                       
 		else {
 			builder = new TrainingBuilder(template);
 		}
