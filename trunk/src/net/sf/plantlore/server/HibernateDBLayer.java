@@ -857,6 +857,26 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // Check whether we have rights for this operation
         checkRights(data, INSERT);
+        
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setCreatedWhen(new java.util.Date());
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setCreatedWho(this.plantloreUser);
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }
+        if (data instanceof Publication) {
+            Publication pub = (Publication)data;
+            pub.setCreatedWho(this.plantloreUser);
+            data = pub;
+        }
+        if (data instanceof Author) {
+            Author aut = (Author)data;
+            aut.setCreatedWho(this.plantloreUser);
+            data = aut;
+        }
+
         // Save item into the database
         recordId = (Integer)this.txSession.save(data);            
         // Save data to history tables - only for selected tables
@@ -875,6 +895,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // Check whether we have rights for this operation
         checkRights(data, UPDATE);
+        
+        // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }
+        
         // Save history record for this change
         saveHistory(txSession, data, UPDATE, null);
         // Save item into the database

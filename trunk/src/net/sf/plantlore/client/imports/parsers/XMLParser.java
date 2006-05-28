@@ -84,8 +84,10 @@ public class XMLParser extends AbstractParser {
     		return;
     	// Retrieve properties.
     	for(String property : part.getProperties()) {
-//    		System.out.println(" > "+part.getClass().getSimpleName()+"."+property+" = "+node.valueOf(property.toLowerCase()));
-    		part.setValue(property, node.valueOf(property.toLowerCase()));
+    		String value = node.valueOf(property.toLowerCase());
+    		if("".equals(value)) value = null;
+    		System.out.println(" > "+part.getClass().getSimpleName()+"."+property+" = "+value);
+    		part.setValue(property, value);
     	}
     	
     	// Reconstruct subrecords as well.
@@ -124,27 +126,27 @@ public class XMLParser extends AbstractParser {
     }
     
     
-//    public static void main(String[] args) 
-//    throws java.io.IOException, ParserException {
-//    	
-//    	XMLParser p = new XMLParser(
-//    			new BufferedReader(
-//    					new InputStreamReader(new FileInputStream("c:/documents and settings/yaa/dokumenty/plantlore/this.xml"),
-//    					"UTF-8"))
-//    	);
-//    	p.initialize();
-//    	while(p.hasNextRecord()) {
-//    		System.out.println("=============");
-//    		p.fetchNextRecord();
-//    		Record r = p.getNextPart(Occurrence.class);
-//    		System.out.println(r.areAllNNSet());
-//    		for(int i = 0; p.hasNextPart(AuthorOccurrence.class); i++) {
-//    			r = p.getNextPart(AuthorOccurrence.class);
-//    			System.out.print("("+i+")");
-//    		}
-//    		System.out.println("");
-//    	}
-//    	p.cleanup();
-//    }
+    public static void main(String[] args) 
+    throws java.io.IOException, ParserException {
+    	
+    	XMLParser p = new XMLParser(
+    			new java.io.BufferedReader(
+    					new java.io.InputStreamReader(new java.io.FileInputStream("c:/documents and settings/yaa/dokumenty/plantlore/this.xml"),
+    					"UTF-8"))
+    	);
+    	p.initialize();
+    	while(p.hasNextRecord()) {
+    		System.out.println("=============");
+    		p.fetchNextRecord();
+    		Record r = p.getNextPart(Occurrence.class);
+    		System.out.println(r.areAllNNSet());
+    		for(int i = 0; p.hasNextPart(AuthorOccurrence.class); i++) {
+    			r = p.getNextPart(AuthorOccurrence.class);
+    			System.out.print("("+i+")");
+    		}
+    		System.out.println("");
+    	}
+    	p.cleanup();
+    }
    
 }

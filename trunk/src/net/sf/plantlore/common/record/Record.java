@@ -336,8 +336,8 @@ public abstract class Record implements Serializable {
 	public String toString() {
 		StringBuilder sigma = new StringBuilder();
 		for(String property : this.getProperties())
-			sigma.append(getClass().getSimpleName()).
-			append(property).append(" = ").append(this.getValue(property)).append("; ");
+			sigma.append(getClass().getSimpleName()).append('.').
+			append(property).append(" = ").append(this.getValue(property)).append(";\n ");
 		for(String key : getForeignKeys()) {
 			Record subrecord = (Record)getValue(key); 
 			if(subrecord != null)	sigma.append( subrecord.toString() );

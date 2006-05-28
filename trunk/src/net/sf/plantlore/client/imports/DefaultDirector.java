@@ -392,7 +392,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				 *----------------------------------------------------------*/
 				
 				// Is the record in the database?
-				AuthorOccurrence[] sharers = null;
+				AuthorOccurrence[] sharers = new AuthorOccurrence[0];
 				if( isInDB ) 
 					sharers = findAllSharers(occInDB);
 				// If the Occurrence record should have been DELETED, all associated AuthorOccurrences should be deleted as well.
@@ -619,7 +619,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		for(String property : record.getProperties()) {
 			Object value = record.getValue(property);
 			
-			System.out.println(" + "+table.getSimpleName()+"."+property+"="+value);
+//			System.out.println(" + "+table.getSimpleName()+"."+property+"="+value);
 			
 //			String newValue = null;
 //			try {
@@ -627,7 +627,7 @@ public class DefaultDirector extends Observable implements Runnable {
 //			}catch(Exception e) {}
 			
 			if( value == null ) // use the database null
-				query.addRestriction(RESTR_IS_NULL, property, null, null, null);
+				/*query.addRestriction(RESTR_IS_NULL, property, null, null, null)*/;
 			else
 				query.addRestriction(RESTR_EQ, property, null, value, null);
 		}

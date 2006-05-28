@@ -79,8 +79,8 @@ public class Occurrence extends Record implements Deletable {
     public List<String> getColumns() {
     	return asList( UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED,
     			MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, ISODATETIMEBEGIN,
-    			DATASOURCE, PUBLICATION, HERBARIUM, /*CREATEDWHEN,*/ 
-    			/*UPDATEDWHEN,*/ METADATA, NOTE );
+    			DATASOURCE, PUBLICATION, HERBARIUM,  
+    			METADATA, NOTE, DELETED );
     }
     
     public List<String> getHistoryColumns() {
@@ -100,7 +100,12 @@ public class Occurrence extends Record implements Deletable {
     	if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) setId((Integer)value);
+		if(column.equals(ID)) {
+			if(value != null && value instanceof String)
+				setId(Integer.parseInt((String)value));
+			else
+				setId((Integer)value);
+		}
 		else if(column.equals(UNITIDDB)) setUnitIdDb((String)value);
 		else if(column.equals(UNITVALUE)) setUnitValue((String)value);
 		else if(column.equals(HABITAT)) setHabitat((Habitat)value);
@@ -132,7 +137,12 @@ public class Occurrence extends Record implements Deletable {
 		else if(column.equals(UPDATEDWHEN)) setUpdatedWhen(checkDate(value));
 		else if(column.equals(METADATA)) setMetadata((Metadata)value);
 		else if(column.equals(NOTE)) setNote((String)value);
-		else if(column.equals(DELETED)) setDeleted((Integer)value);
+		else if(column.equals(DELETED)) {
+			if(value != null && value instanceof String)
+				setDeleted(Integer.parseInt((String)value));
+			else
+				setDeleted((Integer)value);
+		}
     }
     
     @Override 

@@ -34,7 +34,12 @@ public class Village extends Record {
     	if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) setId((Integer)value);
+		if(column.equals(ID)) {
+			if(value != null && value instanceof String)
+				setId(Integer.parseInt((String)value));
+			else
+				setId((Integer)value);
+		}
 		else if(column.equals(NAME)) setName((String)value);
     }
     
