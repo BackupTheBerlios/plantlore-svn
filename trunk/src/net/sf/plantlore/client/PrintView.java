@@ -8,6 +8,7 @@ package net.sf.plantlore.client;
 
 import java.util.Observable;
 import java.util.Observer;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -22,6 +23,21 @@ public class PrintView extends javax.swing.JDialog implements Observer {
         this.model = model;
         initComponents();
         model.addObserver(this);
+        switch (model.getReportToUse()) {
+            case Print.SCHEDA:
+                schedaRadioButton.setSelected(true);
+                useReportLabel.setEnabled(false); chooseButton.setEnabled(false);
+                break;
+            case Print.A4LIST:
+                listRadioButton.setSelected(true);
+                useReportLabel.setEnabled(false); chooseButton.setEnabled(false);
+                break;
+            case Print.OWNREPORT:
+                ownReportRadioButton.setSelected(true);
+                useReportLabel.setEnabled(true); chooseButton.setEnabled(true);
+                break;
+            default:                
+        }
     }
     
     /** This method is called from within the constructor to
@@ -31,29 +47,30 @@ public class PrintView extends javax.swing.JDialog implements Observer {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        reportGroup = new javax.swing.ButtonGroup();
         numOfRecordsLabel = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        reportField = new javax.swing.JTextField();
-        chooseButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         helpButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         previewButton = new javax.swing.JButton();
         printButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        ownReportRadioButton = new javax.swing.JRadioButton();
+        listRadioButton = new javax.swing.JRadioButton();
+        schedaRadioButton = new javax.swing.JRadioButton();
+        useReportLabel = new javax.swing.JLabel();
+        reportField = new javax.swing.JTextField();
+        chooseButton = new javax.swing.JButton();
 
-        numOfRecordsLabel.setText("Number of selected records to print:");
+        numOfRecordsLabel.setText(L10n.getString("Print.NumOfRecords"));
 
-        jLabel1.setText("Use report:");
+        helpButton.setText(L10n.getString("Common.Help"));
 
-        chooseButton.setText("Choose");
+        cancelButton.setText(L10n.getString("Common.Cancel"));
 
-        helpButton.setText("Help");
+        previewButton.setText(L10n.getString("Print.Preview"));
 
-        cancelButton.setText("Cancel");
-
-        previewButton.setText("Preview");
-
-        printButton.setText("Print");
+        printButton.setText(L10n.getString("Print.Print"));
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -62,7 +79,7 @@ public class PrintView extends javax.swing.JDialog implements Observer {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(helpButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 145, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 295, Short.MAX_VALUE)
                 .add(cancelButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(previewButton)
@@ -85,22 +102,77 @@ public class PrintView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Print.ChooseAReport")));
+        reportGroup.add(ownReportRadioButton);
+        ownReportRadioButton.setText(L10n.getString("Print.OwnReport"));
+        ownReportRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        ownReportRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        ownReportRadioButton.setActionCommand("OWNREPORT");
+
+        reportGroup.add(listRadioButton);
+        listRadioButton.setText(L10n.getString("Print.A4List"));
+        listRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        listRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        listRadioButton.setActionCommand("A4LIST");
+
+        reportGroup.add(schedaRadioButton);
+        schedaRadioButton.setText(L10n.getString("Print.Scheda"));
+        schedaRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        schedaRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        schedaRadioButton.setActionCommand("SCHEDA");
+
+        useReportLabel.setText(L10n.getString("Print.UseReport"));
+
+        chooseButton.setText(L10n.getString("Print.Choose"));
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(schedaRadioButton)
+                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(ownReportRadioButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 70, Short.MAX_VALUE)
+                        .add(useReportLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(reportField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 312, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(chooseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(listRadioButton))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(schedaRadioButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(listRadioButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(ownReportRadioButton)
+                    .add(chooseButton)
+                    .add(reportField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(useReportLabel))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(numOfRecordsLabel)
-                    .add(layout.createSequentialGroup()
-                        .add(jLabel1)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(reportField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(chooseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .add(numOfRecordsLabel)
+                .add(366, 366, 366))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -108,11 +180,8 @@ public class PrintView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(numOfRecordsLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel1)
-                    .add(reportField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(chooseButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 36, Short.MAX_VALUE)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 7, Short.MAX_VALUE)
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         pack();
@@ -132,19 +201,14 @@ public class PrintView extends javax.swing.JDialog implements Observer {
     public void update(Observable o, Object arg) {
         if (arg != null && arg instanceof String) {
             String msg = (String)arg;
-            if (msg.equals("REPORT_CHOSEN")) {
-                if (model.getTheChosenOne() != null) {
-                    reportField.setText(model.getTheChosenOne().getAbsolutePath());
-                    previewButton.setEnabled(true);
-                    printButton.setEnabled(true);
-                } else {
-                    previewButton.setEnabled(false);
-                    printButton.setEnabled(false);
-                }
+            if (msg.equals("NEW_SOURCE")) {
+                Object[] args = {model.getSelection().values().size()};
+                numOfRecordsLabel.setText(L10n.getFormattedString("Print.NumOfRecords",args));
                 return;
             }
-            if (msg.equals("NEW_SOURCE")) {
-                numOfRecordsLabel.setText("Number of records to print: "+model.getSelection().values().size());
+            
+            if (msg.equals("REPORT_CHOSEN")) {
+                reportField.setText(model.getTheChosenOne().getAbsolutePath());
                 return;
             }
         }
@@ -154,12 +218,17 @@ public class PrintView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JButton cancelButton;
     protected javax.swing.JButton chooseButton;
     protected javax.swing.JButton helpButton;
-    protected javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    protected javax.swing.JRadioButton listRadioButton;
     protected javax.swing.JLabel numOfRecordsLabel;
+    protected javax.swing.JRadioButton ownReportRadioButton;
     protected javax.swing.JButton previewButton;
     protected javax.swing.JButton printButton;
     protected javax.swing.JTextField reportField;
+    private javax.swing.ButtonGroup reportGroup;
+    protected javax.swing.JRadioButton schedaRadioButton;
+    protected javax.swing.JLabel useReportLabel;
     // End of variables declaration//GEN-END:variables
     
 }
