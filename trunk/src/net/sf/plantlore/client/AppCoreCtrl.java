@@ -57,6 +57,7 @@ import net.sf.plantlore.client.publication.PublicationManager;
 import net.sf.plantlore.client.publication.PublicationManagerCtrl;
 import net.sf.plantlore.client.publication.PublicationManagerView;
 import net.sf.plantlore.client.publication.PublicationManagerView;
+import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
@@ -103,6 +104,8 @@ public class AppCoreCtrl
     Logger logger;
     Preferences prefs;
     private final static int MAX_RECORDS_PER_PAGE = 1000;
+    private boolean showButtonText = true;
+    
     //--------------SUPPLIED MODELS AND VIEWS-----------------
     AppCore model;
     AppCoreView view;
@@ -199,6 +202,7 @@ public class AppCoreCtrl
     AbstractAction invertSelectedAction = new InvertSelectedAction();
     AbstractAction nextPageAction = new NextPageAction();
     AbstractAction prevPageAction = new PreviousPageAction();
+    AbstractAction refreshAction = new RefreshAction();
     
     AbstractAction loginAction = new LoginAction();
     
@@ -239,20 +243,8 @@ public class AppCoreCtrl
         view.setPrevPageAction(prevPageAction);
         view.setSelectedRowListener(new OverviewSelectionListener());
         view.overview.addMouseListener(new OverviewMouseListener());
+        view.refreshButton.setAction(refreshAction);
         
-        DefaultCellEditor dce = (DefaultCellEditor) view.overview.getDefaultEditor(String.class);
-        Component c = dce.getComponent();
-        FocusListener[] fl = c.getFocusListeners();
-        System.out.println("========== Got "+fl.length+" focus listeners.");
-        for (FocusListener listener : fl)
-            c.removeFocusListener(listener);
-        KeyListener[] okl = view.overview.getKeyListeners();
-        okl = c.getKeyListeners();
-        System.out.println("========== Got "+okl.length+" key listeners.");
-        for (KeyListener kl : okl) {
-            view.overview.removeKeyListener(kl);
-            System.out.println("Removed key listener "+kl);
-        }
         view.overview.addKeyListener(new OverviewKeyListener());
 
         view.addWindowListener(new AppWindowListener());
@@ -293,6 +285,8 @@ public class AppCoreCtrl
         nextPageAction.setEnabled(enabled);
         prevPageAction.setEnabled(enabled);  
         view.recordsPerPage.setEnabled(enabled);
+        refreshAction.setEnabled(enabled);
+        loginAction.setEnabled(!enabled);
     }
     
     /** Handles click to menu item Settings.
@@ -325,10 +319,8 @@ public class AppCoreCtrl
      */
     class SettingsBridge implements Observer {        
         public void update(Observable o, Object arg) {
-            System.out.println("Settings bridge update");
             if (arg instanceof String) {                
                 String s = (String)arg;
-                System.out.println("got command : "+s);
                 if (s.equals("COLUMNS")) {
                     ArrayList<Column> columns = settingsModel.getSelectedColumns();
                     model.getTableModel().setColumns(columns);
@@ -498,9 +490,11 @@ public class AppCoreCtrl
 
     class AddAction extends AbstractAction {
         public AddAction() {
-            putValue(NAME, L10n.getString("recordAdd"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("recordAddTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("recordAdd"));            
+            if (showButtonText)
+                putValue(NAME, L10n.getString("Overview.Add"));
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Add24.gif"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.AddTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Add"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -531,9 +525,11 @@ public class AppCoreCtrl
     
     class EditAction extends AbstractAction {
         public EditAction() {
-            putValue(NAME, L10n.getString("recordEdit"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("recordEditTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("recordEdit"));            
+            if (showButtonText)
+                putValue(NAME, L10n.getString("Overview.Edit"));
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Edit24.gif"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.EditTT"));
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Edit"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -551,7 +547,7 @@ public class AppCoreCtrl
                 editModel.setProjects(model.getProjects());
                 editModel.setTerritories(model.getTerritories());
                 
-                Object[] row = model.getSelectedRow();
+                Object[] row = model.getSelectedRow();             
                 editModel.setRecord((Integer) row[row.length-1]);
                 editView = new AddEditView(view, true, editModel, true);
                 editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
@@ -570,9 +566,11 @@ public class AppCoreCtrl
     
     class DeleteAction extends AbstractAction {
         public DeleteAction() {
-            putValue(NAME, L10n.getString("recordDelete"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("recordDeleteTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("recordDelete"));            
+            if (showButtonText)
+                putValue(NAME, L10n.getString("Overview.Delete"));
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Delete24.gif"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.DeleteTT"));
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Delete"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -582,9 +580,9 @@ public class AppCoreCtrl
 
     class SelectAllAction extends AbstractAction {
         public SelectAllAction() {
-            putValue(NAME, L10n.getString("selectAll"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("selectAllTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("selectAll"));            
+            putValue(NAME, L10n.getString("Overview.SelectAll"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SelectAllTT"));
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.SelectAll"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -594,9 +592,9 @@ public class AppCoreCtrl
 
     class SelectNoneAction extends AbstractAction {
         public SelectNoneAction() {
-            putValue(NAME, L10n.getString("selectNone"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("selectNoneTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("selectNone"));            
+            putValue(NAME, L10n.getString("Overview.SelectNone"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SelectNoneTT"));
+//            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.SelectNone"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -606,9 +604,9 @@ public class AppCoreCtrl
     
     class InvertSelectedAction extends AbstractAction {
         public InvertSelectedAction() {
-            putValue(NAME, L10n.getString("invertSelected"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("invertSelectedTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("invertSelected"));            
+            putValue(NAME, L10n.getString("Overview.InvertSelected"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.InvertSelectedTT"));
+//            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.InvertSelected"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -644,9 +642,11 @@ public class AppCoreCtrl
     
     class SearchAction extends AbstractAction {
         public SearchAction() {
-            putValue(NAME, L10n.getString("dataSearch"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("dataSearchTooltip"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("dataSearch"));            
+            if (showButtonText)
+                putValue(NAME, L10n.getString("Overview.Search"));
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Search24.gif"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SearchTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Search"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -710,9 +710,9 @@ public class AppCoreCtrl
     
     class PreviousPageAction extends AbstractAction {
         public PreviousPageAction() {
-            putValue(NAME, L10n.getString("prevButton"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("prevButtonTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("prevButton"));            
+            putValue(NAME, L10n.getString("Overview.PrevPage"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.PrevPageTT"));
+//            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.PrevPage"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -722,9 +722,9 @@ public class AppCoreCtrl
     
     class NextPageAction extends AbstractAction {
         public NextPageAction() {
-            putValue(NAME, L10n.getString("nextButton"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("nextButtonTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("nextButton"));            
+            putValue(NAME, L10n.getString("Overview.NextPage"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.NextPageTT"));
+//            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.NextPage"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -796,9 +796,11 @@ public class AppCoreCtrl
     
     class DataHistoryAction extends AbstractAction {
         public DataHistoryAction() {
-            putValue(NAME, L10n.getString("Overview.MenuDataHistory"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataHistoryTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataHistory"));                        
+            if (showButtonText)
+                putValue(NAME, L10n.getString("Overview.History"));
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/History24.gif"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.HistoryTT"));
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.History"));                        
         }
         
         public void actionPerformed(ActionEvent e) {
@@ -976,15 +978,34 @@ public class AppCoreCtrl
     			model.setAccessRights( loginModel.getAccessRights() );
                         model.login();
                         
+                        view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
                         constructSearchMVC();
                         searchModel.setDatabase(model.getDatabase());
                         searchModel.constructQuery();
                         model.setResultId(searchModel.getNewResultId());
+                        view.getSBM().displayDefaultText();
                         
     			view.initOverview();
                         setDatabaseDependentCommandsEnabled(true);
     		}
     	}
+    }
+    
+    class RefreshAction extends AbstractAction {
+        public RefreshAction() {
+            if (showButtonText)
+                putValue(NAME, L10n.getString("Overview.Refresh"));
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Refresh24.gif"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.RefreshTT"));
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Refresh"));                        
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            searchModel.clear();
+            searchModel.constructQuery();
+            model.setResultId(searchModel.getNewResultId());
+        }
+        
     }
     
 }

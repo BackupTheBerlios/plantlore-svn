@@ -71,6 +71,13 @@ public class StatusBarManager implements MouseListener, Observer
         this.statusLabel.setText(text);
     }
     
+    /** Displays immediately default text on the status bar.
+     *
+     */
+    public void displayDefaultText() {
+        this.statusLabel.setText(defaultText);
+    }
+    
     public void mouseClicked(MouseEvent mouseEvent)
     {
     }
@@ -144,6 +151,9 @@ public class StatusBarManager implements MouseListener, Observer
                 display(L10n.getString("Message.LoadingProjects"));
             }
             
+            if (msg.equals("LOADING_OVERVIEW_DATA")) {
+                display(L10n.getString("Message.LoadingOverviewData"));
+            }
             
             if (msg.equals("LOADED")) {
                 display(defaultText);

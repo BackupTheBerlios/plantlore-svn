@@ -3,6 +3,7 @@ package net.sf.plantlore.client.resources;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import org.apache.log4j.Logger;
 
 /**
  * Resource manager. 
@@ -13,7 +14,7 @@ import javax.swing.ImageIcon;
  *	@version beta
  */
 public class Resource {
-
+    private static Logger logger = Logger.getLogger(Resource.class.getPackage().getName());
 	/**
 	 * Return an icon from the resource directory.
 	 * 
@@ -22,7 +23,9 @@ public class Resource {
 	 */
 	public static ImageIcon createIcon(String name) {
 		URL url = Resource.class.getResource(name);
-		if(url == null) return null;
-		else return new ImageIcon( url );
+		if(url == null) {
+                    logger.warn("Missing resource for "+name);
+                    return null;
+                } else return new ImageIcon( url );
 	}
 }

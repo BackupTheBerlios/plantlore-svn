@@ -70,6 +70,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         prevPage = new javax.swing.JButton();
         nextPage = new javax.swing.JButton();
         recordsPerPage = new javax.swing.JFormattedTextField();
+        refreshButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         overviewScrollPane = new javax.swing.JScrollPane();
         overview = new javax.swing.JTable();
@@ -103,22 +104,24 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         mainToolBar.setFloatable(false);
         mainToolBar.setRollover(true);
-        addButton.setText("Add");
+        addButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Add24.gif")));
+        addButton.setToolTipText(L10n.getString("Overview.AddTT"));
         mainToolBar.add(addButton);
 
-        editButton.setText("Edit");
+        editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Edit24.gif")));
         mainToolBar.add(editButton);
 
-        deleteButton.setText("Delete");
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Delete24.gif")));
+        deleteButton.setToolTipText(L10n.getString("Overview.DeleteTT"));
         mainToolBar.add(deleteButton);
 
-        searchButton.setText("Search");
+        searchButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Search24.gif")));
         mainToolBar.add(searchButton);
 
         schedaButton.setText("Scheda");
         mainToolBar.add(schedaButton);
 
-        historyButton.setText("History");
+        historyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/History24.gif")));
         mainToolBar.add(historyButton);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -165,7 +168,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 .add(recordsPerPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(nextPage)
-                .addContainerGap(338, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -177,6 +180,10 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pageToolBar.add(jPanel3);
+
+        refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Refresh24.gif")));
+        refreshButton.setToolTipText(L10n.getString("Overview.RefreshTT"));
+        pageToolBar.add(refreshButton);
 
         overview.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -347,13 +354,23 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 return;
             }
             if (arg.equals("NEW_QUERY")) {
+                setPreferredColumnSizes();
                 recordsCount.setText(""+model.getResultsCount());
-                pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());                
+                pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount()); 
                 return;
             }
         }        
     }
 
+    private void setPreferredColumnSizes() {
+        OverviewTableModel otm = model.getTableModel();
+        TableColumn tc;
+        for (int i = 0; i < otm.getColumnCount(); i++) {
+            tc = overview.getColumnModel().getColumn(i);
+            tc.setPreferredWidth(otm.getColumnSize(i));
+        }        
+    }
+    
     public void initOverview()
     {
         TableColumn tc;
@@ -367,11 +384,9 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         // Comment to established db connection automatically without the login procedure        
         //overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*19));
        
-        for (int i = 0; i < otm.getColumnCount(); i++) {
-            tc = overview.getColumnModel().getColumn(i);
-            tc.setPreferredWidth(otm.getColumnSize(i));
-        }
-        recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));        
+        setPreferredColumnSizes();
+        recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));  
+        overview.getSelectionModel().setSelectionInterval(0,0);
     }
 
     /** Returns the main window <code>StatusBarManager</code>.
@@ -617,6 +632,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel recordsCount;
     private javax.swing.JLabel recordsCountLabel;
     protected javax.swing.JFormattedTextField recordsPerPage;
+    protected javax.swing.JButton refreshButton;
     protected javax.swing.JButton schedaButton;
     protected javax.swing.JButton searchButton;
     private javax.swing.JButton selectAll;

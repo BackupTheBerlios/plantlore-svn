@@ -159,7 +159,8 @@ public class AddEdit extends Observable {
         longitude = o.getHabitat().getLongitude();
         latitude = o.getHabitat().getLatitude();
         source = o.getDataSource();
-        publication = new Pair(o.getPublication().getReferenceCitation(), o.getPublication().getId());
+        if (o.getPublication() != null)
+            publication = new Pair(o.getPublication().getReferenceCitation(), o.getPublication().getId());
         herbarium = o.getHerbarium();
         month = o.getMonthCollected();
         day = o.getDayCollected();
