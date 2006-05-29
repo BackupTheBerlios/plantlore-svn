@@ -13,6 +13,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
 import java.util.Hashtable;
+import java.util.List;
+
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
@@ -1672,37 +1674,53 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 Occurrence origRec = (Occurrence)original[0];
                 Occurrence newRec = (Occurrence)data;
                 // Save the historyChange
-                sess.save(historyChange);                
-                ArrayList cols = (ArrayList)origRec.getHistoryColumns();
-                for (int i=0;i<cols.size();i++) {
-                    if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
-                        System.out.println("COLUMN: "+(String)cols.get(i));
-                        // Read record from THISTORYCOLUMN first
-                        res = sess.createCriteria(HistoryColumn.class)
-                            .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_OCCURRENCE))
-                            .add(Restrictions.eq(HistoryColumn.COLUMNNAME, (String)cols.get(i)))
-                            .scroll();
-                        if (!res.next()) {
-                            logger.error("tHistoryColumn doesn't contain required data");
-                            DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
-                            ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_OCCURRENCE);
-                            throw ex;                                
-                        }
-                        Object[] colNames = res.get();
-                        // Save OldRecordId if neccessary
-                        
-// TODO: Save oldRecordId                        
-//                        if ((((String)cols.get(i)).equals(Occurrence.PLANT)) || (((String)cols.get(i)).equals(Occurrence.PUBLICATION))) {
-//                            historyChange.setOldRecordId((Integer)newRec.getValue((String)cols.get(i)));
-//                        }
-                        // Save record into THISTORY
-                        HistoryRecord hist = new HistoryRecord();
-                        hist.setHistoryChange(historyChange);
-                        hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                        hist.setOldValue(origRec.getValue((String)cols.get(i)).toString());
-                        hist.setNewValue(newRec.getValue((String)cols.get(i)).toString());
-                        sess.save(hist);
-                    }
+                sess.save(historyChange);
+                
+                // Seeing is believing.
+                List<String> cols = origRec.getHistoryColumns();
+                for(String columnName : cols) {
+                	
+                	Object 
+                	origValue = origRec.getValue(columnName),
+                	newValue = newRec.getValue(columnName);
+                	
+                	if( origValue == null && newValue == null)
+                		continue;
+                	
+                	if( origValue == null || newValue == null ||
+                			!origValue.equals(newValue) ) {
+                		System.out.println(" >> DIFFERENT_COLUMN: " + columnName);
+                		// Read record from THISTORYCOLUMN first
+                		res = sess.createCriteria(HistoryColumn.class).
+                		add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_OCCURRENCE)).
+                		add(Restrictions.eq(HistoryColumn.COLUMNNAME, columnName)).
+                		scroll();
+                		if ( !res.next() ) {
+                			logger.error("tHistoryColumn doesn't contain the required data ("+columnName+").");
+                			DBLayerException ex = new DBLayerException("Error.CorruptedDatabase");
+                			ex.setError(DBLayerException.ERROR_DB, PlantloreConstants.ENTITY_OCCURRENCE);
+                			throw ex;
+                		}
+                		Object[] colNames = res.get();
+                		// Save OldRecordId if neccessary
+                		
+                		// TODO: Save oldRecordId
+                		// if ((((String)cols.get(i)).equals(Occurrence.PLANT))
+                		// ||
+                		// (((String)cols.get(i)).equals(Occurrence.PUBLICATION)))
+                		// {
+                		// historyChange.setOldRecordId((Integer)newRec.getValue((String)cols.get(i)));
+                		// }
+                		// Save record into THISTORY
+                		HistoryRecord historyRecord = new HistoryRecord();
+                		historyRecord.setHistoryChange(historyChange);
+                		historyRecord.setHistoryColumn((HistoryColumn) colNames[0]);
+                		String origValueString = (origValue == null) ? null : origValue.toString(),
+                				newValueString = (newValue == null) ? null : newValue.toString();
+                		historyRecord.setOldValue(origValueString);
+                		historyRecord.setNewValue(newValueString);
+                		sess.save(historyRecord);
+                	}
                 }
             }
         }
@@ -1710,19 +1728,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     
     
     /**
-     * This method is intended for final cleanup. <b>Do not call this method yourself!
-     * The proper way for you to get rid of a DBLayer is to call DBLayer.destroy() method!</b>
-     * <br/>
-     * Terminate all processes running in this DBLayer,
-     * disconnect from the database and 
-     * destroy all objects created by this DBLayer.
-     * <br/>
-     * <b>After this the DBLayer will not be capable of carrying out its duties.</b>
-     * <br/>
-     * This method is supposed to be used by the DBLayerFactory exclusively.
-     * 
-     * FIXME Think of a better mechanism that will hide it from users yet keep it accessible to the DBLF.
-     */
+	 * This method is intended for final cleanup. <b>Do not call this method
+	 * yourself! The proper way for you to get rid of a DBLayer is to call
+	 * DBLayer.destroy() method!</b> <br/> Terminate all processes running in
+	 * this DBLayer, disconnect from the database and destroy all objects
+	 * created by this DBLayer. <br/> <b>After this the DBLayer will not be
+	 * capable of carrying out its duties.</b> <br/> This method is supposed to
+	 * be used by the DBLayerFactory exclusively.
+	 * 
+	 * FIXME Think of a better mechanism that will hide it from users yet keep
+	 * it accessible to the DBLF.
+	 */
     public void shutdown() /* throws RemoteException */ {
     	
     	if(undertaker != null) 
