@@ -139,9 +139,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // TODO: this should be loaded from a configuration file on the server
         // We are temporarily using this for DB authetication and user athentication as well
-        System.out.println("USER: "+user);        
-        System.out.println("PASSWORD: "+password);
-        // password = "test";
         cfg.setProperty("hibernate.connection.url", dbID);
         cfg.setProperty("hibernate.connection.username", user);
         cfg.setProperty("hibernate.connection.password", password);
@@ -164,6 +161,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             .scroll();
         if (!sr.next()) {
             // Authentication failed, close DB connection
+            sess.close();
             sessionFactory.close();
             sessionFactory = null;
             logger.warn("Authentication of user "+user+" failed!");
@@ -175,6 +173,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             User clientUser = (User)userinfo[0];            
             this.rights = clientUser.getRight();           
             this.plantloreUser = clientUser;
+            sess.close();
         }
         Object[] retValue = new Object[2];
         retValue[0] = this.plantloreUser;
@@ -723,8 +722,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw ex;
         }
         Transaction tx = null;
+        Session session = sessionFactory.openSession();
         try {
-            Session session = sessionFactory.openSession();
             tx = session.beginTransaction();
             Query hqlQuery;
             String hqlDelete = "delete "+tableClass.getName(); 
@@ -743,13 +742,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             deletedEntities = hqlQuery.executeUpdate();
             tx.commit();
-            session.close();                    
         } catch (HibernateException e) {
             logger.fatal("Cannot execute conditional delete on table "+tableClass.getName());
             DBLayerException ex = new DBLayerException("Cannot execute conditional delete on table "+tableClass.getName());
             ex.setError(ex.ERROR_DELETE, tableClass.getName());
+            session.close();
             throw ex;
         }
+        session.close();
         return deletedEntities;
     }
     
@@ -857,6 +857,24 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setCreatedWhen(new java.util.Date());
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setCreatedWho(this.plantloreUser);
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }
+        if (data instanceof Publication) {
+            Publication pub = (Publication)data;
+            pub.setCreatedWho(this.plantloreUser);
+            data = pub;
+        }
+        if (data instanceof Author) {
+            Author aut = (Author)data;
+            aut.setCreatedWho(this.plantloreUser);
+            data = aut;
+        }        
         // Check whether we have rights for this operation
         checkRights(data, INSERT);
         
@@ -895,6 +913,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
+        // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }        
         // Check whether we have rights for this operation
         checkRights(data, UPDATE);
         
@@ -946,22 +971,23 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("To-be-updated/deleted author not found in the database. Author ID:"+((Author)data).getId());
                     ex = new DBLayerException("To-be-updated/deleted author not found in the database. Author ID:"+((Author)data).getId());
                     ex.setError(ex.ERROR_OTHER, null);
+                    sess.close();
                     throw ex;                                        
                 }
                 Object[] res = sc.get();
                 Author aut = (Author)res[0];
                 boolean equal = false;
+                // Close the session
+                sess.close();
                 // Check for administrator rights
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
                     System.out.println("USER IS ADMIN");                    
                 }                
-                // Check for direct ownership first                
+                // Check for direct ownership first. We have to compare IDs since equals doesn't work
+                // for User object
                 if (aut.getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
-                    System.out.println("USER IS OWNER");
-                    System.out.println("USERNAME: "+aut.getCreatedWho().getLogin());
-                    System.out.println("LOGGED IN NAME: "+this.plantloreUser.getLogin());
                 }
                 // Then check for indirect (group) ownership
                 if (this.rights.getEditGroup() != null) {
@@ -969,7 +995,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     String strId = aut.getCreatedWho().getId().toString();
                     for (int i=0;i<group.length;i++) {
                         if (strId.equals(group[i])) {
-                            System.out.println("USER IS IN THE GROUP");
                             equal = true;
                             break;
                         }
@@ -978,7 +1003,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (equal == false) {
                     logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOR);
                     ex = new DBLayerException("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_AUTHOR);
-                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_AUTHOR);
+                    ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_AUTHOR);                    
                     throw ex;                    
                 }
             }
@@ -1056,15 +1081,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 // If we haven't found the publication in the database, raise exception
                 if (!sc.next()) {
                     logger.error("To-be-updated/deleted publication not found in the database. Publication ID:"+((Publication)data).getId());
-                    ex = new DBLayerException("To-be-updated/deleted publication not found in the database. Publication ID:"+((Publication)data).getId());
+                    ex = new DBLayerException("To-be-updated/deleted publication not found in the database. Publication ID:"+((Publication)data).getId());                    
                     ex.setError(ex.ERROR_OTHER, null);
+                    sess.close();
                     throw ex;                                        
                 }
                 Object[] res = sc.get();
                 Publication pub = (Publication)res[0];
                 boolean equal = false;
+                sess.close();
                 // Check for direct ownership first                
-                if (pub.getCreatedWho().equals(this.plantloreUser)) {
+                if (pub.getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
                 }
                 // Check for administrator rights
@@ -1112,13 +1139,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("To-be-updated/deleted occurrence not found in the database. Occurrence ID:"+((Publication)data).getId());
                     ex = new DBLayerException("To-be-updated/deleted occurrence not found in the database. Occurrence ID:"+((Publication)data).getId());
                     ex.setError(ex.ERROR_OTHER, null);
+                    sess.close();
                     throw ex;                                        
                 }
                 Object[] res = sc.get();
                 Occurrence occ = (Occurrence)res[0];
                 boolean equal = false;
+                sess.close();
                 // Check for direct ownership first                
-                if (occ.getCreatedWho().equals(this.plantloreUser)) {
+                if (occ.getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
                 }
                 // Check for administrator rights
@@ -1166,6 +1195,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("To-be-updated/deleted habitat not found in the database. Occurrence ID:"+((Habitat)data).getId());
                     ex = new DBLayerException("To-be-updated/deleted habitat not found in the database. Occurrence ID:"+((Habitat)data).getId());
                     ex.setError(ex.ERROR_OTHER, null);
+                    sess.close();
                     throw ex;                                        
                 }
                 Object[] res = sc.get();
@@ -1182,11 +1212,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("No occurrence references selected habitat. Habitat ID:"+hab.getId());
                     ex = new DBLayerException("No occurrence references selected habitat. Habitat ID:"+hab.getId());
                     ex.setError(ex.ERROR_DB, null);
+                    sess.close();
                     throw ex;                          
                 }    
                 res = sc.get();
                 Occurrence occ = (Occurrence)res[0];
-                if (occ.getCreatedWho().equals(this.plantloreUser)) {
+                sess.close();
+                if (occ.getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
                 }       
                 // Check for administrator rights
@@ -1235,13 +1267,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("To-be-updated/deleted authoroccurrence not found in the database. Occurrence ID:"+((AuthorOccurrence)data).getId());
                     ex = new DBLayerException("To-be-updated/deleted authoroccurrence not found in the database. Occurrence ID:"+((AuthorOccurrence)data).getId());
                     ex.setError(ex.ERROR_OTHER, null);
+                    sess.close();
                     throw ex;                                        
                 }
                 Object[] res = sc.get();
                 AuthorOccurrence ao = (AuthorOccurrence)res[0];
                 boolean equal = false;
+                sess.close();
                 // Check for direct ownership first                
-                if (ao.getOccurrence().getCreatedWho().equals(this.plantloreUser)) {
+                if (ao.getOccurrence().getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
                 }
                 // Check for administrator rights
@@ -1303,6 +1337,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 logger.error("Occurrence record for the given Metadata not found");
                 DBLayerException ex = new DBLayerException("Occurrence record for the given Metadata not found");
                 ex.setError(ex.ERROR_OTHER, null);
+                tmpSess.close();
                 throw ex;                    
             }
             Object[] res = sr.get();
@@ -1483,6 +1518,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("To-be-updated record was not found in the database. Type: "+updated.getName()+" ID:"+updatedId);
                     DBLayerException ex = new DBLayerException("To-be-updated record was not found in the database. Type: "+updated.getName()+" ID:"+updatedId);
                     ex.setError(ex.ERROR_UPDATE, updated.getName());
+                    tempSess.close();
                     throw ex;
                 }
                 Object[] original = res.get();
@@ -1667,6 +1703,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     logger.error("To-be-updated Occurrence was not found in the database. ID:"+((Occurrence)data).getId());
                     DBLayerException ex = new DBLayerException("To-be-updated Occurrence was not found in the database. ID:"+((Occurrence)data).getId());
                     ex.setError(ex.ERROR_UPDATE, Occurrence.class.getName());
+                    tempSess.close();
                     throw ex;
                 }
                 Object[] original = res.get();
@@ -1675,7 +1712,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 Occurrence newRec = (Occurrence)data;
                 // Save the historyChange
                 sess.save(historyChange);
-                
                 // Seeing is believing.
                 List<String> cols = origRec.getHistoryColumns();
                 for(String columnName : cols) {
