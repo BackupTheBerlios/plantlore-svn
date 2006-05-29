@@ -20,8 +20,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.lang.Integer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -628,7 +631,7 @@ public class AppCoreCtrl
                             logger.error(ex);                            
                         }              
                         
-                        public void afterStopped() {
+                        public void afterStopped(Object value) {
                             refreshOverview(false); //false -> do not create task, refresh the overview directly in this thread
                         }
                     };
@@ -750,29 +753,68 @@ public class AppCoreCtrl
                     JOptionPane.showMessageDialog(view, "Check at least one occurrence, please.");
                     return;
                 }
-                    
-                
-                ClassLoader cl = this.getClass().getClassLoader();
-                InputStream is = cl.getResourceAsStream("net/sf/plantlore/client/resourcesSchedaA6.jasper");
 
-    //          JasperReport jasperReport = JasperCompileManager.compileReport(
-    //              "Scheda.jrxml");
-                JasperReport jasperReport = JasperCompileManager.compileReport(is);
+                final JasperReport schedaReport;
+                InputStream schedaIs = this.getClass().getClassLoader().getResourceAsStream("net/sf/plantlore/client/resources/SchedaA6.jasper");
 
+                try {
+                    ObjectInputStream schedaOis = new ObjectInputStream(schedaIs);
+                    schedaReport = (JasperReport) schedaOis.readObject();
+                } catch (FileNotFoundException ex) {
+                    logger.error("Problem loading jasper report resource: "+ex);
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.InternalProblem")+"\n"+ex.getMessage(),L10n.getString("Error.InternalProblemTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    return;                    
+                } catch (IOException ex) {                    
+                    logger.error("Problem loading jasper report resource: "+ex);
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.InternalProblem")+ex.getMessage(),L10n.getString("Error.InternalProblemTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                } catch (ClassNotFoundException ex) {
+                    logger.error("Problem loading jasper report resource: "+ex);
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.InternalProblem")+ex.getMessage(),L10n.getString("Error.InternalProblemTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    return;                    
+                }
+                                
                 prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
                 String h1 = prefs.get("HEADER_ONE","Set the first header in settings, please.");
                 String h2 = prefs.get("HEADER_TWO","Set the second header in settings, please.");
-                HashMap params = new HashMap();
+                final HashMap params = new HashMap();
                 params.put("HEADER_ONE",h1);
                 params.put("HEADER_TWO",h2);
-                JasperPrint jasperPrint = JasperFillManager.fillReport(
-                      jasperReport, params, new JasperDataSource(
-                                            model.getDatabase(), model.getTableModel().getSelection() )
-                                            );
-              new SchedaView(view, true, jasperPrint).setVisible(true);  
-            } catch(JRException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(view, "Sorry, can't display scheda, the jasper form is perhaps broken:\n"+e.getMessage());
+                
+                Task task = new Task() {
+                    JasperPrint jasperPrint;
+                    public Object task() throws JRException {
+                        jasperPrint = JasperFillManager.fillReport(
+                              schedaReport, params, new JasperDataSource(
+                                                    model.getDatabase(), model.getTableModel().getSelection() )
+                                                    );
+                        fireStopped(jasperPrint);
+                        return jasperPrint;
+                    }
+                };
+                
+                ProgressBar pb = new ProgressBar(task, view, true) {
+                    public void exceptionHandler(final Exception ex) {
+                        logger.error("Error while filling jasper report in SchedaAction: "+ex);
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);            
+                            }
+                        });
+                    }                    
+                    public void afterStopped(final Object value) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                new SchedaView(view, true, (JasperPrint)value).setVisible(true);  
+                            }                            
+                        });
+                    }
+                };
+                
+                task.start();
+            } catch(JRException ex) {
+                logger.error("Broken report: "+ex);
+                JOptionPane.showMessageDialog(view,L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -1065,9 +1107,7 @@ public class AppCoreCtrl
                 public Object task() {
                     searchModel.clear();
                     searchModel.constructQuery();
-                    logger.debug("before fireStopped");
-                    fireStopped();
-                    logger.debug("after fireStopped");
+                    fireStopped(null);
                     return null;
                 }
             };

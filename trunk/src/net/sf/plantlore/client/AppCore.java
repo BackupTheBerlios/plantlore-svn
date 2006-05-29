@@ -737,7 +737,7 @@ public class AppCore extends Observable
                 }
 
                 getTableModel().clearSelection();
-                fireStopped();
+                fireStopped(null);
                 return null;
             }
         };//task

@@ -146,57 +146,64 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      */
     public void update(Observable o, Object arg) {
         final ProgressBar pb = this;
-        if (arg instanceof Task.Message) {
-            Task.Message msg = (Task.Message)arg;
-            logger.debug("Received message: "+msg);
-            switch (msg) {
-                case STARTING:
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            setLocationRelativeTo(parent);
-                            setVisible(true);
-                            logger.debug("Progress bar visible");
-                        }
-                    });
-                    break;
-                case POSITION_CHANGED:
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            progressBar.setValue(task.getPosition());
-                        }
-                    });
-                    break;
-                case MESSAGE_CHANGED:
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            String text = task.getStatusMessage();
-                            statusField.setText(text);
-                            progressBar.setString(text);
-                            int curWidth = statusField.getWidth();
-                            if (text.length() > (curWidth/charSizeApprox)) {
-                                int newWidth = new Double(text.length()*charSizeApprox).intValue();
-                                pb.setSize(pb.getWidth()+(newWidth-curWidth),pb.getHeight());
+        if (arg instanceof Pair) {
+            Pair p = (Pair)arg;
+            Object first = p.getFirst();
+            if (first instanceof Task.Message) {
+                Task.Message msg = (Task.Message)first;
+                Object value = p.getSecond();
+                logger.debug("Received message: "+msg);
+                switch (msg) {
+                    case STARTING:
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                setLocationRelativeTo(parent);
+                                setVisible(true);
+                                logger.debug("Progress bar visible");
                             }
+                        });
+                        break;
+                    case POSITION_CHANGED:
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                progressBar.setValue(task.getPosition());
+                            }
+                        });
+                        break;
+                    case MESSAGE_CHANGED:
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                String text = task.getStatusMessage();
+                                statusField.setText(text);
+                                progressBar.setString(text);
+                                int curWidth = statusField.getWidth();
+                                if (text.length() > (curWidth/charSizeApprox)) {
+                                    int newWidth = new Double(text.length()*charSizeApprox).intValue();
+                                    pb.setSize(pb.getWidth()+(newWidth-curWidth),pb.getHeight());
+                                }
+                            }
+                        });
+                        break;
+                    case LENGTH_CHANGED:
+                        if (progressBar.isIndeterminate()) {
+                            progressBar.setIndeterminate(false);
                         }
-                    });
-                    break;
-                case LENGTH_CHANGED:
-                    if (progressBar.isIndeterminate()) {
-                        progressBar.setIndeterminate(false);
-                    }
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            progressBar.setMaximum(task.getLength());
-                        }
-                    });
-                    break;
-                case STOPPED:
-                    afterStopped();
-                    setVisible(false);
-                    dispose();
-                    break;                    
-            }
-        }
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                progressBar.setMaximum(task.getLength());
+                            }
+                        });
+                        break;
+                    case STOPPING:
+                        setVisible(false);
+                        dispose();                    
+                        break;
+                    case STOPPED:
+                        afterStopped(value);
+                        break;                    
+                }//switch
+            }//instanceof Message
+        }//instanceof Pair
         
         if (arg instanceof Exception) {
             exceptionHandler((Exception)arg);
@@ -210,8 +217,11 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      */
     public abstract void exceptionHandler(Exception ex);
     
+    public Task getTask() {
+        return task;
+    }
     
-    public void afterStopped() {
+    public void afterStopped(Object value) {
         
     }
     

@@ -58,7 +58,7 @@ public abstract class Task extends Observable {
         this.length = length;
         determinate = false;
         setChanged();
-        notifyObservers(Message.LENGTH_CHANGED);
+        notifyObservers(new Pair<Message,Object>(Message.LENGTH_CHANGED, null));
     }
     
     /** Returns current state of the task's computation.
@@ -79,7 +79,7 @@ public abstract class Task extends Observable {
         }
         
         setChanged();
-        notifyObservers(Message.POSITION_CHANGED);
+        notifyObservers(new Pair<Message,Object>(Message.POSITION_CHANGED,null));
     }
     
     /** Sets the status message and informs observers about this change.
@@ -88,7 +88,7 @@ public abstract class Task extends Observable {
     public void setStatusMessage(String message) {
         this.statusMessage = message;
         setChanged();
-        notifyObservers(Message.MESSAGE_CHANGED);
+        notifyObservers(new Pair<Message,Object>(Message.MESSAGE_CHANGED,null));
     }
     
     /** Informs whether this task is determinate, which means that the tak's length is known.
@@ -165,8 +165,10 @@ public abstract class Task extends Observable {
                 
                 try {
                     setChanged();
-                    notifyObservers(Message.STARTING);
+                    notifyObservers(new Pair<Message,Object>(Message.STARTING,null));
                     value = task();
+                    setChanged();
+                    notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
                 } catch (Exception ex) {
                     setChanged();
                     notifyObservers(ex);
@@ -193,7 +195,7 @@ public abstract class Task extends Observable {
                 
                 try {
                     setChanged();
-                    notifyObservers(Message.PROCEEDING);
+                    notifyObservers(new Pair<Message,Object>(Message.PROCEEDING,null));
                     value = task();
                 } catch (Exception ex) {
                     setChanged();
@@ -209,9 +211,9 @@ public abstract class Task extends Observable {
     /** Informs observers that the computation stopped.
      *
      */
-    public void fireStopped() {
+    public void fireStopped(Object value) {
         setChanged();
-        notifyObservers(Message.STOPPED);
+        notifyObservers(new Pair<Message,Object>(Message.STOPPED,value));
     }
     
     /** Informs observers that the computation has started (and is no longer beginning).
@@ -219,7 +221,7 @@ public abstract class Task extends Observable {
      */
     public void fireStarted() {
         setChanged();
-        notifyObservers(Message.STARTED);
+        notifyObservers(new Pair<Message,Object>(Message.STARTED,null));
     }
     
     /** Stops (cancels) the task.
@@ -230,7 +232,7 @@ public abstract class Task extends Observable {
     public void stop() {
         canceled = true;
         setChanged();
-        notifyObservers(Message.STOPPING);
+        notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
     }
     
 }

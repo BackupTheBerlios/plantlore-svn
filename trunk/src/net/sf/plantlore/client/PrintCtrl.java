@@ -112,15 +112,17 @@ public class PrintCtrl {
             try {
                 model.createJasperPrint();
             } catch (JRException ex) {
-                logger.warn("Broken report: "+ex);
+                logger.error("Broken report: "+ex);
                 JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);            
+                return;
             }
             
             try {
                 JasperPrintManager.printReport(model.getJasperPrint(), true);
             } catch (JRException ex) {
-                logger.warn("Problem while trying to print: "+ex);
+                logger.error("Problem while trying to print: "+ex);
                 JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.PrintProblem")+"\n"+ex.getMessage(),L10n.getString("Print.Message.PrintingProblemTitle"),JOptionPane.WARNING_MESSAGE);
+                return;
             }
         }
         
@@ -157,8 +159,9 @@ public class PrintCtrl {
             try {
                 model.createJasperPrint();
             } catch (JRException ex) {
-                logger.warn("Broken report: "+ex);
+                logger.error("Broken report: "+ex);
                 JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);                            
+                return;
             }
             new SchedaView((Frame) view.getParent(), true, model.getJasperPrint()).setVisible(true);
         }
