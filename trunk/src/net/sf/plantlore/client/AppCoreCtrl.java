@@ -635,6 +635,7 @@ public class AppCoreCtrl
                             refreshOverview(false); //false -> do not create task, refresh the overview directly in this thread
                         }
                     };
+                    progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
                     
                     task.start();
                     break;
@@ -810,6 +811,7 @@ public class AppCoreCtrl
                         });
                     }
                 };
+                pb.setTitle(L10n.getString("Scheda.ProgressTitle"));
                 
                 task.start();
             } catch(JRException ex) {
@@ -1138,6 +1140,7 @@ public class AppCoreCtrl
                     ex.printStackTrace();
                 }                    
             };
+            progressBar.setTitle(L10n.getString("Overview.Refresh.ProgressTitle"));
 
             task.start(); 
         }
