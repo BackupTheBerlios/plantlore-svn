@@ -332,7 +332,6 @@ public class AppCoreCtrl
                     
                     searchModel.setColumns(columns);
                     searchModel.constructQuery();
-                    model.setResultId(searchModel.getNewResultId());
                 }
             }
         }        
@@ -722,7 +721,15 @@ public class AppCoreCtrl
         public void update(Observable o, Object arg) {
             if (arg != null && arg instanceof Integer) {
                 logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
-                model.setResultId(searchModel.getNewResultId());
+                try {
+                    model.setResultId(searchModel.getNewResultId(), searchModel.getNewSelectQuery());
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex);
+                } catch (DBLayerException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex+": "+ex.getErrorInfo());
+                }
                 //model.setExportQuery(searchModel.getExportQuery(), false, Occurrence.class);
             }
         }
@@ -1044,7 +1051,6 @@ public class AppCoreCtrl
                         constructSearchMVC();
                         searchModel.setDatabase(model.getDatabase());
                         searchModel.constructQuery();
-                        model.setResultId(searchModel.getNewResultId());
                         view.getSBM().displayDefaultText();
                         
     			view.initOverview();

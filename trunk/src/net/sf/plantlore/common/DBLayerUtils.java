@@ -53,6 +53,7 @@ public class DBLayerUtils {
             return null;
         Object[] results = db.more(resultid, 0, 0);
         Object[] tmp = (Object[]) results[0];
+        db.closeQuery(sq);
         return (Record)tmp[0];
     }
 
@@ -72,6 +73,7 @@ public class DBLayerUtils {
             ao = (AuthorOccurrence)tmp[0];
             authorResults[i] = ao;
         }
+        db.closeQuery(sq);
         return authorResults;
     }
 
@@ -93,6 +95,7 @@ public class DBLayerUtils {
         } else {
             logger.debug("Leaving habitat id="+h.getId()+" live. Live Occurrence records point at it.");
         }
+        db.closeQuery(sq);
     }
     
     public static void main(String[] args) throws DBLayerException, RemoteException {

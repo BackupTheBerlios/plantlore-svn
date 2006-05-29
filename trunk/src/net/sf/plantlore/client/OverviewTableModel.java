@@ -48,6 +48,8 @@ public class OverviewTableModel extends AbstractTableModel {
     private Selection selection = new Selection();    
     private Object[][] data;
     
+    private SelectQuery oldSelectQuery;
+    
     /** Simple mode if true - only first three columns are displayed
      * Extended mode if false - all columns are displayed
      *
@@ -278,21 +280,17 @@ public class OverviewTableModel extends AbstractTableModel {
         return resultId;
     }
 
-    public void setResultId(int resultId) {
+    public void setResultId(int resultId, SelectQuery sq) throws RemoteException, DBLayerException {
+        if (oldSelectQuery != null)
+            db.closeQuery(oldSelectQuery);
+        
         logger.debug("Setting resultid to "+resultId);
         this.resultId = resultId;
         from = 0;
         currentPage = 1;
-        //FIXME
-        try {
-            loadData();
-            fireTableDataChanged(); //let the table compoment know it should redraw itself
-            //fireTableStructureChanged();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
+        loadData();
+        fireTableDataChanged(); //let the table compoment know it should redraw itself
+        //fireTableStructureChanged();
     }
 
     public int getResultsCount() {

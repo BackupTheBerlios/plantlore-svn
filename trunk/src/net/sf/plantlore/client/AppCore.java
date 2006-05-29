@@ -308,10 +308,10 @@ public class AppCore extends Observable
         mainConfig.save();
     }
     
-    public void setResultId(int resultId) {
+    public void setResultId(int resultId, SelectQuery sq) throws RemoteException, DBLayerException {
         setChanged();
         notifyObservers("LOADING_NEW_DATA");
-        tableSorter.setResultId(resultId);
+        tableSorter.setResultId(resultId, sq);
         setChanged();
         notifyObservers("NEW_QUERY");
     }

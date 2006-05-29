@@ -102,7 +102,7 @@ public class Search extends Observable {
     
     private ArrayList<Column> columns;
     private int newResultId = -1;
-    
+    private SelectQuery newSelectQuery;
     
     
     /** Creates a new instance of AddEdit */
@@ -530,7 +530,7 @@ public class Search extends Observable {
      * The ExportQuery is constructed according to the last known data from the Search dialog. 
      */
     public Object[] constructExportQuery() 
-    throws DBLayerException, RemoteException {
+    throws DBLayerException, RemoteException {                
     	String habitatAlias = Record.alias(Habitat.class) +".";
     	SelectQuery exportQuery = database.createQuery(Occurrence.class);
     	exportQuery.createAlias(Occurrence.HABITAT, Record.alias(Habitat.class));
@@ -834,6 +834,7 @@ public class Search extends Observable {
                 }
                 int resultId = database.executeQuery(sq);
                 this.newResultId = resultId;
+                this.newSelectQuery = sq;
                 logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
                 //let the SearchBridge in AppCoreCtrl know that new result is there
                 setChanged(); 
@@ -1035,6 +1036,10 @@ public class Search extends Observable {
         this.projects = projects;
     }
     
+    public SelectQuery getNewSelectQuery() {
+        return newSelectQuery;
+    }
+        
     // The export query should not be returned - a new export query must be constructed each time!!
 //    public SelectQuery getExportQuery() {
 //        return exportQuery;

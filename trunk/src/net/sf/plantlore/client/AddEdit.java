@@ -973,6 +973,7 @@ public class AddEdit extends Observable {
                 occurrence = (Occurrence)tmp[0];
                 habitatSharingOccurrences[i] = occurrence;
             }
+            database.closeQuery(sq);
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         } catch (RemoteException ex) {
@@ -1028,6 +1029,7 @@ public class AddEdit extends Observable {
                 authorOccurrences.put(a.getId(),ao);
                 resultRevision.add(ao.getNote());
             }
+            database.closeQuery(sq);
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         } catch (RemoteException ex) {

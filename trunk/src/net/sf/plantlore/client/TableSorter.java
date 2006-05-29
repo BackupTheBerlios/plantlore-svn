@@ -12,6 +12,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.SelectQuery;
 
 /**
  * TableSorter is a decorator for TableModels; adding sorting
@@ -542,8 +543,8 @@ public class TableSorter extends AbstractTableModel {
         return tableModel.getOccurrenceId(modelIndex(row));
     }
     
-    public void setResultId(int resultId) {
-        tableModel.setResultId(resultId);
+    public void setResultId(int resultId, SelectQuery sq) throws RemoteException, DBLayerException {
+        tableModel.setResultId(resultId, sq);
     }
     
     public void setDatabase(DBLayer db) {
