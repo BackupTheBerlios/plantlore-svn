@@ -141,7 +141,17 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
             Task.Message msg = (Task.Message)arg;
             switch (msg) {
                 case STARTING:
-                    setVisible(true);
+                    if (isModal()) {
+                        //we are in modal state so we have to show ourselves in a new thread
+                        //so that we don't block the task's thread from continuing it's computation
+                        Thread t = new Thread(new Runnable(){
+                                                    public void run() { setVisible(true); }
+                                              });
+                        // Start the thread so that the dialog will show.
+                        t.start(); 
+                    } else {
+                        setVisible(true);
+                    }
                     break;
                 case POSITION_CHANGED:
                     progressBar.setValue(task.getPosition());
@@ -165,6 +175,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
                     progressBar.setMaximum(task.getLength());
                     break;
                 case STOPPED:
+                    afterStopped();
                     setVisible(false);
                     dispose();
                     break;                    
@@ -182,6 +193,11 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      * computation.
      */
     public abstract void exceptionHandler(Exception ex);
+    
+    
+    public void afterStopped() {
+        
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
