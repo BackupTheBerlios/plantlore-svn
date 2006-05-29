@@ -1204,6 +1204,7 @@ public class History {
     public String getAllAuthors(Occurrence occurrence) {
         String allAuthor = "";
         SelectQuery query = null;
+        
         int resultId = 0;
         
         try {
@@ -1215,9 +1216,11 @@ public class History {
         } catch(DBLayerException e) {
             System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
         }
-       Object[] objects = null;       
+       Object[] objects = null;   
+       
        try {
-            objects = database.more(resultId, 0, 0);  
+            int to = database.getNumRows(resultId); 
+            objects = database.more(resultId, 0, to-1);  
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } catch (DBLayerException ex) {
@@ -1393,19 +1396,19 @@ public class History {
      * Tato funkce je volana jen pro UNDO RECORD, coz znamena, ze pracuje jen s konkretnim nalezem
      */
     public void generateMessageUndo() {    	
-    	messageUndo = "Budou provedeny následující změny:\n";      
+    	messageUndo = "";      
     	int count = markItem.size();
     	for (int i=0; i<count; i++) {
     		Object[] itemList = (Object[])(markItem.get(i));
     		String item = (String)itemList[0];
     		Integer maxId = (Integer)itemList[1];      		
     		oldValue = ((HistoryRecord)historyDataList.get(maxId)).getOldValue(); 
-    		messageUndo = messageUndo + item + " --> " + oldValue + "\n";
+    		messageUndo = messageUndo + item + "  -->  " + oldValue + "\n";
     	}
         //pracuji stale s konkretnim occurrence
         int countResult = getRelationshipHabitat();			
         if (countResult > 1) {
-            messageUndo = "\n" + messageUndo + "Tyto změny ovlivní více nálezů.\n";
+            messageUndo = "\n" + messageUndo + L10n.getString("Question.UndoDetail");
     	}
     }    
 
@@ -1433,7 +1436,7 @@ public class History {
          if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE) || tableName.equals(PlantloreConstants.ENTITY_HABITAT) || tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {           
               //Get details for occurrence
               Occurrence occurrence = historyChange.getOccurrence();             
-              detailsMessage = L10n.getString("detailsOccurrence") + "\n\n";
+              detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE + "."+ Occurrence.PLANT) + ": "+ occurrence.getPlant().getTaxon()+"\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOROCCURRENCE+"."+ AuthorOccurrence.AUTHOR) + ": " +getAllAuthors(occurrence) + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.ISODATETIMEBEGIN) + ": " + occurrence.getIsoDateTimeBegin() +"\n";
@@ -1451,7 +1454,7 @@ public class History {
               //Get details for Publication
               Object[] object = searchObject("Publication",recordId); 
               Publication publication = (Publication)object[0];
-              detailsMessage = L10n.getString("detailsPublication") + "\n\n";
+              detailsMessage = L10n.getString("History.DetailsPublication") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PUBLICATION +"."+ Publication.COLLECTIONNAME) + ": " + publication.getCollectionName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PUBLICATION +"."+ Publication.COLLECTIONYEARPUBLICATION) + ": " + publication.getCollectionYearPublication() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PUBLICATION +"."+ Publication.JOURNALNAME) + ": " + publication.getJournalName() + "\n";
@@ -1462,7 +1465,7 @@ public class History {
               //Get details for Author
               Object[] object = searchObject("Author",recordId);   
               Author author = (Author)object[0];
-              detailsMessage = L10n.getString("detailsAuthor") + "\n\n";
+              detailsMessage = L10n.getString("History.DetailsAuthor") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOR +"."+ Author.WHOLENAME)+ ": " + author.getWholeName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOR +"."+ Author.ORGANIZATION)+ ": "  + author.getOrganization() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOR +"."+ Author.ROLE)+ ": " + author.getRole() + "\n";
@@ -1475,19 +1478,19 @@ public class History {
              //Get details for Metadata
               Object[] object = searchObject("Metadata",recordId);   
               Metadata metadata = (Metadata)object[0];
-              detailsMessage = L10n.getString("detailsMetadata") + "\n\n";
-              detailsMessage = detailsMessage + L10n.getString("institution") + "\n";
+              detailsMessage = L10n.getString("History.DetailsMetadata") + "\n\n";
+              detailsMessage = detailsMessage + L10n.getString("History.DetailsMetadata.Institution") + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.SOURCEINSTITUTIONID) + ": " + metadata.getSourceInstitutionId() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.OWNERORGANIZATIONABBREV) + ": " + metadata.getOwnerOrganizationAbbrev() + "\n\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA + "."+"technicalContact")+ ":\n";
+              detailsMessage = detailsMessage + L10n.getString("History.DetailsMetadata.TechnicalContact")+ "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.TECHNICALCONTACTNAME) + ": " + metadata.getTechnicalContactName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.TECHNICALCONTACTEMAIL) + ": " + metadata.getTechnicalContactEmail() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.TECHNICALCONTACTADDRESS) + ": " + metadata.getTechnicalContactAddress() + "\n\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ "contentContact") + ": \n\n";
+              detailsMessage = detailsMessage + L10n.getString("History.DetailsMetadata.ContentContact") + " \n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.CONTENTCONTACTNAME) + ": " + metadata.getContentContactName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.CONTENTCONTACTEMAIL) + ": " + metadata.getContentContactEmail() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.CONTENTCONTACTADDRESS) + ": " + metadata.getContentContactAddress() + "\n\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ "project") + ": \n";
+              detailsMessage = detailsMessage + L10n.getString("History.DetailsMetadata.Project") + " \n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.DATASETTITLE) + ": " + metadata.getDataSetTitle() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.DATASETDETAILS) + ": " + metadata.getDataSetDetails() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.SOURCEID) + ": " + metadata.getSourceId() +"\n\n";
@@ -1499,20 +1502,20 @@ public class History {
               //Get details for Phytochorion
               Object[] object = searchObject("Phytochorion",recordId); 
               Phytochorion  phytochorion = (Phytochorion)object[0];
-              detailsMessage = L10n.getString("detailsPhytochorion") + "\n\n";
+              detailsMessage = L10n.getString("History.DetailsPhytochorion") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PHYTOCHORION +"."+ Phytochorion.NAME) + ": " + phytochorion.getName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PHYTOCHORION +"."+ Phytochorion.CODE) + ": " + phytochorion.getCode() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
               //Get details for Territory
               Object[] object = searchObject("Territory",recordId); 
               Territory territory = (Territory)object[0];
-              detailsMessage = L10n.getString("detailsTerritory") + "\n\n";
+              detailsMessage = L10n.getString("History.DetailsTerritory") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_TERRITORY +"."+ Territory.NAME) + ": " + territory.getName() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
               //Get details for Village
               Object[] object = searchObject("Village",recordId);  
               Village village = (Village)object[0];
-              detailsMessage = L10n.getString("detailsVillage") + "\n\n";
+              detailsMessage = L10n.getString("History.detailsVillage") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_VILLAGE +"."+ Village.NAME) + ": " + village.getName() + "\n";
         } else {
             logger.error("No table defined");

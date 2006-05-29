@@ -32,15 +32,15 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jPanel2" alignment="0" min="0" max="32767" attributes="1"/>
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+                  <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="684" max="32767" attributes="0"/>
+                      <EmptySpace pref="556" max="32767" attributes="0"/>
                       <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jPanel1" alignment="0" min="-2" pref="756" max="-2" attributes="1"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -49,8 +49,8 @@
           <Group type="102" alignment="1" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="14" max="32767" attributes="0"/>
+              <Component id="jPanel2" min="-2" pref="129" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -65,7 +65,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="User list"/>
+            <TitledBorder title="&lt;User Code&gt;">
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;UserManager.UserList&quot;)" type="code"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -73,15 +75,14 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="858" max="32767" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="previousButton" min="-2" pref="100" max="-2" attributes="0"/>
-                                  <EmptySpace pref="105" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="totalResultLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="totalResultValueLabel" min="-2" max="-2" attributes="0"/>
@@ -89,34 +90,38 @@
                                   <Component id="toDisplayedLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="toDisplayValueTextField" min="-2" pref="33" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="detailsButton" alignment="1" min="-2" pref="110" max="-2" attributes="1"/>
+                          </Group>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                   <Component id="displayedLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="displayedValueLabel" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="detailsButton" min="-2" pref="100" max="-2" attributes="1"/>
+                              <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="addButtons" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Component id="addButtons" min="-2" pref="110" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="editButtons" min="-2" pref="110" max="-2" attributes="1"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="editButtons" min="-2" pref="100" max="-2" attributes="1"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="deleteButton" min="-2" pref="100" max="-2" attributes="1"/>
-                              </Group>
-                              <Component id="nextButton" alignment="1" min="-2" pref="100" max="-2" attributes="1"/>
+                              <Component id="deleteButton" min="-2" pref="110" max="-2" attributes="1"/>
+                              <Component id="nextButton" min="-2" pref="100" max="-2" attributes="1"/>
                           </Group>
                       </Group>
+                      <Component id="jScrollPane1" alignment="0" min="-2" pref="725" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jScrollPane1" pref="227" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -132,12 +137,12 @@
                   </Group>
                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="detailsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="addButtons" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="editButtons" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="deleteButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="addButtons" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="detailsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -167,7 +172,7 @@
         <Component class="javax.swing.JButton" name="previousButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;prevButton&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonPrev&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -177,7 +182,7 @@
         <Component class="javax.swing.JButton" name="nextButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;nextButton&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonNext&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -187,7 +192,7 @@
         <Component class="javax.swing.JButton" name="deleteButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;userManager.dropUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonDrop&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -197,7 +202,7 @@
         <Component class="javax.swing.JButton" name="editButtons">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;userManager.editUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonEdit&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -207,7 +212,7 @@
         <Component class="javax.swing.JButton" name="addButtons">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;userManager.addUser&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonAdd&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -217,7 +222,7 @@
         <Component class="javax.swing.JButton" name="detailsButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;userManager.details&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonDetails&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -227,7 +232,7 @@
         <Component class="javax.swing.JLabel" name="totalResultLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;totalResult&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.TotalResult&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -244,7 +249,7 @@
         <Component class="javax.swing.JLabel" name="toDisplayedLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;toDisplay&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.RowsToDisplay&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -261,7 +266,7 @@
         <Component class="javax.swing.JLabel" name="displayedLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;displayed&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Displayed&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -280,7 +285,7 @@
     <Component class="javax.swing.JButton" name="closeButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Close&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;UserManager.ButtonClose&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -290,7 +295,7 @@
     <Component class="javax.swing.JButton" name="helpButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Help&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;UserManager.ButtonHelp&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -301,7 +306,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Search publicatin"/>
+            <TitledBorder title="&lt;User Code&gt;">
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;UserMnager.SearchPanel&quot;)" type="code"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -319,8 +326,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="loginSearchText" pref="116" max="32767" attributes="1"/>
-                              <Component id="wholeNameSearchText" pref="116" max="32767" attributes="1"/>
+                              <Component id="loginSearchText" pref="79" max="32767" attributes="1"/>
+                              <Component id="wholeNameSearchText" pref="79" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -329,15 +336,15 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="addressSearchText" alignment="0" pref="138" max="32767" attributes="1"/>
-                              <Component id="emailSearchText" alignment="0" pref="138" max="32767" attributes="1"/>
+                              <Component id="addressSearchText" alignment="0" pref="98" max="32767" attributes="1"/>
+                              <Component id="emailSearchText" alignment="0" pref="98" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                       <Component id="searchButton" min="-2" pref="120" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                   <Component id="showActiveUserPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -346,28 +353,26 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="jPanel3" alignment="1" min="0" pref="88" max="32767" attributes="1"/>
                       <Component id="showActiveUserPanel" alignment="0" max="32767" attributes="1"/>
-                      <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="emailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="emailSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="loginLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="loginSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="addressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="addressSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="wholeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="wholeNameSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                              <Component id="searchButton" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="emailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="emailSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="loginLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="loginSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="addressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="addressSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="wholeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="wholeNameSearchText" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                          <Component id="searchButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -379,14 +384,14 @@
         <Component class="javax.swing.JLabel" name="wholeNameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.name&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Name&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="loginLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.login&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Login&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -404,7 +409,9 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Sorting"/>
+                <TitledBorder title="&lt;User Code&gt;">
+                  <Connection PropertyName="titleX" code="L10n.getString(&quot;UserManager.SortPanel&quot;)" type="code"/>
+                </TitledBorder>
               </Border>
             </Property>
           </Properties>
@@ -436,7 +443,6 @@
                       <Component id="sortAscendingRadioButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="sortDescendingRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -445,7 +451,7 @@
             <Component class="javax.swing.JRadioButton" name="sortDescendingRadioButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;sortDescending&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.SortDescending&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -463,7 +469,7 @@
             <Component class="javax.swing.JRadioButton" name="sortAscendingRadioButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;sortAscending&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.SortAscending&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -481,19 +487,14 @@
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;dataSort&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.DataSort&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="sortComboBox">
               <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Login"/>
-                    <StringItem index="1" value="Surname"/>
-                    <StringItem index="2" value="First name"/>
-                    <StringItem index="3" value="Date of create"/>
-                  </StringArray>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString(&quot;UserManager.Login&quot;), L10n.getString(&quot;UserManager.FirstName&quot;), L10n.getString(&quot;UserManager.Surname&quot;), L10n.getString(&quot;UserManager.CreateWhen&quot;)})" type="code"/>
                 </Property>
               </Properties>
               <AuxValues>
@@ -505,7 +506,7 @@
         <Component class="javax.swing.JLabel" name="emailLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.email&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Email&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -517,7 +518,7 @@
         <Component class="javax.swing.JLabel" name="addressLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.address&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Address&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -529,7 +530,7 @@
         <Component class="javax.swing.JButton" name="searchButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;dataSearch&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.ButtonSearch&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -540,7 +541,9 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Show"/>
+                <TitledBorder title="&lt;User Code&gt;">
+                  <Connection PropertyName="titleX" code="L10n.getString(&quot;UserManager.ShowPanel&quot;)" type="code"/>
+                </TitledBorder>
               </Border>
             </Property>
           </Properties>
@@ -568,7 +571,7 @@
                       <Component id="showAllUserRadioBUtton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="showCurrentUserRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="28" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -577,7 +580,7 @@
             <Component class="javax.swing.JRadioButton" name="showAllUserRadioBUtton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;userManager.showAllUser&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.ShowAllUser&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -595,7 +598,7 @@
             <Component class="javax.swing.JRadioButton" name="showCurrentUserRadioButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;userManager.showActiveUser&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.ShowActiveUser&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">

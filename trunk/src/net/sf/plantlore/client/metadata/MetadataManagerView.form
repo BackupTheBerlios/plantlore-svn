@@ -23,16 +23,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
-                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" alignment="0" attributes="1">
-                          <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Group type="102" alignment="0" attributes="1">
+                      <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
+                  <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -59,7 +57,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Metadata list"/>
+            <TitledBorder title="&lt;User Code&gt;">
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;MetadataManager.ListPanel&quot;)" type="code"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -67,15 +67,15 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="820" max="32767" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jScrollPane1" alignment="0" pref="775" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="previousButton" min="-2" pref="100" max="-2" attributes="0"/>
-                                  <EmptySpace pref="67" max="32767" attributes="0"/>
+                                  <EmptySpace pref="12" max="32767" attributes="0"/>
                                   <Component id="totalResultLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="totalResultValueLabel" min="-2" max="-2" attributes="0"/>
@@ -103,9 +103,9 @@
                               </Group>
                               <Component id="nextButton" alignment="1" min="-2" pref="100" max="-2" attributes="1"/>
                           </Group>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -162,7 +162,7 @@
         <Component class="javax.swing.JButton" name="previousButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;prevButton&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonPrev&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -172,7 +172,7 @@
         <Component class="javax.swing.JButton" name="nextButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;nextButton&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonNext&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -182,7 +182,7 @@
         <Component class="javax.swing.JButton" name="deleteButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;recordDelete&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonDelete&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -192,7 +192,7 @@
         <Component class="javax.swing.JButton" name="editButtons">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;recordEdit&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonEdit&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -202,7 +202,7 @@
         <Component class="javax.swing.JButton" name="addButtons">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;recordAdd&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonAdd&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -212,7 +212,7 @@
         <Component class="javax.swing.JButton" name="detailsButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;recordDetails&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonDetails&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -222,7 +222,7 @@
         <Component class="javax.swing.JLabel" name="totalResultLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;totalResult&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.TotalResult&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -239,7 +239,7 @@
         <Component class="javax.swing.JLabel" name="toDisplayedLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;toDisplay&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.RowToDisplay&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -256,7 +256,7 @@
         <Component class="javax.swing.JLabel" name="displayedLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;displayed&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.Displayed&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -275,7 +275,7 @@
     <Component class="javax.swing.JButton" name="closeButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Close&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;MetadataManager.ButtonClose&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -285,7 +285,7 @@
     <Component class="javax.swing.JButton" name="helpButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Help&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;MetadataManager.ButtonHelp&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -296,7 +296,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Search metadata"/>
+            <TitledBorder title="&lt;User Code&gt;">
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;MetadataManager.SearchPanel&quot;)" type="code"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -314,8 +316,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="sourceInstitutionIdText" pref="154" max="32767" attributes="1"/>
-                              <Component id="sourceIdText" alignment="0" pref="154" max="32767" attributes="1"/>
+                              <Component id="sourceInstitutionIdText" pref="99" max="32767" attributes="1"/>
+                              <Component id="sourceIdText" alignment="0" pref="99" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Component id="dataSetTitleLabel" min="-2" max="-2" attributes="0"/>
@@ -361,14 +363,14 @@
         <Component class="javax.swing.JLabel" name="sourceInstitutionIdLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;metadata.sourceInstitutionId&quot;)&#xa;       " type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.SourceInstitutionId&quot;)&#xa;       " type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="sourceLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;metadata.sourceId&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.SourceId&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -386,7 +388,9 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Sorting"/>
+                <TitledBorder title="&lt;User Code&gt;">
+                  <Connection PropertyName="titleX" code="L10n.getString(&quot;MetadataManager.SortPanel&quot;)" type="code"/>
+                </TitledBorder>
               </Border>
             </Property>
           </Properties>
@@ -427,7 +431,7 @@
             <Component class="javax.swing.JRadioButton" name="sortDescendingRadioButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;sortDescending&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;MetadataManager.SortDescending&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -445,7 +449,7 @@
             <Component class="javax.swing.JRadioButton" name="sortAscendingRadioButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;sortAscending&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;MetadataManager.SortAscending&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -463,14 +467,14 @@
             <Component class="javax.swing.JLabel" name="dataSortLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;dataSort&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;MetadataManager.DataSort&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="jComboBox1">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString(&quot;metadata.sourceInstitutionId&quot;), L10n.getString(&quot;metadata.sourceId&quot;), L10n.getString(&quot;metadata.dataSetTitle&quot;), L10n.getString(&quot;metadata.technicalContactName&quot;),L10n.getString(&quot;metadata.contentContactName&quot;), L10n.getString(&quot;metadata.dateCreate&quot;), L10n.getString(&quot;metadata.dateModified&quot;)})" type="code"/>
+                  <Connection code="new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString(&quot;MetadataManager.SourceInstitutionId&quot;), L10n.getString(&quot;MetadataManager.SourceId&quot;), L10n.getString(&quot;MetadataManager.DataSetTitle&quot;), L10n.getString(&quot;MetadataManager.TechnicalContactName&quot;),L10n.getString(&quot;MetadataManager.ContentContactName&quot;), L10n.getString(&quot;MetadataManager.DateCreate&quot;), L10n.getString(&quot;MetadataManager.DateModified&quot;)})" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -479,7 +483,7 @@
         <Component class="javax.swing.JLabel" name="dataSetTitleLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;metadata.dataSetTitle&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.DataSetTitle&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -491,7 +495,7 @@
         <Component class="javax.swing.JButton" name="searchButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;dataSearch&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.ButtonSearch&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>

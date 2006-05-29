@@ -93,14 +93,14 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     }
     
       /**
-     * Display error message saying that no row of table has been selected.
+     * Display warning message saying that no row of table has been selected.
      */
-    public void selectRowMessage() {
-    	JOptionPane.showMessageDialog(this, "Please select one metadata from the list", "Select metadata", JOptionPane.WARNING_MESSAGE);               
+    public void selectRowMessage() {    	
+        JOptionPane.showMessageDialog(this, L10n.getString("Warning.EmptySelection"), L10n.getString("Warning.EmptySelectionTitle"), JOptionPane.WARNING_MESSAGE);               
     }             
     
      public int messageDelete(String message) {
-    	int okCancle = JOptionPane.showConfirmDialog(this, "Access for metadata "+message+ " will be prohibit.", "Drop metadata", JOptionPane.OK_CANCEL_OPTION);
+    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.DeleteMetadata"), L10n.getString("Question.DeleteMetadataTitle"), JOptionPane.OK_CANCEL_OPTION);
     	return okCancle;
     }          
     
@@ -108,12 +108,11 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
      *  Display info message saying that no search field has been filled in.
      */
     public void showSearchInfoFillMessage() {
-        JOptionPane.showMessageDialog(this, "No search field has been filled in. All metadata will display.", "Missing search data", JOptionPane.INFORMATION_MESSAGE);       
+         JOptionPane.showMessageDialog(this, L10n.getString("Information.SearchMetadata"), L10n.getString("Information.SearchMetadataTitle"), JOptionPane.INFORMATION_MESSAGE);       
     }
     
     public void showSearchInfoMessage() {
-        JOptionPane.showMessageDialog(this, "No metadata with the given attributes were found. Please modify search criteria.",
-                                      "No search results", JOptionPane.INFORMATION_MESSAGE);                
+        JOptionPane.showMessageDialog(this, L10n.getString("Information.NoMetadataInResult"), L10n.getString("Information.NoMetadataInResultTitle"), JOptionPane.INFORMATION_MESSAGE);                
     }
     
     /** This method is called from within the constructor to
@@ -156,7 +155,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         searchButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata list"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.ListPanel")));
         tableMetadataList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -170,27 +169,27 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         ));
         jScrollPane1.setViewportView(tableMetadataList);
 
-        previousButton.setText(L10n.getString("prevButton"));
+        previousButton.setText(L10n.getString("MetadataManager.ButtonPrev"));
 
-        nextButton.setText(L10n.getString("nextButton"));
+        nextButton.setText(L10n.getString("MetadataManager.ButtonNext"));
 
-        deleteButton.setText(L10n.getString("recordDelete"));
+        deleteButton.setText(L10n.getString("MetadataManager.ButtonDelete"));
 
-        editButtons.setText(L10n.getString("recordEdit"));
+        editButtons.setText(L10n.getString("MetadataManager.ButtonEdit"));
 
-        addButtons.setText(L10n.getString("recordAdd"));
+        addButtons.setText(L10n.getString("MetadataManager.ButtonAdd"));
 
-        detailsButton.setText(L10n.getString("recordDetails"));
+        detailsButton.setText(L10n.getString("MetadataManager.ButtonDetails"));
 
-        totalResultLabel.setText(L10n.getString("totalResult"));
+        totalResultLabel.setText(L10n.getString("UserManager.TotalResult"));
 
         totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
 
-        toDisplayedLabel.setText(L10n.getString("toDisplay"));
+        toDisplayedLabel.setText(L10n.getString("MetadataManager.RowToDisplay"));
 
         toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
 
-        displayedLabel.setText(L10n.getString("displayed"));
+        displayedLabel.setText(L10n.getString("MetadataManager.Displayed"));
 
         displayedValueLabel.setText(model.getCurrentDisplayRows());
 
@@ -198,15 +197,15 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+            .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 67, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE)
                                 .add(totalResultLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(totalResultValueLabel)
@@ -228,8 +227,8 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                                 .add(editButtons, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(deleteButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
+                            .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -255,28 +254,28 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .addContainerGap())
         );
 
-        closeButton.setText(L10n.getString("Close"));
+        closeButton.setText(L10n.getString("MetadataManager.ButtonClose"));
 
-        helpButton.setText(L10n.getString("Help"));
+        helpButton.setText(L10n.getString("MetadataManager.ButtonHelp"));
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Search metadata"));
-        sourceInstitutionIdLabel.setText(L10n.getString("metadata.sourceInstitutionId")
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.SearchPanel")));
+        sourceInstitutionIdLabel.setText(L10n.getString("MetadataManager.SourceInstitutionId")
         );
 
-        sourceLabel.setText(L10n.getString("metadata.sourceId"));
+        sourceLabel.setText(L10n.getString("MetadataManager.SourceId"));
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Sorting"));
-        sortDescendingRadioButton.setText(L10n.getString("sortDescending"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.SortPanel")));
+        sortDescendingRadioButton.setText(L10n.getString("MetadataManager.SortDescending"));
         sortDescendingRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         sortDescendingRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        sortAscendingRadioButton.setText(L10n.getString("sortAscending"));
+        sortAscendingRadioButton.setText(L10n.getString("MetadataManager.SortAscending"));
         sortAscendingRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         sortAscendingRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        dataSortLabel.setText(L10n.getString("dataSort"));
+        dataSortLabel.setText(L10n.getString("MetadataManager.DataSort"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("metadata.sourceInstitutionId"), L10n.getString("metadata.sourceId"), L10n.getString("metadata.dataSetTitle"), L10n.getString("metadata.technicalContactName"),L10n.getString("metadata.contentContactName"), L10n.getString("metadata.dateCreate"), L10n.getString("metadata.dateModified")}));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("MetadataManager.SourceInstitutionId"), L10n.getString("MetadataManager.SourceId"), L10n.getString("MetadataManager.DataSetTitle"), L10n.getString("MetadataManager.TechnicalContactName"),L10n.getString("MetadataManager.ContentContactName"), L10n.getString("MetadataManager.DateCreate"), L10n.getString("MetadataManager.DateModified")}));
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -305,9 +304,9 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        dataSetTitleLabel.setText(L10n.getString("metadata.dataSetTitle"));
+        dataSetTitleLabel.setText(L10n.getString("MetadataManager.DataSetTitle"));
 
-        searchButton.setText(L10n.getString("dataSearch"));
+        searchButton.setText(L10n.getString("MetadataManager.ButtonSearch"));
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -322,8 +321,8 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                             .add(sourceLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
+                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
                         .add(15, 15, 15)
                         .add(dataSetTitleLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -360,14 +359,13 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                        .add(layout.createSequentialGroup()
-                            .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(

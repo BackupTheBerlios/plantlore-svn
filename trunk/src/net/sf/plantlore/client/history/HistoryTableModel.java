@@ -56,12 +56,12 @@ public class HistoryTableModel extends AbstractTableModel
    
     private void initColumns() {
         columnNames = new String[6];        
-        columnNames[0] = L10n.getString("historyColX");        
-        columnNames[1] = L10n.getString("historyColDate");        
-        columnNames[2] = L10n.getString("historyColUser");        
-        columnNames[3] = L10n.getString("historyColItem");        
-        columnNames[4] = L10n.getString("historyColOldValue");       
-        columnNames[5] = L10n.getString("historyColNewValue");        
+        columnNames[0] = L10n.getString("History.ColumnX");        
+        columnNames[1] = L10n.getString("History.ColumnDate");        
+        columnNames[2] = L10n.getString("History.ColumnUser");        
+        columnNames[3] = L10n.getString("History.ColumnItem");        
+        columnNames[4] = L10n.getString("History.ColumnOldValue");       
+        columnNames[5] = L10n.getString("History.ColumnNewValue");           
     }       
     
     private void initColumnSize() {

@@ -47,18 +47,18 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
       * nastaveni formulare pro add
       */
      public void setAddForm() {
-         operationButton.setText("Add");
+         operationButton.setText(L10n.getString("UserManager.ButtonAdd"));
          createWhenuser.setText("");
          dropWhenLabel.setText("");
      }
      
       public void setEditForm() {
-         operationButton.setText("Edit");
+         operationButton.setText(L10n.getString("UserManager.ButtonEdit"));
          loginText.setEditable(false);
      }
      
      public void setDetailsForm() {
-       operationButton.setText("Ok");
+       operationButton.setText(L10n.getString("UserManager.ButtonOk"));
        this.loginText.setEditable(false);
        this.passwordtext.setEditable(false);
        this.firstNameText.setEditable(false);
@@ -121,7 +121,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
      * Display error message saying that login exists in database. Admin has to fill in different login.
      */
     public void checUniqueLoginMessage(String login) {
-    	JOptionPane.showMessageDialog(this, "Login " +login+ " already exist. Please change it.", "Add user", JOptionPane.ERROR_MESSAGE);               
+    	JOptionPane.showMessageDialog(this, L10n.getString("Error.DuplicateLogin"), L10n.getString("Error.DuplicateLoginTitle"), JOptionPane.ERROR_MESSAGE);               
     }    
      
      /**
@@ -136,19 +136,19 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
      */
     public boolean checkNotNull() {
         if (this.loginText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Login is a compulsory field. Please fill in it.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Login") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.passwordtext.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Password is a compulsory field. Please fill in it.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Password") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.firstNameText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "First name is a compulsory field. Please fill in it.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("UserManager.FirstName") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.surnameText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Surname is a compulsory field. Please fill in it.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Surname") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.emailText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Email is a compulsory field. Please fill in it.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Email") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -199,18 +199,18 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         helpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("User"));
-        loginLabel.setText(L10n.getString("user.login"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserManager.UserDataPanel")));
+        loginLabel.setText(L10n.getString("UserManager.Login"));
 
-        firstNameLabel.setText(L10n.getString("user.firstName"));
+        firstNameLabel.setText(L10n.getString("UserManager.FirstName"));
 
-        surnameLabel.setText(L10n.getString("user.surname"));
+        surnameLabel.setText(L10n.getString("UserManager.Surname"));
 
-        emailLabel.setText(L10n.getString("user.email"));
+        emailLabel.setText(L10n.getString("UserManager.Email"));
 
-        addressLabel.setText(L10n.getString("user.address"));
+        addressLabel.setText(L10n.getString("UserManager.Address"));
 
-        createWhenuser.setText(L10n.getString("user.createWhen"));
+        createWhenuser.setText(L10n.getString("UserManager.CreateWhen"));
 
         loginText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -218,34 +218,34 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
             }
         });
 
-        noteLabel.setText(L10n.getString("user.note"));
+        noteLabel.setText(L10n.getString("UserManager.Note"));
 
         noteText.setColumns(20);
         noteText.setRows(5);
         jScrollPane1.setViewportView(noteText);
 
-        dropWhenLabel.setText(L10n.getString("user.dropWhen"));
+        dropWhenLabel.setText(L10n.getString("UserManager.DropWhen"));
 
-        jLabel2.setText(L10n.getString("user.password"));
+        jLabel2.setText(L10n.getString("UserManager.Password"));
 
         createWhenValueLabel.setText("");
 
         dropWhenValueLabel.setText("");
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("user.right")));
-        administratorCheckBox.setText(L10n.getString("right.administrator"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserManager.UserRightPanel")));
+        administratorCheckBox.setText(L10n.getString("UserManager.Right.Administrator"));
         administratorCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         administratorCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        editAllCheckBox.setText(L10n.getString("right.editAll"));
+        editAllCheckBox.setText(L10n.getString("UserManager.Right.EditAll"));
         editAllCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         editAllCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        addRightCheckBox.setText(L10n.getString("right.add"));
+        addRightCheckBox.setText(L10n.getString("UserManager.Right.Add"));
         addRightCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         addRightCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        editGroupLabel.setText(L10n.getString("right.editGroup"));
+        editGroupLabel.setText(L10n.getString("UserManager.Right.EditGroup"));
         editGroupLabel.setAutoscrolls(true);
 
         editGroupTextArea.setColumns(20);
@@ -360,11 +360,11 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
-        operationButton.setText("Add");
+        operationButton.setText("");
 
-        closeButton.setText(L10n.getString("Close"));
+        closeButton.setText(L10n.getString("UserManager.ButtonClose"));
 
-        helpButton.setText(L10n.getString("Help"));
+        helpButton.setText(L10n.getString("UserManager.ButtonHelp"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

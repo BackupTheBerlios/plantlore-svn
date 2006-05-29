@@ -49,22 +49,23 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         jScrollPane1 = new javax.swing.JScrollPane();
         tableHistoryList = new javax.swing.JTable();
         previousButton = new javax.swing.JButton();
-        nextButton = new javax.swing.JButton();
+        clearHistoryButton = new javax.swing.JButton();
+        detailsButton = new javax.swing.JButton();
+        undoToDateButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         totalResultLabel = new javax.swing.JLabel();
         totalResultValueLabel = new javax.swing.JLabel();
         toDisplayLabel = new javax.swing.JLabel();
         toDisplayValueTextField = new javax.swing.JTextField();
         displayedLabel = new javax.swing.JLabel();
         displayedValueLabel = new javax.swing.JLabel();
-        clearHistoryButton = new javax.swing.JButton();
-        detailsButton = new javax.swing.JButton();
-        undoToDateButton = new javax.swing.JButton();
+        nextButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("wholeHistoryPanel")));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("History.Whole.Panel")));
         tableHistoryList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -78,29 +79,61 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         ));
         jScrollPane1.setViewportView(tableHistoryList);
 
-        previousButton.setText(L10n.getString("prevButton"));
+        previousButton.setText(L10n.getString("History.ButtonPrev"));
 
-        nextButton.setText(L10n.getString("nextButton"));
+        clearHistoryButton.setText(L10n.getString("History.Whole.ButtonClearHistory"));
+        clearHistoryButton.setInheritsPopupMenu(true);
 
-        totalResultLabel.setText(L10n.getString("totalResult"));
+        detailsButton.setText(L10n.getString("History.ButtonDetails"));
+
+        undoToDateButton.setText(L10n.getString("History.Whole.ButtonUndoToDate"));
+
+        totalResultLabel.setText(L10n.getString("History.TotalResult"));
 
         totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
 
-        toDisplayLabel.setText(L10n.getString("toDisplay"));
+        toDisplayLabel.setText(L10n.getString("History.RowsToDisplay"));
 
         toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
         toDisplayValueTextField.setAutoscrolls(false);
 
-        displayedLabel.setText(L10n.getString("displayed"));
+        displayedLabel.setText(L10n.getString("History.Displayed"));
 
         displayedValueLabel.setText(model.getCurrentDisplayRows());
 
-        clearHistoryButton.setText(L10n.getString("clearHistory"));
-        clearHistoryButton.setInheritsPopupMenu(true);
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(31, 31, 31)
+                .add(totalResultLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(totalResultValueLabel)
+                .add(31, 31, 31)
+                .add(toDisplayLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(toDisplayValueTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(30, 30, 30)
+                .add(displayedLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(displayedValueLabel)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(totalResultLabel)
+                    .add(toDisplayLabel)
+                    .add(totalResultValueLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(toDisplayValueTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(displayedLabel)
+                    .add(displayedValueLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
-        detailsButton.setText(L10n.getString("detailsHistory"));
-
-        undoToDateButton.setText(L10n.getString("undoToDate"));
+        nextButton.setText(L10n.getString("History.ButtonNext"));
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -109,58 +142,48 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel1Layout.createSequentialGroup()
-                        .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 69, Short.MAX_VALUE)
-                        .add(totalResultLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(totalResultValueLabel)
-                        .add(34, 34, 34)
-                        .add(toDisplayLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(toDisplayValueTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(40, 40, 40)
-                        .add(displayedLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(displayedValueLabel)
-                        .add(146, 146, 146))
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(534, Short.MAX_VALUE)
-                        .add(detailsButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(undoToDateButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(clearHistoryButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 876, Short.MAX_VALUE)
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .add(detailsButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(undoToDateButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jPanel1Layout.createSequentialGroup()
+                                .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 46, Short.MAX_VALUE)
+                                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(12, 12, 12)
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(nextButton)
+                            .add(clearHistoryButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 747, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 222, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(toDisplayValueTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(toDisplayLabel)
-                    .add(totalResultValueLabel)
-                    .add(totalResultLabel)
-                    .add(nextButton)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(previousButton)
-                    .add(displayedLabel)
-                    .add(displayedValueLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(25, 25, 25)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(clearHistoryButton)
-                    .add(undoToDateButton)
-                    .add(detailsButton))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(nextButton))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(detailsButton)
+                            .add(undoToDateButton)
+                            .add(clearHistoryButton))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addContainerGap())
         );
 
-        okButton.setText(L10n.getString("Ok"));
+        okButton.setText(L10n.getString("History.ButtonOk"));
 
-        closeButton.setText(L10n.getString("Close"));
+        closeButton.setText(L10n.getString("History.ButtonClose"));
 
-        helpButton.setText(L10n.getString("Help"));
+        helpButton.setText(L10n.getString("History.ButtonHelp"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -169,13 +192,13 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                    .add(layout.createSequentialGroup()
                         .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 586, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 462, Short.MAX_VALUE)
                         .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 768, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -183,7 +206,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 17, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)
                     .add(closeButton)
@@ -212,16 +235,16 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
     }
     
      public int messageUndo(String message) {
-    	int okCancle = JOptionPane.showConfirmDialog(this, message, "Information about selected date for undo", JOptionPane.OK_CANCEL_OPTION);
+    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.Undo") + "  "+ message, L10n.getString("Question.UndoTitle"), JOptionPane.OK_CANCEL_OPTION);
     	return okCancle;
     }
      
     public void messageSelection() {
-    	JOptionPane.showMessageDialog(this, "No row was selected.", "Information about selected row", JOptionPane.ERROR_MESSAGE);               
+    	JOptionPane.showMessageDialog(this, L10n.getString("Warning.EmptySelection"), L10n.getString("Warning.EmptySelectionTitle"), JOptionPane.ERROR_MESSAGE);               
     }
     
     public int messageClearHistory() {
-    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("clearHistoryMessage"), "Information", JOptionPane.OK_CANCEL_OPTION);
+    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.ClearHistoryMessage"), L10n.getString("Question.ClearHistoryMessageTitle"), JOptionPane.OK_CANCEL_OPTION);
     	return okCancle;
     }
     
@@ -249,6 +272,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
     protected javax.swing.JLabel displayedValueLabel;
     protected javax.swing.JButton helpButton;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JButton nextButton;
     protected javax.swing.JButton okButton;

@@ -57,7 +57,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="User"/>
+            <TitledBorder title="&lt;User Code&gt;">
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;UserManager.UserDataPanel&quot;)" type="code"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -162,42 +164,42 @@
         <Component class="javax.swing.JLabel" name="loginLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.login&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Login&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="firstNameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.firstName&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.FirstName&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="surnameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.surname&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Surname&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="emailLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.email&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Email&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="addressLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.address&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Address&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="createWhenuser">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.createWhen&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.CreateWhen&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -230,7 +232,7 @@
         <Component class="javax.swing.JLabel" name="noteLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.note&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Note&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -255,7 +257,7 @@
         <Component class="javax.swing.JLabel" name="dropWhenLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.dropWhen&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.DropWhen&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -270,7 +272,7 @@
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;user.password&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Password&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -296,7 +298,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="&lt;User Code&gt;">
-                  <Connection PropertyName="titleX" code="L10n.getString(&quot;user.right&quot;)" type="code"/>
+                  <Connection PropertyName="titleX" code="L10n.getString(&quot;UserManager.UserRightPanel&quot;)" type="code"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -340,7 +342,7 @@
             <Component class="javax.swing.JCheckBox" name="administratorCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;right.administrator&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.Right.Administrator&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -358,7 +360,7 @@
             <Component class="javax.swing.JCheckBox" name="editAllCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;right.editAll&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.Right.EditAll&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -376,7 +378,7 @@
             <Component class="javax.swing.JCheckBox" name="addRightCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;right.add&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.Right.Add&quot;)" type="code"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -394,7 +396,7 @@
             <Component class="javax.swing.JLabel" name="editGroupLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;right.editGroup&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;UserManager.Right.EditGroup&quot;)" type="code"/>
                 </Property>
                 <Property name="autoscrolls" type="boolean" value="true"/>
               </Properties>
@@ -428,7 +430,7 @@
     <Component class="javax.swing.JButton" name="operationButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="&quot;Add&quot;" type="code"/>
+          <Connection code="&quot;&quot;" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -438,7 +440,7 @@
     <Component class="javax.swing.JButton" name="closeButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Close&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;UserManager.ButtonClose&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -448,7 +450,7 @@
     <Component class="javax.swing.JButton" name="helpButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Help&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;UserManager.ButtonHelp&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>

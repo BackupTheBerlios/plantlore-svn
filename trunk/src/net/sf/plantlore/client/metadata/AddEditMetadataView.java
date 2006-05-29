@@ -42,13 +42,13 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
       * nastaveni formulare pro add
       */
      public void setAddForm() {
-         operationButton.setText("Add");         
+         operationButton.setText("MetadataManager.ButtonAdd");         
          dateCreateText.setVisible(false);
          dateModifiedText.setVisible(false);         
      }
      
       public void setEditForm() {
-         operationButton.setText("Edit");
+         operationButton.setText("MetadataManager.ButtonEdit");
          dateCreateText.setEditable(false);
          dateModifiedText.setEditable(false);
          dateModifiedEmptyLable.setVisible(false);
@@ -56,7 +56,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
      }
      
      public void setDetailsForm() {
-       operationButton.setText("Ok");
+       operationButton.setText("MetadataManager.ButtonOk");
        technicalContactNameText.setEditable(false);
        technicalContactEmailText.setEditable(false);
        technicalContactAddressText.setEditable(false);
@@ -114,22 +114,22 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
      */
     public boolean checkNotNull() {
         if (this.sourceInstirutionIdText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Institution is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("MetadataManager.SourceInstitutionId") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.technicalContactNameText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Technical contact name is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("MetadataManager.TechnicalContactName") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.contentContactNameText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Content contact name is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("MetadataManager.ContentContactName") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.dataSetTitleText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Project name is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("MetadataManager.DataSetTitle") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else  if (this.sourceIdText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Code of source name is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("MetadataManager.SourceId") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.createDateChooser.getDate() == null) {
-            JOptionPane.showMessageDialog(this, "Date creating of project is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("MetadataManager.DateCreate") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } 
         return true;
@@ -188,14 +188,14 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         helpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Institution"));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Technical contact"));
-        technicalContactNameLabel.setText(L10n.getString("metadata.technicalContactName"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.MetadataDetailsPanel")));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.InstitutionPanel")));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.TechnicalContectPanel")));
+        technicalContactNameLabel.setText(L10n.getString("MetadataManager.TechnicalContactName"));
 
-        technicalContactEmailLabel.setText(L10n.getString("metadata.technicalContactEmail"));
+        technicalContactEmailLabel.setText(L10n.getString("MetadataManager.TechnicalContactEmail"));
 
-        technivalContactAddressLabel.setText(L10n.getString("metadata.technicalContactAddress"));
+        technivalContactAddressLabel.setText(L10n.getString("MetadataManager.TechnicalContactAddress"));
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -232,12 +232,12 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Content contact"));
-        contentContactNameLabel.setText(L10n.getString("metadata.contentContactName"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.ContentContactPanel")));
+        contentContactNameLabel.setText(L10n.getString("MetadataManager.ContentContactName"));
 
-        contentContactEmail.setText(L10n.getString("metadata.contentContactEmail"));
+        contentContactEmail.setText(L10n.getString("MetadataManager.ContentContactEmail"));
 
-        contectContactAddressLabel.setText(L10n.getString("metadata.contentContactAddress"));
+        contectContactAddressLabel.setText(L10n.getString("MetadataManager.ContentContactAddress"));
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -274,9 +274,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        sourceInstitutionIdLabel.setText(L10n.getString("metadata.sourceInstitutionId"));
+        sourceInstitutionIdLabel.setText(L10n.getString("MetadataManager.SourceInstitutionId"));
 
-        abbrevLabel.setText(L10n.getString("metadata.ownerOrganizationAbbrev"));
+        abbrevLabel.setText(L10n.getString("MetadataManager.OwnerOrganizationAbbrev"));
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -318,13 +318,13 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addContainerGap())
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Project - data"));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.ProjektDataPanel")));
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dataSetTitleLabel.setText(L10n.getString("metadata.dataSetTitle"));
+        dataSetTitleLabel.setText(L10n.getString("MetadataManager.DataSetTitle"));
 
-        dataSetDetailsLabel.setText(L10n.getString("metadata.dataSetDetails"));
+        dataSetDetailsLabel.setText(L10n.getString("MetadataManager.DataSetDetails"));
 
-        sourceIdLabel.setText(L10n.getString("metadata.sourceId"));
+        sourceIdLabel.setText(L10n.getString("MetadataManager.SourceId"));
 
         org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -362,9 +362,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        recordbasisLabel.setText(L10n.getString("metadata.recordbasis"));
+        recordbasisLabel.setText(L10n.getString("MetadataManager.Recordbasis"));
 
-        biotopetextLabel.setText(L10n.getString("metadata.biotopetext"));
+        biotopetextLabel.setText(L10n.getString("MetadataManager.Biotopetext"));
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -396,9 +396,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dateCreateLabel.setText(L10n.getString("metadata.dateCreate"));
+        dateCreateLabel.setText(L10n.getString("MetadataManager.DateCreate"));
 
-        dateModifiedLabel.setText(L10n.getString("metadata.dateModified"));
+        dateModifiedLabel.setText(L10n.getString("MetadataManager.DateModified"));
 
         dateModifiedEmptyLable.setText("--------");
 
@@ -436,8 +436,8 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(dateModifiedLabel)
-                    .add(dateModifiedText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(dateModifiedEmptyLable))
+                    .add(dateModifiedEmptyLable)
+                    .add(dateModifiedText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
@@ -487,11 +487,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addContainerGap())
         );
 
-        closeButton.setText(L10n.getString("Close"));
+        closeButton.setText(L10n.getString("MetadataManager.ButtonClose"));
 
-        operationButton.setText("Add");
+        operationButton.setText("");
 
-        helpButton.setText(L10n.getString("Help"));
+        helpButton.setText(L10n.getString("MetadataManager.ButtonHelp"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

@@ -20,38 +20,46 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
-                  <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="498" max="32767" attributes="0"/>
-                      <Component id="okButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
+                              <EmptySpace pref="364" max="32767" attributes="0"/>
+                              <Component id="okButton" min="-2" pref="100" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jPanel3" alignment="1" pref="684" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jPanel2" alignment="1" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" max="-2" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="24" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -62,7 +70,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="&lt;User Code&gt;">
-              <Connection PropertyName="titleX" code="L10n.getString(&quot;detailsRecordPanel&quot;)" type="code"/>
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;History.DetailsRecordPanel&quot;)" type="code"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -84,7 +92,7 @@
                       <Component id="authorValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="taxonValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="554" max="32767" attributes="0"/>
+                  <EmptySpace pref="424" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -118,7 +126,7 @@
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;taxon&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.Taxon&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -128,7 +136,7 @@
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;author&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.Author&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -138,7 +146,7 @@
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;location&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.Location&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -170,7 +178,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="&lt;User Code&gt;">
-              <Connection PropertyName="titleX" code="L10n.getString(&quot;recordCreatedPanel&quot;)" type="code"/>
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;History.RecordCreatedPanel&quot;)" type="code"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -190,7 +198,7 @@
                       <Component id="whoInsertValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="whenInsertValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="557" max="32767" attributes="0"/>
+                  <EmptySpace pref="427" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -218,7 +226,7 @@
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;whenInsert&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.WhenInsert&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -228,7 +236,7 @@
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;whoInsert&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.WhoInsert&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -253,7 +261,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="&lt;User Code&gt;">
-              <Connection PropertyName="titleX" code="L10n.getString(&quot;changesRecordPanel&quot;)" type="code"/>
+              <Connection PropertyName="titleX" code="L10n.getString(&quot;History.ChangesRecordPanel&quot;)" type="code"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -262,21 +270,26 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane1" alignment="1" pref="788" max="32767" attributes="1"/>
-              <Group type="102" alignment="1" attributes="0">
-                  <Component id="previousButton" min="-2" pref="100" max="-2" attributes="1"/>
-                  <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
-                  <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
-                  <Component id="nextButton" min="-2" pref="100" max="-2" attributes="1"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="-2" pref="446" max="-2" attributes="0"/>
-                  <Component id="undoButton" min="-2" pref="110" max="-2" attributes="2"/>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="-2" pref="326" max="-2" attributes="0"/>
+                          <Component id="undoButton" min="-2" pref="110" max="-2" attributes="2"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="selectAllButton" min="-2" pref="110" max="-2" attributes="2"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="unselectAllButton" min="-2" pref="110" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="previousButton" min="-2" pref="100" max="-2" attributes="1"/>
+                          <EmptySpace pref="33" max="32767" attributes="0"/>
+                          <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="nextButton" min="-2" pref="100" max="-2" attributes="1"/>
+                      </Group>
+                      <Component id="jScrollPane1" alignment="0" pref="668" max="32767" attributes="1"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="selectAllButton" min="-2" pref="110" max="-2" attributes="2"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="unselectAllButton" min="-2" pref="110" max="-2" attributes="1"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -284,23 +297,19 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" max="-2" attributes="0">
                   <Component id="jScrollPane1" min="-2" pref="214" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                          <Component id="previousButton" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                          <Component id="nextButton" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="jPanel4" alignment="1" min="-2" pref="36" max="-2" attributes="0"/>
-                      </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="jPanel4" alignment="1" min="-2" pref="36" max="-2" attributes="0"/>
+                      <Component id="previousButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="nextButton" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="unselectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="selectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="undoButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="unselectAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -327,7 +336,7 @@
         <Component class="javax.swing.JButton" name="previousButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;prevButton&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.ButtonPrev&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -337,7 +346,7 @@
         <Component class="javax.swing.JButton" name="nextButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;nextButton&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.ButtonNext&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -347,7 +356,7 @@
         <Component class="javax.swing.JButton" name="selectAllButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;selectAll&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.ButtonSelectAll&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -357,7 +366,7 @@
         <Component class="javax.swing.JButton" name="unselectAllButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;unselectAll&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.ButtonUnselectAll&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -367,7 +376,7 @@
         <Component class="javax.swing.JButton" name="undoButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;undoSelected&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.ButtonUndoSelected&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -417,7 +426,7 @@
             <Component class="javax.swing.JLabel" name="totalResultLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;totalResult&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;History.TotalResult&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -431,7 +440,7 @@
             <Component class="javax.swing.JLabel" name="toDisplayLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;toDisplay&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;History.RowToDisplay&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -452,7 +461,7 @@
             <Component class="javax.swing.JLabel" name="displayedLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;displayed&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;History.Displayed&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -470,7 +479,7 @@
     <Component class="javax.swing.JButton" name="okButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Ok&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;History.ButtonOk&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -480,7 +489,7 @@
     <Component class="javax.swing.JButton" name="closeButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Close&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;History.ButtonClose&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -490,7 +499,7 @@
     <Component class="javax.swing.JButton" name="helpButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;Help&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;History.ButtonHelp&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>

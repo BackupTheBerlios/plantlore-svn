@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @author Lada
+ * @author Lada Oberreiterova
  */
 public class WholeHistoryTableModel extends AbstractTableModel {
     
@@ -51,12 +51,13 @@ public class WholeHistoryTableModel extends AbstractTableModel {
    
     private void initColumns() {
         columnNames = new String[6];                      
-        columnNames[0] = L10n.getString("historyColDate"); 
-        columnNames[1] = L10n.getString("historyColOperation");  
-        columnNames[2] = L10n.getString("historyColUser");        
-        columnNames[3] = L10n.getString("historyColItem");        
-        columnNames[4] = L10n.getString("historyColOldValue");       
-        columnNames[5] = L10n.getString("historyColNewValue");        
+        columnNames[0] = L10n.getString("History.ColumnDate"); 
+        columnNames[1] = L10n.getString("History.ColumnOperation");  
+        columnNames[2] = L10n.getString("History.ColumnUser");        
+        columnNames[3] = L10n.getString("History.ColumnItem");        
+        columnNames[4] = L10n.getString("History.ColumnOldValue");       
+        columnNames[5] = L10n.getString("History.ColumnNewValue");     
+        
     }       
     
     /**
@@ -84,7 +85,7 @@ public class WholeHistoryTableModel extends AbstractTableModel {
             Date when = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
             
     	    editHistoryData[ii][0] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(when);     	    
-            editHistoryData[ii][1] = L10n.getString( "operation"+((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getOperation());
+            editHistoryData[ii][1] = L10n.getString( "History.Operation"+((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getOperation());
     	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
     	    editHistoryData[ii][3] = item;
     	    editHistoryData[ii][4] = ((HistoryRecord)editHistoryDataList.get(i)).getOldValue();

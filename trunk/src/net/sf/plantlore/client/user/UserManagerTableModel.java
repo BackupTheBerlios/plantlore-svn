@@ -55,11 +55,11 @@ public class UserManagerTableModel  extends AbstractTableModel  {
    
     private void initColumns() {
         columnNames = new String[5];                  
-        columnNames[0] = L10n.getString("user.login");   
-        columnNames[1] = L10n.getString("user.name");  
-        columnNames[2] = L10n.getString("user.email");
-        columnNames[3] = L10n.getString("user.createWhen"); 
-        columnNames[4] = L10n.getString("user.dropWhen");                              
+        columnNames[0] = L10n.getString("UserManager.Login");   
+        columnNames[1] = L10n.getString("UserManager.Name");  
+        columnNames[2] = L10n.getString("UserManager.Email");
+        columnNames[3] = L10n.getString("UserManager.CreateWhen"); 
+        columnNames[4] = L10n.getString("UserManager.DropWhen");                              
     }       
     
     /**
