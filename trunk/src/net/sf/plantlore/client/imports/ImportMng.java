@@ -298,11 +298,11 @@ public class ImportMng extends Observable implements Observer {
 	
 	
 	/**
-	 * @return The number of results that have already been imported into the database.
+	 * @return The number of results that have been inserted into the database.
 	 */
-	public int getNumberOfImported() {
+	public int getNumberOfInserted() {
 		if(director == null) return 0;
-		return director.importedRecords();
+		return director.getNumberOfInserted();
 	}
 	
 	/**
@@ -311,7 +311,36 @@ public class ImportMng extends Observable implements Observer {
 	 */
 	public int getNumberOfRejected() {
 		if(director == null) return 0;
-		return director.totalRecords();
+		return director.getNumberOfProcessed() 
+			- director.getNumberOfDeleted() 
+			- director.getNumberOfInserted()
+			- director.getNumberOfUpdated();
+	}
+	
+	/**
+	 * 
+	 * @return The number of results that have been updated in the database.
+	 */
+	public int getNumbeOfUpdated() {
+		if(director == null) return 0;
+		return director.getNumberOfUpdated();
+	}
+	
+	/**
+	 * 
+	 * @return The number of results that have been deleted from the database.
+	 */
+	public int getNumbderOfDeleted() {
+		if(director == null) return 0;
+		return director.getNumberOfDeleted();
+	}
+	
+	/**
+	 * @return	The total number of records in the file.
+	 */
+	public int getNumberOfRecords() {
+		if(parser == null) return 0;
+		return parser.getNumberOfRecords();
 	}
 	
 	/**

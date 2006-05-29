@@ -25,7 +25,7 @@ import org.dom4j.io.SAXReader;
 public class XMLParser extends AbstractParser {
 
     private Document document;
-    private int occurrences;
+    private int occurrences = -1;
     private Iterator occIterator, aoIterator;
     private Node currentOccurrence;
     
@@ -38,7 +38,7 @@ public class XMLParser extends AbstractParser {
         super(reader);               
     }
     
-    
+    @Override
     public int getNumberOfRecords() {
     	return occurrences;
     }
@@ -49,7 +49,11 @@ public class XMLParser extends AbstractParser {
         try {
         	SAXReader saxReader = new SAXReader();
             document = saxReader.read( reader );
-            occIterator = document.selectNodes("//occurrence").iterator();
+            List nodes = document.selectNodes("//occurrence");
+            if( nodes != null) {
+            	occurrences = nodes.size();
+            	occIterator = nodes.iterator();
+            }
         } catch (Exception ex) {
             throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
         } 
@@ -86,7 +90,7 @@ public class XMLParser extends AbstractParser {
     	for(String property : part.getProperties()) {
     		String value = node.valueOf(property.toLowerCase());
     		if("".equals(value)) value = null;
-    		System.out.println(" > "+part.getClass().getSimpleName()+"."+property+" = "+value);
+//    		System.out.println(" > "+part.getClass().getSimpleName()+"."+property+" = "+value);
     		part.setValue(property, value);
     	}
     	
@@ -125,28 +129,29 @@ public class XMLParser extends AbstractParser {
     		return false;
     }
     
+ 
     
-    public static void main(String[] args) 
-    throws java.io.IOException, ParserException {
-    	
-    	XMLParser p = new XMLParser(
-    			new java.io.BufferedReader(
-    					new java.io.InputStreamReader(new java.io.FileInputStream("c:/documents and settings/yaa/dokumenty/plantlore/this.xml"),
-    					"UTF-8"))
-    	);
-    	p.initialize();
-    	while(p.hasNextRecord()) {
-    		System.out.println("=============");
-    		p.fetchNextRecord();
-    		Record r = p.getNextPart(Occurrence.class);
-    		System.out.println(r.areAllNNSet());
-    		for(int i = 0; p.hasNextPart(AuthorOccurrence.class); i++) {
-    			r = p.getNextPart(AuthorOccurrence.class);
-    			System.out.print("("+i+")");
-    		}
-    		System.out.println("");
-    	}
-    	p.cleanup();
-    }
+//    public static void main(String[] args) 
+//    throws java.io.IOException, ParserException {
+//    	
+//    	XMLParser p = new XMLParser(
+//    			new java.io.BufferedReader(
+//    					new java.io.InputStreamReader(new java.io.FileInputStream("c:/documents and settings/yaa/dokumenty/plantlore/this.xml"),
+//    					"UTF-8"))
+//    	);
+//    	p.initialize();
+//    	while(p.hasNextRecord()) {
+//    		System.out.println("=============");
+//    		p.fetchNextRecord();
+//    		Record r = p.getNextPart(Occurrence.class);
+//    		System.out.println(r.areAllNNSet());
+//    		for(int i = 0; p.hasNextPart(AuthorOccurrence.class); i++) {
+//    			r = p.getNextPart(AuthorOccurrence.class);
+//    			System.out.print("("+i+")");
+//    		}
+//    		System.out.println("");
+//    	}
+//    	p.cleanup();
+//    }
    
 }

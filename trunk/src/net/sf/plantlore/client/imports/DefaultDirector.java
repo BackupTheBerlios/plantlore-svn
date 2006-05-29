@@ -9,7 +9,7 @@ import java.util.Observable;
 import org.apache.log4j.Logger;
 
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
-import static net.sf.plantlore.common.PlantloreConstants.RESTR_IS_NULL;
+//import static net.sf.plantlore.common.PlantloreConstants.RESTR_IS_NULL;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
@@ -49,7 +49,7 @@ public class DefaultDirector extends Observable implements Runnable {
 
 	private Parser parser;
 	private DBLayer db;
-	private int count, imported;
+	private int count = 0, inserted = 0, updated = 0, deleted = 0;
 	
 	private Action 
 		lastDecision = Action.UNKNOWN,
@@ -248,7 +248,8 @@ public class DefaultDirector extends Observable implements Runnable {
 			logger.debug("Import begins...");
 			
 			// Reset the counters.
-			count = imported = 0;
+			count = inserted = updated = deleted = 0;
+			Action takenAction = Action.UNKNOWN;
 			
 			// Go through the whole file.
 			while( !aborted && parser.hasNextRecord() ) {
@@ -259,13 +260,19 @@ public class DefaultDirector extends Observable implements Runnable {
 				// What is supposed to happen with the occurrence.
 				Action intention = parser.fetchNextRecord(); 
 				// Get a new Occurrence.
-				Occurrence occ;
+				Occurrence occ = null;
 				try {
 					count++;
 					occ = (Occurrence) parser.getNextPart(Occurrence.class);
 				} catch( ParserException e) {
 					logger.warn("The record is not valid (probably incomplete). " + e);
 					logger.info("Skipping the record No. " + count);
+					
+					setChanged();
+					if(occ == null)
+						notifyObservers(L10n.getFormattedString("Import.CompletelyCorruptedRecord", count));
+					else
+						notifyObservers(L10n.getFormattedString("Import.PartialyCorruptedRecord", count, occ.getUnitIdDb(), occ.getUnitValue()));
 					continue;
 				}
 				recordFromFile = occ;
@@ -280,6 +287,8 @@ public class DefaultDirector extends Observable implements Runnable {
 				boolean isValid = occ.areAllNNSet();
 				if( !isValid ) {
 					logger.info("Rejecting the record No. "+count+"! Some of the not-null values are not specified!");
+					setChanged();
+					notifyObservers(L10n.getFormattedString("Import.IncompleteRecord", count));
 					continue;
 				}
 				logger.debug("The record is valid.");
@@ -295,9 +304,12 @@ public class DefaultDirector extends Observable implements Runnable {
 				int resultId = db.executeQuery( q );
 				int rows = db.getNumRows( resultId );
 				boolean isInDB = (rows != 0);
-				if(rows > 1)
+				if(rows > 1) {
 					logger.error("The database is not in a consistent state - there are " + rows + " Occurrence " +
 							"records with the same Unique Identifier ("+occ.getUnitIdDb()+"-"+occ.getUnitValue()+")!");
+					setChanged();
+					notifyObservers(L10n.getFormattedString("Import.DuplicateRecord", count, occ.getUnitIdDb(), occ.getUnitValue()));
+				}
 				Occurrence
 				occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
 				recordInDatabase = occInDB;
@@ -318,7 +330,8 @@ public class DefaultDirector extends Observable implements Runnable {
 						updateInFile = occ.getUpdatedWhen();
 					
 					// The record in the database is newer than the record in the file.
-					if(updateInDBOccurred.after(updateInFile)) {
+					if(updateInDBOccurred != null && updateInFile != null &&
+							updateInDBOccurred.after(updateInFile)) {
 						logger.info("The record in the file is older than the record stored in the database.");
 						if( !doNotAskAboutDateAgain ) 
 							dateDecision = expectDecision( occInDB );
@@ -345,9 +358,12 @@ public class DefaultDirector extends Observable implements Runnable {
 							switch(intention) {
 							case DELETE:
 								// Nothing to be done, the record is already dead.
+								takenAction = Action.DELETE;
 								break;
 							default:
 								occInDB = (Occurrence) update( occInDB, occ );
+								takenAction = Action.UPDATE;
+								break;
 							}
 						else
 							switch(intention) {
@@ -356,9 +372,15 @@ public class DefaultDirector extends Observable implements Runnable {
 								// By a common decision: If the habitat is not shared it should be marked as deleted, too.
 								if( sharedBy(occInDB.getHabitat(), Occurrence.class, Occurrence.HABITAT) > 1 )
 									delete( occInDB.getHabitat() );
+								takenAction = Action.DELETE;
 								break;
 							default:
-								occInDB = (Occurrence) update( occInDB, occ );
+								if(occInDB.equals(occ))
+									occ = occInDB;
+								else
+									occInDB = (Occurrence) update( occInDB, occ );
+								takenAction = Action.UPDATE;
+								break;
 							}
 					}
 					/*----------------------------------------------------------
@@ -368,18 +390,25 @@ public class DefaultDirector extends Observable implements Runnable {
 						switch(intention) {
 						case DELETE:	
 							// There's nothing to delete.
+							takenAction = Action.DELETE;
 							break;
 						default:
 							occInDB = (Occurrence) insert( occ );
+							takenAction = Action.INSERT;
+							break;
 						}
 				}
-				catch(ImportException ie) {
+				catch(Exception ie) {
+					String msg = ie.getMessage();
 					logger.error("The import of the record No. " + count + " was unsuccessful!");
-					logger.error("This exception occured during insert/update/delete: " + ie.getMessage());
+					logger.error("This exception occured during insert/update/delete: " + msg);
 					// Roll back the transaction.
 					db.rollbackTransaction();
 					transactionInProgress = false;
 					// The user cannot do a thing. Should he be informed?
+					String userMsg = L10n.getFormattedString("Import.ProblematicRecord", count, occ.getUnitIdDb(), occ.getUnitValue())
+						+ ( (msg == null) ? L10n.getString("Import.UnknownReason") : msg );
+					setChanged(); notifyObservers(userMsg);
 					continue;
 				}
 				
@@ -408,8 +437,10 @@ public class DefaultDirector extends Observable implements Runnable {
 					// Compute the number of undead authors (authors, that are not marked as deleted) 
 					// the Occurrence record has in the database.
 					// We must make sure that every Occurrence record has at least one (undead) author! 
-					for(AuthorOccurrence ao : sharers)
+					for(AuthorOccurrence ao : sharers) {
+						ao.setOccurrence( null ); // simplify the comparison
 						if( !ao.isDead() ) numberOfUndeadAuthors++ ;
+					}
 					
 					while( parser.hasNextPart(AuthorOccurrence.class) ) {
 						// Get the AuthorOccurrence from the Parser.
@@ -427,13 +458,19 @@ public class DefaultDirector extends Observable implements Runnable {
 							logger.warn("The AuthorOccurrence is incomplete - the Author is missing or a NN column is not set!");
 							continue;
 						}
+
+						// Simplify the comparison (the Occurrence is known...)
+						ao.setOccurrence( null );
 						
 						// Check if that AuthorOccurrence is already in the database.
 						AuthorOccurrence aoInDB = null;
-						for( AuthorOccurrence alpha : sharers )
+						System.out.println("INFI ~ " + ao);
+						for( AuthorOccurrence alpha : sharers ) {
+							System.out.println("INDB ~ " + alpha);
 							if( alpha.equals( ao ) ) {
 								aoInDB = alpha; break;
 							}
+						}
 						
 						// The intention with this AuthorOccurrence. 
 						intention = parser.intentedFor();
@@ -502,14 +539,26 @@ public class DefaultDirector extends Observable implements Runnable {
 				else {
 					transactionInProgress = ! db.rollbackTransaction();
 					logger.warn("The current Occurrence record was not added - it would not have any Author left in the database!");
+					setChanged();
+					notifyObservers(L10n.getFormattedString("Import.NoAuthorsLeft", count));
 				}
-					
-				imported++;
-				setChanged(); notifyObservers( imported );
+
+				switch( takenAction ) {
+				case DELETE:
+					deleted++;
+					break;
+				case UPDATE:
+					updated++;
+					break;
+				case INSERT:
+					inserted++;
+					break;
+				}
+				setChanged(); notifyObservers( takenAction );
 			}
 		} 
 		catch(Exception e) {
-			logger.error("The import ended prematurely. "+imported+" records imported into the database. " + e.getMessage());
+			logger.error("The import ended prematurely. "+count+" records processed. " + e.getMessage());
 
 			e.printStackTrace();
 			
@@ -522,8 +571,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			return;
 		}
 		
-		logger.info("Import completed. " + imported + " records were imported into the database.");
-		logger.info("(" + (count - imported) + " records rejected)");
+		logger.info("Import completed. " + count + " records processed. ("+inserted+" inserted, "+updated+" updated, "+deleted+" deleted).");
 	}
 	
 	
@@ -606,11 +654,11 @@ public class DefaultDirector extends Observable implements Runnable {
 		Class table = record.getClass();
 		
 		// Look in the cache.
-//		if(cacheEnabled) {
-//			Record cachedRecord = cache.remove(table);
-//			if( cachedRecord != null && record.equals(cachedRecord))
-//				return cachedRecord; // hooray, one select has been saved!
-//		}
+		if(cacheEnabled) {
+			Record cachedRecord = cache.get(table);
+			if( cachedRecord != null && record.equals(cachedRecord))
+				return cachedRecord; // hooray, one select has been saved!
+		}
 				
 		// Create a query that will look for the record with the same properties.
 		SelectQuery query = db.createQuery( table );
@@ -618,17 +666,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		// Equal properties.
 		for(String property : record.getProperties()) {
 			Object value = record.getValue(property);
-			
 //			System.out.println(" + "+table.getSimpleName()+"."+property+"="+value);
-			
-//			String newValue = null;
-//			try {
-//				newValue = new String(value.toString().getBytes(), "UTF-8");
-//			}catch(Exception e) {}
-			
-			if( value == null ) // use the database null
-				/*query.addRestriction(RESTR_IS_NULL, property, null, null, null)*/;
-			else
+			if( value != null ) 
 				query.addRestriction(RESTR_EQ, property, null, value, null);
 		}
 		// Equal foreign keys (by their ID's)!
@@ -651,8 +690,10 @@ public class DefaultDirector extends Observable implements Runnable {
 		db.closeQuery( query );
 		
 		// Update the cache appropriately - store the record for future generations.
-//		if( record != null && cacheEnabled ) 
-//			cache.put(table, record);
+		if( record != null && cacheEnabled ) {
+			cache.remove(table);
+			cache.put(table, record);
+		}
 		
 		
 		return record;
@@ -758,8 +799,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		logger.debug("Updating ["+current+"] with ["+replacement+"].");
 		
 		boolean immutable = user.isAdmin() ?
-				Record.IMMUTABLE.contains( current.getClass() ) :
-				current instanceof Plant;
+				current instanceof Plant :
+				Record.IMMUTABLE.contains( current.getClass() ) ;
 		/*
 		 * We have an immutable table here - 
 		 * therefore the replacement must match something 
@@ -966,18 +1007,30 @@ public class DefaultDirector extends Observable implements Runnable {
 	}
 	
 	/**
-	 * 
 	 * @return The number of records that were actually inserted into the database.
 	 */
-	public int importedRecords() {
-		return imported;
+	public int getNumberOfInserted() {
+		return inserted;
+	}
+	
+	/**
+	 * @return The number of records that were deleted from the database.
+	 */
+	public int getNumberOfDeleted() {
+		return deleted;
+	}
+	
+	/**
+	 * @return The number of records that were updated in the database.
+	 */
+	public int getNumberOfUpdated() {
+		return updated;
 	}
 	
 	/**
 	 * @return The total number of loaded records (some of them may have been rejected).
-	 * @see #importedRecords()
 	 */
-	public int totalRecords() {
+	public int getNumberOfProcessed() {
 		return count;
 	}
 }

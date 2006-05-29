@@ -10,7 +10,7 @@ import net.sf.plantlore.l10n.L10n;
 public class ImportProgressView  extends javax.swing.JFrame implements Observer {
 
 	private ImportMng model;
-	private int count = 0, rejected = 0;
+	private int processed = 0, rejected = 0, total = 0, updated = 0, deleted = 0, inserted = 0;
     
     /** Creates new form ExportProgressView */
     public ImportProgressView(ImportMng model) {
@@ -31,35 +31,46 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
         status = new javax.swing.JLabel();
         progress = new javax.swing.JProgressBar();
         abort = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        info = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        status.setText("Erised stra ehru oyt ube cafru oyt on wohsi");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        status.setText("You will see the number of imported records here.");
         status.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         abort.setText("Abort");
-        
-        progress.setMinimum(0);
+
+        info.setColumns(20);
+        info.setEditable(false);
+        info.setFont(new java.awt.Font("Tahoma", 0, 11));
+        info.setRows(5);
+        info.setTabSize(2);
+        info.setOpaque(false);
+        jScrollPane1.setViewportView(info);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(progress, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, abort))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .add(abort)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, progress, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(status)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(abort)
                 .addContainerGap())
         );
@@ -70,6 +81,8 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton abort;
+    private javax.swing.JTextArea info;
+    private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JProgressBar progress;
     protected javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
@@ -78,22 +91,69 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
     @Override
     public void setVisible(boolean visible) {
     	status.setText(L10n.getString("Import.Initializing"));
-   		progress.setIndeterminate(true);
-   		progress.setStringPainted(false);
     	abort.setText(L10n.getString("Import.Abort"));
+    	
+    	total = model.getNumberOfRecords();
+    	if(total < 0) {
+    		progress.setStringPainted(false);
+    		progress.setIndeterminate(true);
+    	}
+    	else {
+    		progress.setStringPainted(true);
+    		progress.setIndeterminate(false);
+    		progress.setMaximum(total);
+    	}
+    	
     	super.setVisible(visible);
     	update(null, null);
+    }
+
+    /**
+     * Set the initial state of the component.
+     *
+     */
+    public void reset() {
+    	processed =  rejected =  total =  updated =  deleted =  inserted = 0;
+    	exceptionOccured = false;
     }
 	
 	
 	
     private boolean exceptionOccured = false;
+    private StringBuilder sigma = new StringBuilder(256);
+    
+    private String getInformation() {
+    	rejected = model.getNumberOfRejected();
+    	updated = model.getNumbeOfUpdated();
+    	deleted = model.getNumbderOfDeleted();
+    	inserted = model.getNumberOfInserted();
+
+    	processed = rejected + updated + deleted + inserted;
+    	
+    	sigma.delete(0, 255);
+    	if(inserted > 0)
+    		sigma.append(inserted).append(' ').append(L10n.getString("Import.RecordsInserted")).append(' ');
+    	if(updated > 0)
+    		sigma.append(updated).append(' ').append(L10n.getString("Import.RecordsUpdated")).append(' ');
+    	if(deleted > 0)
+    		sigma.append(deleted).append(' ').append(L10n.getString("Import.RecordsDeleted")).append(' ');
+    	if(rejected > 0)
+    		sigma.append(rejected).append(' ').append(L10n.getString("Import.RecordsRejected"));
+    	
+    	return sigma.toString();
+    }
     
 	
 	public void update(Observable source, Object parameter) {
 		// The final cleanup may overwrite the exception! 
 		if(exceptionOccured)
 			return;
+		
+		String description = getInformation();
+		
+		if( parameter instanceof String ) {
+			info.append(parameter + "\n");			
+		}
 		
 		if( parameter != null && parameter instanceof Exception ) {
 			Exception e = (Exception) parameter;
@@ -106,30 +166,29 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 		}
 		else if(model.isAborted()) {
 			setTitle(L10n.getString("Import.Aborted"));
-			count = model.getNumberOfImported();
-			status.setText(count + L10n.getString("Import.RecordsImported"));
+			status.setText(processed + " " + L10n.getString("Import.RecordsProcessed"));
 			progress.setIndeterminate(false);
 			progress.setValue(0);
 			abort.setText(L10n.getString("Import.Hide"));
 		} 
 		else if(!model.isImportInProgress()) {
-			count = model.getNumberOfImported();
-			rejected = model.getNumberOfRejected();
 			setTitle(L10n.getString("Import.Completed"));
-			status.setText(count + L10n.getString("Import.RecordsImported") + ", " 
-					+ rejected + L10n.getString("Import.RecordsRejected"));
+			status.setText( description );
 			progress.setIndeterminate(false);
 			progress.setMaximum(100);
 			progress.setValue(100);
 			abort.setText(L10n.getString("Import.Hide"));
 		}
 		else if( this.isVisible() ) {
-			count = model.getNumberOfImported();
-			rejected = model.getNumberOfRejected();
-			progress.setValue( count );
-			status.setText(count + L10n.getString("Import.RecordsImported") + ", " 
-					+ rejected + L10n.getString("Import.RecordsRejected"));
-			setTitle(count + L10n.getString("Import.RecordsImported"));
+			progress.setValue( processed );
+			status.setText( description );
+			if(total <= 0)
+				setTitle(processed + L10n.getString("Import.RecordsImported"));
+			else {
+				String percent = Integer.toString(100*processed/total) + "%";
+				setTitle(percent + " " + L10n.getString("Import.Progress"));
+				progress.setString(percent);
+			}
 		}
 	}
 

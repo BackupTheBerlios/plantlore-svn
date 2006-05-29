@@ -125,4 +125,12 @@ public interface Parser {
 	 * @return	The operation the last subrecord should undergo. 
 	 */
 	Action intentedFor();
+	
+	/**
+	 * The file contains several records. The Parser may (or may not)
+	 * know the exact number of records.
+	 * 
+	 * @return	The number of records contained in the file. -1 means "unknown".
+	 */
+	int getNumberOfRecords();
 }

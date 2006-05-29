@@ -38,6 +38,10 @@ public class AbstractParser implements Parser {
 	public Action intentedFor() {
 		return Action.UNKNOWN;
 	}
+	
+	public int getNumberOfRecords() {
+		return -1;
+	}
 
 
 }
