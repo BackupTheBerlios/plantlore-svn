@@ -51,8 +51,8 @@ public class AddEdit extends Observable {
     public static final String EMPTY_STRING = L10n.getString("Common.ComboboxNothingSelected");
     public static final Pair<String,Integer> EMPTY_PAIR = new Pair<String,Integer>(EMPTY_STRING,-1);
     
-    private Logger logger;
-    private DBLayer database;      
+    private static Logger logger;
+    private static DBLayer database;      
     
     private int coordinateSystem;
     private Occurrence o; //original occurrence
@@ -119,7 +119,7 @@ public class AddEdit extends Observable {
      *
      * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
      */
-    public void setRecord(Integer occurrenceId) {
+    public void setRecord(Integer occurrenceId) throws DBLayerException, RemoteException {
         logger.debug("Loading AddEdit data for occurrence id "+occurrenceId);
         
         DBLayerUtils dlu = new DBLayerUtils(database);
@@ -484,7 +484,7 @@ public class AddEdit extends Observable {
      * @return true the object has to be updated
      * @return false the object has to be created
      */
-    private Occurrence prepareNewOccurrence(String taxon, Habitat h) {
+    private Occurrence prepareNewOccurrence(String taxon, Habitat h) throws DBLayerException, RemoteException {
         DBLayerUtils dlu = new DBLayerUtils(database);
         Occurrence occ;
         Author a;
@@ -683,34 +683,7 @@ public class AddEdit extends Observable {
                 
         return occTmp;
     }
-    
-    /** Deletes Habitat for given Occurrence if needed.
-     *
-     * Will delete Habitat if no live Occurrence point at it.
-     *
-     */
-    private void deleteHabitat(Habitat h) {
-        try {
-            SelectQuery sq = database.createQuery(Occurrence.class);        
-            sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
-            sq.addRestriction(PlantloreConstants.RESTR_NE,Occurrence.DELETED, null, 1, null);
-            int resultid = database.executeQuery(sq);
-            int resultCount = database.getNumRows(resultid);
-            if (resultCount == 0) {
-                logger.info("Deleting habitat id="+h.getId()+" with nearest village "+h.getNearestVillage().getName());
-                h.setDeleted(1);
-                database.executeUpdate(h);
-            } else {
-                logger.debug("Leaving habitat id="+h.getId()+" live. Live Occurrence records point at it.");
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (DBLayerException e) {
-            e.printStackTrace();
-        }
         
-    }
-    
     public void storeRecord(boolean updateAllPlants) {
         DBLayerUtils dlu = new DBLayerUtils(database);
 
@@ -738,7 +711,7 @@ public class AddEdit extends Observable {
                         logger.info("Deleting original occurrence and associated author occurrences");
                         o.setDeleted(1);
                         database.executeUpdate(o);
-                        deleteHabitat(o.getHabitat());
+                        dlu.deleteHabitat(o.getHabitat());
                         logger.debug("Occurrence id "+o.getId()+" "+o.getPlant().getTaxon()+" deleted.");
                         Set<Map.Entry<Integer,AuthorOccurrence>> aoSet = authorOccurrences.entrySet();
                         Iterator it = aoSet.iterator();

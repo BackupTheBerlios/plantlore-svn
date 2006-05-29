@@ -10,13 +10,16 @@ package net.sf.plantlore.client;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Observable;
 import java.util.prefs.Preferences;
 import javax.swing.table.TableModel;
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
@@ -28,6 +31,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.l10n.L10n;
 
 // Imports for temporary db access
 import net.sf.plantlore.middleware.DBLayer;
@@ -305,6 +309,8 @@ public class AppCore extends Observable
     }
     
     public void setResultId(int resultId) {
+        setChanged();
+        notifyObservers("LOADING_NEW_DATA");
         tableSorter.setResultId(resultId);
         setChanged();
         notifyObservers("NEW_QUERY");
@@ -698,5 +704,46 @@ public class AppCore extends Observable
     public void setProjects(Pair<String, Integer>[] projects) {
         this.projects = projects;
     }
-    
+ 
+    public Task deleteSelected() {
+        final Task task = new Task() {
+            int deleted = 0;
+            
+            public Object task() throws DBLayerException, RemoteException {
+                DBLayerUtils dlu = new DBLayerUtils(database);
+
+                Collection<Integer> toBeDeleted = getTableModel().getSelection().values();
+                setLength(toBeDeleted.size()*2); //inform about approx. length of this task
+                setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
+                for (Integer i : toBeDeleted) {
+                    Occurrence occ = (Occurrence) dlu.getObjectFor(i.intValue(), Occurrence.class);
+                    AuthorOccurrence[] aos = dlu.getAuthorsOf(occ);
+
+                    logger.debug("Deleting occurrence id "+i);
+                    occ.setDeleted(1);
+                    database.executeUpdate(occ);
+                    dlu.deleteHabitat(occ.getHabitat());
+                    logger.debug("Occurrence id "+occ.getId()+" "+occ.getPlant().getTaxon()+" deleted.");
+                    setPosition(getPosition()+1);
+                    
+                    for (AuthorOccurrence authorOcc : aos) {
+                        authorOcc.setDeleted(1);
+                        database.executeUpdate(authorOcc);
+                        logger.debug("AuthorOccurrence id "+authorOcc.getId()+" "+authorOcc.getAuthor().getWholeName()+" deleted.");
+                    }
+                    deleted++;
+                    setPosition(getPosition()+1);
+                    setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
+                }
+
+                getTableModel().clearSelection();
+                fireStopped();
+                return null;
+            }
+        };//task
+        
+        return task;
+    }
 }
+
+

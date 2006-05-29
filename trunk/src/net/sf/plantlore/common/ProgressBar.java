@@ -7,8 +7,12 @@
 package net.sf.plantlore.common;
 
 import java.awt.Color;
+import java.awt.Window;
 import java.util.Observable;
 import java.util.Observer;
+import java.awt.Frame;
+import javax.swing.SwingUtilities;
+import org.apache.log4j.Logger;
 
 /** ProgressBar dialog that works as an observer of a given Task.
  *
@@ -24,9 +28,11 @@ import java.util.Observer;
  * @author  fraktalek
  */
 public abstract class ProgressBar extends javax.swing.JDialog implements Observer {
+    private Logger logger;
     private Task task;
     private int statusFieldWidth;
     private double charSizeApprox = 180/27; //in 180 pixel wide JTextField first 27 characters are visible in Matisse
+    private Frame parent;
     
     /** Creates a new progress bar, initially invisible. It becomes visible after it receives
      * a STARTING Message from the Task.
@@ -38,8 +44,10 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      */
     public ProgressBar(Task task, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        this.task = task;
         
+        this.parent = parent;
+        this.task = task;
+        logger = Logger.getLogger(this.getClass().getPackage().getName());
         initComponents();
         
         if (task.isDeterminate()) {
@@ -137,42 +145,50 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      * Invokes exceptionHanlder on received exceptions.
      */
     public void update(Observable o, Object arg) {
+        final ProgressBar pb = this;
         if (arg instanceof Task.Message) {
             Task.Message msg = (Task.Message)arg;
+            logger.debug("Received message: "+msg);
             switch (msg) {
                 case STARTING:
-                    if (isModal()) {
-                        //we are in modal state so we have to show ourselves in a new thread
-                        //so that we don't block the task's thread from continuing it's computation
-                        Thread t = new Thread(new Runnable(){
-                                                    public void run() { setVisible(true); }
-                                              });
-                        // Start the thread so that the dialog will show.
-                        t.start(); 
-                    } else {
-                        setVisible(true);
-                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            setLocationRelativeTo(parent);
+                            setVisible(true);
+                            logger.debug("Progress bar visible");
+                        }
+                    });
                     break;
                 case POSITION_CHANGED:
-                    progressBar.setValue(task.getPosition());
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            progressBar.setValue(task.getPosition());
+                        }
+                    });
                     break;
                 case MESSAGE_CHANGED:
-                    String text = task.getStatusMessage();
-                    statusField.setText(text);
-                    progressBar.setString(text);
-                    int curWidth = statusField.getWidth();
-                    if (text.length() > (curWidth/charSizeApprox)) {
-                        int newWidth = new Double(text.length()*charSizeApprox).intValue();
-                        //statusField.setSize(newWidth,statusField.getHeight());
-                        this.setSize(this.getWidth()+(newWidth-curWidth),this.getHeight());
-                        System.out.println("changed field width by "+(newWidth-curWidth));
-                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            String text = task.getStatusMessage();
+                            statusField.setText(text);
+                            progressBar.setString(text);
+                            int curWidth = statusField.getWidth();
+                            if (text.length() > (curWidth/charSizeApprox)) {
+                                int newWidth = new Double(text.length()*charSizeApprox).intValue();
+                                pb.setSize(pb.getWidth()+(newWidth-curWidth),pb.getHeight());
+                            }
+                        }
+                    });
                     break;
                 case LENGTH_CHANGED:
                     if (progressBar.isIndeterminate()) {
                         progressBar.setIndeterminate(false);
                     }
-                    progressBar.setMaximum(task.getLength());
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            progressBar.setMaximum(task.getLength());
+                        }
+                    });
                     break;
                 case STOPPED:
                     afterStopped();

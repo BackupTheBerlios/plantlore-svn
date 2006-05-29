@@ -113,4 +113,9 @@ public class Selection {
         public Collection<Integer> values() {
             return selected;
         }
+        
+        public void clear() {
+            selected.clear();
+            inverted = false;
+        }
 }

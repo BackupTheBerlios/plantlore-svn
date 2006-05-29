@@ -10,6 +10,7 @@
 package net.sf.plantlore.common;
 
 import java.util.Observable;
+import javax.swing.SwingUtilities;
 
 /** A convenience class for long task implementation.
  *
@@ -231,6 +232,7 @@ public abstract class Task extends Observable {
         setChanged();
         notifyObservers(Message.STOPPING);
     }
+    
 }
 
 

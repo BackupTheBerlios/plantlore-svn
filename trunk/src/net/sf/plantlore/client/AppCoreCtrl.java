@@ -8,6 +8,7 @@
 package net.sf.plantlore.client;
 
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
@@ -61,8 +62,11 @@ import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
+import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.StatusBarManager;
+import net.sf.plantlore.common.SwingWorker;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
@@ -547,8 +551,16 @@ public class AppCoreCtrl
                 editModel.setProjects(model.getProjects());
                 editModel.setTerritories(model.getTerritories());
                 
-                Object[] row = model.getSelectedRow();             
-                editModel.setRecord((Integer) row[row.length-1]);
+                Object[] row = model.getSelectedRow();
+                try {
+                    editModel.setRecord((Integer) row[row.length-1]);
+                } catch (DBLayerException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex+": "+ex.getErrorInfo());
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex);
+                }
                 editView = new AddEditView(view, true, editModel, true);
                 editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
                 editCtrl = new AddEditCtrl(editModel, editView, true);
@@ -557,7 +569,15 @@ public class AppCoreCtrl
                 return;
             } else {
                 Object[] row = model.getSelectedRow();
-                editModel.setRecord((Integer) row[row.length-1]);
+                try {
+                    editModel.setRecord((Integer) row[row.length-1]);
+                } catch (DBLayerException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex+": "+ex.getErrorInfo());
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex);
+                }
                 editView.loadComponentData();
                 editView.setVisible(true);
             }
@@ -574,7 +594,49 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("Delete pressed");
+            Selection selection = model.getTableModel().getSelection();
+            Object[] arg = { selection.values().size() };
+            
+            int choice = JOptionPane.showConfirmDialog(view, 
+                    L10n.getFormattedString("Message.DeleteRecords",arg),
+                    L10n.getString("Message.DeleteRecordsTitle"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
+            switch (choice) {
+                case JOptionPane.CANCEL_OPTION:
+                    return;
+                case JOptionPane.OK_OPTION:
+                    logger.info("Deleting "+arg[0]+" records.");
+
+                    Task task = model.deleteSelected();
+                    
+                    ProgressBar progressBar = new ProgressBar(task,view,true) {
+                        public void exceptionHandler(Exception ex) {
+                            if (ex instanceof DBLayerException) {
+                                DBLayerException e = (DBLayerException)ex;
+                                JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                                logger.error(e+": "+e.getErrorInfo());
+                                return;
+                            }
+                            if (ex instanceof RemoteException) {
+                                RemoteException e = (RemoteException)ex;
+                                JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                                logger.error(e);
+                                return;
+                            }
+                            JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                            logger.error(ex);                            
+                        }              
+                        
+                        public void afterStopped() {
+                            refreshOverview(false); //false -> do not create task, refresh the overview directly in this thread
+                        }
+                    };
+                    
+                    task.start();
+                    break;
+            }//switch
         }
     }
 
@@ -684,7 +746,7 @@ public class AppCoreCtrl
                     
                 
                 ClassLoader cl = this.getClass().getClassLoader();
-                InputStream is = cl.getResourceAsStream("net/sf/plantlore/client/Scheda.jrxml");
+                InputStream is = cl.getResourceAsStream("net/sf/plantlore/client/resourcesSchedaA6.jasper");
 
     //          JasperReport jasperReport = JasperCompileManager.compileReport(
     //              "Scheda.jrxml");
@@ -991,6 +1053,27 @@ public class AppCoreCtrl
     	}
     }
     
+    private Task refreshOverview(boolean createTask) {
+        if (createTask) {
+            Task task = new Task() {
+                public Object task() {
+                    searchModel.clear();
+                    searchModel.constructQuery();
+                    logger.debug("before fireStopped");
+                    fireStopped();
+                    logger.debug("after fireStopped");
+                    return null;
+                }
+            };
+
+            return task;
+        } else {
+            searchModel.clear();
+            searchModel.constructQuery();
+            return null;
+        }
+    }
+    
     class RefreshAction extends AbstractAction {
         public RefreshAction() {
             if (showButtonText)
@@ -1001,9 +1084,16 @@ public class AppCoreCtrl
         }
 
         public void actionPerformed(ActionEvent e) {
-            searchModel.clear();
-            searchModel.constructQuery();
-            model.setResultId(searchModel.getNewResultId());
+            // e can be null !!! - we call actionPerformed(null) in DeleteAction
+            Task task = refreshOverview(true);
+            ProgressBar progressBar = new ProgressBar(task, view, true) {
+                public void exceptionHandler(Exception ex) {   
+                    //FIXME
+                    ex.printStackTrace();
+                }                    
+            };
+
+            task.start(); 
         }
         
     }

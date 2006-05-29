@@ -12,6 +12,7 @@ package net.sf.plantlore.common;
 import java.rmi.RemoteException;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
+import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.middleware.DBLayer;
@@ -42,52 +43,56 @@ public class DBLayerUtils {
      * @return Record Object of type c with id id.
      * @return null in case an exception is thrown or no row with that id exists
      */
-    public Record getObjectFor(int id, Class c) {
+    public Record getObjectFor(int id, Class c) throws DBLayerException, RemoteException {
         logger.debug("Looking up "+c.getName()+" object in the database for id "+id);
-        //FIXME:
-        try {
-            SelectQuery sq = db.createQuery(c);
-            sq.addRestriction(PlantloreConstants.RESTR_EQ,"id",null,id,null);
-            int resultid = db.executeQuery(sq);
-            int resultCount = db.getNumRows(resultid);
-            if (resultCount == 0)
-                return null;
-            Object[] results = db.more(resultid, 0, 0);
-            Object[] tmp = (Object[]) results[0];
-            return (Record)tmp[0];
-            
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        SelectQuery sq = db.createQuery(c);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,"id",null,id,null);
+        int resultid = db.executeQuery(sq);
+        int resultCount = db.getNumRows(resultid);
+        if (resultCount == 0)
+            return null;
+        Object[] results = db.more(resultid, 0, 0);
+        Object[] tmp = (Object[]) results[0];
+        return (Record)tmp[0];
     }
 
-    public AuthorOccurrence[] getAuthorsOf(Occurrence o) {
+    public AuthorOccurrence[] getAuthorsOf(Occurrence o) throws DBLayerException, RemoteException {
         AuthorOccurrence[] authorResults = null;
-        //FIXME:
-        try {
-            SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
-            sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
-            sq.addRestriction(PlantloreConstants.RESTR_NE,AuthorOccurrence.DELETED,null,1,null);
-            int resultid = db.executeQuery(sq);
-            int resultCount = db.getNumRows(resultid);
-            authorResults = new AuthorOccurrence[resultCount];
-            Object[] results = db.more(resultid, 0, resultCount-1);
-            Object[] tmp;
-            AuthorOccurrence ao;
-            for (int i = 0; i < resultCount; i++) {
-                tmp = (Object[]) results[i];
-                ao = (AuthorOccurrence)tmp[0];
-                authorResults[i] = ao;
-            }
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
+        SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
+        sq.addRestriction(PlantloreConstants.RESTR_NE,AuthorOccurrence.DELETED,null,1,null);
+        int resultid = db.executeQuery(sq);
+        int resultCount = db.getNumRows(resultid);
+        authorResults = new AuthorOccurrence[resultCount];
+        Object[] results = db.more(resultid, 0, resultCount-1);
+        Object[] tmp;
+        AuthorOccurrence ao;
+        for (int i = 0; i < resultCount; i++) {
+            tmp = (Object[]) results[i];
+            ao = (AuthorOccurrence)tmp[0];
+            authorResults[i] = ao;
         }
         return authorResults;
+    }
+
+    /** Deletes Habitat for given Occurrence if needed.
+     *
+     * Will delete Habitat if no live Occurrence point at it.
+     *
+     */
+    public void deleteHabitat(Habitat h) throws DBLayerException, RemoteException {
+        SelectQuery sq = db.createQuery(Occurrence.class);        
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
+        sq.addRestriction(PlantloreConstants.RESTR_NE,Occurrence.DELETED, null, 1, null);
+        int resultid = db.executeQuery(sq);
+        int resultCount = db.getNumRows(resultid);
+        if (resultCount == 0) {
+            logger.info("Deleting habitat id="+h.getId()+" with nearest village "+h.getNearestVillage().getName());
+            h.setDeleted(1);
+            db.executeUpdate(h);
+        } else {
+            logger.debug("Leaving habitat id="+h.getId()+" live. Live Occurrence records point at it.");
+        }
     }
     
     public static void main(String[] args) throws DBLayerException, RemoteException {

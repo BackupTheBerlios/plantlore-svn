@@ -37,7 +37,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         prefs = Preferences.userNodeForPackage(this.getClass());        
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
         initComponents();
-        sbm = new StatusBarManager(statusLabel);    
+        sbm = new OverviewStatusBarManager(statusLabel);    
         sbm.setDefaultText(L10n.getString("Overview.StatusReady"));
 
         initOverview();
@@ -354,10 +354,25 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 return;
             }
             if (arg.equals("NEW_QUERY")) {
-                setPreferredColumnSizes();
+                //setPreferredColumnSizes();
+                overview.setEnabled(true);
+                overview.setVisible(true);
                 recordsCount.setText(""+model.getResultsCount());
                 pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount()); 
+                overview.getSelectionModel().setSelectionInterval(0,0);
                 return;
+            }
+            if (arg.equals("LOADING_NEW_DATA")) {
+                //TableSorter and OverviewTable model threw exceptions while loading data
+                //because they were trying to display data in possibly inconsistent state
+                //I hope that I've fixed it at least in OverviewTableModel where data are now
+                //loaded into a new variable and then put in place of the working data at one point
+                //
+                //However now I noticed a NullPointerException from TableSorter, which is not my work
+                //and I don't want to study it now, so we'll try to ensure that overview doesn't ask
+                //for any data during the loading:
+                overview.setVisible(false);
+                overview.setEnabled(false);
             }
         }        
     }

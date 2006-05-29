@@ -69,15 +69,19 @@ public class OverviewTableModel extends AbstractTableModel {
         
     private void loadData() throws DBLayerException, RemoteException {
         resultsCount = db.getNumRows(getResultId());
-        System.out.println("resultsCount="+resultsCount);
+        logger.debug("resultsCount="+resultsCount);
         Object[] records;
         Object[] projArray;
         Object[] row;
         if (resultsCount > 0) {
-            logger.debug("resultsCount = "+resultsCount);
             to = Math.min(resultsCount-1, from + pageSize - 1);
             logger.debug("to = "+to+" from="+from+" currentPage="+currentPage);
-            data = new Object[to - from + 1][];
+            
+            // !!! It is essential to create a local data array, because
+            // while we are fetching data from the database someone can still
+            // ask the table for it's value at some cell, etc...
+            ///!!!
+            Object[][] data = new Object[to - from + 1][];
             logger.debug("data.length = "+data.length);
             records = db.more(getResultId(), from, to);
             logger.debug("records.length = " + records.length);
@@ -105,13 +109,17 @@ public class OverviewTableModel extends AbstractTableModel {
                 }// for j                
                 data[i] = row;
             }//for i
+            this.data = data;
         } else
-            data = null;
+            this.data = null;
         
     }
             
     public Object[] getRow(int i) {
-        return data[i];
+        if (data != null)
+            return data[i];
+        else
+            return null;
     }
     
     public int getRowCount() {
@@ -126,7 +134,10 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public Object getValueAt(int row, int col) {
-        return data[row][col+1]; //col+1 because we need to skip the occurrence.id
+        if (data != null)
+            return data[row][col+1]; //col+1 because we need to skip the occurrence.id
+        else
+            return null;
     }
     
     public Class getColumnClass(int c) {
@@ -275,8 +286,8 @@ public class OverviewTableModel extends AbstractTableModel {
         //FIXME
         try {
             loadData();
-            //fireTableDataChanged(); //let the table compoment know it should redraw itself
-            fireTableStructureChanged();
+            fireTableDataChanged(); //let the table compoment know it should redraw itself
+            //fireTableStructureChanged();
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         } catch (RemoteException ex) {
@@ -314,7 +325,10 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public Integer getOccurrenceId(int row) {
-        return (Integer)data[row][data[row].length-1];
+        if (data != null)
+            return (Integer)data[row][data[row].length-1];
+        else
+            return -1;
     }
     
     public void setDatabase(DBLayer database) {
@@ -324,6 +338,15 @@ public class OverviewTableModel extends AbstractTableModel {
 
     public int getSelectionColumnIndex() {
         return selectionColumnIndex;
+    }
+
+    void clearSelection() {
+        selection.clear();
+    }
+    
+    public void clear() {
+        data = null;
+        fireTableDataChanged();
     }
 }
 

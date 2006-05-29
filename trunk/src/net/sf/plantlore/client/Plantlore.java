@@ -72,8 +72,7 @@ public class Plantlore {
         try { 
             UIManager.setLookAndFeel(new PlasticXPLookAndFeel()); 
         } catch (Exception e) { e.printStackTrace(); JFrame.setDefaultLookAndFeelDecorated(true); }
-        
-        
+                
         //BasicConfigurator.configure();
         Plantlore plantlore = new Plantlore();
         try {

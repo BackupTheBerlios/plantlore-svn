@@ -9,6 +9,7 @@
 
 package net.sf.plantlore.client;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import net.sf.jasperreports.engine.JRField;
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.Selection;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.HistoryChange;
@@ -65,7 +67,13 @@ public class JasperDataSource implements JRDataSource {
     public boolean next() throws JRException {
         index++;
         if (it.hasNext()) {
-            occurrence = (Occurrence) dlu.getObjectFor(it.next(), Occurrence.class);
+            try {
+                occurrence = (Occurrence) dlu.getObjectFor(it.next(), Occurrence.class);
+            } catch (RemoteException ex) {
+                throw new JRException(ex);
+            } catch (DBLayerException ex) {
+                throw new JRException(ex);
+            }
             return true;
         } else
             return false;
@@ -108,7 +116,13 @@ public class JasperDataSource implements JRDataSource {
             }
             
             if (aos == null || aosForIndex != index) {
-                aos = dlu.getAuthorsOf(occurrence);
+                try {
+                    aos = dlu.getAuthorsOf(occurrence);
+                } catch (RemoteException ex) {
+                    throw new JRException(ex);
+                } catch (DBLayerException ex) {
+                    throw new JRException(ex);
+                }
             }
             if (aos.length < 1) {
                 logger.error("Given occurrence doesn't have any live authors in the database. Is it a try to work with a deleted occurrence?");
