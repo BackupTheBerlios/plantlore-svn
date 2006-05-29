@@ -171,7 +171,6 @@ public class History {
             logger.error("Processing search occurrence results failed: "+e.toString());            
        }                                          
 
-       //zjiskani zaznamu, pro ktery chceme historii
        occurrence = ((Occurrence)objHis[0]);
        
        //FIXME: bude nutno dovyhledavat autory
@@ -1210,6 +1209,7 @@ public class History {
         try {
             query = database.createQuery(AuthorOccurrence.class);
             query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, occurrence , null);
+            query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0 , null);
             resultId = database.executeQuery(query);
         } catch(RemoteException e) {
             System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
