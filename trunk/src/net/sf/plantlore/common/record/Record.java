@@ -304,6 +304,31 @@ public abstract class Record implements Serializable {
 		return true;
 	}
 	
+	/**
+	 * Compares this record to the <code>obj</code>. 
+	 * Both records are equal 
+	 * if and only if values in their columns (up to the list of exceptions) match.
+	 * 
+	 * @param obj	The record to compare this one to.
+	 * @param exceptions	The list of names of columns that shall not be tested.
+	 * @return	True if both records match.
+	 */
+	public boolean equalsUpTo(Object obj, String...exceptions) {
+		if( obj == null || getClass() != obj.getClass() ) return false;
+		Record record = (Record) obj;
+		List<String> columns = getColumns();
+		columns.removeAll( Arrays.asList(exceptions) );
+		for( String column : columns ) {
+			Object 
+			v1 = this.getValue(column),
+			v2 = record.getValue(column);
+			if(v1 == null && v2 == null) continue;
+			if(v1 == null || v2 == null) return false;
+			if( v1.equals(v2) ) continue;
+			else return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Return the method that corresponds with the getter of <code>table.column</code>.  

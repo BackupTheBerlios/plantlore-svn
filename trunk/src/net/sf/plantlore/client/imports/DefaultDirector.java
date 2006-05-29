@@ -467,10 +467,15 @@ public class DefaultDirector extends Observable implements Runnable {
 						System.out.println("INFI ~ " + ao);
 						for( AuthorOccurrence alpha : sharers ) {
 							System.out.println("INDB ~ " + alpha);
-							if( alpha.equals( ao ) ) {
-								aoInDB = alpha; break;
+							if( alpha.equalsUpTo( ao, AuthorOccurrence.DELETED ) ) {
+								aoInDB = alpha;
+								break;
 							}
 						}
+						
+						//	The Occurrence `occInDB` is in the database, that is for sure.
+						// The ao.Occurrence, however, is NOT from the database.
+						ao.setOccurrence( occInDB ); // now it's fine
 						
 						// The intention with this AuthorOccurrence. 
 						intention = parser.intentedFor();
@@ -488,10 +493,6 @@ public class DefaultDirector extends Observable implements Runnable {
 								case DELETE:
 									break;
 								default:
-									// The Occurrence `occInDB` is in the database, that is for sure.
-									// The ao.Occurrence, however, is NOT from the database.
-									ao.setOccurrence( occInDB ); // now it's fine
-									
 									Record counterpart = findMatchInDB( ao.getAuthor() );
 									Author authorInDB = (counterpart == null) ? null : (Author)counterpart;
 
@@ -513,8 +514,11 @@ public class DefaultDirector extends Observable implements Runnable {
 							else
 								switch(intention) {
 								case DELETE:
-									delete(aoInDB);
-									numberOfUndeadAuthors--;
+									if( !aoInDB.isDead() ) {
+										aoInDB.setOccurrence( occInDB ); // repair the simplified record!
+										delete(aoInDB);
+										numberOfUndeadAuthors--;
+									}
 									break;
 								case UNKNOWN:
 								case INSERT:

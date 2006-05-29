@@ -34,7 +34,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
         jScrollPane1 = new javax.swing.JScrollPane();
         info = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle(L10n.getString("Import.Title"));
         status.setText("You will see the number of imported records here.");
         status.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -42,7 +42,6 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 
         info.setColumns(20);
         info.setEditable(false);
-        info.setFont(new java.awt.Font("Tahoma", 0, 11));
         info.setRows(5);
         info.setTabSize(2);
         info.setOpaque(false);
@@ -152,7 +151,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 		String description = getInformation();
 		
 		if( parameter instanceof String ) {
-			info.append(parameter + "\n");			
+			info.append(parameter + "\n");
 		}
 		
 		if( parameter != null && parameter instanceof Exception ) {
@@ -183,7 +182,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
 			progress.setValue( processed );
 			status.setText( description );
 			if(total <= 0)
-				setTitle(processed + L10n.getString("Import.RecordsImported"));
+				setTitle(processed + L10n.getString("Import.RecordsProcessed"));
 			else {
 				String percent = Integer.toString(100*processed/total) + "%";
 				setTitle(percent + " " + L10n.getString("Import.Progress"));
