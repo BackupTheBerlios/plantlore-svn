@@ -7,6 +7,7 @@
 package net.sf.plantlore.common;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Window;
 import java.util.Observable;
 import java.util.Observer;
@@ -59,7 +60,10 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
         }
         statusFieldWidth = statusField.getWidth();
         statusField.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-       
+        
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        
         task.addObserver(this);
     }
     
@@ -142,6 +146,9 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      * Adjusts widht of the dialog in case it receives a longer text message
      * form the task than it is possible to display in current widht.
      *
+     * Will set WAIT_CURSOR to it's parent and will restore it to defaultCursor
+     * after it disappears.
+     *
      * Invokes exceptionHanlder on received exceptions.
      */
     public void update(Observable o, Object arg) {
@@ -199,6 +206,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
                         dispose();                    
                         break;
                     case STOPPED:
+                        parent.setCursor(Cursor.getDefaultCursor());
                         afterStopped(value);
                         break;                    
                 }//switch

@@ -8,6 +8,7 @@
 package net.sf.plantlore.client;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -293,7 +294,6 @@ public class AppCoreCtrl
         prevPageAction.setEnabled(enabled);  
         view.recordsPerPage.setEnabled(enabled);
         refreshAction.setEnabled(enabled);
-        loginAction.setEnabled(!enabled);
     }
     
     /** Handles click to menu item Settings.
@@ -1084,8 +1084,12 @@ public class AppCoreCtrl
     class DatabaseChange implements Observer {
     	public void update(Observable targer, Object parameter) {
     		if(parameter != null && parameter instanceof DBLayer) {
-    			System.out.println("[!] DBLayer retrieval.");
+                        loginAction.setEnabled(false);
+                        view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+                        System.out.println("[!] DBLayer retrieval.");
     			DBLayer dblayer = loginModel.getDBLayer();
+
 
                         //FIXME: neni potreba zresetovat stav treba loginModelu, pokdu neco takhle selze? pripadne stav jinyho objektu?
                         try {
@@ -1097,7 +1101,6 @@ public class AppCoreCtrl
                             JOptionPane.showMessageDialog(view,"Database problem","Some database problem occurred:\n"+ex,JOptionPane.WARNING_MESSAGE);
                             return;
                         }
-                        setDatabaseDependentCommandsEnabled(true);
     			model.setAccessRights( loginModel.getAccessRights() );
                         model.login();
                         
@@ -1108,6 +1111,8 @@ public class AppCoreCtrl
                         view.getSBM().displayDefaultText();
                         
     			view.initOverview();
+                        view.setCursor(Cursor.getDefaultCursor());
+                        setDatabaseDependentCommandsEnabled(true);
     		}
     	}
     }
