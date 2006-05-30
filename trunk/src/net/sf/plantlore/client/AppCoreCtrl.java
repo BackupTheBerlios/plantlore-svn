@@ -329,6 +329,7 @@ public class AppCoreCtrl
             if (arg instanceof String) {                
                 String s = (String)arg;
                 if (s.equals("COLUMNS")) {
+                    logger.debug("User changed columns in settings. Propagating the change to overview and config.");
                     ArrayList<Column> columns = settingsModel.getSelectedColumns();
                     model.getTableModel().setColumns(columns);
                     model.getMainConfig().setColumns(columns);
@@ -1096,6 +1097,7 @@ public class AppCoreCtrl
                             JOptionPane.showMessageDialog(view,"Database problem","Some database problem occurred:\n"+ex,JOptionPane.WARNING_MESSAGE);
                             return;
                         }
+                        setDatabaseDependentCommandsEnabled(true);
     			model.setAccessRights( loginModel.getAccessRights() );
                         model.login();
                         
@@ -1106,7 +1108,6 @@ public class AppCoreCtrl
                         view.getSBM().displayDefaultText();
                         
     			view.initOverview();
-                        setDatabaseDependentCommandsEnabled(true);
     		}
     	}
     }

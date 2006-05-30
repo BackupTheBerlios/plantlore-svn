@@ -94,8 +94,8 @@ public class OverviewTableModel extends AbstractTableModel {
                 row = new Object[columns.size() + 1]; //we'll store the record id in the last column
                 int proj = 0;
                 Object occId = projArray[0] == null ? new Column(Column.Type.OCCURRENCE_ID).getDefaultNullValue() : projArray[0];
+                Object value = null;
                 for (int j = 0; j < columns.size(); j++) {
-                    Object value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
                     
                     if (columns.get(j).type.equals(Column.Type.SELECTION)) {
                         row[j] = selection.contains((Integer) occId);
@@ -103,6 +103,7 @@ public class OverviewTableModel extends AbstractTableModel {
                     if (columns.get(j).type.equals((Column.Type.NUMBER))) {
                         row[j] = from + i + 1;
                     } else {
+                        value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
                         if (columns.get(j).type.equals(Column.Type.OCCURRENCE_ID))
                             row[row.length-1] = value;                        
                         row[j] = value;
