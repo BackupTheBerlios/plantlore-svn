@@ -42,6 +42,7 @@ public class AuthView extends javax.swing.JDialog implements Observer {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         user = new AutoComboBox();
+        ((AutoComboBox)user).setStrict(false);
         password = new javax.swing.JPasswordField();
         next = new javax.swing.JButton();
         status = new javax.swing.JLabel();
