@@ -169,6 +169,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
         descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
         new TabTransfersFocus(descriptionArea);
         jScrollPane2.setViewportView(descriptionArea);
 
@@ -468,6 +469,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         locationNoteArea.setColumns(20);
         locationNoteArea.setRows(5);
         locationNoteArea.setLineWrap(true);
+        locationNoteArea.setWrapStyleWord(true);
         new TabTransfersFocus(locationNoteArea);
         jScrollPane4.setViewportView(locationNoteArea);
 
@@ -576,6 +578,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         occurrenceNoteArea.setColumns(20);
         occurrenceNoteArea.setRows(5);
         occurrenceNoteArea.setLineWrap(true);
+        occurrenceNoteArea.setWrapStyleWord(true);
         new TabTransfersFocus(occurrenceNoteArea);
         jScrollPane5.setViewportView(occurrenceNoteArea);
 

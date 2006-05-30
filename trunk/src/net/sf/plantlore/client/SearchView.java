@@ -146,6 +146,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         descriptionArea.setColumns(20);
         descriptionArea.setRows(5);
         descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
         new TabTransfersFocus(descriptionArea);
         jScrollPane2.setViewportView(descriptionArea);
 
@@ -436,7 +437,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(sourceLabel)
                     .add(sourceCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(publicationLabel)
                     .add(publicationCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -455,6 +456,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         locationNoteArea.setColumns(20);
         locationNoteArea.setRows(5);
         locationNoteArea.setLineWrap(true);
+        locationNoteArea.setWrapStyleWord(true);
         new TabTransfersFocus(locationNoteArea);
         jScrollPane4.setViewportView(locationNoteArea);
 
@@ -554,13 +556,14 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     .add(SJTSKButton)
                     .add(longitudeLabel)
                     .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.OccurrenceNotePanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         occurrenceNoteArea.setColumns(20);
         occurrenceNoteArea.setRows(5);
         occurrenceNoteArea.setLineWrap(true);
+        occurrenceNoteArea.setWrapStyleWord(true);
         new TabTransfersFocus(occurrenceNoteArea);
         jScrollPane5.setViewportView(occurrenceNoteArea);
 
@@ -576,7 +579,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
-                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

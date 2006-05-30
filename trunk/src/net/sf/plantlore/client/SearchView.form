@@ -155,7 +155,7 @@
                 <Property name="rows" type="int" value="5"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="descriptionArea.setLineWrap(true);&#xa;new TabTransfersFocus(descriptionArea);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="descriptionArea.setLineWrap(true);&#xa;descriptionArea.setWrapStyleWord(true);&#xa;new TabTransfersFocus(descriptionArea);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -673,7 +673,7 @@
                           <Component id="sourceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sourceCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="24" max="32767" attributes="0"/>
+                      <EmptySpace pref="12" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="publicationLabel" min="-2" max="-2" attributes="0"/>
                           <Component id="publicationCombo" min="-2" max="-2" attributes="0"/>
@@ -818,7 +818,7 @@
                     <Property name="rows" type="int" value="5"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="locationNoteArea.setLineWrap(true);&#xa;new TabTransfersFocus(locationNoteArea);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="locationNoteArea.setLineWrap(true);&#xa;locationNoteArea.setWrapStyleWord(true);&#xa;new TabTransfersFocus(locationNoteArea);"/>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
                 </Component>
@@ -900,7 +900,7 @@
                           <Component id="longitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="longitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="60" max="32767" attributes="0"/>
+                      <EmptySpace pref="48" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1047,7 +1047,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane5" pref="127" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="115" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1067,7 +1067,7 @@
                     <Property name="rows" type="int" value="5"/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="occurrenceNoteArea.setLineWrap(true);&#xa;new TabTransfersFocus(occurrenceNoteArea);"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="occurrenceNoteArea.setLineWrap(true);&#xa;occurrenceNoteArea.setWrapStyleWord(true);&#xa;new TabTransfersFocus(occurrenceNoteArea);"/>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
                 </Component>
