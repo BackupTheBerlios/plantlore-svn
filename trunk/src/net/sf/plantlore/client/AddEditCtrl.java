@@ -94,7 +94,7 @@ public class AddEditCtrl {
         view.latitudeTextField.addFocusListener(new LatitudeListener());
         
         //------- TextAreas --------        
-        view.taxonTextArea.addFocusListener(new TaxonAreaListener());
+        view.taxonTextArea.addPropertyChangeListener(AutoTextArea.UPDATE_LIST_OF_PLANTS, new TaxonAreaListener());
         view.descriptionArea.addFocusListener(new PlaceAreaListener());
         view.locationNoteArea.addFocusListener(new LocationAreaListener());
         view.occurrenceNoteArea.addFocusListener(new OccurrenceAreaListener());
@@ -192,11 +192,8 @@ public class AddEditCtrl {
         }
     }//CoordinateSystemListener
     
-    class TaxonAreaListener implements FocusListener {
-        public void focusGained(FocusEvent e) {
-        }
-
-        public void focusLost(FocusEvent e) {
+    class TaxonAreaListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent e) {
             ArrayList<String> taxonList = new ArrayList<String>();
             AutoTextArea ta = (AutoTextArea) e.getSource();
             int lineCount = ta.getLineCount();
