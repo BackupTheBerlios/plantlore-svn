@@ -78,6 +78,9 @@ import javax.swing.text.*;
  */
 public class AutoTextArea extends JTextArea implements KeyListener, FocusListener, MouseListener {
 	
+	
+	public final static String UPDATE_LIST_OF_PLANTS = "ListOfPlants";
+	
 	/*======================================================================
 	 	Members
 	  ======================================================================*/
@@ -166,6 +169,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 					int i = s.indexOf(KeyEvent.VK_SPACE, offset - start) + 1;
 					if(i <= 0) i = s.length();
 					replaceRange(s.substring(0, i), start, end);
+					firePropertyChange(UPDATE_LIST_OF_PLANTS, null, null);
 				}
 				return;
 			case KeyEvent.VK_UP: // select the previous choice
@@ -196,6 +200,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 				mode = Mode.FREE_ROAM;
 				assistant.setVisible(false);
 				replaceRange("", start, end + (eoln ? 1 : 0));
+				firePropertyChange(UPDATE_LIST_OF_PLANTS, null, null);
 				return;
 			case KeyEvent.VK_ENTER: // insert the current selection, switch to the FreeRoam
 				mode = Mode.FREE_ROAM;
@@ -208,6 +213,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 					Object value = list.getSelectedValue();
 					replaceRange(value.toString() + newline, start, end);
 				}
+				firePropertyChange(UPDATE_LIST_OF_PLANTS, null, null);
 				return;
 			}
 		}
@@ -231,6 +237,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 				replaceRange("", start, end + (eoln ? 1 : 0));
 				mode = Mode.FREE_ROAM;
 				assistant.setVisible(false);
+				firePropertyChange(UPDATE_LIST_OF_PLANTS, null, null);
 			} else {
 				replaceRange("", offset, end);
 				assistant.setSelectedValue(σ);
@@ -245,6 +252,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 				if(start > 0) setCaretPosition(start - 1);
 				mode = Mode.FREE_ROAM;
 				assistant.setVisible(false);
+				firePropertyChange(UPDATE_LIST_OF_PLANTS, null, null);
 			}
 			return;
 		default: // all other keys -> select the first suitable choice
@@ -359,6 +367,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 				line++;
 			}
 		}
+		firePropertyChange(UPDATE_LIST_OF_PLANTS, null, null);
 	}
 	
 	
