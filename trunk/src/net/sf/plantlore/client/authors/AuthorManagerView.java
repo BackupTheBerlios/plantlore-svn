@@ -30,9 +30,9 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     /** Model of the AuthorManager MVC */
     private AuthorManager model;
     /** Names of fields available for sorting the results */
-    private String[] sortFields = {L10n.getString("authorName"), L10n.getString("authorOrganization"), L10n.getString("authorRole"), L10n.getString("authorEmail"), L10n.getString("authorPhone"), L10n.getString("authorURL")};        
+    private String[] sortFields = {L10n.getString("Author.Sort.Name"), L10n.getString("Author.Sort.Organization"), L10n.getString("Author.Sort.Role"), L10n.getString("Author.Sort.Email"), L10n.getString("Author.Sort.Phone"), L10n.getString("Author.Sort.Url")};        
     /** Names of the columns in the search results */
-    private String[] columnNames = new String [] {L10n.getString("authorName"), L10n.getString("authorOrganization"), L10n.getString("authorRole"), L10n.getString("authorPhone"), L10n.getString("authorEmail"), L10n.getString("authorURL")};    
+    private String[] columnNames = new String [] {L10n.getString("Author.Table.Name"), L10n.getString("Author.Table.Organization"), L10n.getString("Author.Table.Role"), L10n.getString("Author.Table.Phone"), L10n.getString("Author.Table.Email"), L10n.getString("Author.Table.Url")};    
     /** Contents of the table with the query result */
     private String[][] tableData;
     
@@ -48,6 +48,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         this.model = model;
         this.model.addObserver(this);         
         initComponents();
+        // Center the dialog on the screen
+        this.setLocationRelativeTo(null);        
     }
     
     /** This method is called from within the constructor to
@@ -94,9 +96,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         sortButtonGroup.add(descRadio);
         sortButtonGroup.setSelected(ascRadio.getModel(), true);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(L10n.getString("authorManager"));
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("authorList")));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Author.list")));
         listTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -110,25 +111,25 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         ));
         jScrollPane3.setViewportView(listTable);
 
-        previousBtn.setText(L10n.getString("prevButton"));
+        previousBtn.setText(L10n.getString("Common.Previous"));
 
-        nextBtn.setText(L10n.getString("nextButton"));
+        nextBtn.setText(L10n.getString("Common.Next"));
 
-        deleteBtn.setText(L10n.getString("deleteAuthorBtn"));
+        deleteBtn.setText(L10n.getString("Author.DeleteButton"));
 
-        editBtn.setText(L10n.getString("editAuthorBtn"));
+        editBtn.setText(L10n.getString("Author.EditButton"));
 
-        addBtn.setText(L10n.getString("addAuthorBtn"));
+        addBtn.setText(L10n.getString("Author.AddButton"));
 
-        totalResultLabel2.setText(L10n.getString("totalResult"));
+        totalResultLabel2.setText(L10n.getString("Author.TotalResults"));
 
         totalRowsLabel.setText(((Integer)model.getResultRows()).toString());
 
-        toDisplayedLabel2.setText(L10n.getString("displayRows"));
+        toDisplayedLabel2.setText(L10n.getString("Author.RowsToDisplay"));
 
-        displayedLabel2.setText(L10n.getString("displayed"));
+        displayedLabel2.setText(L10n.getString("Author.DisplayedRowsLabel"));
 
-        displayedLabel.setText(L10n.getString("displayed"));
+        displayedLabel.setText("---");
 
         rowsField.setValue(model.getDisplayRows());
 
@@ -146,7 +147,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                         .add(totalResultLabel2)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(totalRowsLabel)
-                        .add(37, 37, 37)
+                        .add(33, 33, 33)
                         .add(toDisplayedLabel2)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -155,16 +156,16 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                                 .add(89, 89, 89)
                                 .add(displayedLabel2)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(displayedLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .add(displayedLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel7Layout.createSequentialGroup()
                                 .add(addBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 107, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(2, 2, 2)))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                            .add(nextBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(deleteBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(nextBtn)
+                            .add(deleteBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -184,28 +185,28 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                     .add(rowsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(15, 15, 15)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(addBtn)
+                    .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(deleteBtn)
-                    .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(addBtn))
                 .addContainerGap())
         );
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("searchAuthorsLbl")));
-        jLabel11.setText(L10n.getString("authorNameLbl"));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Author.SearchLabel")));
+        jLabel11.setText(L10n.getString("Author.Search.Name"));
 
-        jLabel12.setText(L10n.getString("authorOrganizationLbl"));
+        jLabel12.setText(L10n.getString("Author.Search.Organization"));
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("sortingLbl")));
-        descRadio.setText(L10n.getString("descending"));
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Author.Sorting")));
+        descRadio.setText(L10n.getString("Author.Descending"));
         descRadio.setActionCommand(L10n.getString("descending"));
         descRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         descRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        ascRadio.setText(L10n.getString("ascending"));
+        ascRadio.setText(L10n.getString("Author.Ascending"));
         ascRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         ascRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jLabel13.setText(L10n.getString("sortByLbl"));
+        jLabel13.setText(L10n.getString("Author.SortBy"));
 
         sortCombo.setModel(new DefaultComboBoxModel(sortFields));
 
@@ -214,19 +215,21 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
                 .add(jLabel13)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(descRadio)
-                    .add(ascRadio)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, sortCombo, 0, 151, Short.MAX_VALUE)))
+                .add(jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, descRadio)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, ascRadio)
+                    .add(sortCombo, 0, 151, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
                 .add(jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel13)
-                    .add(sortCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(sortCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(ascRadio)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -234,11 +237,11 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel14.setText(L10n.getString("authorRoleLbl"));
+        jLabel14.setText(L10n.getString("Author.Search.Role"));
 
-        jLabel15.setText(L10n.getString("authorEmailLbl"));
+        jLabel15.setText(L10n.getString("Author.Search.Email"));
 
-        searchBtn.setText(L10n.getString("searchAuthorsBtn"));
+        searchBtn.setText(L10n.getString("Author.SearchButton"));
 
         nameField.setValue("");
 
@@ -261,16 +264,16 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                             .add(jLabel12))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(organizationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .add(nameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+                            .add(organizationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                            .add(nameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel14)
                             .add(jLabel15))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(emailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .add(roleField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
+                            .add(emailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                            .add(roleField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)))
                     .add(searchBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 144, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -299,9 +302,9 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        closeBtn.setText(L10n.getString("Close"));
+        closeBtn.setText(L10n.getString("Common.Close"));
 
-        helpBtn.setText(L10n.getString("Help"));
+        helpBtn.setText(L10n.getString("Common.Help"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -313,8 +316,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                     .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(helpBtn)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 554, Short.MAX_VALUE)
-                        .add(closeBtn))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 542, Short.MAX_VALUE)
+                        .add(closeBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -327,7 +330,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                 .add(17, 17, 17)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpBtn)
-                    .add(closeBtn))
+                    .add(closeBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         pack();
@@ -377,7 +380,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      *  @param message Message we want to display
      */
     public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);               
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
     }
     
     /**
@@ -502,7 +505,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      *  Close this dialog.
      */    
     public void close() {
-        this.dispose();
+        this.hide();
     }
 
     /**
@@ -659,8 +662,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      */
     public boolean confirmDelete() {
         // JOptionPane results: 0 = Yes, 1 = No
-        int res = JOptionPane.showConfirmDialog(this, "Do you really want to delete selected author?", 
-                                                "Delete author", JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, L10n.getString("Author.ConfirmDelete"), 
+                                                L10n.getString("Author.ConfirmDeleteTitle"), JOptionPane.YES_NO_OPTION);
         if (res == 0) {
             return true;
         }
@@ -679,8 +682,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      *  Display dialog with the message saying that no row in the table with authors is selected
      */
     public void selectRowMsg() {
-        JOptionPane.showMessageDialog(this, "Please select at least one author from the list",
-                                      "Select author", JOptionPane.WARNING_MESSAGE);        
+        JOptionPane.showMessageDialog(this, L10n.getString("Author.NoAuthorSelected"),
+                                      L10n.getString("Author.NoAuthorSelectedTitle"), JOptionPane.WARNING_MESSAGE);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

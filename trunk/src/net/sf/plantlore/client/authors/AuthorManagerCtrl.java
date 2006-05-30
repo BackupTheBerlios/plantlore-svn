@@ -145,6 +145,11 @@ public class AuthorManagerCtrl {
      */    
     class AddAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            // Check whether we have rights for this operation
+            if (!model.hasRights(model.ADD)) {
+                view.showErrorMessage("Rights");
+                return;
+            }
             // Display dialog for adding / editing authors. This dialog shares model with
             // the rest of the AuthorManager.
             AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), false);

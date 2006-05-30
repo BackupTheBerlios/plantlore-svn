@@ -49,6 +49,8 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         this.model = model;
         this.model.addObserver(this);
         initComponents();
+        // Center the dialog on the screen
+        this.setLocationRelativeTo(null);
     }
     
     /** This method is called from within the constructor to
@@ -95,7 +97,6 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         sortButtonGroup.add(descRadio);
         sortButtonGroup.setSelected(ascRadio.getModel(), true);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(L10n.getString("publicationManager"));
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("publicationList")));
         listTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -300,7 +301,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                 .addContainerGap())
         );
 
-        closeBtn.setText(L10n.getString("Close"));
+        closeBtn.setText(L10n.getString("Common.Close"));
 
         helpBtn.setText(L10n.getString("Help"));
 

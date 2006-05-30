@@ -185,5 +185,7 @@ public interface DBLayer extends Remote, Serializable {
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException;
                         
     public void shutdown() throws RemoteException;
+    
+    public void destroy();
         
 }

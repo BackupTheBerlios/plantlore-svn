@@ -106,13 +106,7 @@ public class AddPublicationCtrl {
     class SavePublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {            
             // Check whether all the required fields are present
-            if (view.checkNonEmpty(PublicationManager.FIELD_COLLECTION_NAME) &&
-                view.checkNonEmpty(PublicationManager.FIELD_COLLECTION_YEAR) && 
-                view.checkNonEmpty(PublicationManager.FIELD_JOURNAL_AUTHOR) &&
-                view.checkNonEmpty(PublicationManager.FIELD_JOURNAL_NAME) &&
-                view.checkNonEmpty(PublicationManager.FIELD_REFERENCE_CITATION) &&
-                view.checkNonEmpty(PublicationManager.FIELD_REFERENCE_DETAIL) && 
-                view.checkNonEmpty(PublicationManager.FIELD_URL)) {
+            if (view.checkNonEmpty(PublicationManager.FIELD_REFERENCE_CITATION)) {
                 if (model.getEditPublication() == null) {
                     // Save new publication
                     model.savePublication();                

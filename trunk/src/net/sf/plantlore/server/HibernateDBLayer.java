@@ -1787,8 +1787,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	//for each unfinished (unclosed) result do close(result)  
     	
     }
-    
-    
+   
+    // TODO: IS IT OK TO OVERRIDE THIS METHOD?
+    public void destroy() {        
+        if (this.queries.size() > 0) {
+            logger.warn(this.queries.size()+" queries were left unclosed in the DBLayer");
+        }
+    }
     
     //===============================================================
     // What happens to unreferenced objects? They get buried by the untertaker!
@@ -1811,5 +1816,5 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 		if(undertaker != null) undertaker.bury(this); 
 	}
 	//===============================================================
-	      
+	              
 }

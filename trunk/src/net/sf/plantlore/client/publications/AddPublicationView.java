@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -37,6 +38,8 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         this.model = publModel;
         this.model.addObserver(this);         
         initComponents();
+        // Center the dialog on the screen
+        this.setLocationRelativeTo(null);        
     }
     
     /** This method is called from within the constructor to
@@ -68,7 +71,6 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         jLabel10 = new javax.swing.JLabel();
         urlField = new javax.swing.JFormattedTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(L10n.getString("addPublicationTitle"));
         jLabel1.setText(L10n.getString("addPublicationCollectionNameLbl"));
 
@@ -100,13 +102,14 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
 
         noteArea.setColumns(20);
         noteArea.setRows(5);
+        TransferFocus.patch(noteArea);
         jScrollPane2.setViewportView(noteArea);
 
-        helpBtn.setText(L10n.getString("helpBtn"));
+        helpBtn.setText(L10n.getString("Common.Help"));
 
-        closeBtn.setText(L10n.getString("closeBtn"));
+        closeBtn.setText(L10n.getString("Common.Close"));
 
-        saveBtn.setText(L10n.getString("savePublicationBtn"));
+        saveBtn.setText(L10n.getString("Publication.Add.SaveButton"));
 
         jLabel10.setText(L10n.getString("addPublicationUrlLbl"));
 
@@ -121,8 +124,8 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .add(helpBtn)
-                        .add(37, 37, 37)
-                        .add(closeBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 37, Short.MAX_VALUE)
+                        .add(closeBtn)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(saveBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jLabel9)
@@ -187,8 +190,8 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel9)
                 .add(7, 7, 7)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(helpBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE, false)
+                    .add(helpBtn)
                     .add(saveBtn)
                     .add(closeBtn))
                 .addContainerGap())

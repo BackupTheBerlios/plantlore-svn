@@ -172,8 +172,10 @@ public class PublicationManager extends Observable {
                 // Operation not finished yet
                 done = false;
                 try {
-                    // Execute query
-                    database.executeDelete((Publication)data.get(getPublicationIndex()));
+                    // Execute query                    
+                    Publication pub = (Publication)data.get(getPublicationIndex());
+                    pub.setDeleted(1);
+                    database.executeUpdate(pub);
                 } catch (DBLayerException e) {
                     // Log and set an error
                     logger.error("Deleting publication failed. Unable to execute delete query.");
@@ -252,14 +254,15 @@ public class PublicationManager extends Observable {
                     // Create new Select query                    
                     query = database.createQuery(Publication.class);                    
                     // Add given restrictions (WHERE clause)
+                    query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.DELETED, null, 0, null);
                     if ((searchCollectionName != null) && (searchCollectionName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.COLLECTIONNAME, null, "%" + searchCollectionName + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.COLLECTIONNAME, null, "%" + searchCollectionName + "%", null);
                     if ((searchJournalName != null) && (searchJournalName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.JOURNALNAME, null, "%" + searchJournalName + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.JOURNALNAME, null, "%" + searchJournalName + "%", null);
                     if ((searchReferenceCitation != null) && (searchReferenceCitation != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.REFERENCECITATION, null, "%" + searchReferenceCitation + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.REFERENCECITATION, null, "%" + searchReferenceCitation + "%", null);
                     if ((searchReferenceDetail != null) && (searchReferenceDetail != null))
-                        query.addRestriction(PlantloreConstants.RESTR_LIKE, Publication.REFERENCEDETAIL, null, "%" + searchReferenceDetail + "%", null);
+                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.REFERENCEDETAIL, null, "%" + searchReferenceDetail + "%", null);
                     String field;
                     // Add ORDER BY clause
                     switch (sortField) {

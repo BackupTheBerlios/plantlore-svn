@@ -69,7 +69,6 @@ public class AddAuthorCtrl {
                     view.setDialogEnabled(true);                    
                     if (model.processErrors() == false) {    
                         if (model.isResultAvailable()) {   
-                            System.out.println("current first row: "+model.getCurrentFirstRow());
                             model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());                        
                         }
                     }

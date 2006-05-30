@@ -28,7 +28,7 @@ public class Publication extends Record implements Deletable  {
     private String referenceCitation;
     private String referenceDetail;
     private String url;
-    private Integer deleted;
+    private Integer deleted = 0;
     private User createdWho;
     private String note;
 

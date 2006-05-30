@@ -40,6 +40,8 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
         this.model = authModel;
         this.model.addObserver(this);         
         initComponents();
+        // Center the dialog on the screen
+        this.setLocationRelativeTo(null);
     }
     
     /** This method is called from within the constructor to
@@ -72,25 +74,24 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
         closeBtn = new javax.swing.JButton();
         saveBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(L10n.getString("addAuthorTitle"));
-        jLabel1.setText(L10n.getString("addAuthorNameLbl"));
+        setTitle(L10n.getString("Author.Add.Title"));
+        jLabel1.setText(L10n.getString("Author.Add.Name"));
 
-        jLabel2.setText(L10n.getString("addAuthorOrganizationLbl"));
+        jLabel2.setText(L10n.getString("Author.Add.Organization"));
 
-        jLabel3.setText(L10n.getString("addAuthorRoleLbl"));
+        jLabel3.setText(L10n.getString("Author.Add.Role"));
 
-        jLabel4.setText(L10n.getString("addAuthorAddressLbl"));
+        jLabel4.setText(L10n.getString("Author.Add.Address"));
 
-        jLabel5.setText(L10n.getString("addAuthorPhoneLbl"));
+        jLabel5.setText(L10n.getString("Author.Add.Phone"));
 
-        jLabel6.setText(L10n.getString("addAuthorEmailLbl"));
+        jLabel6.setText(L10n.getString("Author.Add.Email"));
 
-        jLabel7.setText(L10n.getString("addAuthorUrlLbl"));
+        jLabel7.setText(L10n.getString("Author.Add.Url"));
 
-        jLabel8.setText(L10n.getString("addAuthorNoteLbl"));
+        jLabel8.setText(L10n.getString("Author.Add.Note"));
 
-        jLabel9.setText(L10n.getString("requiredFieldLbl"));
+        jLabel9.setText(L10n.getString("Author.Add.RequiredFieldLabel"));
 
         nameField.setValue("");
         nameField.setDocument(new FieldLengthLimit(50));
@@ -111,20 +112,20 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
         urlField.setDocument(new FieldLengthLimit(255));
 
         addressArea.setColumns(20);
-        addressArea.setRows(5);
+        addressArea.setRows(4);
         TransferFocus.patch(addressArea);
         jScrollPane1.setViewportView(addressArea);
 
         noteArea.setColumns(20);
-        noteArea.setRows(5);
+        noteArea.setRows(4);
         TransferFocus.patch(noteArea);
         jScrollPane2.setViewportView(noteArea);
 
-        helpBtn.setText(L10n.getString("helpBtn"));
+        helpBtn.setText(L10n.getString("Common.Help"));
 
-        closeBtn.setText(L10n.getString("closeBtn"));
+        closeBtn.setText(L10n.getString("Common.Close"));
 
-        saveBtn.setText(L10n.getString("saveAuthorBtn"));
+        saveBtn.setText(L10n.getString("Author.Add.SaveButton"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -133,6 +134,13 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(helpBtn)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 37, Short.MAX_VALUE)
+                        .add(closeBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(saveBtn)
+                        .add(13, 13, 13))
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
@@ -146,22 +154,15 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
                             .add(jLabel1))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                             .add(nameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, roleField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, organizationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                             .add(phoneField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                             .add(emailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(urlField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))
+                            .add(urlField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))
                         .addContainerGap())
-                    .add(layout.createSequentialGroup()
-                        .add(helpBtn)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 37, Short.MAX_VALUE)
-                        .add(closeBtn)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(saveBtn)
-                        .add(13, 13, 13))
                     .add(layout.createSequentialGroup()
                         .add(jLabel9)
                         .addContainerGap(293, Short.MAX_VALUE))))
@@ -184,12 +185,12 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel4)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 72, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel5)
                     .add(phoneField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(7, 7, 7)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(emailField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel6))
@@ -199,14 +200,14 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
                     .add(jLabel7))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel8))
+                    .add(jLabel8)
+                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 72, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel9)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(helpBtn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(closeBtn)
+                    .add(helpBtn)
+                    .add(closeBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(saveBtn))
                 .addContainerGap())
         );
@@ -221,45 +222,10 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
      */
     public boolean checkNonEmpty(String field) {
         if (field.equals("name") && (nameField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Name of the author is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("Author.Add.MissingCompulsoryField"), L10n.getString("Author.Add.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             nameField.requestFocus();
             return false;
         }
-        if (field.equals("organization") && (organizationField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Organization is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            organizationField.requestFocus();
-            return false;            
-        }
-        if (field.equals("role") && (roleField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Role of the author is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            roleField.requestFocus();
-            return false;                        
-        }
-        if (field.equals("address") && (addressArea.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Address is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            addressArea.requestFocus();
-            return false;                        
-        }
-        if (field.equals("phone") && (phoneField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Phone is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            phoneField.requestFocus();
-            return false;                        
-        }
-        if (field.equals("email") && (emailField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Email is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            emailField.requestFocus();
-            return false;                        
-        }
-        if (field.equals("url") && (urlField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "URL is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            urlField.requestFocus();
-            return false;                        
-        }
-        if (field.equals("note") && (noteArea.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Note is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            noteArea.requestFocus();
-            return false;                        
-        }        
         return true;
     }
     

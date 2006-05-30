@@ -219,20 +219,14 @@ public class PublicationManagerCtrl {
     class SearchPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Check whether at least one search field is non-empty
-            if (view.checkNonEmpty("collectionName") || view.checkNonEmpty("journalName") ||
-                view.checkNonEmpty("referenceCitation") || view.checkNonEmpty("referenceDetail")) {
-                // Run DB search
-                model.searchPublication();
-                // Disable current view and run timer
-                view.setDialogEnabled(false);                                
-                timerSearch.start();                
-                // Display dialog with progress bar
-                progress = new ProgressDialog(view.getDialog(), true);
-                progress.show();                                   
-            } else {
-                // Show error message - no search criteria
-                view.showSearchErrorMessage();
-            }
+            // Run DB search
+            model.searchPublication();
+            // Disable current view and run timer
+            view.setDialogEnabled(false);                                
+            timerSearch.start();                
+            // Display dialog with progress bar
+            progress = new ProgressDialog(view.getDialog(), true);
+            progress.show();                                   
         }
     }        
     

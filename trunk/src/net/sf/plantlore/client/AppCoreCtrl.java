@@ -58,10 +58,9 @@ import net.sf.plantlore.client.history.WholeHistoryView;
 import net.sf.plantlore.client.metadata.MetadataManager;
 import net.sf.plantlore.client.metadata.MetadataManagerCtrl;
 import net.sf.plantlore.client.metadata.MetadataManagerView;
-import net.sf.plantlore.client.publication.PublicationManager;
-import net.sf.plantlore.client.publication.PublicationManagerCtrl;
-import net.sf.plantlore.client.publication.PublicationManagerView;
-import net.sf.plantlore.client.publication.PublicationManagerView;
+import net.sf.plantlore.client.publications.PublicationManager;
+import net.sf.plantlore.client.publications.PublicationManagerCtrl;
+import net.sf.plantlore.client.publications.PublicationManagerView;
 import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
@@ -377,6 +376,8 @@ public class AppCoreCtrl
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(view, "Problem while saving configuration: "+ex.getMessage());
             }
+            // Destroy the DBLayer
+            model.getDatabase().destroy();
             System.exit(0);
         }
     }
@@ -885,14 +886,14 @@ public class AppCoreCtrl
     
     class DataPublicationsAction extends AbstractAction {
         public DataPublicationsAction() {
-             putValue(NAME, L10n.getString("publicationMgr"));
+            putValue(NAME, L10n.getString("Overview.MenuDataPublications"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataPublicationsTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataPublications"));
         }
 
         public void actionPerformed(ActionEvent actionEvent) {
-            System.out.println("PublicationManager");
-
             publicationManagerModel = new PublicationManager(model.getDatabase());
-            publicationManagerView = new PublicationManagerView(publicationManagerModel, view, true);
+            publicationManagerView = new PublicationManagerView(publicationManagerModel, view, false);
             publicationManagerCtrl = new PublicationManagerCtrl(publicationManagerModel, publicationManagerView);
             publicationManagerView.setVisible(true); 
         }

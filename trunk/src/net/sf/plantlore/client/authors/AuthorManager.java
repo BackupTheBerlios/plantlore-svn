@@ -99,6 +99,10 @@ public class AuthorManager extends Observable {
     public static final String ERROR_DELETE = L10n.getString("authorDeleteFailed");
     public static final String ERROR_PROCESS = L10n.getString("authorProcessResultsFailed");
     
+    public static final int ADD = 1;
+    public static final int EDIT = 2;
+    public static final int DELETE = 3;
+    
     /**
      *  Creates a new instance of AuthorManager.
      *  @param database Instance of a database management object
@@ -418,6 +422,25 @@ public class AuthorManager extends Observable {
             // Clean error flag (if it was set)
             this.error = null;
         }
+    }
+    
+    public boolean hasRights(int operation) {
+        try {
+            if (operation == ADD) {
+                if (database.getUserRights().getAdd() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }            
+            } else if (operation == EDIT) {
+                // TODO
+            } else if (operation == DELETE) {
+                // TODO
+            }
+        } catch (RemoteException e) {
+            logger.error("Remote exception caught");
+        }
+        return false;
     }
     
     /**
