@@ -530,13 +530,14 @@ public class Search extends Observable {
      * The ExportQuery is constructed according to the last known data from the Search dialog. 
      */
     public Object[] constructExportQuery() 
-    throws DBLayerException, RemoteException {                
+    throws DBLayerException, RemoteException {
     	String habitatAlias = Record.alias(Habitat.class) +".";
     	SelectQuery exportQuery = database.createQuery(Occurrence.class);
     	exportQuery.createAlias(Occurrence.HABITAT, Record.alias(Habitat.class));
     	exportQuery.createAlias(Occurrence.PLANT, Record.alias(Plant.class));
     	exportQuery.createAlias(Occurrence.METADATA, Record.alias(Metadata.class));
-    	exportQuery.createAlias(Occurrence.PUBLICATION, Record.alias(Publication.class));
+    	 // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well!
+        exportQuery.createAlias(Occurrence.PUBLICATION, Record.alias(Publication.class), PlantloreConstants.LEFT_OUTER_JOIN);
     	exportQuery.createAlias(habitatAlias+Habitat.TERRITORY, Record.alias(Territory.class));
     	exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(Village.class));
     	exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
