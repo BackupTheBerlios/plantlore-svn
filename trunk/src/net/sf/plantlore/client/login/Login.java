@@ -54,7 +54,7 @@ public class Login extends Observable {
 	private String passcode;
 	
 	private Right accessRights;
-    private User plantloreUser;
+        private User plantloreUser;
 	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
@@ -76,32 +76,10 @@ public class Login extends Observable {
 	 */
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
-		// TODO: JAKUB: nacist z XML souboru se jmenem `file` informace o databazich (triplety) do kolekce dbinfo.
 		
-
-		 // TEMPORARY CODE STARTS HERE
-
-/*				dbinfo.add(new DBInfo("Local Database But Via RMI", "data.kolej.mff.cuni.cz", -1,
-						"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
-						new String[] { "sysdba", null, null, null, null }));                
-*/
-				dbinfo.add(new DBInfo("My Home Database", "", -1,
-							"jdbc:firebirdsql:localhost/3050:c:/downloaded/plutf.fdb", 
-							new String[] { "sysdba", null, null, null, null }));
-           
-                                dbinfo.add(new DBInfo("Local Database in UTF-8", "localhost", -1,
-						"jdbc:firebirdsql:localhost/3050:/data/plantloreHIBdataUTF.fdb", 
-						new String[] { "sysdba", null, null, null, null }));
-		
-				dbinfo.add(new DBInfo("Local Database", "localhost", -1,
-							"jdbc:firebirdsql:localhost/3050:c:/downloaded/plantloreHIBdata.fdb", 
-							new String[] { "sysdba", null, null, null, null }));				
-
-		 // TEMPORARY CODE ENDS HERE
-                                
-		//dbinfo = mainConfig.getDBinfos();
-				System.out.println("DBUPD " + UPDATE_LIST);
-				
+                for (DBInfo savedDBInfo: mainConfig.getDBinfos())
+                    dbinfo.add(savedDBInfo);
+                				
 		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 	}
 	
@@ -111,8 +89,8 @@ public class Login extends Observable {
 	 */
 	protected void save() {
 		logger.debug("Saving the list of databases.");
-		// TODO: JAKUB: ulozit kolekci dbinfo zpatky do XML souboru se jmenem `file`.
-		mainConfig.setDBInfos(dbinfo);
+
+                mainConfig.setDBInfos(dbinfo);
                 
                 //ukladat uz tady?! spis ne - co kdyby se ukladani nepovedlo? bylo by divny to porad hlasit
                 //mainConfig.save();
