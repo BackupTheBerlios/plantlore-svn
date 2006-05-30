@@ -225,6 +225,8 @@ public class AddEdit extends Observable {
     public void setYear(Integer year) {
         this.year = year;
         logger.debug("Year set to "+ year);
+        setChanged();
+        notifyObservers("YEAR_CHANGED");
     }
 
     public String getHabitatNote() {
@@ -467,7 +469,6 @@ public class AddEdit extends Observable {
     private Integer lookupPlant(String taxon) {
         logger.debug("Looking up id for #"+taxon+"#");
         for (int i=0; i < plants.length ; i++) {
-            System.out.print("Trying #"+plants[i]+"#");
             if (taxon.equals(plants[i].getFirst())) {
                 return plants[i].getSecond();
             }
