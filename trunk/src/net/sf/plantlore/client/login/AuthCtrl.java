@@ -1,5 +1,6 @@
 package net.sf.plantlore.client.login;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -25,6 +26,8 @@ public class AuthCtrl {
 			putValue(NAME, L10n.getString("Login.Authorize"));
 		}
 		public void actionPerformed(ActionEvent arg0) {
+			view.next.setEnabled(false);
+			view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			String user = (view.user.getSelectedItem() != null) ? view.user.getSelectedItem().toString() : null;
 			if(user != null)
 				model.connectToSelected(user, new String(view.password.getPassword()));
@@ -34,7 +37,6 @@ public class AuthCtrl {
 						L10n.getString("Error.Missing"),
 						JOptionPane.WARNING_MESSAGE);
 			
-			view.password.setText("");
 		}
 	}
 

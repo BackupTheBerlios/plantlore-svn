@@ -6,6 +6,7 @@
 
 package net.sf.plantlore.client.login;
 
+import java.awt.Cursor;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -55,8 +56,6 @@ public class AuthView extends javax.swing.JDialog implements Observer {
 
         user.setEditable(true);
 
-        password.setEchoChar('\u2022');
-
         next.setText(L10n.getString("Login.Authorize"));
 
         status.setText(" ...");
@@ -101,6 +100,14 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     }// </editor-fold>//GEN-END:initComponents
     
     
+    
+    @Override
+    public void setVisible(boolean arg0) {
+    	next.setEnabled(true);
+    	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    	super.setVisible(arg0);
+    }
+    
     /**
      * Reload the list of usernames according to the currently selected record.
      */
@@ -110,12 +117,19 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     		if(selected == null) return;
     		user.removeAllItems();
     		((AutoComboBox)user).addItems(selected.users);
+    		password.setText("");
     		setTitle(L10n.getString("Login.ConnectingTo") + " " + selected.toString());
     	}
     	// Exception! We must display the exception to the user.
     	else if(arg instanceof Exception) {
     		status.setText(L10n.getString("Login.Failed"));
-    		JOptionPane.showMessageDialog(this, arg, L10n.getString("Error.LoginFailed"), JOptionPane.ERROR_MESSAGE);
+    		next.setEnabled(true);
+    		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    		JOptionPane.showMessageDialog(
+    				this, 
+    				((Exception)arg).getMessage(), 
+    				L10n.getString("Error.LoginFailed"), 
+    				JOptionPane.ERROR_MESSAGE);
     	}
     	// The database layer has been created, we are no longer neccessary
 		else if(arg instanceof DBLayer)

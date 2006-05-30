@@ -33,6 +33,7 @@ public class ImportMngCtrl {
 				model.setSelectedFile( view.choice.getSelectedFile().getAbsolutePath() );
 				try {
 					model.start();
+					progressView.reset();
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,

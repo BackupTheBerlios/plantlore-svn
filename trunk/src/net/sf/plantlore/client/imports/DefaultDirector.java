@@ -464,9 +464,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						
 						// Check if that AuthorOccurrence is already in the database.
 						AuthorOccurrence aoInDB = null;
-						System.out.println("INFI ~ " + ao);
 						for( AuthorOccurrence alpha : sharers ) {
-							System.out.println("INDB ~ " + alpha);
 							if( alpha.equalsUpTo( ao, AuthorOccurrence.DELETED ) ) {
 								aoInDB = alpha;
 								break;
@@ -589,12 +587,20 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @return	The number of records in from the <code>father</code> table that share the <code>record</code>. 
 	 */
 	public int sharedBy(Record record, Class father, String column) 
-	throws RemoteException, DBLayerException {
-		SelectQuery q = db.createQuery(father);
-		q.addRestriction(RESTR_EQ, column, null, record, null);
-		int resultset = db.executeQuery(q), 
-		rows = db.getNumRows(resultset);
-		db.closeQuery(q);
+	throws RemoteException {
+		SelectQuery q = null;
+		int rows = 0;
+		try {
+			q = db.createQuery(father);
+			q.addRestriction(RESTR_EQ, column, null, record, null);
+			int resultset = db.executeQuery(q); 
+			rows = db.getNumRows(resultset);
+		} catch (DBLayerException e) {
+			e.printStackTrace();
+		} finally {
+			if(q != null)
+				db.closeQuery(q);
+		}
 		return rows;
 	}
 	
@@ -608,21 +614,26 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @return	All sharers. 
 	 */
 	protected AuthorOccurrence[] findAllSharers(Record shared) 
-	throws RemoteException, DBLayerException {
-		SelectQuery q = db.createQuery(AuthorOccurrence.class);
-		q.addRestriction(RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, shared, null);
-		int resultset = db.executeQuery(q),
-		rows = db.getNumRows(resultset);
-		AuthorOccurrence[] sharers;
-		if(rows > 0) {
-			sharers = new AuthorOccurrence[rows];
-			Object[] pulp = db.more(resultset, 0, rows - 1);
-			for( int i = 0; i < rows; i++ )
-				sharers[i] = ( (AuthorOccurrence)(  (Object[])pulp[i]  )[0] );
+	throws RemoteException {
+		SelectQuery q = null;
+		AuthorOccurrence[] sharers = new AuthorOccurrence[0];
+		try {
+			q = db.createQuery(AuthorOccurrence.class);
+			q.addRestriction(RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, shared, null);
+			int resultset = db.executeQuery(q),
+			rows = db.getNumRows(resultset);
+			if(rows > 0) {
+				sharers = new AuthorOccurrence[rows];
+				Object[] pulp = db.more(resultset, 0, rows - 1);
+				for( int i = 0; i < rows; i++ )
+					sharers[i] = ( (AuthorOccurrence)(  (Object[])pulp[i]  )[0] );
+			}
+		} catch (DBLayerException e) {
+			e.printStackTrace();			
+		} finally {
+			if(q != null)
+				db.closeQuery(q);
 		}
-		else
-			sharers = new AuthorOccurrence[0];
-		db.closeQuery(q);
 		return sharers;
 	}
 	

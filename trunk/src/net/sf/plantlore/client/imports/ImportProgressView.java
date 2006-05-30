@@ -3,6 +3,8 @@ package net.sf.plantlore.client.imports;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.text.PlainDocument;
+
 import net.sf.plantlore.l10n.L10n;
 
 
@@ -114,6 +116,7 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
     public void reset() {
     	processed =  rejected =  total =  updated =  deleted =  inserted = 0;
     	exceptionOccured = false;
+    	info.setDocument(new PlainDocument());
     }
 	
 	

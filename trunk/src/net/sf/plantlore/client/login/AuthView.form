@@ -91,9 +91,6 @@
       </AuxValues>
     </Component>
     <Component class="javax.swing.JPasswordField" name="password">
-      <Properties>
-        <Property name="echoChar" type="char" value="&#x2022;"/>
-      </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
       </AuxValues>
