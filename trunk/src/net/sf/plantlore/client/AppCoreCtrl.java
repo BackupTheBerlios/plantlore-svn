@@ -35,6 +35,7 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -500,7 +501,8 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.Add"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Add24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.AddTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Add"));            
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Add"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -535,6 +537,7 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.Edit"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Edit24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.EditTT"));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Edit"));            
         } 
 
@@ -711,7 +714,9 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.Search"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Search24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SearchTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Search"));            
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+                        
+            //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Search"));            
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -745,7 +750,8 @@ public class AppCoreCtrl
         public SchedaAction() {
             putValue(NAME, L10n.getString("Overview.Scheda"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SchedaTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Scheda"));            
+//            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Scheda"));            
+            putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/ComposeMail24.gif"));
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -951,6 +957,7 @@ public class AppCoreCtrl
     class DataMetadataAction extends AbstractAction {
         public DataMetadataAction() {
              putValue(NAME, L10n.getString("metadataManager"));
+             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
         }
 
         public void actionPerformed(ActionEvent actionEvent) {
@@ -1128,6 +1135,7 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.Refresh"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Refresh24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.RefreshTT"));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Refresh"));                        
         }
 
