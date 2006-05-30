@@ -11,6 +11,7 @@ package net.sf.plantlore.client.metadata;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.middleware.DBLayer;
@@ -22,7 +23,7 @@ import org.apache.log4j.Logger;
  *
  * @author Lada
  */
-public class MetadataManager {
+public class MetadataManager  extends Observable {
     
     /** Instance of a logger */
     private Logger logger;      
@@ -50,8 +51,9 @@ public class MetadataManager {
     //Vyvrany zaznam v tabulce s metadaty
     private Metadata selectedRecord;
     
+    private String[] editTypeArray = new String[]{PlantloreConstants.ENTITY_METADATA};
     
-    //*********************Search - promenne podle,kterych se vyhledava************//
+    //*********************Search************//
     /** Field to be used for sorting search query results */
     private int sortField = 0;
     /** Direction of sorting. 0 = ASC, 1 = DESC. Default is ASC */
@@ -211,6 +213,8 @@ public class MetadataManager {
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         }
+        setChanged(); 
+        notifyObservers(editTypeArray);
     }
     
     public void editMetadataRecord() {       
@@ -221,6 +225,8 @@ public class MetadataManager {
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         }
+        setChanged(); 
+        notifyObservers(editTypeArray);
     }
     
     public void deleteMetadataRecord() {
@@ -232,6 +238,8 @@ public class MetadataManager {
         } catch (DBLayerException ex) {
             ex.printStackTrace();
         }
+        setChanged(); 
+        notifyObservers(editTypeArray);
     }
     
            

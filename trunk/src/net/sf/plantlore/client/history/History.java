@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
@@ -42,7 +43,7 @@ import org.apache.log4j.Logger;
  *
  * @author Lada
  */
-public class History {
+public class History extends Observable {
     
       /** Instance of a logger */
     private Logger logger;      
@@ -63,7 +64,7 @@ public class History {
     /** List of data (results of a search query) displayed in the table */
     private ArrayList<HistoryRecord> historyDataList = new ArrayList();     
     // seznam editovanych objektu (potrebny pro hromadne potvrzeni update)
-    private ArrayList<Record> editObjectList = new ArrayList<Record>();
+    private ArrayList<Record> editObjectList = new ArrayList<Record>();    
     // informace pro uzivatele o record undo
     private String messageUndo;
 
@@ -126,6 +127,7 @@ public class History {
     private Hashtable<String, Integer> habitatHash;
     private Hashtable<String, Integer> metadataHash;
     private Hashtable<String, Integer> publicationHash;
+    private Hashtable<String, String> editTypeHash;
     //pro territory, village a phytochorion neni treba tvorit mapovani
     
         
@@ -1250,19 +1252,48 @@ public class History {
      *  ..... pri whole history se bude do promennych occurrence, atd. nacitat vice ruznych objektu s jinym ID
      *  ....Musim si ty jednotlive objekty pamatovat --> pole objektu, kde budou jednotlive editovane objekty
      */
-    public void commitUpdate() {
-    	
-    	int count = editObjectList.size();
+    public void commitUpdate() {    	                
+        
+        ArrayList<String> editType = new ArrayList();
+        String type;
+        String key;
+        initEditTypeHash();
+        
+    	int count = editObjectList.size();        
     	for (int i=0; i< count; i++) {
     		try {
-    			logger.debug("Object for update: "+editObjectList.get(i));
+    			logger.debug("Object for update: "+editObjectList.get(i).getId()); 
+                        
+                        type = editObjectList.get(i).getClass().getSimpleName();
+                         if (editTypeHash.containsKey(type)) {
+                                 key = (String)editTypeHash.get(type); 
+                                 if(!editType.contains(key))
+                                     editType.add(key);
+                        }                         
+                            
                         database.executeUpdateHistory(editObjectList.get(i));
 	        } catch (RemoteException e) {
 	                logger.error("CommitUpdate - RemoteException: "+e.toString());
 	        } catch (DBLayerException e) {
 	                logger.error("CommitUpdate - DBLayerException: "+e.toString());
-	        }
+	        }                
        }    	
+       
+        informMethod(editType);
+    }
+    
+    /**
+     *  Metoda vytvori pole typu editovanych objektu a preda je v parametru notifyObserver
+     */
+    public void informMethod(ArrayList<String> editType) {
+        int count = editType.size();
+        String[] editTypeArray = new String[count];
+        for(int i=0; i < count; i++) {
+            logger.debug("Type of editing object (array for appcore): " + editType.get(i));
+            editTypeArray[i] = editType.get(i);
+        }
+        setChanged(); 
+        notifyObservers(editTypeArray);
     }
     
     /**
@@ -1675,6 +1706,18 @@ public class History {
         authorHash.put(Author.NOTE, 7);        
     }              
     
+    private void initEditTypeHash() {
+        editTypeHash = new Hashtable<String, String>(5);
+        editTypeHash.put("Occurrence", PlantloreConstants.ENTITY_OCCURRENCE);                
+        editTypeHash.put("Habitat", PlantloreConstants.ENTITY_OCCURRENCE);
+        editTypeHash.put("AuthorOccurrence", PlantloreConstants.ENTITY_OCCURRENCE);                
+        editTypeHash.put("Author", PlantloreConstants.ENTITY_AUTHOR);
+        editTypeHash.put("Metadata", PlantloreConstants.ENTITY_METADATA);
+        editTypeHash.put("Publication", PlantloreConstants.ENTITY_PUBLICATION);
+        editTypeHash.put("Village", PlantloreConstants.ENTITY_VILLAGE);
+        editTypeHash.put("Territory", PlantloreConstants.ENTITY_TERRITORY);
+        editTypeHash.put("Phytochorion", PlantloreConstants.ENTITY_PHYTOCHORION);        
+    }
        
     //****************************//
     //****Get and set metods*****//
