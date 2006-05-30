@@ -127,7 +127,7 @@ public class History extends Observable {
     private Hashtable<String, Integer> habitatHash;
     private Hashtable<String, Integer> metadataHash;
     private Hashtable<String, Integer> publicationHash;
-    private Hashtable<String, String> editTypeHash;
+    private Hashtable<String, Enum> editTypeHash;
     //pro territory, village a phytochorion neni treba tvorit mapovani
     
         
@@ -1254,9 +1254,9 @@ public class History extends Observable {
      */
     public void commitUpdate() {    	                
         
-        ArrayList<String> editType = new ArrayList();
+        ArrayList<Enum> editType = new ArrayList();
         String type;
-        String key;
+        Enum key;
         initEditTypeHash();
         
     	int count = editObjectList.size();        
@@ -1266,7 +1266,7 @@ public class History extends Observable {
                         
                         type = editObjectList.get(i).getClass().getSimpleName();
                          if (editTypeHash.containsKey(type)) {
-                                 key = (String)editTypeHash.get(type); 
+                                 key = (Enum)editTypeHash.get(type); 
                                  if(!editType.contains(key))
                                      editType.add(key);
                         }                         
@@ -1285,9 +1285,9 @@ public class History extends Observable {
     /**
      *  Metoda vytvori pole typu editovanych objektu a preda je v parametru notifyObserver
      */
-    public void informMethod(ArrayList<String> editType) {
+    public void informMethod(ArrayList<Enum> editType) {
         int count = editType.size();
-        String[] editTypeArray = new String[count];
+        Enum[] editTypeArray = new Enum[count];
         for(int i=0; i < count; i++) {
             logger.debug("Type of editing object (array for appcore): " + editType.get(i));
             editTypeArray[i] = editType.get(i);
@@ -1477,7 +1477,8 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.PHYTOCHORION) + ": "+ occurrence.getHabitat().getPhytochorion().getName() +" (Code: " + occurrence.getHabitat().getPhytochorion().getCode() + ")\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.COUNTRY) + ": " + occurrence.getHabitat().getCountry() +"\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.DATASOURCE) + ": " + occurrence.getDataSource() + "\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.PUBLICATION) + ": " + occurrence.getPublication().getReferenceCitation() + "\n";
+              if (occurrence.getPublication() != null)
+                detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.PUBLICATION) + ": " + occurrence.getPublication().getReferenceCitation() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.HERBARIUM) + ": " + occurrence.getHerbarium() +"\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.NOTE) + ": " + occurrence.getNote() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NOTE) + ": " + occurrence.getHabitat().getNote() +"\n";
@@ -1707,16 +1708,16 @@ public class History extends Observable {
     }              
     
     private void initEditTypeHash() {
-        editTypeHash = new Hashtable<String, String>(5);
-        editTypeHash.put("Occurrence", PlantloreConstants.ENTITY_OCCURRENCE);                
-        editTypeHash.put("Habitat", PlantloreConstants.ENTITY_OCCURRENCE);
-        editTypeHash.put("AuthorOccurrence", PlantloreConstants.ENTITY_OCCURRENCE);                
-        editTypeHash.put("Author", PlantloreConstants.ENTITY_AUTHOR);
-        editTypeHash.put("Metadata", PlantloreConstants.ENTITY_METADATA);
-        editTypeHash.put("Publication", PlantloreConstants.ENTITY_PUBLICATION);
-        editTypeHash.put("Village", PlantloreConstants.ENTITY_VILLAGE);
-        editTypeHash.put("Territory", PlantloreConstants.ENTITY_TERRITORY);
-        editTypeHash.put("Phytochorion", PlantloreConstants.ENTITY_PHYTOCHORION);        
+        editTypeHash = new Hashtable<String, Enum>(5);
+        editTypeHash.put("Occurrence", PlantloreConstants.Table.OCCURRENCE);                
+        editTypeHash.put("Habitat", PlantloreConstants.Table.OCCURRENCE);
+        editTypeHash.put("AuthorOccurrence", PlantloreConstants.Table.OCCURRENCE);                
+        editTypeHash.put("Author", PlantloreConstants.Table.AUTHOR);
+        editTypeHash.put("Metadata", PlantloreConstants.Table.METADATA);
+        editTypeHash.put("Publication", PlantloreConstants.Table.PUBLICATION);
+        editTypeHash.put("Village", PlantloreConstants.Table.VILLAGE);
+        editTypeHash.put("Territory", PlantloreConstants.Table.TERRITORY);
+        editTypeHash.put("Phytochorion", PlantloreConstants.Table.PHYTOCHORION);        
     }
        
     //****************************//

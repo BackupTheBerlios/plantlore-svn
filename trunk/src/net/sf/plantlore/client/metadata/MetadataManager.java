@@ -51,7 +51,7 @@ public class MetadataManager  extends Observable {
     //Vyvrany zaznam v tabulce s metadaty
     private Metadata selectedRecord;
     
-    private String[] editTypeArray = new String[]{PlantloreConstants.ENTITY_METADATA};
+    private Enum[] editTypeArray = new Enum[]{PlantloreConstants.Table.METADATA};
     
     //*********************Search************//
     /** Field to be used for sorting search query results */
