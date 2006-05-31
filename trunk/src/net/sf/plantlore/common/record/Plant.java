@@ -54,7 +54,7 @@ public class Plant extends Record {
     }
     
     public List<String> getNN() {
-    	return asList( SURVEYTAXID, TAXON, SCIENTIFICNAMEAUTHOR );
+    	return asList( SURVEYTAXID, TAXON );
     }
     
     
