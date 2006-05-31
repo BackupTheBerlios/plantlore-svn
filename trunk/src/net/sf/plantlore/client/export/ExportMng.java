@@ -303,9 +303,9 @@ public class ExportMng implements Observer {
 		if(filter.getDescription().equals(L10n.getString("Format.CSV")))
 			builder = new CSVBuilder(writer, template);
 		else if(filter.getDescription().equals(L10n.getString("Format.DC")))                        
-			builder = new DarwinCoreBuilder(filter.suggestName(filename));
+			builder = new DarwinCoreBuilder(writer);
 		else if(filter.getDescription().equals(L10n.getString("Format.ABCD"))) 
-			builder = new ABCDBuilder(filter.suggestName(filename));
+			builder = new ABCDBuilder(writer);
 		else if(filter.getDescription().equals(L10n.getString("Format.XML")))                        
 			builder = new XMLBuilder(template, writer);                       
                 else if(filter.getDescription().equals(L10n.getString("Format.PlantloreNative")))                        

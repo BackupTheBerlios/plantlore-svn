@@ -1,11 +1,7 @@
 package net.sf.plantlore.client.export.builders;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import net.sf.plantlore.client.export.AbstractBuilder;
 import net.sf.plantlore.client.export.Builder;
 import net.sf.plantlore.client.export.Template;
@@ -13,7 +9,6 @@ import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -25,16 +20,13 @@ import org.dom4j.io.XMLWriter;
  *
  * @author Lada Oberreiterová
  * @since 18.5.2006
- * @version
+ *
  *
  */
 public class ABCDBuilder implements Builder {
-    
-    private Logger logger;
-
-    private Document document;
-    private File fXML;
-    private String file = "ABCD_2_06.xml";    
+        
+    private Document document;  
+    private Writer outputWriter;  
     private String projectTitle = "";
     private Element root;
     private Element actualUnitsElement;   
@@ -43,54 +35,46 @@ public class ABCDBuilder implements Builder {
     private AuthorOccurrence authorOccurrence = null;
     
     
-    /** Creates a new instance of ABCDBuilder */
-    public ABCDBuilder(String file) {                
-        logger = Logger.getLogger(this.getClass().getPackage().getName());          
+    /** 
+     * Creates a new instance of ABCDBuilder.
+     * This builder receives records (holder objects from the database)
+     * decomposes them, mapping them to ABCD Schema 2.06 and stores it in the 
+     * specified XML file. 
+     * <br/>     
+     *
+     * @param writer	The writer that will create the file.     
+     */
+    public ABCDBuilder(Writer writer) {                           
         document = DocumentHelper.createDocument();        
-        this.file = file;
-    }
-    
-    
-    public void header() throws IOException {
-	logger.debug("ABCD Builder - header.");	
+        this.outputWriter = writer;
         document.addElement("dataSets");
         root = document.getRootElement();
     }
+    
+    /** Empty. */ 
+    public void header() throws IOException {	        
+    }
 
-    /*
-     * Create new XML file for saved data.
-     * Save data into XML file in ABCD Schema.
+    /*          
+     * Generate the footer of this format.
+     * Save data to XML file in ABCD Schema.
      */
-    public void footer() throws IOException {
-        System.out.println("Training Builder disengaged.");
-        
-        fXML= new File(file);
-        if (!fXML.exists()) fXML.createNewFile();
-        
-        // Pretty print the document to System.out        
-        FileOutputStream out = new FileOutputStream(fXML);
+    public void footer() throws IOException {        
         OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer = new XMLWriter( out, format );
-        writer.write( document );
+        XMLWriter xmlwriter = new XMLWriter( outputWriter, format );
+        xmlwriter.write( document );
+        xmlwriter.close();
+    }
+    /** Empty. */
+    public void startRecord() throws IOException {            
     }
 
-    public void startRecord() throws IOException {
-            logger.debug("ABCD Builder - startRecord.");            
-    }
-
-    public void finishRecord() throws IOException {
-            logger.debug("ABCD Builder - finishRecord.");            
-    }
-
-    /**
-     * Only for testing
-     */
-    public void output(Class table, String column, Object value) throws IOException {
-            System.out.println("   " + table.getSimpleName() + "." + column + " = " + value);
+    /** Empty. */
+    public void finishRecord() throws IOException {    
     }
     
-    /**
-     * For eache occurrence generate XML elements and save value.
+    /**     
+     *  Decompose the given <code>occurrence</code>, generate XML document for ABCD Schema and mapping data of occurrence.
      */
     public void outputABCD() {
         if (occurrence == null ) return;
@@ -153,7 +137,7 @@ public class ABCDBuilder implements Builder {
     }
 
     /**
-     * For each project generate elements contains metadata (content and technidal contact person, project descrption).
+     * For each project create elements contains metadata (content contact person, technidal contact person, project descrption,...).
      *
      */
     public void generateDataSet() {
@@ -189,6 +173,9 @@ public class ABCDBuilder implements Builder {
         setActualUnitsElement(units);
     }
     
+    /*
+     *  Create elements for author of occurrence.     
+     */
      public void outputAuthors() {
         Element agents = getActualAgentElement();
         Element gatheringAgent = agents.addElement("gatheringAgent");
@@ -202,6 +189,9 @@ public class ABCDBuilder implements Builder {
         representation.addElement("text").setText(authorOccurrence.getAuthor().getOrganizationNN());
     }
     
+     /*
+      *  Build part of the whole record.
+      */
     public void part(Record record) throws IOException {
         if(record == null) return;        
         Class table = record.getClass();
@@ -214,7 +204,7 @@ public class ABCDBuilder implements Builder {
             outputAuthors();
         }               
     }    
-    
+        
     public void setActualUnitsElement(Element unitsElement) {
         this.actualUnitsElement = unitsElement;
     }

@@ -9,9 +9,9 @@
 
 package net.sf.plantlore.client.export.builders;
 
-import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
 import net.sf.plantlore.client.export.Builder;
 import net.sf.plantlore.common.record.AuthorOccurrence;
@@ -22,7 +22,6 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -34,46 +33,51 @@ import org.dom4j.io.XMLWriter;
  * @author Lada
  */
 public class DarwinCoreBuilder implements Builder {
-    
-    private Logger logger;
 
-    private Document document;
-    private File fXML;
-    private String file = "DarwinCore2.xml";        
+    private Document document;   
+    private Writer outputWriter;        
     private Element root;
     private Element actualRecordElement;       
     private Occurrence occurrence = null;  
     private AuthorOccurrence authorOccurrence = null;
     
-    /** Creates a new instance of DarwinCoreBuilder */
-    public DarwinCoreBuilder(String file) {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());          
+    /** 
+     * Creates a new instance of DarwinCoreBuilder 
+     * This builder receives records (holder objects from the database)
+     * decomposes them, mapping them to Darwin Core 2 and stores it in the 
+     * specified XML file. 
+     *
+     * @param writer	The writer that will create the file.     
+     */
+    public DarwinCoreBuilder(Writer writer) {      
         document = DocumentHelper.createDocument(); 
-        this.file = file;
-    }
-
-    public void header() throws IOException {
-        logger.debug("DarwinCore Builder - header.");	
+        this.outputWriter = writer;
         document.addElement("recordSet");
         root = document.getRootElement();
     }
 
-    public void footer() throws IOException {
-        System.out.println("DarwinCore Builder disengaged.");
-        
-        fXML= new File(file);
-        if (!fXML.exists()) fXML.createNewFile();
-        
-        // Pretty print the document to System.out        
-        FileOutputStream out = new FileOutputStream(fXML);
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer = new XMLWriter( out, format );
-        writer.write( document );
+    /** Empty. */
+    public void header() throws IOException {                
     }
 
+    /*          
+     * Generate the footer of this format.
+     * Save data to XML file in DarwinCore Schema.
+     */
+    public void footer() throws IOException {        
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        XMLWriter xmlwriter = new XMLWriter( outputWriter, format );
+        xmlwriter.write( document );
+        xmlwriter.close();
+    }
+
+    /** Empty. */
     public void startRecord() throws IOException {
     }
 
+    /*
+     * Build part of the whole record.
+     */
     public void part(Record record) throws IOException {
         if(record == null) return;        
         Class table = record.getClass();
@@ -87,11 +91,14 @@ public class DarwinCoreBuilder implements Builder {
         }     
     }
 
+    /** Empty. */
     public void finishRecord() throws IOException {
     }
 
-    private void outputDarwinCore() {
-        logger.debug("output");
+    /*
+     * Decompose the given <code>occurrence</code>, generate XML document for Darwin Core and mapping data of occurrence.     
+     */
+    private void outputDarwinCore() {      
         Element record = document.getRootElement().addElement("record");
         setActualREcordElement(record);                
                
@@ -127,7 +134,7 @@ public class DarwinCoreBuilder implements Builder {
         record.addElement("collector").setText(authorOccurrence.getAuthor().getWholeName());
     }
     
-       public void setActualREcordElement(Element recordElement) {
+   public void setActualREcordElement(Element recordElement) {
         this.actualRecordElement = recordElement;
     }
     
