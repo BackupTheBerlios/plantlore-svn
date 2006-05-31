@@ -445,7 +445,7 @@ public class ImportMng extends Observable implements Observer {
 				
 				for(int i = 0; i < r.length; i++) { 
 					Object v = (r[i] == null) ? null : r[i].getValue(property);
-					value[i].add( (v == null) ? "" : v.toString() );
+					value[i + 1].add( (v == null) ? "" : v.toString() );
 				}
 			}
 			for( String key : r[n].getForeignKeys() )
@@ -457,11 +457,11 @@ public class ImportMng extends Observable implements Observer {
 		
 
 		public int getRowCount() {
-			return columnNames.length;
+			return value[0].size(); 
 		}
 
 		public int getColumnCount() {
-			return value.length;
+			return columnNames.length;
 		}
 		
 		public String getColumnName(int column) {
