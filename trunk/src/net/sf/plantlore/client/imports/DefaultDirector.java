@@ -212,8 +212,10 @@ public class DefaultDirector extends Observable implements Runnable {
 		problematicRecord = about;
 		observerNotifier.start(); // must be another thread
 		while( lastDecision == Action.UNKNOWN && !aborted ) {
+			System.out.println(">>>> GOING TO SLEEP");
 			try { wait(); } catch( InterruptedException e ) {}
 		}
+		System.out.println(">>>> DECISION DONE => AWAKEN!");
 		return lastDecision;
 	}
 	
@@ -309,6 +311,7 @@ public class DefaultDirector extends Observable implements Runnable {
 							"records with the same Unique Identifier ("+occ.getUnitIdDb()+"-"+occ.getUnitValue()+")!");
 					setChanged();
 					notifyObservers(L10n.getFormattedString("Import.DuplicateRecord", count, occ.getUnitIdDb(), occ.getUnitValue()));
+					continue; // it is not clear which record should be updated!
 				}
 				Occurrence
 				occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
@@ -588,6 +591,9 @@ public class DefaultDirector extends Observable implements Runnable {
 	 */
 	public int sharedBy(Record record, Class father, String column) 
 	throws RemoteException {
+		
+		System.out.println(">>>> SHARE TEST: "+father+"."+column+" = " +record);
+		
 		SelectQuery q = null;
 		int rows = 0;
 		try {
@@ -601,6 +607,9 @@ public class DefaultDirector extends Observable implements Runnable {
 			if(q != null)
 				db.closeQuery(q);
 		}
+		
+		System.out.println(">>>> RESULT: " + rows);
+		
 		return rows;
 	}
 	

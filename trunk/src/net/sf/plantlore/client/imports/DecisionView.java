@@ -134,8 +134,8 @@ public class DecisionView extends javax.swing.JFrame implements Observer {
 			}
 			// There is a shared record in the database that is to be updated.
 			else {
-				question.setText(L10n.getString("Question.SharedRecord"));
-				recordView.setModel( model.getProblematicRecord() );
+				question.setText(L10n.getFormattedString("Question.SharedRecord", parameter.getClass().getSimpleName()));
+				recordView.setModel( model.getProblematicRecords() );
 				leave.setText(L10n.getString("Import.Insert"));
 				update.setText(L10n.getString("Import.Update"));
 				remember.setSelected(false);

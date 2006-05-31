@@ -26,6 +26,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
 		model.addObserver(this);
         initComponents();
         setLocationRelativeTo(null); // center of the screen
+        getRootPane().setDefaultButton(next);
         // See what's new.
         update(null, Login.UPDATE_LIST);
     }

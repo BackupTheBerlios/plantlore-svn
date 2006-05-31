@@ -25,6 +25,7 @@ public class ItemView extends javax.swing.JDialog implements Observer {
 		this.model = model;
 		model.addObserver(this);
 		initComponents();
+		getRootPane().setDefaultButton(next);
 		setLocationRelativeTo(null);
     }
     

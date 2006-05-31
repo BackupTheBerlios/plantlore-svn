@@ -343,16 +343,25 @@ public class ImportMng extends Observable implements Observer {
 		return parser.getNumberOfRecords();
 	}
 	
+	
+	private TableModel emptyTableModel = new javax.swing.table.DefaultTableModel();
+	
 	/**
 	 * 
 	 * @return	The record that is currently loaded from the database
 	 * and the record loaded from the file.
 	 */
 	public TableModel getProcessedRecords() {
-		return (director == null) ? null : 
-			new RecordTable(
-					director.getProcessedRecordInDatabase(), 
-					director.getProcessedRecordFromFile());
+		if(director == null)
+			return emptyTableModel;
+
+		Record inDB = director.getProcessedRecordInDatabase(),
+		fromFile = director.getProcessedRecordFromFile();
+		
+		if(fromFile == null || inDB == null)
+			return emptyTableModel;
+		else
+			return new RecordTable( inDB, fromFile );
 	}
 	
 	/**
@@ -360,7 +369,37 @@ public class ImportMng extends Observable implements Observer {
 	 * @return	The record that caused problems (exceptions).
 	 */
 	public TableModel getProblematicRecord() {
-		return (director == null) ? null : new RecordTable( director.getProblematic() );
+		if(director == null)
+			return emptyTableModel;
+		
+		Record problematic = director.getProblematic();
+		
+		if(problematic == null)
+			return emptyTableModel;
+		else
+			return new RecordTable( problematic );
+	}
+	
+	/**
+	 * 
+	 * @return	The record that caused a problem and the counterpart in database.
+	 */
+	public TableModel getProblematicRecords() {
+		if(director == null)
+			return emptyTableModel;
+		
+		Record problematic = director.getProblematic(),
+		counterpart = director.getProcessedRecordInDatabase();
+		if(counterpart != null && problematic != null)
+			counterpart = counterpart.findSubrecord( problematic.getClass() );
+		
+		if(problematic == null)
+			return emptyTableModel;
+		else
+			if( counterpart == null)
+				return new RecordTable( problematic );
+			else
+				return new RecordTable( counterpart, problematic );
 	}
 	
 	
@@ -435,10 +474,13 @@ public class ImportMng extends Observable implements Observer {
 		
 		private void traverse(Record...r) {
 			int n;
-			if(r[0] != null) n = 0; else if(r.length >= 2 && r[1] != null) n = 1;
-			else return;
+			for(n = 0; n < r.length; n++) {
+				if(r[n] != null) break;
+			}
+			if(r[n] == null)
+				return;
+			
 			Class table = r[n].getClass(); 
-				
 			for( String property : r[n].getProperties()) {
 				
 				value[0].add(L10n.getString(table.getSimpleName()+"."+property));
