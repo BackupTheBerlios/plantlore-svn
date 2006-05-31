@@ -724,8 +724,8 @@ public class AddEdit extends Observable {
                         while (it.hasNext()) {
                             Map.Entry<Integer, AuthorOccurrence> entry = (Entry<Integer, AuthorOccurrence>) it.next();
                             AuthorOccurrence tmp = entry.getValue();
-                            tmp.setDeleted(1);
-                            database.executeUpdate(tmp);
+                            tmp.setDeleted(2);
+                            database.executeUpdateHistory(tmp);
                             logger.debug("AuthorOccurrence id "+tmp.getId()+" "+tmp.getAuthor().getWholeName()+" deleted.");
                         }
                         //clear the authorOccurrences so that we don't try to delete them once again further in this method

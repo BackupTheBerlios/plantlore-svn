@@ -1223,6 +1223,7 @@ public class AppCoreCtrl
                             searchModel.setPublications(model.getPublications());
                             break;
                         case RIGHT: //???
+                            logger.warn("Reaction to changes in RIGHTS table is NOT IMPLEMENTED.");
                             break;
                         case TERRITORY:
                             model.loadTerritories();
@@ -1231,6 +1232,7 @@ public class AppCoreCtrl
                             searchModel.setTerritories(model.getTerritories());
                             break;
                         case USER: //???
+                            logger.warn("Reaction to changes in USERS table is NOT IMPLEMENTED.");
                             break;
                         case VILLAGE:
                             model.loadVillages();

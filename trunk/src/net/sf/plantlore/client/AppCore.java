@@ -727,8 +727,8 @@ public class AppCore extends Observable
                     setPosition(getPosition()+1);
                     
                     for (AuthorOccurrence authorOcc : aos) {
-                        authorOcc.setDeleted(1);
-                        database.executeUpdate(authorOcc);
+                        authorOcc.setDeleted(2);
+                        database.executeUpdateHistory(authorOcc);
                         logger.debug("AuthorOccurrence id "+authorOcc.getId()+" "+authorOcc.getAuthor().getWholeName()+" deleted.");
                     }
                     deleted++;
