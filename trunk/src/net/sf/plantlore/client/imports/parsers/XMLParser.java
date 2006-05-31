@@ -54,6 +54,8 @@ public class XMLParser extends AbstractParser {
             	occurrences = nodes.size();
             	occIterator = nodes.iterator();
             }
+            else
+            	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
         } catch (Exception ex) {
             throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
         } 

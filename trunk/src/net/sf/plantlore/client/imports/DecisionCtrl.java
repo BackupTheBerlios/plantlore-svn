@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 import net.sf.plantlore.client.imports.Parser.Action;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
+import net.sf.plantlore.l10n.L10n;
 
 public class DecisionCtrl {
 	
@@ -48,6 +49,10 @@ public class DecisionCtrl {
 	}
 	
 	class RememberDecision extends AbstractAction {
+		public RememberDecision() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Import.RememberDecisionTT"));
+			putValue(NAME, L10n.getString("Import.RememberDecision"));
+		}
 		public void actionPerformed(ActionEvent arg0) {
 			Object issue = model.getIssue();
 			if(issue instanceof Record)

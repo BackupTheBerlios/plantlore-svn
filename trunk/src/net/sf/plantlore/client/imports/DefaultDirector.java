@@ -267,7 +267,7 @@ public class DefaultDirector extends Observable implements Runnable {
 					count++;
 					occ = (Occurrence) parser.getNextPart(Occurrence.class);
 				} catch( ParserException e) {
-					logger.warn("The record is not valid (probably incomplete). " + e);
+					logger.warn("The record is corrupted. " + e);
 					logger.info("Skipping the record No. " + count);
 					
 					setChanged();
@@ -410,7 +410,7 @@ public class DefaultDirector extends Observable implements Runnable {
 					transactionInProgress = false;
 					// The user cannot do a thing. Should he be informed?
 					String userMsg = L10n.getFormattedString("Import.ProblematicRecord", count, occ.getUnitIdDb(), occ.getUnitValue())
-						+ ( (msg == null) ? L10n.getString("Import.UnknownReason") : msg );
+						+ " " + ( (msg == null) ? L10n.getString("Import.UnknownReason") : msg );
 					setChanged(); notifyObservers(userMsg);
 					continue;
 				}
@@ -576,7 +576,8 @@ public class DefaultDirector extends Observable implements Runnable {
 			return;
 		}
 		
-		logger.info("Import completed. " + count + " records processed. ("+inserted+" inserted, "+updated+" updated, "+deleted+" deleted).");
+		logger.info("Import completed. " + count + " records processed. ("+
+				inserted+" inserted, "+updated+" updated, "+deleted+" deleted).");
 	}
 	
 	

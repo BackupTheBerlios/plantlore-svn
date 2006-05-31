@@ -117,7 +117,7 @@ public class XTree extends javax.swing.JTree {
 				new XNode(Plant.class, Plant.TAXON, true),
 				new XNode(Plant.class, Plant.GENUS),
 				new XNode(Plant.class, Plant.SPECIES),
-				new XNode(Plant.class, Plant.SCIENTIFICNAMEAUTHOR, true),
+				new XNode(Plant.class, Plant.SCIENTIFICNAMEAUTHOR),
 				new XNode(Plant.class, Plant.CZECHNAME),
 				new XNode(Plant.class, Plant.SYNONYMS),
 				new XNode(Plant.class, Plant.NOTE)
@@ -227,7 +227,7 @@ public class XTree extends javax.swing.JTree {
 			new XNode(Plant.class, Plant.TAXON, true),
 			new XNode(Plant.class, Plant.GENUS),
 			new XNode(Plant.class, Plant.SPECIES),
-			new XNode(Plant.class, Plant.SCIENTIFICNAMEAUTHOR, true),
+			new XNode(Plant.class, Plant.SCIENTIFICNAMEAUTHOR),
 			new XNode(Plant.class, Plant.CZECHNAME),
 			new XNode(Plant.class, Plant.SYNONYMS),
 			new XNode(Plant.class, Plant.NOTE)
