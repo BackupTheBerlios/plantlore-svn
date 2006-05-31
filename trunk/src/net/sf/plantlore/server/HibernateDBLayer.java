@@ -1529,7 +1529,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     Author newRec = (Author)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
                     for (int i=0;i<cols.size();i++) {
-                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {
                             // Read record from THISTORYCOLUMN first                            
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_AUTHOR))
@@ -1554,9 +1556,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 } else if (data instanceof Publication) {
                     Publication origRec = (Publication)original[0];                    
                     Publication newRec = (Publication)data;
-                    ArrayList cols = (ArrayList)origRec.getColumns();
-                    for (int i=0;i<cols.size();i++) {
-                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                    ArrayList cols = (ArrayList)origRec.getColumns();                    
+                    for (int i=0;i<cols.size();i++) {                            
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {
                             // Read record from THISTORYCOLUMN first
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_PUBLICATION))
@@ -1583,7 +1587,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     Territory newRec = (Territory)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
                     for (int i=0;i<cols.size();i++) {
-                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {
                             // Read record from THISTORYCOLUMN first
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_TERRITORY))
@@ -1610,7 +1616,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     Metadata newRec = (Metadata)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
                     for (int i=0;i<cols.size();i++) {
-                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {
                             // Read record from THISTORYCOLUMN first
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_METADATA))
@@ -1637,7 +1645,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     Phytochorion newRec = (Phytochorion)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
                     for (int i=0;i<cols.size();i++) {
-                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {
                             // Read record from THISTORYCOLUMN first
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_PHYTOCHORION))
@@ -1663,8 +1673,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     Village origRec = (Village)original[0];                    
                     Village newRec = (Village)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
-                    for (int i=0;i<cols.size();i++) {
-                        if (!origRec.getValue((String)cols.get(i)).equals(newRec.getValue((String)cols.get(i)))) {
+                    for (int i=0;i<cols.size();i++) {                        
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {    
                             // Read record from THISTORYCOLUMN first
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_VILLAGE))
