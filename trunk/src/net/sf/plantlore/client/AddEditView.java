@@ -62,6 +62,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
         
+        getRootPane().setDefaultButton(okButton);
+        
         setLabels();
         
         //if (inEditMode)

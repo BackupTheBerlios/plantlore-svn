@@ -96,6 +96,14 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         dataMetadata = new javax.swing.JMenuItem();
         dataUser = new javax.swing.JMenuItem();
         dataWholeHistory = new javax.swing.JMenuItem();
+        occurrencesMenu = new javax.swing.JMenu();
+        occurrencesAdd = new javax.swing.JMenuItem();
+        occurrencesEdit = new javax.swing.JMenuItem();
+        occurrencesDelete = new javax.swing.JMenuItem();
+        occurrencesScheda = new javax.swing.JMenuItem();
+        occurrencesHistory = new javax.swing.JMenuItem();
+        occurrencesSearch = new javax.swing.JMenuItem();
+        occurrencesRefresh = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpContents = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
@@ -133,7 +141,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(statusLabel)
-                .addContainerGap(571, Short.MAX_VALUE))
+                .addContainerGap(582, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -175,7 +183,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 .add(recordsPerPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 45, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(nextPage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(204, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -212,11 +220,11 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -254,7 +262,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 .addContainerGap())
         );
 
-        fileMenu.setText("File");
+        fileMenu.setMnemonic(L10n.getMnemonic("Overview.MenuFile"));
+        fileMenu.setText(L10n.getString("Overview.MenuFile"));
         fileLogin.setText("Item");
         fileMenu.add(fileLogin);
 
@@ -281,7 +290,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         jMenuBar1.add(fileMenu);
 
-        dataMenu.setText("Data");
+        dataMenu.setMnemonic(L10n.getMnemonic("Overview.MenuData"));
+        dataMenu.setText(L10n.getString("Overview.MenuData"));
         dataAuthors.setText("Item");
         dataMenu.add(dataAuthors);
 
@@ -299,7 +309,39 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         jMenuBar1.add(dataMenu);
 
-        helpMenu.setText("Help");
+        occurrencesMenu.setMnemonic(L10n.getMnemonic("Overview.MenuOccurrences"));
+        occurrencesMenu.setText(L10n.getString("Overview.MenuOccurrences"));
+        occurrencesMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                occurrencesMenuActionPerformed(evt);
+            }
+        });
+
+        occurrencesAdd.setText("Item");
+        occurrencesMenu.add(occurrencesAdd);
+
+        occurrencesEdit.setText("Item");
+        occurrencesMenu.add(occurrencesEdit);
+
+        occurrencesDelete.setText("Item");
+        occurrencesMenu.add(occurrencesDelete);
+
+        occurrencesScheda.setText("Item");
+        occurrencesMenu.add(occurrencesScheda);
+
+        occurrencesHistory.setText("Item");
+        occurrencesMenu.add(occurrencesHistory);
+
+        occurrencesSearch.setText("Item");
+        occurrencesMenu.add(occurrencesSearch);
+
+        occurrencesRefresh.setText("Item");
+        occurrencesMenu.add(occurrencesRefresh);
+
+        jMenuBar1.add(occurrencesMenu);
+
+        helpMenu.setMnemonic(L10n.getMnemonic("Overview.MenuHelp"));
+        helpMenu.setText(L10n.getString("Overview.MenuHelp"));
         helpContents.setText("Item");
         helpMenu.add(helpContents);
 
@@ -318,9 +360,9 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(mainToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .add(mainToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(pageToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+            .add(pageToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -337,6 +379,10 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void occurrencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_occurrencesMenuActionPerformed
+// TODO add your handling code here:
+    }//GEN-LAST:event_occurrencesMenuActionPerformed
     
     /**
      * @param args the command line arguments
@@ -469,6 +515,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
      */
     public void setAddAction(AbstractAction a) {
         addButton.setAction(a);
+        occurrencesAdd.setAction(a);
     }
     
     /** Sets an action to the editButton.
@@ -476,6 +523,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
      */
     public void setEditAction(AbstractAction a) {
         editButton.setAction(a);
+        occurrencesEdit.setAction(a);
     }
     
     /** Sets an action to the deleteButton.
@@ -483,6 +531,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
      */
     public void setDeleteAction(AbstractAction a) {
         deleteButton.setAction(a);
+        occurrencesDelete.setAction(a);
     }
     
     
@@ -491,6 +540,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
      */
     public void setSearchAction(AbstractAction a) {
         searchButton.setAction(a);
+        occurrencesSearch.setAction(a);
     }
 
     /** Sets an action to the Data->Search menu item and to the Search toolbar button.
@@ -498,6 +548,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
      */
     public void setSchedaAction(AbstractAction a) {
         schedaButton.setAction(a);
+        occurrencesScheda.setAction(a);
     }
 
      /** Sets an action to the History toolbar button.
@@ -505,6 +556,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
      */
     public void setHistoryRecordAction(AbstractAction a) {
         historyButton.setAction(a);
+        occurrencesHistory.setAction(a);
     }
     
     /** Sets an action to the selectAll button.
@@ -649,6 +701,14 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JSeparator jSeparator4;
     private javax.swing.JToolBar mainToolBar;
     private javax.swing.JButton nextPage;
+    private javax.swing.JMenuItem occurrencesAdd;
+    private javax.swing.JMenuItem occurrencesDelete;
+    private javax.swing.JMenuItem occurrencesEdit;
+    private javax.swing.JMenuItem occurrencesHistory;
+    private javax.swing.JMenu occurrencesMenu;
+    protected javax.swing.JMenuItem occurrencesRefresh;
+    private javax.swing.JMenuItem occurrencesScheda;
+    private javax.swing.JMenuItem occurrencesSearch;
     protected javax.swing.JTable overview;
     private javax.swing.JScrollPane overviewScrollPane;
     private javax.swing.JLabel pageStatus;

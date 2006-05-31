@@ -80,6 +80,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+        setUndecorated(true);
         jPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEtchedBorder()));
 
         statusField.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
@@ -204,9 +205,9 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
                     case STOPPING:
                         setVisible(false);
                         dispose();                    
+                        parent.setCursor(Cursor.getDefaultCursor());
                         break;
                     case STOPPED:
-                        parent.setCursor(Cursor.getDefaultCursor());
                         afterStopped(value);
                         break;                    
                 }//switch

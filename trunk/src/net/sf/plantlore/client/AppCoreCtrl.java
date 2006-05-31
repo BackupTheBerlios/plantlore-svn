@@ -256,6 +256,7 @@ public class AppCoreCtrl
         view.setSelectedRowListener(new OverviewSelectionListener());
         view.overview.addMouseListener(new OverviewMouseListener());
         view.refreshButton.setAction(refreshAction);
+        view.occurrencesRefresh.setAction(refreshAction);
         
         view.overview.addKeyListener(new OverviewKeyListener());
 
@@ -534,7 +535,7 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.Add"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Add24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.AddTT"));
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Add"));            
         } 
 
@@ -576,6 +577,8 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.Delete"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/Delete24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.DeleteTT"));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Delete"));            
         } 
 
@@ -603,12 +606,14 @@ public class AppCoreCtrl
                                 DBLayerException e = (DBLayerException)ex;
                                 JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
                                 logger.error(e+": "+e.getErrorInfo());
+                                getTask().stop();
                                 return;
                             }
                             if (ex instanceof RemoteException) {
                                 RemoteException e = (RemoteException)ex;
                                 JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
                                 logger.error(e);
+                                getTask().stop();
                                 return;
                             }
                             JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
@@ -704,6 +709,7 @@ public class AppCoreCtrl
         public SchedaAction() {
             putValue(NAME, L10n.getString("Overview.Scheda"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SchedaTT"));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 //            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Scheda"));            
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/ComposeMail24.gif"));
         } 
@@ -762,6 +768,7 @@ public class AppCoreCtrl
                                 JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);            
                             }
                         });
+                        getTask().stop();
                     }                    
                     public void afterStopped(final Object value) {
                         SwingUtilities.invokeLater(new Runnable() {
@@ -873,6 +880,7 @@ public class AppCoreCtrl
                 putValue(NAME, L10n.getString("Overview.History"));
             putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/History24.gif"));
             putValue(SHORT_DESCRIPTION, L10n.getString("Overview.HistoryTT"));
+//            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.History"));                        
         }
         
@@ -1159,6 +1167,7 @@ public class AppCoreCtrl
                 public void exceptionHandler(Exception ex) {   
                     //FIXME
                     ex.printStackTrace();
+                    getTask().stop();
                 }                    
             };
             progressBar.setTitle(L10n.getString("Overview.Refresh.ProgressTitle"));

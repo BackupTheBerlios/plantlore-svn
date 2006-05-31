@@ -61,7 +61,7 @@ public class DBLayerUtils {
         AuthorOccurrence[] authorResults = null;
         SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
-        sq.addRestriction(PlantloreConstants.RESTR_NE,AuthorOccurrence.DELETED,null,1,null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.DELETED,null,0,null);
         int resultid = db.executeQuery(sq);
         int resultCount = db.getNumRows(resultid);
         authorResults = new AuthorOccurrence[resultCount];
@@ -85,7 +85,7 @@ public class DBLayerUtils {
     public void deleteHabitat(Habitat h) throws DBLayerException, RemoteException {
         SelectQuery sq = db.createQuery(Occurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
-        sq.addRestriction(PlantloreConstants.RESTR_NE,Occurrence.DELETED, null, 1, null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DELETED, null, 0, null);
         int resultid = db.executeQuery(sq);
         int resultCount = db.getNumRows(resultid);
         if (resultCount == 0) {
