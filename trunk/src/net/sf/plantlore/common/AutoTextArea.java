@@ -333,6 +333,29 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			this.values.add(obj);
 	}
 	
+        public AutoTextArea(Container container) {
+                this(new String[] {""}, container);
+        }
+        
+        public AutoTextArea(JDialog dialog) {
+            this(new String[] {""}, dialog.getLayeredPane());
+        }
+        
+        public AutoTextArea(JFrame frame) {
+            this(new String[] {""}, frame.getLayeredPane());
+        }
+        
+        public void setChoices(Object[] choices) {
+            if (choices == null)
+                choices = new String[] {""};
+            assistant.setChoices(choices);
+            assistant.getList().addMouseListener(this);
+            this.choices = choices;
+            this.values = new HashSet<Object>(choices.length);
+            for(Object obj : choices)
+                    this.values.add(obj);            
+        }
+        
 	/**
 	 * The list of choices, or "allowed values" - for fast searching.
 	 */

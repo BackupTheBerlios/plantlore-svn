@@ -66,6 +66,7 @@ import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.StatusBarManager;
@@ -183,6 +184,9 @@ public class AppCoreCtrl
     ImportProgressCtrl importProgressCtrl;
     DecisionView importDecisionView;
     DecisionCtrl importDecisionCtrl;
+
+    //Bridges
+    ManagerBridge managerBridge = new ManagerBridge();
     
     //Actions
     AbstractAction settingsAction = new SettingsAction();
@@ -260,11 +264,37 @@ public class AppCoreCtrl
         
         view.setLoginAction(loginAction);
         
+        constructDialogs();                
+               
         // This is here in order to skip login procedure and connect to the database automatically
         // For developement purposes only - so that we don't have to go through login each time we run Plantlore 
         // view.initOverview();
         
         setDatabaseDependentCommandsEnabled(false);
+    }
+    
+    private void constructDialogs() {
+        //--- Add ---
+        addModel = new AddEdit(model.getDatabase(),false);
+        addView = new AddEditView(view, true, addModel, false);
+        addView.setTitle(L10n.getString("AddEdit.AddDialogTitle"));
+        addCtrl = new AddEditCtrl(addModel, addView, false);
+
+        //--- Edit ---
+        editModel = new AddEdit(model.getDatabase(),true);
+        editView = new AddEditView(view, true, editModel, true);
+        editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
+        editCtrl = new AddEditCtrl(editModel, editView, true);
+        
+        
+        //--- Search ---
+        searchModel = new Search(model.getDatabase());
+        StatusBarManager sbm = view.getSBM();
+        searchModel.setColumns(model.getTableModel().getColumns());
+        searchView = new SearchView(view, true, searchModel);
+        searchView.setTitle(L10n.getString("Search.DialogTitle"));
+        searchCtrl = new SearchCtrl(searchModel, searchView);
+        searchModel.addObserver(new SearchBridge());
     }
     
     private void setDatabaseDependentCommandsEnabled(boolean enabled) {
@@ -331,10 +361,11 @@ public class AppCoreCtrl
                 if (s.equals("COLUMNS")) {
                     logger.debug("User changed columns in settings. Propagating the change to overview and config.");
                     ArrayList<Column> columns = settingsModel.getSelectedColumns();
-                    model.getTableModel().setColumns(columns);
+                    model.getTableSorter().setColumns(columns);
                     model.getMainConfig().setColumns(columns);
                     
                     searchModel.setColumns(columns);
+                    searchModel.clear();
                     searchModel.constructQuery();
                 }
             }
@@ -507,28 +538,8 @@ public class AppCoreCtrl
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Add"));            
         } 
 
-        public void actionPerformed(ActionEvent actionEvent) {
-            if (addView == null) {
-                addModel = new AddEdit(model.getDatabase(),false);
-                addModel.setAuthors(model.getAuthors());
-                addModel.setAuthorRoles(model.getAuthorRoles());
-                addModel.setPlants(model.getPlants());
-                addModel.setVillages(model.getVillages());
-                addModel.setPhytNames(model.getPhytNames());
-                addModel.setPhytCodes(model.getPhytCodes());
-                addModel.setCountries(model.getCountries());
-                addModel.setSources(model.getSources());
-                addModel.setPublications(model.getPublications());
-                addModel.setProjects(model.getProjects());
-                addModel.setTerritories(model.getTerritories());
-                
-                addView = new AddEditView(view, true, addModel, false);
-                addView.setTitle(L10n.getString("AddEdit.AddDialogTitle"));
-                addCtrl = new AddEditCtrl(addModel, addView, false);
-            }
+        public void actionPerformed(ActionEvent actionEvent) {                
             addModel.clear();
-            //fixme: should be automatic via observer/observable
-            addView.clearComponentData();
             addView.setVisible(true);
         }
     }
@@ -544,50 +555,18 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            if (editView == null) {
-                editModel = new AddEdit(model.getDatabase(),true);
-                editModel.setAuthors(model.getAuthors());
-                editModel.setAuthorRoles(model.getAuthorRoles());
-                editModel.setPlants(model.getPlants());
-                editModel.setVillages(model.getVillages());
-                editModel.setPhytNames(model.getPhytNames());
-                editModel.setPhytCodes(model.getPhytCodes());
-                editModel.setCountries(model.getCountries());
-                editModel.setSources(model.getSources());
-                editModel.setPublications(model.getPublications());
-                editModel.setProjects(model.getProjects());
-                editModel.setTerritories(model.getTerritories());
-                
-                Object[] row = model.getSelectedRow();
-                try {
-                    editModel.setRecord((Integer) row[row.length-1]);
-                } catch (DBLayerException ex) {
-                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(ex+": "+ex.getErrorInfo());
-                } catch (RemoteException ex) {
-                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(ex);
-                }
-                editView = new AddEditView(view, true, editModel, true);
-                editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
-                editCtrl = new AddEditCtrl(editModel, editView, true);
-                editView.loadComponentData();
-                editView.setVisible(true);                
-                return;
-            } else {
-                Object[] row = model.getSelectedRow();
-                try {
-                    editModel.setRecord((Integer) row[row.length-1]);
-                } catch (DBLayerException ex) {
-                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(ex+": "+ex.getErrorInfo());
-                } catch (RemoteException ex) {
-                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(ex);
-                }
-                editView.loadComponentData();
-                editView.setVisible(true);
+            Object[] row = model.getSelectedRow();
+            try {
+                editModel.setRecord((Integer) row[row.length-1]);
+            } catch (DBLayerException ex) {
+                JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                logger.error(ex+": "+ex.getErrorInfo());
+            } catch (RemoteException ex) {
+                JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                logger.error(ex);
             }
+            editView.loadComponentData();
+            editView.setVisible(true);
         }
     }
     
@@ -684,32 +663,6 @@ public class AppCoreCtrl
         }
     }
 
-    private void constructSearchMVC() {
-            if (searchModel == null) {
-                searchModel = new Search(model.getDatabase());
-                StatusBarManager sbm = view.getSBM();
-                
-                searchModel.setColumns(model.getTableModel().getColumns());
-                
-                searchModel.setAuthors(model.getAuthors());
-                searchModel.setAuthorRoles(model.getAuthorRoles());
-                searchModel.setPlants(model.getPlants());
-                searchModel.setVillages(model.getVillages());
-                searchModel.setPhytNames(model.getPhytNames());
-                searchModel.setPhytCodes(model.getPhytCodes());
-                searchModel.setCountries(model.getCountries());
-                searchModel.setSources(model.getSources());
-                searchModel.setPublications(model.getPublications());
-                searchModel.setProjects(model.getProjects());
-                searchModel.setTerritories(model.getTerritories());
-                
-                searchView = new SearchView(view, true, searchModel);
-                searchView.setTitle(L10n.getString("Search.DialogTitle"));
-                searchCtrl = new SearchCtrl(searchModel, searchView);
-                searchModel.addObserver(new SearchBridge());
-            }        
-    }
-    
     class SearchAction extends AbstractAction {
         public SearchAction() {
             if (showButtonText)
@@ -723,7 +676,6 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             searchModel.clear();
-            searchView.clearComponentData();
             searchView.setVisible(true);
         }
     }
@@ -933,6 +885,7 @@ public class AppCoreCtrl
             historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());
             historyView = new HistoryView(historyModel, view, true);
             historyCtrl = new HistoryCtrl(historyModel, historyView);
+            historyModel.addObserver(managerBridge);
             historyView.setVisible(true);                         
         }
         
@@ -949,6 +902,7 @@ public class AppCoreCtrl
             wholeHistoryModel = new History(model.getDatabase());
             wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view, true);
             wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel, wholeHistoryView);
+            wholeHistoryModel.addObserver(managerBridge);
             wholeHistoryView.setVisible(true); 
         }
     }    
@@ -968,6 +922,7 @@ public class AppCoreCtrl
             metadataManagerModel = new MetadataManager(model.getDatabase());
             metadataManagerView = new MetadataManagerView(metadataManagerModel, view, true);
             metadataManagerCtrl = new MetadataManagerCtrl(metadataManagerModel, metadataManagerView);
+            metadataManagerModel.addObserver(managerBridge);
             metadataManagerView.setVisible(true);
         }
     }              
@@ -1082,6 +1037,50 @@ public class AppCoreCtrl
     
     // Update all information about the database layer and inform everyone who has to be informed 
     class DatabaseChange implements Observer {
+        /** Fetches combobox items from AppCore and stores them to dialog models.
+         *
+         */
+        private void fillDialogModels() {
+            logger.debug("Filling Add model.");
+                addModel.setAuthors(model.getAuthors());
+                addModel.setAuthorRoles(model.getAuthorRoles());
+                addModel.setPlants(model.getPlants());
+                addModel.setVillages(model.getVillages());
+                addModel.setPhytNames(model.getPhytNames());
+                addModel.setPhytCodes(model.getPhytCodes());
+                addModel.setCountries(model.getCountries());
+                addModel.setSources(model.getSources());
+                addModel.setPublications(model.getPublications());
+                addModel.setProjects(model.getProjects());
+                addModel.setTerritories(model.getTerritories());            
+
+            logger.debug("Filling Edit model.");
+                editModel.setAuthors(model.getAuthors());
+                editModel.setAuthorRoles(model.getAuthorRoles());
+                editModel.setPlants(model.getPlants());
+                editModel.setVillages(model.getVillages());
+                editModel.setPhytNames(model.getPhytNames());
+                editModel.setPhytCodes(model.getPhytCodes());
+                editModel.setCountries(model.getCountries());
+                editModel.setSources(model.getSources());
+                editModel.setPublications(model.getPublications());
+                editModel.setProjects(model.getProjects());
+                editModel.setTerritories(model.getTerritories());
+
+            logger.debug("Filling Search model.");
+                searchModel.setAuthors(model.getAuthors());
+                searchModel.setAuthorRoles(model.getAuthorRoles());
+                searchModel.setPlants(model.getPlants());
+                searchModel.setVillages(model.getVillages());
+                searchModel.setPhytNames(model.getPhytNames());
+                searchModel.setPhytCodes(model.getPhytCodes());
+                searchModel.setCountries(model.getCountries());
+                searchModel.setSources(model.getSources());
+                searchModel.setPublications(model.getPublications());
+                searchModel.setProjects(model.getProjects());
+                searchModel.setTerritories(model.getTerritories());
+        }
+
     	public void update(Observable targer, Object parameter) {
     		if(parameter != null && parameter instanceof DBLayer) {
                         loginAction.setEnabled(false);
@@ -1101,12 +1100,19 @@ public class AppCoreCtrl
                             JOptionPane.showMessageDialog(view,"Database problem","Some database problem occurred:\n"+ex,JOptionPane.WARNING_MESSAGE);
                             return;
                         }
-    			model.setAccessRights( loginModel.getAccessRights() );
+                        //distribute database to dialogs
+                        addModel.setDatabase(dblayer);
+                        editModel.setDatabase(dblayer);
+                        searchModel.setDatabase(dblayer);
+    			
+                        model.setAccessRights( loginModel.getAccessRights() );
                         model.login();
                         
+                        view.getSBM().display(L10n.getString("Message.FillingDialogs"));
+                        fillDialogModels();
+                        
                         view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
-                        constructSearchMVC();
-                        searchModel.setDatabase(model.getDatabase());
+                        searchModel.clear();
                         searchModel.constructQuery();
                         view.getSBM().displayDefaultText();
                         
@@ -1162,4 +1168,89 @@ public class AppCoreCtrl
         
     }
     
+    /** Propagates changes made in managers to the rest of the application.
+     *
+     */
+    class ManagerBridge implements Observer {
+        public void update(Observable o, Object arg) {
+            if (arg instanceof PlantloreConstants.Table[]) {
+                PlantloreConstants.Table[] tables = (PlantloreConstants.Table[])arg;   
+                try {
+                for (PlantloreConstants.Table table : tables) {
+                    logger.debug("ManagerBridge received message that "+table+" has been updated.");
+                    switch (table) {
+                        case AUTHOR:
+                            model.loadAuthors();
+                            addModel.setAuthors(model.getAuthors());
+                            editModel.setAuthors(model.getAuthors());
+                            searchModel.setAuthors(model.getAuthors());
+                            break;
+                        case AUTHOROCCURRENCE:
+                            model.loadAuthorRoles();
+                            addModel.setAuthorRoles(model.getAuthorRoles());
+                            editModel.setAuthorRoles(model.getAuthorRoles());
+                            searchModel.setAuthorRoles(model.getAuthorRoles());                            
+                            break;
+                        case METADATA:
+                            model.loadProjects();
+                            addModel.setProjects(model.getProjects());
+                            editModel.setProjects(model.getProjects());
+                            searchModel.setProjects(model.getProjects());
+                            break;
+                        case OCCURRENCE:
+                            refreshAction.actionPerformed(null);
+                            break;
+                        case PHYTOCHORION:
+                            model.loadPhytCodes();
+                            model.loadPhytNames();
+                            addModel.setPhytCodes(model.getPhytCodes());
+                            addModel.setPhytNames(model.getPhytNames());
+                            editModel.setPhytCodes(model.getPhytCodes());
+                            editModel.setPhytNames(model.getPhytNames());
+                            searchModel.setPhytCodes(model.getPhytCodes());
+                            searchModel.setPhytNames(model.getPhytNames());
+                            break;
+                        case PLANT:
+                            model.loadPlants();
+                            addModel.setPlants(model.getPlants());
+                            editModel.setPlants(model.getPlants());
+                            searchModel.setPlants(model.getPlants());
+                            break;
+                        case PUBLICATION:
+                            model.loadPublications();
+                            addModel.setPublications(model.getPublications());
+                            editModel.setPublications(model.getPublications());
+                            searchModel.setPublications(model.getPublications());
+                            break;
+                        case RIGHT: //???
+                            break;
+                        case TERRITORY:
+                            model.loadTerritories();
+                            addModel.setTerritories(model.getTerritories());
+                            editModel.setTerritories(model.getTerritories());
+                            searchModel.setTerritories(model.getTerritories());
+                            break;
+                        case USER: //???
+                            break;
+                        case VILLAGE:
+                            model.loadVillages();
+                            addModel.setVillages(model.getVillages());
+                            editModel.setVillages(model.getVillages());
+                            searchModel.setVillages(model.getVillages());
+                            break;
+                    }//switch table
+                }//for
+                } catch (DBLayerException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex+": "+ex.getErrorInfo());
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex);
+                }
+            }//if arg instanceof Table[]
+        }//update()        
+    }//class ManagerBridge
+    
 }
+
+

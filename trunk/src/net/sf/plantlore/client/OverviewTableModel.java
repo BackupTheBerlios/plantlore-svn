@@ -315,7 +315,6 @@ public class OverviewTableModel extends AbstractTableModel {
         logger.debug("Setting new overview columns.");
         selectionColumnIndex = columns.indexOf(new Column(Column.Type.SELECTION)) - 1; // we don't display the first column which is always Occurrence.ID
                                                                                        // so the index as JTable sees it is -1
-        
         this.columns = columns;
     }
     

@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -63,8 +64,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         
         setLabels();
         
-        if (inEditMode)
-            loadComponentData();
+        //if (inEditMode)
+        //    loadComponentData();
         
         jPanel3.setVisible(visible);
         jPanel2.setPreferredSize(new Dimension(DIALOG_WIDTH,190));
@@ -84,19 +85,15 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel2 = new javax.swing.JPanel();
         townLabel = new javax.swing.JLabel();
         //items = new Object[] {"Praha", "Brno", "Turnov", "Trebic"};
-        townComboBox = new AutoComboBoxNG3(model.getVillages(), true);
+        townComboBox = new AutoComboBoxNG3(true);
         taxonLabel = new javax.swing.JLabel();
         yearLabel = new javax.swing.JLabel();
         placeDescriptionLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         descriptionArea = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
-        Pair<String, Integer>[] plants = model.getPlants();
-        String[] choices = new String[plants.length];
-        for (int i = 0; i < plants.length; i++)
-        choices[i] = plants[i].getFirst();
 
-        taxonTextArea = new AutoTextArea(choices, this);
+        taxonTextArea = new AutoTextArea(this);
         extendedButton = new javax.swing.JToggleButton();
         checklistButton = new javax.swing.JButton();
         yearSpinner = new javax.swing.JSpinner();
@@ -116,10 +113,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         territoryNameLabel = new javax.swing.JLabel();
         phytNameLabel = new javax.swing.JLabel();
         phytCodeLabel = new javax.swing.JLabel();
-        territoryNameCombo = new AutoComboBoxNG3(model.getTerritories(), true);
-        phytNameCombo = new AutoComboBoxNG3(model.getPhytNames(), true);
-        phytCodeCombo = new AutoComboBoxNG3(model.getPhytCodes(), true);
-        phytCountryCombo = new AutoComboBoxNG3(model.getCountries(), false);
+        territoryNameCombo = new AutoComboBoxNG3(true);
+        phytNameCombo = new AutoComboBoxNG3(true);
+        phytCodeCombo = new AutoComboBoxNG3(true);
+        phytCountryCombo = new AutoComboBoxNG3(false);
         quadrantTextField = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         publicationLabel = new javax.swing.JLabel();
@@ -127,9 +124,9 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         projectLabel = new javax.swing.JLabel();
         herbariumTextField = new javax.swing.JTextField();
         sourceLabel = new javax.swing.JLabel();
-        sourceCombo = new AutoComboBoxNG3(model.getSources(), false);
-        publicationCombo = new AutoComboBoxNG3(model.getPublications(), true);
-        projectCombo = new AutoComboBoxNG3(model.getProjects(), true);
+        sourceCombo = new AutoComboBoxNG3(false);
+        publicationCombo = new AutoComboBoxNG3(true);
+        projectCombo = new AutoComboBoxNG3(true);
         jPanel7 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         locationNoteArea = new javax.swing.JTextArea();
@@ -722,9 +719,19 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         TableColumn tc3 = authorTable.getColumnModel().getColumn(2);
         TableColumn tc4 = authorTable.getColumnModel().getColumn(3);
 
-        JComboBox cb = new AutoComboBoxNG3(model.getAuthors());
+        JComboBox cb;
+        if (model.getAuthors() == null) 
+            cb = new AutoComboBoxNG3();
+        else
+            cb = new AutoComboBoxNG3(model.getAuthors());
+        
         tc1.setCellEditor(new DefaultCellEditor(cb));  
-        cb = new AutoComboBoxNG3(model.getAuthorRoles());
+        
+        if (model.getAuthorRoles() == null) 
+            cb = new AutoComboBoxNG3();
+        else
+            cb = new AutoComboBoxNG3(model.getAuthorRoles());
+        
         tc2.setCellEditor(new DefaultCellEditor(cb));
         
         ButtonEditor be = new ButtonEditor(model);
@@ -899,7 +906,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 //unfortunately have to set up the editors and renderers again because of the
                 //fireTableStructureChanged() in the tableModel.removeRow() ... :-/
                 //initAuthorTable();            
-            }
+            }            
         }
         
         if (arg instanceof String) {
@@ -913,6 +920,116 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getMonth() == null)
                     dayChooser.setEnabled(false);
             }
+            if (s.equals("CLEAR"))
+                clearComponentData();
+            
+            if (s.equals("PLANTS_CHANGED")) {
+                logger.debug("Updating plant area");
+                if (model.getPlants() == null) {
+                    ((AutoTextArea)taxonTextArea).setChoices(new String[] {""});
+                    return;
+                }
+                Pair<String, Integer>[] plants = model.getPlants();
+                String[] choices = new String[plants.length];
+                for (int i = 0; i < plants.length; i++) 
+                    choices[i] = plants[i].getFirst();
+                
+                ((AutoTextArea)taxonTextArea).setChoices(choices);
+            }
+            
+            if (s.equals("AUTHORS_CHANGED")) {
+                logger.debug("Updating authors combo");
+                JComboBox cb;
+                
+                if (model.getAuthors() == null) 
+                    cb = new AutoComboBoxNG3();
+                else
+                    cb = new AutoComboBoxNG3(model.getAuthors());
+                    
+                TableColumn tc1 = authorTable.getColumnModel().getColumn(0);
+
+                
+                tc1.setCellEditor(new DefaultCellEditor(cb));  
+            }
+
+            if (s.equals("AUTHORROLES_CHANGED")) {
+                logger.debug("Updating authorroles combobox");
+                JComboBox cb;
+                
+                if (model.getAuthorRoles() == null)
+                    cb = new AutoComboBoxNG3();
+                else
+                    cb = new AutoComboBoxNG3(model.getAuthorRoles());
+
+                TableColumn tc2 = authorTable.getColumnModel().getColumn(1);
+                
+                tc2.setCellEditor(new DefaultCellEditor(cb));                
+            }
+            
+            if (s.equals("VILLAGES_CHANGED")) {
+                logger.debug("Updating villages combobox");
+                if (model.getVillages() == null)
+                    townComboBox.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    townComboBox.setModel(new DefaultComboBoxModel(model.getVillages()));;                
+            }
+            
+            if (s.equals("TERRITORIES_CHANGED")) {
+                logger.debug("Updating territories combobox");
+                if (model.getTerritories() == null)
+                    territoryNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    territoryNameCombo.setModel(new DefaultComboBoxModel(model.getTerritories()));;                                
+            }
+
+            if (s.equals("PHYTNAMES_CHANGED")) {
+                logger.debug("Updating phytnames combobox");
+                if (model.getPhytNames() == null)
+                    phytNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    phytNameCombo.setModel(new DefaultComboBoxModel(model.getPhytNames()));;                                
+            }
+
+            if (s.equals("PHYTCODES_CHANGED")) {
+                logger.debug("Updating phytcodes combobox");
+                if (model.getPhytCodes() == null)
+                    phytCodeCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    phytCodeCombo.setModel(new DefaultComboBoxModel(model.getPhytCodes()));;                                
+            }
+
+            if (s.equals("COUNTRIES_CHANGED")) {
+                logger.debug("Updating countries combobox");
+                if (model.getCountries() == null)
+                    phytCountryCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    phytCountryCombo.setModel(new DefaultComboBoxModel(model.getCountries()));;                                
+            }
+            
+            if (s.equals("SOURCES_CHANGED")) {
+                logger.debug("Updating sources combobox");
+                if (model.getSources() == null)
+                    sourceCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    sourceCombo.setModel(new DefaultComboBoxModel(model.getSources()));;                                
+            }
+            
+            if (s.equals("PUBLICATIONS_CHANGED")) {
+                logger.debug("Updating publications combobox");
+                if (model.getPublications() == null)
+                    publicationCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    publicationCombo.setModel(new DefaultComboBoxModel(model.getPublications()));;                                
+            }
+
+            if (s.equals("PROJECTS_CHANGED")) {
+                logger.debug("Updating projects combobox");
+                if (model.getProjects() == null)
+                    projectCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                else
+                    projectCombo.setModel(new DefaultComboBoxModel(model.getProjects()));;                                
+            }
+            
         }
     }
         

@@ -412,6 +412,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         setPreferredColumnSizes();
         recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));  
         overview.getSelectionModel().setSelectionInterval(0,0);
+        overview.setAutoCreateColumnsFromModel(true);
     }
 
     /** Returns the main window <code>StatusBarManager</code>.

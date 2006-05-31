@@ -55,6 +55,19 @@ public class Assistant extends JScrollPane {
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setFocusable(false);
 	}
+        
+        public Assistant(Container container) {
+		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		setVisible(false); setSize(200,100); setLocation(0, 0);
+		container.add(this, JLayeredPane.POPUP_LAYER);            
+        }
+        
+        public void setChoices(Object[] choices) {
+            setList(new JList(choices));
+            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            list.setFocusable(false);
+        }
 	
 	/** Get the list of choices. */
 	public JList getList() { 

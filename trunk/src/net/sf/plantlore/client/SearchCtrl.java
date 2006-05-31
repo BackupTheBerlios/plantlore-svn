@@ -121,7 +121,7 @@ public class SearchCtrl {
             if (command.equals("phytCodeCombo") && !(c.getSelectedItem() instanceof String))
                 model.setPhytCode((Pair<String, Integer>) c.getSelectedItem());
            
-            if (command.equals("phytCountryCombo") && !(c.getSelectedItem() instanceof String))
+            if (command.equals("phytCountryCombo"))
                 model.setPhytCountry((String) c.getSelectedItem());
 
             if (command.equals("sourceCombo"))

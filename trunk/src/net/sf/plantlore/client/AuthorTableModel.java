@@ -46,12 +46,12 @@ public class AuthorTableModel extends AbstractTableModel {
         row[3] = "";
         data.add(row);
         loadDataFromModel();
-        fireTableDataChanged();
     }
     
-    private void loadDataFromModel() {
+    public void loadDataFromModel() {
         for (int i = 0; i < aemodel.getAuthorCount(); i++)
             addRow(aemodel.getAuthor(i), aemodel.getAuthorRole(i), aemodel.getResultRevision(i));        
+        fireTableDataChanged();
     }
     
     public void reset() {
@@ -138,8 +138,11 @@ public class AuthorTableModel extends AbstractTableModel {
             return;
         Object[] row = data.get(r);
         row[c] = o;
-        if (c == 0)
+        if (c == 0) {
+            if (!(o instanceof Pair)) //the combobox could contain only one empty string (new AutoComboBoxNG3())
+                return;
             aemodel.setAuthor(r, (Pair<String, Integer>) o);
+        }
         if (c == 1)
             aemodel.setAuthorRole(r, (String) o);
         if (c == 3)

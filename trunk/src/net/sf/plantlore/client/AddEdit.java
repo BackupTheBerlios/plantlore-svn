@@ -58,7 +58,7 @@ public class AddEdit extends Observable {
     private Occurrence o; //original occurrence
     
     //list of authors user selects
-    private ArrayList<Pair<Pair<String,Integer>,String>> authorList;
+    private ArrayList<Pair<Pair<String,Integer>,String>> authorList = new ArrayList<Pair<Pair<String,Integer>,String>>();
     private ArrayList<String> resultRevision;
     private HashSet<Pair<Integer,String>> originalAuthors;//authors with the same name and different role are different authors for us --> they each have their own AuthorOccurrence record
     
@@ -112,7 +112,7 @@ public class AddEdit extends Observable {
     public AddEdit(DBLayer database, Boolean editMode) {
         this.database = database;
         this.editMode = editMode;
-        logger = Logger.getLogger(this.getClass().getPackage().getName());                
+        logger = Logger.getLogger(this.getClass().getPackage().getName());      
     }
  
     /** Makes the model load data from the parameter ao.
@@ -269,14 +269,16 @@ public class AddEdit extends Observable {
             return;
         }
         this.phytName = phytName;
-        for (int i=0; i < phytCodes.length; i++) {
-            if (phytCodes[i].getSecond().equals(phytName.getSecond())) {
-                phytCode = phytCodes[i];
-                logger.debug("SetPhytName For "+phytName+" found "+phytCode);
-                skipUpdate = true;
-                break;
-            } 
-        }
+        if (phytCodes != null)
+            for (int i=0; i < phytCodes.length; i++) {
+                if (phytCodes[i].getSecond().equals(phytName.getSecond())) {
+                    phytCode = phytCodes[i];
+                    logger.debug("SetPhytName For "+phytName+" found "+phytCode);
+                    skipUpdate = true;
+                    break;
+                } 
+            }
+        else return;
         logger.debug("PhytName set to "+phytName);
         setChanged();
         notifyObservers(new Pair<String,Integer>("updateCode",-1));
@@ -296,14 +298,17 @@ public class AddEdit extends Observable {
             return;
         }
         this.phytCode = phytCode;
-        for (int i=0; i < phytNames.length; i++) {
-            if (phytNames[i].getSecond().equals(phytCode.getSecond())) {
-                phytName = phytNames[i];
-                logger.debug("SetPhytCode For "+phytCode+" found "+phytName);
-                skipUpdate = true;
-                break;
+        if (phytNames != null)
+            for (int i=0; i < phytNames.length; i++) {
+                if (phytNames[i].getSecond().equals(phytCode.getSecond())) {
+                    phytName = phytNames[i];
+                    logger.debug("SetPhytCode For "+phytCode+" found "+phytName);
+                    skipUpdate = true;
+                    break;
+                }
             }
-        }
+        else
+            return;
         logger.debug("PhytCode set to "+phytCode);
         setChanged();
         notifyObservers(new Pair<String,Integer>("updateName",-1));
@@ -1009,7 +1014,7 @@ public class AddEdit extends Observable {
             //Pair<Pair<String,Integer>,Pair<String,Integer>> p;
             SelectQuery sq = database.createQuery(AuthorOccurrence.class);        
             sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
-            sq.addRestriction(PlantloreConstants.RESTR_NE, AuthorOccurrence.DELETED, null, 1, null);
+            sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
             int resultid = database.executeQuery(sq);
             int resultCount = database.getNumRows(resultid);
             Object[] results = database.more(resultid, 0, resultCount-1);
@@ -1102,6 +1107,7 @@ public class AddEdit extends Observable {
     public void setPlants(Pair<String, Integer>[] plants) {
         logger.debug(""+plants.length+" plants set.");
         this.plants = plants;
+        setChanged(); notifyObservers("PLANTS_CHANGED");
     }
 
     public Pair<String, Integer>[] getAuthors() {
@@ -1111,6 +1117,7 @@ public class AddEdit extends Observable {
     public void setAuthors(Pair<String, Integer>[] authors) {
         logger.debug(""+authors.length+" authors set.");
         this.authors = authors;
+        setChanged(); notifyObservers("AUTHORS_CHANGED");
     }
 
     public String[] getAuthorRoles() {
@@ -1120,6 +1127,7 @@ public class AddEdit extends Observable {
     public void setAuthorRoles(String[] authorRoles) {
         logger.debug(""+authorRoles.length+" author roles set.");
         this.authorRoles = authorRoles;
+        setChanged(); notifyObservers("AUTHORROLES_CHANGED");
     }
 
     public Pair<String, Integer>[] getVillages() {
@@ -1129,6 +1137,7 @@ public class AddEdit extends Observable {
     public void setVillages(Pair<String, Integer>[] villages) {
         logger.debug(""+villages.length+" villages set.");
         this.villages = villages;
+        setChanged(); notifyObservers("VILLAGES_CHANGED");
     }
 
     public Pair<String, Integer>[] getTerritories() {
@@ -1138,6 +1147,7 @@ public class AddEdit extends Observable {
     public void setTerritories(Pair<String, Integer>[] territories) {
         logger.debug(""+territories.length+" territories set.");
         this.territories = territories;
+        setChanged(); notifyObservers("TERRITORIES_CHANGED");
     }
 
     public Pair<String, Integer>[] getPhytNames() {
@@ -1147,6 +1157,7 @@ public class AddEdit extends Observable {
     public void setPhytNames(Pair<String, Integer>[] phytNames) {
         logger.debug(""+phytNames.length+" phytochorion names set.");
         this.phytNames = phytNames;
+        setChanged(); notifyObservers("PHYTNAMES_CHANGED");
     }
 
     public Pair<String, Integer>[] getPhytCodes() {
@@ -1156,6 +1167,7 @@ public class AddEdit extends Observable {
     public void setPhytCodes(Pair<String, Integer>[] phytCodes) {
         logger.debug(""+phytCodes.length+" phytochorion codes set.");
         this.phytCodes = phytCodes;
+        setChanged(); notifyObservers("PHYTCODES_CHANGED");
     }
 
     public String[] getCountries() {
@@ -1163,8 +1175,9 @@ public class AddEdit extends Observable {
     }
 
     public void setCountries(String[] countries) {
-        logger.debug(""+countries.length+" set.");
+        logger.debug(""+countries.length+" countries set.");
         this.countries = countries;
+        setChanged(); notifyObservers("COUNTRIES_CHANGED");
     }
 
     public String[] getSources() {
@@ -1172,8 +1185,9 @@ public class AddEdit extends Observable {
     }
 
     public void setSources(String[] sources) {
-        logger.debug(""+sources.length+" set.");
+        logger.debug(""+sources.length+" sources set.");
         this.sources = sources;
+        setChanged(); notifyObservers("SOURCES_CHANGED");
     }
 
     public Pair<String, Integer>[] getPublications() {
@@ -1181,8 +1195,9 @@ public class AddEdit extends Observable {
     }
 
     public void setPublications(Pair<String, Integer>[] publications) {
-        logger.debug(""+publications.length+" set.");
+        logger.debug(""+publications.length+" publications set.");
         this.publications = publications;
+        setChanged(); notifyObservers("PUBLICATIONS_CHANGED");
     }
 
     public Pair<String, Integer>[] getProjects() {
@@ -1190,8 +1205,9 @@ public class AddEdit extends Observable {
     }
 
     public void setProjects(Pair<String, Integer>[] projects) {
-        logger.debug(""+projects.length+" set.");
+        logger.debug(""+projects.length+" projects set.");
         this.projects = projects;
+        setChanged(); notifyObservers("PROJECTS_CHANGED");
     }
 
     //for add mode
@@ -1216,6 +1232,8 @@ public class AddEdit extends Observable {
         month = Calendar.getInstance().get(Calendar.MONTH);
         day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         time = null;
+        setChanged();
+        notifyObservers("CLEAR");
     }
     
 }

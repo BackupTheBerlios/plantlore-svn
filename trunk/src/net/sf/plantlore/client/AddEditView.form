@@ -140,7 +140,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getVillages(), true);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true);"/>
             <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="//items = new Object[] {&quot;Praha&quot;, &quot;Brno&quot;, &quot;Turnov&quot;, &quot;Trebic&quot;};"/>
             <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="townComboBox.setActionCommand(&quot;townComboBox&quot;);"/>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -203,8 +203,8 @@
                 <Property name="autoscrolls" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoTextArea(choices, this);"/>
-                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Pair&lt;String, Integer&gt;[] plants = model.getPlants();&#xa;String[] choices = new String[plants.length];&#xa;for (int i = 0; i &lt; plants.length; i++) &#xa;    choices[i] = plants[i].getFirst();&#xa;&#xa;"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoTextArea(this);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
             </Component>
@@ -600,7 +600,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getTerritories(), true); "/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true); "/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="territoryNameCombo.setActionCommand(&quot;territoryNameCombo&quot;);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -612,7 +612,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getPhytNames(), true); "/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true); "/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="phytNameCombo.setActionCommand(&quot;phytNameCombo&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -624,7 +624,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getPhytCodes(), true); "/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true); "/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="phytCodeCombo.setActionCommand(&quot;phytCodeCombo&quot;);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -636,7 +636,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getCountries(), false); "/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(false); "/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="phytCountryCombo.setActionCommand(&quot;phytCountryCombo&quot;);&#xa;phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -759,7 +759,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getSources(), false); "/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(false); "/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="sourceCombo.setActionCommand(&quot;sourceCombo&quot;);&#xa;sourceCombo.insertItemAt(model.EMPTY_STRING,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -771,7 +771,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getPublications(), true);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true);"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="publicationCombo.setActionCommand(&quot;publicationCombo&quot;);&#xa;publicationCombo.insertItemAt(model.EMPTY_PAIR,0);"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -783,7 +783,7 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(model.getProjects(), true);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true);"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="projectCombo.setActionCommand(&quot;projectCombo&quot;);&#xa;"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>

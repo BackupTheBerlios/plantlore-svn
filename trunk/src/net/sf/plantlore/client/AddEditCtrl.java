@@ -143,35 +143,37 @@ public class AddEditCtrl {
             
             String command = e.getActionCommand();
             
-            System.out.println("command: "+command);
             
             //------- ComboBoxes --------            
 //            if (command.equals("authorComboBox"))
 //                model.setAuthor((Pair<String, Integer>) c.getSelectedItem());
-                
-            if (command.equals("townComboBox"))
+             
+            //we have to check whether the selected item is of the right type
+            //because of the possibility that the choices set to the combobox were null
+            //and therefore it by default created only one item with an empty string
+            if (command.equals("townComboBox") && (c.getSelectedItem() instanceof Pair))
                 model.setVillage((Pair<String, Integer>) c.getSelectedItem());
            
-            if (command.equals("territoryNameCombo"))
+            if (command.equals("territoryNameCombo") && (c.getSelectedItem() instanceof Pair))
                 model.setTerritoryName((Pair<String, Integer>) c.getSelectedItem());
 
-            if (command.equals("phytNameCombo"))
+            if (command.equals("phytNameCombo") && (c.getSelectedItem() instanceof Pair))
                 model.setPhytName((Pair<String, Integer>) c.getSelectedItem());
            
-            if (command.equals("phytCodeCombo"))
+            if (command.equals("phytCodeCombo") && (c.getSelectedItem() instanceof Pair))
                 //System.out.println("c.getSelectedItem(): "+c.getSelectedItem());
                 model.setPhytCode((Pair<String, Integer>) c.getSelectedItem());
            
-            if (command.equals("phytCountryCombo"))
+            if (command.equals("phytCountryCombo") && (c.getSelectedItem() instanceof String))
                 model.setPhytCountry((String) c.getSelectedItem());
 
-            if (command.equals("sourceCombo"))
+            if (command.equals("sourceCombo") && (c.getSelectedItem() instanceof String))
                 model.setSource((String) c.getSelectedItem());
            
-            if (command.equals("publicationCombo"))
+            if (command.equals("publicationCombo") && (c.getSelectedItem() instanceof Pair))
                 model.setPublication((Pair<String, Integer>) c.getSelectedItem());
            
-            if (command.equals("projectCombo"))
+            if (command.equals("projectCombo") && (c.getSelectedItem() instanceof Pair))
                 model.setProject((Pair<String, Integer>) c.getSelectedItem());
             
         }

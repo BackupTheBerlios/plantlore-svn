@@ -1,5 +1,6 @@
 package net.sf.plantlore.common;
 
+import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -7,10 +8,13 @@ import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.BorderFactory;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
+import javax.swing.plaf.metal.MetalComboBoxEditor;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -84,6 +88,8 @@ public class AutoComboBoxNG3 extends JComboBox {
 		JTextField e = (JTextField)(editor.getEditorComponent());
 		AutoDocument a = new AutoDocument(); // change the model ~~> AutoDocument 
 		e.setDocument(a); e.addKeyListener(a); e.addFocusListener(a);
+                //setBorder(BorderFactory.createLineBorder(Color.BLUE));
+                //updateUI();
 	}
 	
 	/**
@@ -109,9 +115,13 @@ public class AutoComboBoxNG3 extends JComboBox {
 	
 	
 	public AutoComboBoxNG3() {
-		this(new String[] { null });		
+		this(new String[] { "" });		
 	} 
 	
+	public AutoComboBoxNG3(boolean strict) {
+		this(new String[] { "" });
+                this.strict = strict;
+	} 
 	
 	public void addItems(Object[] items) {
 		for(Object item : items)
@@ -126,7 +136,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 	 * 
 	 * @author Erik Kratochvíl
 	 */
-	private class EnhancedEditor extends BasicComboBoxEditor {
+	private class EnhancedEditor extends MetalComboBoxEditor {
 		@Override
 		public Object getItem() {
 			String prefix = editor.getText();
@@ -137,9 +147,9 @@ public class AutoComboBoxNG3 extends JComboBox {
 					return value;
 			}
 			return (strict ? null : prefix);
-		} 
-	}
-	
+		}               
+        }
+        
 	/**
 	 * @return
 	 * The return value is based on the mode. 
