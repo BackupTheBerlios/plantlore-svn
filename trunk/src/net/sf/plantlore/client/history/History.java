@@ -176,7 +176,7 @@ public class History extends Observable {
        occurrence = ((Occurrence)objHis[0]);
        
        //FIXME: bude nutno dovyhledavat autory
-       setNameAuthor(getAllAuthors(occurrence));
+       setNameAuthor(getAllNameOfAuthors(getAllAuthors(occurrence, 0)));
        setNamePlant(occurrence.getPlant().getTaxon());       
        setLocation(occurrence.getHabitat().getNearestVillage().getName());
        
@@ -476,7 +476,19 @@ public class History extends Observable {
              occurrence.setDeleted(isDelete);              
              //Add to list of changed Record
              if (!editObjectList.contains((Record)occurrence))                 
-                editObjectList.add((Record)occurrence);             
+                editObjectList.add((Record)occurrence);       
+             //pripsat PRI obnovani z DELETE obnoveni i autoru (autorOcc)
+             isDelete = (isDelete == 1) ? 2 : isDelete;
+             Object[] objects = getAllAuthors(occurrence, 2-isDelete);
+             int countResult = objects.length;               
+             for (int i=0; i<countResult; i++ ) {                    							
+                Object[] autOcc = (Object[])objects[i];          
+                AuthorOccurrence authorOccurrence = (AuthorOccurrence)autOcc[0];
+                authorOccurrence.setDeleted(isDelete);
+                 //Add to list of changed Record
+                 if (!editObjectList.contains((Record)authorOccurrence))                 
+                    editObjectList.add((Record)authorOccurrence);                 
+            }                                     
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {
              Object[] object = searchObject("AuthorOccurrence",recordId);  
              AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];
@@ -1201,17 +1213,29 @@ public class History extends Observable {
     
     /*
      * Funkce, ktera mi dohleda vsechny autory ke konkretnimu nalezu
+     * isDlete - rekne, zda pozadujeme vsechny aktivni nebo neaktivni zaznamy
      */
-    public String getAllAuthors(Occurrence occurrence) {
-        String allAuthor = "";
-        SelectQuery query = null;
+    public Object[] getAllAuthors(Occurrence occurrence, int isDelete) {        
         
-        int resultId = 0;
-        
+        SelectQuery query = null;        
+        int resultId = 0;        
         try {
             query = database.createQuery(AuthorOccurrence.class);
             query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, occurrence , null);
-            query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0 , null);
+            if (isDelete == 1) {
+                query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 1 , null);
+            } else {
+                Object[] args = new Object[8];
+                args[0] = PlantloreConstants.RESTR_EQ;
+                args[1] = AuthorOccurrence.DELETED;
+                args[2] = null;
+                args[3] = 0;                    
+                args[4] = PlantloreConstants.RESTR_EQ;
+                args[5] = AuthorOccurrence.DELETED;
+                args[6] = null;
+                args[7] = 2;
+                query.addOrRestriction(args);                
+            }
             resultId = database.executeQuery(query);
         } catch(RemoteException e) {
             System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
@@ -1222,13 +1246,29 @@ public class History extends Observable {
        
        try {
             int to = database.getNumRows(resultId); 
-            objects = database.more(resultId, 0, to-1);  
+            if (to > 0)
+                objects = database.more(resultId, 0, to-1);  
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } catch (DBLayerException ex) {
             ex.printStackTrace();
-        }  
-        
+        }         
+       //close session
+        try {
+            database.closeQuery(query);
+        } catch(RemoteException e) {
+            System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
+        }         
+       return objects;
+    }
+    
+    /*
+     * Funkce, ktera vrati jmena autoru pro dany nalez
+     */
+    public String getAllNameOfAuthors(Object[] objects) {
+        if (objects == null)
+            return "";
+        String allAuthor = "";
         int countResult = objects.length;  
         logger.debug("Authos of occurrence. Results retrieved. Count: "+ countResult);        
         // Cast the results to the AuthorOccurrence objects
@@ -1237,14 +1277,7 @@ public class History extends Observable {
             String author = ((AuthorOccurrence)object[0]).getAuthor().getWholeName();
             String role = ((AuthorOccurrence)object[0]).getRole();
             allAuthor = allAuthor + author + " (" + L10n.getString(PlantloreConstants.ENTITY_AUTHOR + "." + Author.ROLE + "." +role) + ")" + ", ";
-        }           
-       //close session
-        try {
-            database.closeQuery(query);
-        } catch(RemoteException e) {
-            System.err.println("RemoteException, getAllAuthors() - AuthorOccurrence, createQuery");
-        }
-        
+        }                        
        return allAuthor;     	    
     }
     
@@ -1469,7 +1502,7 @@ public class History extends Observable {
               Occurrence occurrence = historyChange.getOccurrence();             
               detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE + "."+ Occurrence.PLANT) + ": "+ occurrence.getPlant().getTaxon()+"\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOROCCURRENCE+"."+ AuthorOccurrence.AUTHOR) + ": " +getAllAuthors(occurrence) + "\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOROCCURRENCE+"."+ AuthorOccurrence.AUTHOR) + ": " +getAllNameOfAuthors(getAllAuthors(occurrence, 0)) + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE +"."+ Occurrence.ISODATETIMEBEGIN) + ": " + occurrence.getIsoDateTimeBegin() +"\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NEARESTVILLAGE) + ": "+ occurrence.getHabitat().getNearestVillage().getName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.DESCRIPTION) + ": "+ occurrence.getHabitat().getDescription() + "\n";
