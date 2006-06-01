@@ -54,7 +54,7 @@ public class TableImportTask extends Task {
 	}
 	
 	
-
+	
 	/**
 	 * 
 	 * @param db	The database where the data will be imported.
@@ -107,11 +107,12 @@ public class TableImportTask extends Task {
 			int resultId = db.executeQuery( q ),
 			rows = db.getNumRows( resultId );
 			
-			Collection<Record> cache = new HashSet<Record>(rows);
+			Map<Record, Record> cache = new Hashtable<Record, Record>(rows);
 			
 			for(int i = 0; i < rows; i++) {
 				Object[] pulp = db.more(resultId, i, i);
-				cache.add( (Record)((Object[])(pulp[0]))[0] );
+				Record rec = (Record)((Object[])(pulp[0]))[0]; 
+				cache.put( rec, rec );
 			}
 			
 			db.closeQuery( q );
@@ -148,41 +149,48 @@ public class TableImportTask extends Task {
 								" ==> " + data.replacement :
 								""));
 				
+				
+				Record recordInDB = cache.get( data.record );
+				boolean isRecordInDB = recordInDB != null;
+								
 				// Take action.
 				try {
 					switch(data.action) {
 					case INSERT:
-						if( !cache.contains(data.record) ) {
+						if( !isRecordInDB ) {
 							insert( data.record );
-							cache.add( data.record );
+							cache.put( data.record, data.record );
 						}
 						inserted++;						
 						break;
 					case DELETE:
-						if( cache.contains(data.record) ) {
-							delete( data.record );
+						if( isRecordInDB ) {
+							delete( recordInDB );
 							cache.remove( data.record );
 						}
 						deleted++;
 						break;
 					case UPDATE:
-						if( !cache.contains(data.replacement) )
-							if( !cache.remove(data.record) ) {
+						Record replacementInDB = cache.get(data.replacement); 
+						if( replacementInDB == null )
+							if( !isRecordInDB ) {
 								insert( data.replacement );
-								cache.add( data.replacement );
+								cache.put( data.replacement, data.replacement );
 							}
 							else {
-								update( data.record, data.replacement );
-								cache.add( data.replacement );
+								cache.remove(data.record);
+								update( recordInDB, data.replacement );
+								cache.put( data.replacement, data.replacement );
 							}
 						updated ++;
 						break;
 					}
 				} catch(ImportException ie) {
-					logger.error("The import of the record No. " + count + " was unsuccessful! " + ie);
+					logger.error("The import of the record No. " + count + " was unsuccessful! " + ie.getMessage());
 					setStatusMessage( ie.getMessage() );
 				} catch(DBLayerException de) {
-					logger.error("Delete/update/insert failed! " + de);
+					logger.error("Delete/update/insert failed! " + de.getMessage());
+					de.printStackTrace();
 					setStatusMessage( L10n.getFormattedString("Error.UnableToProcess", count) + " " + 
 							((de.getMessage() == null) ? L10n.getString("Import.UnknownReason") : de.getMessage()) );
 				}
@@ -231,6 +239,9 @@ public class TableImportTask extends Task {
 	 */
 	protected int sharedBy(Record record) 
 	throws RemoteException {
+		if(record.getId() == null)
+			return 0;
+		
 		SelectQuery q = null;
 		int rows = 0;
 		try {
@@ -264,8 +275,11 @@ public class TableImportTask extends Task {
 	 */
 	protected void update(Record current, Record replacement) 
 	throws RemoteException, DBLayerException {
-		for(String property : current.getProperties())
+		
+		for(String property : current.getProperties()) {
+			System.out.println("                 replacing "+property);
 			current.setValue(property, replacement.getValue(property));
+		}
 		
 		db.executeUpdateInTransaction( current );
 	}
@@ -274,12 +288,14 @@ public class TableImportTask extends Task {
 	 */
 	protected void delete(Record record) 
 	throws RemoteException, DBLayerException, ImportException {
-		int sharers = sharedBy( record );
-		if( sharers > 0 ) {
-			logger.error("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
-			throw new ImportException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
+		if(record.getId() != null) {
+			int sharers = sharedBy( record );
+			if( sharers > 0 ) {
+				logger.error("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
+				throw new ImportException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
+			}
+			db.executeDeleteInTransaction( record );
 		}
-		db.executeDeleteInTransaction( record );
 	}
 	
 	
