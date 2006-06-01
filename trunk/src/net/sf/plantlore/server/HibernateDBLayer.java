@@ -85,21 +85,33 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private static final int UPDATE = 2;
     private static final int DELETE = 3;
     
+    private String databaseConnectionPrefix;
+    
     /**
      * Creates a new instance of HibernateDBLayer.
      * 
      *  @param undertaker The object that is responsible for cleanup if the client crashes. 
      */
     public HibernateDBLayer(Undertaker undertaker) {
-    	this();
-    	this.undertaker = undertaker;
-    	logger.debug("      completely completed.");
+    	this(undertaker, "");
     }
     
-    /** Creates a new instance of HibernateDBLayer */
+    public HibernateDBLayer(String databaseConnectionPrefix) {
+    	this(null, databaseConnectionPrefix);
+    }
+    
     public HibernateDBLayer() {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());                
-        logger.debug("      Constructing a new HibernateDBLayer ...");        
+    	this(null, "");
+    }
+    
+    
+    /** Creates a new instance of HibernateDBLayer */
+    public HibernateDBLayer(Undertaker undertaker, String databaseConnectionPrefix) {
+        logger = Logger.getLogger(this.getClass().getPackage().getName());
+        logger.debug("      Constructing a new HibernateDBLayer ...");
+        
+        this.databaseConnectionPrefix = databaseConnectionPrefix;
+        
         // Initialize pool of result sets, initial capacity = INITIAL POOL SIZE
         results = new Hashtable<Integer, ScrollableResults>(INITIAL_POOL_SIZE); 
         // Initialize maximum result id
@@ -108,6 +120,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Table of all living queries, initial capacity = INITIAL_POOL_SIZE
         queries = new Hashtable<SelectQuery, SelectQuery>(INITIAL_POOL_SIZE);        
         sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
+        
+        this.undertaker = undertaker;
+        
         logger.debug("      completed.");
     }
     
@@ -139,7 +154,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // TODO: this should be loaded from a configuration file on the server
         // We are temporarily using this for DB authetication and user athentication as well
-        cfg.setProperty("hibernate.connection.url", dbID);
+        cfg.setProperty("hibernate.connection.url", databaseConnectionPrefix + dbID);
         cfg.setProperty("hibernate.connection.username", user);
         cfg.setProperty("hibernate.connection.password", password);
         try {
