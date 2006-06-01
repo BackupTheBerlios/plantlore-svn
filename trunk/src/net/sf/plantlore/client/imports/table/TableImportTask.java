@@ -6,6 +6,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
+import net.sf.plantlore.client.imports.table.TableParser.Action;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.exception.ImportException;
@@ -106,7 +107,7 @@ public class TableImportTask extends Task {
 			int resultId = db.executeQuery( q ),
 			rows = db.getNumRows( resultId );
 			
-			Set<Record> cache = new HashSet<Record>(rows);
+			Collection<Record> cache = new HashSet<Record>(rows);
 			
 			for(int i = 0; i < rows; i++) {
 				Object[] pulp = db.more(resultId, i, i);
@@ -142,6 +143,11 @@ public class TableImportTask extends Task {
 					setStatusMessage(L10n.getFormattedString("Import.IncompleteRecord", count));					
 				}
 				
+				logger.debug(data.action+" "+data.record + 
+						((data.action == Action.UPDATE) ? 
+								" ==> " + data.replacement :
+								""));
+				
 				// Take action.
 				try {
 					switch(data.action) {
@@ -169,7 +175,7 @@ public class TableImportTask extends Task {
 								update( data.record, data.replacement );
 								cache.add( data.replacement );
 							}
-						updated++;
+						updated ++;
 						break;
 					}
 				} catch(ImportException ie) {
@@ -228,8 +234,13 @@ public class TableImportTask extends Task {
 		SelectQuery q = null;
 		int rows = 0;
 		try {
-			q = db.createQuery( parentTable.get(record.getClass()) );
-			q.addRestriction(RESTR_EQ, parentColumn.get(record.getClass()), null, record, null);
+			Class parent = parentTable.get( record.getClass() );
+			String column = parentColumn.get( record.getClass() );
+			
+			System.out.println(parent.getSimpleName()+"."+column);
+			
+			q = db.createQuery( parent );
+			q.addRestriction(RESTR_EQ, column, null, record, null);
 			int resultset = db.executeQuery(q); 
 			rows = db.getNumRows(resultset);
 		} catch (DBLayerException e) {

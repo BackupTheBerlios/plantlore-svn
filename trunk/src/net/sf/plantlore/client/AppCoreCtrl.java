@@ -91,6 +91,8 @@ import net.sf.plantlore.client.imports.ImportMngCtrl;
 import net.sf.plantlore.client.imports.ImportMngView;
 import net.sf.plantlore.client.imports.ImportProgressCtrl;
 import net.sf.plantlore.client.imports.ImportProgressView;
+import net.sf.plantlore.client.imports.table.TableImportMng;
+import net.sf.plantlore.client.imports.table.TableImportMngCtrl;
 import net.sf.plantlore.client.login.Login;
 import net.sf.plantlore.client.login.LoginCtrl;
 import net.sf.plantlore.client.login.LoginView;
@@ -184,6 +186,10 @@ public class AppCoreCtrl
     ImportProgressCtrl importProgressCtrl;
     DecisionView importDecisionView;
     DecisionCtrl importDecisionCtrl;
+    
+    // Immutable Table Import
+    TableImportMng tableImportModel;
+    TableImportMngCtrl tableImportCtrl;
 
     //Bridges
     ManagerBridge managerBridge = new ManagerBridge();
@@ -194,7 +200,7 @@ public class AppCoreCtrl
     AbstractAction helpContentsAction = new HelpContentsAction();
     AbstractAction helpAboutAction = new HelpAboutAction();
     AbstractAction  exportAction = new ExportAction();
-    AbstractAction importAction = new ImportAction();
+    AbstractAction importAction = new TableImportAction();
     
     AbstractAction dataAuthorsAction = new DataAuthorsAction();
     AbstractAction dataPublicationsAction = new DataPublicationsAction();
@@ -264,7 +270,7 @@ public class AppCoreCtrl
         view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
         
         view.setLoginAction(loginAction);
-        
+                
         constructDialogs();                
                
         // This is here in order to skip login procedure and connect to the database automatically
@@ -471,6 +477,30 @@ public class AppCoreCtrl
         }
     }
     
+    
+    class TableImportAction extends AbstractAction {
+        public TableImportAction() {
+            putValue(NAME, L10n.getString("Overview.TableImport"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.TableImportTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.TableImport"));            
+        } 
+
+        public void actionPerformed(ActionEvent actionEvent) {
+        	if(tableImportModel == null) {
+        		try {
+        			tableImportModel = new TableImportMng( model.getDatabase() );
+        			tableImportCtrl = new TableImportMngCtrl( tableImportModel, view );
+        		} catch(ImportException e) {
+        			logger.error("Import MVC cannot be created. " + e.getMessage());
+        			return;
+        		}
+        	}
+
+        	tableImportCtrl.setVisible( true );
+        }
+    }
+    
+    
     class ExportAction extends AbstractAction {
         public ExportAction() {
             putValue(NAME, L10n.getString("dataExport"));
@@ -505,8 +535,10 @@ public class AppCoreCtrl
             		 * FIXME: Solve this with Jakub.
             		 *==============================================================*/
             		SelectQuery query;
-            		if(searchModel == null) 
+            		if(searchModel == null) {
+            			System.out.println(">>>>>>>> CREATING A FAKE QUERY");
             			query = model.getDatabase().createQuery(Occurrence.class); // fake the query
+            		}
             		else {
             			Object[] queryParam = searchModel.constructExportQuery();
             			query = (SelectQuery)queryParam[0];
@@ -781,7 +813,7 @@ public class AppCoreCtrl
                 pb.setTitle(L10n.getString("Scheda.ProgressTitle"));
                 
                 task.start();
-            } catch(JRException ex) {
+            } catch(Exception ex) { // Unreachable CATCH block
                 logger.error("Broken report: "+ex);
                 JOptionPane.showMessageDialog(view,L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);
             }

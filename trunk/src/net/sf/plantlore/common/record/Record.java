@@ -351,6 +351,17 @@ public abstract class Record implements Serializable {
 		return new ArrayList<String>(Arrays.asList(values));
 	}
 	
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		for(String property : getProperties()) {
+			Object value = getValue(property);
+			if( value != null)
+				hash ^= value.hashCode(); 
+		}
+		return hash;
+	}
+	
 
 	/**
 	 * Convert the record into a string. 
@@ -362,7 +373,7 @@ public abstract class Record implements Serializable {
 		StringBuilder sigma = new StringBuilder();
 		for(String property : this.getProperties())
 			sigma.append(getClass().getSimpleName()).append('.').
-			append(property).append(" = ").append(this.getValue(property)).append("; ");
+			append(property).append(" = ").append(this.getValue(property)).append(";\n");
 		for(String key : getForeignKeys()) {
 			Record subrecord = (Record)getValue(key); 
 			if(subrecord != null)	sigma.append( subrecord.toString() );

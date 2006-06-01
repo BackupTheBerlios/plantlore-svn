@@ -16,7 +16,6 @@ import net.sf.plantlore.l10n.L10n;
 public class UnifiedTableParser implements TableParser {
 	
 	private Document document;
-	private Record current, replacement;
 	private DataHolder data = new DataHolder();
 	
 	private int numberOfRecords = -1;
@@ -54,11 +53,6 @@ public class UnifiedTableParser implements TableParser {
             }
             else
             	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
-            
-            current = (Record)table.newInstance();
-			replacement = (Record)table.newInstance();
-			data.record = current;
-			data.replacement = replacement;
 			
 			rootTable = table;
         } catch (Exception ex) {
@@ -77,22 +71,29 @@ public class UnifiedTableParser implements TableParser {
 	throws ParserException {
 		if(recIterator == null)
 			return null;
-		
-		Node node = (Node) recIterator.next();
-		reconstruct( current, node );
-		node = node.getParent();
-		String name = (node == null) ? "add" : node.getName().toLowerCase();
-		
-		if( name.startsWith("add") )
-			data.action = Action.INSERT;
-		else if( name.startsWith("del") )
-			data.action = Action.DELETE;
-		else if( name.startsWith("upd")) {
-			data.action = Action.UPDATE;
-			node = (Node) recIterator.next();
-			if(node == null)
-				throw new ParserException("Error.MissingUpdateRecord");
-			reconstruct( replacement, node );
+
+		try {
+			data.record = (Record)rootTable.newInstance();
+			
+			Node node = (Node) recIterator.next();
+			reconstruct( data.record, node );
+			node = node.getParent();
+			String name = (node == null) ? "add" : node.getName().toLowerCase();
+			
+			if( name.startsWith("add") )
+				data.action = Action.INSERT;
+			else if( name.startsWith("del") )
+				data.action = Action.DELETE;
+			else if( name.startsWith("upd")) {
+				data.action = Action.UPDATE;
+				node = (Node) recIterator.next();
+				if(node == null)
+					throw new ParserException("Error.MissingUpdateRecord");
+				data.replacement = (Record)rootTable.newInstance();
+				reconstruct( data.replacement, node );
+			}
+		} catch(Exception e) {
+			throw new ParserException("Import.PartialyCorruptedRecord");
 		}
 		
 		return data;
