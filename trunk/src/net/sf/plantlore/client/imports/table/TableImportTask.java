@@ -95,8 +95,7 @@ public class TableImportTask extends Task {
 	 */
 	public Object task() throws Exception {
 		SelectQuery q = null;
-		boolean transactionInProgress =  false;
-		
+
 		logger.info("Import into "+table+" begins...");
 		
 		setLength( parser.getNumberOfRecords() );
@@ -118,9 +117,7 @@ public class TableImportTask extends Task {
 			db.closeQuery( q );
 			q = null;
 			
-			transactionInProgress = db.beginTransaction();
-			if( ! transactionInProgress )
-				throw new ImportException(L10n.getString("Error.TransactionRaceConditions"));
+			
 						
 			while( !isCanceled() && parser.hasNext() ) {
 				DataHolder data = null;
@@ -198,14 +195,13 @@ public class TableImportTask extends Task {
 
 			
 			if( !isCanceled() ) {
-				transactionInProgress = ! db.commitTransaction();
 				logger.info("Import completed. "+count+" records processed ("+
 						inserted+" inserted, "+updated+" updated, "+deleted+" deleted).");
 				setStatusMessage(L10n.getString("Import.Completed"));
 			}
 			else {
-				transactionInProgress = ! db.rollbackTransaction();
-				logger.info("Import aborted. Nothing will be stored in the database.");
+				logger.info("Import aborted. "+count+" records processed ("+
+						inserted+" inserted, "+updated+" updated, "+deleted+" deleted).");
 				setStatusMessage(L10n.getString("Import.Aborted"));
 			}
 			
@@ -213,8 +209,6 @@ public class TableImportTask extends Task {
 			try {
 				if(q != null) 
 					db.closeQuery( q );
-				if(transactionInProgress) 
-					transactionInProgress = ! db.rollbackTransaction();
 			} catch(Exception re) {}
 			
 			logger.fatal("Import ended prematurely. "+count+" records processed ("+
@@ -267,7 +261,7 @@ public class TableImportTask extends Task {
 	 */
 	protected void insert(Record record) 
 	throws RemoteException, DBLayerException {
-		db.executeInsertInTransaction( record );
+		db.executeInsert( record );
 
 	}
 	
@@ -276,12 +270,10 @@ public class TableImportTask extends Task {
 	protected void update(Record current, Record replacement) 
 	throws RemoteException, DBLayerException {
 		
-		for(String property : current.getProperties()) {
-			System.out.println("                 replacing "+property);
+		for(String property : current.getProperties())
 			current.setValue(property, replacement.getValue(property));
-		}
 		
-		db.executeUpdateInTransaction( current );
+		db.executeUpdate( current );
 	}
 		
 	/**
@@ -294,7 +286,7 @@ public class TableImportTask extends Task {
 				logger.error("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
 				throw new ImportException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
 			}
-			db.executeDeleteInTransaction( record );
+			db.executeDelete( record );
 		}
 	}
 	
