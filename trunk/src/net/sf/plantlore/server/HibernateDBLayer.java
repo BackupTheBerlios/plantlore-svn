@@ -86,6 +86,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private static final int DELETE = 3;
     
     private String databaseConnectionPrefix;
+    private String databaseMasterUser;
+    private String databaseMasterPassword;
     
     /**
      * Creates a new instance of HibernateDBLayer.
@@ -93,20 +95,24 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @param undertaker The object that is responsible for cleanup if the client crashes. 
      */
     public HibernateDBLayer(Undertaker undertaker) {
-    	this(undertaker, "");
+    	this(undertaker, "", null, null);
     }
     
     public HibernateDBLayer(String databaseConnectionPrefix) {
-    	this(null, databaseConnectionPrefix);
+    	this(null, databaseConnectionPrefix, null, null);
     }
     
     public HibernateDBLayer() {
-    	this(null, "");
+    	this(null, "", null, null);
     }
     
     
     /** Creates a new instance of HibernateDBLayer */
-    public HibernateDBLayer(Undertaker undertaker, String databaseConnectionPrefix) {
+    public HibernateDBLayer(
+    		Undertaker undertaker, 
+    		String databaseConnectionPrefix,
+    		String user,
+    		String password) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         logger.debug("      Constructing a new HibernateDBLayer ...");
         
@@ -122,6 +128,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
         
         this.undertaker = undertaker;
+        databaseMasterUser = user;
+        databaseMasterPassword = password;
         
         logger.debug("      completed.");
     }
@@ -153,10 +161,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw ex;
         }
         // TODO: this should be loaded from a configuration file on the server
-        // We are temporarily using this for DB authetication and user athentication as well
+        // TEMPORARY CODE STARTS HERE
+        databaseMasterUser = user;
+        databaseMasterPassword = password;
+        // TEMPORARY CODE ENDS HERE
         cfg.setProperty("hibernate.connection.url", databaseConnectionPrefix + dbID);
-        cfg.setProperty("hibernate.connection.username", user);
-        cfg.setProperty("hibernate.connection.password", password);
+        cfg.setProperty("hibernate.connection.username", databaseMasterUser);
+        cfg.setProperty("hibernate.connection.password", databaseMasterPassword);
         try {
             // Build session factory
             sessionFactory = cfg.buildSessionFactory();
