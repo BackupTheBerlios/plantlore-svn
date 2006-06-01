@@ -2,7 +2,8 @@
 <head>
 <title>Nálezová databáze Jihočeské pobočky ČBS</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="plantlore/styly.css">
+<link rel="stylesheet" type="text/css" href="plantlore/position.css">
+<link rel="stylesheet" type="text/css" href="plantlore/styles.css">
 <link rel="SHORTCUT ICON" href="../resources/images/favicon.ico">
 <script language="JavaScript" type="text/JavaScript">
     function updateForm(start){
@@ -11,18 +12,22 @@
     };
 </script>
 </head>
-
-<body>
-<div>
-      <h1>Nálezová databáze Jihočeské pobočky ČBS</h1>   
-      <br><hr color=#663333>   
-</div> 
-
-<div id="Content">
-  <p><em><br>
-    <!--VAR:filter_display-->
-    </em>
-  </p>
+<body id="page">
+<div id="mainContainer">
+    <div id="head"></div>
+    <div id="menu">
+       <div id="menuUvod"><a href="plantlore/uvod.html"><img src="plantlore/images/menuUvod4.gif"></a></div>
+        <div id="menuNews"><a href="plantlore/aktuality.html"><img src="plantlore/images/menuAktuality2.gif"></a></div>
+        <div id="menuDB"><a href="plantlore/databaze.html"><img src="plantlore/images/menuDB2.gif"></a></div>
+        <div id="menuRef"><a href="plantlore/odkazy.html"><img src="plantlore/images/menuOdkazy2.gif"></a></div>
+        <div id="menuEmpty"></div>
+    </div>   
+    <div id="lineLeft"></div>
+    <div id="lineRight"></div> 
+    <div id="mainPage">
+        <div class="mainText">                                
+   
+<div id="Content">  
 
   <form name="recordlist" method="post" action="recordlist.cgi">
     <input type="hidden" name="dsa" value="<!--VAR:dsa-->">
@@ -48,8 +53,10 @@
 
 </div>
 
-
 <div id="Footer"> <img src="../resources/images/biocase_powered.gif" alt="powered by Biocase" width="112" height="34" border="0"></div>
+
+</div>
+</div>
 
 </body>
 </html>

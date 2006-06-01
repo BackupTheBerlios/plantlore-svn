@@ -1,3 +1,20 @@
+h1 {
+text-align :center;
+font-family :"Times New Roman", serif;
+font-weight: bold;
+font-size: 13pt;
+color: #325870;
+}
+
+.mainText {
+font-family :"Times New Roman", serif;
+font-size: 10pt;
+text-align: justify;
+color: #575B5D;
+}
+
+
+
 body {
 margin:0px;
 padding:0px;
@@ -5,18 +22,10 @@ padding:0px;
 font-size:11pt;
 font-weight:normal;
 text-align :justify;
-color:#000000;
-background-image: url(./images/sand-light.jpeg)
+background-color: grey;
+/*background-image: url(./images/sand-light.jpeg)*/
 }
 
-h1{
-text-align :center;
-/*font-family :"Times New Roman", serif;*/
-font-weight:bold;
-font-size:22pt;
-color:#663333;
-margin-bottom: 12px;
-}
 
 #Content {
     margin:0px 25px;

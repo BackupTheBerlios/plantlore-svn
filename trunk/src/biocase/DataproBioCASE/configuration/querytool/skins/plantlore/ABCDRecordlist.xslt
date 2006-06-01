@@ -4,6 +4,7 @@
 	<xsl:param name="wrapper_url"/>
 	<xsl:param name="dsa"/>
 	<xsl:param name="id"/>
+	<xsl:param name="login"/>
 	<xsl:template match="/">
 					
 				
@@ -23,7 +24,7 @@
 										</xsl:for-each>) </a>
 								</h3>
 								<p>
-									<span class="label">Last update: </span>
+									<span class="label">Poslední aktualizace: </span>
 									<xsl:for-each select="n1:SourceLastUpdatedDate">
 										<xsl:apply-templates/>
 									</xsl:for-each>|
@@ -58,7 +59,7 @@
 											<td>
 												<!-- to link to the unit details we have to use the SourceInstitutionCode + SourceName + UnitID as GUID. Also include the wrapper_url cause might be different from the dsa  -->
 												<a>
-												<xsl:attribute name="href">details.cgi?dsa=<xsl:value-of select="$dsa"/>&amp;id=<xsl:value-of select="$id"/>&amp;wrapper_url=<xsl:value-of select="$wrapper_url"/>&amp;detail=unit&amp;SourceInstitutionCode=<xsl:value-of select="normalize-space(../../n1:OriginalSource/n1:SourceInstitutionCode)"/>&amp;SourceName=<xsl:value-of select="normalize-space(../../n1:OriginalSource/n1:SourceName)"/>&amp;UnitID=<xsl:value-of select="normalize-space(n1:UnitID)"/></xsl:attribute>
+												<xsl:attribute name="href">details.cgi?dsa=<xsl:value-of select="$dsa"/>&amp;id=<xsl:value-of select="$id"/>&amp;login=<xsl:value-of select="$login"/>&amp;wrapper_url=<xsl:value-of select="$wrapper_url"/>&amp;detail=unit&amp;SourceInstitutionCode=<xsl:value-of select="normalize-space(../../n1:OriginalSource/n1:SourceInstitutionCode)"/>&amp;SourceName=<xsl:value-of select="normalize-space(../../n1:OriginalSource/n1:SourceName)"/>&amp;UnitID=<xsl:value-of select="normalize-space(n1:UnitID)"/></xsl:attribute>
 													<xsl:for-each select="n1:UnitID">
 														<xsl:apply-templates/>
 													</xsl:for-each>
@@ -131,7 +132,7 @@
 	
 						</xsl:for-each>
 					</xsl:for-each>
-		<p style="font-size:10"><br/>Click on UnitId to get details. </p>
+		<p style="font-size:10"><br/>Pro zpobrazení detailu klikněte na UnitId. </p>
 	</xsl:template>
 </xsl:stylesheet>
 

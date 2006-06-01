@@ -3,16 +3,41 @@
 	<xsl:output version="1.0" encoding="UTF-8" indent="yes" omit-xml-declaration="yes" media-type="text/html" />
 	<xsl:template match="/">
 
-					<!--      **************************************UNIT*********************************************  -->
+					<!--      **************************************DATA*********************************************  -->
 					<xsl:for-each select="n1:DataSets/n1:DataSet/n1:Units/n1:Unit">
 						<div id="Unit">
+						  						
+				<!--		<xsl:if test="n1:Identifications/n1:Identification/n1:TaxonIdentified/n1:NameAuthorYearString"> -->
+							<br/>
+							<span class="label"><b>Taxon: </b></span>
+							<xsl:value-of select="n1:Identifications/n1:Identification/n1:TaxonIdentified/n1:NameAuthorYearString"/>
+				<!--		</xsl:if>  -->
+						<br/>
+						            						
+							<span class="label"><b>Record Basis: </b></span>
+							<xsl:value-of select="n1:RecordBasis"/>						
+							<br/><br/>
+												
+            	<span class="label"><b>Village: </b></span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:NearNamedPlaces/n1:NamedPlaceRelation/n1:NearNamedPlace"/>
+					     <br/><br/>
+												            							
+							<span class="label"><b>Author (nalezce): </b></span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringAgents/n1:GatheringAgent/n1:Person/n1:PersonName"/>
+						  <br/><br/>
+												            
+							<span class="label"><b>Author (identifier): </b></span>
+							<xsl:value-of select="n1:Identifications/n1:Identification/n1:Identifier/n1:IdentifierPersonName/n1:PersonName"/>
+							<br/><br/>
+						
+						
 							<!-- *********************************/HEADER ************************************** 	-->
 							<table width="96%" border="3">
 								<tr>
 									<td>
 										<span class="style1">
 										
-<!-- ***********************************************************************+NAME****************************************************** -->												
+<!-- ************Sloupek s infem o Kytce  ***********************************************************+NAME****************************************************** -->												
 												<xsl:for-each select="n1:Identifications/n1:Identification">
 											<!--General rule for names -->
 											<!-- Avoid execution if there are no Identifications-->
@@ -265,12 +290,12 @@
 												<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:BiotopeData"/><br/>
 											</xsl:if>
 											<xsl:if test="string(n1:Gathering/n1:GatheringDateTime)">
-												<span class="label">Date: </span>
-												<xsl:value-of select="n1:Gathering/n1:GatheringDateTime"/><br/>
+												<span class="label">Year: </span>
+												<xsl:value-of select="n1:Gathering/n1:GatheringDateTime/n1:DateText"/><br/>
 											</xsl:if>
 											<xsl:if test="string(n1:Gathering/n1:Project/n1:ProjectTitle)">
 												<span class="label">Project: </span>
-												<xsl:value-of select="n1:Gathering/n1:ProjectTitle"/>
+												<xsl:value-of select="n1:Gathering/n1:Project/n1:ProjectTitle"/>
 											</xsl:if>
 
 										</td>
