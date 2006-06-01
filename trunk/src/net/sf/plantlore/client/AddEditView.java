@@ -44,7 +44,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     private Logger logger;
     private static final int DIALOG_WIDTH = 890;
     private static final String REQUIRED_STRING  = "(*)";
-    private boolean visible=false;
+    private boolean visible=true;
     private AddEdit model;
     private boolean inEditMode = false;
     private boolean inAddMode = true;
@@ -69,6 +69,12 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         //if (inEditMode)
         //    loadComponentData();
         
+        if (inEditMode)
+            preloadAuthorsCheckBox.setVisible(false);
+        else
+            preloadAuthorsCheckBox.setVisible(true);
+        
+        extendedButton.setVisible(false); //the button is of no use... the analysis didn't count on NotNull items in the extended part...
         jPanel3.setVisible(visible);
         jPanel2.setPreferredSize(new Dimension(DIALOG_WIDTH,190));
         jPanel8.setPreferredSize(new Dimension(DIALOG_WIDTH,50));
@@ -145,7 +151,9 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jPanel9 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         occurrenceNoteArea = new javax.swing.JTextArea();
+        jPanel10 = new javax.swing.JPanel();
         requiredInfoLabel = new javax.swing.JLabel();
+        preloadAuthorsCheckBox = new javax.swing.JCheckBox();
         jPanel8 = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
@@ -269,8 +277,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.ExtendedData"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
-        jPanel3.setMinimumSize(new java.awt.Dimension(800, 490));
-        jPanel3.setPreferredSize(new java.awt.Dimension(800, 490));
+        jPanel3.setMinimumSize(new java.awt.Dimension(800, 510));
+        jPanel3.setPreferredSize(new java.awt.Dimension(800, 510));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.TimePanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         monthLabel.setText("Month:");
 
@@ -303,8 +311,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(dayLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(dayChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(dayChooser, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -478,7 +486,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -587,7 +595,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -597,51 +605,77 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
+        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("AddEdit.InfoPanel")));
         requiredInfoLabel.setText("requiredInfoLabel");
+
+        preloadAuthorsCheckBox.setText(L10n.getString("AddEdit.PreloadAuthors"));
+        preloadAuthorsCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        preloadAuthorsCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+
+        org.jdesktop.layout.GroupLayout jPanel10Layout = new org.jdesktop.layout.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(requiredInfoLabel)
+                .addContainerGap(314, Short.MAX_VALUE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel10Layout.createSequentialGroup()
+                .addContainerGap(241, Short.MAX_VALUE)
+                .add(preloadAuthorsCheckBox)
+                .addContainerGap())
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(requiredInfoLabel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 90, Short.MAX_VALUE)
+                .add(preloadAuthorsCheckBox)
+                .addContainerGap())
+        );
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
-                .add(12, 12, 12)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel3Layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel3Layout.createSequentialGroup()
                         .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(requiredInfoLabel))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(jPanel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel3Layout.createSequentialGroup()
                                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .add(jPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .add(2, 2, 2))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(requiredInfoLabel)
-                        .add(288, 288, 288))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(274, 274, 274))))
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jPanel4, 0, 168, Short.MAX_VALUE)
+                    .add(jPanel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(283, Short.MAX_VALUE))
         );
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
@@ -808,7 +842,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     }
     
     public void clearComponentData() {
-        resetAuthorModel(); initAuthorTable();
+        if ( ! preloadAuthorsCheckBox.isSelected() ) {
+            resetAuthorModel(); initAuthorTable();
+        }
+        
         townComboBox.setSelectedIndex(-1);
         taxonTextArea.setText("");
         descriptionArea.setText("");
@@ -973,7 +1010,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getVillages() == null)
                     townComboBox.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    townComboBox.setModel(new DefaultComboBoxModel(model.getVillages()));;                
+                    townComboBox.setModel(new DefaultComboBoxModel(model.getVillages()));          
             }
             
             if (s.equals("TERRITORIES_CHANGED")) {
@@ -981,7 +1018,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getTerritories() == null)
                     territoryNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    territoryNameCombo.setModel(new DefaultComboBoxModel(model.getTerritories()));;                                
+                    territoryNameCombo.setModel(new DefaultComboBoxModel(model.getTerritories()));                            
             }
 
             if (s.equals("PHYTNAMES_CHANGED")) {
@@ -989,7 +1026,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getPhytNames() == null)
                     phytNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    phytNameCombo.setModel(new DefaultComboBoxModel(model.getPhytNames()));;                                
+                    phytNameCombo.setModel(new DefaultComboBoxModel(model.getPhytNames()));                         
             }
 
             if (s.equals("PHYTCODES_CHANGED")) {
@@ -997,7 +1034,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getPhytCodes() == null)
                     phytCodeCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    phytCodeCombo.setModel(new DefaultComboBoxModel(model.getPhytCodes()));;                                
+                    phytCodeCombo.setModel(new DefaultComboBoxModel(model.getPhytCodes()));                          
             }
 
             if (s.equals("COUNTRIES_CHANGED")) {
@@ -1005,7 +1042,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getCountries() == null)
                     phytCountryCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    phytCountryCombo.setModel(new DefaultComboBoxModel(model.getCountries()));;                                
+                    phytCountryCombo.setModel(new DefaultComboBoxModel(model.getCountries()));       
+                phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);
             }
             
             if (s.equals("SOURCES_CHANGED")) {
@@ -1013,7 +1051,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getSources() == null)
                     sourceCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    sourceCombo.setModel(new DefaultComboBoxModel(model.getSources()));;                                
+                    sourceCombo.setModel(new DefaultComboBoxModel(model.getSources()));
+                sourceCombo.insertItemAt(model.EMPTY_STRING,0);
             }
             
             if (s.equals("PUBLICATIONS_CHANGED")) {
@@ -1021,7 +1060,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getPublications() == null)
                     publicationCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    publicationCombo.setModel(new DefaultComboBoxModel(model.getPublications()));;                                
+                    publicationCombo.setModel(new DefaultComboBoxModel(model.getPublications()));
+                publicationCombo.insertItemAt(model.EMPTY_PAIR,0);
             }
 
             if (s.equals("PROJECTS_CHANGED")) {
@@ -1029,7 +1069,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 if (model.getProjects() == null)
                     projectCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
                 else
-                    projectCombo.setModel(new DefaultComboBoxModel(model.getProjects()));;                                
+                    projectCombo.setModel(new DefaultComboBoxModel(model.getProjects()));                              
             }
             
         }
@@ -1055,6 +1095,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel herbariumLabel;
     protected javax.swing.JTextField herbariumTextField;
     protected javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     protected javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     protected javax.swing.JPanel jPanel4;
@@ -1083,6 +1124,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JComboBox phytNameCombo;
     protected javax.swing.JLabel phytNameLabel;
     protected javax.swing.JLabel placeDescriptionLabel;
+    protected javax.swing.JCheckBox preloadAuthorsCheckBox;
     protected javax.swing.JComboBox projectCombo;
     protected javax.swing.JLabel projectLabel;
     protected javax.swing.JComboBox publicationCombo;

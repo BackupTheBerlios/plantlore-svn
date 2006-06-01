@@ -394,7 +394,9 @@ public class AppCore extends Observable
     }
     
     public String[] loadAuthorRoles() throws DBLayerException, RemoteException {
-        SelectQuery sq;
+        authorRoles = new String[] {"collected","revised","other"};
+        return authorRoles;
+        /*SelectQuery sq;
         int resultid;
         int resultsCount;
         Object[] records;
@@ -416,7 +418,7 @@ public class AppCore extends Observable
         }
         logger.info("Loaded: "+resultsCount+" author roles.");
         setChanged(); notifyObservers("LOADED");
-        return authorRoles;
+        return authorRoles;*/
     }
 
     public Pair<String, Integer>[] loadVillages() throws DBLayerException, RemoteException {

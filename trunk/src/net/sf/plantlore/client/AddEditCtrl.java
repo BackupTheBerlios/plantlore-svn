@@ -31,6 +31,7 @@ import java.util.Locale;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
@@ -116,6 +117,8 @@ public class AddEditCtrl {
         view.cancelButton.addMouseListener(new CancelButtonListener());
         view.helpButton.addMouseListener(new HelpButtonListener());
         view.checklistButton.setAction(new ChecklistAction());
+        
+        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
     
@@ -509,5 +512,11 @@ public class AddEditCtrl {
         }
     }//HelpButtonListener
     
+    class PreloadCheckBox implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            JCheckBox cb = (JCheckBox) e.getSource();
+            model.setPreloadAuthorsEnabled(cb.isSelected());
+        }        
+    }
 }
 

@@ -106,6 +106,7 @@ public class AddEdit extends Observable {
     //helper variable to avoid recursion potentially caused by phytCode and phytName updates
     private Boolean skipUpdate = false;
     private Boolean editMode = false;
+    private Boolean preloadAuthors = false;
     
     
     /** Creates a new instance of AddEdit */
@@ -1215,7 +1216,8 @@ public class AddEdit extends Observable {
     //the not null values are forced by calling checkData before store()
     public void clear() {
         logger.debug("Clearing add model");
-        clearAuthors();
+        if (! preloadAuthors)
+            clearAuthors();
         habitatDescription = null;
         year = Calendar.getInstance().get(Calendar.YEAR);
         habitatNote = null;
@@ -1235,7 +1237,10 @@ public class AddEdit extends Observable {
         setChanged();
         notifyObservers("CLEAR");
     }
-    
+ 
+    public void setPreloadAuthorsEnabled(boolean preloadAuthors) {
+        this.preloadAuthors = preloadAuthors;
+    }
 }
 
 
