@@ -115,7 +115,6 @@ public class AddEditCtrl {
         view.extendedButton.addMouseListener(new ExtendedButtonListener());
         view.okButton.addMouseListener(new OkButtonListener());
         view.cancelButton.addMouseListener(new CancelButtonListener());
-        view.helpButton.addMouseListener(new HelpButtonListener());
         view.checklistButton.setAction(new ChecklistAction());
         
         view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
@@ -504,13 +503,6 @@ public class AddEditCtrl {
             view.setVisible(false);
         }
     }//CancelButtonListener
-
-    class HelpButtonListener extends MouseAdapter {
-        public void mouseClicked(MouseEvent e) {
-            logger.info("Help inovked from the AddEdit dialog.");
-            PlantloreHelp.showHelp(PlantloreHelp.ADD_OCCURRENCE);            
-        }
-    }//HelpButtonListener
     
     class PreloadCheckBox implements ActionListener {
         public void actionPerformed(ActionEvent e) {

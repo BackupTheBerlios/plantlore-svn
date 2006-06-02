@@ -19,6 +19,8 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.exception.PlantloreException;
 
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.BasicConfigurator;
@@ -80,6 +82,13 @@ public class Plantlore {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        // Initialize Help
+        try {
+            PlantloreHelp.initialize();
+        } catch (PlantloreException e) {
+            // TODO: Display error message
+        }
+        
         plantlore.run();
     }
     

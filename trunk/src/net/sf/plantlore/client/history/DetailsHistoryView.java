@@ -9,6 +9,7 @@ package net.sf.plantlore.client.history;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -24,6 +25,8 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
         super(parent, modal);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents(); 
+        PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
         this.detailsTextArea.setEditable(false);
     }
     

@@ -37,7 +37,6 @@ public class WholeHistoryCtrl {
                   
         view.okButton.addActionListener(new okButtonListener());
         view.closeButton.addActionListener(new closeButtonListener());
-        view.helpButton.addActionListener(new helpButtonListener());
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());     
         view.undoToDateButton.addActionListener(new undoToDateButtonListener());
@@ -65,19 +64,6 @@ public class WholeHistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
     	   view.close();
-       }
-   }
-   
-   /**
-    * On Help should call help.
-    *
-    */
-   class helpButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {    	  
-    	   // Display help viewer            
-    	   System.out.println("Tady se bude volat Help!");
-           PlantloreHelp.showHelp(PlantloreHelp.HISTORY_MANAGER); 
        }
    }
    

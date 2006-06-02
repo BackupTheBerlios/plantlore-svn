@@ -49,7 +49,6 @@ public class AddPublicationCtrl {
         this.view = addView;
         // Add listeners for buttons and fields
         view.closeBtnAddActionListener(new CloseButtonListener());
-        view.helpBtnAddActionListener(new HelpButtonListener());
         view.saveBtnAddActionListener(new SavePublicationButtonListener());        
         view.collectionNameAddPropertyChangeListener(new CollectionNameFieldPropertyChangeListener());
         view.publicationYearAddPropertyChangeListener(new PublicationYearFieldPropertyChangeListener());
@@ -87,17 +86,6 @@ public class AddPublicationCtrl {
         }
     }
 
-    /**
-     * ActionListener class controlling the <b>help</b> button on the form.
-     */    
-    class HelpButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            // Display help viewer      
-            logger.info("Help inovked from the Add/Edit author window");
-            PlantloreHelp.showHelp(PlantloreHelp.AUTHOR_MANAGER);
-        }
-    }
-    
     /**
      * ActionListener class controlling the <b>Save publication</b> button on the form. Checks whether all 
      * the required fields have been set and calls model to save the data when the button is clicked.

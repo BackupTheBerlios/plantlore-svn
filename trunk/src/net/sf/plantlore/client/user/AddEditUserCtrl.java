@@ -41,7 +41,6 @@ public class AddEditUserCtrl {
         this.view = view;
         
         view.closeButton.addActionListener(new CloseButtonListener());
-        view.helpButton.addActionListener(new HelpButtonListener());
         view.operationButton.addActionListener(new OperationButtonListener());
         view.editGroupTextArea.addFocusListener(new UserAreaListener());
     }
@@ -54,19 +53,6 @@ public class AddEditUserCtrl {
        public void actionPerformed(ActionEvent actionEvent)
        {
     	   view.close();
-       }
-   }
-   
-   /**
-    * On Help should call help.
-    *
-    */
-   class HelpButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {    	  
-    	   // Display help viewer            
-    	   System.out.println("Tady se bude volat Help!");
-           PlantloreHelp.showHelp(PlantloreHelp.USER_RIGHTS); 
        }
    }
    

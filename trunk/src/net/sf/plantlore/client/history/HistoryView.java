@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -35,6 +36,8 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
         getTable().setModel(new HistoryTableModel(model));           
     }
     

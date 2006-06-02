@@ -10,6 +10,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -30,6 +31,8 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         super(parent, modal);
         this.model = model;
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.USER_MANAGER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.USER_MANAGER, this.helpButton);        
         sortButtonGroup.add(sortAscendingRadioButton);
         sortButtonGroup.add(sortDescendingRadioButton);
         sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);

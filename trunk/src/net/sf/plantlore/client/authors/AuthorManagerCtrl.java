@@ -49,7 +49,6 @@ public class AuthorManagerCtrl {
         this.view = authView;
         // Add action listeners to buttons
         view.closeBtnAddActionListener(new CloseButtonListener());
-        view.helpBtnAddActionListener(new HelpButtonListener());
         view.addBtnAddActionListener(new AddAuthorButtonListener());
         view.searchBtnAddActionlistener(new SearchAuthorButtonListener());
         view.deleteBtnAddActionListener(new DeleteAuthorButtonListener());
@@ -130,17 +129,6 @@ public class AuthorManagerCtrl {
     }
 
     /**
-     * ActionListener class controlling the <b>help</b> button on the form.
-     */    
-    class HelpButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            // Display help viewer            
-            logger.info("Help inovked from the AuthorManager window");
-            PlantloreHelp.showHelp(PlantloreHelp.ADD_AUTHOR);            
-        }
-    }
-    
-    /**
      * ActionListener class controlling the <b>Add author</b> button on the form.
      */    
     class AddAuthorButtonListener implements ActionListener {
@@ -152,7 +140,7 @@ public class AuthorManagerCtrl {
             }
             // Display dialog for adding / editing authors. This dialog shares model with
             // the rest of the AuthorManager.
-            AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), false);
+            AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), true);
             AddAuthorCtrl addAuthCtrl = new AddAuthorCtrl(model, addAuthView);            
             // We are going to add author, no editing
             model.setEditAuthor(null);

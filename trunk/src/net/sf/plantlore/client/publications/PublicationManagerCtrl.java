@@ -50,7 +50,6 @@ public class PublicationManagerCtrl {
         this.view = publView;
         // Add action listeners to buttons
         view.closeBtnAddActionListener(new CloseButtonListener());
-        view.helpBtnAddActionListener(new HelpButtonListener());
         view.addBtnAddActionListener(new AddPublicationButtonListener());
         view.searchBtnAddActionlistener(new SearchPublicationButtonListener());
         view.deleteBtnAddActionListener(new DeletePublicationButtonListener());
@@ -134,24 +133,13 @@ public class PublicationManagerCtrl {
     }
 
     /**
-     * ActionListener class controlling the <b>help</b> button on the form.
-     */    
-    class HelpButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            // Display help viewer            
-            logger.info("Help inovked from the AuthorManager window");
-            PlantloreHelp.showHelp(PlantloreHelp.ADD_AUTHOR);            
-        }
-    }
-    
-    /**
      * ActionListener class controlling the <b>Add publication</b> button on the form.
      */    
     class AddPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Display dialog for adding / editing publications. This dialog shares model with
             // the rest of the PublicationManager.
-            AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), false);
+            AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), true);
             AddPublicationCtrl addPublCtrl = new AddPublicationCtrl(model, addPublView);            
             // We are going to add publication, no editing
             model.setEditPublication(null);

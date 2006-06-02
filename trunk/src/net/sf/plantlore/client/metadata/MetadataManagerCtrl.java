@@ -35,7 +35,6 @@ public class MetadataManagerCtrl {
         this.view = view;
           
         view.closeButton.addActionListener(new closeButtonListener());
-        view.helpButton.addActionListener(new helpButtonListener());        
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());            
         view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());    
@@ -58,20 +57,7 @@ public class MetadataManagerCtrl {
     	   view.close();
        }
    }
-   
-   /**
-    * On Help should call help.
-    *
-    */
-   class helpButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {    	  
-    	   // Display help viewer            
-    	   System.out.println("Tady se bude volat Help!");
-           PlantloreHelp.showHelp(PlantloreHelp.METDATA_MANAGER); 
-       }
-   }
-   
+     
    /**
     * 
     *

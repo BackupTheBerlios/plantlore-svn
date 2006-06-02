@@ -326,8 +326,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="loginSearchText" pref="79" max="32767" attributes="1"/>
-                              <Component id="wholeNameSearchText" pref="79" max="32767" attributes="1"/>
+                              <Component id="loginSearchText" pref="85" max="32767" attributes="1"/>
+                              <Component id="wholeNameSearchText" pref="85" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -336,8 +336,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="addressSearchText" alignment="0" pref="98" max="32767" attributes="1"/>
-                              <Component id="emailSearchText" alignment="0" pref="98" max="32767" attributes="1"/>
+                              <Component id="addressSearchText" alignment="0" pref="104" max="32767" attributes="1"/>
+                              <Component id="emailSearchText" alignment="0" pref="104" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                       <Component id="searchButton" min="-2" pref="120" max="-2" attributes="1"/>
@@ -571,7 +571,7 @@
                       <Component id="showAllUserRadioBUtton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="showCurrentUserRadioButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="15" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

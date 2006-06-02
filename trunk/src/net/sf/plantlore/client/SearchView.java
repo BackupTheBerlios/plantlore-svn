@@ -18,6 +18,7 @@ import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TabTransfersFocus;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
@@ -40,6 +41,8 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.SEARCH_OCCURRENCE, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.SEARCH_OCCURRENCE, this.helpButton);
         
         getRootPane().setDefaultButton(okButton);
         

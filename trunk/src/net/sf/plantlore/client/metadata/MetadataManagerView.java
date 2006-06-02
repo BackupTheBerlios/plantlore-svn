@@ -10,6 +10,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -28,6 +29,8 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         super(parent, modal);
         this.model = model;
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_MANAGER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton);        
         sortButtonGroup.add(sortAscendingRadioButton);
         sortButtonGroup.add(sortDescendingRadioButton);
         sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);

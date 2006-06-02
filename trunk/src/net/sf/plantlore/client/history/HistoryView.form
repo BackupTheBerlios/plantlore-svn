@@ -92,7 +92,7 @@
                       <Component id="authorValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="taxonValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="424" max="32767" attributes="0"/>
+                  <EmptySpace pref="428" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -198,7 +198,7 @@
                       <Component id="whoInsertValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="whenInsertValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="427" max="32767" attributes="0"/>
+                  <EmptySpace pref="431" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

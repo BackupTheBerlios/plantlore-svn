@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
 
@@ -38,6 +39,8 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         this.model = publModel;
         this.model.addObserver(this);         
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.PUBLICATION_ADD, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.PUBLICATION_ADD, this.helpBtn);        
         // Center the dialog on the screen
         this.setLocationRelativeTo(null);        
     }

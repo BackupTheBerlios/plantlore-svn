@@ -17,6 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
@@ -49,6 +50,8 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         this.model = model;
         this.model.addObserver(this);
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.PUBLICATION_MANAGER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.PUBLICATION_MANAGER, this.helpBtn);        
         // Center the dialog on the screen
         this.setLocationRelativeTo(null);
     }

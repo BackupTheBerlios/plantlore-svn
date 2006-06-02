@@ -862,15 +862,10 @@ public class AppCoreCtrl
             putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataAuthors"));                        
         }
         public void actionPerformed(ActionEvent e) {
-            //try {
-                AuthorManager authModel = new AuthorManager(model.getDatabase());
-                AuthorManagerView authView = new AuthorManagerView(authModel, view, false);
-                AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
-                //authModel.pokus();
-                authView.setVisible(true);                
-            //} catch(RemoteException e) {
-            //	System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-            //}                
+            AuthorManager authModel = new AuthorManager(model.getDatabase());
+            AuthorManagerView authView = new AuthorManagerView(authModel, view, true);
+            AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel, authView);
+            authView.setVisible(true);                
         }
         
     }
@@ -885,7 +880,7 @@ public class AppCoreCtrl
 
         public void actionPerformed(ActionEvent actionEvent) {
             publicationManagerModel = new PublicationManager(model.getDatabase());
-            publicationManagerView = new PublicationManagerView(publicationManagerModel, view, false);
+            publicationManagerView = new PublicationManagerView(publicationManagerModel, view, true);
             publicationManagerCtrl = new PublicationManagerCtrl(publicationManagerModel, publicationManagerView);
             publicationManagerView.setVisible(true); 
         }

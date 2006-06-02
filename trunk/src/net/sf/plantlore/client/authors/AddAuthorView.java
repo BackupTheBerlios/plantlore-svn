@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
 import javax.swing.text.AttributeSet;
@@ -40,6 +41,8 @@ public class AddAuthorView extends javax.swing.JDialog implements Observer {
         this.model = authModel;
         this.model.addObserver(this);         
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.ADD_AUTHOR, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.ADD_AUTHOR, this.helpBtn);        
         // Center the dialog on the screen
         this.setLocationRelativeTo(null);
     }

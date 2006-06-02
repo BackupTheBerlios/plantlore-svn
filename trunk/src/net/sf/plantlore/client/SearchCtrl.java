@@ -86,7 +86,6 @@ public class SearchCtrl {
         view.extendedButton.addMouseListener(new ExtendedButtonListener());
         view.okButton.addMouseListener(new OkButtonListener());
         view.cancelButton.addMouseListener(new CancelButtonListener());
-        view.helpButton.addMouseListener(new HelpButtonListener());
         
         //------- Time
         view.monthChooser.addPropertyChangeListener("month",new MonthChangeListener());
@@ -410,13 +409,5 @@ public class SearchCtrl {
             view.setVisible(false);
         }
     }//CancelButtonListener
-
-    class HelpButtonListener extends MouseAdapter {
-        public void mouseClicked(MouseEvent e) {
-            logger.info("Help inovked from the Search dialog.");
-            PlantloreHelp.showHelp(PlantloreHelp.SEARCH_OCCURRENCE);            
-        }
-    }//HelpButtonListener
-    
 }
 

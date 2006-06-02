@@ -11,6 +11,7 @@ import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -29,6 +30,8 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
         this.tableHistoryList.setRowSelectionAllowed(true);
         this.tableHistoryList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         this.tableHistoryList.setModel(new WholeHistoryTableModel(model));                

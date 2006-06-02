@@ -13,6 +13,7 @@ import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.l10n.L10n;
 
@@ -32,6 +33,8 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         super(parent, modal);
         this.model = model;
         initComponents();        
+        PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_ADD, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_ADD, this.helpButton);        
     }
     
      public void update(Observable observable, Object object)

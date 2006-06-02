@@ -316,8 +316,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="sourceInstitutionIdText" pref="99" max="32767" attributes="1"/>
-                              <Component id="sourceIdText" alignment="0" pref="99" max="32767" attributes="1"/>
+                              <Component id="sourceInstitutionIdText" pref="103" max="32767" attributes="1"/>
+                              <Component id="sourceIdText" alignment="0" pref="103" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Component id="dataSetTitleLabel" min="-2" max="-2" attributes="0"/>

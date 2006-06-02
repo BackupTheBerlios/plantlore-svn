@@ -7,13 +7,17 @@
 
 package net.sf.plantlore.common;
 
+import java.awt.Component;
 import java.net.URL;
+import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
 import javax.help.JHelp;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import net.sf.plantlore.common.exception.PlantloreException;
 import net.sf.plantlore.l10n.L10n;
+import org.apache.log4j.Logger;
 
 /**
  * Class for invoking Help viewer.
@@ -78,40 +82,41 @@ public class PlantloreHelp {
     public static final String IMPORT                   = "import";
     // Export feature description
     public static final String EXPORT                   = "export";   
-            
+
+    /* Instance of a logger */
+    private static Logger logger = Logger.getLogger(PlantloreHelp.class.getPackage().getName());
+
+    private static HelpBroker hb;
+    private static HelpSet hs;
+    
     /** Creates a new instance of PlantloreHelp */
     public PlantloreHelp() {
-        
     }
-  
-    /**
-     * Method for opening Help Viewer at a specified page.
-     *
-     * @param section Section of help which will be shown. Sections are defined in 
-     *                <code>jHelpMap.jhm</code> and <code>jHelpToc.xml</code>
-     */
-    public static void showHelp(String section) {
-        JHelp helpViewer;
+
+    public static void initialize() throws PlantloreException {
         try {
             // Get the classloader of this class.
             ClassLoader cl = PlantloreHelp.class.getClassLoader();
             URL url = HelpSet.findHelpSet(cl, HELPFILE, L10n.getCurrentLocale());
             // Create a new JHelp object with a new HelpSet.        
-            HelpSet hs = new HelpSet(cl, url);
-            helpViewer = new JHelp(hs);
-            // Set the initial entry point in the table of contents.
-            helpViewer.setCurrentID(section);
+            hs = new HelpSet(cl, url);
+            // Create the HelpBroker
+            hb = hs.createHelpBroker();
         } catch (HelpSetException e) {
-            System.out.println("EXCEPTION: "+e.getMessage());
-            e.printStackTrace();
-            return;
-        }
-        // Create a new frame.
-        JFrame frame = new JFrame();
-        frame.setSize(500,500);
-        frame.getContentPane().add(helpViewer);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // Make the frame visible.
-        frame.setVisible(true);        
-    }    
+            logger.error("Unable to initialize help: "+e.getMessage());
+            throw new PlantloreException("Unable to initialize help: "+e.getMessage());
+        }        
+    }
+    
+    public static void addButtonHelp(String section, Component button) {
+        hb.enableHelpOnButton(button, section, hs);        
+    }
+    
+    public static void addComponentHelp(String section, Component comp) {
+        hb.enableHelp(comp, section, hs);
+    }
+    
+    public static void addKeyHelp(String section, Component comp) {
+        hb.enableHelpKey(comp, section, hs);
+    }   
 }

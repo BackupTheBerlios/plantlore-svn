@@ -14,6 +14,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TabTransfersFocus;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
@@ -35,6 +36,8 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         super(parent, modal);
         this.model = model;
         initComponents(); 
+        PlantloreHelp.addKeyHelp(PlantloreHelp.USER_ADD, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.USER_ADD, this.helpButton);        
         new TabTransfersFocus(noteText);
         new TabTransfersFocus(editGroupTextArea);                
     }

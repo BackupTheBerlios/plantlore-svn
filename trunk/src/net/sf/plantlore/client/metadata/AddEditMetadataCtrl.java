@@ -34,7 +34,6 @@ public class AddEditMetadataCtrl {
         this.view = view;
         
         view.closeButton.addActionListener(new closeButtonListener());
-        view.helpButton.addActionListener(new helpButtonListener());
         view.operationButton.addActionListener(new operationButtonListener());
     }
     
@@ -48,20 +47,7 @@ public class AddEditMetadataCtrl {
     	   view.close();
        }
    }
-   
-   /**
-    * On Help should call help.
-    *
-    */
-   class helpButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {    	  
-    	   // Display help viewer            
-    	   System.out.println("Tady se bude volat Help!");
-           PlantloreHelp.showHelp(PlantloreHelp.METDATA_ADD); 
-       }
-   }
-   
+     
    /*
     *
     */
