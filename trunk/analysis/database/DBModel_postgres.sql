@@ -1,7 +1,8 @@
 /*************************************************************/
 /*							     */
 /* SQL script for creating Plantlore database for PostgreSQL */
-/* 		Version: 4.4. 2006			     */
+/* 		Version: 02.6. 2006			     */
+/*	    Tested with PostgreSQL 8.0.3		     */
 /*							     */
 /*************************************************************/
 SET client_encoding = 'UNICODE';
@@ -12,16 +13,17 @@ SET default_tablespace = '';
 
 SET default_with_oids = true;
 
+/* Table: TLASTDATAVERSION */
 CREATE TABLE TLASTDATAVERSION (
     CID                  INTEGER NOT NULL,
     CDATE                DATE NOT NULL,
-    CPLANTSVERSION    INTEGER DEFAULT 0 NOT NULL,
+    CPLANTSVERSION    	 INTEGER DEFAULT 0 NOT NULL,
     CVILLAGESVERSION     INTEGER DEFAULT 0 NOT NULL,
     CPHYTOCHORIAVERSION  INTEGER DEFAULT 0 NOT NULL,
     CTERRITORYVERSION    INTEGER DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TAUTHORS, Owner: SYSDBA */
+/* Table: TAUTHORS */
 CREATE TABLE TAUTHORS (
     CID               SERIAL NOT NULL,    
     CWHOLENAME        VARCHAR(50) NOT NULL,
@@ -36,7 +38,7 @@ CREATE TABLE TAUTHORS (
     CDELETE           SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TAUTHORSOCCURRENCES, Owner: SYSDBA */
+/* Table: TAUTHORSOCCURRENCES */
 CREATE TABLE TAUTHORSOCCURRENCES (
     CAUTHORID          SERIAL NOT NULL,
     COCCURRENCEID      INTEGER NOT NULL,
@@ -46,7 +48,7 @@ CREATE TABLE TAUTHORSOCCURRENCES (
     CDELETE           SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: THABITATS, Owner: SYSDBA */
+/* Table: THABITATS */
 CREATE TABLE THABITATS (
     CID                SERIAL NOT NULL,
     CTERRITORYID       INTEGER NOT NULL,
@@ -62,7 +64,7 @@ CREATE TABLE THABITATS (
     CDELETE            SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: THISTORY, Owner: SYSDBA */
+/* Table: THISTORY */
 CREATE TABLE THISTORY (
         CID       SERIAL NOT NULL,
         CCOLUMNID INTEGER NOT NULL,
@@ -71,7 +73,7 @@ CREATE TABLE THISTORY (
         CNEWVALUE VARCHAR(4096),
 PRIMARY KEY (CID));
 
-/* Table: THISTORYCHANGE, Owner: SYSDBA */
+/* Table: THISTORYCHANGE */
 CREATE TABLE THISTORYCHANGE (
     CID            SERIAL NOT NULL,
     COCCURRENCEID  INTEGER  DEFAULT 0,
@@ -82,14 +84,14 @@ CREATE TABLE THISTORYCHANGE (
     CWHO           INTEGER NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: THISTORYCOLUMN, Owner: SYSDBA */
+/* Table: THISTORYCOLUMN */
 CREATE TABLE THISTORYCOLUMN (
     CID          SERIAL NOT NULL,
     CTABLENAME   VARCHAR(20) NOT NULL,
     CCOLUMNNAME  VARCHAR(30),
 PRIMARY KEY (CID));
 
-/* Table: TMETADATA, Owner: SYSDBA */
+/* Table: TMETADATA */
 CREATE TABLE TMETADATA (
     CID                       SERIAL NOT NULL,
     CTECHNICALCONTACTNAME     VARCHAR(50) NOT NULL,
@@ -110,7 +112,7 @@ CREATE TABLE TMETADATA (
     CDELETE                   SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TOCCURRENCES, Owner: SYSDBA */
+/* Table: TOCCURRENCES */
 CREATE TABLE TOCCURRENCES (
     CID                SERIAL NOT NULL,
     CUNITIDDB          VARCHAR(30) NOT NULL,
@@ -134,14 +136,14 @@ CREATE TABLE TOCCURRENCES (
     CDELETE            SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TPHYTOCHORIA, Owner: SYSDBA */
+/* Table: TPHYTOCHORIA */
 CREATE TABLE TPHYTOCHORIA (
     CID    SERIAL NOT NULL,
     CCODE  VARCHAR(5) NOT NULL,
     CNAME  VARCHAR(50) NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TPLANTS, Owner: SYSDBA */
+/* Table: TPLANTS */
 CREATE TABLE TPLANTS (
     CID                    SERIAL NOT NULL,
     CSURVEYTAXID           VARCHAR(20) NOT NULL,
@@ -155,7 +157,7 @@ CREATE TABLE TPLANTS (
 PRIMARY KEY (CID));
 
 
-/* Table: TPUBLICATIONS, Owner: SYSDBA */
+/* Table: TPUBLICATIONS */
 CREATE TABLE TPUBLICATIONS (
     CID                         SERIAL NOT NULL,
     CCOLLECTIONNAME             VARCHAR(30),
@@ -170,7 +172,7 @@ CREATE TABLE TPUBLICATIONS (
     CDELETE                     SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TRIGHT, Owner: SYSDBA */
+/* Table: TRIGHT */
 CREATE TABLE TRIGHT (
     CID             SERIAL NOT NULL,
     CADMINISTRATOR  SMALLINT DEFAULT 0 NOT NULL,
@@ -180,13 +182,13 @@ CREATE TABLE TRIGHT (
     CADD            SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TTERRITORIES, Owner: SYSDBA */
+/* Table: TTERRITORIES */
 CREATE TABLE TTERRITORIES (
     CID    SERIAL NOT NULL,
     CNAME  VARCHAR(100) NOT NULL,
 PRIMARY KEY (CID));
 
-/* Table: TUSER, Owner: SYSDBA */
+/* Table: TUSER */
 CREATE TABLE TUSER (
     CID          SERIAL NOT NULL,
     CLOGIN       VARCHAR(20) NOT NULL,
@@ -203,7 +205,7 @@ CREATE TABLE TUSER (
 PRIMARY KEY (CID));
 
 
-/* Table: TVILLAGES, Owner: SYSDBA */
+/* Table: TVILLAGES */
 CREATE TABLE TVILLAGES (
     CID    SERIAL NOT NULL,
     CNAME  VARCHAR(50) NOT NULL,
@@ -245,53 +247,65 @@ ALTER TABLE TAUTHORS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
 
 ALTER TABLE TPUBLICATIONS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
 
+CREATE USER plantlore
+  PASSWORD 'plantlore'
+  NOCREATEDB NOCREATEUSER;
 
-/* Grant role for this database */
+CREATE USER www
+  ENCRYPTED PASSWORD 'plantlore'
+  NOCREATEDB NOCREATEUSER;
 
-/* Role: BOTANIK, Owner: SYSDBA 
-CREATE ROLE defaultAdmin;
-CREATE ROLE defaultUser;
-CREATE ROLE WWW;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORS TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORSOCCURRENCES TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THABITATS TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORY TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCHANGE TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCOLUMN TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMETADATA TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TOCCURRENCES TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPHYTOCHORIA TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPLANTS TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TTERRITORIES TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TUSER TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TRIGHT TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TVILLAGES TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPUBLICATIONS TO plantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TLASTDATAVERSION TO plantlore;
 
-Grant permissions for this database 
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORS TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORSOCCURRENCES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THABITATS TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORY TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCHANGE TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCOLUMN TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMETADATA TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TOCCURRENCES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPHYTOCHORIA TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPLANTS TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TTERRITORIES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TUSER TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TRIGHT TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TVILLAGES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPUBLICATIONS TO ROLE defaultAdmin;
-GRANT defaultAdmin TO LADA;
-GRANT defaultAdmin TO SYSDBA;
-*/
+GRANT SELECT ON TAUTHORS TO www;
+GRANT SELECT ON TAUTHORSOCCURRENCES TO www;
+GRANT SELECT ON THABITATS TO www;
+GRANT SELECT ON THISTORY TO www;
+GRANT SELECT ON THISTORYCHANGE TO www;
+GRANT SELECT ON THISTORYCOLUMN TO www;
+GRANT SELECT ON TMETADATA TO www;
+GRANT SELECT ON TOCCURRENCES TO www;
+GRANT SELECT ON TPHYTOCHORIA TO www;
+GRANT SELECT ON TPLANTS TO www;
+GRANT SELECT ON TTERRITORIES TO www;
+GRANT SELECT ON TUSER TO www;
+GRANT SELECT ON TRIGHT TO www;
+GRANT SELECT ON TVILLAGES TO www;
+GRANT SELECT ON TPUBLICATIONS TO www;
+GRANT SELECT ON TLASTDATAVERSION TO www;
+
+
 /* View: TAUTHORREVISION */
-/*
 CREATE VIEW TAUTHORREVISION(
     CID,
     COCCURRENCEID,
     CWHOLENAME,
     CEMAIL,
     CADDRESS,
-    CRESULTREVISION,
     CDAY,
     CMONTH,
     CYEAR)
 AS
-select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.cresultrevisition, O.cdaycollected, O.cmonthcollected, O.cyearcollected
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO JOIN toccurrences O  ON (A.CID = AO.cauthorid) ON (AO.coccurrenceid = O.cid)
-WHERE AO.crole = 'revision'
-;
-*/
+select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, O.cdaycollected, O.cmonthcollected, O.cyearcollected
+from (TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON A.CID = AO.cauthorid) JOIN toccurrences O ON AO.coccurrenceid = O.cid
+WHERE AO.crole = 'revision';
+
 /* View: TAUTHORCOLLECT */
-/*
 CREATE VIEW TAUTHORCOLLECT(
     CID,    
     COCCURRENCEID,
@@ -301,13 +315,11 @@ CREATE VIEW TAUTHORCOLLECT(
     CADDRESS)
 AS
 select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CORGANIZATION, A.CEMAIL, A.CADDRESS
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
-WHERE AO.crole = 'collect'
-;
-*/
+from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON A.CID = AO.cauthorid
+WHERE AO.crole = 'collect';
+
 /* View: TAUTHORIDENTIFY */
-/*
-CREATE VIEW TAUTHORIDENTIFY(
+CREATE OR REPLACE VIEW TAUTHORIDENTIFY (
     CID,
     COCCURRENCEID,
     CWHOLENAME,
@@ -315,7 +327,75 @@ CREATE VIEW TAUTHORIDENTIFY(
     CADDRESS)
 AS
 select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CEMAIL, A.CADDRESS
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
-WHERE AO.crole = 'identify'
-;
-*/
+from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON A.CID = AO.cauthorid
+WHERE AO.crole = 'identify';
+
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (1, 'AUTHOROCCURRENCE', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (2, 'OCCURRENCE', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (3, 'HABITAT', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (4, 'AUTHOR', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (5, 'METADATA', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (6, 'PUBLICATION', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (7, 'TERRITORY', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (8, 'VILLAGE', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (9, 'PHYTOCHORION', NULL);
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (10, 'AUTHOROCCURRENCE', 'author');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (11, 'AUTHOROCCURRENCE', 'role');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (12, 'AUTHOROCCURRENCE', 'resultRevision');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (13, 'OCCURRENCE', 'plant');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (14, 'OCCURRENCE', 'yearCollected');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (15, 'OCCURRENCE', 'monthCollected');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (16, 'OCCURRENCE', 'dayCollected');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (17, 'OCCURRENCE', 'timeCollected');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (18, 'OCCURRENCE', 'dataSource');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (19, 'OCCURRENCE', 'publication');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (20, 'OCCURRENCE', 'herbarium');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (21, 'OCCURRENCE', 'metadata');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (22, 'OCCURRENCE', 'note');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (23, 'HABITAT', 'territory');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (24, 'HABITAT', 'phytochorion');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (25, 'HABITAT', 'nearestVillage');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (26, 'HABITAT', 'quadrant');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (27, 'HABITAT', 'description');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (28, 'HABITAT', 'country');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (29, 'HABITAT', 'altitude');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (30, 'HABITAT', 'latitude');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (31, 'HABITAT', 'longitude');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (32, 'HABITAT', 'note');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (33, 'AUTHOR', 'wholeName');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (34, 'AUTHOR', 'organization');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (35, 'AUTHOR', 'role');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (36, 'AUTHOR', 'address');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (37, 'AUTHOR', 'phoneNumber');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (38, 'AUTHOR', 'email');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (39, 'AUTHOR', 'url');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (40, 'AUTHOR', 'note');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (41, 'METADATA', 'technicalContactName');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (42, 'METADATA', 'technicalContactAddress');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (43, 'METADATA', 'technicalContactEmail');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (44, 'METADATA', 'contentContactName');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (45, 'METADATA', 'contentContactAddress');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (46, 'METADATA', 'contentContactEmail');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (47, 'METADATA', 'dataSetTitle');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (48, 'METADATA', 'dataSetDetails');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (49, 'METADATA', 'sourceInstitutionId');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (50, 'METADATA', 'sourceId');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (51, 'METADATA', 'ownerOrganizationAbbrev');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (52, 'METADATA', 'dateCreate');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (53, 'METADATA', 'dateModified');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (54, 'METADATA', 'recordBasis');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (55, 'METADATA', 'biotopeText');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (56, 'METADATA', 'versionPlantsFile');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (57, 'PUBLICATION', 'collectionName');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (58, 'PUBLICATION', 'collectionYearPublication');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (59, 'PUBLICATION', 'journalName');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (60, 'PUBLICATION', 'journalAuthorName');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (61, 'PUBLICATION', 'referenceCitation');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (62, 'PUBLICATION', 'referenceDetail');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (63, 'PUBLICATION', 'url');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (64, 'PUBLICATION', 'note');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (65, 'VILLAGE', 'name');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (66, 'TERRITORY', 'name');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (67, 'PHYTOCHORIA', 'name');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (68, 'PHYTOCHORIA', 'code');
+
