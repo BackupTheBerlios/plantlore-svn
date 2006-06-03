@@ -92,7 +92,7 @@ public class ServerMng extends Observable {
             connections = (connectionsNumber == null) ? 16 : connectionsNumber.intValue(),
             perip = (peripNumber == null) ? 2 : peripNumber.intValue()*/;
             
-            Node database = (Node)server.selectSingleNode("/database");
+            Node database = (Node)server.selectSingleNode("database");
             
             String databaseType = database.valueOf("engine"),
             databaseParameter = database.valueOf("parameter"),
@@ -108,6 +108,9 @@ public class ServerMng extends Observable {
             
 		} catch(Exception e) {
 			logger.error("Settings could not be loaded. " + e.getMessage());
+			
+			e.printStackTrace();
+			
 			setChanged();
 			notifyObservers(L10n.getString("Server.SettingsNotLoaded"));
 		}

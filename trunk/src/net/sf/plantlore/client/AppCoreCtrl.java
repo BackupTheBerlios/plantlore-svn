@@ -416,7 +416,7 @@ public class AppCoreCtrl
                 JOptionPane.showMessageDialog(view, "Problem while saving configuration: "+ex.getMessage());
             }
             // Destroy the DBLayer
-            model.getDatabase().destroy();
+            //model.getDatabase().destroy();  --- takhle se to nesmi delat, musi ji znicit factory, ktera ji vyrobila
             System.exit(0);
         }
     }

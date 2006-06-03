@@ -186,6 +186,6 @@ public interface DBLayer extends Remote, Serializable {
                         
     public void shutdown() throws RemoteException;
     
-    public void destroy();
+    public void destroy() throws RemoteException;
         
 }

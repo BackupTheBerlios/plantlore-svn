@@ -196,8 +196,9 @@ public class Login extends Observable {
 		lastIndex = index;
 		
 		logger.debug("Selected database is " + selected);
-		this.setChanged(); 
-		this.notifyObservers( selected.clone() );
+		this.setChanged();
+		if(selected != null)
+			this.notifyObservers( selected.clone() );
 	}
 	
 	/**
