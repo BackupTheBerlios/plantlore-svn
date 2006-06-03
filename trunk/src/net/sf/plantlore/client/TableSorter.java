@@ -543,6 +543,10 @@ public class TableSorter extends AbstractTableModel {
         return tableModel.getOccurrenceId(modelIndex(row));
     }
     
+    public Integer getResultNumber(int row) {
+        return tableModel.getResultNumber(modelIndex(row));
+    }
+    
     public void setResultId(int resultId, SelectQuery sq) throws RemoteException, DBLayerException {
         tableModel.setResultId(resultId, sq);
     }
@@ -554,6 +558,10 @@ public class TableSorter extends AbstractTableModel {
     public void setColumns(ArrayList<Column> columns) {
         tableModel.setColumns(columns);
         fireTableStructureChanged();
+    }
+    
+    public Integer getOccurrence(int i) throws DBLayerException, RemoteException {
+        return tableModel.getOccurrence(i);
     }
 }
 

@@ -190,6 +190,11 @@ public class AppCoreCtrl
     // Immutable Table Import
     TableImportMng tableImportModel;
     TableImportMngCtrl tableImportCtrl;
+    
+    //Detail
+    Detail detailModel;
+    DetailView detailView;
+    DetailCtrl detailCtrl;
 
     //Bridges
     ManagerBridge managerBridge = new ManagerBridge();
@@ -302,6 +307,11 @@ public class AppCoreCtrl
         searchView.setTitle(L10n.getString("Search.DialogTitle"));
         searchCtrl = new SearchCtrl(searchModel, searchView);
         searchModel.addObserver(new SearchBridge());
+        
+        //--- Detail ---
+        detailModel = new Detail(model);
+        detailView = new DetailView(detailModel, view, true);
+        detailCtrl = new DetailCtrl(detailModel, detailView);        
     }
     
     private void setDatabaseDependentCommandsEnabled(boolean enabled) {
@@ -828,7 +838,15 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            model.prevPage();
+            try {
+                model.prevPage();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+            }
         }
     }
     
@@ -840,7 +858,15 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            model.nextPage();
+            try {
+                model.nextPage();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+            } catch (DBLayerException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+            }
         }
     }
 
@@ -1037,8 +1063,19 @@ public class AppCoreCtrl
             if (e.getKeyText(e.getKeyChar()).equals("Space"))
                 model.invertSelectedOnCurrentRow();
             if (e.getKeyText(e.getKeyChar()).equals("Enter")) {
-                JOptionPane.showMessageDialog(view,"Detail of #"+model.getSelectedRowNumber());
-                e.consume();
+                try {
+                    int resultNumber = model.getSelectedResultNumber();
+                    if (resultNumber != model.getResultsCount())
+                        model.selectAndShow(resultNumber - 1);//After Enter the hyperactive JTable moves selection to next row, so we need to correct that
+                    detailModel.load(model.getSelectedResultNumber());
+                    detailView.setVisible(true);
+                } catch (RemoteException ex) {  
+                    JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+                    ex.printStackTrace();
+                } catch (DBLayerException ex) {
+                    JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -1138,6 +1175,7 @@ public class AppCoreCtrl
                         addModel.setDatabase(dblayer);
                         editModel.setDatabase(dblayer);
                         searchModel.setDatabase(dblayer);
+                        detailModel.setDatabase(dblayer);
     			
                         model.setAccessRights( loginModel.getAccessRights() );
                         model.login();

@@ -14,6 +14,7 @@ import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import net.sf.plantlore.common.StatusBarManager;
@@ -430,6 +431,9 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 overview.setVisible(false);
                 overview.setEnabled(false);
             }
+            if (arg.equals("SELECTION_CHANGED")) {
+                overview.getSelectionModel().setSelectionInterval(model.getSelectedRowNumber(),model.getSelectedRowNumber());
+            }
         }        
     }
 
@@ -451,6 +455,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         //FIXME: what if otm == null ????????????
         overview.setModel(tableSorter);
         tableSorter.setTableHeader(overview.getTableHeader());
+        overview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         // Comment to established db connection automatically without the login procedure        
         //overviewScrollPane.setPreferredSize(new Dimension(800, (otm.getRowCount()+1)*19));

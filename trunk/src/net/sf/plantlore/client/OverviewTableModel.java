@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.client;
 
+import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class OverviewTableModel extends AbstractTableModel {
     private int pageSize = 30;
     private int currentPage = 1;
     private int selectionColumnIndex = -1;
+    private int numberColumnIndex = -1;
     
     private ArrayList<Column> columns;
     private Selection selection = new Selection();    
@@ -103,9 +105,9 @@ public class OverviewTableModel extends AbstractTableModel {
                     if (columns.get(j).type.equals((Column.Type.NUMBER))) {
                         row[j] = from + i + 1;
                     } else {
-                        value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
                         if (columns.get(j).type.equals(Column.Type.OCCURRENCE_ID))
-                            row[row.length-1] = value;                        
+                            row[row.length-1] = value;    
+                        value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
                         row[j] = value;
                         proj++;
                     }
@@ -118,6 +120,12 @@ public class OverviewTableModel extends AbstractTableModel {
         
     }
             
+    public Integer getOccurrence(int i) throws DBLayerException, RemoteException {
+        Object[] obj = db.more(getResultId(), i, i);
+        Object[] pa = (Object[]) obj[0];
+        return (Integer) pa[0];
+    }
+    
     public Object[] getRow(int i) {
         if (data != null)
             return data[i];
@@ -315,6 +323,8 @@ public class OverviewTableModel extends AbstractTableModel {
         logger.debug("Setting new overview columns.");
         selectionColumnIndex = columns.indexOf(new Column(Column.Type.SELECTION)) - 1; // we don't display the first column which is always Occurrence.ID
                                                                                        // so the index as JTable sees it is -1
+        
+        numberColumnIndex = columns.indexOf(new Column(Column.Type.NUMBER));
         this.columns = columns;
     }
     
@@ -327,6 +337,13 @@ public class OverviewTableModel extends AbstractTableModel {
             return (Integer)data[row][data[row].length-1];
         else
             return -1;
+    }
+    
+    public Integer getResultNumber(int row) {
+        if (data != null)
+            return ((Integer)data[row][numberColumnIndex])-1; //displayed numbers are indexed from 1
+        else
+            return -1;        
     }
     
     public void setDatabase(DBLayer database) {

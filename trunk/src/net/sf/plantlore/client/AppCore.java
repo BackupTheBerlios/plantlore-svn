@@ -214,33 +214,19 @@ public class AppCore extends Observable
         }
     }
 
-    public void nextPage() {
+    public void nextPage() throws DBLayerException, RemoteException {
         if (tableSorter != null)
         {
-            //FIXME:
-            try {
-                tableSorter.nextPage();
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }
+            tableSorter.nextPage();
             setChanged();
             notifyObservers("PAGE_CHANGED");        
         }
     }
     
-    public void prevPage() {
+    public void prevPage() throws DBLayerException, RemoteException {
         if (tableSorter != null)
         {
-            //FIXME:
-            try {
-                tableSorter.prevPage();
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
-            }
+            tableSorter.prevPage();
             setChanged();
             notifyObservers("PAGE_CHANGED");
         }
@@ -286,6 +272,23 @@ public class AppCore extends Observable
         logger.debug("Selected row #"+i);
     }
     
+    public void selectAndShow(int resultNumber) throws DBLayerException, RemoteException {
+        System.out.println("selectAndShow resultNumber = "+resultNumber);
+        if (resultNumber < 0 || resultNumber > getResultsCount()) {
+            throw new IllegalArgumentException("Result number "+resultNumber+" doesn't exist.");
+        }
+        if (resultNumber >= getRecordsPerPage()*getCurrentPage()) { //resultNumber is greater than the last resultNumber on current page
+            nextPage();
+        } 
+        if (resultNumber < (getRecordsPerPage()*(getCurrentPage()-1))){ //resultNumber is less than the first resultNumber on current page
+            prevPage();
+        }
+        
+        selectedRow = resultNumber % getRecordsPerPage();
+        setChanged();
+        notifyObservers("SELECTION_CHANGED");
+    }
+    
     public int getSelectedRowNumber()
     {
         return selectedRow;
@@ -300,6 +303,17 @@ public class AppCore extends Observable
         //Object[] row = tableSorter.getRow(selectedRow);
         //return (Integer)row[row.length-1];
         return tableSorter.getOccurrenceId(selectedRow);
+    }
+    
+    public Integer getSelectedResultNumber() {
+        return tableSorter.getResultNumber(selectedRow);
+    }
+    
+    public Integer getOccurrence(int i) throws DBLayerException, RemoteException {
+        if (i < 0 || i > getResultsCount())
+            throw new IllegalArgumentException(""+i);
+        
+        return tableSorter.getOccurrence(i);
     }
     
     public void savePreferences() throws IOException {
