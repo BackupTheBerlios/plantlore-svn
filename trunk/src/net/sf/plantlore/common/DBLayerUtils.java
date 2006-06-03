@@ -10,7 +10,6 @@
 package net.sf.plantlore.common;
 
 import java.rmi.RemoteException;
-import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
@@ -18,7 +17,6 @@ import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.server.HibernateDBLayer;
 import org.apache.log4j.Logger;
 
 /** Class offering convenience methods for DBLayer.
@@ -98,14 +96,14 @@ public class DBLayerUtils {
         db.closeQuery(sq);
     }
     
-    public static void main(String[] args) throws DBLayerException, RemoteException {
-        DBLayer db = new HibernateDBLayer();
-        db.initialize("jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdataUTF.fdb","sysdba","masterkey");
-        DBLayerUtils dlu = new DBLayerUtils(db);
-        Author a = (Author)dlu.getObjectFor(1,Author.class);
-        System.out.println("class "+a.getWholeName());
-        Occurrence o = (Occurrence)dlu.getObjectFor(1,Occurrence.class);
-        System.out.println("nalez "+o.getPlant().getTaxon());
-    }
+//    public static void main(String[] args) throws DBLayerException, RemoteException {
+//        DBLayer db = new HibernateDBLayer();
+//        db.initialize("jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdataUTF.fdb","sysdba","masterkey");
+//        DBLayerUtils dlu = new DBLayerUtils(db);
+//        Author a = (Author)dlu.getObjectFor(1,Author.class);
+//        System.out.println("class "+a.getWholeName());
+//        Occurrence o = (Occurrence)dlu.getObjectFor(1,Occurrence.class);
+//        System.out.println("nalez "+o.getPlant().getTaxon());
+//    }
     
 }
