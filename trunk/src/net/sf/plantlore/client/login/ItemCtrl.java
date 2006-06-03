@@ -3,7 +3,8 @@ package net.sf.plantlore.client.login;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.event.ChangeEvent;
+import javax.swing.Action;
+
 
 import net.sf.plantlore.l10n.L10n;
 
@@ -37,7 +38,7 @@ public class ItemCtrl {
 					view.setTitle(L10n.getString("Login.AddTitle"));
 					view.next.setText(L10n.getString("Login.Add"));
 					view.next.setToolTipText(L10n.getString("Login.AddTT"));
-					view.next.setEnabled(false);
+//					view.next.setEnabled(false);
 				}
 			});
 			break;
@@ -59,30 +60,36 @@ public class ItemCtrl {
 		this.model = login; this.view = itemview;
 		view.next.setAction(new NextAction());
 		view.discard.setAction(new DiscardAction());
-		//view.next.addChangeListener();
+		
+//		Action validator = new ObligatoryItemsListener();
+//		view.alias.addActionListener(validator);
+//		((javax.swing.JTextField)view.database.getEditor().getEditorComponent()).addActionListener(validator);
+//		view.databasePort.addActionListener(validator);
+//		view.databaseIdentifier.addActionListener(validator);
 	}
 	
 	
 	
-	class ObligatoryItemsListener implements javax.swing.event.ChangeListener {
-		public void stateChanged(ChangeEvent event) {
+	class ObligatoryItemsListener extends AbstractAction {
+		public void actionPerformed(ActionEvent arg0) {
 			boolean newState = 
 				view.alias.getText().length() > 0
 				&&
 				((javax.swing.JTextField)view.database.getEditor().getEditorComponent()).getText().length() > 0
 				&&
 				view.databaseIdentifier.getText().length() > 0;
+				
+			System.out.println("@---------> "+newState);
+				
 			if(newState)
 				try {
-					if( Integer.parseInt(view.databasePort.getText()) < 1024 )
+					if( Integer.parseInt(view.databasePort.getText()) <= 0 )
 						newState = false;
 				} catch(Exception e) { 
 					newState = false; 
 				}
 			
-			boolean state = view.next.isEnabled();
-			
-			if( state != newState )
+			if( view.next.isEnabled() != newState )
 				view.next.setEnabled(newState);
 		}
 	}
