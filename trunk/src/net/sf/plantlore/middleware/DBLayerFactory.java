@@ -3,6 +3,7 @@ package net.sf.plantlore.middleware;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.exception.DBLayerException;
 
 /** 
@@ -14,12 +15,7 @@ import net.sf.plantlore.common.exception.DBLayerException;
  */
 public interface DBLayerFactory {
 	
-	/** Create a new instance of the DBLayer that will manage the connection to the local database. 
-	 * 
-	 * @return	A new instance of the DBLayer mediating the connection between the client and the local database.
-	 */
-	DBLayer create();
-	
+
 	/** 
 	 * Create a new instance of the DBLayer that will manage the connection to the remote database.
 	 *  
@@ -29,7 +25,7 @@ public interface DBLayerFactory {
 	 * @throws RemoteException		If the RMI encounters a problem.
 	 * @throws NotBoundException	If the server is not running on the specified port.
 	 */
-	DBLayer create(String host, int port) throws RemoteException, NotBoundException, DBLayerException;
+	DBLayer create(DBInfo settings) throws RemoteException, NotBoundException, DBLayerException;
 	
 	/** 
 	 * Destroy the DBLayer. This is a special measure, 

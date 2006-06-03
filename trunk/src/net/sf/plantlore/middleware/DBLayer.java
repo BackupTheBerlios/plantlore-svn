@@ -22,7 +22,7 @@ import net.sf.plantlore.common.exception.DBLayerException;
  * @author Tomáš Kovařík, Erik Kratochvíl
  */
 public interface DBLayer extends Remote, Serializable {
-    
+	
     /**
      *  Initialize database connection. Authenticate user and Load rights of this user
      *

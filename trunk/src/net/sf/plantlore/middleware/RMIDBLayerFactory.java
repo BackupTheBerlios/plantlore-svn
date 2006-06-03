@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 import net.sf.plantlore.server.ConnectionInfo;
+import net.sf.plantlore.server.DatabaseSettings;
+import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
@@ -39,38 +41,18 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
   */
 public class RMIDBLayerFactory implements DBLayerFactory {
 	
-	private Logger logger; 
-
+	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName()); 
+	
+	
 	/** Keep information about connections to databases. */
 	private Hashtable<DBLayer, ConnectionInfo> client = new Hashtable<DBLayer, ConnectionInfo>(4);
 	
+	
 	/** Create a new instance of DBLayerFactory. */
 	public RMIDBLayerFactory() {
-		logger = Logger.getLogger(this.getClass().getPackage().getName()); 
 	}
 	
-
-	/** 
-	 * Create a new local DBLayer.
-	 * <br/>
-	 * This method creates purely local DBLayer. The DBLayer object lives in the local JVM. 
-	 * No RMI gets involved here. 
-	 * It is meant for connections to local database - the overhead is minimalized.
-	 * 
-	 *  @return The local DBLayer object that mediates the connection with the local database.
-	 */
-	public synchronized DBLayer create() {
-		//Create a new DBLayer and save information about that connection 
-		DBLayer db = new HibernateDBLayer();
-		ConnectionInfo info = new ConnectionInfo(null, db, null, "localhost (direct connection)");
-		client.put(db, info);
-		
-		logger.info("New DBLayer created: " + info);
-		
-		return db;
-	}
 	
-
 	/**
 	 * Create a new DBLayer.
 	 * <br/>
@@ -85,10 +67,31 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	 * @return A stub of the remote object that lives on the server and mediates the connection
 	 * with the remote database.
 	 */
-	public synchronized DBLayer create(String host, int port) throws RemoteException, NotBoundException, DBLayerException {
+	public synchronized DBLayer create(DBInfo settings) 
+	throws RemoteException, NotBoundException, DBLayerException {
 		// Some exceptional cases are handled specially.
-		if(host == null || host.equals("") || host.equalsIgnoreCase("localhost"))
-			return create();
+		String host = settings.getHost();
+		
+		if(host == null || host.equals("") || host.equalsIgnoreCase("localhost")) {
+			
+			DatabaseSettings dbSettings = new DatabaseSettings(
+					settings.getDatabaseType(),
+					settings.getDatabasePort(),
+					settings.getDatabaseParameter(),
+					settings.getMasterUser(),
+					settings.getMasterPassword()
+			);
+			
+			DBLayer db = new HibernateDBLayer( dbSettings );
+			ConnectionInfo info = new ConnectionInfo(null, db, null, "localhost (direct connection)");
+			client.put(db, info);
+			
+			logger.info("New DBLayer created: " + info);
+			
+			return db;
+		}
+		
+		int port = settings.getPort();
 		
 		logger.debug("Creating a new DBLayer using the RMI:");
 		

@@ -39,12 +39,10 @@ public interface Server extends Remote, Serializable {
 	void start() throws RemoteException, AlreadyBoundException;
 	
 	/**
-	 * Terminate the server. If <code>harsh</code> is true, the server terminates immediately,
-	 * if not, it waits, until the last client disconnects. 
+	 * Terminate the server. 
 	 * 
-	 * @param harsh Should all currently connected clients be disconnected?
 	 * @throws RemoteException if the RMI encounters an error (network/server).
 	 */
-	void stop(boolean harsh) throws RemoteException;
+	void stop() throws RemoteException;
 	
 }

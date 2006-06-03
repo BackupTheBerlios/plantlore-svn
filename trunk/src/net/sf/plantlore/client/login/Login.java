@@ -1,5 +1,6 @@
 package net.sf.plantlore.client.login;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -45,16 +46,13 @@ public class Login extends Observable {
 	
 	//private String  file = System.getProperty("user.home") + "/.plantlore/db.info.xml";
 	
-        private MainConfig mainConfig = null;
+	private MainConfig mainConfig = null;
 	private DBLayerFactory factory = null;
 	private DBLayer dblayer;
-	private Logger logger;
-	
-	private String username;
-	private String passcode;
+	private Logger logger  = Logger.getLogger(this.getClass().getPackage().getName());
 	
 	private Right accessRights;
-        private User plantloreUser;
+	private User plantloreUser;
 	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
@@ -64,36 +62,35 @@ public class Login extends Observable {
 	 */
 	public Login(DBLayerFactory factory, MainConfig mainConfig) {
 		this.factory = factory;
-                this.mainConfig = mainConfig;
-		logger = Logger.getLogger(this.getClass().getPackage().getName());
+		this.mainConfig = mainConfig;
 		load();
 	}
 	
 	
 	/**
 	 * Load saved information about the database connections.
-	 * TODO: -IMPLEMENTATION MISSING-
 	 */
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
 		
-                for (DBInfo savedDBInfo: mainConfig.getDBinfos())
-                    dbinfo.add(savedDBInfo);
-                				
+		for (DBInfo savedDBInfo: mainConfig.getDBinfos())
+			dbinfo.add(savedDBInfo);
+		
 		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 	}
 	
 	/**
 	 * Save the list of database connections for further usage.
-	 * TODO: -IMPLEMENTATION MISSING-
 	 */
 	protected void save() {
 		logger.debug("Saving the list of databases.");
-
-                mainConfig.setDBInfos(dbinfo);
-                
-                //ukladat uz tady?! spis ne - co kdyby se ukladani nepovedlo? bylo by divny to porad hlasit
-                //mainConfig.save();
+		
+		mainConfig.setDBInfos(dbinfo);
+		try {
+			mainConfig.save();
+		}catch(IOException e) {
+			logger.warn("Saving failed. "+e.getMessage());
+		}
 	}
 	
 
@@ -101,13 +98,22 @@ public class Login extends Observable {
 	 * Create a new record, add it to the list of connections and save that information for
 	 * the future use.
 	 * 
-	 * @param alias	Alias of the database.
-	 * @param host	Hostname of the computer where the server dwells.
-	 * @param port	Port where the server listens.
-	 * @param db		Identifier of the database to which the User wants to connect.
+	
 	 */
-	public void createRecord(String alias, String host, int port, String db) {
-		DBInfo r = new DBInfo(alias, host, port, db, new String[MAX_NAMES]);
+	synchronized public void createRecord(
+			String alias, 
+			String host, 
+			int port, 
+			String databaseType, 
+			int databasePort, 
+			String databaseIdentifier, 
+			String databaseParameter, 
+			String masterUser, 
+			String masterPassword ) {
+
+		DBInfo r = new DBInfo(
+				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter,
+				new String[MAX_NAMES], masterUser, masterPassword );
 		dbinfo.add(r);
 		logger.debug("New database record has been created " + r);
 		save();
@@ -118,7 +124,7 @@ public class Login extends Observable {
 	 * Delete the selected record from the list.
 	 *
 	 */
-	public void deleteSelectedRecord() {
+	synchronized public void deleteSelectedRecord() {
 		if(selected == null) return;
 		dbinfo.remove(selected);
 		logger.debug("The selected record has been removed " + selected);
@@ -135,9 +141,30 @@ public class Login extends Observable {
 	 * @param port	Port where the server listens.
 	 * @param db		Identifier of the database to which the User wants to connect.
 	 */
-	public void updateSelectedRecord(String alias, String host, int port, String db) {
+	synchronized public void updateSelectedRecord(
+			String alias, 
+			String host, 
+			int port, 
+			String databaseType, 
+			int databasePort, 
+			String databaseIdentifier, 
+			String databaseParameter, 
+			String masterUser, 
+			String masterPassword ) {
+
 		if(selected == null) return;
-		selected.alias = alias; selected.host = host; selected.port = port; selected.db = db;
+		
+		selected.alias = alias ;
+		selected.host = host; 
+		selected.port = port;
+		selected.databaseType = databaseType; 
+		selected.databasePort = databasePort ;
+		selected.databaseIdentifier = databaseIdentifier ;
+		selected.databaseParameter = databaseParameter; 
+		selected.masterUser = masterUser;
+		selected.masterPassword = masterPassword;
+		
+		save();
 		logger.debug("The selected record has been updated " + selected);
 		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 	}
@@ -145,7 +172,7 @@ public class Login extends Observable {
 	/**
 	 * @return the list of all records.
 	 */
-	public DBInfo[] getRecords() {
+	synchronized public DBInfo[] getRecords() {
 		// Seeing is believing: http://java.sun.com/j2se/1.5.0/docs/api/java/util/Collection.html#toArray(T[])
 		return dbinfo.toArray(new DBInfo[0]);
 	}
@@ -158,34 +185,25 @@ public class Login extends Observable {
 	 * @param index	The index of the selected record. Zero means first. 
 	 * Negative means nothing gets selected (deselect).
 	 */
-	public void setSelected(int index) {
+	synchronized public void setSelected(int index) {
 		if(index == lastIndex) 
 			return;
-		if(index >= 0) selected = dbinfo.get(index); 
-		else selected = null;
+		else if(index >= 0) 
+			selected = dbinfo.get(index); 
+		else 
+			selected = null;
 		
 		lastIndex = index;
 		
 		logger.debug("Selected database is " + selected);
 		this.setChanged(); 
-		/*------------------------------------------------------------
-		 * The reason why a parameter is used here is simple:
-		 * 1. you select something in the choice list in the LoginView ->
-		 * 2. ListSelectionEvent is fired ->
-		 * 3. model.setSelected(..) is called in the handler ->
-		 * 4. notifyObservers(..) is called here ->
-		 * 5. loginView.update() gets involved ->
-		 * 6. without proper recognition of events setList(data)
-		 *    would be called which will in turn trigger 
-		 *    ListSelectionEvent -> 2.
-		 *------------------------------------------------------------*/
-		this.notifyObservers( selected );
+		this.notifyObservers( selected.clone() );
 	}
 	
 	/**
 	 * @return	The selected record.
 	 */
-	public DBInfo getSelected() {
+	synchronized public DBInfo getSelected() {
 		return selected;
 	}
 	
@@ -201,44 +219,43 @@ public class Login extends Observable {
 	 * @param name The account name (used to access the database).  
 	 * @param password The password to the account.
 	 */
-	public void connectToSelected(String name, String password) {
-		this.username = name; this.passcode = password;
+	synchronized public void connectToSelected(final String name, final String password) {
+		
 		if(selected == null) {
 			logger.debug("The System cannot create a connection when nothing was selected!");
 			return;
 		}
 		
+		final DBInfo selectedClone = selected.clone();
+		
 		 final SwingWorker worker = new SwingWorker() {
 	            public Object construct() {
 	            	
-	            	try {
-	            		logout();
-	            	} catch (RemoteException e) { logger.info("Unable to disconnect from the server. " + e); }
-	            	
+            		logout();
 	            	try {
 	            		// The current username is moved to the top of the list of names :) Nice feature.
-	            		selected.promoteUser(username);
+	            		selectedClone.promoteUser(name);
 	            		// Save the current state.
 	            		save();
 	            		
 	            		// Create a new database layer.
-	            		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selected.host + ":" + selected.port);
+	            		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selectedClone.host + ":" + selectedClone.port);
 	            		setChanged(); notifyObservers(L10n.getString("Login.Connecting"));
-	            		dblayer = factory.create(selected.host, selected.port);
+	            		dblayer = factory.create( selectedClone );
 	            		
 	            		logger.debug("Connection successful.");
 	            		setChanged(); notifyObservers(L10n.getString("Login.Connected"));
 	            		
 	            		// Initialize the database layer.
 	            		setChanged(); notifyObservers(L10n.getString("Login.InitializingDBLayer"));
-	            		logger.debug("Initializing that DBLayer (" + selected.db + ", " + username + ", " + passcode + "...");
+	            		logger.debug("Initializing that DBLayer (" + selectedClone.databaseType + ", " + name + ", " + password + "...");
 
-	            		Object[] init = dblayer.initialize(selected.db, username, passcode);
+	            		Object[] init = dblayer.initialize(selectedClone.getDatabaseIdentifier(), name, password);
 	            		plantloreUser = (User)init[0];
 	            		accessRights = (Right)init[1];
 	            	} 
 	            	catch (Exception exception) {
-	            		logger.error("The initialization of the DBLayer failed! " + exception);
+	            		logger.error("The initialization of the DBLayer failed! " + exception.getMessage());
 	            		// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 	            		// If it is not, the server's policy may not allow another connection from this client!
 	            		try {
@@ -269,27 +286,31 @@ public class Login extends Observable {
 	 * 
 	 * @throws RemoteException if the RMI encounters an error.
 	 */
-	public void logout() throws RemoteException {
-		if(dblayer != null) {
-			factory.destroy(dblayer);
-			dblayer = null; accessRights = null; plantloreUser = null;
-			logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
-			this.setChanged(); this.notifyObservers();
-		}
+	public void logout() {
+		if(dblayer != null) 
+			try {
+				factory.destroy(dblayer);
+				dblayer = null; accessRights = null; plantloreUser = null;
+				logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
+			} catch(RemoteException e) {
+				logger.warn("Unable to disconnect from the server. " + e.getMessage());
+				/*setChanged();
+				notifyObservers(e);*/ // Not this time, this is supposed to be silent.
+			}
 	}
 	
 		
 	/**
 	 * @return The last DBLayer that has been created.  
 	 */	
-	public DBLayer getDBLayer() { 
+	synchronized public DBLayer getDBLayer() { 
 		return dblayer; 
 	}
 	
 	/**
 	 * @return The currently logged user.
 	 */
-	public User getLoggedUser() {
+	synchronized public User getLoggedUser() {
 		return plantloreUser;
 	}
 	
@@ -297,7 +318,7 @@ public class Login extends Observable {
 	 * @return The list of access rights as returned by the database layer
 	 * after initialization.
 	 */
-	public Right getAccessRights() {
+	synchronized public Right getAccessRights() {
 		return accessRights;
 	}
         

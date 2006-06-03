@@ -1,5 +1,10 @@
 package net.sf.plantlore.server.manager;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JOptionPane;
+
 import net.sf.plantlore.l10n.L10n;
 
 
@@ -7,15 +12,16 @@ import net.sf.plantlore.l10n.L10n;
  * The server connection/creation dialog.
  *
  * @author  Erik Kratochvíl (discontinuum@gmail.com)
+ * @version GR-8
  */
-public class ServerLoginView extends javax.swing.JFrame {
+public class ServerLoginView extends javax.swing.JFrame implements Observer {
 	
-	ServerMng model;
     
     /** Creates new form ServerLoginView */
     public ServerLoginView(ServerMng model) {
-    	this.model = model;
+    	model.addObserver(this);
         initComponents();
+        getRootPane().setDefaultButton(next);
         setLocationRelativeTo(null); // center of the screen
     }
     
@@ -26,47 +32,43 @@ public class ServerLoginView extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         host = new javax.swing.JTextField();
         password = new javax.swing.JPasswordField();
         next = new javax.swing.JButton();
-        imageHere = new javax.swing.JPanel();
-        createNew = new javax.swing.JRadioButton();
-        connectExisting = new javax.swing.JRadioButton();
+        plantloreLogo = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        help = new javax.swing.JButton();
+        status = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        jLabel1.setText(L10n.getString("HostPort"));
+        setTitle(L10n.getString("Server.Login"));
+        setResizable(false);
+        host.setText("localhost");
 
-        jLabel2.setText(L10n.getString("Password"));
+        next.setText(L10n.getString("Server.Next"));
 
-        host.setText("localhost:1099");
-
-        next.setText("Next");
-
-        imageHere.setBackground(new java.awt.Color(0, 0, 0));
-        org.jdesktop.layout.GroupLayout imageHereLayout = new org.jdesktop.layout.GroupLayout(imageHere);
-        imageHere.setLayout(imageHereLayout);
-        imageHereLayout.setHorizontalGroup(
-            imageHereLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        plantloreLogo.setBackground(new java.awt.Color(0, 0, 0));
+        plantloreLogo.setPreferredSize(new java.awt.Dimension(300, 100));
+        org.jdesktop.layout.GroupLayout plantloreLogoLayout = new org.jdesktop.layout.GroupLayout(plantloreLogo);
+        plantloreLogo.setLayout(plantloreLogoLayout);
+        plantloreLogoLayout.setHorizontalGroup(
+            plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(0, 397, Short.MAX_VALUE)
         );
-        imageHereLayout.setVerticalGroup(
-            imageHereLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 198, Short.MAX_VALUE)
+        plantloreLogoLayout.setVerticalGroup(
+            plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 100, Short.MAX_VALUE)
         );
 
-        buttonGroup1.add(createNew);
-        createNew.setSelected(true);
-        createNew.setText("Create and start a new server");
-        createNew.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        createNew.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jLabel1.setText(L10n.getString("Server.Host"));
 
-        buttonGroup1.add(connectExisting);
-        connectExisting.setText("Connect to a running server");
-        connectExisting.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        connectExisting.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jLabel2.setText(L10n.getString("Server.Password"));
+
+        help.setText(L10n.getString("Common.Help"));
+
+        status.setText("Awaiting commands");
+        status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -75,40 +77,41 @@ public class ServerLoginView extends javax.swing.JFrame {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(imageHere, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(createNew)
-                    .add(connectExisting)
+                    .add(plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(help)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 279, Short.MAX_VALUE)
+                        .add(next))
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel1)
                             .add(jLabel2))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
-                            .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, next))
+                            .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))))
                 .addContainerGap())
+            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(imageHere, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(createNew)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(connectExisting)
+                .add(plantloreLogo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
-                    .add(host, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(host, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel2)
-                    .add(password, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(password, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(next)
+                    .add(help))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(next)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(status))
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -116,15 +119,31 @@ public class ServerLoginView extends javax.swing.JFrame {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    protected javax.swing.JRadioButton connectExisting;
-    protected javax.swing.JRadioButton createNew;
+    protected javax.swing.JButton help;
     protected javax.swing.JTextField host;
-    protected javax.swing.JPanel imageHere;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     protected javax.swing.JButton next;
     protected javax.swing.JPasswordField password;
+    protected javax.swing.JPanel plantloreLogo;
+    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
+    
+    
+    public void update(Observable source, final Object parameter) {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				if(parameter instanceof String)
+					status.setText( " " + (String)parameter );
+				else if(parameter instanceof Exception) {
+					JOptionPane.showMessageDialog(null,
+							((Exception)parameter).getMessage(),
+						    L10n.getString("Error.ServerLoginFailed"),
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+	}
+	
     
 }

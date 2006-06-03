@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.server.RMIServer;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -94,31 +96,72 @@ public class MainConfig {
     }
     
     public ArrayList<DBInfo> getDBinfos() {
-        ArrayList<DBInfo> result = new ArrayList<DBInfo>();
-
-        List columnList = document.selectNodes("//config/login/triplet");
-        Iterator it = columnList.iterator();
-        while (it.hasNext()) {
-            Node n = (Node)it.next();
-            String alias = n.valueOf("alias"),
-                    host = n.valueOf("host"),
-                    database = n.valueOf("database");
-            Number port = n.numberValueOf("port");
-
-            List userList = n.selectNodes("user");
-            String[] users = new String[userList.size()];
-            Node user = null;
-            Iterator it2 = userList.iterator(); int i = 0;
-            while (it2.hasNext()) {
-                user = (Node) it2.next();
-                users[i] = user.getText();
-                i++;
-            }
-                        
-            DBInfo dbi = new DBInfo(alias,host,port.intValue(),database,users);
-            result.add(dbi);
-        }
-        return result;
+    	ArrayList<DBInfo> result = new ArrayList<DBInfo>();
+    	
+    	String alias, host, databaseType, databaseIdentifier, 
+    	databaseParameter, masterUser, masterPassword;
+    	String[] users;
+    	int port, databasePort;
+    	
+    	int unnamedDatabase = 0;
+    	
+    	List columnList = document.selectNodes("//config/login/triplet");
+    	Iterator it = columnList.iterator();
+    	while (it.hasNext()) {
+    		
+    		alias = host = databaseType = databaseIdentifier = 
+    			databaseParameter = masterUser = masterPassword = "";
+    		port = RMIServer.DEFAULT_PORT; databasePort = -1;
+    		
+    		Node n = (Node)it.next();
+    		// Obtain the basic characteristic.
+    		alias = n.valueOf("alias");
+    		host = n.valueOf("host");
+    		Number portNumber = n.numberValueOf("port");
+    		port = ( portNumber == null ? RMIServer.DEFAULT_PORT : portNumber.intValue() );
+    		
+    		// The database info.
+    		Node database = (Node) n.selectSingleNode("database");
+    		if(database != null) {
+    			databaseType = database.valueOf("engine");
+    			databaseIdentifier = database.valueOf("identifier");
+    			Number databasePortNumber = database.numberValueOf("port");
+    			databasePort = ( databasePortNumber == null ? -1 : databasePortNumber.intValue() );
+    			databaseParameter = database.valueOf("parameter");
+    			masterUser = database.valueOf("masteruser");
+    			masterPassword = database.valueOf("masterpassword");
+    		}
+    		else
+    			continue; // incomplete record (databaseType, databasePort, databaseIdentifier are obligatory).
+    		
+    		if(databasePort < 0)
+    			continue; // corrupted record (databasePort is obligatory).
+    		
+    		if(alias == null || alias.length() == 0) {
+    			unnamedDatabase++;
+    			alias = "Database " + unnamedDatabase;
+    		}
+    		
+    		// The list of stored users. 
+    		List userList = n.selectNodes("user");
+    		users = new String[userList.size()];
+    		Node user = null;
+    		Iterator it2 = userList.iterator(); int i = 0;
+    		while (it2.hasNext()) {
+    			user = (Node) it2.next();
+    			users[i] = user.getText();
+    			i++;
+    		}
+    		
+    		// Create a new DBInfo ~ triplet.
+    		DBInfo dbi = new DBInfo(
+    				alias, host, port, 
+    				databaseType, databasePort, databaseIdentifier, databaseParameter, 
+    				users, masterUser, masterPassword );
+    		
+    		result.add(dbi);
+    	}
+    	return result;
     }
     
     public void setColumns(ArrayList<Column> columns) {
@@ -158,14 +201,32 @@ public class MainConfig {
         
         for (int i = 0; i < dbinfos.size(); i++) {
             DBInfo dbi = dbinfos.get(i);
+            
+            // Server settings.
             Element triplet = login.addElement("triplet");
             if (dbi.getAlias() != null)
                 triplet.addElement("alias").setText(dbi.getAlias());
             if (dbi.getHost() != null)
                 triplet.addElement("host").setText(dbi.getHost());
-            if (dbi.getDb() != null)
-                triplet.addElement("database").setText(dbi.getDb());
-            triplet.addElement("port").setText(""+dbi.getPort());
+            if(dbi.getPort() > 0)
+            	triplet.addElement("port").setText("" + dbi.getPort());
+            
+            // Database settings.
+            Element database = triplet.addElement("database");
+            if (dbi.getDatabaseType() != null)
+                database.addElement("engine").setText(dbi.getDatabaseType());
+            if(dbi.getDatabaseIdentifier() != null)
+            	database.addElement("identifier").setText(dbi.getDatabaseIdentifier());
+            if(dbi.getDatabasePort() > 0)
+            	database.addElement("port").setText("" + dbi.getDatabasePort());
+            if(dbi.getDatabaseParameter() != null)
+            	database.addElement("parameter").setText(dbi.getDatabaseParameter());
+            if(dbi.getMasterUser() != null)
+            	database.addElement("masteruser").setText(dbi.getMasterUser());
+            if(dbi.getMasterPassword() != null)
+            	database.addElement("masterpassword").setText(dbi.getMasterPassword());
+            
+            // Regular users of the database.
             String[] usrs = dbi.getUsers();
             for (int u = 0; u < usrs.length; u++) {
                 if (usrs[u] != null)

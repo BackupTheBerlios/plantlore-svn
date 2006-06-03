@@ -85,38 +85,28 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private static final int UPDATE = 2;
     private static final int DELETE = 3;
     
-    private String databaseConnectionPrefix;
-    private String databaseMasterUser;
-    private String databaseMasterPassword;
+    private DatabaseSettings settings;
+    private String currentlyConnectedUser = "";
+    
+
+    
+    public HibernateDBLayer(DatabaseSettings settings) {
+    	this(null, settings);
+    }
+   
     
     /**
      * Creates a new instance of HibernateDBLayer.
      * 
      *  @param undertaker The object that is responsible for cleanup if the client crashes. 
      */
-    public HibernateDBLayer(Undertaker undertaker) {
-    	this(undertaker, "", null, null);
-    }
-    
-    public HibernateDBLayer(String databaseConnectionPrefix) {
-    	this(null, databaseConnectionPrefix, null, null);
-    }
-    
-    public HibernateDBLayer() {
-    	this(null, "", null, null);
-    }
-    
-    
-    /** Creates a new instance of HibernateDBLayer */
     public HibernateDBLayer(
     		Undertaker undertaker, 
-    		String databaseConnectionPrefix,
-    		String user,
-    		String password) {
+    		DatabaseSettings settings) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         logger.debug("      Constructing a new HibernateDBLayer ...");
         
-        this.databaseConnectionPrefix = databaseConnectionPrefix;
+        this.settings = settings;
         
         // Initialize pool of result sets, initial capacity = INITIAL POOL SIZE
         results = new Hashtable<Integer, ScrollableResults>(INITIAL_POOL_SIZE); 
@@ -128,9 +118,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
         
         this.undertaker = undertaker;
-        databaseMasterUser = user;
-        databaseMasterPassword = password;
-        
+       
         logger.debug("      completed.");
     }
     
@@ -149,6 +137,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Configuration cfg;
         int result = 0;
         
+        currentlyConnectedUser = user;
+        
         // File containing Hibernate configuration
         configFile = new File("hibernate.cfg.xml");        
         // Load Hibernate configuration
@@ -160,14 +150,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_LOAD_CONFIG, null);
             throw ex;
         }
-        // TODO: this should be loaded from a configuration file on the server
-        // TEMPORARY CODE STARTS HERE
-        databaseMasterUser = user;
-        databaseMasterPassword = password;
-        // TEMPORARY CODE ENDS HERE
-        cfg.setProperty("hibernate.connection.url", databaseConnectionPrefix + dbID);
-        cfg.setProperty("hibernate.connection.username", databaseMasterUser);
-        cfg.setProperty("hibernate.connection.password", databaseMasterPassword);
+
+        if( settings.getConnectionStringSuffix() == null || "".equals(settings.getConnectionStringSuffix()) )
+        	cfg.setProperty("hibernate.connection.url", settings.getConnectionStringPrefix() + dbID);
+        else
+        	cfg.setProperty("hibernate.connection.url", settings.getConnectionStringPrefix() + dbID 
+        			+ "?" + settings.getConnectionStringSuffix());
+        
+        cfg.setProperty("hibernate.connection.username", settings.getMasterUser());
+        cfg.setProperty("hibernate.connection.password", settings.getMasterPassword());
         try {
             // Build session factory
             sessionFactory = cfg.buildSessionFactory();
@@ -1851,8 +1842,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	 * @see java.rmi.dgc.leaseValue
 	 */
 	public void unreferenced() { 
-		if(undertaker != null) undertaker.bury(this); 
+		if(undertaker != null) 
+			undertaker.bury(this); 
 	}
 	//===============================================================
-	              
+	  
+	
+	@Override
+	public String toString() {
+		return currentlyConnectedUser ; 
+	}
 }

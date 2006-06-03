@@ -104,17 +104,21 @@ public class LoginView extends javax.swing.JDialog implements Observer {
     /**
      * Update the list of records (in case there were some changes).
      */
-    public void update(Observable source, Object parameter) {
-    	// Ignore setSelected() event
-    	if(parameter == Login.UPDATE_LIST) {
-    		// Every item of the list will - after being added to the list - 
-    		// cause a ListSelectionEvent (valueChange) event!
-    		// This is probably because every time an item is inserted 
-    		// into the list, it is also selected!
-    		choice.setListData(model.getRecords());
-    	}
-    	else if(parameter != null && parameter instanceof DBLayer)
-    		this.setVisible(false); // the database layer has been created, we are no longer neccessary
+    public void update(Observable source, final Object parameter) {
+    	java.awt.EventQueue.invokeLater(new Runnable() {
+    		public void run() {
+    			// Ignore setSelected() event
+    			if(parameter == Login.UPDATE_LIST) {
+    				// Every item of the list will - after being added to the list - 
+    				// cause a ListSelectionEvent (valueChange) event!
+    				// This is probably because every time an item is inserted 
+    				// into the list, it is also selected!
+    				choice.setListData(model.getRecords());
+    			}
+    			else if(parameter != null && parameter instanceof DBLayer)
+    				setVisible(false); // the database layer has been created, we are no longer neccessary
+    		}
+    	});
 	}
     
     

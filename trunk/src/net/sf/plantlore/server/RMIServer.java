@@ -34,25 +34,22 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	
 	
 	private RMIRemoteDBLayerFactory remoteFactory = null;
-	private int port = DEFAULT_PORT;
 	private Guard guard = null;
+	private ServerSettings settings;
 	
 	private Logger logger;
 
-	/** Create a new instance of RMIServer running on the default port. */
-	public RMIServer(String password) throws RemoteException, AlreadyBoundException {
-		this(DEFAULT_PORT, password);
-	}
+
 	
 	/** Create a new instance of RMIServer running on the specified port. */
-	public RMIServer(int port, String password) throws RemoteException, AlreadyBoundException {
-		this.port = port;
-		
+	public RMIServer(ServerSettings settings, String password) 
+	throws RemoteException, AlreadyBoundException {
 		logger = Logger.getLogger(this.getClass().getPackage().getName());
+		this.settings = settings;
 		
 		// Control object that will return the server after the client passed a valid certif. information
 		guard = new RMIServerControl(this, password);
-		RMI.bind(port, guard, Guard.ID);
+		RMI.bind(settings.getPort(), guard, Guard.ID);
 	}
 	
 	/** Get the information about the connected clients. */
@@ -67,8 +64,11 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	 * @param client The client to be kicked.
 	 */
 	public synchronized void disconnect(ConnectionInfo client) {
-		try { remoteFactory.destroy(client.getStub()); } 
-		catch(RemoteException e) { logger.warn(e); }
+		try { 
+			remoteFactory.destroy(client.getStub()); 
+		} catch(RemoteException e) { 
+			logger.warn(e.getMessage()); 
+		}
 	}
 	
 	/** 
@@ -79,14 +79,22 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	 */
 	public synchronized void start() throws AlreadyBoundException {
 		try {
+			
+			int timeout = Math.min(Math.max(1, settings.getTimeout()), 30) * 60000;
+			System.setProperty( "java.rmi.dgc.leaseValue", new Integer(timeout).toString() );
+
 			// Locate (or start) the rmiregistry on the specified port
 			Registry registry;
-			try {	registry = LocateRegistry.createRegistry(port); }
-			catch(Exception e) { registry = LocateRegistry.getRegistry(port); }
+			try {	registry = LocateRegistry.createRegistry(settings.getPort()); }
+			catch(Exception e) { registry = LocateRegistry.getRegistry(settings.getPort()); }
 			// Create a new factory or reuse an existing one.
-			if(remoteFactory == null) remoteFactory = new RMIRemoteDBLayerFactory();
+			if(remoteFactory == null) remoteFactory = new RMIRemoteDBLayerFactory( settings );
 			// Bind the factory to the rmiregistry. 
 			registry.bind(RemoteDBLayerFactory.ID, remoteFactory);
+
+			
+			// Nemel by server exportnout i sebe??
+
 			
 			logger.info("The RemoteDBLayerFactory has been bound to the rmiregistry.");
 		}
@@ -98,15 +106,13 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	 * The rmiregistry on the specified port is <b>not</b> stopped, because some other programs may be still
 	 * using it!<br/>
 	 * This will terminate the server completely.
-	 * 
-	 * @param harsh		Be harsh and disconnect every client connected to the server.
 	 */
-	public synchronized void stop(boolean harsh) {
+	public synchronized void stop() {
 		if(remoteFactory == null) return;
 		try {
 			// 1. Unbind the RemoteDBLayerFactory from the rmiregistry 
 			// -> noone can obtain the stub of the remote factory anymore
-			RMI.unbind(port, RemoteDBLayerFactory.ID);
+			RMI.unbind(settings.getPort(), RemoteDBLayerFactory.ID);
 			logger.debug("The RemoteDBLayerFactory was unbound from the rmiregistry.");
 			
 			// 2. Unexport the remote factory -> noone can make a remote call anymore
@@ -114,25 +120,25 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 			logger.debug("The RemoteDBLayerFactory was unexported. It cannot accept remote calls now.");
 			
 			// 3. Disconnect all users from the server.
-			if(harsh) {
-				remoteFactory.disconnectAll();
-				logger.info("All clients were disconnected.");
-			}
+			remoteFactory.disconnectAll();
+			logger.info("All clients were disconnected.");
 
 			// 4. Disconnect this object from the RMI ->
 			UnicastRemoteObject.unexportObject(this, true);
 			logger.info("The RMIServer now stops accepting remote calls.");
 			
 			// 5. Disconnect the control guard and unexport it
-			RMI.unbind(port, Guard.ID);
+			RMI.unbind(settings.getPort(), Guard.ID);
 			RMI.unexport(guard);
 			logger.debug("The ServerProxy is now unavailable.");
 			
 			logger.info("The Server terminates. Bye.");
 		}
-		catch(Exception e) { logger.error(e); }
+		catch(Exception e) { 
+			logger.error(e.getMessage()); 
+		}
 	}
-	
+
 	
 	/** 
 	 * Initialize the codebase java.rmi.server.property to the specified directory or the

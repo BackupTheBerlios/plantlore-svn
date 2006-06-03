@@ -16,24 +16,15 @@ package net.sf.plantlore.client.login;
 public class DBInfo {
 	protected String alias;
 	protected String host;
-	protected String db;
-	protected String[] users;	
 	protected int port;
+	protected String databaseType;
+	protected int databasePort;
+	protected String databaseIdentifier;
+	protected String databaseParameter;
+	protected String[] users;
+	protected String masterUser;
+	protected String masterPassword;
 	
-	/**
-	 * Create a new record.
-	 * 
-	 * @param alias The name the user will be presented with.
-	 * @param host The hostname where the server runs.
-	 * @param port The port number where the server listens, 0 means default.
-	 * @param db The database identificator.
-	 * @param users The list of user names used lately.
-	 */
-	public DBInfo(String alias, String host, int port, String db, String[] users) {
-		this.alias = alias; this.host = host; this.port = (port <= 0) ? 1099 : port; this.db = db; this.users = users;
-	}
-	
-
 	/**
 	 * Pick a user. The selected name will be moved to the start of the list.
 	 * The selected user will be at the top of the list next time.
@@ -55,25 +46,69 @@ public class DBInfo {
 	public String toString() {
 		return alias;
 	}
+	
+	
+	public DBInfo clone() {
+		return new DBInfo(
+				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter,
+				users, masterUser, masterPassword );
+	}
 
-    public String getAlias() {
-        return alias;
-    }
+	public DBInfo(String alias, String host, int port, String databaseType, int databasePort, String databaseIdentifier, String databaseParameter, String[] users, String masterUser, String masterPassword) {
+		this.alias = alias;
+		this.host = host;
+		this.port = port;
+		this.databaseType = databaseType;
+		this.databasePort = databasePort;
+		this.databaseIdentifier = databaseIdentifier;
+		this.databaseParameter = databaseParameter;
+		this.users = users;
+		this.masterUser = masterUser;
+		this.masterPassword = masterPassword;
+	}
 
-    public String getHost() {
-        return host;
-    }
+	
+	public String getAlias() {
+		return alias;
+	}
 
-    public String getDb() {
-        return db;
-    }
+	public String getDatabaseIdentifier() {
+		return databaseIdentifier;
+	}
 
-    public String[] getUsers() {
-        return users;
-    }
+	public String getDatabaseParameter() {
+		return databaseParameter;
+	}
 
-    public int getPort() {
-        return port;
-    }
+	public int getDatabasePort() {
+		return databasePort;
+	}
+
+	public String getDatabaseType() {
+		return databaseType;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public String getMasterPassword() {
+		return masterPassword;
+	}
+
+	public String getMasterUser() {
+		return masterUser;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public String[] getUsers() {
+		return users;
+	}
+
+
+	
 		
 }

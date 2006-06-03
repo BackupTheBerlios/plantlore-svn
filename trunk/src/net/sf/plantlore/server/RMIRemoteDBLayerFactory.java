@@ -35,34 +35,28 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * @version 1.0  final
  */
 public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
-	implements RemoteDBLayerFactory, Undertaker {
+	implements RemoteDBLayerFactory {
 	
-	private Logger logger;
+	private Logger logger  = Logger.getLogger(this.getClass().getPackage().getName());;
 	
-	
-	/** 
-	 * Maximum number of connections from one IP = maximum number of DBLayer objects 
-	 * that can be created for users from this IP address.
-	 */
-	private int maxConnectionsPerIP = 81; // TODO: Nacitat z nejakyho settings...
-	
-	/** 
-	 * Maximum number of clients = the total maximum number of DBLayer objects 
-	 * that can be created by this factory. 
-	 */
-	private int maxConnectionsTotal = 81; // TODO: Nacitat z nejakyho settings...
+	private ServerSettings  settings;
+	private Undertaker undertaker;
 	
 	/** Keep information about all connected clients. */
-	private Hashtable<DBLayer, ConnectionInfo> client = 
-		new Hashtable<DBLayer, ConnectionInfo>(2*maxConnectionsTotal);
+	private Hashtable<DBLayer, ConnectionInfo> clients; 
+		
+	
 	
 	/** 
 	 * Create a new RMIDBLayerFactory.
 	 * @throws RemoteException If the RMI encounters an error.
 	 */
-	public RMIRemoteDBLayerFactory() throws RemoteException {
-		logger = Logger.getLogger(this.getClass().getPackage().getName());
+	public RMIRemoteDBLayerFactory(ServerSettings settings) throws RemoteException {
+		this.settings = settings;
+		clients = new Hashtable<DBLayer, ConnectionInfo>( settings.getConnectionsTotal() );
+		undertaker = new RMIUndertaker();
 	}
+	
 	
 	/** 
 	 * Return information about connected clients.
@@ -70,9 +64,11 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 *  @return Collection holding information about currently connected clients.
 	 */
 	protected synchronized ConnectionInfo[] getClients() {
-		Collection<ConnectionInfo> clients = client.values();
-		if(clients != null) return clients.toArray(new ConnectionInfo[0]);
-		else return null;
+		Collection<ConnectionInfo> currentlyConnectedClients = clients.values();
+		if(currentlyConnectedClients != null) 
+			return currentlyConnectedClients.toArray(new ConnectionInfo[0]);
+		else 
+			return null;
 	}
 	
 	/**
@@ -83,12 +79,14 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * @return	True if the connection should be allowed.
 	 */
 	private boolean allowConnection(String host) {
-		if(client.size() >= maxConnectionsTotal) return false;
+		if(clients.size() >= settings.getConnectionsTotal()) 
+			return false;
 		
 		int c = 0;
-		for(ConnectionInfo info : client.values())
-			if(info.getClientHost().equalsIgnoreCase(host)) c++; // HA! C++ in Java! Strange!
-		return (c < maxConnectionsPerIP);
+		for(ConnectionInfo info : clients.values())
+			if(info.getClientHost().equalsIgnoreCase(host)) 
+				c++; // HA! C++ in Java! Strange!
+		return (c < settings.getConnectionsPerIP());
 	}
 	
 	/**
@@ -115,13 +113,13 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		
 		// Create a new DBLayer, export it, and keep the stub. Also set the Undertaker of this object.
 		logger.debug("  Creating a new HibernateDBLayer ...");
-		DBLayer database = new HibernateDBLayer(this);
+		DBLayer database = new HibernateDBLayer( undertaker, settings.getDatabaseSettings() );
 		logger.debug("   completed!");
 		DBLayer stub = (DBLayer) UnicastRemoteObject.exportObject(database);
 		
 		// Save the information about this connection.
 		ConnectionInfo info = new ConnectionInfo(null, database, stub, clientHost); // remoteFactory is null because of security reasons.
-		client.put(stub, info);
+		clients.put(stub, info);
 		
 		logger.info("New remote DBLayer created " + info);
 
@@ -157,7 +155,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 */	
 	public synchronized void destroy(DBLayer stub) throws RemoteException {
 		if(stub == null) return;
-		ConnectionInfo info = client.remove(stub);
+		ConnectionInfo info = clients.remove(stub);
 		if(info != null) disconnect(info.getDatabase());
 		else try {
 			logger.warn(RemoteServer.getClientHost() + " attempts to destroy " +
@@ -169,10 +167,10 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * Terminate the connection of all connected clients. 
 	 */
 	synchronized void disconnectAll() {
-		for (ConnectionInfo info : client.values()) 
+		for (ConnectionInfo info : clients.values()) 
 			try { disconnect(info.getDatabase()); } catch (Exception e) {}		
 		// Clear the list of opened connections - none is now opened.
-		client.clear();
+		clients.clear();
 	}
 	
 	/** 
@@ -181,17 +179,23 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * 
 	 * @see destroy 
 	 */
-	public synchronized void bury(DBLayer database) {
-		DBLayer stub = null;
-		
-		// Find the ConnectionInfo object among the connected clients 
-		for(ConnectionInfo info : client.values())
-			if(info.getDatabase().equals(database)) { stub = info.getStub(); break; }
-		
-		// Destroy it properly
-		try { destroy(stub); } catch(RemoteException e) {}
+	private class RMIUndertaker implements Undertaker { 
+		public synchronized final void bury(DBLayer database) {
+			DBLayer stub = null;
+			
+			// Find the ConnectionInfo object among the connected clients 
+			for(ConnectionInfo info : clients.values())
+				if(info.getDatabase().equals(database)) { 
+					stub = info.getStub(); 
+					break; 
+				}
+			
+			// Destroy it properly
+			try { 
+				destroy(stub); 
+			} catch(RemoteException e) {}
+		}
 	}
-	
 
 
 }

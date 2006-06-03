@@ -9,7 +9,10 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JOptionPane;
 
+
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ConnectionInfo;
 
 /**
@@ -28,6 +31,7 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     	model.addObserver(this);
     	
         initComponents();
+        //getRootPane().setDefaultButton(hide);
         setLocationRelativeTo(null); // center of the screen
     }
     
@@ -38,46 +42,71 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jScrollPane1 = new javax.swing.JScrollPane();
+        users = new javax.swing.JList();
+        hide = new javax.swing.JButton();
+        help = new javax.swing.JButton();
+        status = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         refresh = new javax.swing.JButton();
         kick = new javax.swing.JButton();
-        startstop = new javax.swing.JButton();
         terminate = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        users = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        refresh.setText("Refresh");
+        setTitle(L10n.getString("Server.Manage"));
+        users.setToolTipText(L10n.getString("Server.ListOfUsersTT"));
+        jScrollPane1.setViewportView(users);
+
+        hide.setText(L10n.getString("Server.Hide"));
+
+        help.setText(L10n.getString("Common.Help"));
+
+        status.setText("Server up and running");
+        status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        jToolBar1.setFloatable(false);
+        refresh.setText(L10n.getString("Server.Refresh"));
         jToolBar1.add(refresh);
 
-        kick.setText("Kick users");
+        kick.setText(L10n.getString("Server.KickUser"));
         jToolBar1.add(kick);
 
-        startstop.setText("Stop server");
-        jToolBar1.add(startstop);
-
-        terminate.setText("Terminate server");
-        jToolBar1.add(terminate);
-
-        jScrollPane1.setViewportView(users);
+        terminate.setText(L10n.getString("Server.Terminate"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
-                .add(10, 10, 10)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(help)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 86, Short.MAX_VALUE)
+                        .add(terminate)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(hide)))
                 .addContainerGap())
+            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+            .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
         );
+
+        layout.linkSize(new java.awt.Component[] {hide, terminate}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(jToolBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                .addContainerGap())
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(hide)
+                    .add(help)
+                    .add(terminate))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -85,11 +114,13 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton help;
+    protected javax.swing.JButton hide;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
     protected javax.swing.JButton kick;
     protected javax.swing.JButton refresh;
-    protected javax.swing.JButton startstop;
+    private javax.swing.JLabel status;
     protected javax.swing.JButton terminate;
     protected javax.swing.JList users;
     // End of variables declaration//GEN-END:variables
@@ -98,12 +129,26 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     /**
      * Reload the list of the connected clients.
      */
-	public void update(Observable source, Object parameter) {
-		if(parameter != null && parameter.toString().startsWith("PH")){
+	public void update(Observable source, final Object parameter) {
+		if(parameter == ServerMng.UPDATE_LIST){
 			ConnectionInfo[] clients = model.getConnectedUsers(false);
-			if(clients != null) users.setListData(clients);
-			else users.setListData(new String[] {null}); // empty selection. the setListData mustn't be null :/
-		}
+			if(clients != null) 
+				users.setListData(clients);
+			else 
+				users.setListData(new String[] {""});
+		} else
+			java.awt.EventQueue.invokeLater(new Runnable(){
+				public void run() {
+					if(parameter instanceof String)
+						status.setText((String)parameter);
+					else if(parameter instanceof Exception) {
+						JOptionPane.showMessageDialog(null,
+								((Exception)parameter).getMessage(),
+							    L10n.getString("Error.ServerOperationFailed"),
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
 	}
     
 }

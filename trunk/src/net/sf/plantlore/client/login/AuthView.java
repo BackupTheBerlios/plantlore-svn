@@ -22,11 +22,8 @@ import net.sf.plantlore.middleware.DBLayer;
  */
 public class AuthView extends javax.swing.JDialog implements Observer {
 	
-	private Login model;
-    
     /** Creates new form AuthView */
     public AuthView(Login model) {
-    	this.model = model;
     	model.addObserver(this);
         initComponents();
         getRootPane().setDefaultButton(next);
@@ -113,32 +110,36 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     /**
      * Reload the list of usernames according to the currently selected record.
      */
-    public void update(Observable source, Object arg) {
-    	if(arg == null || arg instanceof DBInfo) {
-    		DBInfo selected = model.getSelected();
-    		if(selected == null) return;
-    		user.removeAllItems();
-    		((AutoComboBox)user).addItems(selected.users);
-    		password.setText("");
-    		setTitle(L10n.getString("Login.ConnectingTo") + " " + selected.toString());
-    	}
-    	// Exception! We must display the exception to the user.
-    	else if(arg instanceof Exception) {
-    		status.setText(L10n.getString("Login.Failed"));
-    		next.setEnabled(true);
-    		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    		JOptionPane.showMessageDialog(
-    				this, 
-    				((Exception)arg).getMessage(), 
-    				L10n.getString("Error.LoginFailed"), 
-    				JOptionPane.ERROR_MESSAGE);
-    	}
-    	// The database layer has been created, we are no longer neccessary
-		else if(arg instanceof DBLayer)
-    		this.setVisible(false); 
-    	// Some update information - display them in the status bar.
-		else if(arg instanceof String) 
-			status.setText("  " + (String)arg);
+    public void update(Observable source, final Object arg) {
+    	java.awt.EventQueue.invokeLater(new Runnable() {
+    		public void run() {
+    			if(arg == null || arg instanceof DBInfo) {
+    				DBInfo selected = (DBInfo)arg;
+    				if(selected == null) return;
+    				user.removeAllItems();
+    				((AutoComboBox)user).addItems(selected.users);
+    				password.setText("");
+    				setTitle(L10n.getString("Login.ConnectingTo") + " " + selected.toString());
+    			}
+    			// Exception! We must display the exception to the user.
+    			else if(arg instanceof Exception) {
+    				status.setText(L10n.getString("Login.Failed"));
+    				next.setEnabled(true);
+    				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    				JOptionPane.showMessageDialog(
+    						null, 
+    						((Exception)arg).getMessage(), 
+    						L10n.getString("Error.LoginFailed"), 
+    						JOptionPane.ERROR_MESSAGE);
+    			}
+    			// The database layer has been created, we are no longer neccessary
+    			else if(arg instanceof DBLayer)
+    				setVisible(false); 
+    			// Some update information - display them in the status bar.
+    			else if(arg instanceof String) 
+    				status.setText("  " + (String)arg);
+    		}
+    	});
 	}
     
     

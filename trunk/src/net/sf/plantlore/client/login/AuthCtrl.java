@@ -4,7 +4,6 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
 
 import net.sf.plantlore.l10n.L10n;
 
@@ -29,14 +28,8 @@ public class AuthCtrl {
 			view.next.setEnabled(false);
 			view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			String user = (view.user.getSelectedItem() != null) ? view.user.getSelectedItem().toString() : null;
-			if(user != null)
-				model.connectToSelected(user, new String(view.password.getPassword()));
-			else 
-				JOptionPane.showMessageDialog(view,
-						L10n.getString("Error.MissingUsername"),
-						L10n.getString("Error.Missing"),
-						JOptionPane.WARNING_MESSAGE);
-			
+
+			model.connectToSelected(user, new String(view.password.getPassword()));
 		}
 	}
 

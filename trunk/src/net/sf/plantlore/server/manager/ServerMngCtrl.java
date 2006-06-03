@@ -1,11 +1,11 @@
 package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
-import java.rmi.RemoteException;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
 
+import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ConnectionInfo;
 
@@ -23,81 +23,67 @@ public class ServerMngCtrl {
 	public ServerMngCtrl(ServerMng model, ServerMngView view) {
 		this.model = model; this. view = view;
 		
-		view.kick.addActionListener(new KickUsers());
-		view.startstop.addActionListener(new StopServer());
-		view.terminate.addActionListener(new TerminateServer());
-		view.refresh.addActionListener(new Refresh());
+		view.kick.setAction(new KickUserAction());
+		view.terminate.setAction(new TerminateServerAction());
+		view.refresh.setAction(new RefreshAction());
+		view.hide.setAction(new HideAction());
 	}
 	
 	
-	class KickUsers extends AbstractAction {
-		public KickUsers() {
-            putValue(NAME, L10n.getString("Kick"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("KickTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Kick"));            
-        }
-		
+	class KickUserAction extends AbstractAction {
+		public KickUserAction() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Server.KickUserTT"));
+			putValue(NAME, L10n.getString("Server.KickUser"));
+            ImageIcon icon = Resource.createIcon("Server.KickUser.gif");
+			if(icon != null) putValue(SMALL_ICON, icon);
+		}
 		public void actionPerformed(ActionEvent ae) {
-			try {
-				Object[] bunch = view.users.getSelectedValues();
-				if(bunch == null || bunch.length == 0) return;
-
-				for(Object client : bunch)
-					if(client instanceof ConnectionInfo) model.kick((ConnectionInfo)client);
-
-			} catch(RemoteException re) { 
-				JOptionPane.showMessageDialog(view,
-						L10n.getString("errorRemoteException"),
-					    L10n.getString("errorRemoteExceptionTitle"),
-					    JOptionPane.WARNING_MESSAGE);
+			Object client = view.users.getSelectedValue();
+			if(client == null) 
 				return;
-			}
+			else if(client instanceof ConnectionInfo) 
+				model.kick( (ConnectionInfo)client );
 		}
 	}
 	
-	class StopServer extends AbstractAction {
+	class TerminateServerAction extends AbstractAction {
+		public TerminateServerAction() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Server.TerminateTT"));
+			putValue(NAME, L10n.getString("Server.Terminate"));
+            ImageIcon icon = Resource.createIcon("Server.Terminate.gif");
+			if(icon != null) putValue(SMALL_ICON, icon);
+		}
 		public void actionPerformed(ActionEvent ae) {
-			try {
-				model.stopServer();
-			} catch(RemoteException re) { 
-				JOptionPane.showMessageDialog(view,
-						L10n.getString("errorRemoteException"),
-					    L10n.getString("errorRemoteExceptionTitle"),
-					    JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			model.terminateServer();
+			// Disable Terminate, Refresh and Kick buttons.
+			view.terminate.setEnabled(false);
+			view.refresh.setEnabled(false);
+			view.kick.setEnabled(false);
 		}
 	}
 	
-	class TerminateServer extends AbstractAction {
-		public TerminateServer() {
-            putValue(NAME, L10n.getString("TerminateServer"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("TerminateServerTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("TerminateServer"));            
-        }
-		
+	class RefreshAction extends AbstractAction {
+		public RefreshAction() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Server.RefreshTT"));
+			putValue(NAME, L10n.getString("Server.Refresh"));
+            ImageIcon icon = Resource.createIcon("Server.Refresh.gif");
+			if(icon != null) putValue(SMALL_ICON, icon);
+		}
 		public void actionPerformed(ActionEvent ae) {
-			try {
-				model.terminateServer();
-			} catch(RemoteException re) { 
-				JOptionPane.showMessageDialog(view,
-						L10n.getString("errorRemoteException"),
-					    L10n.getString("errorRemoteExceptionTitle"),
-					    JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+			model.getConnectedUsers(true);
 		}
 	}
 	
-	class Refresh extends AbstractAction {
-		public Refresh() {
-            putValue(NAME, L10n.getString("Refresh"));
-            putValue(SHORT_DESCRIPTION, L10n.getString("RefreshTT"));
-            putValue(MNEMONIC_KEY, L10n.getMnemonic("Refresh"));            
-        }
-		
+	class HideAction extends AbstractAction {
+		public HideAction() {
+			putValue(SHORT_DESCRIPTION, L10n.getString("Server.HideTT"));
+			putValue(NAME, L10n.getString("Server.Hide"));
+            ImageIcon icon = Resource.createIcon("Server.Hide.gif");
+			if(icon != null) putValue(SMALL_ICON, icon);
+		}
 		public void actionPerformed(ActionEvent ae) {
-				model.getConnectedUsers(true);
+			view.setVisible(false);
+			//view.dispose();
 		}
 	}
 
