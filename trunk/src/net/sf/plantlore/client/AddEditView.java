@@ -28,6 +28,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
@@ -759,20 +760,37 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         TableColumn tc4 = authorTable.getColumnModel().getColumn(3);
 
         JComboBox cb;
-        if (model.getAuthors() == null) 
-            cb = new AutoComboBoxNG3();
+        /*if (model.getAuthors() == null) 
+            cb = new AutoComboBox();
         else
-            cb = new AutoComboBoxNG3(model.getAuthors());
+            cb = new AutoComboBox(model.getAuthors());
+        
+        ((AutoComboBox)cb).setStrict(true);
+        tc1.setCellEditor(new DefaultCellEditor(cb));  
+        
+        if (model.getAuthorRoles() == null) 
+            cb = new AutoComboBox();
+        else
+            cb = new AutoComboBox(model.getAuthorRoles());
+        
+        ((AutoComboBox)cb).setStrict(true);
+        tc2.setCellEditor(new DefaultCellEditor(cb));
+*/      
+//        
+        if (model.getAuthors() == null) 
+            cb = new JComboBox();
+        else
+            cb = new JComboBox(model.getAuthors());
         
         tc1.setCellEditor(new DefaultCellEditor(cb));  
         
         if (model.getAuthorRoles() == null) 
-            cb = new AutoComboBoxNG3();
+            cb = new JComboBox();
         else
-            cb = new AutoComboBoxNG3(model.getAuthorRoles());
+            cb = new JComboBox(model.getAuthorRoles());
         
         tc2.setCellEditor(new DefaultCellEditor(cb));
-        
+//  
         ButtonEditor be = new ButtonEditor(model);
         tc3.setCellEditor(be);
         tc3.setCellRenderer(be);
