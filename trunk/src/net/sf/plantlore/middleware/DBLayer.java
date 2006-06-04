@@ -86,6 +86,19 @@ public interface DBLayer extends Remote, Serializable {
     public void executeUpdateHistory(Object data) throws DBLayerException, RemoteException;
 
     /**
+     *  Execute DB update using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and DOES NOT save history
+     *
+     *  @param data holder object with the record we want to update
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case network connection failed
+     */
+    public void executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException;
+    
+    /**
      *  Get more rows from the current result set.
      *
      *  @param resultId id of the result from which we want to read

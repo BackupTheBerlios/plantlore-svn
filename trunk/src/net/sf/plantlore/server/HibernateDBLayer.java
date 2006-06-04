@@ -499,6 +499,45 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
     
     /**
+     *  Execute DB update using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and DOES NOT save history
+     *
+     *  @param data holder object with the record we want to update
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case network connection failed
+     */
+    public void executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+        // Check whether we are connected to the database
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            ex.setError(ex.ERROR_CONNECT, null);
+            throw ex;
+        }
+        // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }        
+        // Check whether we have rights for this operation
+        checkRights(data, UPDATE);        
+        // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }        
+        // Save item into the database
+        txSession.update(data);        
+    }
+    
+    /**
      *  Get more rows from the current result set.
      *
      *  @param resultId id of the result from which we want to read
@@ -666,6 +705,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return stub;
     }    
     
+    /**
+     *  Create new subquery (SQL "subselect"). To work with this query, use methods of the SelectQuery
+     *  interface.
+     *
+     *  @param classname classname of the holder object we want to use for the select.
+     *  @param slias alias used for the holder specified in the first argument
+     *  @return new instance of subquery
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */
     public SelectQuery createSubQuery(Class classname, String alias) throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
@@ -674,7 +724,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
-        System.out.println("CREATE NEW SUBQUERY");
         SelectQuery query = new SubQueryImplementation(classname, alias), 
         	stub = query;
         
@@ -707,7 +756,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             tx = session.beginTransaction();
             // Execute detached criteria query
             sq.setProjectionList();
-            res = sq.getCriteria().scroll(); // retrieve Criteria from SelectQuery
+                res = sq.getCriteria().scroll(); // retrieve Criteria from SelectQuery
             // Commit transaction
             tx.commit();                                      
         } catch (HibernateException e) {
@@ -815,6 +864,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return this.rights;
     }
 
+    /**
+     *  Begin long running transaction. in the current implementation, there can be only one long
+     *  running transaction at a time.
+     *
+     *  @return true if transaction was started, false if there already is a long running transaction
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */
     synchronized public boolean beginTransaction() throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
@@ -833,7 +891,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         this.longTx = this.txSession.beginTransaction();        
         return true;                    // Transaction succesfully started
     }
-    
+
+    /**
+     *  Commit long running transaction. In the current implementation, there can be only one long
+     *  running transaction at a time.
+     *
+     *  @return true if commit was successful, false if there is no long running transaction
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */    
     public boolean commitTransaction() throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
@@ -850,9 +917,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         this.longTx.commit();
         // Set the transaction object to null
         this.longTx = null;
+        // Close the session
+        this.txSession.close();
         return true;
     }
     
+    /**
+     *  Rollback long running transaction. In the current implementation, there can be only one 
+     *  long running transaction is possible. All the DB changes made by *InHistory() methods will
+     *  be rolled back.
+     *
+     *  @return true if rollback was successful, false if the long transaction is not in progress
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */
     public boolean rollbackTransaction() throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
@@ -868,10 +947,24 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Rollback the transaction
         this.longTx.rollback();
         // Set the transaction object to null
-        this.longTx = null;        
+        this.longTx = null;
+        // Close the session
+        this.txSession.close();        
         return true;        
     }
-    
+
+    /**
+     *  Execute DB insert using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges, saves history and updates
+     *  the holder with the author (CCREATEDWHO) and time of creation (CREATEDWHEN).
+     *
+     *  @param data holder object with the record we want to insert
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */    
     public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException {
         int recordId;
         
@@ -930,6 +1023,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return recordId;        
     }
     
+    /**
+     *  Execute DB update using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and saves history
+     *
+     *  @param data holder object with the record we want to update
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case network connection failed
+     */
     public void executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
@@ -946,22 +1050,31 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             data = occ;
         }        
         // Check whether we have rights for this operation
-        checkRights(data, UPDATE);
-        
+        checkRights(data, UPDATE);        
         // Modify the input data - UPDATEWHEN and UPDATEWHO where applicable
         if (data instanceof Occurrence) {
             Occurrence occ = (Occurrence)data;
             occ.setUpdatedWhen(new java.util.Date());
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
-        }
-        
+        }        
         // Save history record for this change
         saveHistory(txSession, data, UPDATE, null);
         // Save item into the database
         txSession.update(data);
     }
     
+    /**
+     *  Execute DB delete using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and saves history
+     *
+     *  @param data holder object with the record we want to delete
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the delete
+     *  @throws RemoteException in case network connection failed
+     */
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
@@ -1826,12 +1939,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
    
     // TODO: IS IT OK TO OVERRIDE THIS METHOD?
-    public void destroy() {        
+    public void destroy() throws RemoteException {
         if (this.queries.size() > 0) {
             logger.warn(this.queries.size()+" queries were left unclosed in the DBLayer");
         }
     }
-    
+
     //===============================================================
     // What happens to unreferenced objects? They get buried by the untertaker!
     
