@@ -229,55 +229,58 @@ public class Login extends Observable {
 		
 		final DBInfo selectedClone = selected.clone();
 		
-		 final SwingWorker worker = new SwingWorker() {
-	            public Object construct() {
-	            	
-            		logout();
-	            	try {
-	            		// The current username is moved to the top of the list of names :) Nice feature.
-	            		selectedClone.promoteUser(name);
-	            		// Save the current state.
-	            		save();
-	            		
-	            		// Create a new database layer.
-	            		logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selectedClone.host + ":" + selectedClone.port);
-	            		setChanged(); notifyObservers(L10n.getString("Login.Connecting"));
-	            		dblayer = factory.create( selectedClone );
-	            		
-	            		logger.debug("Connection successful.");
-	            		setChanged(); notifyObservers(L10n.getString("Login.Connected"));
-	            		
-	            		// Initialize the database layer.
-	            		setChanged(); notifyObservers(L10n.getString("Login.InitializingDBLayer"));
-	            		logger.debug("Initializing that DBLayer (" + selectedClone.databaseType + ", " + name + ", " + password + "...");
-
-	            		Object[] init = dblayer.initialize(selectedClone.getDatabaseIdentifier(), name, password);
-	            		plantloreUser = (User)init[0];
-	            		accessRights = (Right)init[1];
-	            	} 
-	            	catch (Exception exception) {
-	            		logger.error("The initialization of the DBLayer failed! " + exception.getMessage());
-	            		// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
-	            		// If it is not, the server's policy may not allow another connection from this client!
-	            		try {
-	            			factory.destroy(dblayer);
-	            		} catch(RemoteException re) {}
-	            		setChanged();
-            			notifyObservers( exception );
-	            		return null;
-	            	}
-	            	
-	            	setChanged(); 
-	            	notifyObservers(L10n.getString("Login.DBLayerInitialized"));
-	            	logger.debug("DBLayer initialized.");
-	            	
-	            	// Everything went fine.
-	            	setChanged(); notifyObservers(dblayer);
-	            	return null;
-	            }
-		 };
-		 
-		 worker.start();
+		final SwingWorker worker = new SwingWorker() {
+			public Object construct() {
+				
+				logout();
+				try {
+					// The current username is moved to the top of the list of names :) Nice feature.
+					selectedClone.promoteUser(name);
+					// Save the current state.
+					save();
+					
+					// Create a new database layer.
+					logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selectedClone.host + ":" + selectedClone.port);
+					setChanged(); notifyObservers(L10n.getString("Login.Connecting"));
+					dblayer = factory.create( selectedClone );
+					
+					logger.debug("Connection successful.");
+					setChanged(); notifyObservers(L10n.getString("Login.Connected"));
+					
+					// Initialize the database layer.
+					setChanged(); notifyObservers(L10n.getString("Login.InitializingDBLayer"));
+					logger.debug("Initializing that DBLayer (" + selectedClone.databaseType + ", " + name + ", " + password + "...");
+					
+					Object[] init = dblayer.initialize(selectedClone.getDatabaseIdentifier(), name, password);
+					plantloreUser = (User)init[0];
+					accessRights = (Right)init[1];
+				} 
+				catch (Exception e) {
+					logger.error("The initialization of the DBLayer failed! " + e.getMessage());
+					// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
+					// If it is not, the server's policy may not allow another connection from this client!
+					if(dblayer != null)
+						try {
+							factory.destroy(dblayer);
+						} catch(RemoteException re) {
+							// Nothing we can do; the server is probably in trouble, or the network connection failed. 
+						}
+					setChanged();
+					notifyObservers( e );
+					return null;
+				}
+				
+				setChanged(); 
+				notifyObservers(L10n.getString("Login.DBLayerInitialized"));
+				logger.debug("DBLayer initialized.");
+				
+				// Everything went fine.
+				setChanged(); notifyObservers(dblayer);
+				return null;
+			}
+		};
+		
+		worker.start();
 	}
 	
 	

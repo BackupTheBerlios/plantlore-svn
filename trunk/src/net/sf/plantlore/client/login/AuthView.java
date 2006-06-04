@@ -7,6 +7,7 @@
 package net.sf.plantlore.client.login;
 
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,7 +24,9 @@ import net.sf.plantlore.middleware.DBLayer;
 public class AuthView extends javax.swing.JDialog implements Observer {
 	
     /** Creates new form AuthView */
-    public AuthView(Login model) {
+    public AuthView(Dialog parent, Login model) {
+    	super(parent, true);
+    	
     	model.addObserver(this);
         initComponents();
         getRootPane().setDefaultButton(next);
@@ -44,6 +47,7 @@ public class AuthView extends javax.swing.JDialog implements Observer {
         password = new javax.swing.JPasswordField();
         next = new javax.swing.JButton();
         status = new javax.swing.JLabel();
+        discard = new javax.swing.JButton();
 
         setTitle(L10n.getString("Login.Authentication"));
         setTitle(L10n.getString("Login.Authentication"));
@@ -60,6 +64,8 @@ public class AuthView extends javax.swing.JDialog implements Observer {
         status.setText(" ...");
         status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
+        discard.setText(L10n.getString("Common.Cancel"));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -75,10 +81,16 @@ public class AuthView extends javax.swing.JDialog implements Observer {
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
                             .add(user, 0, 223, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, next))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(discard)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(next)))
                 .addContainerGap())
             .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
         );
+
+        layout.linkSize(new java.awt.Component[] {discard, next}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -91,7 +103,9 @@ public class AuthView extends javax.swing.JDialog implements Observer {
                     .add(jLabel2)
                     .add(password, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(next)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(next)
+                    .add(discard))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -144,6 +158,7 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton discard;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     protected javax.swing.JButton next;

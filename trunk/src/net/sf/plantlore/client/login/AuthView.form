@@ -35,7 +35,11 @@
                           <Component id="user" alignment="0" pref="223" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="next" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="discard" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="next" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -56,7 +60,10 @@
                   <Component id="password" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="next" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="next" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="discard" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="status" min="-2" pref="22" max="-2" attributes="0"/>
           </Group>
@@ -112,6 +119,16 @@
           <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
             <BevelBorder bevelType="1"/>
           </Border>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="discard">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Cancel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>

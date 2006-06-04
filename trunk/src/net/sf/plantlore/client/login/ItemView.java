@@ -6,6 +6,7 @@
 
 package net.sf.plantlore.client.login;
 
+import java.awt.Dialog;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,7 +22,9 @@ public class ItemView extends javax.swing.JDialog implements Observer {
 	private Login model;
     
     /** Creates new form ItemView */
-    public ItemView(Login model) {
+    public ItemView(Dialog parent, Login model) {
+    	super(parent, true);
+    	
 		this.model = model;
 		model.addObserver(this);
 		initComponents();
@@ -56,6 +59,7 @@ public class ItemView extends javax.swing.JDialog implements Observer {
         port = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         databaseIdentifier = new javax.swing.JTextField();
+        help = new javax.swing.JButton();
 
         setTitle(L10n.getString("Login.Change"));
         setTitle(L10n.getString("Login.Add"));
@@ -103,6 +107,8 @@ public class ItemView extends javax.swing.JDialog implements Observer {
 
         databaseIdentifier.setToolTipText(L10n.getString("Login.DatabaseIdentifierTT"));
 
+        help.setText(L10n.getString("Common.Help"));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -111,41 +117,54 @@ public class ItemView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel1)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(alias, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel2)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(host, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel8)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(port, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel3)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(database, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel9)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel4)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(databasePort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel5)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(databaseParameter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel6)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(databaseMasterUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jLabel7)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(databaseMasterPassword, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 231, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(help)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 80, Short.MAX_VALUE)
                         .add(discard)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next))
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel1)
-                            .add(jLabel2)
-                            .add(jLabel8))
-                        .add(6, 6, 6)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .add(alias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .add(port, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)))
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel3)
-                            .add(jLabel9))
-                        .add(8, 8, 8)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .add(database, 0, 231, Short.MAX_VALUE)))
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel4)
-                            .add(jLabel5)
-                            .add(jLabel6)
-                            .add(jLabel7))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .add(databaseParameter, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .add(databaseMasterUser, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .add(databaseMasterPassword, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE))))
-                .addContainerGap())
+                        .add(next)
+                        .add(10, 10, 10))))
         );
+
+        layout.linkSize(new java.awt.Component[] {alias, database, databaseIdentifier, databaseMasterPassword, databaseMasterUser, databaseParameter, databasePort, host, port}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         layout.linkSize(new java.awt.Component[] {discard, next}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
@@ -191,7 +210,8 @@ public class ItemView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(next)
-                    .add(discard))
+                    .add(discard)
+                    .add(help))
                 .addContainerGap())
         );
         pack();
@@ -229,6 +249,7 @@ public class ItemView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextField databaseParameter;
     protected javax.swing.JTextField databasePort;
     protected javax.swing.JButton discard;
+    protected javax.swing.JButton help;
     protected javax.swing.JTextField host;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -1099,7 +1099,7 @@ public class AppCoreCtrl
                 if(loginModel == null) {
                 	loginModel = new Login(new RMIDBLayerFactory(), model.getMainConfig());
                 	loginModel.addObserver(new DatabaseChange());
-                	loginView = new LoginView(loginModel);
+                	loginView = new LoginView(view, loginModel);
                 	loginCtrl = new LoginCtrl(loginModel, loginView);
                 }
                 loginCtrl.setVisible(true);

@@ -6,6 +6,7 @@
 
 package net.sf.plantlore.client.login;
 
+import java.awt.Frame;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,7 +22,9 @@ public class LoginView extends javax.swing.JDialog implements Observer {
 	private Login model;
     
     /** Creates new form LoginView */
-    public LoginView(Login model) {
+    public LoginView(Frame parent, Login model) {
+    	super(parent, true);
+    	
 		this.model = model;
 		model.addObserver(this);
         initComponents();

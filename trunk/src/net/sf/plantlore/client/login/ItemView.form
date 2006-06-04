@@ -24,52 +24,65 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" alignment="1" max="-2" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="alias" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="host" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="port" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="database" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="databaseIdentifier" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="databasePort" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="databaseParameter" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="databaseMasterUser" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="2"/>
+                              <Component id="databaseMasterPassword" linkSize="2" min="-2" pref="231" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="1">
+                      <Component id="help" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="80" max="32767" attributes="0"/>
                       <Component id="discard" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="next" linkSize="1" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="host" alignment="0" pref="231" max="32767" attributes="0"/>
-                          <Component id="alias" alignment="0" pref="231" max="32767" attributes="0"/>
-                          <Component id="port" alignment="0" pref="231" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="databaseIdentifier" pref="231" max="32767" attributes="0"/>
-                          <Component id="database" alignment="0" pref="231" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="databasePort" alignment="0" pref="231" max="32767" attributes="0"/>
-                          <Component id="databaseParameter" alignment="0" pref="231" max="32767" attributes="0"/>
-                          <Component id="databaseMasterUser" alignment="0" pref="231" max="32767" attributes="0"/>
-                          <Component id="databaseMasterPassword" alignment="0" pref="231" max="32767" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -125,6 +138,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="next" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="discard" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="help" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="1"/>
           </Group>
@@ -308,6 +322,16 @@
       <Properties>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.DatabaseIdentifierTT" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="help">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Help" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>

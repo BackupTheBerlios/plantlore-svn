@@ -3,7 +3,6 @@ package net.sf.plantlore.client.login;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 
 
 import net.sf.plantlore.l10n.L10n;
@@ -79,8 +78,6 @@ public class ItemCtrl {
 				&&
 				view.databaseIdentifier.getText().length() > 0;
 				
-			System.out.println("@---------> "+newState);
-				
 			if(newState)
 				try {
 					if( Integer.parseInt(view.databasePort.getText()) <= 0 )
@@ -101,13 +98,17 @@ public class ItemCtrl {
 			putValue(NAME, L10n.getString("Login.Change"));
 		}
 		public void actionPerformed(ActionEvent arg0) {
-			int port = 1099, databasePort = -1;
+			int port = 1099, databasePort = 0;
 			try {
 				port = Integer.parseInt(view.port.getText());
-			} catch(NumberFormatException e) {}
+			} catch(NumberFormatException e) {
+				// Never mind, use the default port.
+			}
 			try {
 				databasePort = Integer.parseInt(view.databasePort.getText());
-			} catch(NumberFormatException e) {}
+			} catch(NumberFormatException e) {
+				// Nothing we can do.
+			}
 			
 			switch(mode) {
 			case ADD:

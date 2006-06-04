@@ -127,7 +127,8 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	 * @param db The database layer to be taken care of.
 	 */
 	public synchronized void destroy(DBLayer db) throws RemoteException {
-		assert(db != null);
+		if(db == null)
+			return;
 		
 		// Get the stored information about the connection
 		ConnectionInfo info = client.remove(db);

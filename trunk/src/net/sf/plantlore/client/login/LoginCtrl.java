@@ -27,10 +27,10 @@ public class LoginCtrl {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// Create Item Add/Edit dialog.
-				itemView = new ItemView(model);
+				itemView = new ItemView(view, model);
 				itemCtrl = new ItemCtrl(model, itemView);
 				// Create Authorization dialog.
-				authView = new AuthView(model);
+				authView = new AuthView(view, model);
 				new AuthCtrl(model, authView);
 			}
 		});
