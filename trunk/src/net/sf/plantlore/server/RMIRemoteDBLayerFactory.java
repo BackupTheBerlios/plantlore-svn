@@ -37,6 +37,8 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	implements RemoteDBLayerFactory {
 	
+	private static final long serialVersionUID = 2006060433002698L;
+	
 	private Logger logger  = Logger.getLogger(this.getClass().getPackage().getName());;
 	
 	private ServerSettings  settings;
@@ -67,8 +69,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		Collection<ConnectionInfo> currentlyConnectedClients = clients.values();
 		if(currentlyConnectedClients != null) 
 			return currentlyConnectedClients.toArray(new ConnectionInfo[0]);
-		else 
-			return null;
+		return null;
 	}
 	
 	/**
@@ -112,16 +113,26 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		}
 		
 		// Create a new DBLayer, export it, and keep the stub. Also set the Undertaker of this object.
-		logger.debug("  Creating a new HibernateDBLayer ...");
+		logger.debug("Creating a new HibernateDBLayer ...");
 		DBLayer database = new HibernateDBLayer( undertaker, settings.getDatabaseSettings() );
-		logger.debug("   completed!");
-		DBLayer stub = (DBLayer) UnicastRemoteObject.exportObject(database);
+		logger.debug("[Success] DBLayer created.");
+		
+		
+		DBLayer stub = null;
+		try {
+			logger.debug("Exporting the database layer...");
+			stub = (DBLayer) UnicastRemoteObject.exportObject(database);
+			logger.debug("[Success] DBLayer exported.");
+		} catch(RemoteException e) {
+			logger.error("[Failure] Unable to export the DBLayer. Is the `codebase` set properly? Are stubs generated properly? " + e.getMessage());
+			throw e;
+		}
 		
 		// Save the information about this connection.
 		ConnectionInfo info = new ConnectionInfo(null, database, stub, clientHost); // remoteFactory is null because of security reasons.
 		clients.put(stub, info);
 		
-		logger.info("New remote DBLayer created " + info);
+		logger.info("New remote DBLayer created (" + info + ").");
 
 		return stub;
 	}
@@ -156,7 +167,8 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	public synchronized void destroy(DBLayer stub) throws RemoteException {
 		if(stub == null) return;
 		ConnectionInfo info = clients.remove(stub);
-		if(info != null) disconnect(info.getDatabase());
+		if(info != null) 
+			disconnect(info.getDatabase());
 		else try {
 			logger.warn(RemoteServer.getClientHost() + " attempts to destroy " +
 						"a database layer that has was not created by this factory OR attempts to destroy an already destroyed DBLayer!");

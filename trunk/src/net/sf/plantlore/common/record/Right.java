@@ -17,6 +17,9 @@ package net.sf.plantlore.common.record;
  * @author Lada Oberreiterova
  */
 public class Right extends Record {
+	
+	private static final long serialVersionUID = 20060604026L;
+	
     /** Parameters of the Right record */
     private Integer id;   
     private int administrator;

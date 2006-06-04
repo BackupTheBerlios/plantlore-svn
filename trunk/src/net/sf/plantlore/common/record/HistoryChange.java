@@ -16,6 +16,8 @@ package net.sf.plantlore.common.record;
  *  @author Tomas Kovarik
  */
 public class HistoryChange extends Record {
+	
+	private static final long serialVersionUID = 20060604010L;
 
     // Constants for HistoryChange operations (field COPERATION)
     public static final int HISTORYCHANGE_INSERT = 1;

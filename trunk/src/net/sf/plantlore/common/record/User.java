@@ -14,6 +14,9 @@ package net.sf.plantlore.common.record;
  *  @version 0.1, Mar 15, 2006
  */
 public class User extends Record {
+	
+	private static final long serialVersionUID = 20060604032L;
+	
     /** Parameters of the user */
     private Integer id;
     private String login;

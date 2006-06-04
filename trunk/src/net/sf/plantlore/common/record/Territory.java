@@ -19,6 +19,9 @@ import java.util.List;
  * @author Lada Oberreiterova
  */
 public class Territory extends Record {
+	
+	private static final long serialVersionUID = 20060604030L;
+	
     /** Parameters of the territory */
     private Integer id;    
     private String name;

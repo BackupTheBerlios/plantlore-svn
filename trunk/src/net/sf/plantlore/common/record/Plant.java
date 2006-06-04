@@ -19,6 +19,9 @@ import java.util.List;
  *  @version 0.1, Mar 15, 2006
  */
 public class Plant extends Record {
+	
+	private static final long serialVersionUID = 20060604022L;
+	
     /** Parameters of the plant */    
     private Integer id;
     private String surveyTaxId;

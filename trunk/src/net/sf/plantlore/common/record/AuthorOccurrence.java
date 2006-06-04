@@ -19,6 +19,9 @@ import java.util.List;
  * @author Lada Oberreiterova
  */
 public class AuthorOccurrence extends Record implements Deletable {
+	
+	private static final long serialVersionUID = 20060604004L;
+	
     /** Parameters of AuthorOccurence */
     private Integer id;
     private Author author;

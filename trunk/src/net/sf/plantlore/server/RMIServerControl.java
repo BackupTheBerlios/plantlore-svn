@@ -5,6 +5,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RMIServerControl extends UnicastRemoteObject implements Guard {
 	
+	private static final long serialVersionUID = 2006060433140537L;
+	
 	private Server server;
 	private String password;
 

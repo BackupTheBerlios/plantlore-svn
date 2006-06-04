@@ -44,6 +44,9 @@ import org.hibernate.sql.JoinFragment;
  * @author Tomáš Kovařík, Erik Kratochvíl
  */
 public class SelectQueryImplementation implements SelectQuery {
+	
+	private static final long serialVersionUID = 2006060433450880L;
+	
     // Hibernate criteria used in criteria query
     private Criteria criteria;
     /* List of projections for the query */

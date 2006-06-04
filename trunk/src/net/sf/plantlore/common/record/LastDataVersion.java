@@ -11,6 +11,8 @@ import java.util.Date;
  *  @author Lada Oberreiterova  
  */
 public class LastDataVersion extends Record {
+	
+	private static final long serialVersionUID = 20060604014L;
 
 	 /**
      * Parameters of the LastDataVersion. For detailed explanation see data model documentation.

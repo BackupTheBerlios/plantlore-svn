@@ -19,6 +19,9 @@ import java.util.List;
  * @author Lada Oberreiterova
  */
 public class Metadata extends Record {
+	
+	private static final long serialVersionUID = 20060604016L;
+	
     /** Parameters of Metadata */
     private Integer id;
     private String technicalContactName;

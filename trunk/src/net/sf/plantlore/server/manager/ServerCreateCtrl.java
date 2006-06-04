@@ -34,7 +34,7 @@ public class ServerCreateCtrl {
 		}
 		public void actionPerformed(ActionEvent arg0) {
 			// Take the stored information.
-			ServerSettings settings = model.getSettings();
+			ServerSettings settings = model.getSettings(false);
 			
 			// Gather the information from the dialog. 
 			try {

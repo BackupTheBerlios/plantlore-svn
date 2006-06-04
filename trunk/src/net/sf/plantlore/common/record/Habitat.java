@@ -19,6 +19,9 @@ import java.util.List;
  * @author Lada Oberreiterova
  */
 public class Habitat extends Record implements Deletable {   
+	
+	private static final long serialVersionUID = 20060604006L;
+	
     /** Parameters of the Habitat */
     private Integer id;
     private Territory territory;

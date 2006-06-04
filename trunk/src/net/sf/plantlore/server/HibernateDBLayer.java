@@ -56,6 +56,10 @@ import org.hibernate.criterion.Restrictions;
  *  @version far from ready!
  */
 public class HibernateDBLayer implements DBLayer, Unreferenced {
+	
+	
+	private static final long serialVersionUID = 2006060433222L;
+	
     /** Instance of a logger */
     private Logger logger;
     /** Configuration file for Hibernate */

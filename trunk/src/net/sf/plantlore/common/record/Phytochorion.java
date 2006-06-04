@@ -19,6 +19,9 @@ import java.util.List;
  * @author Lada Oberreiterova
  */
 public class Phytochorion extends Record {
+	
+	private static final long serialVersionUID = 20060604020L;
+	
     /** Parameters of phytochorion */
     private Integer id;
     private String code;

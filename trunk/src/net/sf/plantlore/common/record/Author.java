@@ -18,6 +18,10 @@ import java.util.List;
  *  @version 0.1, Mar 14, 2006
  */
 public class Author extends Record implements Deletable {
+	
+	private static final long serialVersionUID = 20060604002L;
+	
+	
     /** Parameters of the author. For detailed explanation see data model documentation. */
     private Integer id;
     private String wholeName;

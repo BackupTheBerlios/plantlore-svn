@@ -16,6 +16,9 @@ package net.sf.plantlore.common.record;
  *  @author Tomas Kovarik
  */
 public class HistoryColumn extends Record {
+	
+	private static final long serialVersionUID = 20060604008L;
+	
     /** Parameters of the HistoryColumn. For detailed explanation see data model documentation. */
     private Integer id;    
     private String tableName;

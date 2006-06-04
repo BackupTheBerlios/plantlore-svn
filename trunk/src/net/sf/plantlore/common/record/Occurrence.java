@@ -24,6 +24,9 @@ import java.util.List;
  *  @version 0.1, Mar 14, 2006
  */
 public class Occurrence extends Record implements Deletable {
+	
+	private static final long serialVersionUID = 20060604018L;
+	
     /** Parameters of the occurrence. For detailed explanation see data model documentation. */
     private Integer id;
     private String unitIdDb;

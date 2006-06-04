@@ -12,6 +12,8 @@ import java.io.Serializable;
  *
  */
 public class PlantloreException extends Exception implements Serializable {
+	
+	private static final long serialVersionUID = 2006060411032L;
 
 	public PlantloreException() { super(); }
 

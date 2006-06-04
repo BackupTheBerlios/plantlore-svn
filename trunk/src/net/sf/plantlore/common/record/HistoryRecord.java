@@ -10,6 +10,9 @@ package net.sf.plantlore.common.record;
  *  @author Tomas Kovarik
  */
 public class HistoryRecord extends Record {
+	
+	private static final long serialVersionUID = 20060604012L;
+	
     /** Parameters of the author. For detailed explanation see data model documentation. */
     private Integer id;
     private HistoryColumn historyColumn;

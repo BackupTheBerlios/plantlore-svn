@@ -28,6 +28,8 @@ import net.sf.plantlore.server.tools.*;
  */
 public class RMIServer extends UnicastRemoteObject implements Server {
 	
+	private static final long serialVersionUID = 2006060433819775L;
+	
 	/** The default port where the rmiregistry listens. To that rmiregistry the RemoteDBLayerFactory will be bound to. */
 	public static final int DEFAULT_PORT = Registry.REGISTRY_PORT;
 	
@@ -54,8 +56,9 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	
 	/** Get the information about the connected clients. */
 	public synchronized ConnectionInfo[] getClients() {
-		if(remoteFactory == null) return null;
-		else return remoteFactory.getClients(); 
+		if(remoteFactory == null) 
+			return null;
+		return remoteFactory.getClients(); 
 	}
 
 	/**
@@ -67,7 +70,8 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 		try { 
 			remoteFactory.destroy(client.getStub()); 
 		} catch(RemoteException e) { 
-			logger.warn(e.getMessage()); 
+			logger.error("Unable to disconnect the client. " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -98,7 +102,10 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 			
 			logger.info("The RemoteDBLayerFactory has been bound to the rmiregistry.");
 		}
-		catch(RemoteException e) { logger.error(e); }
+		catch(RemoteException e) { 
+			logger.error("Unable to start the server. " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	/** 
@@ -135,7 +142,8 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 			logger.info("The Server terminates. Bye.");
 		}
 		catch(Exception e) { 
-			logger.error(e.getMessage()); 
+			logger.error("Unable to stop the server. " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -149,7 +157,7 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 		String codebase = "file:/" + ((directory != null) ? directory : System.getProperty("user.dir")) + "/";
 		codebase = codebase.replaceAll(" ", "%20"); // to prevent the MalformedURLException
 		System.setProperty("java.rmi.server.codebase", codebase);
-		//System.out.println("java.rmi.server.codebase = " + codebase);
+		System.out.println("java.rmi.server.codebase = " + codebase);
 		
 		System.setProperty("java.rmi.dgc.leaseValue", "30000"); // 30 seconds, just for DEBUG.REASONS
 	}

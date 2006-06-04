@@ -19,6 +19,9 @@ import java.util.List;
  *  @version 0.1, Mar 15, 2006
  */
 public class Publication extends Record implements Deletable  {
+	
+	private static final long serialVersionUID = 20060604024L;
+	
     /** Parameters of the publication */    
     private Integer id;
     private String collectionName;

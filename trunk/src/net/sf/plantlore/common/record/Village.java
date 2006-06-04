@@ -19,6 +19,9 @@ import java.util.List;
  * @author Lada Oberreiterova
  */
 public class Village extends Record {
+	
+	private static final long serialVersionUID = 20060604034L;
+	
     /** Parameters of the Village */    
     private Integer id;   
     private String name;

@@ -14,6 +14,8 @@ package net.sf.plantlore.common.exception;
  */
 public class ExportException extends PlantloreException {
 	
+	private static final long serialVersionUID = 2006060411004L;
+	
 	public ExportException() { super(); }
 	
 	public ExportException(String message) { super(message); }

@@ -21,6 +21,9 @@ import java.util.*;
  */
 public abstract class Record implements Serializable {
 	
+	
+	private static final long serialVersionUID = 20060604000L;
+	
 	/** 
 	 * The list of "basic tables" i.e. tables related directly to the Occurence data.
 	 * The other tables are database specific and are used by our System only

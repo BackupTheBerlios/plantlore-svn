@@ -20,6 +20,9 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  */
 public class ConnectionInfo implements Serializable {
 	
+	
+	private static final long serialVersionUID = 2006060433002L;
+	
 	private RemoteDBLayerFactory remoteFactory = null;
 	private DBLayer database = null;
 	private DBLayer stub = null;

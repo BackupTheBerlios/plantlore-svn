@@ -32,7 +32,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         setLocationRelativeTo(null); // center of the screen
         
         // Initialize the components' contents.
-        ServerSettings settings = model.getSettings();
+        ServerSettings settings = model.getSettings(true);
         if(settings != null) {
         	// Server
         	serverPort.setText( new Integer(settings.getPort()).toString() );
@@ -44,6 +44,8 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         	databasePassword.setText( settings.getDatabaseSettings().getMasterPassword() );
         	databaseParameter.setText( settings.getDatabaseSettings().getConnectionStringSuffix() );
         }
+        
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     }
     
     /** This method is called from within the constructor to

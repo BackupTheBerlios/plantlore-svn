@@ -72,7 +72,10 @@ public class ServerMng extends Observable {
 	}
 	
 	
-	public ServerSettings getSettings() {
+	public ServerSettings getSettings(boolean refresh) {
+		
+		if( !refresh )
+			return settings;
 
 		// Create some default settings.
 		settings = new ServerSettings(RMIServer.DEFAULT_PORT, 3, 32, 2, 
@@ -84,7 +87,7 @@ public class ServerMng extends Observable {
 			SAXReader saxReader = new SAXReader();
             Document document = saxReader.read( reader );
             
-            Node server = (Node)document.selectSingleNode("/config/server");
+            Node server = document.selectSingleNode("/config/server");
             Number portNumber = server.numberValueOf("port")/*,
             connectionsNumber = server.numberValueOf("connections"),
             peripNumber = server.numberValueOf("perip")*/;
@@ -92,16 +95,17 @@ public class ServerMng extends Observable {
             connections = (connectionsNumber == null) ? 16 : connectionsNumber.intValue(),
             perip = (peripNumber == null) ? 2 : peripNumber.intValue()*/;
             
-            Node database = (Node)server.selectSingleNode("database");
+            Node database = server.selectSingleNode("database");
             
             String databaseType = database.valueOf("engine"),
             databaseParameter = database.valueOf("parameter"),
-            databaseMasterUser = database.valueOf("masteruser");
+            databaseMasterUser = database.valueOf("masteruser"),
+            databaseMasterPassword = database.valueOf("masterpassword");
             Number databasePortNumber = database.numberValueOf("port");
             int databasePort = (databasePortNumber == null) ? 0 : databasePortNumber.intValue();
             
             settings = new ServerSettings(port, 3, 32, 2, 
-            		new DatabaseSettings(databaseType, databasePort, databaseParameter, databaseMasterUser, ""));
+            		new DatabaseSettings(databaseType, databasePort, databaseParameter, databaseMasterUser, databaseMasterPassword));
             
     		setChanged();
     		notifyObservers(L10n.getString("Server.SettingsLoaded"));

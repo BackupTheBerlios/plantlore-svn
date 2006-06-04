@@ -2,6 +2,8 @@ package net.sf.plantlore.server;
 
 public class DatabaseSettings {
 	
+	private static final long serialVersionUID = 2006060433004L;
+	
 	private String connectionStringPrefix;
 	private String connectionStringSuffix;
 	private String masterUser;

@@ -10,6 +10,9 @@ package net.sf.plantlore.common.exception;
  *
  */
 public class DBLayerException extends PlantloreException {
+	
+	private static final long serialVersionUID = 2006060411002L;
+	
         /** Error code */
         private int errorCode;
         /** Additional error info */

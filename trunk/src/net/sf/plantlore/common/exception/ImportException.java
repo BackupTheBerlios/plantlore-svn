@@ -4,6 +4,8 @@ import net.sf.plantlore.common.record.Record;
 
 public class ImportException extends PlantloreException {
 	
+	private static final long serialVersionUID = 2006060411008L;
+	
 	private Record problematicRecord;
 
 	public ImportException() { super(); }
