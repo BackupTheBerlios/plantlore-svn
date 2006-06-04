@@ -601,7 +601,8 @@ public class AddEdit extends Observable {
         } else {
             //we've already created and set up a new Habitat now we have to store it into the database
             h.setDeleted(0);
-            database.executeInsert(h);
+            int habId = database.executeInsert(h);
+            h.setId(habId);
         }
         
         m = o.getMetadata();
@@ -670,7 +671,8 @@ public class AddEdit extends Observable {
         hTmp.setTerritory(o.getHabitat().getTerritory());
         hTmp.setDeleted(0);
         
-        database.executeInsert(hTmp);
+        int habId = database.executeInsert(hTmp);
+        hTmp.setId(habId);
         
         occTmp.setDataSource(o.getDataSource());
         occTmp.setDayCollected(o.getDayCollected());
@@ -792,7 +794,8 @@ public class AddEdit extends Observable {
                         logger.info("Creating a new occurrence for "+taxonList.get(j));
                         Occurrence occTmp = cloneOccurrence();
                         occTmp.setPlant((Plant) dlu.getObjectFor(lookupPlant(taxonList.get(j)),Plant.class));
-                        database.executeInsert(occTmp);
+                        int occId = database.executeInsert(occTmp);
+                        occTmp.setId(occId);
                         logger.debug("Occurrence for "+taxonList.get(j)+" inserted. Id="+occTmp.getId());
                         Integer id = lookupPlant(taxonList.get(j));
                         if (!id.equals(-1)) {
@@ -859,13 +862,15 @@ public class AddEdit extends Observable {
                     h.setTerritory(t);
                     h.setDeleted(0);
                     logger.info("Creating a shared habitat");
-                    database.executeInsert(h);//insert the shared habitat
+                    int habId = database.executeInsert(h);//insert the shared habitat
+                    h.setId(habId);
                     logger.debug("Shared habitat created. Id="+h.getId());
                         
                     for (int j = 0; j < taxonList.size(); j++) {
                         logger.info("Creating an Occurrence using the shared habitat");
                         Occurrence occ = prepareNewOccurrence(taxonList.get(j), h);//share the habitat
-                        database.executeInsert(occ);
+                        int occId = database.executeInsert(occ);
+                        occ.setId(occId);
                         logger.debug("Occurrence for "+taxonList.get(j)+" inserted. Id="+occ.getId());
                         
                         for (int k = 0; k < authorList.size(); k++) {

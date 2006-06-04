@@ -224,7 +224,8 @@ public class UserManager {
     
     public void addUserRecord (User user, Right right) {
         try {
-            database.executeInsert(right);
+            int rightId = database.executeInsert(right);
+            right.setId(rightId);
             database.executeInsert(user);
         } catch (RemoteException ex) {
             ex.printStackTrace();
