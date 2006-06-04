@@ -393,6 +393,7 @@ public class AppCore extends Observable
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Author.WHOLENAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.WHOLENAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Author.ID);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ, Author.DELETED, null, 0, null);
 
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
@@ -582,6 +583,8 @@ public class AppCore extends Observable
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Publication.REFERENCECITATION);
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Publication.REFERENCECITATION);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Publication.ID);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ, Publication.DELETED,null,0, null);
+        
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
@@ -609,6 +612,8 @@ public class AppCore extends Observable
         sq.addOrder(PlantloreConstants.DIRECT_ASC, Metadata.DATASETTITLE);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.DATASETTITLE);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Metadata.ID);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ, Metadata.DELETED, null, 0, null);
+        
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
