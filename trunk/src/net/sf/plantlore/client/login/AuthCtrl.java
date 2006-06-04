@@ -15,12 +15,13 @@ public class AuthCtrl {
 	
 	public AuthCtrl(Login login, AuthView authview) {
 		this.model = login; this.view = authview;
-		view.next.setAction(new Next());
+		view.next.setAction(new NextAction());
+		view.discard.setAction(new CancelAction());
 	}
 
 	
-	class Next extends AbstractAction {
-		public Next() {
+	class NextAction extends AbstractAction {
+		public NextAction() {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Login.AuthorizeTT"));
 			putValue(NAME, L10n.getString("Login.Authorize"));
 		}
@@ -30,6 +31,22 @@ public class AuthCtrl {
 			String user = (view.user.getSelectedItem() != null) ? view.user.getSelectedItem().toString() : null;
 
 			model.connectToSelected(user, new String(view.password.getPassword()));
+		}
+	}
+	
+	class CancelAction extends AbstractAction {
+		public CancelAction() {
+			//putValue(SHORT_DESCRIPTION, L10n.getString("Login.DiscardTT"));
+			putValue(NAME, L10n.getString("Login.Discard"));
+		}
+		public void actionPerformed(ActionEvent arg0) {
+			if( !view.next.isEnabled() ) {
+				view.next.setEnabled(true);
+				view.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				model.interrupt();
+			}
+			else
+				view.setVisible(false);
 		}
 	}
 

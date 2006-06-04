@@ -34,6 +34,8 @@ public class Login extends Observable {
 	/** The maximum number of usernames the System will store for each database record.*/
 	public static final int MAX_NAMES = 5;
 	public static final Object UPDATE_LIST = new Object();
+	
+	private SwingWorker worker;
 
 	/** 
 	 * The list of databases the User has accessed. This list is unique for every User
@@ -229,7 +231,7 @@ public class Login extends Observable {
 		
 		final DBInfo selectedClone = selected.clone();
 		
-		final SwingWorker worker = new SwingWorker() {
+		worker = new SwingWorker() {
 			public Object construct() {
 				
 				logout();
@@ -282,6 +284,17 @@ public class Login extends Observable {
 		
 		worker.start();
 	}
+	
+	/**
+	 * Cancel the login proces.
+	 *
+	 */
+	synchronized public void interrupt() {
+		worker.interrupt();
+		logout();
+		setChanged(); notifyObservers(L10n.getString("Login.Interrupted"));
+	}
+	
 	
 	
 	/**

@@ -24,16 +24,12 @@ public class LoginCtrl {
 	public LoginCtrl(Login login, LoginView loginview) {
 		this.view = loginview; this.model = login;
 		
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				// Create Item Add/Edit dialog.
-				itemView = new ItemView(view, model);
-				itemCtrl = new ItemCtrl(model, itemView);
-				// Create Authorization dialog.
-				authView = new AuthView(view, model);
-				new AuthCtrl(model, authView);
-			}
-		});
+		// Create Item Add/Edit dialog.
+		itemView = new ItemView(view, model);
+		itemCtrl = new ItemCtrl(model, itemView);
+		// Create Authorization dialog.
+		authView = new AuthView(view, model);
+		new AuthCtrl(model, authView);
 		
 		view.choice.addListSelectionListener(new ChoiceChanged());
 		view.add.setAction(new AddRecordAction());
@@ -46,14 +42,9 @@ public class LoginCtrl {
 	}
 	
 	
-	public void setVisible(final boolean visible) {
-		final JDialog dialog = view.remember.isSelected() && !view.choice.isSelectionEmpty() ? authView : view;
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				dialog.setVisible(visible);
-			}
-		});
-		
+	public void setVisible(boolean visible) {
+		JDialog dialog = view.remember.isSelected() && !view.choice.isSelectionEmpty() ? authView : view;
+		dialog.setVisible(visible);
 	}
 	
 	
@@ -70,11 +61,7 @@ public class LoginCtrl {
 		}
 		public void actionPerformed(ActionEvent arg0) {
 			itemCtrl.setMode(ItemCtrl.Mode.ADD);
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					itemView.setVisible(true);
-				}
-			});
+			itemView.setVisible(true);
 		}
 	}
 	
@@ -96,11 +83,7 @@ public class LoginCtrl {
 		public void actionPerformed(ActionEvent arg0) {
 			if(model.getSelected() != null) {
 				itemCtrl.setMode(ItemCtrl.Mode.EDIT);
-				java.awt.EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						itemView.setVisible(true);
-					}
-				});
+				itemView.setVisible(true);
 			}
 		}
 	}
@@ -112,11 +95,7 @@ public class LoginCtrl {
 		}
 		public void actionPerformed(ActionEvent arg0) {
 			if(model.getSelected() != null)
-				java.awt.EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						authView.setVisible(true);
-					}
-				});
+				authView.setVisible(true);
 		}
 	}
 

@@ -22,34 +22,26 @@ public class ItemCtrl {
 		this.mode = m;
 		switch(m) {
 		case ADD:
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					view.alias.setText(""); 
-					view.host.setText("");
-					view.port.setText("");
-					((javax.swing.JTextField)view.database.getEditor().getEditorComponent()).setText("");
-					view.databaseIdentifier.setText("");
-					view.databasePort.setText("");
-					view.databaseParameter.setText("");
-					view.databaseMasterUser.setText("");
-					view.databaseMasterPassword.setText("");
-					
-					view.setTitle(L10n.getString("Login.AddTitle"));
-					view.next.setText(L10n.getString("Login.Add"));
-					view.next.setToolTipText(L10n.getString("Login.AddTT"));
-//					view.next.setEnabled(false);
-				}
-			});
+			view.alias.setText(""); 
+			view.host.setText("");
+			view.port.setText("");
+			((javax.swing.JTextField)view.database.getEditor().getEditorComponent()).setText("");
+			view.databaseIdentifier.setText("");
+			view.databasePort.setText("");
+			view.databaseParameter.setText("");
+			view.databaseMasterUser.setText("");
+			view.databaseMasterPassword.setText("");
+			
+			view.setTitle(L10n.getString("Login.AddTitle"));
+			view.next.setText(L10n.getString("Login.Add"));
+			view.next.setToolTipText(L10n.getString("Login.AddTT"));
+//			view.next.setEnabled(false);
 			break;
 		case EDIT:
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					view.setTitle(L10n.getString("Login.EditTitle"));
-					view.next.setText(L10n.getString("Login.Change"));
-					view.next.setToolTipText(L10n.getString("Login.ChangeTT"));
-					view.next.setEnabled(true);
-				}
-			});
+			view.setTitle(L10n.getString("Login.EditTitle"));
+			view.next.setText(L10n.getString("Login.Change"));
+			view.next.setToolTipText(L10n.getString("Login.ChangeTT"));
+			view.next.setEnabled(true);
 			break;
 		}
 	}
@@ -139,11 +131,7 @@ public class ItemCtrl {
 				break;
 			}
 			
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					view.setVisible(false);
-				}
-			});
+			view.setVisible(false);
 			
 			setMode(Mode.EDIT);
 		}
@@ -155,11 +143,7 @@ public class ItemCtrl {
 			putValue(NAME, L10n.getString("Login.Discard"));
 		}
 		public void actionPerformed(ActionEvent arg0) {
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					view.setVisible(false);
-				}
-			});
+			view.setVisible(false);
 		}
 	}
 
