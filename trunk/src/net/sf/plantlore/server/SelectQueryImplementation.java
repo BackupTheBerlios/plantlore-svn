@@ -52,9 +52,12 @@ public class SelectQueryImplementation implements SelectQuery {
     /* List of projections for the query */
     private ArrayList projections = new ArrayList();
     
+    private Map<SelectQuery, SelectQuery> translation;
+    
     /** Creates a new instance of SelectQueryImplementation */
-    public SelectQueryImplementation(Criteria criteria) {
+    public SelectQueryImplementation(Criteria criteria, Map<SelectQuery, SelectQuery> translation) {
         this.criteria = criteria;
+        this.translation = translation;
     }
     
     /**
@@ -114,6 +117,7 @@ public class SelectQueryImplementation implements SelectQuery {
      *  @param values collection of values for restrictions working with more values (RESTR_IN)
      */
     public void addRestriction(int type, String firstPropertyName, String secondPropertyName, Object value, Collection values) throws RemoteException {
+    	SubQueryImplementation subQuery = null;
         switch (type) {
             case PlantloreConstants.RESTR_BETWEEN:
                 Object[] vals = values.toArray();
@@ -179,10 +183,16 @@ public class SelectQueryImplementation implements SelectQuery {
                 criteria.add(Restrictions.neProperty(firstPropertyName, secondPropertyName));
                 break;
             case PlantloreConstants.SUBQUERY_GEALL:
-                criteria.add(Subqueries.propertyGeAll(firstPropertyName, ((SubQueryImplementation)value).getCriteria()));
+            	// It may happen we got only the STUB, yet what we need is the remote object!
+            	subQuery = (SubQueryImplementation)translation.get( value );
+            	if( subQuery != null)
+            		criteria.add(Subqueries.propertyGeAll(firstPropertyName, subQuery.getCriteria()));
                 break;
             case PlantloreConstants.SUBQUERY_LEALL:
-                criteria.add(Subqueries.propertyLeAll(firstPropertyName, ((SubQueryImplementation)value).getCriteria()));
+            	// It may happen we got only the STUB, yet what we need is the remote object!
+            	subQuery = (SubQueryImplementation)translation.get( value );
+            	if( subQuery != null)
+            		criteria.add(Subqueries.propertyLeAll(firstPropertyName, subQuery.getCriteria()));
                 break;                
             default:
                 

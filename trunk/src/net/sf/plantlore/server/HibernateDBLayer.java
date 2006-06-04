@@ -71,8 +71,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     
     private int maxSessionId;
     /** Session factory for creating Hibernate sessions */
-    private SessionFactory sessionFactory;    
-    /** List of select queries */
+    private SessionFactory sessionFactory;
+    
+    /** 
+     * List of select queries - velmi dulezity obekt, provadi preklad ze stubu, ktere nam muzou chodit
+     * na odpovidajici remote objekty. TODO: Nekam to poznamenat a zdokumentovat! 
+     */
     private Hashtable<SelectQuery, SelectQuery> queries;    
     
     private Hashtable<SelectQuery, Session> sessions;
@@ -651,7 +655,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw ex;
         }
         Session session = sessionFactory.openSession();
-        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname)), 
+        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname), queries), 
         	stub = query;
         
         if(undertaker != null)
