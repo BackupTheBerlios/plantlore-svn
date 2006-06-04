@@ -24,4 +24,14 @@
       <type>javax.help.SearchView</type>
       <data engine="com.sun.java.help.search.DefaultSearchEngine">JavaHelpSearch</data>
     </view>
+    <presentation default=true>
+       <name>main window</name>
+       <title>Plantlore Help</title>
+       <location x="200" y="200" />
+       <toolbar>
+           <helpaction>javax.help.BackAction</helpaction>
+           <helpaction>javax.help.ForwardAction</helpaction>
+           <helpaction image="homeicon">javax.help.HomeAction</helpaction>
+       </toolbar>
+   </presentation>
   </helpset>

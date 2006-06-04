@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 1.0//EN" "http://java.sun.com/products/javahelp/helpset_1_0.dtd">
   <helpset version="1.0">
     <title>Nápověda Plantlore</title>
@@ -24,4 +24,14 @@
       <type>javax.help.SearchView</type>
       <data engine="com.sun.java.help.search.DefaultSearchEngine">JavaHelpSearch</data>
     </view>
-	  </helpset>
+    <presentation default=true>
+       <name>main window</name>
+       <title>Plantlore - Napoveda</title>
+       <location x="200" y="200" />
+       <toolbar>
+           <helpaction>javax.help.BackAction</helpaction>
+           <helpaction>javax.help.ForwardAction</helpaction>
+           <helpaction image="homeicon">javax.help.HomeAction</helpaction>
+       </toolbar>
+   </presentation>
+</helpset>
