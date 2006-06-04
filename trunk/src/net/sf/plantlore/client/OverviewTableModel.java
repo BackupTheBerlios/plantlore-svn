@@ -105,9 +105,9 @@ public class OverviewTableModel extends AbstractTableModel {
                     if (columns.get(j).type.equals((Column.Type.NUMBER))) {
                         row[j] = from + i + 1;
                     } else {
+                        value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
                         if (columns.get(j).type.equals(Column.Type.OCCURRENCE_ID))
                             row[row.length-1] = value;    
-                        value = projArray[proj] == null ? columns.get(j).getDefaultNullValue() : projArray[proj];
                         row[j] = value;
                         proj++;
                     }
