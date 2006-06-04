@@ -921,7 +921,7 @@ public class AddEdit extends Observable {
             return false;
     }
     
-    public Pair<Boolean,String> checkData() {
+    public Pair<Boolean,String> checkData() throws RemoteException {
         if (authorList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one author!");
         else {
@@ -932,6 +932,10 @@ public class AddEdit extends Observable {
         }
         if (taxonList == null || taxonList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one taxon!");
+        
+        if (editMode && taxonList.size() > 1 && database.getUserRights().getAdd() != 1) { //the user is not allowed to add new records
+            return new Pair<Boolean,String>(false, L10n.getString("AddEdit.InsufficientAddRights"));
+        }
         
         Pair<Pair<String,Integer>,String> ai, aj;
         for (int i=0; i < authorList.size() ; i++) {

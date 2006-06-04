@@ -10,6 +10,7 @@ package net.sf.plantlore.client;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
@@ -96,6 +97,8 @@ import net.sf.plantlore.client.imports.table.TableImportMngCtrl;
 import net.sf.plantlore.client.login.Login;
 import net.sf.plantlore.client.login.LoginCtrl;
 import net.sf.plantlore.client.login.LoginView;
+import net.sf.plantlore.common.record.Right;
+import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -581,7 +584,16 @@ public class AppCoreCtrl
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Add"));            
         } 
 
-        public void actionPerformed(ActionEvent actionEvent) {                
+        public void actionPerformed(ActionEvent actionEvent) {         
+            try {
+                if (model.getDatabase().getUserRights().getAdd() != 1) {
+                    JOptionPane.showMessageDialog(view, L10n.getString("AddEdit.InsufficientAddRights"),L10n.getString("AddEdit.InsufficientRightsTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+            } catch (RemoteException ex) {
+                JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+ex.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                logger.error(ex);
+            }
             addModel.clear();
             addView.setVisible(true);
         }
@@ -596,10 +608,15 @@ public class AppCoreCtrl
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
             //putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Edit"));            
         } 
-
+        
         public void actionPerformed(ActionEvent actionEvent) {
             Object[] row = model.getSelectedRow();
+            
             try {
+                if (!model.isEditAllowed(model.getSelectedOccurrence())) {
+                    JOptionPane.showMessageDialog(view, L10n.getString("AddEdit.InsufficientEditRights"),L10n.getString("AddEdit.InsufficientRightsTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 editModel.setRecord((Integer) row[row.length-1]);
             } catch (DBLayerException ex) {
                 JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+ex.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
@@ -627,6 +644,27 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             Selection selection = model.getTableModel().getSelection();
             Object[] arg = { selection.values().size() };
+            
+            if (arg[0].equals(0)) {
+                JOptionPane.showMessageDialog(view, L10n.getString("Message.CheckAnOccurrence"),L10n.getString("Message.CheckAnOccurrenceTitle"),JOptionPane.INFORMATION_MESSAGE);
+                return;                
+            }
+            
+            try {
+                for (Integer occId : selection.values())
+                    if (!model.isEditAllowed(occId)) {
+                        JOptionPane.showMessageDialog(view, L10n.getString("Delete.InsufficientRights"), L10n.getString("Delete.InsufficientRightsTitle"),JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+            } catch (RemoteException ex) {  
+                logger.error("Remote problem: "+ex);
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+            } catch (DBLayerException ex) {
+                logger.error("Database problem: "+ex);
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+            }
             
             int choice = JOptionPane.showConfirmDialog(view, 
                     L10n.getFormattedString("Message.DeleteRecords",arg),
@@ -759,7 +797,7 @@ public class AppCoreCtrl
         public void actionPerformed(ActionEvent actionEvent) {
             try {
                 if (model.getTableModel().getSelection().values().size() < 1) {
-                    JOptionPane.showMessageDialog(view, "Check at least one occurrence, please.");
+                    JOptionPane.showMessageDialog(view, L10n.getString("Message.CheckAnOccurrence"),L10n.getString("Message.CheckAnOccurrenceTitle"),JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
 
@@ -805,6 +843,7 @@ public class AppCoreCtrl
                 ProgressBar pb = new ProgressBar(task, view, true) {
                     public void exceptionHandler(final Exception ex) {
                         logger.error("Error while filling jasper report in SchedaAction: "+ex);
+                        ex.printStackTrace();
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
                                 JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);            
@@ -826,6 +865,7 @@ public class AppCoreCtrl
             } catch(Exception ex) { // Unreachable CATCH block
                 logger.error("Broken report: "+ex);
                 JOptionPane.showMessageDialog(view,L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);
+                ex.printStackTrace();
             }
         }
     }

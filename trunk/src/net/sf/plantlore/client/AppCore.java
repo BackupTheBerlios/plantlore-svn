@@ -30,6 +30,7 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
+import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.l10n.L10n;
 
@@ -760,6 +761,50 @@ public class AppCore extends Observable
         
         return task;
     }
+    
+        public boolean isEditAllowed(int occId) throws RemoteException, DBLayerException {
+            User user = database.getUser();
+            Right rights = database.getUserRights();
+
+            if (rights.getAdministrator() == 1) {
+                logger.debug("This user is an administrator which allows him to edit this record.");
+                return true;
+            }
+            
+            if (rights.getEditAll() == 1) {
+                logger.debug("This user can edit all records which means that this one too.");
+                return true;               
+            }
+            
+            SelectQuery sq = database.createQuery(Occurrence.class);
+            sq.createAlias(Occurrence.CREATEDWHO,"cw");
+            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"cw."+User.ID);
+            sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.ID, null, occId, null);
+            int resId = database.executeQuery(sq);
+            int resCount = database.getNumRows(resId);
+            assert resCount == 1;
+            if (resCount == 0)
+                throw new DBLayerException("The record is no longer in the database.");
+            Object[] obj = database.more(resId, 0, 0);
+            Object[] res = (Object[])obj[0];
+            String userId = ""+res[0];            
+            logger.debug("Occurrence id "+occId+" was created by user id "+userId);
+            if (user.getId().equals(res[0])) {
+                logger.debug("It was this user who created the record. Therefore he is allowed to edit it.");
+                return true;
+            }
+            String[] editableIds = rights.getEditGroup().split(",");          
+            for (String id : editableIds) {
+                if (userId.equals(id)) {
+                    logger.debug("This user is allowed to edit this user's record.");
+                    return true;
+                } 
+            }
+            
+            logger.debug("This user is NOT allowed to edit this record.");
+            return false;                
+        }
+    
 }
 
 
