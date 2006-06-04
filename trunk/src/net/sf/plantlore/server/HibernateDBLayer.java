@@ -1858,6 +1858,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	
 	@Override
 	public String toString() {
+		if(plantloreUser != null)
+			return plantloreUser.getFirstName() + plantloreUser.getSurname() + " (" + currentlyConnectedUser + ")"; 
 		return currentlyConnectedUser ; 
 	}
 }

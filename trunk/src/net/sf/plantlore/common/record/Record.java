@@ -37,7 +37,7 @@ public abstract class Record implements Serializable {
 	/**
 	 * A set of tables that cannot be changed.
 	 */
-	public final static HashSet<Class> IMMUTABLE = new HashSet( Arrays.asList(
+	public final static HashSet<Class> IMMUTABLE = new HashSet<Class>( Arrays.asList(
 			Plant.class, Territory.class, Village.class, Phytochorion.class, Metadata.class) );
 	
 	
@@ -125,7 +125,7 @@ public abstract class Record implements Serializable {
 			Record sub = (Record)base.getValue(key);
 			if(sub == null) continue; // As a matter of fact this can happen - Publication can be NULL.
 			if(sub.getClass().equals(type)) return sub;
-			else sub = findSubrecord( sub, type); // dig deeper...
+			sub = findSubrecord( sub, type); // dig deeper...
 			if(sub != null) return sub;
 		}
 		return null;
@@ -236,12 +236,12 @@ public abstract class Record implements Serializable {
 	/**
 	 * @return The set of names of all foreign keys (columns that refer to other tables).
 	 */
-	public List<String> getForeignKeys() { return new ArrayList(0); }
+	public List<String> getForeignKeys() { return new ArrayList<String>(0); }
 	
 	/**
 	 * @return The set of names of all columns of the table.
 	 */
-	public List<String> getColumns() { return new ArrayList(0); }
+	public List<String> getColumns() { return new ArrayList<String>(0); }
 	
 	/**
 	 * @return The set of names of columns that are not foreign keys.
@@ -302,7 +302,7 @@ public abstract class Record implements Serializable {
 			if(v1 == null && v2 == null) continue;
 			if(v1 == null || v2 == null) return false;
 			if( v1.equals(v2) ) continue;
-			else return false;
+			return false;
 		}
 		return true;
 	}
@@ -328,7 +328,7 @@ public abstract class Record implements Serializable {
 			if(v1 == null && v2 == null) continue;
 			if(v1 == null || v2 == null) return false;
 			if( v1.equals(v2) ) continue;
-			else return false;
+			return false;
 		}
 		return true;
 	}
