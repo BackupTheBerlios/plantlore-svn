@@ -83,14 +83,14 @@ public class ServerCreateCtrl {
 				}
 
 			} catch(final Exception e) {
-				java.awt.EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(null,
-								e.getMessage(),
-							    L10n.getString("Error.MissingInformation"),
-							    JOptionPane.ERROR_MESSAGE);						
-					}
-				});
+//				java.awt.EventQueue.invokeLater(new Runnable() {
+//					public void run() {
+//						JOptionPane.showMessageDialog(null,
+//								e.getMessage(),
+//							    L10n.getString("Error.MissingInformation"),
+//							    JOptionPane.ERROR_MESSAGE);						
+//					}
+//				});
 			}
 		}
 	}

@@ -251,14 +251,14 @@ public class ImportMng extends Observable implements Observer {
 					try {
 						current.join();
 						break;
-					}catch(InterruptedException e) {}
+					}catch(InterruptedException e) {/* Never mind. */}
 				}
 				// Perform the parser's final cleanup.	
 				parser.cleanup();
 				// Dispose of the reader.
 				try {
 					reader.close();
-				}catch(IOException e) {}
+				}catch(IOException e) {/* NEver mind. */}
 				
 				importInProgress = false;
 				logger.debug("Environment cleaned up.");
@@ -360,8 +360,8 @@ public class ImportMng extends Observable implements Observer {
 		
 		if(fromFile == null || inDB == null)
 			return emptyTableModel;
-		else
-			return new RecordTable( inDB, fromFile );
+		
+		return new RecordTable( inDB, fromFile );
 	}
 	
 	/**
@@ -376,8 +376,8 @@ public class ImportMng extends Observable implements Observer {
 		
 		if(problematic == null)
 			return emptyTableModel;
-		else
-			return new RecordTable( problematic );
+
+		return new RecordTable( problematic );
 	}
 	
 	/**

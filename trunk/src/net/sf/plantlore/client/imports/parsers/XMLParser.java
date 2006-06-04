@@ -118,8 +118,8 @@ public class XMLParser extends AbstractParser {
     		reconstruct( ao, currentAO );
     		return ao;
     	} 
-    	else 
-    		return occ.findSubrecord(table);
+ 
+   		return occ.findSubrecord(table);
     }
     
     
@@ -127,8 +127,8 @@ public class XMLParser extends AbstractParser {
     public boolean hasNextPart(Class table) {
     	if(table == AuthorOccurrence.class && aoIterator.hasNext())
     		return true;
-    	else
-    		return false;
+
+    	return false;
     }
     
  

@@ -41,7 +41,7 @@ public class Template {
 
 	
 	/** Create a new template. */
-	public Template() {}
+	public Template() {/* Nothing to be done. Just to have a default constructor. */}
 	
 	/** A copy constructor. */
 	public Template(Template template) {
@@ -87,7 +87,7 @@ public class Template {
 	
 	/** Select all not null columns (properties). */
 	public void setEverythingNN() {
-		
+		// Implementation missing!
 	}
 	
 	/** Select all properties of this <code>table</code>. */
@@ -95,7 +95,7 @@ public class Template {
 		try {
 			for( String column : ((Record)table.newInstance()).getProperties() )
 				set(table, column);
-		} catch(Exception e) {}
+		} catch(Exception e) {/* Not good :/. */}
 		return this;
 	}
 	
@@ -107,7 +107,7 @@ public class Template {
 			nnProperties.removeAll(record.getForeignKeys());
 			for( String column :  nnProperties )
 				set(table, column);
-		} catch(Exception e) {}
+		} catch(Exception e) {/* Not good. */}
 		return this;
 	}
 	
@@ -159,7 +159,7 @@ public class Template {
 					q.addProjection(PROJ_PROPERTY, (omitAlias ? property : Record.alias(table)+"."+property));
 					plan.add(new Pair<Class, String>(table, property));
 				}
-		} catch(Exception e) {}
+		} catch(Exception e) {/* Not good. */}
 	}
 	
 }

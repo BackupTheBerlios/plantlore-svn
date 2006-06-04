@@ -49,7 +49,7 @@ public class Checklist extends JList {
 			for(int i = 0; i < values.length; i++) 
 				values[i] = values[i].toString();
 		// Insert the values to the list.
-		setListData( (String[])values );
+		setListData( values );
 		// Remember the list.
 		original = (String[])values;
 		// Specify the default looks.

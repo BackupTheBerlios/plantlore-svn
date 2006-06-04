@@ -61,15 +61,15 @@ public class ExportTask extends Observable implements Observer {
 					while( true ) try {
 						execution.join(); 
 						break;
-					} catch(InterruptedException e) {}
+					} catch(InterruptedException e) { /* Do nothing...  */ }
 					// Perform the final cleanup.
 					exportInProgress = false;
 					try {
 						writer.close();
-					} catch(Exception e) {}
+					} catch(Exception e) { /* Never mind. */ }
 					try {
 						dblayer.closeQuery( exportQuery );
-					} catch(Exception e) {}
+					} catch(Exception e) {/* Never mind. */}
 					
 					logger.debug("Environment cleaned up.");
 					setChanged(); notifyObservers(this);

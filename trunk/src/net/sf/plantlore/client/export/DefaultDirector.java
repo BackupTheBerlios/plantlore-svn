@@ -112,7 +112,9 @@ public class DefaultDirector extends Observable implements Runnable {
 		if(rootTable != null) try { 
 			torso = (Record)rootTable.newInstance();
 			torso.createTorso();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			// What shall we do? The torso is not complete!
+		}
 	}
 	
 	

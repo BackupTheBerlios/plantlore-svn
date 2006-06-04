@@ -178,7 +178,9 @@ public class ExportMng implements Observer {
 	synchronized public void setDBLayer(DBLayer dblayer) {
 		if(query != null) try {
 			db.closeQuery(query);
-		} catch(RemoteException e) {}
+		} catch(RemoteException e) {
+			// Never mind.
+		}
 		db = dblayer;
 	}
 	
@@ -233,7 +235,9 @@ public class ExportMng implements Observer {
 		// Close the previous query!
 		if(this.query != null) try {
 			db.closeQuery(this.query); 
-		} catch (RemoteException e) {}
+		} catch (RemoteException e) {
+			// Never mind.
+		}
 		this.query = query;
 	}
 	

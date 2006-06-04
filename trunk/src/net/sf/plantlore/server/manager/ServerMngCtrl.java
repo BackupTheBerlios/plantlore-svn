@@ -55,15 +55,11 @@ public class ServerMngCtrl {
 		}
 		public void actionPerformed(ActionEvent ae) {
 			model.terminateServer();
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					// Disable Terminate, Refresh and Kick buttons.
-					view.terminate.setEnabled(false);
-					view.refresh.setEnabled(false);
-					view.kick.setEnabled(false);
-					terminated = true;
-				}
-			});
+			// Disable Terminate, Refresh and Kick buttons.
+			view.terminate.setEnabled(false);
+			view.refresh.setEnabled(false);
+			view.kick.setEnabled(false);
+			terminated = true;
 		}
 	}
 	
@@ -87,14 +83,10 @@ public class ServerMngCtrl {
 			if(icon != null) putValue(SMALL_ICON, icon);
 		}
 		public void actionPerformed(ActionEvent ae) {
-			java.awt.EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					view.setVisible(false);
-					view.dispose();
-					if(terminated)
-						System.exit(0);
-				}
-			});
+			view.setVisible(false);
+			view.dispose();
+			if(terminated)
+				System.exit(0);
 		}
 	}
 

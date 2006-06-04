@@ -107,6 +107,8 @@ public class XMLBuilder extends AbstractBuilder {
     }
 
 	@Override
-	protected void output(Class table, String column, Object value) throws IOException {}
+	protected void output(Class table, String column, Object value) throws IOException {
+		// I do not need this method.
+	}
 
 }

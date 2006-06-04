@@ -83,18 +83,22 @@ public abstract class AbstractBuilder implements Builder {
 
 	/** Empty. */
 	public void startRecord() throws IOException {
+		// Not implemented
 	}
 
 	/** Empty. */
 	public void finishRecord() throws IOException {
+//		 Not implemented
 	}
 
 	/** Empty. */
 	public void header() throws IOException {
+//		 Not implemented
 	}
 
 	/** Empty. */
 	public void footer() throws IOException {
+//		 Not implemented
 	}
 
 	

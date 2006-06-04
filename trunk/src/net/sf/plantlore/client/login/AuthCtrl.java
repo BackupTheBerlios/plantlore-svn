@@ -28,6 +28,7 @@ public class AuthCtrl {
 		public void actionPerformed(ActionEvent arg0) {
 			view.next.setEnabled(false);
 			view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			view.discard.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			String user = (view.user.getSelectedItem() != null) ? view.user.getSelectedItem().toString() : null;
 
 			model.connectToSelected(user, new String(view.password.getPassword()));

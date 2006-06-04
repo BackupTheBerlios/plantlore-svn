@@ -172,7 +172,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		else try {
 			logger.warn(RemoteServer.getClientHost() + " attempts to destroy " +
 						"a database layer that has was not created by this factory OR attempts to destroy an already destroyed DBLayer!");
-		} catch(ServerNotActiveException e) {}
+		} catch(ServerNotActiveException e) {/* Should never happen. */}
 	}
 	
 	/** 
@@ -180,7 +180,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 */
 	synchronized void disconnectAll() {
 		for (ConnectionInfo info : clients.values()) 
-			try { disconnect(info.getDatabase()); } catch (Exception e) {}		
+			try { disconnect(info.getDatabase()); } catch (Exception e) {/* Never mind. */}		
 		// Clear the list of opened connections - none is now opened.
 		clients.clear();
 	}
@@ -205,7 +205,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 			// Destroy it properly
 			try { 
 				destroy(stub); 
-			} catch(RemoteException e) {}
+			} catch(RemoteException e) {/* What else can we do? */}
 		}
 	}
 

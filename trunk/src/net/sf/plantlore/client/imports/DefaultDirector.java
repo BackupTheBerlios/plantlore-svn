@@ -757,40 +757,39 @@ public class DefaultDirector extends Observable implements Runnable {
 			}
 			return counterpart;
 		} 
+		
 		// The part of the record is from a common table.
-		else {
-			logger.debug("The record belongs to a common table "+record.getClass().getSimpleName());
-			// Insert all of its sub-records.
-			List<String> keys = record.getForeignKeys();
-			// Inserting a new AuthorOccurrence MUSTN'T cause the insertion of the Occurrence.
-			if(record instanceof AuthorOccurrence)
-				keys.remove(AuthorOccurrence.OCCURRENCE); 
-			for(String key : keys)
-				record.setValue( key, insert( (Record)record.getValue(key) ) );
-			
-			Record counterpart = null;
-			
-			// Try to find its counterpart (if it is in the database already).
-			// (The Habitat table is special, the relationship Occ->Habitat should always be 1:1.)
-			if( !(record instanceof Habitat) ) {
-				counterpart = findMatchInDB( record );
-			}
-			
-			// The record is not in the database.
-			if(counterpart == null) {
-				logger.debug("The record is not in the database. It will be inserted.");
-				// Insert it!
-				Integer newId = db.executeInsertInTransaction(record);
-				record.setId( newId );
-				return record;
-			}
-			// The record is in the database.
-			else {
-				logger.debug("The record is in the database already. It will be used.");
-				// Do not insert anything, use that record instead.
-				return counterpart;
-			}
+		logger.debug("The record belongs to a common table "+record.getClass().getSimpleName());
+		// Insert all of its sub-records.
+		List<String> keys = record.getForeignKeys();
+		// Inserting a new AuthorOccurrence MUSTN'T cause the insertion of the Occurrence.
+		if(record instanceof AuthorOccurrence)
+			keys.remove(AuthorOccurrence.OCCURRENCE); 
+		for(String key : keys)
+			record.setValue( key, insert( (Record)record.getValue(key) ) );
+		
+		Record counterpart = null;
+		
+		// Try to find its counterpart (if it is in the database already).
+		// (The Habitat table is special, the relationship Occ->Habitat should always be 1:1.)
+		if( !(record instanceof Habitat) ) {
+			counterpart = findMatchInDB( record );
 		}
+		
+		// The record is not in the database.
+		if(counterpart == null) {
+			logger.debug("The record is not in the database. It will be inserted.");
+			// Insert it!
+			Integer newId = db.executeInsertInTransaction(record);
+			record.setId( newId );
+			return record;
+		}
+		
+		// The record is in the database.
+		logger.debug("The record is in the database already. It will be used.");
+		// Do not insert anything, use that record instead.
+		return counterpart;
+		
 	}
 	
 	/**
@@ -845,6 +844,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			}
 			return counterpart;
 		}
+		
 		/*
 		 * It is a little bit trickier now, because UPDATE may sometimes in fact
 		 * mean INSERT or nothing :). 

@@ -113,8 +113,9 @@ public class XFilter extends FileFilter {
 	 * @see net.sf.plantlore.client.export.component.XFilter#hasExtension(String)
 	 */
 	public String suggestName(String filename) {
-		if(hasExtension(filename)) return filename;
-		else return filename + extensions.get(0);
+		if(hasExtension(filename)) 
+			return filename;
+		return filename + extensions.get(0);
 	}
 	
 }

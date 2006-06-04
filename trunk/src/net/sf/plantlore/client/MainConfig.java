@@ -20,6 +20,7 @@ import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.server.RMIServer;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -34,11 +35,13 @@ import org.dom4j.io.XMLWriter;
  * @author fraktalek
  */
 public class MainConfig {
-    Logger logger;
-    Document document;
-    String file;
-    ArrayList<Column> columns = null;
-    ArrayList<DBInfo> dbinfos = null;
+    private Logger logger;
+    private Document document;
+    private String file;
+    private ArrayList<Column> columns = null;
+    private ArrayList<DBInfo> dbinfos = null;
+    private DBInfo selected = null;
+    private boolean selectAutomatically = false; 
     
     /** Creates a new instance of MainConfigParser */
     public MainConfig(String file) throws DocumentException {
@@ -104,6 +107,14 @@ public class MainConfig {
     	int port, databasePort;
     	
     	int unnamedDatabase = 0;
+    	selectAutomatically = false;
+    	
+    	Node login = document.selectSingleNode("/config/login");
+    	if(login != null && login instanceof Element) {
+    		Attribute attr = ((Element)login).attribute("auto");
+    		if( attr != null && "true".equalsIgnoreCase(attr.getValue()) )
+    			selectAutomatically = true;
+    	}
     	
     	List columnList = document.selectNodes("//config/login/triplet");
     	Iterator it = columnList.iterator();
@@ -114,6 +125,8 @@ public class MainConfig {
     		port = RMIServer.DEFAULT_PORT; databasePort = -1;
     		
     		Node n = (Node)it.next();
+    		
+    		
     		// Obtain the basic characteristic.
     		alias = n.valueOf("alias");
     		host = n.valueOf("host");
@@ -121,7 +134,7 @@ public class MainConfig {
     		port = ( portNumber == null ? RMIServer.DEFAULT_PORT : portNumber.intValue() );
     		
     		// The database info.
-    		Node database = (Node) n.selectSingleNode("database");
+    		Node database = n.selectSingleNode("database");
     		if(database != null) {
     			databaseType = database.valueOf("engine");
     			databaseIdentifier = database.valueOf("identifier");
@@ -159,17 +172,39 @@ public class MainConfig {
     				databaseType, databasePort, databaseIdentifier, databaseParameter, 
     				users, masterUser, masterPassword );
     		
+    		if( n instanceof Element ) {
+    			Attribute attr = ((Element)n).attribute("selected");
+    			if(attr != null && "true".equalsIgnoreCase(attr.getValue()) ) {
+    				selected = dbi;
+    				// System.out.println("SELECTED = " + dbi);
+    			}
+    		}
+    		
     		result.add(dbi);
     	}
     	return result;
+    }
+    
+    public boolean getSelectAutomatically() {
+    	return selectAutomatically;
+    }
+    
+    
+    public DBInfo getSelected() {
+    	return selected;
     }
     
     public void setColumns(ArrayList<Column> columns) {
         this.columns = columns;
     }
     
-    public void setDBInfos(ArrayList<DBInfo> dbinfos) {
+    public void setDBInfos(ArrayList<DBInfo> dbinfos, DBInfo selected) {
         this.dbinfos = dbinfos;
+        this.selected = selected;
+    }
+    
+    public void setSelectAutomatically(boolean automatically) {
+    	this.selectAutomatically = automatically;
     }
     
     private void storeColumns() {
@@ -199,11 +234,18 @@ public class MainConfig {
         org.dom4j.Element root = document.getRootElement();
         org.dom4j.Element login = root.addElement("login");
         
+        // Store the "Select Automatically" option.
+        login.addAttribute("auto", Boolean.toString(selectAutomatically));
+        
         for (int i = 0; i < dbinfos.size(); i++) {
             DBInfo dbi = dbinfos.get(i);
             
             // Server settings.
             Element triplet = login.addElement("triplet");
+            
+            if(dbi == selected)
+            	triplet.addAttribute("selected", "true");
+            
             if (dbi.getAlias() != null)
                 triplet.addElement("alias").setText(dbi.getAlias());
             if (dbi.getHost() != null)

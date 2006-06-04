@@ -77,8 +77,14 @@ public class Login extends Observable {
 		
 		for (DBInfo savedDBInfo: mainConfig.getDBinfos())
 			dbinfo.add(savedDBInfo);
-		
 		this.setChanged(); this.notifyObservers(UPDATE_LIST);
+
+		// Restore the last selected record.
+		selected = mainConfig.getSelected();
+		if(selected != null) {
+			this.setChanged();
+			this.notifyObservers( selected.clone() );
+		}
 	}
 	
 	/**
@@ -87,7 +93,7 @@ public class Login extends Observable {
 	protected void save() {
 		logger.debug("Saving the list of databases.");
 		
-		mainConfig.setDBInfos(dbinfo);
+		mainConfig.setDBInfos(dbinfo, selected);
 		try {
 			mainConfig.save();
 		}catch(IOException e) {
@@ -285,12 +291,16 @@ public class Login extends Observable {
 		worker.start();
 	}
 	
+	
 	/**
 	 * Cancel the login proces.
 	 *
 	 */
 	synchronized public void interrupt() {
-		worker.interrupt();
+		if(worker != null) {
+			worker.interrupt();
+			worker = null;
+		}
 		logout();
 		setChanged(); notifyObservers(L10n.getString("Login.Interrupted"));
 	}

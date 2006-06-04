@@ -15,9 +15,13 @@ public class AbstractParser implements Parser {
 	}
 	
 	
-	public void initialize() throws ParserException {}
+	public void initialize() throws ParserException {
+		// Unimplemented. A subclass may override it.
+	}
 	
-	public void cleanup() {}
+	public void cleanup() {
+		// Unimplemented. A subclass may override it.
+	}
 	
 	public boolean hasNextRecord() {
 		return false;

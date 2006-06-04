@@ -87,6 +87,7 @@ public class TableImportTask extends Task {
 	 */
 	@Override
 	public void proceed() {
+		// Empty implementation. Just to make sure no one will try to resurrect this operation.
 	}
 	
 	
@@ -209,7 +210,7 @@ public class TableImportTask extends Task {
 			try {
 				if(q != null) 
 					db.closeQuery( q );
-			} catch(Exception re) {}
+			} catch(Exception re) {/* Never mind. */}
 			
 			logger.fatal("Import ended prematurely. "+count+" records processed ("+
 					inserted+" inserted, "+updated+" updated, "+deleted+" deleted).");
@@ -261,8 +262,8 @@ public class TableImportTask extends Task {
 	 */
 	protected void insert(Record record) 
 	throws RemoteException, DBLayerException {
-		db.executeInsert( record );
-
+		Integer newId = db.executeInsert( record );
+		record.setId( newId ); // It is not important here - these records won't be referenced (in here).
 	}
 	
 	/**
