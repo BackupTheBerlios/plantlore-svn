@@ -152,7 +152,7 @@ public class Occurrence extends Record implements Deletable {
     public boolean isDead() {
     	Integer c = getDeleted();
     	if( c == null ) return false;
-    	else return c != 0;
+    	return c != 0;
     }
     
     public Date checkDate(Object value) {
