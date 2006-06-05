@@ -509,7 +509,7 @@ public class DefaultDirector extends Observable implements Runnable {
 									if( occInDB != null )
 										db.executeInsertInTransaction( ao );
 									else
-										/*db.executeInsertInTransactionHistory( ao )*/;
+										db.executeInsertInTransactionHistory( ao );
 									
 									numberOfUndeadAuthors++;
 								}
