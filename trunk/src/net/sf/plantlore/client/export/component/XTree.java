@@ -286,7 +286,7 @@ public class XTree extends javax.swing.JTree {
 		this( DefaultHierarchy );
 	}
 	
-	
+		
 	/**
 	 * Create a new XTree with a specified Hierarchy Model.
 	 * @param hierarchy The hierarchy to be processed.
@@ -316,6 +316,7 @@ public class XTree extends javax.swing.JTree {
 			else
 				addSelectionPath(path);
 		}
+		
 	}
 	
 	

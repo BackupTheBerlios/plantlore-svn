@@ -22,7 +22,7 @@ public class ExportProgressCtrl {
 	
 	public ExportProgressCtrl(ExportTask model, ExportProgressView view) {
 		setModel(model); this.view = view;
-		view.abort.addActionListener( new Abort() );
+		view.abort.setAction( new Abort() );
 	}
 	
 	class Abort extends AbstractAction {

@@ -21,37 +21,32 @@ public class ExportMngCtrlB {
 			ExportProgressView progressView,  ExportProgressCtrl progressCtrl) {
 		this.model = model; this.view = view; 
 		this.progressView = progressView; this.progressCtrl = progressCtrl;
-		view.next.addActionListener( new Next() );
+		view.next.setAction( new Next() );
 	}
 	
 	
 	class Next extends AbstractAction {
 		public void actionPerformed(ActionEvent arg0) {
 			Template t = view.tsm.getTemplate();
-			if( t.isEmpty() )
+			view.setVisible(false);
+			view.tsm.clearSelection();
+			
+			try {
+				model.setTemplate( t ); // Set the new template.
+				
+				ExportTask task = model.createExportTask();
+				progressCtrl.setModel(task); 
+				progressView.setModel(task);
+				
+				task.execute();
+				
+				progressView.setVisible(true);
+			}
+			catch(Exception e) {
 				JOptionPane.showMessageDialog(view,
-					L10n.getString("Error.NoColumnsSelected"),
-				    L10n.getString("Error.NothingSelected"),
-				    JOptionPane.WARNING_MESSAGE);
-			else {
-				view.setVisible(false);
-				try {
-					model.setTemplate( t ); // Set the new template.
-
-					ExportTask task = model.createExportTask();
-					progressCtrl.setModel(task); 
-					progressView.setModel(task);
-					
-					task.execute();
-					
-					progressView.setVisible(true);
-				}
-				catch(Exception e) {
-					JOptionPane.showMessageDialog(view,
-							L10n.getString("Error.ExportFailed") + e,
-							L10n.getString("Export.Failed"),
-						    JOptionPane.WARNING_MESSAGE);
-				}
+						L10n.getString("Error.ExportFailed") + e.getMessage(),
+						L10n.getString("Export.Failed"),
+						JOptionPane.WARNING_MESSAGE);
 			}
 		}
 	}

@@ -6,6 +6,8 @@
 
 package net.sf.plantlore.client.export;
 
+import java.awt.Frame;
+
 import net.sf.plantlore.client.export.component.TemplateSelectionModel;
 import net.sf.plantlore.client.export.component.XTree;
 import net.sf.plantlore.l10n.L10n;
@@ -19,13 +21,14 @@ public class ExportMngViewB extends javax.swing.JDialog {
 	protected TemplateSelectionModel tsm;
     
     /** Creates new form ExportMngView */
-    public ExportMngViewB() {
+    public ExportMngViewB(Frame parent) {
+    	super(parent, true);
+    	
     	tsm = new TemplateSelectionModel();
     	
         initComponents();
-        
+        getRootPane().setDefaultButton(next);
         setLocationRelativeTo(null); // center of the screen
-        setModal(true);
     }
     
     /** This method is called from within the constructor to

@@ -6,6 +6,7 @@
 
 package net.sf.plantlore.client.export;
 
+import java.awt.EventQueue;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,6 +28,8 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
 		model = newModel;
 		if(model != null)
 			model.addObserver(this);
+		
+		exceptionOccured = false;
 	}
 	
     
@@ -113,64 +116,67 @@ public class ExportProgressView extends javax.swing.JFrame implements Observer {
     
     private boolean exceptionOccured = false;
     
-	public void update(Observable source, Object parameter) {
+	public void update(Observable source, final Object parameter) {
 		// The final cleanup may overwrite the exception! 
 		if(exceptionOccured)
 			return;
 		
-		if( parameter != null && parameter instanceof Exception ) {
-			Exception e = (Exception) parameter;
-			setTitle(L10n.getString("Export.Failed"));
-			progress.setIndeterminate(false);
-    		progress.setStringPainted(true);
-			status.setText(e.toString());
-			progress.setValue(0);
-			progress.setString("");
-			abort.setText(L10n.getString("Export.Hide"));
-			exceptionOccured = true;
-		}
-		else if(model == null) {
-			return;
-		}
-		else if(model.isAborted()) {
-			setTitle(L10n.getString("Export.Aborted"));
-			if(total > 0)
-				status.setText(count +"/" + total + " " + L10n.getString("Export.RecordsExported"));
-			else
-				status.setText(count + " " + L10n.getString("Export.RecordsExported"));
-			progress.setIndeterminate(false);
-    		progress.setStringPainted(true);
-			progress.setValue(0);
-			progress.setString("");
-			abort.setText(L10n.getString("Export.Hide"));
-		} 
-		else if(!model.isExportInProgress()) {
-			setTitle(L10n.getString("Export.Completed"));
-			progress.setIndeterminate(false);
-    		progress.setStringPainted(true);
-			status.setText(count + " " + L10n.getString("Export.RecordsExported"));
-			progress.setMaximum(100);
-			progress.setValue(100);
-			progress.setString("100%");
-			abort.setText(L10n.getString("Export.Hide"));
-		}
-		else if( this.isVisible() ) {
-			count = model.getNumberOfExported();
-			if(count >= 0) {
-				progress.setValue( count );
-				if(total > 0) {
-					String percent = Integer.toString(100*count / total) + "%";
-					progress.setString( percent );
-					status.setText(count +"/" + total + " " + L10n.getString("Export.RecordsExported"));
-					setTitle(percent + L10n.getString("Export.Progress"));
+		EventQueue.invokeLater(new Runnable(){
+			public void run() {
+				if( parameter != null && parameter instanceof Exception ) {
+					Exception e = (Exception) parameter;
+					setTitle(L10n.getString("Export.Failed"));
+					progress.setIndeterminate(false);
+					progress.setStringPainted(true);
+					status.setText(e.getMessage());
+					progress.setValue(0);
+					progress.setString("");
+					abort.setText(L10n.getString("Export.Hide"));
+					exceptionOccured = true;
 				}
-				else {
+				else if(model == null) {
+					return;
+				}
+				else if(model.isAborted()) {
+					setTitle(L10n.getString("Export.Aborted"));
+					if(total > 0)
+						status.setText(count +"/" + total + " " + L10n.getString("Export.RecordsExported"));
+					else
+						status.setText(count + " " + L10n.getString("Export.RecordsExported"));
+					progress.setIndeterminate(false);
+					progress.setStringPainted(true);
+					progress.setValue(0);
+					progress.setString("");
+					abort.setText(L10n.getString("Export.Hide"));
+				} 
+				else if(!model.isExportInProgress()) {
+					setTitle(L10n.getString("Export.Completed"));
+					progress.setIndeterminate(false);
+					progress.setStringPainted(true);
 					status.setText(count + " " + L10n.getString("Export.RecordsExported"));
-					setTitle(count + " " + L10n.getString("Export.RecordsExported"));
+					progress.setMaximum(100);
+					progress.setValue(100);
+					progress.setString("100%");
+					abort.setText(L10n.getString("Export.Hide"));
 				}
-				
+				else if( isVisible() ) {
+					count = model.getNumberOfExported();
+					if(count >= 0) {
+						progress.setValue( count );
+						if(total > 0) {
+							String percent = Integer.toString(100*count / total) + "%";
+							progress.setString( percent );
+							status.setText(count +"/" + total + " " + L10n.getString("Export.RecordsExported"));
+							setTitle(percent + L10n.getString("Export.Progress"));
+						}
+						else {
+							status.setText(count + " " + L10n.getString("Export.RecordsExported"));
+							setTitle(count + " " + L10n.getString("Export.RecordsExported"));
+						}
+						
+					}
+				}
 			}
-		}
+		});
 	}
-    
 }

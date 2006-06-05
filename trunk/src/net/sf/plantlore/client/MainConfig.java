@@ -176,7 +176,7 @@ public class MainConfig {
     			Attribute attr = ((Element)n).attribute("selected");
     			if(attr != null && "true".equalsIgnoreCase(attr.getValue()) ) {
     				selected = dbi;
-    				// System.out.println("SELECTED = " + dbi);
+    				System.out.println("SELECTED = " + dbi);
     			}
     		}
     		

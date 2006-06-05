@@ -129,7 +129,7 @@ public class AddEditCtrl {
     	}
 		public void actionPerformed(ActionEvent isUseless) {
 			if(checklistView == null) {
-				checklistView = new ChecklistView( (AutoTextArea) view.taxonTextArea );
+				checklistView = new ChecklistView(view, (AutoTextArea) view.taxonTextArea );
 				new ChecklistCtrl( checklistView, (AutoTextArea) view.taxonTextArea );
 			}
 			checklistView.setVisible(true);			

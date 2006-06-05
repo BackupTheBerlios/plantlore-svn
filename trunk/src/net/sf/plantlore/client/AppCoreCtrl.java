@@ -51,7 +51,6 @@ import net.sf.jasperreports.engine.JasperReport;
 
 import net.sf.plantlore.client.export.ExportMng;
 import net.sf.plantlore.client.export.ExportMngCtrlA;
-import net.sf.plantlore.client.export.ExportMngViewA;
 import net.sf.plantlore.client.export.ExportProgressCtrl;
 import net.sf.plantlore.client.export.ExportProgressView;
 import net.sf.plantlore.client.history.History;
@@ -176,7 +175,6 @@ public class AppCoreCtrl
     
     // Export
     ExportMng exportModel;
-    ExportMngViewA exportView;
     ExportMngCtrlA exportCtrl;
     ExportProgressView exportProgressView;
     ExportProgressCtrl exportProgressCtrl;
@@ -528,8 +526,7 @@ public class AppCoreCtrl
             		exportModel = new ExportMng(model.getDatabase());
             		exportProgressView = new ExportProgressView(null);
             		exportProgressCtrl = new ExportProgressCtrl(null, exportProgressView);
-            		exportView = new ExportMngViewA(exportModel);
-            		exportCtrl = new ExportMngCtrlA(exportModel, exportView, exportProgressView, exportProgressCtrl);
+            		exportCtrl = new ExportMngCtrlA(exportModel, view, exportProgressView, exportProgressCtrl);
             	} catch(ExportException e) {
             		logger.error("Export MVC cannot be created. " + e.getMessage());
             		return;

@@ -50,7 +50,9 @@ public class LoginCtrl {
 	
 	class ChoiceChanged implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
-			model.setSelected( view.choice.getSelectedIndex() );
+			int index = view.choice.getSelectedIndex();
+			view.next.setEnabled( index >= 0 ); // Evil code.
+			model.setSelected( index );
 		}	
 	}
 	

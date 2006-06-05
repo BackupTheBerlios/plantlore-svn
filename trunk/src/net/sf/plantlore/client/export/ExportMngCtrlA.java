@@ -2,7 +2,9 @@ package net.sf.plantlore.client.export;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
+import net.sf.plantlore.client.AppCoreView;
 import net.sf.plantlore.client.export.component.XFilter;
 import net.sf.plantlore.l10n.L10n;
 
@@ -10,7 +12,8 @@ public class ExportMngCtrlA {
 	
 	
 	private ExportMng model;
-	private ExportMngViewA view;
+	private AppCoreView view;
+	private JFileChooser choice;
 	
 	private ExportMngViewB viewB;
 	//private ExportMngCtrlB ctrlB;
@@ -18,29 +21,35 @@ public class ExportMngCtrlA {
 	private ExportProgressView progressView;
 	private ExportProgressCtrl progressCtrl;
 	
-	public ExportMngCtrlA(ExportMng model, ExportMngViewA view, 
+	public ExportMngCtrlA(ExportMng model, AppCoreView view, 
 			ExportProgressView progressView, ExportProgressCtrl progressCtrl) {
 		this.model = model; this.view = view; 
 		this.progressView = progressView; this.progressCtrl = progressCtrl;
-		viewB = new ExportMngViewB();
+		viewB = new ExportMngViewB(view);
 		/*ctrlB = */new ExportMngCtrlB(model, viewB, progressView, progressCtrl);
+		
+		choice = new JFileChooser();
+		choice.setAcceptAllFileFilterUsed(false);
+		for( FileFilter filter: model.getFilters() )
+			choice.addChoosableFileFilter(filter);
 	}
 	
 	public void setVisible(boolean visible) {
 		if(visible) {
-			int result = view.choice.showDialog(null, L10n.getString("Export.Title"));
+			// The dialog must have a parent so that it is displayed correctly above it after ALT+TAB is pressed.
+			int result = choice.showDialog(view, L10n.getString("Export.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				
-				if(view.choice.getSelectedFile() == null) {
-					JOptionPane.showMessageDialog(null,
-							L10n.getString("Error.MissingFileName"),
-							L10n.getString("Error.NothingSelected"),
-						    JOptionPane.WARNING_MESSAGE);
+				if(choice.getSelectedFile() == null) {
+//					JOptionPane.showMessageDialog(null,
+//							L10n.getString("Error.MissingFileName"),
+//							L10n.getString("Error.NothingSelected"),
+//						    JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				
-				model.setSelectedFile( view.choice.getSelectedFile().getAbsolutePath() );
-				XFilter filter = (XFilter) view.choice.getFileFilter();
+				model.setSelectedFile( choice.getSelectedFile().getAbsolutePath() );
+				XFilter filter = (XFilter) choice.getFileFilter();
 				model.setActiveFileFilter( filter );
 				
 				if( filter.isColumnSelectionEnabled() )
@@ -55,7 +64,7 @@ public class ExportMngCtrlA {
 					progressView.setVisible(true);
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(null,
-							L10n.getString("Error.ExportFailed") + e,
+							L10n.getString("Error.ExportFailed") + e.getMessage(),
 							L10n.getString("Export.Failed"),
 						    JOptionPane.WARNING_MESSAGE);
 				}

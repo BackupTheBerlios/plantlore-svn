@@ -62,6 +62,12 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 		}
 		super.addSelectionPaths( paths );
 	}
+	
+	@Override
+	public void clearSelection() {
+		super.clearSelection();
+		xtemplate.unsetEverything();
+	}
 			
 	/**
 	 * 

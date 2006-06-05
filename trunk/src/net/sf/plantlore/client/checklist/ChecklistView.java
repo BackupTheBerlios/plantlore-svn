@@ -1,5 +1,7 @@
 package net.sf.plantlore.client.checklist;
 
+import java.awt.Dialog;
+
 import javax.swing.JFileChooser;
 
 import net.sf.plantlore.common.AutoTextArea;
@@ -19,7 +21,9 @@ public class ChecklistView extends javax.swing.JDialog {
      * @param model	The model is an AutoTextArea - 
      * the selected plants will be appended to the end of the AutoTextArea's contents.
      */
-    public ChecklistView(AutoTextArea model) {
+    public ChecklistView(Dialog parent, AutoTextArea model) {
+    	super(parent, true);
+    	
     	this.model = model;
         initComponents();
         choice = new JFileChooser();
