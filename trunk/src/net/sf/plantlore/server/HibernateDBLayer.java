@@ -962,7 +962,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *
      *  @param data holder object with the record we want to insert
      *  @throws DBLayerException in case we are not connected to the database or an error occurred
-     *                           while executing the update
+     *                           while executing the insert
      *  @throws RemoteException in case server connection failed
      */    
     public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException {
@@ -1022,6 +1022,74 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Return new record identifier
         return recordId;        
     }
+
+    /**
+     *  Execute DB insert using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges, DOES NOT save history and 
+     *  updates the holder with the author (CCREATEDWHO) and time of creation (CREATEDWHEN).
+     *
+     *  @param data holder object with the record we want to insert
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the insert
+     *  @throws RemoteException in case server connection failed
+     */    
+    public int executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+        int recordId;
+        
+        // Check whether we are connected to the database
+        if (sessionFactory == null) {
+            logger.warn("SessionFactory not avilable. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            ex.setError(ex.ERROR_CONNECT, null);
+            throw ex;
+        }
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setCreatedWhen(new java.util.Date());
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setCreatedWho(this.plantloreUser);
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }
+        if (data instanceof Publication) {
+            Publication pub = (Publication)data;
+            pub.setCreatedWho(this.plantloreUser);
+            data = pub;
+        }
+        if (data instanceof Author) {
+            Author aut = (Author)data;
+            aut.setCreatedWho(this.plantloreUser);
+            data = aut;
+        }        
+        // Check whether we have rights for this operation
+        checkRights(data, INSERT);
+        
+        if (data instanceof Occurrence) {
+            Occurrence occ = (Occurrence)data;
+            occ.setCreatedWhen(new java.util.Date());
+            occ.setUpdatedWhen(new java.util.Date());
+            occ.setCreatedWho(this.plantloreUser);
+            occ.setUpdatedWho(this.plantloreUser);
+            data = occ;
+        }
+        if (data instanceof Publication) {
+            Publication pub = (Publication)data;
+            pub.setCreatedWho(this.plantloreUser);
+            data = pub;
+        }
+        if (data instanceof Author) {
+            Author aut = (Author)data;
+            aut.setCreatedWho(this.plantloreUser);
+            data = aut;
+        }
+
+        // Save item into the database
+        recordId = (Integer)this.txSession.save(data);            
+        // Return new record identifier
+        return recordId;        
+    }    
     
     /**
      *  Execute DB update using a long running transaction. For this method to work, it is neccessary
@@ -1099,7 +1167,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (data instanceof Author) {
             if ((type == DELETE) || (type == UPDATE)) {
                 // Only data of the user and those listed in CEDITGROUP
-                System.out.println("UPDATE or DELETE of AUTHOR");
                 sess = this.sessionFactory.openSession();
                 ScrollableResults sc = sess.createCriteria(Author.class)
                     .add(Restrictions.eq(Author.ID, ((Author)data).getId()))
@@ -1120,7 +1187,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 // Check for administrator rights
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
-                    System.out.println("USER IS ADMIN");                    
                 }                
                 // Check for direct ownership first. We have to compare IDs since equals doesn't work
                 // for User object
@@ -1914,17 +1980,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     
     
     /**
-	 * This method is intended for final cleanup. <b>Do not call this method
-	 * yourself! The proper way for you to get rid of a DBLayer is to call
-	 * DBLayer.destroy() method!</b> <br/> Terminate all processes running in
-	 * this DBLayer, disconnect from the database and destroy all objects
-	 * created by this DBLayer. <br/> <b>After this the DBLayer will not be
-	 * capable of carrying out its duties.</b> <br/> This method is supposed to
-	 * be used by the DBLayerFactory exclusively.
-	 * 
-	 * FIXME Think of a better mechanism that will hide it from users yet keep
-	 * it accessible to the DBLF.
-	 */
+     * This method is intended for final cleanup. <b>Do not call this method
+     * yourself! The proper way for you to get rid of a DBLayer is to call
+     * DBLayer.destroy() method!</b> <br/> Terminate all processes running in
+     * this DBLayer, disconnect from the database and destroy all objects
+     * created by this DBLayer. <br/> <b>After this the DBLayer will not be
+     * capable of carrying out its duties.</b> <br/> This method is supposed to
+     * be used by the DBLayerFactory exclusively.
+     *
+     * FIXME Think of a better mechanism that will hide it from users yet keep
+     * it accessible to the DBLF.
+     */
     public void shutdown() /* throws RemoteException */ {
     	
     	if(undertaker != null) 

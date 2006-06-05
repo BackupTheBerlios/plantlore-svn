@@ -144,6 +144,17 @@ public interface DBLayer extends Remote, Serializable {
      */
     public SelectQuery createQuery(Class classname) throws DBLayerException, RemoteException;
 
+    /**
+     *  Create new subquery (SQL "subselect"). To work with this query, use methods of the SelectQuery
+     *  interface.
+     *
+     *  @param classname classname of the holder object we want to use for the select.
+     *  @param slias alias used for the holder specified in the first argument
+     *  @return new instance of subquery
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */
     public SelectQuery createSubQuery(Class classname, String alias) throws DBLayerException, RemoteException;
     
     /**
@@ -185,18 +196,103 @@ public interface DBLayer extends Remote, Serializable {
      */    
     public Right getUserRights() throws RemoteException;
 
+    /**
+     *  Begin long running transaction. in the current implementation, there can be only one long
+     *  running transaction at a time.
+     *
+     *  @return true if transaction was started, false if there already is a long running transaction
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */    
     public boolean beginTransaction() throws DBLayerException, RemoteException;
-            
+
+    /**
+     *  Commit long running transaction. In the current implementation, there can be only one long
+     *  running transaction at a time.
+     *
+     *  @return true if commit was successful, false if there is no long running transaction
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */     
     public boolean commitTransaction() throws DBLayerException, RemoteException;
             
+    /**
+     *  Rollback long running transaction. In the current implementation, there can be only one 
+     *  long running transaction is possible. All the DB changes made by *InHistory() methods will
+     *  be rolled back.
+     *
+     *  @return true if rollback was successful, false if the long transaction is not in progress
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case server connection failed
+     */
     public boolean rollbackTransaction() throws DBLayerException, RemoteException;    
-
+    
+    /**
+     *  Execute DB insert using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges, saves history and updates
+     *  the holder with the author (CCREATEDWHO) and time of creation (CREATEDWHEN).
+     *
+     *  @param data holder object with the record we want to insert
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the insert
+     *  @throws RemoteException in case server connection failed
+     */    
     public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException;
             
+    /**
+     *  Execute DB insert using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges, DOES NOT save history and 
+     *  updates the holder with the author (CCREATEDWHO) and time of creation (CREATEDWHEN).
+     *
+     *  @param data holder object with the record we want to insert
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the insert
+     *  @throws RemoteException in case server connection failed
+     */    
+    public int executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException;
+    
+    /**
+     *  Execute DB update using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and saves history
+     *
+     *  @param data holder object with the record we want to update
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the update
+     *  @throws RemoteException in case network connection failed
+     */
     public void executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException;
     
+    /**
+     *  Execute DB delete using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and saves history
+     *
+     *  @param data holder object with the record we want to delete
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the delete
+     *  @throws RemoteException in case network connection failed
+     */
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException;
                         
+    /**
+     * This method is intended for final cleanup. <b>Do not call this method
+     * yourself! The proper way for you to get rid of a DBLayer is to call
+     * DBLayer.destroy() method!</b> <br/> Terminate all processes running in
+     * this DBLayer, disconnect from the database and destroy all objects
+     * created by this DBLayer. <br/> <b>After this the DBLayer will not be
+     * capable of carrying out its duties.</b> <br/> This method is supposed to
+     * be used by the DBLayerFactory exclusively.
+     */
     public void shutdown() throws RemoteException;
     
     public void destroy() throws RemoteException;
