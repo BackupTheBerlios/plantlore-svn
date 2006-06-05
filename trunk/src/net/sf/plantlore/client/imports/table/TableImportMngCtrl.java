@@ -25,7 +25,7 @@ public class TableImportMngCtrl {
 	
 	public void setVisible(boolean visible) {
 		if(visible) {
-			int result = choice.showDialog(null, L10n.getString("Import.Title"));
+			int result = choice.showDialog(view, L10n.getString("Import.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				if(choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,

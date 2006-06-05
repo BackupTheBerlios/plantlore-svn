@@ -88,7 +88,6 @@ import net.sf.plantlore.client.imports.DecisionCtrl;
 import net.sf.plantlore.client.imports.DecisionView;
 import net.sf.plantlore.client.imports.ImportMng;
 import net.sf.plantlore.client.imports.ImportMngCtrl;
-import net.sf.plantlore.client.imports.ImportMngView;
 import net.sf.plantlore.client.imports.ImportProgressCtrl;
 import net.sf.plantlore.client.imports.ImportProgressView;
 import net.sf.plantlore.client.imports.table.TableImportMng;
@@ -181,7 +180,6 @@ public class AppCoreCtrl
     
     // Import
     ImportMng importModel;
-    ImportMngView importView;
     ImportMngCtrl importCtrl;
     ImportProgressView importProgressView;
     ImportProgressCtrl importProgressCtrl;
@@ -469,8 +467,7 @@ public class AppCoreCtrl
         			importProgressView = new ImportProgressView(importModel);
         			importProgressCtrl = new ImportProgressCtrl(importModel, importProgressView);
         			
-        			importView = new ImportMngView(importModel);
-        			importCtrl = new ImportMngCtrl(importModel, importView, importProgressView);
+        			importCtrl = new ImportMngCtrl(importModel, view, importProgressView);
         			
         			importDecisionView = new DecisionView(importModel);
         			importDecisionCtrl = new DecisionCtrl(importModel, importDecisionView);

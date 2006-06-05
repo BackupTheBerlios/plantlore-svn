@@ -212,10 +212,8 @@ public class DefaultDirector extends Observable implements Runnable {
 		problematicRecord = about;
 		observerNotifier.start(); // must be another thread
 		while( lastDecision == Action.UNKNOWN && !aborted ) {
-			System.out.println(">>>> GOING TO SLEEP");
-			try { wait(); } catch( InterruptedException e ) {}
+			try { wait(); } catch( InterruptedException e ) {/* Never mind. */}
 		}
-		System.out.println(">>>> DECISION DONE => AWAKEN!");
 		return lastDecision;
 	}
 	
@@ -371,10 +369,10 @@ public class DefaultDirector extends Observable implements Runnable {
 						else
 							switch(intention) {
 							case DELETE:
-								occInDB = (Occurrence) delete( occInDB );
+								occInDB = (Occurrence) delete( occInDB, 1 );
 								// By a common decision: If the habitat is not shared it should be marked as deleted, too.
 								if( sharedBy(occInDB.getHabitat(), Occurrence.class, Occurrence.HABITAT) > 1 )
-									delete( occInDB.getHabitat() );
+									delete( occInDB.getHabitat(), 1 );
 								takenAction = Action.DELETE;
 								break;
 							default:
@@ -433,7 +431,8 @@ public class DefaultDirector extends Observable implements Runnable {
 					numberOfUndeadAuthors = 1; // so that the transaction is confirmed
 					
 					for(AuthorOccurrence ao : sharers) 
-						delete( ao );					
+						if( !ao.isDead() )
+							delete( ao, 2 );					
 				}
 				// The intention was to ADD or UPDATE the existing Occurrence record.  
 				else {
@@ -507,7 +506,10 @@ public class DefaultDirector extends Observable implements Runnable {
 									ao.setAuthor(authorInDB);
 									
 									// Now the AuthorOccurrence is complete.
-									db.executeInsertInTransaction(ao);	
+									if( occInDB != null )
+										db.executeInsertInTransaction( ao );
+									else
+										/*db.executeInsertInTransactionHistory( ao )*/;
 									
 									numberOfUndeadAuthors++;
 								}
@@ -517,7 +519,7 @@ public class DefaultDirector extends Observable implements Runnable {
 								case DELETE:
 									if( !aoInDB.isDead() ) {
 										aoInDB.setOccurrence( occInDB ); // repair the simplified record!
-										delete(aoInDB);
+										delete( aoInDB, 1 );
 										numberOfUndeadAuthors--;
 									}
 									break;
@@ -570,7 +572,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			if( transactionInProgress ) 
 				try {
 					transactionInProgress = ! db.rollbackTransaction();
-				} catch (Exception e2) {}
+				} catch (Exception e2) {/* Nothing we can do, can we? */}
 			
 			setChanged(); notifyObservers(e);
 			return;
@@ -1012,11 +1014,11 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * to belong to the database layer (ie. it must be something previously
 	 * obtained directly from the database layer).
 	 */
-	public Record delete(Record record) 
+	public Record delete(Record record, int deleteLevel) 
 	throws RemoteException, DBLayerException {
 		if(record instanceof Deletable) {
 			logger.info("Deleting ["+record+"] from the database.");
-			((Deletable)record).setDeleted(1);
+			((Deletable)record).setDeleted(deleteLevel);
 			db.executeUpdateInTransaction( record );
 		}
 		return record;

@@ -250,10 +250,14 @@ public class AppCore extends Observable
     }
     
     public int getResultsCount() {
-        if (tableSorter != null)        
-            return tableSorter.getResultsCount();
-        else
-            return 0;
+        if (tableSorter != null) {        
+        	try {
+                return database.getNumRows(this.getTableModel().getResultId());
+            } catch (RemoteException e) {
+                //
+            }
+        }
+        return 0;
     }
     
     public int getPagesCount() {

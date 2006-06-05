@@ -1,7 +1,10 @@
 package net.sf.plantlore.client.imports;
 
+import java.awt.Frame;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
 import net.sf.plantlore.l10n.L10n;
 
@@ -9,20 +12,27 @@ import net.sf.plantlore.l10n.L10n;
 public class ImportMngCtrl {
 	
 	private ImportMng model;
-	private ImportMngView view;
-	
+	protected JFileChooser choice;
+	private Frame parent;
 	private ImportProgressView  progressView;
 	
-	public ImportMngCtrl(ImportMng model, ImportMngView view, ImportProgressView progressView) {
-		this.model = model; this.view = view; this.progressView = progressView;
+	public ImportMngCtrl(ImportMng model, Frame view, ImportProgressView progressView) {
+		this.model = model; 
+		this.progressView = progressView;
+		this.parent = view;
+		
+		choice = new JFileChooser();
+		choice.setAcceptAllFileFilterUsed(false);
+		for( FileFilter filter: model.getFilters() )
+			choice.addChoosableFileFilter(filter);
 	}
 	
 	public void setVisible(boolean visible) {
 		if(visible) {
-			int result = view.choice.showDialog(null, L10n.getString("Import.Title"));
+			int result = choice.showDialog(parent, L10n.getString("Import.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				
-				if(view.choice.getSelectedFile() == null) {
+				if(choice.getSelectedFile() == null) {
 					JOptionPane.showMessageDialog(null,
 							L10n.getString("Error.MissingFileName"),
 							L10n.getString("Error.NothingSelected"),
@@ -30,7 +40,7 @@ public class ImportMngCtrl {
 					return;
 				}
 				
-				model.setSelectedFile( view.choice.getSelectedFile().getAbsolutePath() );
+				model.setSelectedFile( choice.getSelectedFile().getAbsolutePath() );
 				try {
 					model.start();
 					progressView.reset();

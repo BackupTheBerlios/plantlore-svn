@@ -42,13 +42,11 @@ public class ExportMngViewB extends javax.swing.JDialog {
         tree = new XTree();
         next = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setTitle(L10n.getString("Export.SelectColumns"));
+        tree.setSelectionModel( tsm );
         jScrollPane1.setViewportView(tree);
 
         next.setText(L10n.getString("Export.Title"));
-        
-        tree.setSelectionModel( tsm );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -78,7 +76,7 @@ public class ExportMngViewB extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JButton next;
-    protected XTree tree;
+    protected javax.swing.JTree tree;
     // End of variables declaration//GEN-END:variables
     
 }
