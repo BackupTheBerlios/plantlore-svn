@@ -96,6 +96,27 @@ public class DBLayerUtils {
         db.closeQuery(sq);
     }
     
+    /** Deletes Habitat for given Occurrence if needed.
+     *
+     * Will delete Habitat if no live Occurrence point at it.
+     *
+     */
+    public void deleteHabitatInTransaction(Habitat h) throws DBLayerException, RemoteException {
+        SelectQuery sq = db.createQuery(Occurrence.class);        
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DELETED, null, 0, null);
+        int resultid = db.executeQuery(sq);
+        int resultCount = db.getNumRows(resultid);
+        if (resultCount == 0) {
+            logger.info("Deleting habitat id="+h.getId()+" with nearest village "+h.getNearestVillage().getName());
+            h.setDeleted(1);
+            db.executeUpdateInTransaction(h);
+        } else {
+            logger.debug("Leaving habitat id="+h.getId()+" live. Live Occurrence records point at it.");
+        }
+        db.closeQuery(sq);
+    }
+    
 //    public static void main(String[] args) throws DBLayerException, RemoteException {
 //        DBLayer db = new HibernateDBLayer();
 //        db.initialize("jdbc:firebirdsql:localhost/3050:/mnt/data/temp/plantloreHIBdataUTF.fdb","sysdba","masterkey");

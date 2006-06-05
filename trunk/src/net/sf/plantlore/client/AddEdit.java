@@ -597,11 +597,11 @@ public class AddEdit extends Observable {
         h.setTerritory(t);
         
         if (updateAllPlants) {
-            database.executeUpdate(h);
+            database.executeUpdateInTransaction(h);
         } else {
             //we've already created and set up a new Habitat now we have to store it into the database
             h.setDeleted(0);
-            int habId = database.executeInsert(h);
+            int habId = database.executeInsertInTransaction(h);
             h.setId(habId);
         }
         
@@ -671,7 +671,7 @@ public class AddEdit extends Observable {
         hTmp.setTerritory(o.getHabitat().getTerritory());
         hTmp.setDeleted(0);
         
-        int habId = database.executeInsert(hTmp);
+        int habId = database.executeInsertInTransaction(hTmp);
         hTmp.setId(habId);
         
         occTmp.setDataSource(o.getDataSource());
@@ -693,34 +693,41 @@ public class AddEdit extends Observable {
         return occTmp;
     }
         
-    public void storeRecord(boolean updateAllPlants) {
+    private boolean originalTaxonSurvived() {
+        for (int t = 0; t < taxonList.size(); t++) {
+            if (taxonOriginal.equals(taxonList.get(t))) {
+                return true;
+            }
+        }        
+        return false;
+    }
+    
+    public void storeRecord(boolean updateAllPlants) throws DBLayerException, RemoteException {
         DBLayerUtils dlu = new DBLayerUtils(database);
 
         logger.info("Storing occurrence record...");
-        //FIXME: exception catching/throwing
         try {     
                 if (editMode) {
-                    boolean originalTaxonSurvived = false;
+                    boolean originalTaxonSurvived = originalTaxonSurvived();
                     
-                    for (int t = 0; t < taxonList.size(); t++) {
-                        if (taxonOriginal.equals(taxonList.get(t))) {
-                            originalTaxonSurvived = true;
-                            break;
-                        }
+                    boolean ok = database.beginTransaction();
+                    if (!ok) {
+                        logger.debug("AppCore.deleteSelected(): Can't create transaction. Another is probably already running.");
+                        throw new DBLayerException("Can't create transaction. Another already running.");
                     }
-
+                                            
                     prepareOccurrenceUpdate(updateAllPlants);
                     if (originalTaxonSurvived) {
                         // update original occurrence
                         logger.info("Updating original occurrence");
-                        database.executeUpdate(o);
+                        database.executeUpdateInTransaction(o);
                         logger.debug("Original occurrence id="+o.getId()+" updated.");
                     } else {
                         // delete original occurrence and bound author occurrences
                         logger.info("Deleting original occurrence and associated author occurrences");
                         o.setDeleted(1);
-                        database.executeUpdate(o);
-                        dlu.deleteHabitat(o.getHabitat());
+                        database.executeUpdateInTransaction(o);
+                        dlu.deleteHabitatInTransaction(o.getHabitat());
                         logger.debug("Occurrence id "+o.getId()+" "+o.getPlant().getTaxon()+" deleted.");
                         Set<Map.Entry<Integer,AuthorOccurrence>> aoSet = authorOccurrences.entrySet();
                         Iterator it = aoSet.iterator();
@@ -728,7 +735,7 @@ public class AddEdit extends Observable {
                             Map.Entry<Integer, AuthorOccurrence> entry = (Entry<Integer, AuthorOccurrence>) it.next();
                             AuthorOccurrence tmp = entry.getValue();
                             tmp.setDeleted(2);
-                            database.executeUpdateHistory(tmp);
+                            database.executeUpdateInTransactionHistory(tmp);
                             logger.debug("AuthorOccurrence id "+tmp.getId()+" "+tmp.getAuthor().getWholeName()+" deleted.");
                         }
                         //clear the authorOccurrences so that we don't try to delete them once again further in this method
@@ -758,7 +765,7 @@ public class AddEdit extends Observable {
                         if (!originalSurvived) {
                             aoTmp = authorOccurrences.get(auth.getFirst());
                             aoTmp.setDeleted(1);
-                            database.executeUpdate(aoTmp);
+                            database.executeUpdateInTransaction(aoTmp);
                             logger.debug("AuthorOccurrence id="+aoTmp.getId()+" "+aoTmp.getAuthor().getWholeName()+" deleted.");
                         }
                     }
@@ -776,7 +783,7 @@ public class AddEdit extends Observable {
                             AuthorOccurrence aoTmp = authorOccurrences.get(pTmp.getFirst().getSecond());
                             aoTmp.setRole(pTmp.getSecond());
                             aoTmp.setNote(resultRevision.get(j));
-                            database.executeUpdate(aoTmp);
+                            database.executeUpdateInTransaction(aoTmp);
                             logger.debug("AuthorOccurrence id="+aoTmp.getId()+" "+pTmp.getFirst().getFirst()+" updated");
                         } 
                     }
@@ -794,7 +801,7 @@ public class AddEdit extends Observable {
                         logger.info("Creating a new occurrence for "+taxonList.get(j));
                         Occurrence occTmp = cloneOccurrence();
                         occTmp.setPlant((Plant) dlu.getObjectFor(lookupPlant(taxonList.get(j)),Plant.class));
-                        int occId = database.executeInsert(occTmp);
+                        int occId = database.executeInsertInTransaction(occTmp);
                         occTmp.setId(occId);
                         logger.debug("Occurrence for "+taxonList.get(j)+" inserted. Id="+occTmp.getId());
                         Integer id = lookupPlant(taxonList.get(j));
@@ -812,7 +819,7 @@ public class AddEdit extends Observable {
                             aoTmp.setNote(resultRevision.get(k));
                             aoTmp.setOccurrence(occTmp);
                             aoTmp.setDeleted(0);
-                            database.executeInsert(aoTmp);
+                            database.executeInsertInTransaction(aoTmp);
                             logger.debug("AuthorOccurrence for "+pTmp.getFirst().getFirst()+" inserted. Id="+aoTmp.getId());
                         }
                     }
@@ -837,10 +844,12 @@ public class AddEdit extends Observable {
                                 aoTmp.setNote(resultRevision.get(k));
                                 aoTmp.setOccurrence(o);
                                 aoTmp.setDeleted(0);
-                                database.executeInsert(aoTmp);    
+                                database.executeInsertInTransaction(aoTmp);    
                                 logger.debug("AuthorOccurrence for "+pTmp.getFirst().getFirst()+" inserted. Id="+aoTmp.getId());                            
                             }
                         }
+                    
+                    database.commitTransaction();
                     
                 } else { //Add Mode
                     Village v;
@@ -861,15 +870,22 @@ public class AddEdit extends Observable {
                     if (quadrant != null) h.setQuadrant(quadrant);
                     h.setTerritory(t);
                     h.setDeleted(0);
+                    
+                    boolean ok = database.beginTransaction();
+                    if (!ok) {
+                        logger.debug("AppCore.deleteSelected(): Can't create transaction. Another is probably already running.");
+                        throw new DBLayerException("Can't create transaction. Another already running.");
+                    }
+                    
                     logger.info("Creating a shared habitat");
-                    int habId = database.executeInsert(h);//insert the shared habitat
+                    int habId = database.executeInsertInTransaction(h);//insert the shared habitat
                     h.setId(habId);
                     logger.debug("Shared habitat created. Id="+h.getId());
                         
                     for (int j = 0; j < taxonList.size(); j++) {
                         logger.info("Creating an Occurrence using the shared habitat");
                         Occurrence occ = prepareNewOccurrence(taxonList.get(j), h);//share the habitat
-                        int occId = database.executeInsert(occ);
+                        int occId = database.executeInsertInTransaction(occ);
                         occ.setId(occId);
                         logger.debug("Occurrence for "+taxonList.get(j)+" inserted. Id="+occ.getId());
                         
@@ -882,14 +898,17 @@ public class AddEdit extends Observable {
                             aoTmp.setNote(resultRevision.get(k));
                             aoTmp.setOccurrence(occ);
                             aoTmp.setDeleted(0);
-                            database.executeInsert(aoTmp);                            
+                            database.executeInsertInTransaction(aoTmp);                            
                         }//for authorList
                     }// for taxonList
+                    
+                    database.commitTransaction();
                 }//add mode
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
         } catch (DBLayerException ex) {
-            ex.printStackTrace();
+            database.rollbackTransaction();
+            DBLayerException dbex = new DBLayerException("Add/Edit was rolled back. Some database problem occurred during processing: "+ex);
+            dbex.setStackTrace(ex.getStackTrace());
+            throw dbex;
         }        
     }//createRecord()
 
@@ -933,8 +952,12 @@ public class AddEdit extends Observable {
         if (taxonList == null || taxonList.size() < 1)
             return new Pair<Boolean,String>(false, "You have to add at least one taxon!");
         
-        if (editMode && taxonList.size() > 1 && database.getUserRights().getAdd() != 1) { //the user is not allowed to add new records
+        if (editMode && taxonList.size() > 1 && database.getUserRights().getAdd() != 1 && database.getUserRights().getAdministrator() != 1) { //the user is not allowed to add new records
             return new Pair<Boolean,String>(false, L10n.getString("AddEdit.InsufficientAddRights"));
+        }
+        
+        if (editMode && !originalTaxonSurvived() && database.getUserRights().getAdd() != 1 && database.getUserRights().getAdministrator() != 1) { //in case the user replaced original taxon by some other but doesn't have rights for adding
+            return new Pair<Boolean,String>(false, L10n.getString("AddEdit.InsufficientAddRights"));            
         }
         
         Pair<Pair<String,Integer>,String> ai, aj;

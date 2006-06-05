@@ -734,30 +734,45 @@ public class AppCore extends Observable
             public Object task() throws DBLayerException, RemoteException {
                 DBLayerUtils dlu = new DBLayerUtils(database);
 
-                Collection<Integer> toBeDeleted = getTableModel().getSelection().values();
-                setLength(toBeDeleted.size()*2); //inform about approx. length of this task
-                setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
-                for (Integer i : toBeDeleted) {
-                    Occurrence occ = (Occurrence) dlu.getObjectFor(i.intValue(), Occurrence.class);
-                    AuthorOccurrence[] aos = dlu.getAuthorsOf(occ);
-
-                    logger.debug("Deleting occurrence id "+i);
-                    occ.setDeleted(1);
-                    database.executeUpdate(occ);
-                    dlu.deleteHabitat(occ.getHabitat());
-                    logger.debug("Occurrence id "+occ.getId()+" "+occ.getPlant().getTaxon()+" deleted.");
-                    setPosition(getPosition()+1);
-                    
-                    for (AuthorOccurrence authorOcc : aos) {
-                        authorOcc.setDeleted(2);
-                        database.executeUpdateHistory(authorOcc);
-                        logger.debug("AuthorOccurrence id "+authorOcc.getId()+" "+authorOcc.getAuthor().getWholeName()+" deleted.");
-                    }
-                    deleted++;
-                    setPosition(getPosition()+1);
-                    setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
+                boolean ok = false;
+                ok = database.beginTransaction();
+                if (!ok) {
+                    logger.debug("AppCore.deleteSelected(): Can't create transaction. Another is probably already running.");
+                    throw new DBLayerException("Can't create transaction. Another already running.");
                 }
+                
+                try {
+                    Collection<Integer> toBeDeleted = getTableModel().getSelection().values();
+                    setLength(toBeDeleted.size()*2); //inform about approx. length of this task
+                    setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
+                    for (Integer i : toBeDeleted) {
+                        Occurrence occ = (Occurrence) dlu.getObjectFor(i.intValue(), Occurrence.class);
+                        AuthorOccurrence[] aos = dlu.getAuthorsOf(occ);
 
+                        logger.debug("Deleting occurrence id "+i);
+                        occ.setDeleted(1);
+                        database.executeUpdateInTransaction(occ);
+                        dlu.deleteHabitatInTransaction(occ.getHabitat());
+                        logger.debug("Occurrence id "+occ.getId()+" "+occ.getPlant().getTaxon()+" deleted.");
+                        setPosition(getPosition()+1);
+
+                        for (AuthorOccurrence authorOcc : aos) {
+                            authorOcc.setDeleted(2);
+                            database.executeUpdateInTransactionHistory(authorOcc);
+                            logger.debug("AuthorOccurrence id "+authorOcc.getId()+" "+authorOcc.getAuthor().getWholeName()+" deleted.");
+                        }
+                        deleted++;
+                        setPosition(getPosition()+1);
+                        setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
+                    }
+                } catch (DBLayerException ex) {
+                    database.rollbackTransaction();
+                    DBLayerException dbex = new DBLayerException("Delete rolled back. Some database problem occurred: "+ex);
+                    dbex.setStackTrace(ex.getStackTrace());
+                    throw dbex;
+                }
+                
+                database.commitTransaction();
                 getTableModel().clearSelection();
                 fireStopped(null);
                 return null;

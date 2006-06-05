@@ -82,6 +82,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
         setResizable(false);
         setUndecorated(true);
         jPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEtchedBorder()));
+        progressBar.setForeground(java.awt.Color.green);
 
         statusField.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         statusField.setBorder(null);

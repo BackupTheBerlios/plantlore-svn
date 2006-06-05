@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -49,6 +50,7 @@ import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
@@ -453,48 +455,59 @@ public class AddEditCtrl {
         
         public void mouseClicked(MouseEvent e) {
             int choice=-1;
-            Pair<Boolean,String> check = model.checkData();
-            if (!check.getFirst()) {
-                JOptionPane.showMessageDialog(view,check.getSecond());
-                return;
-            } 
-            if (inEditMode) {
-                Occurrence[] sharedOcc = model.getHabitatSharingOccurrences();
-                if (sharedOcc.length > 1) {
-                    Object[] arg = {""+(sharedOcc.length-1)};
-                    String formattedQuestion = L10n.getFormattedString("AddEdit.OkQuestion",arg);
-                    
-                    Object[] options = {ALL,JUST_THIS,CANCEL};
-                    choice = JOptionPane.showOptionDialog(view, 
-                            formattedQuestion,
-                            TITLE,
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
-                    switch (choice) {
-                        case 0:
+            try {
+                Pair<Boolean,String> check = model.checkData();
+                if (!check.getFirst()) {
+                    JOptionPane.showMessageDialog(view,check.getSecond());
+                    return;
+                } 
+                if (inEditMode) {
+                    Occurrence[] sharedOcc = model.getHabitatSharingOccurrences();
+                    if (sharedOcc.length > 1) {
+                        Object[] arg = {""+(sharedOcc.length-1)};
+                        String formattedQuestion = L10n.getFormattedString("AddEdit.OkQuestion",arg);
+
+                        Object[] options = {ALL,JUST_THIS,CANCEL};
+                        choice = JOptionPane.showOptionDialog(view, 
+                                formattedQuestion,
+                                TITLE,
+                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                options,
+                                options[0]);
+                        switch (choice) {
+                            case 0:
+                                model.storeRecord(true);
+                                view.setVisible(false);
+                                break;
+                            case 1:
+                                model.storeRecord(false);
+                                view.setVisible(false);
+                                break;
+                            case 2:
+                            default:                        
+                                //we'll do nothing and leave the AddEdit dialog visible
+                        }
+                    } else {
                             model.storeRecord(true);
-                            view.setVisible(false);
-                            break;
-                        case 1:
-                            model.storeRecord(false);
-                            view.setVisible(false);
-                            break;
-                        case 2:
-                        default:                        
-                            //we'll do nothing and leave the AddEdit dialog visible
+                            view.setVisible(false);                    
                     }
-                } else {
-                        model.storeRecord(true);
-                        view.setVisible(false);                    
+                } else {//inAddMode
+                    model.storeRecord(true);
+                    view.setVisible(false);
                 }
-            } else {//inAddMode
-                model.storeRecord(true);
-                view.setVisible(false);
+            } catch (RemoteException ex) {
+                logger.error("Remote problem: "+ex);
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+            } catch (DBLayerException ex) {
+                logger.error("Database problem: "+ex);
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
             }
-        }
+        }//mouseClicked
+            
     }//OkButtonListener
     
     class CancelButtonListener extends MouseAdapter {
