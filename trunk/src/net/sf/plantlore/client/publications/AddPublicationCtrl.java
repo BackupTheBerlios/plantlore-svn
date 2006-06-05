@@ -13,9 +13,15 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
+import javax.swing.JOptionPane;
 import net.sf.plantlore.common.PlantloreHelp;
 import javax.swing.Timer;
+import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.ProgressDialog;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 /**
@@ -54,26 +60,9 @@ public class AddPublicationCtrl {
         view.publicationYearAddPropertyChangeListener(new PublicationYearFieldPropertyChangeListener());
         view.journalNameAddPropertyChangeListener(new JournalNameFieldPropertyChangeListener());
         view.journalAuthorAddPropertyChangeListener(new JournalAuthorFieldPropertyChangeListener());
-        view.referenceCitationAddPropertyChangeListener(new ReferenceCitationFieldPropertyChangeListener());
         view.referenceDetailAddPropertyChangeListener(new ReferenceDetailFieldPropertyChangeListener());
         view.urlAddPropertyChangeListener(new UrlFieldPropertyChangeListener());
         view.noteAddFocusListener(new NoteAreaFocusListener());                
-        // Create a timer to check for the end of long running task
-        timer = new Timer(100, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (model.isOperationDone() == true) {
-                    timer.stop();
-                    // Close progress bar dialog
-                    progress.close();
-                    view.setDialogEnabled(true);                    
-                    if (model.processErrors() == false) {    
-                        if (model.isResultAvailable()) {   
-                            model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());                        
-                        }
-                    }
-                }
-            }
-        });        
     }
     
     /**
@@ -94,20 +83,69 @@ public class AddPublicationCtrl {
     class SavePublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {            
             // Check whether all the required fields are present
-            if (view.checkNonEmpty(PublicationManager.FIELD_REFERENCE_CITATION)) {
-                if (model.getEditPublication() == null) {
+            if (view.checkCompulsory()) {
+                if (model.getEditPublication() == null) {                    
                     // Save new publication
-                    model.savePublication();                
-                } else {
+                    Task task = model.savePublication();                
+                    ProgressBar progressBar = new ProgressBar(task, view, true) {
+                        public void exceptionHandler(Exception ex) {
+                            if (ex instanceof DBLayerException) {
+                                DBLayerException e = (DBLayerException)ex;
+                                JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                                logger.error(e+": "+e.getErrorInfo());
+                                getTask().stop();
+                                return;
+                            }
+                            if (ex instanceof RemoteException) {
+                                RemoteException e = (RemoteException)ex;
+                                JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                                logger.error(e);
+                                getTask().stop();
+                                return;
+                            }
+                            JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                            logger.error(ex);                            
+                        }              
+                        
+                        public void afterStopped(Object value) {
+                            model.searchPublication(false);
+                            model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                            model.reloadCache();
+                        }
+                    };
+                    progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+                    task.start();
+                } else {                    
                     // Edit existing publication
-                    model.editPublication();
+                    Task task = model.editPublication();
+                    ProgressBar progressBar = new ProgressBar(task, view, true) {
+                        public void exceptionHandler(Exception ex) {
+                            if (ex instanceof DBLayerException) {
+                                DBLayerException e = (DBLayerException)ex;
+                                JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                                logger.error(e+": "+e.getErrorInfo());
+                                getTask().stop();
+                                return;
+                            }
+                            if (ex instanceof RemoteException) {
+                                RemoteException e = (RemoteException)ex;
+                                JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                                logger.error(e);
+                                getTask().stop();
+                                return;
+                            }
+                            JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                            logger.error(ex);                            
+                        }                                      
+                        public void afterStopped(Object value) {
+                            model.searchPublication(false);
+                            model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                            model.reloadCache();                            
+                        }
+                    };
+                    progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+                    task.start();                    
                 }
-                // Disable the dialog while saving author
-                view.setDialogEnabled(false);                                
-                timer.start();                
-                // Display dialog with progress bar
-                progress = new ProgressDialog(view.getDialog(), true);
-                progress.show();
                 // Close the add dialog when save finished
                 view.close();
             }
@@ -128,7 +166,9 @@ public class AddPublicationCtrl {
      */
     class PublicationYearFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
-            model.setPublicationYear(view.getPublicationYear());
+            if (view.getPublicationYear() != null) {
+                model.setPublicationYear(view.getPublicationYear());
+            }
         }        
     }    
     
@@ -149,15 +189,6 @@ public class AddPublicationCtrl {
             model.setJournalAuthor(view.getJournalAuthor());
         }        
     }    
-    
-    /**
-     *  PropertyChangeListener class for updating <b>reference citation</b> field in the model with data from the form.
-     */
-    class ReferenceCitationFieldPropertyChangeListener implements PropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent e) {
-            model.setReferenceCitation(view.getReferenceCitation());
-        }        
-    }        
     
     /**
      *  PropertyChangeListener class for updating <b>reference detail</b> field in the model with data from the form.

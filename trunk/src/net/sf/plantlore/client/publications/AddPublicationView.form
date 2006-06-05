@@ -22,38 +22,43 @@
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="helpBtn" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="37" max="32767" attributes="1"/>
-                      <Component id="closeBtn" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="10" max="32767" attributes="1"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="10" max="32767" attributes="1"/>
+                          </Group>
+                          <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel7" alignment="0" pref="76" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" max="-2" attributes="0">
+                              <Component id="jLabel3" min="-2" max="-2" attributes="1"/>
+                              <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+                          </Group>
+                          <Component id="jLabel5" alignment="0" pref="76" max="32767" attributes="1"/>
+                          <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="1"/>
+                      </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="saveBtn" min="-2" pref="104" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jScrollPane2" pref="290" max="32767" attributes="0"/>
+                          <Component id="journalAuthorField" alignment="0" pref="290" max="32767" attributes="0"/>
+                          <Component id="collectionNameField" alignment="1" pref="290" max="32767" attributes="0"/>
+                          <Component id="publicationYearField" alignment="1" pref="290" max="32767" attributes="0"/>
+                          <Component id="journalNameField" alignment="1" pref="290" max="32767" attributes="0"/>
+                          <Component id="urlField" alignment="0" pref="290" max="32767" attributes="0"/>
+                          <Component id="referenceDetailField" alignment="0" pref="290" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="jLabel5" alignment="1" max="32767" attributes="1"/>
-                              <Component id="jLabel7" alignment="1" max="32767" attributes="1"/>
-                              <Component id="jLabel6" alignment="1" max="32767" attributes="1"/>
-                          </Group>
-                          <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="helpBtn" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="58" max="32767" attributes="0"/>
+                      <Component id="closeBtn" min="-2" pref="101" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="urlField" alignment="0" pref="279" max="32767" attributes="0"/>
-                          <Component id="collectionNameField" alignment="1" pref="279" max="32767" attributes="0"/>
-                          <Component id="publicationYearField" alignment="1" pref="279" max="32767" attributes="0"/>
-                          <Component id="journalNameField" alignment="1" pref="279" max="32767" attributes="0"/>
-                          <Component id="journalAuthorField" alignment="1" pref="279" max="32767" attributes="0"/>
-                          <Component id="referenceCitationField" alignment="1" pref="279" max="32767" attributes="0"/>
-                          <Component id="referenceDetailField" alignment="1" pref="279" max="32767" attributes="0"/>
-                          <Component id="jScrollPane2" alignment="1" pref="279" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="saveBtn" min="-2" pref="104" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -62,7 +67,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" max="-2" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -78,38 +83,38 @@
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="journalNameField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="journalAuthorField" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                   <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="journalAuthorField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="referenceCitationField" alignment="3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" max="-2" attributes="0">
+                  <Component id="referenceDetailField" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="referenceDetailField" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="urlField" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                   <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="urlField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="60" max="32767" attributes="0"/>
+                      <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jScrollPane2" pref="72" max="32767" attributes="0"/>
+                      <EmptySpace min="16" pref="16" max="16" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" max="-2" attributes="0">
-                  <Component id="helpBtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="saveBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="closeBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="saveBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="helpBtn" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -145,13 +150,6 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel6">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;addPublicationReferenceCitationLbl&quot;)" type="code"/>
-        </Property>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -180,7 +178,7 @@
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="publicationYearField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="publicationYearField.setValue(0);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="publicationYearField.setValue(0);&#xa;publicationYearField.setValue(null);"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="journalNameField">
@@ -188,19 +186,9 @@
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="journalNameField.setValue(&quot;&quot;);"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="journalAuthorField">
+    <Component class="javax.swing.JFormattedTextField" name="urlField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="journalAuthorField.setValue(&quot;&quot;);"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JFormattedTextField" name="referenceCitationField">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="referenceCitationField.setValue(&quot;&quot;);"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JFormattedTextField" name="referenceDetailField">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="referenceDetailField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="urlField.setValue(&quot;&quot;);"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane2">
@@ -226,6 +214,9 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="L10n.getString(&quot;Common.Help&quot;)" type="code"/>
         </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[150, 23]"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="closeBtn">
@@ -233,12 +224,18 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="L10n.getString(&quot;Common.Close&quot;)" type="code"/>
         </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[150, 23]"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="saveBtn">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="L10n.getString(&quot;Publication.Add.SaveButton&quot;)" type="code"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[150, 23]"/>
         </Property>
       </Properties>
     </Component>
@@ -249,9 +246,14 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="urlField">
+    <Component class="javax.swing.JFormattedTextField" name="referenceDetailField">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="urlField.setValue(&quot;&quot;);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="referenceDetailField.setValue(&quot;&quot;);"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JFormattedTextField" name="journalAuthorField">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="journalAuthorField.setValue(&quot;&quot;);"/>
       </AuxValues>
     </Component>
   </SubComponents>

@@ -1136,6 +1136,7 @@ public class AppCoreCtrl {
 					true);
 			AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel,
 					authView);
+                        authModel.addObserver(managerBridge);
 			authView.setVisible(true);
 		}
 
@@ -1157,6 +1158,7 @@ public class AppCoreCtrl {
 					publicationManagerModel, view, true);
 			publicationManagerCtrl = new PublicationManagerCtrl(
 					publicationManagerModel, publicationManagerView);
+                        publicationManagerModel.addObserver(managerBridge);
 			publicationManagerView.setVisible(true);
 		}
 	}

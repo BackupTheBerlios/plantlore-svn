@@ -1,8 +1,3 @@
-/*
- * AddPublicationView.java
- *
- * Created on 30. duben 2006, 17:46
- */
 
 package net.sf.plantlore.client.publications;
 
@@ -21,7 +16,7 @@ import net.sf.plantlore.l10n.L10n;
  * Dialog used for adding / editing publications.
  *
  * @author  Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
+ * @version 1.0, June 4, 2006
  */
 public class AddPublicationView extends javax.swing.JDialog implements Observer {
     /** Model of the Publication manager MVC */
@@ -39,6 +34,9 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         this.model = publModel;
         this.model.addObserver(this);         
         initComponents();
+        // Set default button of the dialog
+        getRootPane().setDefaultButton(this.saveBtn);        
+        // Initialize help
         PlantloreHelp.addKeyHelp(PlantloreHelp.PUBLICATION_ADD, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.PUBLICATION_ADD, this.helpBtn);        
         // Center the dialog on the screen
@@ -56,23 +54,21 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         collectionNameField = new javax.swing.JFormattedTextField();
         publicationYearField = new javax.swing.JFormattedTextField();
         journalNameField = new javax.swing.JFormattedTextField();
-        journalAuthorField = new javax.swing.JFormattedTextField();
-        referenceCitationField = new javax.swing.JFormattedTextField();
-        referenceDetailField = new javax.swing.JFormattedTextField();
+        urlField = new javax.swing.JFormattedTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         noteArea = new javax.swing.JTextArea();
         helpBtn = new javax.swing.JButton();
         closeBtn = new javax.swing.JButton();
         saveBtn = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        urlField = new javax.swing.JFormattedTextField();
+        referenceDetailField = new javax.swing.JFormattedTextField();
+        journalAuthorField = new javax.swing.JFormattedTextField();
 
         setTitle(L10n.getString("addPublicationTitle"));
         jLabel1.setText(L10n.getString("addPublicationCollectionNameLbl"));
@@ -83,8 +79,6 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
 
         jLabel5.setText(L10n.getString("addPublicationJournalAuthorNameLbl"));
 
-        jLabel6.setText(L10n.getString("addPublicationReferenceCitationLbl"));
-
         jLabel7.setText(L10n.getString("addPublicationReferenceDetailLbl"));
 
         jLabel8.setText(L10n.getString("addPublicationNoteLbl"));
@@ -94,14 +88,11 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         collectionNameField.setValue("");
 
         publicationYearField.setValue(0);
+        publicationYearField.setValue(null);
 
         journalNameField.setValue("");
 
-        journalAuthorField.setValue("");
-
-        referenceCitationField.setValue("");
-
-        referenceDetailField.setValue("");
+        urlField.setValue("");
 
         noteArea.setColumns(20);
         noteArea.setRows(5);
@@ -109,14 +100,19 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         jScrollPane2.setViewportView(noteArea);
 
         helpBtn.setText(L10n.getString("Common.Help"));
+        helpBtn.setMinimumSize(new java.awt.Dimension(150, 23));
 
         closeBtn.setText(L10n.getString("Common.Close"));
+        closeBtn.setMinimumSize(new java.awt.Dimension(150, 23));
 
         saveBtn.setText(L10n.getString("Publication.Add.SaveButton"));
+        saveBtn.setMinimumSize(new java.awt.Dimension(150, 23));
 
         jLabel10.setText(L10n.getString("addPublicationUrlLbl"));
 
-        urlField.setValue("");
+        referenceDetailField.setValue("");
+
+        journalAuthorField.setValue("");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -125,34 +121,37 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(helpBtn)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 37, Short.MAX_VALUE)
-                        .add(closeBtn)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(layout.createSequentialGroup()
+                                .add(jLabel2)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 10, Short.MAX_VALUE))
+                            .add(layout.createSequentialGroup()
+                                .add(jLabel1)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 10, Short.MAX_VALUE))
+                            .add(jLabel10)
+                            .add(jLabel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                            .add(layout.createSequentialGroup()
+                                .add(jLabel3)
+                                .add(10, 10, 10))
+                            .add(jLabel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                            .add(jLabel8))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(saveBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, journalAuthorField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                            .add(collectionNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                            .add(publicationYearField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                            .add(journalNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, urlField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, referenceDetailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)))
                     .add(jLabel9)
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                .add(jLabel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(jLabel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .add(jLabel3)
-                            .add(jLabel2)
-                            .add(jLabel1)
-                            .add(jLabel8)
-                            .add(jLabel10))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(helpBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 58, Short.MAX_VALUE)
+                        .add(closeBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(urlField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, collectionNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, publicationYearField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, journalNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, journalAuthorField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, referenceCitationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, referenceDetailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))))
+                        .add(saveBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 104, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -172,83 +171,48 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
                     .add(journalNameField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel5)
-                    .add(journalAuthorField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(7, 7, 7)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel6)
-                    .add(referenceCitationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(journalAuthorField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel5))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE, false)
+                    .add(referenceDetailField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel7))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel7)
-                    .add(referenceDetailField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel10)
-                    .add(urlField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(urlField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel10))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jLabel8)
-                    .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .add(jLabel8)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 60, Short.MAX_VALUE)
+                        .add(jLabel9))
+                    .add(layout.createSequentialGroup()
+                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                        .add(16, 16, 16)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLabel9)
-                .add(7, 7, 7)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE, false)
-                    .add(helpBtn)
-                    .add(saveBtn)
-                    .add(closeBtn))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(closeBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(saveBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(helpBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
     /**
-     *  Check whether given compulsory field is blank. If it is, display appropriate message and give this field focus.
+     *  Check whether compulsory items are present. At least one of the following items must be
+     *  provided: collectionName, collectionYearPublication, journalAuthorName, journalName
      *
-     *  @param field string identifier of the field. possible values are: <i>name, surname, organization, role, address, phone, email, url, note</i>
-     *  @return true if the field is non-empty, false otherwise
+     *  @return true if one of the collectionName, collectionYearPublication, journalAuthorName, journalName is non-empty, false otherwise
      */
-    public boolean checkNonEmpty(int field) {
-        if ((field == PublicationManager.FIELD_COLLECTION_NAME) && (collectionNameField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Name of the author is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+    public boolean checkCompulsory() {
+        if (((Integer)publicationYearField.getValue() == null) && (((String)collectionNameField.getValue()).length() == 0) &&
+            (((String)journalNameField.getValue()).length() == 0) && (((String)journalAuthorField.getValue()).length() == 0)) {
+            JOptionPane.showMessageDialog(this, "At least one of the following fields must be filled in: Journal author, Year of publication, Journal name, Collection name", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
             collectionNameField.requestFocus();
             return false;
         }
-        if ((field == PublicationManager.FIELD_COLLECTION_YEAR) && (publicationYearField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Publication year is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            publicationYearField.requestFocus();
-            return false;            
-        }
-        if ((field == PublicationManager.FIELD_JOURNAL_NAME) && (journalNameField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Journal name is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            journalNameField.requestFocus();
-            return false;                        
-        }
-        if ((field == PublicationManager.FIELD_JOURNAL_AUTHOR) && (journalAuthorField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Name of the author of the journal is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            journalAuthorField.requestFocus();
-            return false;                        
-        }
-        if ((field == PublicationManager.FIELD_REFERENCE_CITATION) && (referenceCitationField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Reference citation is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            referenceCitationField.requestFocus();
-            return false;                        
-        }
-        if ((field == PublicationManager.FIELD_REFERENCE_DETAIL) && (referenceDetailField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Reference detail is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            referenceDetailField.requestFocus();
-            return false;                        
-        }
-        if ((field == PublicationManager.FIELD_URL) && (urlField.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "URL is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            urlField.requestFocus();
-            return false;                        
-        }
-        if ((field == PublicationManager.FIELD_NOTE) && (noteArea.getText().length() == 0)) {
-            JOptionPane.showMessageDialog(this, "Note is a compulsory field. Please fill it in.", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
-            noteArea.requestFocus();
-            return false;                        
-        }        
         return true;
     }
     
@@ -270,7 +234,10 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     }
     
     /**
-     *  Update contents of the fields on the form according to the data in the model. This method is called when model notifies its observers.
+     *  Update contents of the fields on the form according to the data in the model. This method is 
+     *  called when model notifies its observers.
+     *  @param o    observable which notified observers
+     *  @param arg  argument sent with notification
      */
     public void update(Observable o, Object arg) {
         // Load form fields with data from the model
@@ -278,7 +245,6 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         this.publicationYearField.setValue(model.getPublicationYear());
         this.journalNameField.setValue(model.getJournalName());
         this.journalAuthorField.setValue(model.getJournalAuthor());
-        this.referenceCitationField.setValue(model.getReferenceCitation());
         this.referenceDetailField.setValue(model.getReferenceDetail());
         this.urlField.setValue(model.getUrl());
         this.noteArea.setText(model.getNote());
@@ -339,15 +305,7 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     void journalAuthorAddPropertyChangeListener(PropertyChangeListener pcl) {
         journalAuthorField.addPropertyChangeListener(pcl);
     }    
-
-    /**
-     *  Add PropertyChangeListener for the <b>reference citation</b> field
-     *  @param pcl PropertyChangeListener for the <b>reference citation</b> field
-     */
-    void referenceCitationAddPropertyChangeListener(PropertyChangeListener pcl) {
-        referenceCitationField.addPropertyChangeListener(pcl);
-    }
-    
+   
     /**
      *  Add PropertyChangeListener for the <b>reference detail</b> field
      *  @param pcl PropertyChangeListener for the <b>reference detail</b> field
@@ -410,15 +368,7 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     public String getJournalAuthor() {
         return (String)journalAuthorField.getValue();
     }    
-    
-    /**
-     *  Get the reference citation.
-     *  @return reference citation
-     */    
-    public String getReferenceCitation() {
-        return (String)referenceCitationField.getValue();        
-    }    
-    
+       
     /**
      *  Get the reference detail.
      *  @return reference detail
@@ -452,7 +402,6 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -461,7 +410,6 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     private javax.swing.JFormattedTextField journalNameField;
     private javax.swing.JTextArea noteArea;
     private javax.swing.JFormattedTextField publicationYearField;
-    private javax.swing.JFormattedTextField referenceCitationField;
     private javax.swing.JFormattedTextField referenceDetailField;
     private javax.swing.JButton saveBtn;
     private javax.swing.JFormattedTextField urlField;

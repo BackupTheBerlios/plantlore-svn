@@ -1,8 +1,3 @@
-/*
- * PublicationManagerView.java
- *
- * Created on 30. duben 2006, 14:58
- */
 
 package net.sf.plantlore.client.publications;
 
@@ -23,10 +18,11 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- * Main dialog of the PublicationManager used for searching publications and displaying the search results.
+ * Main dialog of the PublicationManager used for searching publications and displaying the 
+ * search results.
  * 
  * @author Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
+ * @version 1.0, June 4, 2006
  */
 public class PublicationManagerView extends javax.swing.JDialog implements Observer {
     /** Model of the PublicationManager MVC */
@@ -50,6 +46,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         this.model = model;
         this.model.addObserver(this);
         initComponents();
+        // Initialize help
         PlantloreHelp.addKeyHelp(PlantloreHelp.PUBLICATION_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.PUBLICATION_MANAGER, this.helpBtn);        
         // Center the dialog on the screen
@@ -154,29 +151,27 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                         .add(37, 37, 37)
                         .add(toDisplayedLabel2)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jPanel7Layout.createSequentialGroup()
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(addBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 121, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(deleteBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(jPanel7Layout.createSequentialGroup()
-                                .add(rowsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(89, 89, 89)
-                                .add(displayedLabel2)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(displayedLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(nextBtn)))))
+                        .add(rowsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(89, 89, 89)
+                        .add(displayedLabel2)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(displayedLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(nextBtn))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(addBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 113, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(deleteBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 136, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .add(jScrollPane3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(previousBtn)
@@ -189,9 +184,9 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                     .add(rowsField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(15, 15, 15)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(deleteBtn)
                     .add(editBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(addBtn)
-                    .add(deleteBtn))
+                    .add(addBtn))
                 .addContainerGap())
         );
 
@@ -315,21 +310,21 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(helpBtn)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 585, Short.MAX_VALUE)
                         .add(closeBtn))
-                    .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(17, 17, 17)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpBtn)
                     .add(closeBtn))
@@ -339,8 +334,8 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
     }// </editor-fold>//GEN-END:initComponents
         
     /**
-     *  Check whether the given field is emty or not. This is used for validating user input when searching
-     *  publications.
+     *  Check whether the given field is empty or not. This is used for validating user input when 
+     *  searching publications.
      *
      *  @param field field we want to check
      *  @return true if the field is empty, false otherwise
@@ -412,10 +407,15 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
      */
     public void displayResults(ArrayList results) {
         this.tableData = new String[results.size()][];
+        System.out.println("Displaying data. Data length: "+this.tableData.length);        
         for (int i=0;i<results.size();i++) {            
             this.tableData[i] = new String[7];
             this.tableData[i][0] = ((Publication)results.get(i)).getCollectionName();
-            this.tableData[i][1] = ((Publication)results.get(i)).getCollectionYearPublication()+"";
+            if (((Publication)results.get(i)).getCollectionYearPublication() == null) {
+                this.tableData[i][1] = new String("");
+            } else {
+                this.tableData[i][1] = ((Publication)results.get(i)).getCollectionYearPublication().toString();
+            }
             this.tableData[i][2] = ((Publication)results.get(i)).getJournalName();
             this.tableData[i][3] = ((Publication)results.get(i)).getJournalAuthorName();
             this.tableData[i][4] = ((Publication)results.get(i)).getReferenceCitation();

@@ -548,7 +548,7 @@ public class Search extends Observable {
     	exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(Village.class));
     	exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
     	exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED);
-    	
+        exportQuery.addRestriction(PlantloreConstants.RESTR_EQ, Record.alias(Publication.class)+"."+Occurrence.DELETED, null, 0, null);    	
     	for( Restriction restriction : restrictions ) {
     		if(restriction.type == RESTR_BETWEEN)
     			exportQuery.addRestriction(restriction.type, restriction.column, null, null, (Collection)restriction.arg);
@@ -595,7 +595,7 @@ public class Search extends Observable {
                 sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);                
                 sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
                 sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
-                
+                sq.addRestriction(PlantloreConstants.RESTR_EQ, "publication."+Occurrence.DELETED, null, 0, null);
                 for (Column column : columns) {
                     switch (column.type) {
                         case AUTHOR:

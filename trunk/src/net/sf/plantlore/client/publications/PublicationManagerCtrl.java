@@ -1,9 +1,3 @@
-/*
- * PublicationManagerCtrl.java
- *
- * Created on 15. leden 2006, 2:04
- *
- */
 
 package net.sf.plantlore.client.publications;
 
@@ -13,15 +7,19 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
+import javax.swing.JOptionPane;
 import net.sf.plantlore.common.*;
 import javax.swing.Timer;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 /**
  * Controller for the main PublicationManager dialog (part of the PublicationManager MVC).
  * 
  * @author Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
+ * @version 1.0, June 4, 2006
  */
 public class PublicationManagerCtrl {
     /** Instance of a logger */
@@ -30,12 +28,6 @@ public class PublicationManagerCtrl {
     PublicationManager model;
     /** View of the PublicationManager MVC  */
     PublicationManagerView view;
-         
-    private Timer timerSearch;          // Used for periodic checking of the state of other thread
-    private Timer timerDelete;          // Used for periodic checking of the state of other thread    
-    private ProgressDialog progress;    // Dialog showing progressbar
-    /** Frequency of the timer used for periodic checking of the state of other threads */
-    private final int TIMER_FREQUENCY = 100;
     
     /**
      * Creates a new instance of PublicationManagerCtrl 
@@ -65,61 +57,35 @@ public class PublicationManagerCtrl {
         view.rowsAddPropertyChangeListener(new RowsPropertyChangeListener());
         view.sortAddFocusListener(new SortComboFocusListener());
         view.sortDirectionAddFocusListener(new SortDirectionRadioFocusListener());
-        // Create a timer for search operation
-        timerSearch = new Timer(TIMER_FREQUENCY, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                // Check whether the other thread is still running
-                if (model.isOperationDone() == true) {
-                    timerSearch.stop();                    
-                    progress.close();               // Close dialog with progress bar
-                    view.setDialogEnabled(true);    // Enable view dialog                
-                    // Check for errors which might have occured. If none occured, tell model to process the result
-                    if (model.processErrors() == false) {
-                        if (model.getResultRows() == 0) {
-                            view.showSearchInfoMessage();
-                        }
-                        model.setCurrentFirstRow(1);                                                    
-                        // Display first n rows (n = model.getDisplayRows())                        
-                        model.processResults(1, model.getDisplayRows());                        
-                    }
+        // Display all publication when Publication manager is opened using the Task
+        Task task = model.searchPublication(true);
+        ProgressBar progressBar = new ProgressBar(task, view, true) {
+            public void exceptionHandler(Exception ex) {
+                if (ex instanceof DBLayerException) {
+                    DBLayerException e = (DBLayerException)ex;
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(e+": "+e.getErrorInfo());
+                    getTask().stop();
+                    return;
                 }
-            }
-        });                
-        // Create a timer for delete operation
-        timerDelete = new Timer(TIMER_FREQUENCY, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                // Check whether the other thread is still running
-                if (model.isOperationDone() == true) {
-                    timerDelete.stop();                    
-                    progress.close();               // Close dialog with progress bar
-                    view.setDialogEnabled(true);    // Enable view dialog                
-                    // Check for errors which might have occured. If none occured, tell model to process the result
-                    if (model.processErrors() == false) {
-                        // Update curent first row so that it is not greater than number of rows in the result
-                        // (this happens in case the last record in the list has been deleted and it was set as 
-                        // the current first row)
-                        if (model.getCurrentFirstRow() > model.getResultRows()) {                           
-                            int row = model.getCurrentFirstRow()-model.getDisplayRows();
-                            if (row < 1) {
-                                model.setCurrentFirstRow(1);                                
-                            } else {
-                                model.setCurrentFirstRow(row);                                                                
-                            }
-                        }
-                        // Update table with publications - remove deleted author                        
-                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
-                    }
+                if (ex instanceof RemoteException) {
+                    RemoteException e = (RemoteException)ex;
+                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(e);
+                    getTask().stop();
+                    return;
                 }
+                JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                logger.error(ex);                            
+            }              
+            // After Task is finished, display the results
+            public void afterStopped(Object value) {
+                model.setCurrentFirstRow(1);
+                model.processResults(1, model.getDisplayRows());
             }
-        });   
-        // Display all publications when Publication manager is opened
-        model.searchPublication();
-        // Disable current view and run timer
-        view.setDialogEnabled(false);                                
-        timerSearch.start();                
-        // Display dialog with progress bar
-        progress = new ProgressDialog(view.getDialog(), true);
-        progress.show();        
+        };
+        progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+        task.start();
     }
     
     /**
@@ -137,6 +103,11 @@ public class PublicationManagerCtrl {
      */    
     class AddPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            // Check whether we have rights for this operation
+            if (!model.hasRights(model.ADD)) {
+                view.showErrorMessage("You don't have sufficient rights for this operation");
+                return;
+            }            
             // Display dialog for adding / editing publications. This dialog shares model with
             // the rest of the PublicationManager.
             AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), true);
@@ -160,13 +131,17 @@ public class PublicationManagerCtrl {
                 view.selectRowMsg();
                 return;
             }          
+            // Check whether we have rights for this operation
+            if (!model.hasRights(model.EDIT)) {
+                view.showErrorMessage("You don't have sufficient rights for this operation");
+                return;
+            }                        
             AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), false);
             AddPublicationCtrl addPublCtrl = new AddPublicationCtrl(model, addPublView);            
-            // Save author we are going to edit
+            // Save publication we are going to edit
             model.setEditPublication(model.getSelectedPublication(index));            
             model.setPublicationIndex(index);
-            model.loadPublication();
-            // addPublView.setSize(400,450);        
+            model.loadPublication();            
             addPublView.setLocationRelativeTo(null);
             logger.info("Add Publication dialog opened for editing author");
             addPublView.setVisible(true);            
@@ -184,20 +159,54 @@ public class PublicationManagerCtrl {
             if (index == -1) {
                 view.selectRowMsg();
                 return;
+            }        
+            // Check whether we have rights for this operation
+            if (!model.hasRights(model.DELETE)) {
+                view.showErrorMessage("You don't have sufficient rights for this operation");
+                return;
             }           
+            // Check whether it is OK to delete the publication (it cannot be used in an occurrence)
+            if (model.checkDelete(index) == false) {
+                view.showErrorMessage("This publication cannot be deleted because it is used in an occurence");
+                return;
+            }
+            System.out.println("********* CHECK DELETE OK");
             // Confirm deletion
             if (!view.confirmDelete()) {
                 return;
             }
             // Call delete
             model.setPublicationIndex(index);
-            model.deletePublication();
-            // Disable current view and run timer
-            view.setDialogEnabled(false);                    
-            timerDelete.start();                
-            // Display dialog with progress bar
-            progress = new ProgressDialog(view.getDialog(), true);
-            progress.show();                                                
+            // Delete is executed in a separate thread using Task
+            Task task = model.deletePublication();
+            ProgressBar progressBar = new ProgressBar(task, view, true) {
+                public void exceptionHandler(Exception ex) {
+                    if (ex instanceof DBLayerException) {
+                        DBLayerException e = (DBLayerException)ex;
+                        JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                        logger.error(e+": "+e.getErrorInfo());
+                        getTask().stop();
+                        return;
+                    }
+                    if (ex instanceof RemoteException) {
+                        RemoteException e = (RemoteException)ex;
+                        JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                        logger.error(e);
+                        getTask().stop();
+                        return;
+                    }
+                    JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex);                            
+                }              
+                // Refresh the list of publications after a delete
+                public void afterStopped(Object value) {
+                    model.searchPublication(false);
+                    model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    model.reloadCache();
+                }
+            };
+            progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+            task.start();
         }
     }    
 
@@ -206,15 +215,34 @@ public class PublicationManagerCtrl {
      */    
     class SearchPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // Check whether at least one search field is non-empty
-            // Run DB search
-            model.searchPublication();
-            // Disable current view and run timer
-            view.setDialogEnabled(false);                                
-            timerSearch.start();                
-            // Display dialog with progress bar
-            progress = new ProgressDialog(view.getDialog(), true);
-            progress.show();                                   
+            // Run DB search. The operation is executed in a separate thread
+            Task task = model.searchPublication(true);
+            ProgressBar progressBar = new ProgressBar(task, view, true) {
+                public void exceptionHandler(Exception ex) {
+                    if (ex instanceof DBLayerException) {
+                        DBLayerException e = (DBLayerException)ex;
+                        JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                        logger.error(e+": "+e.getErrorInfo());
+                        getTask().stop();
+                        return;
+                    }
+                    if (ex instanceof RemoteException) {
+                        RemoteException e = (RemoteException)ex;
+                        JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                        logger.error(e);
+                        getTask().stop();
+                        return;
+                    }
+                    JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
+                    logger.error(ex);                            
+                }              
+                // Display the results of a search
+                public void afterStopped(Object value) {
+                    model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                }
+            };
+            progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+            task.start();
         }
     }        
     
@@ -244,8 +272,8 @@ public class PublicationManagerCtrl {
     }    
     
     /**
-     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
-     *  stores value of the field to model.
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus 
+     *  automaticaly stores value of the field to model.
      */
     class SortComboFocusListener implements FocusListener {
         public void focusLost(FocusEvent e) {
@@ -258,8 +286,8 @@ public class PublicationManagerCtrl {
     }    
     
     /**
-     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
-     *  stores value of the field to model.
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus 
+     *  automaticaly stores value of the field to model.
      */
     class SortDirectionRadioFocusListener implements FocusListener {
         public void focusLost(FocusEvent e) {
@@ -272,8 +300,8 @@ public class PublicationManagerCtrl {
     }                
     
     /**
-     *  PropertyChange listener for the <strong>collection name field</strong> at the search panel. After losing focus automaticaly 
-     *  stores value of the field to model object.
+     *  PropertyChange listener for the <strong>collection name field</strong> at the search panel. After losing focus 
+     *  automaticaly stores value of the field to model object.
      */
     class CollectionNameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
@@ -282,8 +310,8 @@ public class PublicationManagerCtrl {
     }
 
     /**
-     *  PropertyChange listener for the <strong>journal name field</strong> at the search panel. After losing focus automaticaly 
-     *  stores value of the field to model object.
+     *  PropertyChange listener for the <strong>journal name field</strong> at the search panel. After 
+     *  losing focus automaticaly stores value of the field to model object.
      */    
     class JournalNameFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
@@ -292,8 +320,8 @@ public class PublicationManagerCtrl {
     }    
 
     /**
-     *  PropertyChange listener for the <strong>reference citation field</strong> at the search panel. After losing focus automaticaly 
-     *  stores value of the field to model object.
+     *  PropertyChange listener for the <strong>reference citation field</strong> at the search panel. After 
+     *  losing focus automaticaly stores value of the field to model object.
      */    
     class ReferenceCitationFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
@@ -302,8 +330,8 @@ public class PublicationManagerCtrl {
     }    
 
     /**
-     *  PropertyChange listener for the <strong>reference detail field</strong> at the search panel. After losing focus automaticaly 
-     *  stores value of the field to model object.
+     *  PropertyChange listener for the <strong>reference detail field</strong> at the search panel. 
+     *  After losing focus automaticaly stores value of the field to model object.
      */        
     class ReferenceDetailFieldPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
@@ -312,8 +340,8 @@ public class PublicationManagerCtrl {
     }        
     
     /**
-     *  PropertyChange listener for the <strong>rows field</strong> with the number of records to display. After losing focus 
-     *  automaticaly stores value of the field to model object.
+     *  PropertyChange listener for the <strong>rows field</strong> with the number of records to 
+     *  display. After losing focus automaticaly stores value of the field to model object.
      */        
     class RowsPropertyChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent e) {
@@ -329,7 +357,6 @@ public class PublicationManagerCtrl {
             // If neccessary reload search results
             if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
                 model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
-                logger.debug("Search results reloaded. First row: "+model.getCurrentFirstRow()+"; Display rows: "+view.getDisplayRows());
             }
         }        
     }            

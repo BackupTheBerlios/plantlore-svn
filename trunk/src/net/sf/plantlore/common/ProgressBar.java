@@ -33,7 +33,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
     private Task task;
     private int statusFieldWidth;
     private double charSizeApprox = 180/27; //in 180 pixel wide JTextField first 27 characters are visible in Matisse
-    private Frame parent;
+    private Window parent;
     
     /** Creates a new progress bar, initially invisible. It becomes visible after it receives
      * a STARTING Message from the Task.
@@ -48,6 +48,18 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
         
         this.parent = parent;
         this.task = task;
+        initialize();
+    }
+    
+    public ProgressBar(Task task, javax.swing.JDialog parent, boolean modal) {
+        super(parent, modal);
+
+        this.parent = parent;
+        this.task = task;        
+        initialize();        
+    }    
+   
+    private void initialize() {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         initComponents();
         
@@ -64,7 +76,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         
-        task.addObserver(this);
+        task.addObserver(this);    
     }
     
     /** This method is called from within the constructor to

@@ -1193,6 +1193,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (aut.getCreatedWho().getId().equals(this.plantloreUser.getId())) {
                     equal = true;
                 }
+                // Check EDITALL privilege
+                if (this.plantloreUser.getRight().getEditAll() == 1) {
+                    equal = true;
+                }                                                                
                 // Then check for indirect (group) ownership
                 if (this.rights.getEditGroup() != null) {
                     String[] group = this.rights.getEditGroup().split(",");
@@ -1302,8 +1306,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
                 }                
+                if (this.plantloreUser.getRight().getEditAll() == 1) {
+                    equal = true;
+                }                                
                 // Then check for indirect (group) ownership
-                if (this.rights.getEditGroup() != null) {                
+                if (this.rights.getEditGroup() != null) {   
                     String[] group = this.rights.getEditGroup().split(",");
                     String strId = pub.getCreatedWho().getId().toString();
                     for (int i=0;i<group.length;i++) {
@@ -1358,6 +1365,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
                 }
+                // Check EDITALL privilege
+                if (this.plantloreUser.getRight().getEditAll() == 1) {
+                    equal = true;
+                }                                                
                 // Then check for indirect (group) ownership
                 if (this.rights.getEditGroup() != null) {                
                     String[] group = this.rights.getEditGroup().split(",");
@@ -1430,6 +1441,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
                 }
+                // Check EDITALL privilege
+                if (this.plantloreUser.getRight().getEditAll() == 1) {
+                    equal = true;
+                }                                                                
                 // Then check for indirect (group) ownership
                 if (this.rights.getEditGroup() != null) {                
                     String[] group = this.rights.getEditGroup().split(",");
@@ -1487,6 +1502,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (this.plantloreUser.getRight().getAdministrator() == 1) {
                     equal = true;
                 }
+                // Check EDITALL privilege
+                if (this.plantloreUser.getRight().getEditAll() == 1) {
+                    equal = true;
+                }                                                                
                 // Then check for indirect (group) ownership
                 if (this.rights.getEditGroup() != null) {                
                     String[] group = this.rights.getEditGroup().split(",");

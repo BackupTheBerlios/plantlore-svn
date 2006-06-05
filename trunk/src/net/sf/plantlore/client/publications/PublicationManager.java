@@ -1,9 +1,3 @@
-/*
- * PublicationManager.java
- *
- * Created on 15. leden 2006, 2:04
- *
- */
 
 package net.sf.plantlore.client.publications;
 
@@ -11,10 +5,12 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -23,54 +19,29 @@ import net.sf.plantlore.common.SwingWorker;
 import org.apache.log4j.Logger;
 
 /**
- * Publication manager model. Contains bussines logic and data fields of the PublicationManager. 
- * Implements operations including add publication, edit publication, delete publication, search 
+ * Publication manager model. Contains bussines logic and data fields of the PublicationManager.
+ * Implements operations including add publication, edit publication, delete publication, search
  * publications.
- * 
+ *
  * @author Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
- * 
+ * @version 1.0, June 4, 2006
+ *
  * TODO:    Proper exception handling
  *          Clean API (get rid of unused or unnecessary methods)
  *          Improve thread management
  */
 public class PublicationManager extends Observable {
+    /* VARIOUS VARIABLES */
     /** Instance of a logger */
     private Logger logger;
     /** Exception with details about an error */
     private String error = null;
     /** Instance of a database management object */
     private DBLayer database;
-    /** Name of the collection */
-    private String collectionName;
-    /** Year of publication */
-    private int publicationYear;
-    /** Name of the journal */
-    private String journalName;
-    /** Name of the author of the journal */
-    private String journalAuthor;
-    /** Reference citation */
-    private String referenceCitation;
-    /** Reference detail */
-    private String referenceDetail;
-    /** URL of the author */
-    private String url;
-    /** Note of the author */
-    private String note;
-    /** Collection name field used for searching */
-    private String searchCollectionName;
-    /** Journal name field used for searching */
-    private String searchJournalName;
-    /** Reference citation field used for searching */
-    private String searchReferenceCitation;
-    /** Reference detail field used for searching */
-    private String searchReferenceDetail;
     /** Flag telling whether a long running operation has already finished */
     private boolean done;
     /** Result of the search query */
     private int resultId = 0;
-    /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 10;
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;
     /** Data (results of a search query) displayed in the table */
@@ -85,6 +56,38 @@ public class PublicationManager extends Observable {
     private int sortDirection = 0;
     /** Publication we want to edit */
     private Publication editPublication;
+    /** Enum used for notifying AppCore to reload cahced publications */
+    private PlantloreConstants.Table[] editTypeArray = new PlantloreConstants.Table[]{PlantloreConstants.Table.PUBLICATION};
+    
+    /* PUBLICATION PROPERTIES */
+    /** Name of the collection */
+    private String collectionName;
+    /** Year of publication */
+    private Integer publicationYear;
+    /** Name of the journal */
+    private String journalName;
+    /** Name of the author of the journal */
+    private String journalAuthor;
+    /** Reference detail */
+    private String referenceDetail;
+    /** URL of the author */
+    private String url;
+    /** Note of the author */
+    private String note;
+    
+    /* CRITERIA FOR PUBLICATION SEARCH */
+    /** Collection name field used for searching */
+    private String searchCollectionName;
+    /** Journal name field used for searching */
+    private String searchJournalName;
+    /** Reference citation field used for searching */
+    private String searchReferenceCitation;
+    /** Reference detail field used for searching */
+    private String searchReferenceDetail;
+    
+    /* CONSTANTS */
+    /** Constant with default number of rows to display */
+    private static final int DEFAULT_DISPLAY_ROWS = 10;
     /** Constants used for identification of fields for sorting */
     public static final int SORT_COLLECTION_NAME = 1;
     public static final int SORT_PUBLICATION_YEAR = 2;
@@ -92,25 +95,20 @@ public class PublicationManager extends Observable {
     public static final int SORT_JOURNAL_AUTHOR = 4;
     public static final int SORT_REFERENCE_CITATION = 5;
     public static final int SORT_REFERENCE_DETAIL = 6;
-    
-    public static final int FIELD_COLLECTION_NAME = 1;
-    public static final int FIELD_COLLECTION_YEAR = 2;
-    public static final int FIELD_JOURNAL_NAME = 3;
-    public static final int FIELD_JOURNAL_AUTHOR = 4;
-    public static final int FIELD_REFERENCE_CITATION = 5;
-    public static final int FIELD_REFERENCE_DETAIL = 6;    
-    public static final int FIELD_URL = 7;    
-    public static final int FIELD_NOTE = 8;    
-    
+    /** Constants with error descriptions */
     public static final String ERROR_SEARCH = L10n.getString("publicationSearchFailed");
     public static final String ERROR_SAVE = L10n.getString("publicationSaveFailed");
-    public static final String ERROR_UPDATE = L10n.getString("publicationUpdateFailed");    
+    public static final String ERROR_UPDATE = L10n.getString("publicationUpdateFailed");
     public static final String ERROR_DELETE = L10n.getString("publicationDeleteFailed");
     public static final String ERROR_PROCESS = L10n.getString("publicationProcessResultsFailed");
+
+    public static final int ADD = 1;
+    public static final int EDIT = 2;
+    public static final int DELETE = 3;
     
     /**
      * Creates a new instance of PublicationManager.
-     * 
+     *
      * @param database Instance of a database management object
      */
     public PublicationManager(DBLayer database) {
@@ -119,215 +117,331 @@ public class PublicationManager extends Observable {
     }
     
     /**
-     *  Save new publication to the database. Information about the publication are stored in data fields of this class.
-     *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
+     *  Save new publication to the database. Information about the publication are stored in the
+     *  data fields of this class. Operation is executed in a separate thread using Task class.
+     *
+     *  @return instance of the Task with the long running operation (saving data)
      */
-    public void savePublication() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                // The operation is not finished yet
-                done = false;
+    public Task savePublication() {
+        // Create Task
+        final Task task = new Task() {
+            public Object task() throws Exception {
+                boolean first = true;
+                // Construct Reference citation
+                StringBuffer refCitation = new StringBuffer();
+                if ((journalAuthor != null) && (!journalAuthor.equals(""))) {
+                    first = false;
+                    refCitation.append(journalAuthor);
+                }
+                if (publicationYear != null) {
+                    if (first == false) {
+                        refCitation.append(", ");
+                    }
+                    refCitation.append(publicationYear);
+                }
+                if ((journalName != null) && (!journalName.equals(""))) {
+                    if (first == false) {
+                        refCitation.append(", ");
+                    }
+                    refCitation.append(journalName);
+                }
+                if ((collectionName != null) && (!collectionName.equals(""))) {
+                    if (first == false) {
+                        refCitation.append(", ");
+                    }
+                    refCitation.append(collectionName);
+                }
                 // Create Publication object for publication we want to add
                 Publication publication = new Publication();
                 publication.setCollectionName(collectionName);
                 publication.setCollectionYearPublication(publicationYear);
                 publication.setJournalName(journalName);
                 publication.setJournalAuthorName(journalAuthor);
-                publication.setReferenceCitation(referenceCitation);
+                publication.setReferenceCitation(refCitation.toString());
                 publication.setReferenceDetail(referenceDetail);
                 publication.setUrl(url);
                 publication.setNote(note);
                 int rowId = -1;
-                try {
-                    // Execute query
-                    rowId = database.executeInsert(publication);
-                } catch (DBLayerException e) {
-                    // Log and set an error
-                    logger.error("Saving publication failed. Unable to execute insert query");
-                    setError(ERROR_SAVE);
-                    // Set operation state to finished
-                    done = true;
-                    return null;
-                } catch(RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                }
+                // Clear variables with publication properties
+                clearDataHolders();
+                // Execute query
+                rowId = database.executeInsert(publication);
                 logger.info("Publication "+collectionName+" saved successfuly.");
-                if (isResultAvailable()) {
-                    searchPublication();
-                }
-                done = true;
+                // Stop the Task
+                fireStopped(null);               
                 return rowId;
             }
-        };
-        worker.start();
+        };        
+        return task;
     }
     
     /**
-     *  Delete a publication from the database. To-be-deleted publication is identified by the ID and is
-     *  retrieved based on the value of <code>publicationIndex</code> field. Error is set in case of an exception.
+     *  Delete a publication from the database. To-be-deleted publication is identified by the ID 
+     *  and is retrieved based on the value of <code>publicationIndex</code> field. The operation
+     *  is executed in a separate thread using the Task class.
+     *
+     *  In fact we are not deleting the publication, we just set the delete flag and update the record.
+     *
+     *  @return instance of the Task with the long running operation (deleting data)
      */
-    public void deletePublication() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                // Operation not finished yet
-                done = false;
-                try {
-                    // Execute query                    
-                    Publication pub = (Publication)data.get(getPublicationIndex());
-                    pub.setDeleted(1);
-                    database.executeUpdate(pub);
-                } catch (DBLayerException e) {
-                    // Log and set an error
-                    logger.error("Deleting publication failed. Unable to execute delete query.");
-                    setError(ERROR_DELETE);
-                    // Set operation state to finished
-                    done = true;
-                    return false;
-                } catch(RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                }
+    public Task deletePublication() {
+        // Create new Task
+        final Task task = new Task() {
+            public Object task() throws Exception {
+                Publication pub = (Publication)data.get(getPublicationIndex());
+                // Set deleted flag of the publication
+                pub.setDeleted(1);
+                // Execute DB query                
+                database.executeUpdate(pub);
                 logger.info("Publication "+collectionName+" deleted succesfully");
-                // Execute publication search - required in order to display up-to-date data in the table of publications
-                searchPublication();
-                // Set operation state to finished
-                done = true;
+                // Stop the Task
+                fireStopped(null);
                 return true;
             }
         };
-        worker.start();
+        return task;
     }
-
+    
     /**
-     *  Update publication in the database. To-be-updated publication is stored in <code>editPublication</code> field. Operation 
-     *  is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
-     */    
-    public void editPublication() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                // The operation is not finished yet
-                done = false;
+     *  Update publication in the database. To-be-updated publication is stored in 
+     *  <code>editPublication</code> field. Operation is executed in a separate thread using 
+     *  the Task class.
+     *
+     *  @return instance of the Task with the long running operation (updating data)
+     */
+    public Task editPublication() {
+        // Create the Task
+        final Task task = new Task() {
+            public Object task() throws Exception {
+                boolean first = true;
+                // Construct Refernce citation
+                StringBuffer refCitation = new StringBuffer();
+                if ((journalAuthor != null) && (!journalAuthor.equals(""))) {
+                    first = false;
+                    refCitation.append(journalAuthor);
+                }
+                if (publicationYear != null) {
+                    if (first == false) {
+                        refCitation.append(", ");
+                    }
+                    refCitation.append(publicationYear);
+                }
+                if ((journalName != null) && (!journalName.equals(""))) {
+                    if (first == false) {
+                        refCitation.append(", ");
+                    }
+                    refCitation.append(journalName);
+                }
+                if ((collectionName != null) && (!collectionName.equals(""))) {
+                    if (first == false) {
+                        refCitation.append(", ");
+                    }
+                    refCitation.append(collectionName);
+                }
                 // Update to-be-updated publication based on user input
                 Publication publication = getEditPublication();
                 publication.setCollectionName(collectionName);
                 publication.setCollectionYearPublication(publicationYear);
                 publication.setJournalName(journalName);
                 publication.setJournalAuthorName(journalAuthor);
-                publication.setReferenceCitation(referenceCitation);
+                publication.setReferenceCitation(refCitation.toString());
                 publication.setReferenceDetail(referenceDetail);
                 publication.setUrl(url);
                 publication.setNote(note);
-                try {
-                    // Execute query
-                    database.executeUpdate(publication);
-                } catch (DBLayerException e) {
-                    // Log and set an error
-                    logger.error("Update publication failed. Unable to execute update query");
-                    setError(ERROR_UPDATE);
-                    // Set operation state to finished
-                    done = true;
-                    return false;
-                } catch(RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                }
+                // Clear variables with publication properties
+                clearDataHolders();
+                // Execute query
+                database.executeUpdate(publication);
                 logger.info("Publication "+collectionName+" updated successfuly.");
-                if (isResultAvailable()) {
-                    searchPublication();
-                }
-                done = true;
+                // Stop the Task
+                fireStopped(null);
                 return true;
             }
         };
-        worker.start();        
+        return task;
     }
     
     /**
-     *  Search for publications in the database. Criteria for search are stored in data fields of this class.
-     *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception
-     */
-    public void searchPublication() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                // Operation not finished yet
-                done = false;
-                SelectQuery query;
-                try {
-                    // Create new Select query                    
-                    query = database.createQuery(Publication.class);                    
-                    // Add given restrictions (WHERE clause)
-                    query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.DELETED, null, 0, null);
-                    if ((searchCollectionName != null) && (searchCollectionName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.COLLECTIONNAME, null, "%" + searchCollectionName + "%", null);
-                    if ((searchJournalName != null) && (searchJournalName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.JOURNALNAME, null, "%" + searchJournalName + "%", null);
-                    if ((searchReferenceCitation != null) && (searchReferenceCitation != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.REFERENCECITATION, null, "%" + searchReferenceCitation + "%", null);
-                    if ((searchReferenceDetail != null) && (searchReferenceDetail != null))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.REFERENCEDETAIL, null, "%" + searchReferenceDetail + "%", null);
-                    String field;
-                    // Add ORDER BY clause
-                    switch (sortField) {
-                        case 1: field = Publication.COLLECTIONNAME;
-                                break;
-                        case 2: field = Publication.COLLECTIONYEARPUBLICATION;
-                                break;
-                        case 3: field = Publication.JOURNALNAME;
-                                break;
-                        case 4: field = Publication.JOURNALAUTHORNAME;
-                                break;
-                        case 5: field = Publication.REFERENCECITATION;
-                                break;
-                        case 6: field = Publication.REFERENCEDETAIL;
-                                break;
-                        default:field = Publication.COLLECTIONNAME;
-                    }
-                    
-                    if (sortDirection == 0) {
-                        query.addOrder(PlantloreConstants.DIRECT_ASC, field);
-                    } else {
-                        query.addOrder(PlantloreConstants.DIRECT_DESC, field);
-                    }
-                    int resultId = 0;
-                    try {
-                        // Execute query
-                        resultId = database.executeQuery(query);
-                    } catch (DBLayerException e) {
-                        // Log and set an error
-                        logger.error("Searching publications failed. Unable to execute search query.");
-                        setError(ERROR_SEARCH);
-                    } finally {
-                        // Set operation state to finished
-                        done = true;
-                        logger.info("Publications successfuly retrieved from the database");
-                        // Save the results
-                        setResult(resultId);
-                    }
-                    return resultId;
-                } catch (RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                    return null;
-                } catch (DBLayerException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                    return null;
-                }
-            }
-        };
-        worker.start();
-    }
-    
-    /**
-     * Checks whether an error is set. If yes, notifies observers to display it.
-     * Finally unsets the error flag.
+     *  Search for publications in the database. Criteria for search are stored in data fields of 
+     *  this class. Operation might be executed in a separate thread using the Task class (depends
+     *  on the input parameters). the reason for this is that we are sometimes executing search from
+     *  another long running operation, teherefore we do not need a new thread.
      *
-     * @return <code>true</code> if an error was set (and observers were notified), <code>false</code> otherwise
+     *  @param createTask tells whether to execute search in a separate thread
+     *  @return instance of the Task with the long running operation (searching data)
      */
-    public boolean processErrors() {
-        if (this.error != null) {
-            setChanged();
-            notifyObservers();
-            this.error = null;
-            return true;
+    public Task searchPublication(boolean createTask) {
+        // Use the Task class to execute the search in a new thread
+        if (createTask) {
+            final Task task = new Task() {
+                public Object task() throws Exception {
+                    // Search the data
+                    int resultId = search();
+                    setResult(resultId);
+                    logger.info("Publications successfuly retrieved from the database");
+                    // Stop the Task
+                    fireStopped(null);
+                    return resultId;
+                }
+            };
+            return task;
+        } else {
+            // Do not use Task
+            try {
+                int resultId = search();
+                setResult(resultId);
+            } catch (DBLayerException ex1) {
+                // ???
+            } catch (RemoteException ex2) {
+                // ???
+            }
+            logger.info("Publications successfuly retrieved from the database");
+            return null;
+        }
+    }
+    
+    /**
+     *  Method to construct and execute the search query.
+     *
+     *  @return id identifying the search result
+     *  @throws DBLayerException in case search failed
+     *  @throws RemoteException in case network communication failed
+     */
+    private Integer search() throws DBLayerException, RemoteException {
+        SelectQuery query;
+        // Create new Select query
+        query = database.createQuery(Publication.class);
+        // Add given restrictions (WHERE clause)
+        query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.DELETED, null, 0, null);
+        if ((searchCollectionName != null) && (searchCollectionName != ""))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.COLLECTIONNAME, null, "%" + searchCollectionName + "%", null);
+        if ((searchJournalName != null) && (searchJournalName != ""))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.JOURNALNAME, null, "%" + searchJournalName + "%", null);
+        if ((searchReferenceCitation != null) && (searchReferenceCitation != ""))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.REFERENCECITATION, null, "%" + searchReferenceCitation + "%", null);
+        if ((searchReferenceDetail != null) && (searchReferenceDetail != null))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Publication.REFERENCEDETAIL, null, "%" + searchReferenceDetail + "%", null);
+        String field;
+        // Add ORDER BY clause
+        switch (sortField) {
+            case 1: field = Publication.COLLECTIONNAME;
+            break;
+            case 2: field = Publication.COLLECTIONYEARPUBLICATION;
+            break;
+            case 3: field = Publication.JOURNALNAME;
+            break;
+            case 4: field = Publication.JOURNALAUTHORNAME;
+            break;
+            case 5: field = Publication.REFERENCECITATION;
+            break;
+            case 6: field = Publication.REFERENCEDETAIL;
+            break;
+            default:field = Publication.COLLECTIONNAME;
+        }
+        // Add the direction of searching
+        if (sortDirection == 0) {
+            query.addOrder(PlantloreConstants.DIRECT_ASC, field);
+        } else {
+            query.addOrder(PlantloreConstants.DIRECT_DESC, field);
+        }
+        int resultId = 0;
+        // Execute query
+        resultId = database.executeQuery(query);
+        return resultId;
+    }
+      
+    public void reloadCache() {
+        // Notify observers about the change in the list of publications. Used to reload cached publications
+        setChanged();
+        notifyObservers(editTypeArray);        
+    }
+    
+    public boolean hasRights(int operation) {
+        String[] group;
+        SelectQuery sq;
+        int result;
+        Object[] resData;
+        ArrayList groupList;
+        User groupUser;
+        try {
+            // Administrator can add, edit and delete any record
+            if (database.getUserRights().getAdministrator() == 1) {
+                return true;
+            }
+            if (operation == ADD) {
+                if (database.getUserRights().getAdd() == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else { // EDIT AND DELETE - the same rights apply
+                // Check whether the user can edit all the records
+                if (database.getUserRights().getEditAll() == 1) {
+                    return true;
+                }
+                // Check whether the user can edit the record through some other user
+                group = database.getUserRights().getEditGroup().split(",");
+                // We will need Publication that will be edited
+                Publication selectedPubl = (Publication)data.get(this.getPublicationIndex());
+                // Check whether someone in the group is an owner of the publication
+                for (int i=0;i<group.length;i++) {
+                    if (selectedPubl.getCreatedWho().getId().toString().equals(group[i])) {
+                        return true;
+                    }
+                }
+                // No rights to edit the record
+                return false;
+            }
+        } catch (RemoteException e) {
+            logger.error("Remote exception caught");
         }
         return false;
+    }
+    
+    /**
+     *  Clear the variables with publication properties
+     */
+    private void clearDataHolders() {
+        this.collectionName = null;
+        this.journalAuthor = null;
+        this.journalName = null;
+        this.note = null;
+        this.publicationYear = null;
+        this.referenceDetail = null;
+        this.url = null;
+    }
+    
+    /**
+     *  Method used to check whether it is ok to delete the publication. If there is an occurrence
+     *  linked to this publication, publication cannot be deleted.
+     *
+     *  @param index index of the selected publication in the list of publications
+     *  @return true if publication can be deleted, false otherwise
+     */
+    public boolean checkDelete(int index) {
+        SelectQuery sq;
+        int resId;
+        
+        // Get the selected publication
+        Publication publ = (Publication)data.get(index);
+        // Find out whether we can delete this publication
+        try {
+            sq = database.createQuery(Occurrence.class);
+            sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.PUBLICATION, null, publ, null);
+            sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.DELETED, null, 0, null);
+            resId = database.executeQuery(sq);
+            if (database.getNumRows(resId)>0) {
+                database.closeQuery(sq);
+                return false;
+            }
+            database.closeQuery(sq);
+        } catch (RemoteException e1) {
+            System.out.println("Handle the Remote exception");
+        } catch (DBLayerException e2) {
+            logger.error("Loading occurrences failed. Cannot determine whether publication can be deleted");
+            setError(this.ERROR_DELETE);
+        }        
+        return true;
     }
     
     /**
@@ -341,8 +455,6 @@ public class PublicationManager extends Observable {
      */
     public void processResults(int from, int count) {
         if (this.resultId != 0) {
-            logger.info("Processing "+count+" results from "+from);
-            logger.debug("Rows in the result: "+getResultRows());
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
             int to = Math.min(getResultRows(), from+count-1);
             if (to == 0) {
@@ -388,8 +500,9 @@ public class PublicationManager extends Observable {
     }
     
     /**
-     *  Load fields with information about selected publication (specified by the value of <code>publicationIndex</code> field).
-     *  Notify observers about this change. This is used to load a form when editing publications.
+     *  Load fields with information about selected publication (specified by the value of 
+     *  <code>publicationIndex</code> field). Notify observers about this change. This is used 
+     *  to load a form when editing publications.
      */
     public void loadPublication() {
         Publication selectedPubl = (Publication)data.get(this.getPublicationIndex());
@@ -397,7 +510,6 @@ public class PublicationManager extends Observable {
         this.setPublicationYear(selectedPubl.getCollectionYearPublication());
         this.setJournalName(selectedPubl.getJournalName());
         this.setJournalAuthor(selectedPubl.getJournalAuthorName());
-        this.setReferenceCitation(selectedPubl.getReferenceCitation());
         this.setReferenceDetail(selectedPubl.getReferenceDetail());
         this.setUrl(selectedPubl.getUrl());
         this.setNote(selectedPubl.getNote());
@@ -483,7 +595,7 @@ public class PublicationManager extends Observable {
     }
     
     /**
-     *  Get index of currently selected publication. The index is used to locate publication 
+     *  Get index of currently selected publication. The index is used to locate publication
      *  record in the data field.
      *
      *  @return index of currently selected publication
@@ -493,7 +605,7 @@ public class PublicationManager extends Observable {
     }
     
     /**
-     *  Set index of currently selected publication. The index is used to locate publication 
+     *  Set index of currently selected publication. The index is used to locate publication
      *  record in the data field.
      *
      *  @param index index of currently selected publication
@@ -519,7 +631,7 @@ public class PublicationManager extends Observable {
     }
     
     /**
-     *  Get index of the first row currently displayed in the list of publications. This is an index 
+     *  Get index of the first row currently displayed in the list of publications. This is an index
      *  in the results returned by a search query.
      *
      *  @return index of the first row currently displayed in the list of publications
@@ -556,7 +668,7 @@ public class PublicationManager extends Observable {
         }
         return false;
     }
-
+    
     /**
      *  Set publication we are going to edit in the add/edit publication dialog
      *  @param editPublication   Publication we are going to edit
@@ -568,7 +680,7 @@ public class PublicationManager extends Observable {
     /**
      *  Get publication we are editing in the add/edit publication dialog
      *  @param editPublication   Publication we are editing
-     */    
+     */
     public Publication getEditPublication() {
         return this.editPublication;
     }
@@ -620,7 +732,7 @@ public class PublicationManager extends Observable {
     public void setSearchReferenceDetail(String referenceDetail) {
         this.searchReferenceDetail = referenceDetail;
     }
-        
+    
     /**
      *  Get collection name.
      *  @return collection name for the publication
@@ -641,7 +753,7 @@ public class PublicationManager extends Observable {
      *  Get year of collection publication.
      *  @return year of collection publication
      */
-    public int getPublicationYear() {
+    public Integer getPublicationYear() {
         return publicationYear;
     }
     
@@ -649,7 +761,7 @@ public class PublicationManager extends Observable {
      *  Set year of collection publication.
      *  @param publicationYear year of collection publication
      */
-    public void setPublicationYear(int publicationYear) {
+    public void setPublicationYear(Integer publicationYear) {
         this.publicationYear = publicationYear;
     }
     
@@ -683,22 +795,6 @@ public class PublicationManager extends Observable {
      */
     public void setJournalAuthor(String journalAuthor) {
         this.journalAuthor = journalAuthor;
-    }
-    
-    /**
-     *  Get the reference citation.
-     *  @return reference citation
-     */
-    public String getReferenceCitation() {
-        return referenceCitation;
-    }
-    
-    /**
-     *  Set the reference citation.
-     *  @param referenceCitation reference citation
-     */
-    public void setReferenceCitation(String referenceCitation) {
-        this.referenceCitation = referenceCitation;
     }
     
     /**
