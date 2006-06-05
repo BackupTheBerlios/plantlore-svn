@@ -717,7 +717,8 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            model.selectAll();
+            if (model.getResultsCount() > 0)
+                model.selectAll();
         }
     }
 
@@ -729,7 +730,8 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            model.selectNone();
+            if (model.getResultsCount() > 0)
+                model.selectNone();
         }
     }
     
@@ -741,7 +743,8 @@ public class AppCoreCtrl
         } 
 
         public void actionPerformed(ActionEvent actionEvent) {
-            model.invertSelected();
+            if (model.getResultsCount() > 0)
+                model.invertSelected();
         }
     }
 

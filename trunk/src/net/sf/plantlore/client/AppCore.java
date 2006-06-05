@@ -324,6 +324,8 @@ public class AppCore extends Observable
     }
     
     public void setResultId(int resultId, SelectQuery sq) throws RemoteException, DBLayerException {
+        getTableModel().clearSelection(); //fix bug #7760
+        
         setChanged();
         notifyObservers("LOADING_NEW_DATA");
         tableSorter.setResultId(resultId, sq);
