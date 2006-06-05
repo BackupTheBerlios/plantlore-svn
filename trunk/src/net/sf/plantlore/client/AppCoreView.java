@@ -72,7 +72,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         nextPage = new javax.swing.JButton();
         recordsPerPage = new javax.swing.JFormattedTextField();
         refreshButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        overviewPanel = new javax.swing.JPanel();
         overviewScrollPane = new javax.swing.JScrollPane();
         overview = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
@@ -85,6 +85,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         fileLogin = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         dataImport = new javax.swing.JMenuItem();
+        dataImportTable = new javax.swing.JMenuItem();
         dataExport = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         fileSettings = new javax.swing.JMenuItem();
@@ -217,15 +218,15 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         ));
         overviewScrollPane.setViewportView(overview);
 
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        org.jdesktop.layout.GroupLayout overviewPanelLayout = new org.jdesktop.layout.GroupLayout(overviewPanel);
+        overviewPanel.setLayout(overviewPanelLayout);
+        overviewPanelLayout.setHorizontalGroup(
+            overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+        overviewPanelLayout.setVerticalGroup(
+            overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -272,6 +273,9 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         dataImport.setText("Item");
         fileMenu.add(dataImport);
+
+        dataImportTable.setText("Item");
+        fileMenu.add(dataImportTable);
 
         dataExport.setText("Item");
         fileMenu.add(dataExport);
@@ -362,7 +366,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
             .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(mainToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(pageToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -370,7 +374,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(mainToolBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(overviewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -678,6 +682,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JMenuItem dataAuthors;
     private javax.swing.JMenuItem dataExport;
     private javax.swing.JMenuItem dataImport;
+    protected javax.swing.JMenuItem dataImportTable;
     protected javax.swing.JMenu dataMenu;
     protected javax.swing.JMenuItem dataMetadata;
     protected javax.swing.JMenuItem dataPublication;
@@ -697,7 +702,6 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     private javax.swing.JButton invertSelected;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator1;
@@ -715,7 +719,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem occurrencesScheda;
     private javax.swing.JMenuItem occurrencesSearch;
     protected javax.swing.JTable overview;
-    private javax.swing.JScrollPane overviewScrollPane;
+    protected javax.swing.JPanel overviewPanel;
+    protected javax.swing.JScrollPane overviewScrollPane;
     private javax.swing.JLabel pageStatus;
     private javax.swing.JLabel pageStatusLabel;
     private javax.swing.JToolBar pageToolBar;
