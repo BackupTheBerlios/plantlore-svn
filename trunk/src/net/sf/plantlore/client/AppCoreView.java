@@ -595,6 +595,13 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     public void setImportAction(AbstractAction a) {
         dataImport.setAction(a);
     }
+    
+    /** Sets an action to the Data->TableImport menu item and to the Import toolbar button.
+    *
+    */
+   public void setTableImportAction(AbstractAction a) {
+       dataImportTable.setAction(a);
+   }
 
     /** Sets an action to the Data->export menu item and to the Export toolbar button.
      *
