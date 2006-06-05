@@ -10,6 +10,7 @@ package net.sf.plantlore.client;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
@@ -35,6 +36,8 @@ public class Settings extends Observable
     private String headerOne;
     private String headerTwo;
     
+    private boolean dynamicPageLoading;
+    
     /** Creates a new instance of Settings */
     public Settings()
     {
@@ -47,6 +50,8 @@ public class Settings extends Observable
         prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
         headerOne = prefs.get("HEADER_ONE","Set header one in settings.");
         headerTwo = prefs.get("HEADER_TWO","Set header two in settings.");
+        
+        dynamicPageLoading = prefs.getBoolean(PlantloreConstants.PREF_DYNAMIC_PAGE_SIZE,false);
     }
     
     /** Returns currently set language in this model.
@@ -97,8 +102,13 @@ public class Settings extends Observable
         if (headerTwo != null)
             prefs.put("HEADER_TWO",headerTwo);
         
+        prefs.putBoolean(PlantloreConstants.PREF_DYNAMIC_PAGE_SIZE,dynamicPageLoading);
+        
         setChanged();
         notifyObservers("COLUMNS");        
+        
+        setChanged();
+        notifyObservers("DYNAMIC_PAGE_LOADING");
     }//store()
     
     public void setSelectedColumns(ArrayList<Column> columns) {
@@ -139,6 +149,14 @@ public class Settings extends Observable
     public void setHeaderTwo(String headerTwo) {
         this.headerTwo = headerTwo;
         logger.debug("Header two set to: "+headerTwo);
+    }
+
+    public boolean isDynamicPageLoading() {
+        return dynamicPageLoading;
+    }
+
+    public void setDynamicPageLoading(boolean dynamicPageLoading) {
+        this.dynamicPageLoading = dynamicPageLoading;
     }
     
     

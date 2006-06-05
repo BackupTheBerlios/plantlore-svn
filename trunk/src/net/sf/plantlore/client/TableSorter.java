@@ -503,7 +503,7 @@ public class TableSorter extends AbstractTableModel {
         return tableModel.getPageSize();
     }
     
-    public void setPageSize(int size) {
+    public void setPageSize(int size) throws RemoteException, DBLayerException {
         tableModel.setPageSize(size);
     }
     

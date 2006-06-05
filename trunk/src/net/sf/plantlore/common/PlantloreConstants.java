@@ -101,6 +101,10 @@ public class PlantloreConstants {
     public static final int UPDATE                = 2;
     public static final int DELETE                = 3;
     
+    /** Constants used for Preferences keys */
+    public static final String PREF_DYNAMIC_PAGE_SIZE = "Overview.dynamicPageSize";
+    
+    
     /** Creates a new instance of PlantloreConstants */
     public PlantloreConstants() {
     }

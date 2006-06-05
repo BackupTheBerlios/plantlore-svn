@@ -68,6 +68,9 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         //--- SCHEDA TAB
         headerOneField.setText(model.getHeaderOne());
         headerTwoField.setText(model.getHeaderTwo());
+        
+        //--- GENERAL TAB
+        dynamicPageCheckBox.setSelected(model.isDynamicPageLoading());
     }
     
     
@@ -96,6 +99,8 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         
         headerOneLabel.setText(L10n.getString("Settings.HeaderOne"));
         headerTwoLabel.setText(L10n.getString("Settings.HeaderTwo"));
+        
+        dynamicPageCheckBox.setText(L10n.getString("Settings.General.DynamicPageLoading"));
     }
     
     /** This method is called from within the constructor to
@@ -130,6 +135,9 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         headerOneLabel = new javax.swing.JLabel();
         headerTwoLabel = new javax.swing.JLabel();
         headerTwoField = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        dynamicPageCheckBox = new javax.swing.JCheckBox();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
@@ -174,7 +182,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .add(czechRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(defaultRadioButton)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -191,7 +199,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addContainerGap(144, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab(L10n.getString("Settings.LanguagesTab"), jPanel1);
 
@@ -333,7 +341,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(headerTwoLabel)
                     .add(headerTwoField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
@@ -350,9 +358,50 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
             .add(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab(L10n.getString("Settings.SchedaTab"), jPanel5);
+
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Settings.General.OverviewPanel")));
+        dynamicPageCheckBox.setText("jCheckBox1");
+        dynamicPageCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        dynamicPageCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        dynamicPageCheckBox.setActionCommand("DYNAMIC_PAGE_LOADING");
+
+        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(dynamicPageCheckBox)
+                .addContainerGap(481, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(dynamicPageCheckBox)
+                .addContainerGap(73, Short.MAX_VALUE))
+        );
+
+        org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(159, Short.MAX_VALUE))
+        );
+        jTabbedPane1.addTab(L10n.getString("Settings.GeneralTab"), jPanel7);
 
         cancelButton.setText("Cancel");
         cancelButton.setActionCommand("CANCEL");
@@ -375,7 +424,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(okButton)
                 .addContainerGap())
-            .add(jTabbedPane1)
+            .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
         );
 
         layout.linkSize(new java.awt.Component[] {cancelButton, helpButton, okButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -420,6 +469,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JRadioButton czechRadioButton;
     protected javax.swing.JRadioButton defaultRadioButton;
     protected javax.swing.JButton downButton;
+    protected javax.swing.JCheckBox dynamicPageCheckBox;
     protected javax.swing.JRadioButton englishRadioButton;
     protected javax.swing.JTextField headerOneField;
     protected javax.swing.JLabel headerOneLabel;
@@ -432,6 +482,8 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;

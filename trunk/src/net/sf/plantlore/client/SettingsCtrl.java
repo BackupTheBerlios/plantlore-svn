@@ -55,6 +55,8 @@ public class SettingsCtrl extends Observable
         
         view.headerOneField.addFocusListener(new SchedaFieldListener());
         view.headerTwoField.addFocusListener(new SchedaFieldListener());
+        
+        view.dynamicPageCheckBox.addActionListener(new ButtonListener());
     }
     
     /** Handles clicks on languages radio buttons.
@@ -166,6 +168,11 @@ public class SettingsCtrl extends Observable
                 }
                 
                 return;
+            }
+            
+            if (s.equals("DYNAMIC_PAGE_LOADING")) {
+                boolean dynamic = view.dynamicPageCheckBox.isSelected();
+                model.setDynamicPageLoading(dynamic);
             }
         }
     }//ButtonListener

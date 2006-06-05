@@ -58,6 +58,7 @@ public class AppCore extends Observable
     private TableSorter tableSorter;
     private Logger logger;
     private ArrayList<Column> columns;
+    private boolean loggedIn = false;
     
     private SelectQuery exportQuery = null;
     private boolean usingProjections = false;
@@ -78,12 +79,15 @@ public class AppCore extends Observable
     private Pair<String, Integer>[] publications = null;
     private Pair<String, Integer>[] projects = null;
     
+    protected boolean dynamicPageLoading;
     
     /** Creates a new instance of AppCore */
     public AppCore(MainConfig mainConfig)
     {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         prefs = Preferences.userNodeForPackage(this.getClass());
+        
+        dynamicPageLoading  = prefs.getBoolean(PlantloreConstants.PREF_DYNAMIC_PAGE_SIZE,false);
         
         this.mainConfig = mainConfig;
         ArrayList<Column> columns = mainConfig.getColumns();
@@ -205,7 +209,7 @@ public class AppCore extends Observable
             return 0;
     }
 
-    public void setRecordsPerPage(int recordsPerPage) {        
+    public void setRecordsPerPage(int recordsPerPage) throws RemoteException, DBLayerException {        
         if (tableSorter != null)
         {
             logger.info("Setting records per page to "+recordsPerPage);
@@ -642,9 +646,14 @@ public class AppCore extends Observable
     public void login() {
         assert database != null;
         
+        loggedIn = true;
         tableSorter.setDatabase(database);
     }
 
+    public boolean loggedIn() {
+        return loggedIn;
+    }
+    
     public Pair<String, Integer>[] getPlants() {
         return plants;
     }

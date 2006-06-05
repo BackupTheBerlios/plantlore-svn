@@ -13,6 +13,8 @@ import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -330,7 +332,8 @@ public class AppCoreCtrl {
 		view.occurrencesRefresh.setAction(refreshAction);
 
 		view.overview.addKeyListener(new OverviewKeyListener());
-
+                view.overviewScrollPane.addComponentListener(new OverviewResizeListener());
+                
 		view.addWindowListener(new AppWindowListener());
 		view
 				.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
@@ -455,6 +458,9 @@ public class AppCoreCtrl {
 					searchModel.clear();
 					searchModel.constructQuery();
 				}
+                                if (s.equals("DYNAMIC_PAGE_LOADING")) {
+                                    model.dynamicPageLoading = prefs.getBoolean(PlantloreConstants.PREF_DYNAMIC_PAGE_SIZE,false);
+                                }                                
 			}
 		}
 	}
@@ -1273,8 +1279,15 @@ public class AppCoreCtrl {
 						// 1 anyway...
 						tf.setValue(1);
 				} else {
-					model.setRecordsPerPage(i);
-				}
+                                    try {
+                                       model.setRecordsPerPage(i);                    
+                                    } catch (RemoteException ex) {  
+                                        JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+                                        ex.printStackTrace();
+                                    } catch (DBLayerException ex) {
+                                        JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+                                        ex.printStackTrace();
+                                    }				}
 			}
 		}
 	}
@@ -1298,12 +1311,20 @@ public class AppCoreCtrl {
 
 	class OverviewMouseListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
-			if (e.getClickCount() == 2) {
-				JOptionPane.showMessageDialog(view, "Double click! On row #"
-						+ model.getSelectedRowNumber());
-			}
-			System.out.println("Click count = " + e.getClickCount());
-		}
+                    try {
+                        int resultNumber = model.getSelectedResultNumber();
+                        if (resultNumber != model.getResultsCount())
+                            model.selectAndShow(resultNumber);
+                        detailModel.load(model.getSelectedResultNumber());
+                        detailView.setVisible(true);
+                    } catch (RemoteException ex) {  
+                        JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+                        ex.printStackTrace();
+                    } catch (DBLayerException ex) {
+                        JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+                        ex.printStackTrace();
+                    }
+                }
 
 		public void mousePressed(MouseEvent e) {
 		}
@@ -1321,9 +1342,6 @@ public class AppCoreCtrl {
 
 	class OverviewKeyListener implements KeyListener {
 		public void keyTyped(KeyEvent e) {
-			System.out.println("Typed key: char=" + e.getKeyChar() + " code="
-					+ e.getKeyCode() + " text=" + e.getKeyText(e.getKeyChar())
-					+ " modif=" + e.getKeyModifiersText(e.getModifiers()));
 			if (e.getKeyText(e.getKeyChar()).equals("Space"))
 				model.invertSelectedOnCurrentRow();
 			if (e.getKeyText(e.getKeyChar()).equals("Enter")) {
@@ -1625,5 +1643,37 @@ public class AppCoreCtrl {
 			}// if arg instanceof Table[]
 		}// update()
 	}// class ManagerBridge
+        
+    class OverviewResizeListener implements ComponentListener {
+        private final static int sub = 20; //height of the header row perhaps
+        
+        public void componentResized(ComponentEvent e) {
+            if (!model.loggedIn() || !model.dynamicPageLoading)
+                return;
+            Component c = e.getComponent();
+            int tableHeight = c.getSize().height - sub; //height of the row part of JTable ( --> without header)
+            int rowHeight = view.overview.getRowHeight();
+            int newRecordsCount = tableHeight / rowHeight;
+            try {
+                model.setRecordsPerPage(newRecordsCount);
+                view.recordsPerPage.setValue(newRecordsCount);
+            } catch (RemoteException ex) {  
+                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+                ex.printStackTrace();
+            } catch (DBLayerException ex) {
+                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+                ex.printStackTrace();
+            }
+        }
+
+        public void componentMoved(ComponentEvent e) {
+        }
+
+        public void componentShown(ComponentEvent e) {
+        }
+
+        public void componentHidden(ComponentEvent e) {
+        }        
+    }        
 
 }

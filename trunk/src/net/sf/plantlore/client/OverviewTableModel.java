@@ -225,7 +225,13 @@ public class OverviewTableModel extends AbstractTableModel {
         return pageSize;
     }
     
-    public void setPageSize(int pageSize) {
+    public void setPageSize(int pageSize) throws DBLayerException, RemoteException {
+        if (pageSize <= 0) {
+            data = null;
+            this.pageSize = 0;
+            fireTableDataChanged();
+            return;
+        }
         this.pageSize = pageSize;
         if (from + pageSize > resultsCount)
             from = resultsCount - pageSize;
@@ -233,14 +239,7 @@ public class OverviewTableModel extends AbstractTableModel {
             from = 0;
         
         currentPage = from / pageSize + 1;
-        //FIXME: 
-        try {
-            loadData();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
+        loadData();
         fireTableDataChanged();
     }
     
@@ -340,8 +339,9 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public Integer getResultNumber(int row) {
-        if (data != null)
-            return ((Integer)data[row][numberColumnIndex])-1; //displayed numbers are indexed from 1
+        if (data != null) 
+//            return ((Integer)data[row][numberColumnIndex])-1; //displayed numbers are indexed from 1
+            return from + row; //we do not depend on data array which is crucial because the Number column doesn't have to be between the displayed/projected columns
         else
             return -1;        
     }
