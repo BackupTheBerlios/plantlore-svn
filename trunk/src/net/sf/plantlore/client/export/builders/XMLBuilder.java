@@ -89,21 +89,35 @@ public class XMLBuilder extends AbstractBuilder {
      * @param father	Father element of the currently processed <code>record</code>.
      * @param record	Part of the whole record corresponding to a certain table in the database.
      */
-    protected void decompose(Element father, Record record) 
+    protected boolean decompose(Element father, Record record) 
     throws IOException {
-    	if(record == null) return;
-    	Element current = father.addElement(record.getClass().getSimpleName().toLowerCase());
+    	if(record == null) 
+    		return false;
+    	
+    	Class table = record.getClass();
+    	Element current = father.addElement(table.getSimpleName().toLowerCase());
     	// Every occurrence may have 0..N associated AuthorOccurrences.
     	if(record instanceof Occurrence) 
     		occurrence = current;
     	
-    	for( String property : record.getProperties() ) {
-    		String value = record.getValue(property) == null ? "" : record.getValue(property).toString();
-    		current.addElement(property.toLowerCase()).setText(value);
-    	}
+    	boolean hasAtLeastOneProperty = false;
+    	
+    	for( String property : record.getProperties() )
+    		if( template.isSet(table, property) ) {
+    			Object value = record.getValue(property);
+    			current.addElement(property.toLowerCase()).setText(value == null ? "" : value.toString());
+    			hasAtLeastOneProperty = true;
+    		}
+    	
     	// Decompose all subrecords of this record.
-    	for(String key : record.getForeignKeys())
-    		decompose( current, (Record) record.getValue(key) );
+    	for(String key : record.getForeignKeys()) {
+    		hasAtLeastOneProperty =  decompose( current, (Record) record.getValue(key) ) || hasAtLeastOneProperty;
+    	}
+    	
+    	if( !hasAtLeastOneProperty )
+    		current.detach();
+    	
+    	return hasAtLeastOneProperty;
     }
 
 	@Override

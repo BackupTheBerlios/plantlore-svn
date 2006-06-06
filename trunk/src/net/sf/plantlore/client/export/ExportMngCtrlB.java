@@ -29,7 +29,7 @@ public class ExportMngCtrlB {
 		public void actionPerformed(ActionEvent arg0) {
 			Template t = view.tsm.getTemplate();
 			view.setVisible(false);
-			view.tsm.clearSelection();
+			
 			
 			try {
 				model.setTemplate( t ); // Set the new template.
@@ -41,6 +41,8 @@ public class ExportMngCtrlB {
 				task.execute();
 				
 				progressView.setVisible(true);
+				
+				view.tsm.clearSelection();
 			}
 			catch(Exception e) {
 				JOptionPane.showMessageDialog(view,
