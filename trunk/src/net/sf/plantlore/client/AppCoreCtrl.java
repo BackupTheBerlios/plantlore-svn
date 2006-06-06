@@ -1313,6 +1313,7 @@ public class AppCoreCtrl {
 
 	class OverviewMouseListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() >= 2)
                     try {
                         int resultNumber = model.getSelectedResultNumber();
                         if (resultNumber != model.getResultsCount())
