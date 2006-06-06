@@ -13,12 +13,8 @@
 							<xsl:value-of select="n1:Identifications/n1:Identification/n1:TaxonIdentified/n1:NameAuthorYearString"/>
 				<!--		</xsl:if>  -->
 						<br/>
-						            						
-							<span class="label"><b>Record Basis: </b></span>
-							<xsl:value-of select="n1:RecordBasis"/>						
-							<br/><br/>
-												
-            	<span class="label"><b>Village: </b></span>
+						 
+             	<span class="label"><b>Village: </b></span>
 							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:NearNamedPlaces/n1:NamedPlaceRelation/n1:NearNamedPlace"/>
 					     <br/><br/>
 												            							
@@ -29,8 +25,105 @@
 							<span class="label"><b>Author (identifier): </b></span>
 							<xsl:value-of select="n1:Identifications/n1:Identification/n1:Identifier/n1:IdentifierPersonName/n1:PersonName"/>
 							<br/><br/>
+												              
+              <span class="label"><b>Prispevatel: </b></span>
+							<xsl:value-of select="n1:RecordRights/n1:LegalOwner/n1:Person/n1:PersonName"/>
+							<br/><br/>
 						
+						  <span class="label"><b>Prispevatel (email): </b></span>
+							<xsl:value-of select="n1:RecordRights/n1:LegalOwner/n1:EmailAddresses/n1:EmailAdress"/>
+							<br/><br/>
+							
+							<span class="label"><b>Prispevatel (adresa): </b></span>
+							<xsl:value-of select="n1:RecordRights/n1:LegalOwner/n1:Addresses/n1:Adress"/>
+							<br/><br/>
+							
+							<span class="label"><b>Zdroj: </b></span>
+							<xsl:value-of select="n1:UnitReferences/n1:UnitReference/n1:ReferenceCitation"/>
+							<br/><br/>
+							
+							<span class="label"><b>Rok nalezu: </b></span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringDateTime/n1:DateText"/>
+							<br/><br/>																				
+							           						
+							<span class="label"><b>Record Basis: </b></span>
+							<xsl:value-of select="n1:RecordBasis"/>						
+							<br/><br/>
+												
+              <span class="label"><b>Project:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:Project/n1:ProjectTitle"/>
+							<br/><br/>
+							
+							<span class="label"><b>Country:</b> </span>
+    					<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:Country/n1:CountryName"/> <xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:Country/n1:ISO2Letter"/> <xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:Country/n1:ISO3Letter"/>
+    					<br/><br/>
+							
+							<span class="label"><b>Last update (projekt):</b> </span>
+							<xsl:value-of select="../../n1:OriginalSource/n1:SourceLastUpdatedDate"/>
+							<br/><br/>
+							
+							<span class="label">Source Institution: </span>
+							<xsl:value-of select="../../n1:OriginalSource/n1:SourceName"/>
+              <br/><br/> 
+              
+							<span class="label">Source Id: </span>
+              (<xsl:value-of select="../../n1:OriginalSource/n1:SourceInstitutionCode"/>)
+              <br/><br/>
+												
+              <span class="label"><b>Technical contact email:</b> </span>
+							<xsl:value-of select="n1:DatasetDerivations/n1:DatasetDerivation/n1:Supplier/n1:EmailAddresses/n1:EmailAddress"/>
+							<br/><br/>									
+							
+							<span class="label"><b>Date last edited:</b> </span>							
+							<br/><br/>
+							
+							<span class="label">==========Only for celected ==============</span><br/><br/>
+              							 
+							<span class="label"><b>Locality description:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:LocalityText"/>
+							<br/><br/>						  						
+              
+              <span class="label"><b>Datum nalezu:</b> </span>
+							<xsl:value-of select="n1:GatheringDateTime/n1:ISODateTimeBegin"/>
+							<br/><br/>
+							
+							<span class="label"><b>Locality description:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:LocalityText"/>
+							<br/><br/>
+							
+							<span class="label"><b>Territory:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:AreaDetail"/>
+							<br/><br/>
+							
+							<span class="label"><b>Phytochorion:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:NamedAreas/n1:NamedAra/n1:AreaCode"/>
+							<br/><br/>
+							
+							<span class="label"><b>Latitude:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:SiteCoordinateSets/n1:SiteCoordinates/n1:CoordinatesLatLong/n1:LatitudeDecimal"/>
+							<br/><br/>
 						
+						  <span class="label"><b>Longitude:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:SiteCoordinateSets/n1:SiteCoordinates/n1:CoordinatesLatLong/n1:LongitudeDecimal "/>
+							<br/><br/>
+							
+							<span class="label"><b>Altitude:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:Altitude/n1:MeasurementAtomized/n1:MeasurementLowerValue"/>
+							<br/><br/>
+							
+							<span class="label"><b>Poznamka k nalezu:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringAgents/n1:GhateringAgentsText"/>
+							<br/><br/>
+							
+							<span class="label"><b>Poznamka k autorovi daneho nalezu:</b> </span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringAgents/n1:GatheringAgent/n1:AgentText"/>
+							<br/><br/>
+						
+						  <span class="label"><b>Poznamka k lokalite:</b></span>
+							<xsl:value-of select="n1:Gathering/n1:GatheringSite/n1:Notes"/>
+							<br/><br/>
+							
+								
 							<!-- *********************************/HEADER ************************************** 	-->
 							<table width="96%" border="3">
 								<tr>

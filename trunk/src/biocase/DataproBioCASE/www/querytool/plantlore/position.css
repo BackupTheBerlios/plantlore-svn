@@ -1,13 +1,19 @@
 #page {    
-  background-color: grey;
+  background-color: grey;  
+}
+
+#headContainer {
+  position: absolute;  
+  top: 0px;  left:  10%;
+  width: 800px; height: 100%;  
+  background-color: white;
 }
 
 #mainContainer {
   position: absolute;
-  left: 10%; top: 0px;
-  width: 800px; height: 100%;
-  background-attachment: scroll;
-  background-color: white;
+  left: 10%; top: 155px;
+  width: 800px; height: 100%;  
+  background-color: white;    
 }
 
 #head{
@@ -60,20 +66,14 @@
 
 #lineLeft{
   position: absolute;
-  left: 150px; top: 141px;
+  left: 150px; top: 0px;
   width: 1px; height: 75%;   
   background-color: #DCDDDE;
 }
 
 #lineRight{
   position: absolute;
-  left: 650px; top: 141px;
+  left: 650px; top: 0px;
   width: 1px; height: 75%;   
   background-color: #DCDDDE;
-}
-
-#mainPage {
-  position: absolute;
-  left: 165px; top: 155px;
-  width: 470px; height: 75%; 
 }
