@@ -1320,7 +1320,7 @@ public class History extends Observable {
      */
     public void informMethod(ArrayList<Enum> editType) {
         int count = editType.size();
-        Enum[] editTypeArray = new Enum[count];
+        Enum[] editTypeArray = new PlantloreConstants.Table[count];
         for(int i=0; i < count; i++) {
             logger.debug("Type of editing object (array for appcore): " + editType.get(i));
             editTypeArray[i] = editType.get(i);
