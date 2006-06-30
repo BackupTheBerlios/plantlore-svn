@@ -20,6 +20,19 @@ import org.apache.log4j.Logger;
  * Transformace souradnic WGS84<-->-JTSK<-->S42 http://astro.mff.cuni.cz/mira/sh/sh.php  
  *
  * @author Lada Oberreiterova
+ * 
+ * 
+ * U WGS-84 se bude zadavat a zobrazovat geodeticke souradnice:
+ *    latitude: 50.4576°
+ * 	  longitude: 14.3986°
+ * 	  altitude: 289.15 m
+ *
+ * U S42 a S-JTSK se budou zadavat a zobrazovat souradnice v ortogonálním systému: 
+ * Pro S-JSTK se rozlisuji kvadranty - CR spada do 3.kvadrantu (X-ova souradnice bude vychazet zaporne)
+ * Pro S-42 se rozlisuji pasy - CR spada do 3.pasu a část Karpat na Moravě do 4.pasu
+ * 		Y= 1002007 m 
+ * 		X= 738791 m.
+ * 		Z=  244 m
  */
 public class Transformation {
     
@@ -41,11 +54,11 @@ public class Transformation {
     
     //A = velka poloosa zplosteneho elipsoidu
     //F = zplosteni elipsoidu
-    public static final Double ELIPSOID_WGS84_A = 6378137.0;
+    public static final Double ELIPSOID_WGS84_A = 6378137.0; //6377397,155
     public static final Double ELIPSOID_WGS84_F = 298.257223563;
     public static final Double ELIPSOID_BESSEL_A = 6377397.15508;
     public static final Double ELIPSOID_BESSEL_F = 299.152812853;    
-    public static final Double ELIPSOID_KRAJOVSKIJ_A = 6378245.0;;
+    public static final Double ELIPSOID_KRAJOVSKIJ_A = 6378245.0;
     public static final Double ELIPSOID_KRAJOVSKIJ_F = 298.3;    
     
     /**
@@ -68,9 +81,13 @@ public class Transformation {
      public static void main(String[] args) {
             Transformation tr = new Transformation();
             System.out.println("********************WGS84 --> S-JTSK**************************");
-            Double[] coordinate_SJTSK = tr.transform_WGS84_to_SJTSK(50.465555, 14.3986, 289.155);
+            Double[] coordinate_SJTSK = tr.transform_WGS84_to_SJTSK(50.4576163694, 14.3986, 289.155);
             System.out.println("******************** S-JTSK --> WGS84 **************************");
-            Double[] coordinate_WGS84 = tr.transform_SJTSK_to_WGS84(coordinate_SJTSK[0], coordinate_SJTSK[1], 244.6);
+            Double[] coordinate_WGS84_SJTSK = tr.transform_SJTSK_to_WGS84(coordinate_SJTSK[0], coordinate_SJTSK[1], coordinate_SJTSK[2]);
+            System.out.println("********************WGS84 --> S-42**************************");
+            Double[] coordinate_S42 = tr.transform_WGS84_to_S42(50.4576163694, 14.3986, 289.155);
+            System.out.println("******************** S-42 --> WGS84 **************************");                       
+            Double[] coordinate_WGS84_S42 = tr.transform_S42_to_WGS84(coordinate_S42[0], coordinate_S42[1], coordinate_S42[2]);            
      }
          
     //**********************************************************************************************//
@@ -117,18 +134,19 @@ public class Transformation {
         System.out.println("SJTSK - geodeticke souradnice: " + latLong[0]);
         System.out.println("SJTSK - geodeticke souradnice: " + latLong[1]);
         System.out.println("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinateRAD_SJTSK[2] + "\n");        
-              
-        Double[] planarCoordinate = krovak_BLH_xy(latLong[0], latLong[1], geodeticCoordinateRAD_SJTSK[2]);               
-        System.out.println("SJTSK - planar souradnice: " + planarCoordinate[0]);
-        System.out.println("SJTSK - planar souradnice: " + planarCoordinate[1] + "\n");
+         
+        Double[] planarCoordinate = krovak_BLH_xy(latLong[0], latLong[1], geodeticCoordinateRAD_SJTSK[2]);       
+        System.out.println("SJTSK - planar souradnice (X): " + planarCoordinate[0]);
+        System.out.println("SJTSK - planar souradnice (Y): " + planarCoordinate[1]);
+        System.out.println("SJTSK (Z): " + planarCoordinate[2] + "\n");
         
         return planarCoordinate;
     }
     
-    public Double[] transform_SJTSK_to_WGS84(Double latitude, Double longitude, Double altitude) {
+    public Double[] transform_SJTSK_to_WGS84(Double x, Double y, Double z) {
                  
-        //Prepocet z S-JTSK do WGS-84 ... uz dostanu hodnoty v radianech
-        Double[] geodeticCoordinate = kovak_xy_BLH(latitude, longitude, altitude);
+        //Prepocet z S-JTSK  ... uz dostanu hodnoty v radianech
+        Double[] geodeticCoordinate = kovak_xy_BLH(x, y, z);
         System.out.println("SJTSK - geodeticke souradnice: " + geodeticCoordinate[0]);
         System.out.println("SJTSK - geodeticke souradnice: " + geodeticCoordinate[1]);
         System.out.println("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinate[2] + "\n");                      
@@ -191,23 +209,33 @@ public class Transformation {
         System.out.println("S42 - geodeticke souradnice: " + latLong[0]);
         System.out.println("S42 - geodeticke souradnice: " + latLong[1]);
         System.out.println("S42 - geodeticke souradnice altitude: " + geodeticCoordinateRAD_S42[2] + "\n");        
-              
-        Double[] coordinate = transformatin_S42_BLH_xy(latLong[0], latLong[1]);               
-        System.out.println("S42 - planar souradnice: " + coordinate[0]);
-        System.out.println("S42 - planar souradnice: " + coordinate[1] + "\n");
+                 
+        Double[] coordinate = transformatin_S42_BLH_xy(geodeticCoordinateRAD_S42[0], geodeticCoordinateRAD_S42[1]);               
+        System.out.println("S42 - planar souradnice (X): " + coordinate[0]);
+        System.out.println("S42 - planar souradnice (Y): " + coordinate[1]);
+        System.out.println("S42 (Z): " + geodeticCoordinateRAD_S42[2] + "\n");
         
-        return coordinate;
+        Double[] planarCoordinate = new Double[3];
+        planarCoordinate[0] = coordinate[0];
+        planarCoordinate[1] = coordinate[1];
+        planarCoordinate[2] = geodeticCoordinateRAD_S42[2];
+               
+        return planarCoordinate;
     }
+      
     
-     public Double[] transform_S42_to_WGS84(Double latitude, Double longitude, Double altitude) {
+     public Double[] transform_S42_to_WGS84(Double x, Double y, Double z) {
          
          //Prepocet z S-42 do WGS-84 ... uz dostanu hodnoty v radianech
-        Double[] geodeticCoordinate = transformation_S42_xy_BLH(latitude, longitude);
+         //!!!!!FIXME - v teto funkci je chyba
+        //Double[] geodeticCoordinate = transformation_S42_xy_BLH(x, y, z);
+    	 Double[] geodeticCoordinate = S42_xy_BLH(x, y, z);
         System.out.println("S42 - geodeticke souradnice: " + geodeticCoordinate[0]);
         System.out.println("S42 - geodeticke souradnice: " + geodeticCoordinate[1]);
         System.out.println("S42 - geodeticke souradnice altitude: " + geodeticCoordinate[2] + "\n");                      
         //Vypocet pravouhlych souradnic z geodetickych souradnic pro elipsoid Bessel
         Double[] cartesianCoordinate = krajovskij_BLH_xyz(geodeticCoordinate[0], geodeticCoordinate[1], geodeticCoordinate[2]);
+        //Double[] cartesianCoordinate = krajovskij_BLH_xyz(0.8806574639397869, 0.25133270679766656, geodeticCoordinate[2]);
         System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate[0]);
         System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate[1]);
         System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate[2] + "\n");
@@ -279,8 +307,7 @@ public class Transformation {
            pom = (pom-1)/(pom+1);
       } while (Math.abs(pom - sinB) > 1.e-15);
        double latitude = Math.atan(pom/Math.sqrt(1.- Math.pow(pom,2)));
-      
-      altitude = altitude + 45;	
+  
       // this is an appropriate heigth correction                  
 
        Double[] geologicCoordinate = new Double[3];
@@ -308,7 +335,7 @@ public class Transformation {
         double a     = 6377397.15508;   //polomer Gausseovy koule (6380065.5402 metrů)
         double e     = 0.081696831215303;
         double n     = 0.97992470462083;
-        double rho_0 = 12310230.12797036;
+        double rho_0 = 12310230.12797036; //1298039,0046
         double sinUQ = 0.863499969506341; //kulova sirka odpovidajici zemepisne sirce 49°30`
         double cosUQ = 0.504348889819882;
         double sinVQ = 0.420215144586493;
@@ -340,14 +367,60 @@ public class Transformation {
        double eps = n * Math.atan(sinD/cosD);
        double rho = rho_0 * Math.exp(-n * Math.log((1+sinS)/cosS));
 
-       Double[] planarCoordinate = new Double[2];
+       Double[] planarCoordinate = new Double[3];
        planarCoordinate[0] = rho * Math.cos(eps); //x
        planarCoordinate[1] = rho * Math.sin(eps); //y
+       planarCoordinate[2] = altitude;
        
        return planarCoordinate;       
     }        
  
-           
+    //*******************************************************************************************//
+    //***************** S-42  Orthogonal coordinates --> geodetic coordinate*********************//
+    //******************************************************************************************//   
+    
+    public Double[] S42_xy_BLH(Double x, Double y, Double z) {
+    	//VYPOCET S-42 ortogonalni system --> S-42 geodeticky system
+
+    	double A2 = x;
+    	double B2 = y;
+    	double C2 = 6378245;
+    	double D2 = 0.0818133340169312;
+    	double E2 = 500000+Math.rint(A2/1000000)*1000000;
+    	double F2 = 0;
+    	double G2 = 21+6*(Math.rint(A2/1000000)-4);
+    	double H2 = G2*Math.PI/180;
+    	double I2 = 0;
+    	double J2 = I2*Math.PI/180;
+    	double K2 = 1;
+    	double L2 = A2-E2;
+    	double M2 = B2-F2;
+    	double N2 = (1-Math.sqrt(1-D2*D2))/(1+ Math.sqrt(1-D2*D2));
+    	double O2 = C2*(J2*(1-D2*D2/4-3*Math.pow(D2,4)/64-5*Math.pow(D2,6)/256)-Math.sin(2*J2)*(3*D2*D2/8+3*Math.pow(D2,4)/32+45*Math.pow(D2,6)/1024)+Math.sin(4*J2)*(15*Math.pow(D2,4)/256+45*Math.pow(D2,6)/1024)-Math.sin(6*J2)*35*Math.pow(D2,6)/3072);
+    	double P2 = O2+M2/K2;
+    	double Q2 = P2/(C2*(1-D2*D2/4-3*Math.pow(D2,4)/64-5*Math.pow(D2,6)/256));
+    	double R2 = Q2+Math.sin(2*Q2)*(3*N2/2-27*Math.pow(N2,3)/32)+Math.sin(4*Q2)*(21*N2*N2/16-55*Math.pow(N2,4)/32)+Math.sin(6*Q2)*151*Math.pow(N2,3)/96+Math.sin(8*Q2)*1097*Math.pow(N2,4)/512;
+    	double S2 = D2*D2/(1-D2*D2);
+    	double T2 = S2*Math.cos(R2)*Math.cos(R2);
+    	double U2 = Math.tan(R2)*Math.tan(R2);
+    	double V2 = C2/Math.sqrt(1-D2*D2*Math.sin(R2)*Math.sin(R2));
+    	double W2 = C2*(1-D2*D2)/Math.sqrt(1-D2*D2*Math.sin(R2)*Math.sin(R2));
+    	double X2 = L2/(V2*K2);
+    	double Z2 = H2+(X2-(1+2*U2+T2)*Math.pow(X2,3)/6+(5-2*T2+28*U2-3*T2*T2+8*S2+24*U2*U2)*Math.pow(X2,5)/120)/Math.cos(R2);
+    	double Y2 = R2-(V2*Math.tan(R2)/W2)*(X2*X2/2-(5+3*U2+10*T2-4*T2*T2-9*S2)*Math.pow(X2,4)/24+(61+90*U2+298*T2+45*U2*U2-252*S2-3*T2*T2)*Math.pow(X2,6)/720);
+    	//latitude
+    	double lambda = Z2*180/Math.PI;
+    	//longitude
+    	double fi = Y2 * 180/Math.PI; //prevod na stupne z radianu    	
+    	
+    	Double[] coordinate = new Double[3];
+    	coordinate[0] = Math.toRadians(fi);
+    	coordinate[1] = Math.toRadians(lambda);
+    	coordinate[2] = z;
+    	
+    	return coordinate;
+    }
+    
     //*******************************************************************************************//
     //***************** S-42  Planar coordinates ***********************************************//
     //******************************************************************************************//    
@@ -380,7 +453,7 @@ public class Transformation {
      * (the 3rd belt suitable for the Czech Republic)
      *
      */
-    public Double[] transformation_S42_xy_BLH(Double e, Double n) {
+    public Double[] transformation_S42_xy_BLH(Double e, Double n, Double altitude) {
              
         // parameters of the Krasovskij ellipsoid 
         double elipsoid_a = ELIPSOID_KRAJOVSKIJ_A; 
@@ -393,14 +466,13 @@ public class Transformation {
        double fo = 1;
        double phi0 = Math.toRadians(0);
        double lambda0 = Math.toRadians(15);
-       double b = elipsoid_a - elipsoid_a/elipsoid_f;
+       double b = elipsoid_a - (elipsoid_a/elipsoid_f);
           
-       Double[] listPhiLambda = mercator_XY_BLH(e, n, no, eo, fo, phi0, lambda0, elipsoid_a, b);
-       altitude = 0.;
+       Double[] listPhiLambda = mercator_XY_BLH(e, n, no, eo, fo, phi0, lambda0, elipsoid_a, b);      
        Double[] value = new Double[3];
        value[0] = listPhiLambda[0];
        value[1] = listPhiLambda[1];
-       value[2] = 0.;          
+       value[2] = altitude;          
        return value;
     }    
     
@@ -412,11 +484,10 @@ public class Transformation {
                 
         double e2 = (Math.pow(elipsoid_a,2) - Math.pow(b, 2)) / Math.pow(elipsoid_a,2);
         double n = (elipsoid_a - b) / (elipsoid_a + b);
-        double sinphi = Math.sin(phi);
-        double sinphi2 = Math.pow(sinphi,2);
+        double sinphi = Math.sin(phi);       
         double e2sinphi2 = 1 - e2 * Math.pow(sinphi, 2);
-        double nu = elipsoid_a * fo / Math.pow(e2sinphi2, 2);
-        double rho = elipsoid_a * fo * (1 - e2) / Math.sqrt( Math.pow(e2sinphi2, 2) * e2sinphi2);
+        double nu = elipsoid_a * fo / Math.sqrt(e2sinphi2);
+        double rho = elipsoid_a * fo * (1 - e2) / Math.sqrt( Math.pow(e2sinphi2, 3));
         double eta2 = nu / rho - 1;
         
         double n2 = Math.pow(n,2);
@@ -461,7 +532,7 @@ public class Transformation {
 
         n = (elipsoid_a - b) / (elipsoid_a + b);
         double n2 = Math.pow(n,2);
-        double n3 = Math.pow(n, 3);
+        double n3 = Math.pow(n,3);
         double m = 0;
         
         int i1st = 0;
@@ -480,11 +551,10 @@ public class Transformation {
           } while (Math.abs(n-no-m) > 1.e-4);
 
           double e2 = (Math.pow(elipsoid_a,2) - Math.pow(b, 2)) / Math.pow(elipsoid_a,2);
-          double sinphi = Math.sin(phid);	// tady je zrejme phi
-          double sinphi2 = Math.pow(sinphi,2);
+          double sinphi = Math.sin(phid);	// tady je zrejme phi        
           double e2sinphi2 = 1 - e2 * Math.pow(sinphi, 2);
-          double nu = elipsoid_a * fo / Math.pow(e2sinphi2, 2);
-          double rho = elipsoid_a * fo * (1 - e2) / Math.sqrt( Math.pow(e2sinphi2, 2) * e2sinphi2);
+          double nu = elipsoid_a * fo / Math.sqrt(e2sinphi2);
+          double rho = elipsoid_a * fo * (1 - e2) / Math.sqrt( Math.pow(e2sinphi2, 3));
           double eta2 = nu / rho - 1;
           
           double secphid = 1./ Math.cos(phid);
@@ -504,7 +574,7 @@ public class Transformation {
 
           Double[] value = new Double[2];
           value[0] = phi;
-          value[1] = lambda;
+          value[1] = lambda;                   
           
           return value;
     }
@@ -549,7 +619,7 @@ public class Transformation {
     public Double[] ellipsoid_BLH_xyz(Double latitude, Double longitude, Double altitude, Double elipsoid_a, Double elipsoid_f) {
        
         //e = excentricita elipsoidu
-        Double e2 = 1 - Math.sqrt(1 - 1 / elipsoid_f);
+        Double e2 = 1 - Math.pow(1 - 1 / elipsoid_f, 2);
         //rho = pricny polomer krivosti
         Double rho = elipsoid_a/Math.sqrt(1 - e2 * Math.pow(Math.sin(latitude),2));          
         //pravouhle souradnice
@@ -557,7 +627,7 @@ public class Transformation {
         cartesianCoordinate[0] = (rho + altitude) * Math.cos(latitude) * Math.cos(longitude); //x
         cartesianCoordinate[1] = (rho + altitude) * Math.cos(latitude) * Math.sin(longitude); //y
         cartesianCoordinate[2] = ((1-e2)*rho + altitude) * Math.sin(latitude);  //z
-        
+                
         return cartesianCoordinate;
     }
     
@@ -587,7 +657,7 @@ public class Transformation {
      */
     public Double[] bessel_BLH_xyz(Double latitude, Double longitude, Double altitude) {                
        
-        Double[] cartesianCoordinate = ellipsoid_BLH_xyz(latitude, longitude, altitude, this.ELIPSOID_BESSEL_A, ELIPSOID_BESSEL_F);        
+        Double[] cartesianCoordinate = ellipsoid_BLH_xyz(latitude, longitude, altitude, ELIPSOID_BESSEL_A, ELIPSOID_BESSEL_F);        
         return cartesianCoordinate;
     }
     
@@ -597,7 +667,7 @@ public class Transformation {
      */
     public Double[] bessel_xyz_BLH(Double x, Double y, Double z) {        
      
-        Double[] geodeticCoordinate = ellipsoid_xyz_BLH(x,y, z, ELIPSOID_WGS84_A, ELIPSOID_WGS84_F);
+        Double[] geodeticCoordinate = ellipsoid_xyz_BLH(x,y, z, ELIPSOID_BESSEL_A, ELIPSOID_BESSEL_F);
         return geodeticCoordinate;
       }        
     
