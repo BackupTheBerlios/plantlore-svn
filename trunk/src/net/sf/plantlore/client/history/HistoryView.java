@@ -143,7 +143,8 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         whoInsertLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         whoInsertLabel.setText(L10n.getString("History.WhoInsert"));
 
-        whenInsertValueLabel.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(model.getWhen()) );
+        String whenInsert = (model.getWhen() == null) ? null : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(model.getWhen());
+        whenInsertValueLabel.setText(whenInsert);
 
         whoInsertValueLabel.setText(model.getNameUser());
 

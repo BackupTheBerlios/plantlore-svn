@@ -1570,32 +1570,38 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             sess.update(occ.getMetadata());
         }
 */ 
+        // Set right type of operation for AuthorOccurrence
+        int aoInsert = 0;
+        if (data instanceof AuthorOccurrence) {
+        	if (type == INSERT) {
+        		aoInsert = 1;
+        		type = UPDATE;
+        	}        	
+        }
+        
         // Saving history when new record is inserted
         if (type == INSERT) {
-            HistoryChange historyChange = new HistoryChange();            
-            if (data instanceof Occurrence) {
-                historyChange.setOccurrence((Occurrence)data);
-                historyChange.setRecordId(0);
-                table = PlantloreConstants.ENTITY_OCCURRENCE;
-            } else {
-                historyChange.setOccurrence(null);
-                if (data instanceof Publication) {
-                    table = PlantloreConstants.ENTITY_PUBLICATION;
-                } else if (data instanceof Author) {
-                    table = PlantloreConstants.ENTITY_AUTHOR;                        
-                } else if (data instanceof Phytochorion) {
-                    table = PlantloreConstants.ENTITY_PHYTOCHORION;                        
-                } else if (data instanceof Village) {
-                    table = PlantloreConstants.ENTITY_VILLAGE;
-                } else if (data instanceof Territory) {
-                    table = PlantloreConstants.ENTITY_TERRITORY;                        
-                } else if (data instanceof Metadata) {
-                    table = PlantloreConstants.ENTITY_METADATA;                    
-                } else {
-                    return;
-                }
-                historyChange.setRecordId(recordId);
-            }
+            HistoryChange historyChange = new HistoryChange();                                    
+	        if (data instanceof Occurrence) {
+	        	table = PlantloreConstants.ENTITY_OCCURRENCE;
+	        } else if (data instanceof Habitat) {
+	            table = PlantloreConstants.ENTITY_HABITAT;
+	        } else if (data instanceof Publication) {
+	            table = PlantloreConstants.ENTITY_PUBLICATION;
+	        } else if (data instanceof Author) {
+	            table = PlantloreConstants.ENTITY_AUTHOR;                        
+	        } else if (data instanceof Phytochorion) {
+	            table = PlantloreConstants.ENTITY_PHYTOCHORION;                        
+	        } else if (data instanceof Village) {
+	            table = PlantloreConstants.ENTITY_VILLAGE;
+	        } else if (data instanceof Territory) {
+	            table = PlantloreConstants.ENTITY_TERRITORY;                        
+	        } else if (data instanceof Metadata) {
+	            table = PlantloreConstants.ENTITY_METADATA;                    
+	        } else {
+	        	return;
+	        }
+	        historyChange.setRecordId(recordId);            
             historyChange.setOldRecordId(0);
             historyChange.setOperation(INSERT);
             historyChange.setWho(this.plantloreUser);
@@ -1627,14 +1633,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             history.setHistoryChange(historyChange);                
             recId = (Integer)sess.save(history);                
         }
-        // Saving history when new record is inserted        
+        // Saving history when record is updated        
         if (type == UPDATE){            
             HistoryChange historyChange = new HistoryChange();                        
             // Check whether we are dealing with delete (seting CDELETE to 0)
             if ((data instanceof Author) || (data instanceof Publication) || 
-                (data instanceof Metadata) || (data instanceof Occurrence)) {
-                Integer delete = 0;
-                historyChange.setOccurrence(null);                
+                (data instanceof Metadata) || (data instanceof Occurrence) || 
+                (data instanceof Habitat)) {
+                Integer delete = 0;                  
                 if (data instanceof Author) {
                     delete = ((Author)data).getDeleted();
                     id = ((Author)data).getId();
@@ -1648,12 +1654,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (data instanceof Occurrence) {
                     delete = ((Occurrence)data).getDeleted();                    
                     id = ((Occurrence)data).getId();         
-                    table = PlantloreConstants.ENTITY_OCCURRENCE;                    
-                    historyChange.setOccurrence((Occurrence)data);                    
-                } else {                    
+                    table = PlantloreConstants.ENTITY_OCCURRENCE;                                                         
+                } else 
+                if (data instanceof Habitat) {
+                    delete = ((Habitat)data).getDeleted();                    
+                    id = ((Habitat)data).getId();         
+                    table = PlantloreConstants.ENTITY_HABITAT;                                                         
+                } else 
+                if (data instanceof Metadata){                    
                     delete = ((Metadata)data).getDeleted();
                     id = ((Metadata)data).getId();               
                     table = PlantloreConstants.ENTITY_METADATA;                    
+                } else {                	
+                	id = 0;
+                	table = "";
                 }
                 if (delete == 1) {
                     // CDELETE was set to 1, we are deleting record
@@ -1688,12 +1702,31 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             if ((data instanceof Author) || (data instanceof Publication) ||
                 (data instanceof Territory) || (data instanceof Phytochorion) ||
-                (data instanceof Village) || (data instanceof Metadata)) {                
-                historyChange.setOccurrence(null);
+                (data instanceof Village) || (data instanceof Metadata) ||
+                (data instanceof Occurrence) || (data instanceof Habitat) ||
+                (data instanceof AuthorOccurrence)) {                               
                 historyChange.setOldRecordId(0);                
                 historyChange.setOperation(UPDATE);
                 historyChange.setWhen(new java.util.Date());
                 historyChange.setWho(this.plantloreUser);
+                if (data instanceof Occurrence) {
+                    updated = Occurrence.class;
+                    updatedId = ((Occurrence)data).getId();
+                    tableId = Occurrence.ID;                    
+                    historyChange.setRecordId(((Occurrence)data).getId());
+                } else
+                if (data instanceof AuthorOccurrence) {
+                    updated = AuthorOccurrence.class;
+                    updatedId = ((AuthorOccurrence)data).getId();
+                    tableId = AuthorOccurrence.ID;                    
+                    historyChange.setRecordId(((AuthorOccurrence)data).getId());
+                } else
+                if (data instanceof Habitat) {
+                    updated = Habitat.class;
+                    updatedId = ((Habitat)data).getId();
+                    tableId = Habitat.ID;                    
+                    historyChange.setRecordId(((Habitat)data).getId());
+                } else
                 if (data instanceof Author) {
                     updated = Author.class;
                     updatedId = ((Author)data).getId();
@@ -1729,25 +1762,205 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     updatedId = ((Village)data).getId();
                     tableId = Village.ID;
                     historyChange.setRecordId(((Village)data).getId());                    
-                }                    
-                // Save the HistoryChange object
-                sess.save(historyChange);
+                }                                  
                 // Read the to-be-updated object
                 Session tempSess = this.sessionFactory.openSession(); 
                 ScrollableResults res = tempSess.createCriteria(updated)
                     .add(Restrictions.eq(tableId, updatedId))
                     .scroll();
-                if (!res.next()) {
+                if (!res.next() && aoInsert != 1) {
                     logger.error("To-be-updated record was not found in the database. Type: "+updated.getName()+" ID:"+updatedId);
                     DBLayerException ex = new DBLayerException("To-be-updated record was not found in the database. Type: "+updated.getName()+" ID:"+updatedId);
                     ex.setError(ex.ERROR_UPDATE, updated.getName());
                     tempSess.close();
                     throw ex;
                 }
-                Object[] original = res.get();
+                Object[] original = null;
+                if (aoInsert != 1) {
+                    original = res.get();
+                }
                 tempSess.close();
                 // Object origRec, newRec;
-                if (data instanceof Author) {
+                if (data instanceof Occurrence) {                	
+                    Occurrence origRec = (Occurrence)original[0];
+                    Occurrence newRec = (Occurrence)data;                    
+                    // Seeing is believing.
+                    List<String> cols = origRec.getHistoryColumns();
+                    for(String columnName : cols) {
+                    	
+                    	Object 
+                    	origValue = origRec.getValue(columnName),
+                    	newValue = newRec.getValue(columnName);
+                    	
+                    	if( origValue == null && newValue == null)
+                    		continue;
+                    	
+                    	if( origValue == null || newValue == null || !origValue.equals(newValue) ) {
+                    		System.out.println(" >> DIFFERENT_COLUMN: " + columnName);
+                    		// Read record from THISTORYCOLUMN first
+                    		res = sess.createCriteria(HistoryColumn.class).
+                    		add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_OCCURRENCE)).
+                    		add(Restrictions.eq(HistoryColumn.COLUMNNAME, columnName)).
+                    		scroll();
+                    		if ( !res.next() ) {
+                    			logger.error("tHistoryColumn doesn't contain the required data ("+columnName+").");
+                    			DBLayerException ex = new DBLayerException("Error.CorruptedDatabase");
+                    			ex.setError(DBLayerException.ERROR_DB, PlantloreConstants.ENTITY_OCCURRENCE);
+                    			throw ex;
+                    		}
+                    		Object[] colNames = res.get();
+                    		// Create new history record
+                    		HistoryRecord historyRecord = new HistoryRecord();
+                    		// Save OldRecordId if neccessary
+                    		                    		
+                    		// TODO: Save oldRecordId
+                    		 if (((String)columnName).equals(Occurrence.PLANT)) {
+                    			 //TODO: tato situace by nastat nemela - zmenou kytky dojde k vlozeni noveho nalezu
+                    			 historyChange.setOldRecordId(((Plant)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldValue(((Plant)origValue).getTaxon());
+                         		 historyRecord.setNewValue(((Plant)newValue).getTaxon());
+                    		 } else if (((String)columnName).equals(Occurrence.PUBLICATION)) {
+                    			 historyChange.setOldRecordId(((Publication)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldValue(((Publication)origValue).getReferenceCitation());
+                         		 historyRecord.setNewValue(((Publication)newValue).getReferenceCitation());
+                    		 } else if (((String)columnName).equals(Occurrence.HABITAT)) {
+                    			 historyChange.setOldRecordId(((Habitat)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldValue(((Habitat)origValue).getDescription());
+                         		 historyRecord.setNewValue(((Habitat)newValue).getDescription());
+                    		 } else {
+                    			String origValueString = (origValue == null) ? null : origValue.toString(),
+                         			   newValueString = (newValue == null) ? null : newValue.toString(); 
+                    			historyRecord.setOldValue(origValueString);
+                         		historyRecord.setNewValue(newValueString);
+                    		 }
+                    		                     		 
+                    		 //Save the HistoryChange object
+                             sess.save(historyChange);
+                    		// Save record into THISTORY                    		
+                    		historyRecord.setHistoryChange(historyChange);
+                    		historyRecord.setHistoryColumn((HistoryColumn) colNames[0]);                    		
+                    		sess.save(historyRecord);
+                    	}
+                    }
+                } else if (data instanceof AuthorOccurrence) { 
+                	AuthorOccurrence newRec = (AuthorOccurrence)data;
+                	// Save the HistoryChange object
+                    sess.save(historyChange);
+                	//delete == 0 ...edit information about Author in occurrence
+                	//delete == 1 ...delete Auhtor from occurrence
+                	//aoInsert == 1 ...add new Author to occurrence                      
+                	if (newRec.getDeleted() == 1 || aoInsert == 1) {                                              
+                        // Read HistoryColumn table
+                        sr = sess.createCriteria(HistoryColumn.class)
+                            .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_AUTHOROCCURRENCE))
+                            .add(Restrictions.isNull(HistoryColumn.COLUMNNAME))
+                            .scroll();
+                        if (!sr.next()) {
+                            logger.error("tHistoryColumn doesn't contain required data");
+                            DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
+                            ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                            throw ex;                                                        
+                        }
+                        Object[] hc = sr.get();                        
+                        HistoryRecord hist = new HistoryRecord(); 
+                        hist.setHistoryChange(historyChange);                        
+                        hist.setHistoryColumn((HistoryColumn)hc[0]);
+                        if ( newRec.getDeleted() == 1) {
+	                        hist.setNewValue(null);
+	                        hist.setOldValue(newRec.getAuthor().getWholeName());
+                        } else if (aoInsert == 1) {
+                        	hist.setNewValue(newRec.getAuthor().getWholeName());
+	                        hist.setOldValue(null);
+                        }
+                        // Save History record
+                        sess.save(hist);                                                       
+                	} else {
+                		AuthorOccurrence origRec = (AuthorOccurrence)original[0];
+                		ArrayList cols = (ArrayList)origRec.getColumns();
+                        for (int i=0;i<cols.size();i++) {
+                            Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                            Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                            if (!origValue.equals(newValue)) {
+                            	//Read record from THISTORYCOLUMN first                              	
+                                res = sess.createCriteria(HistoryColumn.class)
+                                    .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_AUTHOROCCURRENCE))
+                                    .add(Restrictions.eq(HistoryColumn.COLUMNNAME, (String)cols.get(i)))
+                                    .scroll();                                
+                                if (!res.next()) {
+                                    logger.error("tHistoryColumn doesn't contain required data");
+                                    DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
+                                    ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_AUTHOROCCURRENCE);
+                                    throw ex;                                
+                                }
+                            
+	                            Object[] colNames = res.get();                                             
+	                            
+	                            // Save record into THISTORY
+	                            HistoryRecord hist = new HistoryRecord();
+	                            hist.setHistoryChange(historyChange);	                            	                           
+	                            hist.setHistoryColumn((HistoryColumn)colNames[0]);  
+	                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+	                           			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+	                      		hist.setOldValue(origValueString);
+	                           	hist.setNewValue(newValueString);	                            
+	                            sess.save(hist);  
+                            }
+                        }
+                	} 
+                } else if (data instanceof Habitat) {
+                	Habitat origRec = (Habitat)original[0];
+                	Habitat newRec = (Habitat)data;
+                    ArrayList cols = (ArrayList)origRec.getColumns();
+                    for (int i=0;i<cols.size();i++) {
+                        Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        if (!origValue.equals(newValue)) {
+                            // Read record from THISTORYCOLUMN first                           	
+                            res = sess.createCriteria(HistoryColumn.class)
+                                .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_HABITAT))
+                                .add(Restrictions.eq(HistoryColumn.COLUMNNAME, (String)cols.get(i)))
+                                .scroll();
+                            if (!res.next()) {
+                                logger.error("tHistoryColumn doesn't contain required data");
+                                //TODO
+                                DBLayerException ex = new DBLayerException("tHistoryColumn doesn't contain required data");
+                                ex.setError(ex.ERROR_DB, PlantloreConstants.ENTITY_HABITAT);
+                                throw ex;                                
+                            }
+                            Object[] colNames = res.get();
+                            // Create new history record
+                            HistoryRecord hist = new HistoryRecord();
+                            // Save OldRecordId if neccessary
+                            
+                    		 //TODO: Save oldRecordId
+                    		 if (((String)cols.get(i)).equals(Habitat.TERRITORY)) {                    			 
+                    			 historyChange.setOldRecordId(((Territory)newRec.getValue((String)cols.get(i))).getId());
+                    			 hist.setOldValue(((Territory)origRec.getValue((String)cols.get(i))).getName());
+                                 hist.setNewValue(((Territory)newRec.getValue((String)cols.get(i))).getName());
+                    		 } else if (((String)cols.get(i)).equals(Habitat.PHYTOCHORION)) {
+                    			 historyChange.setOldRecordId(((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
+                    			 hist.setOldValue(((Phytochorion)origRec.getValue((String)cols.get(i))).getName());
+                                 hist.setNewValue(((Phytochorion)newRec.getValue((String)cols.get(i))).getName());
+                    		 } else if (((String)cols.get(i)).equals(Habitat.VILLAGE)) {
+                    			 historyChange.setOldRecordId(((Village)newRec.getValue((String)cols.get(i))).getId());
+                    			 hist.setOldValue(((Village)origRec.getValue((String)cols.get(i))).getName());
+                                 hist.setNewValue(((Village)newRec.getValue((String)cols.get(i))).getName());
+                    		 } else {
+                    			 String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                           			    newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                      			 hist.setOldValue(origValueString);
+                           		 hist.setNewValue(newValueString);                    			
+                    		 }
+                    		 
+                            // Save the HistoryChange object
+                             sess.save(historyChange);
+                            // Save record into THISTORY                            
+                            hist.setHistoryChange(historyChange);
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                                                        
+                            sess.save(hist);                            
+                        }
+                    }
+                } else if (data instanceof Author) {
                     Author origRec = (Author)original[0];
                     Author newRec = (Author)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
@@ -1767,12 +1980,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                                 throw ex;                                
                             }
                             Object[] colNames = res.get();
+                            //Save the HistoryChange object
+                            sess.save(historyChange);
                             // Save record into THISTORY
                             HistoryRecord hist = new HistoryRecord();
                             hist.setHistoryChange(historyChange);
-                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);    
+                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                        			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                   			hist.setOldValue(origValueString);
+                        	hist.setNewValue(newValueString);                           
                             sess.save(hist);                            
                         }
                     }
@@ -1796,12 +2013,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                                 throw ex;                                
                             }
                             Object[] colNames = res.get();
+                            //Save the HistoryChange object
+                            sess.save(historyChange);
                             // Save record into THISTORY
                             HistoryRecord hist = new HistoryRecord();
                             hist.setHistoryChange(historyChange);
-                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]); 
+                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                        			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                   			hist.setOldValue(origValueString);
+                        	hist.setNewValue(newValueString);                            
                             sess.save(hist);     
                         }
                     }
@@ -1825,12 +2046,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                                 throw ex;                                
                             }
                             Object[] colNames = res.get();
+                            // Save the HistoryChange object
+                            sess.save(historyChange);
                             // Save record into THISTORY
                             HistoryRecord hist = new HistoryRecord();
                             hist.setHistoryChange(historyChange);
-                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);   
+                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                        			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                   			hist.setOldValue(origValueString);
+                        	hist.setNewValue(newValueString);                            
                             sess.save(hist);                            
                         }
                     }
@@ -1854,12 +2079,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                                 throw ex;                                
                             }
                             Object[] colNames = res.get();
+                            // Save the HistoryChange object
+                            sess.save(historyChange);
                             // Save record into THISTORY
                             HistoryRecord hist = new HistoryRecord();
                             hist.setHistoryChange(historyChange);
-                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);   
+                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                        			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                   			hist.setOldValue(origValueString);
+                        	hist.setNewValue(newValueString);                            
                             sess.save(hist);
                         }
                     }                    
@@ -1883,12 +2112,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                                 throw ex;                                
                             }
                             Object[] colNames = res.get();
+                            // Save the HistoryChange object
+                            sess.save(historyChange);
                             // Save record into THISTORY
                             HistoryRecord hist = new HistoryRecord();
                             hist.setHistoryChange(historyChange);
-                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);  
+                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                        			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                   			hist.setOldValue(origValueString);
+                        	hist.setNewValue(newValueString);                            
                             sess.save(hist);
                         }
                     }
@@ -1912,88 +2145,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                                 throw ex;                                
                             }
                             Object[] colNames = res.get();
+                            // Save the HistoryChange object
+                            sess.save(historyChange);
                             // Save record into THISTORY
                             HistoryRecord hist = new HistoryRecord();
                             hist.setHistoryChange(historyChange);
-                            hist.setHistoryColumn((HistoryColumn)colNames[0]);                            
-                            hist.setOldValue((String)origRec.getValue((String)cols.get(i)));
-                            hist.setNewValue((String)newRec.getValue((String)cols.get(i)));
+                            hist.setHistoryColumn((HistoryColumn)colNames[0]);     
+                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
+                        			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
+                   			hist.setOldValue(origValueString);
+                        	hist.setNewValue(newValueString);                           
                             sess.save(hist);
                         }
                     }
                 }
-            }
-            if (data instanceof Occurrence) {
-                historyChange.setOccurrence((Occurrence)data);
-                historyChange.setRecordId(((Occurrence)data).getId());
-                historyChange.setOperation(UPDATE);
-                historyChange.setWhen(new java.util.Date());
-                historyChange.setWho(this.plantloreUser);                
-                // Read the original occurrence
-                Session tempSess = this.sessionFactory.openSession();
-                ScrollableResults res = tempSess.createCriteria(Occurrence.class)
-                    .add(Restrictions.eq(Occurrence.ID, ((Occurrence)data).getId()))
-                    .scroll();
-                if (!res.next()) {
-                    logger.error("To-be-updated Occurrence was not found in the database. ID:"+((Occurrence)data).getId());
-                    DBLayerException ex = new DBLayerException("To-be-updated Occurrence was not found in the database. ID:"+((Occurrence)data).getId());
-                    ex.setError(ex.ERROR_UPDATE, Occurrence.class.getName());
-                    tempSess.close();
-                    throw ex;
-                }
-                Object[] original = res.get();
-                tempSess.close();
-                Occurrence origRec = (Occurrence)original[0];
-                Occurrence newRec = (Occurrence)data;
-                // Save the historyChange
-                sess.save(historyChange);
-                // Seeing is believing.
-                List<String> cols = origRec.getHistoryColumns();
-                for(String columnName : cols) {
-                	
-                	Object 
-                	origValue = origRec.getValue(columnName),
-                	newValue = newRec.getValue(columnName);
-                	
-                	if( origValue == null && newValue == null)
-                		continue;
-                	
-                	if( origValue == null || newValue == null ||
-                			!origValue.equals(newValue) ) {
-                		System.out.println(" >> DIFFERENT_COLUMN: " + columnName);
-                		// Read record from THISTORYCOLUMN first
-                		res = sess.createCriteria(HistoryColumn.class).
-                		add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_OCCURRENCE)).
-                		add(Restrictions.eq(HistoryColumn.COLUMNNAME, columnName)).
-                		scroll();
-                		if ( !res.next() ) {
-                			logger.error("tHistoryColumn doesn't contain the required data ("+columnName+").");
-                			DBLayerException ex = new DBLayerException("Error.CorruptedDatabase");
-                			ex.setError(DBLayerException.ERROR_DB, PlantloreConstants.ENTITY_OCCURRENCE);
-                			throw ex;
-                		}
-                		Object[] colNames = res.get();
-                		// Save OldRecordId if neccessary
-                		
-                		// TODO: Save oldRecordId
-                		// if ((((String)cols.get(i)).equals(Occurrence.PLANT))
-                		// ||
-                		// (((String)cols.get(i)).equals(Occurrence.PUBLICATION)))
-                		// {
-                		// historyChange.setOldRecordId((Integer)newRec.getValue((String)cols.get(i)));
-                		// }
-                		// Save record into THISTORY
-                		HistoryRecord historyRecord = new HistoryRecord();
-                		historyRecord.setHistoryChange(historyChange);
-                		historyRecord.setHistoryColumn((HistoryColumn) colNames[0]);
-                		String origValueString = (origValue == null) ? null : origValue.toString(),
-                				newValueString = (newValue == null) ? null : newValue.toString();
-                		historyRecord.setOldValue(origValueString);
-                		historyRecord.setNewValue(newValueString);
-                		sess.save(historyRecord);
-                	}
-                }
-            }
+            }                                  
         }
     }
     

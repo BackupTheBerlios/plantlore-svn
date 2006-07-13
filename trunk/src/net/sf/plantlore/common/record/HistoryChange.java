@@ -22,8 +22,7 @@ public class HistoryChange extends Record {
     // Constants for HistoryChange operations (field COPERATION)
     public static final int HISTORYCHANGE_INSERT = 1;
     public static final int HISTORYCHANGE_EDIT = 2;
-    public static final int HISTORYCHANGE_DELETE = 3;
-    public static final int HISTORYCHANGE_EDITGROUP = 4;    
+    public static final int HISTORYCHANGE_DELETE = 3;    
     
     /** Parameters of the HistoryChange. For detailed explanation see data model documentation. */
     private Integer id;
@@ -35,8 +34,7 @@ public class HistoryChange extends Record {
     private User who;
     
     /** Constants with column mapping (used for building select queries) */
-    public static final String ID = "id";
-    public static final String OCCURRENCE = "occurrence";    
+    public static final String ID = "id";     
     public static final String RECORDID = "recordId";
     public static final String OLDRECORDID = "oldRecordId";
     public static final String OPERATION = "operation";
@@ -71,25 +69,7 @@ public class HistoryChange extends Record {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    /**
-     *  Get occurrence associated with this HistoryChange record
-     *  @return occurrence associated with this record
-     *  @see setOccurrence
-     */
-    public Occurrence getOccurrence() {        
-        return this.occurrence;
-    }
-    
-    /**
-     *  Set occurrence associated with this HistoryChange record
-     *  @param occurrence occurrence associated with this record
-     *  @see getOccurrence
-     */
-    public void setOccurrence(Occurrence occurrence) {
-        this.occurrence= occurrence;
-    }
-
+ 
     /**
      *   Get identifier of the record which was changed
      *   @return identifier of the record which was changed

@@ -103,7 +103,7 @@ public class History extends Observable {
     /** Operation whitch was used*/   
     private int operation;
     /** Date and time when the reccord was changed*/
-    private java.util.Date when = new Date();	
+    private java.util.Date when = null;	
     /** Old value of attribute*/    
     private String oldValue;
     /** New value of attribute*/
@@ -202,29 +202,34 @@ public class History extends Observable {
             
        // Create new Select query
        SelectQuery query = null;
+       int resultIdInsert = 0;
+       Object[] object = null;
+       
        try {
        	    query = database.createQuery(HistoryChange.class);
-       	    query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OCCURRENCE, null, occurrence, null);
+       	    query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.RECORDID, null, occurrenceId, null);
        	    query.addRestriction(PlantloreConstants.RESTR_EQ, HistoryChange.OPERATION, null, HistoryChange.HISTORYCHANGE_INSERT, null);
+       	    resultIdInsert = database.executeQuery(query);
+       	    object = database.next(resultIdInsert);
+       	    database.closeQuery(query);
        } catch(RemoteException e) {
        	    System.err.println("RemoteException- searchInsertInfo(), createQuery");       	  
        } catch(DBLayerException e) {
        	    System.err.println("DBLayerException - searchInsertInfo(), createQuery");
        }            
-       
-       int resultIdInsert = 0;
-       try {
-           // Execute query                    
-           resultIdInsert = database.executeQuery(query); 
-           // Save "insert" history data
-           setInsertResult(resultIdInsert);
-           database.closeQuery(query);           
-       } catch (DBLayerException e) {
-           // Log and set an error                   
-           logger.error("Searching history data with condition 'operation = insert' failed. Unable to execute search query.");          
-       } catch (RemoteException e) {		 
-    	   System.err.println("RemoteException- searchInsertInfo(), executeQuery");
+        
+       if (object == null) {
+    	   logger.error("tHistoryChange doesn't contain required data");
+       } else {
+    	   //TODO: INFORMACE O INSERTU NALEZU BY SE DALY ZJISKAT Z TABULKY TOCCURRENCE - TO BUDE I LEPSI 
+    	   setWhen(((HistoryChange)object[0]).getWhen());
+           setNameUser(((HistoryChange)object[0]).getWho().getWholeName());
+           // TOTO BUDE LEPSI 
+           setWhen(occurrence.getCreatedWhen());
+           setNameUser(occurrence.getCreatedWho().getWholeName());
+          
        }
+       
     }
     
     
@@ -245,7 +250,7 @@ public class History extends Observable {
 	        query.createAlias("historyChange", "hc");        
 	        // Add restriction to COPERATION column of tJistoryChange table
 	        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.operation", null, HistoryChange.HISTORYCHANGE_EDIT, null);        
-	        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.occurrence", null, occurrence, null);    	
+	        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, occurrence.getId(), null);    	
 	        query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
 	} catch (RemoteException e) {
 		System.err.println("RemoteException - searchEditHistory(), createQuery");
@@ -269,35 +274,7 @@ public class History extends Observable {
         //zde nejde zavrit session closeQuery
     }
     
-    
-    /**     
-     * Sets information about data (date, name of user) entries concerned with specified occurrence 
-     * @param result result of a database operation INSERT. Result has one row.
-     */
-    public void setInsertResult(int resultIdInsert) {
-   	    	
-    	if (getResultRows() > 1) {                
-            logger.error("Too many results for searching insert operation.");  
-    	}
-            	
-    	logger.debug("Retrieving query results."); 
-    	Object[] objectHistory = null;
-        try {
-        	 // Retrieve selected row interval         	
-         	try {
-         		objectHistory = database.more(resultIdInsert, 0, 0);  
-         	} catch(RemoteException e) {             	
-             	logger.debug("RemoteException- setInsertResult, more");
-             	return;
-             }   
-         	Object[] objHis = (Object[])objectHistory[0];                 
-         	setWhen(((HistoryChange)objHis[0]).getWhen());
-         	setNameUser(((HistoryChange)objHis[0]).getWho().getWholeName());         	
-        } catch (DBLayerException e) {         
-            logger.error("Processing search (inserting) results failed: "+e.toString());            
-        }       
-    }
-    
+       
     /**
      *
      */
@@ -573,7 +550,7 @@ public class History extends Observable {
         Object[] object = searchObject("AuthorOccurrence", recordId);
         AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];  
         
-        occurrenceId = historyChange.getOccurrence().getId();	
+        occurrenceId = historyChange.getRecordId();	
         
         //test, zda jiz dany zaznam byl editovan
         boolean objectList = editObjectList.contains((Record)authorOccurrence); 
@@ -621,8 +598,10 @@ public class History extends Observable {
     public void undoOccurrence() {
         
         //zaznam v ramci, ktereho doslo k editaci tabulky tOccurrences
-        occurrence = historyChange.getOccurrence();           
-        occurrenceId = historyChange.getOccurrence().getId();	
+    	occurrenceId = historyChange.getRecordId();
+    	//Select record Occurrence where id = occurrenceId 
+        Object[] objectOcc = searchObject("Occurrence",occurrenceId);
+        occurrence = (Occurrence)objectOcc[0];                           	
         
         boolean objectList = editObjectList.contains((Record)occurrence);
         if (!objectList) {
@@ -743,9 +722,10 @@ public class History extends Observable {
      */
     public void undoHabitat() {
         
-        //zaznam v ramci, ktereho doslo k editaci tabulky tHabitats        
-        Habitat habitat = historyChange.getOccurrence().getHabitat();
-        occurrenceId = historyChange.getOccurrence().getId();	
+        //historie lokalit se sleduje zvlast                
+        int habitatId = historyChange.getRecordId();	
+        Object[] object = searchObject("Habitat",habitatId);        
+        Habitat habitat = (Habitat)object[0];
       
         //K editaci tabulky tHabitats dojde jen v pripade editace nejakeho konkretniho nalezu
         //protoze neni k dispozici kaskadovy update musi se do seznamu objektu pridat i Habitat, i kdyz na nej muzem pristupovat pres konkretni zaznam
@@ -1499,7 +1479,10 @@ public class History extends Observable {
         //podle tableName najdeme podrobnosti o konkretnim objektu (autor, publikace, nalez,...)
          if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE) || tableName.equals(PlantloreConstants.ENTITY_HABITAT) || tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {           
               //Get details for occurrence
-              Occurrence occurrence = historyChange.getOccurrence();             
+              int occurrenceId = historyChange.getRecordId();
+              //Select record Occurrence where id = occurrenceId 
+              Object[] objectOcc = searchObject("Occurrence",occurrenceId);
+              Occurrence occurrence = (Occurrence)objectOcc[0]; 
               detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE + "."+ Occurrence.PLANT) + ": "+ occurrence.getPlant().getTaxon()+"\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOROCCURRENCE+"."+ AuthorOccurrence.AUTHOR) + ": " +getAllNameOfAuthors(getAllAuthors(occurrence, 0)) + "\n";

@@ -49,6 +49,10 @@ public class AuthorOccurrence extends Record implements Deletable {
     	return asList( AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED );
     }
     
+    public List<String> getHistoryColumns() {
+        return asList( ROLE, NOTE);
+    }
+    
     @Override
     public void setValue(String column, Object value) {
     	if(value instanceof String && "".equals(value) )

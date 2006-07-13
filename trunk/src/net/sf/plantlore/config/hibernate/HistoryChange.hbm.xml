@@ -8,11 +8,7 @@
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
-
-      <many-to-one name="occurrence" 
-                   class="net.sf.plantlore.common.record.Occurrence" 
-                   column="COCCURRENCEID"
-                   fetch="select"/>           
+                 
       <property column="CRECORDID"                
                 name="recordId"
                 not-null="true"
