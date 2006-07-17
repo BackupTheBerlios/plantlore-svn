@@ -1827,6 +1827,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     			 historyChange.setOldRecordId(((Habitat)newRec.getValue(columnName)).getId());
                     			 historyRecord.setOldValue(((Habitat)origValue).getDescription());
                          		 historyRecord.setNewValue(((Habitat)newValue).getDescription());
+                    		 } else if (((String)columnName).equals(Occurrence.METADATA)) {
+                    			 historyChange.setOldRecordId(((Metadata)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldValue(((Metadata)origValue).getDataSetTitle());
+                         		 historyRecord.setNewValue(((Metadata)newValue).getDataSetTitle());
                     		 } else {
                     			String origValueString = (origValue == null) ? null : origValue.toString(),
                          			   newValueString = (newValue == null) ? null : newValue.toString(); 
@@ -1843,9 +1847,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     	}
                     }
                 } else if (data instanceof AuthorOccurrence) { 
-                	AuthorOccurrence newRec = (AuthorOccurrence)data;
-                	// Save the HistoryChange object
-                    sess.save(historyChange);
+                	AuthorOccurrence newRec = (AuthorOccurrence)data;                	
                 	//delete == 0 ...edit information about Author in occurrence
                 	//delete == 1 ...delete Auhtor from occurrence
                 	//aoInsert == 1 ...add new Author to occurrence                      
@@ -1872,6 +1874,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                         	hist.setNewValue(newRec.getAuthor().getWholeName());
 	                        hist.setOldValue(null);
                         }
+                        // Save the HistoryChange object
+                        sess.save(historyChange);
                         // Save History record
                         sess.save(hist);                                                       
                 	} else {
@@ -1902,7 +1906,10 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
 	                           			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
 	                      		hist.setOldValue(origValueString);
-	                           	hist.setNewValue(newValueString);	                            
+	                           	hist.setNewValue(newValueString);
+	                            // Save the HistoryChange object
+	                            sess.save(historyChange);
+	                            // Save the History object
 	                            sess.save(hist);  
                             }
                         }
@@ -1915,6 +1922,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                         Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
                         Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
                         if (!origValue.equals(newValue)) {
+                        	System.out.println(" >> DIFFERENT_COLUMN: " + (String)cols.get(i));
                             // Read record from THISTORYCOLUMN first                           	
                             res = sess.createCriteria(HistoryColumn.class)
                                 .add(Restrictions.eq(HistoryColumn.TABLENAME, PlantloreConstants.ENTITY_HABITAT))

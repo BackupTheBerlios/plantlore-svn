@@ -154,7 +154,7 @@ public class HistoryCtrl {
         	   logger.debug("Button OK was press.");
         	   model.commitUpdate();
         	   model.deleteHistory(model.getResultRows(), true);
-        	   model.searchEditHistory();
+        	   model.searchEditHistory(model.getData());
         	   model.processResult(1,model.getDisplayRows());
         	   view.getTable().setModel(new HistoryTableModel(model));
         	   int resultRows = model.getResultRows();
