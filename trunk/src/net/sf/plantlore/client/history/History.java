@@ -24,7 +24,6 @@ import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.HistoryChange;
-import net.sf.plantlore.common.record.HistoryColumn;
 import net.sf.plantlore.common.record.HistoryRecord;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.common.record.Occurrence;
@@ -41,8 +40,12 @@ import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author Lada
+ * History model. Contains bussines logic and data fields of the History. Implements
+ * operations including search history data, undo, cleare database.
+ * 
+ * @author Lada Oberreiterova
+ * @version 1.0 
+ * 
  */
 public class History extends Observable {
     
@@ -53,47 +56,29 @@ public class History extends Observable {
     /** Exception with details about an error */
     private String error = null;
     /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 6;    
+    private static final int DEFAULT_DISPLAY_ROWS = 12;    
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;   
     /** Index of the first record shown in the table */
     private int currentFirstRow;
     /** Information about current display rows*/
-    private String displayRow;    
-    
-    //*******Informations about searching Result from database*****//
+    private String displayRow;          
     /** Result of the search query */
     private int resultId = 0;
-    /** List of data (results of a search query) displayed in the table */
+    /** List of data (results of a search query) displayed in the view dialog */
     private ArrayList<HistoryRecord> historyDataList = new ArrayList<HistoryRecord>();     
-    // seznam editovanych objektu (potrebny pro hromadne potvrzeni update)
+    /** List of editing object */
     private ArrayList<Object> editObjectList = new ArrayList<Object>();    
-    // informace pro uzivatele o record undo
-    private String messageUndo;
-
-    //************************************pro historii jednoho nalezu*********************/
-    //seznam id vsech oznacenych polozek
+    /** Information message */
+    private String messageUndo;    
+    /** List of identifier of selected item */
     private HashSet markListId = new HashSet();
-    //Seznam Item + maxIdItem (nejstarsi oznacene id pro dany Item=sloupec)
+    /** List of pairs (Item, identifier of the oldest change of this Item) */
     private ArrayList<Object[]> markItem = new ArrayList<Object[]>();
-    //Informuje o tom, zda byla zvolena volba "SelectAll"
-    private boolean selectAll;    
-    
-    //*********************Record of history, ... ***************************************//   
-    private Object data;
-    private Occurrence occurrence;
-    private Habitat habitat;
-    private AuthorOccurrence authorOccurrence;
-    private HistoryRecord historyRecord;
-    private HistoryChange historyChange;
-    private Publication publication;
-    private Author author;
-    private Village village;
-    private Territory territory;
-    private Phytochorion phytochorion;
-    private Metadata metadata;
-    
-     //	**************Informations about HistoryRecord*************//	
+    /** Information about useing function Select All*/
+    private boolean selectAll;
+    /** Information about useing function Unselected All*/
+    private boolean unselectedAll;    
     /** Name of the table where value was changed*/
     private String tableName;  
     /** Name of the column where value was changed*/
@@ -112,16 +97,19 @@ public class History extends Observable {
     private String oldValue;      
    /** Name of user who did changed*/
     private String nameUser;
-    
-    //**************Informations about occurrences***************//
-    /** Name of plant for specified occurrenc*/
+    /** Name of plant for specific occurrence*/
     private String namePlant;
-    /** Name of author for specified occurrenc*/
+    /** Name of author for specific occurrence*/
     private String nameAuthor;
-    /** Informaciton about location for specified occurrenc*/
-    private String location;
+    /** Informaciton about location for specific occurrence*/
+    private String location;    
     
-    //********************************************************//          
+    /** Instances of Record */
+    private Object data;        
+    private HistoryRecord historyRecord;
+    private HistoryChange historyChange;
+         
+    /** */    
     private Hashtable<String, Integer> authorsOccurrenceHash;
     private Hashtable<String, Integer> occurrenceHash; 
     private Hashtable<String, Integer> authorHash;
@@ -130,7 +118,7 @@ public class History extends Observable {
     private Hashtable<String, Integer> publicationHash;
     private Hashtable<String, Enum> editTypeHash;
     
-    //*********************************************************//
+    /** Constants used for description of errors */
     public static final String ERROR_SEARCH_RECORD = L10n.getString("Error.historyRecordSearchFailed");
     public static final String ERROR_SEARCH_DATA = L10n.getString("Error.historyDataSearchFailed");
     public static final String ERROR_SEARCH_OBJECT = L10n.getString("Error.historyObjectSearchFailed");
@@ -138,7 +126,12 @@ public class History extends Observable {
     public static final String ERROR_PROCESS = L10n.getString("Error.historyProcessResultsFailed");
     public static final String ERROR_UPDATE = L10n.getString("Error.historyUpdateResultsFailed");
     public static final String ERROR_DELETE = L10n.getString("Error.historyDeleteResultsFailed");  
-        
+    public static final String ERROR_CLEAR_DATABASE = L10n.getString("Error.historyClearDatabase");
+    public static final String ERROR_CLEAR_HISTORY = L10n.getString("Error.historyClearHistory");
+    public static final String ERROR_PARSE_DATE = L10n.getString("Error.historyParseData");
+    public static final String ERROR_NUMBER_ROWS = L10n.getString("Error.historyGetNumberRows");
+    public static final String ERROR_NO_RIGHTS = L10n.getString("Error.historyNoRights"); 
+    
     /**
      * Creates a new instance of History - history of Occurrences, Habitats, Authors, 
      * Publications, Metadata, Territories, Phytochorions, Villages
@@ -163,7 +156,7 @@ public class History extends Observable {
     public History(DBLayer database, int idObj)
     {
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
-       this.database = database;       
+       this.database = database;                     
        
        SelectQuery query = null;
        int resultIdRecord = 0;
@@ -190,8 +183,14 @@ public class History extends Observable {
     	   setError(ERROR_SEARCH_RECORD); 
        } else {
     	   
-    	   occurrence = (Occurrence)object[0];    	   
+    	   Occurrence occurrence = (Occurrence)object[0];    	   
     	   setData(occurrence);
+    	   
+    	   //Check rights
+    	   if(! hasRights(occurrence.getCreatedWho().getId())) {
+    		   setError(ERROR_NO_RIGHTS);
+    		   return;
+    	   }
     	   
 	       //Save basic information about specific occurrence 
 	       setNameAuthor(getAllNameOfAuthors(getAllAuthors(occurrence, 0)));
@@ -214,7 +213,7 @@ public class History extends Observable {
      *  Creates a new instance of History - history of specific habitat 
      *  @param database Instance of a database management object
      *  @param idObj integer containing identifier of specific habitat
-     *  @param infoHabitat
+     *  @param infoHabitat 
      * */
     public History(DBLayer database, int idObj, String infoHabitat)
     {
@@ -246,8 +245,14 @@ public class History extends Observable {
     	   setError(ERROR_SEARCH_RECORD); 
        } else {
     	   
-    	   habitat = (Habitat)object[0];    	   
+    	   Habitat habitat = (Habitat)object[0];    	   
     	   setData(habitat);
+
+    	   //Check rights
+    	   if(! hasRights(habitat.getCreatedWho().getId())) {
+    		   setError(ERROR_NO_RIGHTS);
+    		   return;
+    	   }
     	   
     	   //TODO
 	       //Save basic information about specific habitat	             	      	  
@@ -267,7 +272,9 @@ public class History extends Observable {
      * @param data object containing specific occurrence or habitat
      */     
     public void searchEditHistory(Object data)
-    {      	    	
+    {    
+    	//Cleare historyDataList
+    	historyDataList.clear();
         //Create new Select query
         SelectQuery query = null; 
         int resultIdEdit = 0;
@@ -303,6 +310,8 @@ public class History extends Observable {
      */
     public void searchWholeHistoryData() {
         
+    	// Cleare historyDataList
+    	historyDataList.clear();
         //Create new Select query
         SelectQuery query = null;
         int resultIdWHistory = 0;
@@ -334,51 +343,59 @@ public class History extends Observable {
         if (this.resultId != 0) {
             int currentRow = getResultRows();
             logger.debug("Rows in the result: "+currentRow);
-            logger.debug("Max available rows: "+(from+count-1));
+            logger.debug("Max available rows: "+(from+count-1));            
            
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
-            int to = Math.min(currentRow, from+count-1);           
+            int to = Math.min(currentRow, from+count-1);             
             if (to <= 0) {
             	historyDataList = new ArrayList<HistoryRecord>(); 
             	setDisplayRows(0);
             	setCurrentDisplayRows("0-0");
+            } else if (historyDataList.size() >= to) {
+            	logger.debug("Retrieving query results: 1 - " + to);
+            	setCurrentDisplayRows(from+ "-" + to);
+            	setCurrentFirstRow(from);
             } else {
-                logger.debug("Retrieving query results: 1 - "+to);
-                setCurrentDisplayRows(from+ "-" + to);
-                try {                	 
-                     // Retrieve selected row interval 
-                	Object[] objectHistory;
-                 	try {
-                 		objectHistory = database.more(this.resultId, 0, to-1);  
-                 	} catch(RemoteException e) {
-                     	System.err.println("RemoteException- processEditResult, more");
-                     	logger.debug("RemoteException- processEditResult, more");
-                     	return;
-                     }                   
-                    int countResult = objectHistory.length;  
-                    logger.debug("Results retrieved. Count: "+ countResult);
-                    // Create storage for the results
-                    this.historyDataList = new ArrayList<HistoryRecord>();
-                    // Cast the results to the HistoryRecord objects
-                    for (int i=0; i<countResult; i++ ) {                    							
-						Object[] objHis = (Object[])objectHistory[i];
-                        this.historyDataList.add((HistoryRecord)objHis[0]);
-                    }                               
+                logger.debug("Retrieving query results: 1 - "+ to);
+                setCurrentDisplayRows(from+ "-" + to);                              	 
+                // Retrieve selected row interval 
+            	Object[] objectHistory;
+             	try {
+             		objectHistory = database.more(this.resultId, 0, to-1);  
+             	} catch(RemoteException e) {
+             		logger.error("Remote exception caught in History (processResult). Details: "+e.getMessage());
+        			setError(ERROR_SEARCH_DATA);
+        			setChanged();
+                    notifyObservers();
+                 	return;                                                                                       
                 } catch (DBLayerException e) {                  
-                    logger.error("Processing search results failed: "+e.toString());   
-                    setError(this.ERROR_PROCESS);
-                }    
-                // Update current first displayed row (only if data retrieval was successful).
-                if (!this.isError()) {
-                    logger.info("Results successfuly retrieved");                   
-                    setCurrentFirstRow(from);
+                    logger.error("Processing search results failed: " + e.getMessage());   
+                    setError(ERROR_PROCESS);
+                    setChanged();
+                    notifyObservers();
+                    return;
+                }  
+                if (objectHistory == null) {
+                	logger.error("tHistoryChange doesn`t contain required data");
+                	setError(ERROR_PROCESS);
+                    setChanged();
+                    notifyObservers();
+                    return;
                 }
-            }
-            // Tell observers to update
-            setChanged();
-            notifyObservers();
-            // Clean error flag 
-            this.error = null;
+                int countResult = objectHistory.length;  
+                logger.debug("Results retrieved. Count: "+ countResult);                
+                this.historyDataList = new ArrayList<HistoryRecord>();
+                // Cast the results to the HistoryRecord objects
+                for (int i=0; i<countResult; i++ ) {                    							
+					Object[] objHis = (Object[])objectHistory[i];
+                    this.historyDataList.add((HistoryRecord)objHis[0]);
+                    logger.debug("RESULT: " + ((HistoryRecord)objHis[0]).getId());
+                }
+               
+                // Update current first displayed row                
+                logger.info("Results successfuly retrieved");                   
+                setCurrentFirstRow(from);
+            }                        
          }         
     }
     
@@ -397,7 +414,8 @@ public class History extends Observable {
         initMetadataHash();
         	    	
     	//read record from younger to older until selected row        
-    	for( int i=0; i < toResult; i++) {    		
+    	for( int i=0; i < toResult; i++) {    
+    		if (isError()) return;
     		//init history data 
     		historyRecord = (HistoryRecord)historyDataList.get(i);    		
     		historyChange = historyRecord.getHistoryChange();
@@ -432,9 +450,8 @@ public class History extends Observable {
     	
     	//take record from younger to older
     	for( int i=0; i < countResult; i++) {
-    		if (! markListId.contains(i)) {
-    			continue;
-    		}
+    		if (isError())return;
+    		if (! markListId.contains(i)) continue;    		
     		
     		// init history data about editing concerned with record
     		historyRecord = (HistoryRecord)historyDataList.get(i);    		
@@ -454,10 +471,11 @@ public class History extends Observable {
      *   @param isDelete int containing informaciton about insertion or erasure of record. 
      */
     public void undoInsertDelete(int isDelete) {
-        if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)){
-             Object[] object = searchObject("Occurrence",recordId);             
-             Occurrence occurrence = (Occurrence)object[0];             
-             occurrence.setDeleted(isDelete);              
+        if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)){        	
+        	Object[] object = searchObject("Occurrence",recordId);        	        	
+        	if (isError()) return; //tOccurrence doesn`t contain required data        	       		        		
+        	Occurrence occurrence = (Occurrence)object[0];             
+            occurrence.setDeleted(isDelete);                      	     	 
              //Add to list of changed Record
              if (!editObjectList.contains((Record)occurrence))                 
                 editObjectList.add((Record)occurrence);       
@@ -474,7 +492,8 @@ public class History extends Observable {
                     editObjectList.add((Record)authorOccurrence);                 
             }                                     
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {
-             Object[] object = searchObject("AuthorOccurrence",recordId);  
+             Object[] object = searchObject("AuthorOccurrence",recordId);               
+             if (isError()) return; //tAuthorOccurrence doesn`t contain required data
              AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];
              authorOccurrence.setDeleted(isDelete);             
              //Add to list of changed Record             
@@ -482,28 +501,31 @@ public class History extends Observable {
                 editObjectList.add((Record)authorOccurrence);             
        } else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {            
                Object[] object = searchObject("Habitat",recordId);  
+               if (isError()) return; //tHabitat doesn`t contain required data
                Habitat habitat = (Habitat)object[0];
                habitat.setDeleted(isDelete);
                //Add to list of changed Record             
                if (!editObjectList.contains((Record)habitat))                 
                    editObjectList.add((Record)habitat);             
         } else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
-             Object[] object = searchObject("Metadata",recordId);  
+             Object[] object = searchObject("Metadata",recordId); 
+             if (isError()) return; //tMetadata doesn`t contain required data
              Metadata metadata = (Metadata)object[0];
              metadata.setDeleted(isDelete);
              //Add to list of changed Record             
              if (!editObjectList.contains((Record)metadata))                 
                 editObjectList.add((Record)metadata);             
         } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
-             Object[] object = searchObject("Publication",recordId);  
+             Object[] object = searchObject("Publication",recordId);
+             if (isError()) return; //tPublication doesn`t contain required data
              Publication publication = (Publication)object[0];
              publication.setDeleted(isDelete);
              //Add to list of changed Record             
              if (!editObjectList.contains((Record)publication))                 
                 editObjectList.add((Record)publication);             
-        } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {
-             logger.debug("AUTHOR HISTORY: "+ isDelete);
-             Object[] object = searchObject("Author",recordId);   
+        } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {             
+             Object[] object = searchObject("Author",recordId);  
+             if (isError()) return; //tAuthor doesn`t contain required data
              Author author = (Author)object[0];
              author.setDeleted(isDelete);
              //Add to list of changed Record             
@@ -521,7 +543,7 @@ public class History extends Observable {
         
         //init history data about editing concerned with record
         columnName = historyRecord.getHistoryColumn().getColumnName();    		    			
-        oldRecordId = historyChange.getOldRecordId();                        	           
+        oldRecordId = historyRecord.getOldRecordId();                        	           
         oldValue = historyRecord.getOldValue();
         
         if (tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {
@@ -573,6 +595,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record AuthorOccurrence where id = authorOccurrenceId 
     		Object[] object = searchObject("AuthorOccurrence", authorOccId);
+    		if (isError()) return; //tAuthorOccurrence doesn`t contain required data
             authorOccurrence = (AuthorOccurrence)object[0];
         }     	                 
                 
@@ -646,6 +669,7 @@ public class History extends Observable {
         if (!contain) {
         	// Select record Occurrence where id = occurrenceId 
             Object[] objectOcc = searchObject("Occurrence",occurrenceId);
+            if (isError()) return; //tOccurrence doesn`t contain required data
             occ = (Occurrence)objectOcc[0];                    	
         }    
                 
@@ -665,6 +689,7 @@ public class History extends Observable {
             if (oldRecordId > 0 ) {
                 //Select record Plant where id = oldRocordId 
                 Object[] object = searchObject("Plant",oldRecordId);
+                if (isError()) return; //tPlant doesn`t contain required data
                 Plant plant = (Plant)object[0];
                 //Set old value to attribute plantID
                 occ.setPlant(plant);
@@ -708,6 +733,7 @@ public class History extends Observable {
                         time = df.parse( oldValue );
                 } catch (ParseException e) {
                         logger.error("Parse time failed. "+ e);
+                        setError(ERROR_PARSE_DATE);
                 }
                 occ.setTimeCollected(time);
                 logger.debug("Set selected value for update of attribute Time.");
@@ -735,6 +761,7 @@ public class History extends Observable {
                 //Select record Publication where id = oldRocordId 
                 if (oldRecordId > 0){
                     Object[] objectPubl = searchObject("Publication",oldRecordId);
+                    if (isError()) return; //tPublication doesn`t contain required data
                     Publication publication = (Publication)objectPubl[0];
                     //Set old value to attribute publicationID
                     occ.setPublication(publication);
@@ -747,6 +774,7 @@ public class History extends Observable {
         		//Select record Publication where id = oldRocordId 
 	            if (oldRecordId > 0){
 	                Object[] objectMetadata = searchObject("Metadata",oldRecordId);
+	                if (isError()) return; //tMetadata doesn`t contain required data
 	                Metadata metadata = (Metadata)objectMetadata[0];
 	                //Set old value to attribute metadataID
 	                occ.setMetadata(metadata);
@@ -759,6 +787,7 @@ public class History extends Observable {
         		//Select record Publication where id = oldRocordId 
 	            if (oldRecordId > 0){
 	                Object[] objectHabitat = searchObject("Habitat",oldRecordId);
+	                if (isError()) return; //tHabitat doesn`t contain required data
 	                Habitat habitat = (Habitat)objectHabitat[0];
 	                //Set old value to attribute habitatID
 	                occ.setHabitat(habitat);
@@ -783,8 +812,8 @@ public class History extends Observable {
     /**
      * Rollback data editing concerned with specific habitat
      */
-    public void undoHabitat() {
-                         
+    public void undoHabitat() {            	
+    	
         int habitatId = historyChange.getRecordId();	        
         Habitat hab = null;
     	int placings = 0;
@@ -803,7 +832,8 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Habitat where id = habitatId 
-    		Object[] object = searchObject("Habitat",habitatId);        
+    		Object[] object = searchObject("Habitat",habitatId);
+    		if (isError()) return; //tHabitat doesn`t contain required data
             hab = (Habitat)object[0];
         } 
                              
@@ -845,6 +875,7 @@ public class History extends Observable {
                 //Select record Village where id = oldRocordId 
                 if (oldRecordId != 0){
                         Object[] objectVill = searchObject("Village",oldRecordId);
+                        if (isError()) return; //tVillage doesn`t contain required data
                         Village village = (Village)objectVill[0];
                 hab.setNearestVillage(village);
                 logger.debug("Set selected value for update of attribute NearesVillage.");
@@ -856,6 +887,7 @@ public class History extends Observable {
                 // Select record Phytochoria where id = oldRocordId 
                 if (oldRecordId != 0){
                         Object[] objectPhyt = searchObject("Phytochorion",oldRecordId);
+                        if (isError()) return; //tPhytochorion doesn`t contain required data
                         Phytochorion phytochorion = (Phytochorion)objectPhyt[0];
                         hab.setPhytochorion(phytochorion);
                         logger.debug("Set selected value for update of attribute Phytochorion.");
@@ -867,8 +899,9 @@ public class History extends Observable {
                 // Select record Territory where id = oldRocordId 
                 if (oldRecordId != 0){
                         Object[] objectTerr = searchObject("Territory",oldRecordId);
+                        if (isError()) return; //tTerritory doesn`t contain required data
                         Territory territory = (Territory)objectTerr[0];
-                        hab.setTerritory(territory);
+                        hab.setTerritory(territory);                                                            
                         logger.debug("Set selected value for update of attribute Territory.");
                 }else {
                         logger.error("UNDO - Incorrect oldRecordId for Territory.");
@@ -915,6 +948,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record Publication where id = publicationId 
     		Object[] object = searchObject("Publication", publicationId);
+    		if (isError()) return; //tPublication doesn`t contain required data
             publication = (Publication)object[0];
         } 
             	        
@@ -993,6 +1027,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record Author where id = authorId 
     		Object[] object = searchObject("Author", authorId);
+    		if (isError()) return; //tAuthor doesn`t contain required data
             author = (Author)object[0];
         } 	
        
@@ -1066,7 +1101,7 @@ public class History extends Observable {
     			if (metadataId == listOccId) {
     				contain = true;
     				placings = i; 
-    				author = (Author)(editObjectList.get(i));
+    				metadata = (Metadata)(editObjectList.get(i));
     				break;
     			}
     		}
@@ -1075,6 +1110,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record Metadata where id = metadataId 
     		Object[] object = searchObject("Metadata", metadataId);
+    		if (isError()) return; //tMetadata doesn`t contain required data
     	    metadata = (Metadata)object[0];
         }
     	
@@ -1178,6 +1214,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record Phytochorion where id = phytochorionId 
     		Object[] object = searchObject("Phytochorion", phytId);
+    		if (isError()) return; //tPhytochorion doesn`t contain required data
             phytochorion = (Phytochorion)object[0];     
         }
     	
@@ -1224,6 +1261,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record Village where id = villageId 
     		Object[] object = searchObject("Village", villageId);
+    		if (isError()) return; //tVillage doesn`t contain required data
             village = (Village)object[0];     
         }
        
@@ -1268,6 +1306,7 @@ public class History extends Observable {
     	if (!contain) {
         	// Select record Territory where id = territoryId 
     		Object[] object = searchObject("Territory", territoryId);
+    		if (isError()) return; //tTerritory doesn`t contain required data
     		territory = (Territory)object[0];     
         }
     	        
@@ -1291,7 +1330,7 @@ public class History extends Observable {
      * 
      * @param typeObject string containing information about type of object
      * @param id int containing identifier of record
-     * @return object defined by parameters typeObject and id
+     * @return object[] array of object defined by parameters typeObject and id
      */
     public Object[] searchObject(String typeObject, int id) {       
     	SelectQuery query = null;
@@ -1349,22 +1388,22 @@ public class History extends Observable {
             setChanged();
             notifyObservers();
         }
-       
-        //TODO
+              
 	   if (object == null) {
 		   logger.error("t"+typeObject+ " doesn't contain required data");  
 		   setError(ERROR_SEARCH_OBJECT);		   
 		   //Tell observers to update
            setChanged();
-           notifyObservers();
-	   } 	   
+           notifyObservers();           
+	   } 	 
        return object; 	       	          	              	        
     }
     
     /**     
      * Seach all authors concerned with specific occurrence
-     * @param occurrence 
-     * @param idDelete 
+     * @param occurrence specific occurrence
+     * @param idDelete int containing information about type of author - active, inactive
+     * @return object[] names of authors for specific occurrence
      */
     public Object[] getAllAuthors(Occurrence occurrence, int isDelete) {        
         
@@ -1397,22 +1436,14 @@ public class History extends Observable {
             setChanged();
             notifyObservers();
         }     
-        
-        //TODO
-        if(objects == null ) {
-        	logger.error("tAuthorOccurrence doesn't contain required data");  
- 		    setError(ERROR_SEARCH_AUTHOR);
- 		    //Tell observers to update
-            setChanged();
-            notifyObservers();
-        }
-        
+               
        return objects;
     }
     
     /**
      *  Get names of authors for specific occurrence
      *  @param objects  
+     *  @return String containing names of authors for specific occurrence
      */
     public String getAllNameOfAuthors(Object[] objects) {
         if (objects == null)
@@ -1440,7 +1471,8 @@ public class History extends Observable {
         Enum key;
         initEditTypeHash();
         
-    	int count = editObjectList.size();        
+    	int count = editObjectList.size();
+              	
     	for (int i=0; i< count; i++) {
     		try {
     			logger.debug("Object for update: "+ ((Record)editObjectList.get(i)).getId());                         
@@ -1457,13 +1489,15 @@ public class History extends Observable {
 	       	    //Tell observers to update
 	            setChanged();
 	            notifyObservers();
+	            return;
 	        } catch (DBLayerException e) {
 	        	logger.error("Update data failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
 	            setError(ERROR_UPDATE); 
 	            //Tell observers to update
 	            setChanged();
 	            notifyObservers();
-	        }                
+	            return;
+	        } 
        }    	
     	//Create array of editing object and call notifyObservers
         informMethod(editType);
@@ -1471,7 +1505,7 @@ public class History extends Observable {
     
     /**
      *  Create array of editing object and give this array to parrent
-     *  @param editType
+     *  @param editType containing list of type of editing object 
      */
     public void informMethod(ArrayList<Enum> editType) {
         int count = editType.size();
@@ -1493,8 +1527,8 @@ public class History extends Observable {
        
     /**
      * Delete selected data from history table. During delete data from table tHistoryChange verify foring key from table tHistory.
-     * @param toResult
-     * @param typeHistory
+     * @param toResult identifier of the oldest changes which will be restored
+     * @param typeHistory containing information about type of history (whole history or history of record)
      */
     public void deleteHistory(int toResult, boolean typeHistory) {
    	
@@ -1553,7 +1587,7 @@ public class History extends Observable {
     /**
      * Get number of record from tHistory, whitch has the value of attribute cChangeId equals id
      * @param id identifier of historyChange record 
-     * @return int number of record from tHistory, whitch has the value of attribute cChangeId equals id
+     * @return int number of record from tHistory, where attribute cChangeId is equaled prameter "id"
      */
     public int getRelationshipHistoryChange(int id){    	
     	SelectQuery query = null;
@@ -1591,7 +1625,7 @@ public class History extends Observable {
     	for (int i=0; i<count; i++) {
     		Object[] itemList = (Object[])(markItem.get(i));
     		String item = (String)itemList[0];
-    		Integer maxId = (Integer)itemList[1];      		
+    		Integer maxId = (Integer)itemList[1];      		      		
     		oldValue = ((HistoryRecord)historyDataList.get(maxId)).getOldValue(); 
     		messageUndo = messageUndo + item + "  -->  " + oldValue + "\n";
     	}       
@@ -1608,8 +1642,9 @@ public class History extends Observable {
     }
     
     /**
-     *  Create message containing details about record
-     *  @param resultNumber 
+     *  Create message containing details of record
+     *  @param resultNumber identifier of selected record
+     *  @return String containing details of record 
      */
     public String getDetailsMessage(int resultNumber) {
         
@@ -1627,6 +1662,7 @@ public class History extends Observable {
               int occurrenceId = historyChange.getRecordId();
               //Select record Occurrence where id = occurrenceId 
               Object[] objectOcc = searchObject("Occurrence",occurrenceId);
+              if (isError()) return ""; //tOccurrence doesn`t contain required data
               Occurrence occurrence = (Occurrence)objectOcc[0]; 
               detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_OCCURRENCE + "."+ Occurrence.PLANT) + ": "+ occurrence.getPlant().getTaxon()+"\n";
@@ -1646,17 +1682,19 @@ public class History extends Observable {
         }else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {
         	  //Get details for Publication
               Object[] object = searchObject("Habitat",recordId);
+              if (isError()) return ""; //tHabitat doesn`t contain required data
               Habitat habitat = (Habitat)object[0];
               detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NEARESTVILLAGE) + ": "+ occurrence.getHabitat().getNearestVillage().getName() + "\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.DESCRIPTION) + ": "+ occurrence.getHabitat().getDescription() + "\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.TERRITORY) + ": "+ occurrence.getHabitat().getTerritory().getName() + "\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.PHYTOCHORION) + ": "+ occurrence.getHabitat().getPhytochorion().getName() +" (Code: " + occurrence.getHabitat().getPhytochorion().getCode() + ")\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.COUNTRY) + ": " + occurrence.getHabitat().getCountry() +"\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NOTE) + ": " + occurrence.getHabitat().getNote() +"\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NEARESTVILLAGE) + ": "+ habitat.getNearestVillage().getName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.DESCRIPTION) + ": "+ habitat.getDescription() + "\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.TERRITORY) + ": "+ habitat.getTerritory().getName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.PHYTOCHORION) + ": "+ habitat.getPhytochorion().getName() +" (Code: " + habitat.getPhytochorion().getCode() + ")\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.COUNTRY) + ": " + habitat.getCountry() +"\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NOTE) + ": " + habitat.getNote() +"\n";
     	}else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
               //Get details for Publication
-              Object[] object = searchObject("Publication",recordId); 
+              Object[] object = searchObject("Publication",recordId);
+              if (isError()) return ""; //tPublication doesn`t contain required data
               Publication publication = (Publication)object[0];
               detailsMessage = L10n.getString("History.DetailsPublication") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PUBLICATION +"."+ Publication.COLLECTIONNAME) + ": " + publication.getCollectionName() + "\n";
@@ -1667,7 +1705,8 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PUBLICATION +"."+ Publication.NOTE) + ": " + publication.getNote() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {
               //Get details for Author
-              Object[] object = searchObject("Author",recordId);   
+              Object[] object = searchObject("Author",recordId); 
+              if (isError()) return ""; //tAuthor doesn`t contain required data
               Author author = (Author)object[0];
               detailsMessage = L10n.getString("History.DetailsAuthor") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOR +"."+ Author.WHOLENAME)+ ": " + author.getWholeName() + "\n";
@@ -1680,7 +1719,8 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOR +"."+ Author.NOTE)+ ": "  + author.getNote() + "\n";
         }  else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
              //Get details for Metadata
-              Object[] object = searchObject("Metadata",recordId);   
+              Object[] object = searchObject("Metadata",recordId); 
+              if (isError()) return ""; //tMetadata doesn`t contain required data
               Metadata metadata = (Metadata)object[0];
               detailsMessage = L10n.getString("History.DetailsMetadata") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString("History.DetailsMetadata.Institution") + "\n";
@@ -1705,19 +1745,22 @@ public class History extends Observable {
         } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
               //Get details for Phytochorion
               Object[] object = searchObject("Phytochorion",recordId); 
+              if (isError()) return ""; //tPhytochorion doesn`t contain required data
               Phytochorion  phytochorion = (Phytochorion)object[0];
               detailsMessage = L10n.getString("History.DetailsPhytochorion") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PHYTOCHORION +"."+ Phytochorion.NAME) + ": " + phytochorion.getName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PHYTOCHORION +"."+ Phytochorion.CODE) + ": " + phytochorion.getCode() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
               //Get details for Territory
-              Object[] object = searchObject("Territory",recordId); 
+              Object[] object = searchObject("Territory",recordId);
+              if (isError()) return ""; //tTerritory doesn`t contain required data
               Territory territory = (Territory)object[0];
               detailsMessage = L10n.getString("History.DetailsTerritory") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_TERRITORY +"."+ Territory.NAME) + ": " + territory.getName() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
               //Get details for Village
-              Object[] object = searchObject("Village",recordId);  
+              Object[] object = searchObject("Village",recordId);
+              if (isError()) return ""; //tVillage doesn`t contain required data
               Village village = (Village)object[0];
               detailsMessage = L10n.getString("History.detailsVillage") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_VILLAGE +"."+ Village.NAME) + ": " + village.getName() + "\n";
@@ -1731,76 +1774,175 @@ public class History extends Observable {
     }
     
     /**
-     *  Delete all date from tables tHistorz and tHistoryChange
+     *  Delete all date from tables tHistory and tHistoryChange
      */
     public void clearHistory() {        
         
+    	//TODO uzavrit to do dlouhotrvajici transakce
         try {
             //delete data from table tHistory
             database.conditionDelete(HistoryRecord.class, HistoryRecord.ID, ">", 0);
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tHistory failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_HISTORY);       	   
+            setChanged();
+            notifyObservers();    
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tHistory failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_HISTORY);            
+            setChanged();
+            notifyObservers(); 
+            return;
+        }        
         
         try {            
             //delete data from  table tHistoryChange
             database.conditionDelete(HistoryChange.class, HistoryChange.ID, ">", 0);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tHistoryChange failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_HISTORY);       	   
+            setChanged();
+            notifyObservers();  
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tHistoryChange failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_HISTORY);            
+            setChanged();
+            notifyObservers();
+            return;
+        }        
         
     }
     
     /**
-     * Delete all record with cdelete equals 1 from table tAuthors, tAuthorsOccurrences, tOccurrences, tHabitats, tPublications
+     * Delete records from table tAuthors, tAuthorsOccurrences, tOccurrences, tHabitats, tPublications with condition cdelete == 1 
      */
     public void clearDatabase() {
+    	
+    	//TODO - osetrit proti smazani zaznamu na ktery existuje FK
+    	//Uzavrit to do dlouho trvajici transakce, at se to provede bud vse nebo nic 
+    	
         try {
-            
+            // delete data from table tAuthor with contidion cDelete == 1
             database.conditionDelete(Author.class, Author.DELETED, "=", 1);
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        }
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tAuthor failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_DATABASE);       	   
+            setChanged();
+            notifyObservers();   
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tAuthor failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_DATABASE);            
+            setChanged();
+            notifyObservers();  
+            return;
+        }        
         try {
-            database.conditionDelete(AuthorOccurrence.class, AuthorOccurrence.DELETED, "=", 1);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
+        	//delete data from table tAuthorOccurrence with contidion cDelete > 0
+            database.conditionDelete(AuthorOccurrence.class, AuthorOccurrence.DELETED, ">", 0);
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tAuthorOccurrence failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_DATABASE);       	   
+            setChanged();
+            notifyObservers();
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tAuthorOccurrence failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_DATABASE);            
+            setChanged();
+            notifyObservers();
+            return;
+        }        
         try {
+        	// delete data from table tOccurrence with contidion cDelete == 1
             database.conditionDelete(Occurrence.class, Occurrence.DELETED, "=", 1);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tOccurrence failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_DATABASE);       	   
+            setChanged();
+            notifyObservers();
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tOccurrence failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_DATABASE);            
+            setChanged();
+            notifyObservers();
+            return;
+        }        
         try {
+        	// delete data from table tHabitat with contidion cDelete == 1
             database.conditionDelete(Habitat.class, Habitat.DELETED, "=", 1);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tHabitat failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_DATABASE);       	   
+            setChanged();
+            notifyObservers();
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tHabitat failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_DATABASE);            
+            setChanged();
+            notifyObservers();
+            return;
+        }        
         try {
+        	// delete data from table tPublication with contidion cDelete == 1
             database.conditionDelete(Publication.class, Publication.DELETED, "=", 1);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
+        } catch (RemoteException e) {
+        	logger.error("Delete data from tPublication failed.Remote exception caught in History. Details: "+e.getMessage());
+       	    setError(ERROR_CLEAR_DATABASE);       	   
+            setChanged();
+            notifyObservers();
+            return;
+        } catch(DBLayerException e) {
+        	logger.error("Delete data from tPublication failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+            setError(ERROR_CLEAR_DATABASE);            
+            setChanged();
+            notifyObservers();
+            return;
+        }        
+    }
+    
+    /**
+     * Check right for working with history of the record 
+     * @param createWhoId identifier of user who inserted the record into database
+     * @return true if user has right to work with history of record
+     */
+    public boolean hasRights(Integer createWhoId) {
+        String[] group;     
+        try {
+            // Administrator can work with history of any record
+            if (database.getUserRights().getAdministrator() == 1) {
+                return true;                        
+            } else { 
+                // Check whether the user can work with history of all the records
+                if (database.getUserRights().getEditAll() == 1) {
+                    return true;
+                }
+                // Check whether the user can work with history of the record through some other user
+                group = database.getUserRights().getEditGroup().split(",");                
+                // Check whether someone in the group is an owner of the publication
+                for (int i=0;i<group.length;i++) {
+                    if (createWhoId.toString().equals(group[i])) {
+                        return true;
+                    }
+                }
+                // No rights to work with history of the record
+                return false;
+            }
+        } catch (RemoteException e) {
+        	logger.error("GetUserRight() failed. Remote exception caught in History. Details: "+e.getMessage());       	                
         }
+        return false;
     }
     
      //***************************//
     //****Init Hashtable*********//
     //**************************//
     
+    /** Init hash table for AuthorOccurence */
     private void initAuthorsOccurrenceHash() {
         authorsOccurrenceHash = new Hashtable<String, Integer>(3);
         authorsOccurrenceHash.put(AuthorOccurrence.AUTHOR, 1);
@@ -1808,6 +1950,7 @@ public class History extends Observable {
         authorsOccurrenceHash.put(AuthorOccurrence.NOTE, 3);
     }
     
+    /** Init hash table for Occurence */
     private void initOccurrenceHash() {
     	occurrenceHash = new Hashtable<String, Integer>(10); 
         occurrenceHash.put(Occurrence.PLANT, 1);
@@ -1823,6 +1966,7 @@ public class History extends Observable {
         occurrenceHash.put(Occurrence.HABITAT, 11);
     }    
     
+    /** Init hash table for Habitat */
     private void initHabitatHash() {
     	habitatHash = new Hashtable<String, Integer>(11);         
         habitatHash.put(Habitat.QUADRANT, 1);
@@ -1838,6 +1982,7 @@ public class History extends Observable {
         habitatHash.put(Habitat.NOTE, 10);
     }    
     
+    /** Init hash table for Metadata */
     private void initMetadataHash() {
         metadataHash = new Hashtable<String, Integer>(16);
         metadataHash.put(Metadata.TECHNICALCONTACTNAME, 1);
@@ -1855,6 +2000,7 @@ public class History extends Observable {
         metadataHash.put(Metadata.BIOTOPETEXT, 13);        
     }
     
+    /** Init hash table for Publication */
     private void initPublicationHash() {
         publicationHash = new Hashtable<String, Integer>(6);
         publicationHash.put(Publication.COLLECTIONNAME, 1);
@@ -1865,6 +2011,7 @@ public class History extends Observable {
         publicationHash.put(Publication.URL, 6);      
     }
     
+    /** Init hash table for Author */
     private void initAuthorHash() {
         authorHash = new Hashtable<String, Integer>(7);
         authorHash.put(Author.WHOLENAME, 1);        
@@ -1876,6 +2023,7 @@ public class History extends Observable {
         authorHash.put(Author.NOTE, 7);        
     }              
     
+    /** Init hash table for editing object*/
     private void initEditTypeHash() {
         editTypeHash = new Hashtable<String, Enum>(5);
         editTypeHash.put("Occurrence", PlantloreConstants.Table.OCCURRENCE);                
@@ -1903,7 +2051,7 @@ public class History extends Observable {
     
     /**
      *  Checks whether an error flag is set.
-     *  return true if an error occured and error message is available, false otherwise
+     *  @return true if an error occured and error message is available, false otherwise
      */
     public boolean isError() {
         if (this.error != null) {
@@ -1919,18 +2067,10 @@ public class History extends Observable {
      */
     public String getError() {
         return this.error;
-    }
-    
-    
-    public Object getData() {
-    	return data;
-    }
-    
-    public void setData(Object data) {
-    	this.data = data;
-    }
+    }    
     
     /**
+     * Get information about selecting of all record
      * @return true if all recorda were selected.
      */
     public boolean getSelectAll() {
@@ -1938,74 +2078,158 @@ public class History extends Observable {
 	   }
 
     /**
-     * Set information if all records were selected. 
-     * @param selectAll
+     * Set information if all records were selected 
+     * @param selectAll true if all records were selected
      */
 	 public void setSelectAll(boolean selectAll) {
 		  this.selectAll = selectAll;		  
 	 } 
+
+    /**
+     * Get information about unselecting of all record
+     * @return true if all recorda were unselected.
+     */
+    public boolean getUnselectedAll() {
+		  return this.unselectedAll;		  
+	   }
+
+    /**
+     * Set information if all records were unselected 
+     * @param unselectedAll true if all records were unselected
+     */
+	 public void setUnselectedAll(boolean unselectedAll) {
+		  this.unselectedAll = unselectedAll;		  
+	 } 
+	 
+	/**
+	 * Get object whitch history of changes is displayed (Habitat or Occurrence) 
+	 * @return object whitch history of changes is displayed (Habitat or Occurrence)
+	 */ 
+    public Object getData() {
+    	return data;
+    }
+       
+    /**
+     * Set object whitch history of changes is displayed (Habitat or Occurrence)
+     * @param data object whitch history of changes is displayed (Habitat or Occurrence)
+     */
+    public void setData(Object data) {
+    	this.data = data;
+    }	
     
+    /**
+     * Get list of identifiers of selected items (history of record)
+     * @return list of identifiers of selected items (history of record)
+     */
 	 public HashSet getMarkListId() {
 		  return this.markListId;		  
 	   }
 
+	 /**
+	  * Set list of identifiers of selected items (history of record)
+	  * @param markListId list of identifiers of selected items (history of record)
+	  */
 	 public void setMarkListId(HashSet markListId) {
 		  this.markListId = markListId;		  
 	 } 
-	 
+	
+	 /**
+	  * Get list of pairs (Item, identifier of the oldest change of this Item
+	  * @return list of pairs (Item, identifier of the oldest change of this Item
+	  */
     public ArrayList<Object[]> getMarkItem() {
 		  return this.markItem;		  
 	   }
 
+    /**
+     * Set list of pairs (Item, identifier of the oldest change of this Item
+     * @param markItem list of pairs (Item, identifier of the oldest change of this Item
+     */
 	 public void setMarkItem(ArrayList<Object[]> markItem) {
 		  this.markItem = markItem;		  
 	 } 
+	 
+	 /**
+	  * Get results of a search query for dislpaying in history dialog
+	  * @return results of a search query for dislpaying in history dialog
+	  */
+	 public ArrayList<HistoryRecord> getHistoryDataList() {
+         return this.historyDataList;		  
+     }
+
+	 /**
+	  * Set results of a search query for dislpaying in history dialog
+	  * @param historyDataList results of a search query for dislpaying in history dialog
+	  */
+	public void setHistoryDataList(ArrayList<HistoryRecord> historyDataList) {
+	         this.historyDataList = historyDataList;		  
+	} 
+	
+	/**
+	 * Get information about current display rows
+	 * @return information about current display rows
+	 */
+	public String getCurrentDisplayRows() {
+		  return this.displayRow;		  
+	  }
+	
+	/**
+	 * Set information about current display rows
+	 * @param displayRow information about current display rows
+	 */
+	public void setCurrentDisplayRows(String displayRow) {
+	         this.displayRow = displayRow;		  
+	} 
+	
+	/**
+	 * Get message with information for user
+	 * @return message with information for user
+	 */
+	public String getMessageUndo() {
+		  return this.messageUndo;		  
+	  }
+	
+	/**
+	 * Set message with information for user
+	 * @param messageUndo message with information for user
+	 */
+	public void setMessageUndo(String messageUndo) {
+	         this.messageUndo = messageUndo;		  
+	} 
+
     
-    
-    //id vysledku po vyhledavani v db
+	 /**
+	  * Set result of a database operation. This is used only for search operations.
+      * @param resultId id of the SelectQuery result	  
+	  */
     public void setResultId(int resultId) {
         this.resultId = resultId;
     }
     
+    /**
+     *  Get results of last database operation. This is used only for search operations.
+     *  @return resultId identifying the SelectQuery result
+     */
     public int getResultId() {
         return this.resultId;
     }
     
+    /**
+     * Get the number of results for the current SelectQuery
+     * @return number of results for the current SelectQuery
+     */
     public int getResultRows() {
         int resultCount = 0;
         if (resultId != 0) try {
-                resultCount = database.getNumRows(resultId);        	
+             resultCount = database.getNumRows(resultId);        	
         } catch(RemoteException e) {
-                System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+        	logger.error("Get number of results failed.Remote exception caught in History. Details: "+e.getMessage());  
+        	setError(ERROR_NUMBER_ROWS);
         }
         return resultCount;
     }
-
-    public ArrayList<HistoryRecord> getHistoryDataList() {
-              return this.historyDataList;		  
-       }
-
-     public void setHistoryDataList(ArrayList<HistoryRecord> historyDataList) {
-              this.historyDataList = historyDataList;		  
-     } 
-    
-     public String getCurrentDisplayRows() {
-		  return this.displayRow;		  
-	   }
-
-     public void setCurrentDisplayRows(String displayRow) {
-              this.displayRow = displayRow;		  
-     } 
-     
-     public String getMessageUndo() {
-		  return this.messageUndo;		  
-	   }
-
-     public void setMessageUndo(String messageUndo) {
-              this.messageUndo = messageUndo;		  
-     } 
-     
-         /**
+        
+     /**
      *  Get index of the first row currently displayed in the list of record changes. This is an index in the results returned by a search query.
      *  @return index of the first row currently displayed in the list of history
      */
@@ -2037,26 +2261,50 @@ public class History extends Observable {
         this.displayRows = rows;
     }
     
+    /**
+     * Get name of the plant
+     * @return name of the plant
+     */
     public String getNamePlant() {
 		  return this.namePlant;
 	   }
 
+    /**
+     * Set name of the plant
+     * @param namePlant name of the plant
+     */
     public void setNamePlant(String namePlant) {
 		  this.namePlant = namePlant;
 	}   
     
+    /**
+     * Get name of the author
+     * @return name of the author
+     */
     public String getNameAuthor() {
 		  return this.nameAuthor;
 	   }
 
+    /**
+     * Set name of the author
+     * @param nameAuthor name of the author
+     */
 	 public void setNameAuthor(String nameAuthor) {
 		  this.nameAuthor = nameAuthor;
 	 } 
 	 
+	 /**
+	  * Get name of the nearest village where the record was found 
+	  * @return name of the nearest village where the record was found
+	  */
 	 public String getLocation() {
 		  return this.location;
 	   }
-	
+	 
+	/**
+	 * Set name of the nearest village where the record was found
+	 * @param location name of the nearest village where the record was found 
+	 */
 	 public void setLocation(String location) {
 		  this.location = location;
 	}    

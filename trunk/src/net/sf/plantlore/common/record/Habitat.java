@@ -34,6 +34,7 @@ public class Habitat extends Record implements Deletable {
     private Double latitude;
     private Double longitude;
     private Integer deleted;
+    private User createdWho;
     private String note;
     
     /** Constants with column mapping (used for building select queries) */
@@ -48,6 +49,7 @@ public class Habitat extends Record implements Deletable {
     public static final String LATITUDE = "latitude";    
     public static final String LONGITUDE = "longitude";    
     public static final String DELETED = "deleted";    
+    public static final String CREATEDWHO = "createdWho"; 
     public static final String NOTE = "note";
     
     public static final String VILLAGE = "village";
@@ -93,6 +95,7 @@ public class Habitat extends Record implements Deletable {
 		else if(column.equals(QUADRANT)) setQuadrant((String)value);
 		else if(column.equals(DESCRIPTION)) setDescription((String)value);
 		else if(column.equals(COUNTRY)) setCountry((String)value);
+		else if(column.equals(CREATEDWHO)) setCreatedWho((User)value); 
 		else if(column.equals(ALTITUDE)) {
 			if (value != null && value instanceof String) 
 				setAltitude(Double.parseDouble((String) value));
@@ -446,4 +449,24 @@ public class Habitat extends Record implements Deletable {
     public void setNote(String note) {
         this.note = note;
     }
+    
+    /**
+     *  Get user who created this Habitat 
+     *  @return User who created this Habitat
+     *  @see setCreatedWho
+     */
+    public User getCreatedWho() {        
+        //obligatory
+        return this.createdWho;
+    }
+    
+    /**
+     *  Set user who created this Habitat
+     *  @param createdWho user who created this Habitat
+     *  @see getCreatedWho
+     */
+    public void setCreatedWho(User createdWho) {
+        this.createdWho = createdWho;
+    }    
+    
 }

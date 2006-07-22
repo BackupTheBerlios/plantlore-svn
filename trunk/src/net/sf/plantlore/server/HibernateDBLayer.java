@@ -233,6 +233,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
         }
+        if (data instanceof Habitat) {
+            Habitat hab = (Habitat)data;
+            hab.setCreatedWho(this.plantloreUser);
+            data = hab;
+        }
         if (data instanceof Publication) {
             Publication pub = (Publication)data;
             pub.setCreatedWho(this.plantloreUser);
@@ -295,6 +300,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setCreatedWho(this.plantloreUser);
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
+        }
+        if (data instanceof Habitat) {
+            Habitat hab = (Habitat)data;
+            hab.setCreatedWho(this.plantloreUser);
+            data = hab;
         }
         if (data instanceof Publication) {
             Publication pub = (Publication)data;
@@ -983,6 +993,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
         }
+        if (data instanceof Habitat) {
+            Habitat hab = (Habitat)data;
+            hab.setCreatedWho(this.plantloreUser);
+            data = hab;
+        }
         if (data instanceof Publication) {
             Publication pub = (Publication)data;
             pub.setCreatedWho(this.plantloreUser);
@@ -1003,6 +1018,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setCreatedWho(this.plantloreUser);
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
+        }
+        if (data instanceof Habitat) {
+            Habitat hab = (Habitat)data;
+            hab.setCreatedWho(this.plantloreUser);
+            data = hab;
         }
         if (data instanceof Publication) {
             Publication pub = (Publication)data;
@@ -1053,6 +1073,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
         }
+        if (data instanceof Habitat) {
+            Habitat hab = (Habitat)data;
+            hab.setCreatedWho(this.plantloreUser);
+            data = hab;
+        }
         if (data instanceof Publication) {
             Publication pub = (Publication)data;
             pub.setCreatedWho(this.plantloreUser);
@@ -1073,6 +1098,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setCreatedWho(this.plantloreUser);
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
+        }
+        if (data instanceof Habitat) {
+            Habitat hab = (Habitat)data;
+            hab.setCreatedWho(this.plantloreUser);
+            data = hab;
         }
         if (data instanceof Publication) {
             Publication pub = (Publication)data;
@@ -1601,8 +1631,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	        } else {
 	        	return;
 	        }
-	        historyChange.setRecordId(recordId);            
-            historyChange.setOldRecordId(0);
+	        historyChange.setRecordId(recordId);                        
             historyChange.setOperation(INSERT);
             historyChange.setWho(this.plantloreUser);
             historyChange.setWhen(new java.util.Date());
@@ -1626,6 +1655,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }                
             HistoryRecord history = new HistoryRecord();
             history.setHistoryColumn(column);
+            history.setOldRecordId(0);
             history.setNewValue(null);
             history.setOldValue(null);
             // Save into the database
@@ -1670,8 +1700,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 	table = "";
                 }
                 if (delete == 1) {
-                    // CDELETE was set to 1, we are deleting record
-                    historyChange.setOldRecordId(0);
+                    // CDELETE was set to 1, we are deleting record                    
                     historyChange.setOperation(DELETE);
                     historyChange.setRecordId(id);
                     historyChange.setWhen(new java.util.Date());
@@ -1692,6 +1721,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     }
                     Object[] hc = sr.get();
                     hist.setHistoryChange(historyChange);
+                    hist.setOldRecordId(0);
                     hist.setNewValue(null);
                     hist.setOldValue(null);
                     hist.setHistoryColumn((HistoryColumn)hc[0]);
@@ -1704,8 +1734,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 (data instanceof Territory) || (data instanceof Phytochorion) ||
                 (data instanceof Village) || (data instanceof Metadata) ||
                 (data instanceof Occurrence) || (data instanceof Habitat) ||
-                (data instanceof AuthorOccurrence)) {                               
-                historyChange.setOldRecordId(0);                
+                (data instanceof AuthorOccurrence)) {                                                               
                 historyChange.setOperation(UPDATE);
                 historyChange.setWhen(new java.util.Date());
                 historyChange.setWho(this.plantloreUser);
@@ -1812,23 +1841,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     		// Create new history record
                     		HistoryRecord historyRecord = new HistoryRecord();
                     		// Save OldRecordId if neccessary
-                    		                    		
-                    		// TODO: Save oldRecordId
                     		 if (((String)columnName).equals(Occurrence.PLANT)) {
-                    			 //TODO: tato situace by nastat nemela - zmenou kytky dojde k vlozeni noveho nalezu
-                    			 historyChange.setOldRecordId(((Plant)newRec.getValue(columnName)).getId());
+                    			 //this situation is improbability (new occurrence is insert into database during editinig of plant)   
+                    			 historyRecord.setOldRecordId(((Plant)newRec.getValue(columnName)).getId());
                     			 historyRecord.setOldValue(((Plant)origValue).getTaxon());
                          		 historyRecord.setNewValue(((Plant)newValue).getTaxon());
                     		 } else if (((String)columnName).equals(Occurrence.PUBLICATION)) {
-                    			 historyChange.setOldRecordId(((Publication)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldRecordId(((Publication)newRec.getValue(columnName)).getId());
                     			 historyRecord.setOldValue(((Publication)origValue).getReferenceCitation());
                          		 historyRecord.setNewValue(((Publication)newValue).getReferenceCitation());
                     		 } else if (((String)columnName).equals(Occurrence.HABITAT)) {
-                    			 historyChange.setOldRecordId(((Habitat)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldRecordId(((Habitat)newRec.getValue(columnName)).getId());
                     			 historyRecord.setOldValue(((Habitat)origValue).getDescription());
                          		 historyRecord.setNewValue(((Habitat)newValue).getDescription());
                     		 } else if (((String)columnName).equals(Occurrence.METADATA)) {
-                    			 historyChange.setOldRecordId(((Metadata)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldRecordId(((Metadata)newRec.getValue(columnName)).getId());                    			 
                     			 historyRecord.setOldValue(((Metadata)origValue).getDataSetTitle());
                          		 historyRecord.setNewValue(((Metadata)newValue).getDataSetTitle());
                     		 } else {
@@ -1836,6 +1863,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                          			   newValueString = (newValue == null) ? null : newValue.toString(); 
                     			historyRecord.setOldValue(origValueString);
                          		historyRecord.setNewValue(newValueString);
+                         		historyRecord.setOldRecordId(0);
                     		 }
                     		                     		 
                     		 //Save the HistoryChange object
@@ -1867,6 +1895,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                         HistoryRecord hist = new HistoryRecord(); 
                         hist.setHistoryChange(historyChange);                        
                         hist.setHistoryColumn((HistoryColumn)hc[0]);
+                        hist.setOldRecordId(0);
                         if ( newRec.getDeleted() == 1) {
 	                        hist.setNewValue(null);
 	                        hist.setOldValue(newRec.getAuthor().getWholeName());
@@ -1903,6 +1932,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	                            HistoryRecord hist = new HistoryRecord();
 	                            hist.setHistoryChange(historyChange);	                            	                           
 	                            hist.setHistoryColumn((HistoryColumn)colNames[0]);  
+	                            hist.setOldRecordId(0);
 	                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
 	                           			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
 	                      		hist.setOldValue(origValueString);
@@ -1941,23 +1971,30 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             // Save OldRecordId if neccessary
                             
                     		 //TODO: Save oldRecordId
-                    		 if (((String)cols.get(i)).equals(Habitat.TERRITORY)) {                    			 
-                    			 historyChange.setOldRecordId(((Territory)newRec.getValue((String)cols.get(i))).getId());
+                    		 if (((String)cols.get(i)).equals(Habitat.TERRITORY)) { 
+                    			 logger.debug("TERRITORY: " + ((Territory)newRec.getValue((String)cols.get(i))).getId());
+                    			 logger.debug("TERRITORY: " + ((Territory)newRec.getValue((String)cols.get(i))).getName());
+                    			 hist.setOldRecordId(((Territory)newRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((Territory)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((Territory)newRec.getValue((String)cols.get(i))).getName());
                     		 } else if (((String)cols.get(i)).equals(Habitat.PHYTOCHORION)) {
-                    			 historyChange.setOldRecordId(((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
+                    			 logger.debug("PHYTOCHORION: " + ((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
+                    			 logger.debug("PHYTOCHORION: " + ((Phytochorion)newRec.getValue((String)cols.get(i))).getName());
+                    			 hist.setOldRecordId(((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((Phytochorion)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((Phytochorion)newRec.getValue((String)cols.get(i))).getName());
                     		 } else if (((String)cols.get(i)).equals(Habitat.VILLAGE)) {
-                    			 historyChange.setOldRecordId(((Village)newRec.getValue((String)cols.get(i))).getId());
+                    			 logger.debug("VILLAGE: " + ((Village)newRec.getValue((String)cols.get(i))).getId());
+                    			 logger.debug("VILLAGE: " + ((Village)newRec.getValue((String)cols.get(i))).getName());
+                    			 hist.setOldRecordId(((Village)newRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((Village)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((Village)newRec.getValue((String)cols.get(i))).getName());
                     		 } else {
                     			 String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                            			    newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                       			 hist.setOldValue(origValueString);
-                           		 hist.setNewValue(newValueString);                    			
+                           		 hist.setNewValue(newValueString);  
+                           		 hist.setOldRecordId(0);
                     		 }
                     		 
                             // Save the HistoryChange object
@@ -1997,7 +2034,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                         			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                    			hist.setOldValue(origValueString);
-                        	hist.setNewValue(newValueString);                           
+                        	hist.setNewValue(newValueString); 
+                        	hist.setOldRecordId(0);
                             sess.save(hist);                            
                         }
                     }
@@ -2030,7 +2068,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                         			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                    			hist.setOldValue(origValueString);
-                        	hist.setNewValue(newValueString);                            
+                        	hist.setNewValue(newValueString);  
+                        	hist.setOldRecordId(0);
                             sess.save(hist);     
                         }
                     }
@@ -2063,7 +2102,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                         			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                    			hist.setOldValue(origValueString);
-                        	hist.setNewValue(newValueString);                            
+                        	hist.setNewValue(newValueString); 
+                        	hist.setOldRecordId(0);
                             sess.save(hist);                            
                         }
                     }
@@ -2096,7 +2136,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                         			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                    			hist.setOldValue(origValueString);
-                        	hist.setNewValue(newValueString);                            
+                        	hist.setNewValue(newValueString); 
+                        	hist.setOldRecordId(0);
                             sess.save(hist);
                         }
                     }                    
@@ -2129,7 +2170,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                         			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                    			hist.setOldValue(origValueString);
-                        	hist.setNewValue(newValueString);                            
+                        	hist.setNewValue(newValueString); 
+                        	hist.setOldRecordId(0);
                             sess.save(hist);
                         }
                     }
@@ -2162,7 +2204,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                         			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
                    			hist.setOldValue(origValueString);
-                        	hist.setNewValue(newValueString);                           
+                        	hist.setNewValue(newValueString);  
+                        	hist.setOldRecordId(0);
                             sess.save(hist);
                         }
                     }

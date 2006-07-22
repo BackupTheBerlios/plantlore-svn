@@ -15,30 +15,52 @@ import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- *
- * @author  Lada
+ * View for the main WholeHistory dialog (part of the WholeHistory MVC). Used for displaying the search results.
+ * @author  Lada Oberreiterová
+ * @version 1.0
  */
 public class WholeHistoryView extends javax.swing.JDialog implements Observer{
-    
-    //Whole History model
+       
+	private static final long serialVersionUID = -3610428060548385487L;
+	/** Model of the History MVC*/
     private History model;  
   
-    /** Creates new form WholeHistoryView */
+    /**
+     * Creates new form WholeHistoryView
+     * @param model model of the WholeHistory MVC
+     * @param parent parent of this dialog
+     * @param modal boolean flag whether the dialog should be modal or not
+     */
     public WholeHistoryView(History model, java.awt.Frame parent, boolean modal) {
         
         super(parent, modal);
         this.model = model;
+        // Register observer
+        model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        // Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
         this.tableHistoryList.setRowSelectionAllowed(true);
         this.tableHistoryList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        this.tableHistoryList.setModel(new WholeHistoryTableModel(model));                
+        this.tableHistoryList.setModel(new WholeHistoryTableModel(model));     
+        previousButton.setEnabled(false);
+        if (this.tableHistoryList.getRowCount() <= model.getDisplayRows()) {
+        	nextButton.setEnabled(false);
+        }
     }
     
+    /**
+     * Reload the view dialog or display some kind of error.
+     */
     public void update(Observable observable, Object object)
     {
+    	// Check whether we have some kind of error to display
+        if (model.isError()) {
+            showErrorMessage(model.getError());                          
+            return;
+        } 
     }
     
     /** This method is called from within the constructor to
@@ -218,40 +240,50 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+      
     
     /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new WholeHistoryView(null, new javax.swing.JFrame(), true).setVisible(true);
-            }
-        });
-    }
-  
-    /**
-     *
+     * Close this dialog.
      */
     public void close() {
         dispose();
     }
     
-     public int messageUndo(String message) {
-    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.Undo") + "  "+ message, L10n.getString("Question.UndoTitle"), JOptionPane.OK_CANCEL_OPTION);
+    /**
+     *  Display generic error message.
+     *  @param message Message we want to display
+     */
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
+    }  
+    
+    /**
+     * Display generic message
+     * @param message Message we want to display
+     * @return information about user selection. <ul><li> 0 if user press OK button</li> <li>1 if user press Cancle button</li></ul>
+     */
+    public int messageUndo(String message) {
+    	int okCancle = 1;
+    	if (message.equals("cHistory")) {
+    		okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.ClearHistoryMessage"), L10n.getString("Question.ClearHistoryMessageTitle"), JOptionPane.OK_CANCEL_OPTION);
+    	}else {
+    		okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.Undo") + "  "+ message, L10n.getString("Question.UndoTitle"), JOptionPane.OK_CANCEL_OPTION);
+    	}
     	return okCancle;
     }
-     
+    
+    /**
+     * Display generic warning message
+     * @param message Message we want to display     
+     */
     public void messageSelection() {
     	JOptionPane.showMessageDialog(this, L10n.getString("Warning.EmptySelection"), L10n.getString("Warning.EmptySelectionTitle"), JOptionPane.ERROR_MESSAGE);               
     }
-    
-    public int messageClearHistory() {
-    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.ClearHistoryMessage"), L10n.getString("Question.ClearHistoryMessageTitle"), JOptionPane.OK_CANCEL_OPTION);
-    	return okCancle;
-    }
-    
-    /**Rows to display */
+      
+    /**
+     * Get numger of rows to displaying on one page
+     * @return numger of rows to displaying on one page
+     */
     public Integer getDisplayRows() { 
         Integer countRows;
         try {
@@ -262,7 +294,10 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer{
         return countRows;
     }
     
-    /**Rows to display*/
+    /**
+     * Set numger of rows to displaying on one page
+     * @param value numger of rows to displaying on one page
+     */
     public void setDisplayRows(Integer value) {
         this.toDisplayValueTextField.setText(value.toString());
     }  

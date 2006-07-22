@@ -13,30 +13,45 @@ import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- *
- * @author  Lada
+ * View for the DetailsHistory dialog (part of the DetailsHistory MVC). Used for displaying the detailed information about the record.
+ * 
+ * @author  Lada Oberreiterova
+ * @version 1.0
  */
 public class DetailsHistoryView extends javax.swing.JDialog implements Observer {
     
-    /**
-     * Creates new form DetailsHistoryView
+    
+	private static final long serialVersionUID = 2142390888514121396L;
+	
+	/**
+     * Creates new form DetailsHistoryView     
+     * @param parent parent of this dialog
+     * @param modal boolean flag whether the dialog should be modal or not
      */
     public DetailsHistoryView(javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents(); 
+        //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
         this.detailsTextArea.setEditable(false);
     }
-    
+        
     public void update(Observable observable, Object object) {
     } 
     
+    /**
+     * Display generic message containing detailed information about the record
+     * @param detailsMessage Message we want to display     
+     */
     public void setDetailsMessage(String detailsMessage) {
         this.detailsTextArea.setText(detailsMessage);
     }
     
+    /**
+     * Close this dialog.    
+     */
     public void close() {
         dispose();
     }
@@ -102,18 +117,7 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DetailsHistoryView(new javax.swing.JDialog(), true).setVisible(true);
-            }
-        });
-    }
-    
+      
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton closeButton;
     protected javax.swing.JTextArea detailsTextArea;

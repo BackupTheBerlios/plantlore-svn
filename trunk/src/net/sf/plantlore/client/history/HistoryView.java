@@ -12,40 +12,56 @@ import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.table.TableColumn;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- *
- * @author  Lada
+ * View for the main History dialog (part of the History MVC). Used for displaying the search results.
+ * @author  Lada Oberreiterová
+ * @version 1.0
  */
 public class HistoryView extends javax.swing.JDialog implements Observer{
-    
-    //History model
-    private History model;  
-    //data
-    private Object[][] data;
+        
+	private static final long serialVersionUID = -6749177153586329145L;
+	/** Model of the History MVC*/
+	private History model;      
     
     /**
      * Creates new form HistoryView
+     * @param model model of the History MVC
+     * @param parent parent of this dialog
+     * @param modal boolean flag whether the dialog should be modal or not
      */
     public HistoryView(History model, java.awt.Frame parent, boolean modal) {
                 
         super(parent, modal);
         this.model = model;
+        // Register observer
+        model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
-        getTable().setModel(new HistoryTableModel(model));           
+        getTable().setModel(new HistoryTableModel(model));         
+        previousButton.setEnabled(false);
+        if (getTable().getRowCount() <= model.getDisplayRows()) {
+        	nextButton.setEnabled(false);
+        }
     }
     
+    /**
+     * Reload the view dialog or display some kind of error.
+     */
       public void update(Observable observable, Object object)
     {                                
-       
+    	  //Check whether we have some kind of error to display
+          if (model.isError()) {
+              showErrorMessage(model.getError());                          
+              return;
+          } 
     } 
-    
+      
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -332,20 +348,21 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents       
     
     /**
-     * @param args the command line arguments
+     *  Display generic error message.
+     *  @param message Message we want to display
      */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new HistoryView(null, new javax.swing.JFrame(), true).setVisible(true);
-            }
-        });
-    }
-    
-     
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
+    }  
+   
+    /**
+     * Display generic message
+     * @param message Message we want to display
+     * @return information about user selection. <ul><li> 0 if user press OK button</li> <li>1 if user press Cancle button</li> <li>2 if warnnig message has been displayed</li></ul>
+     */
     public int messageUndo(String message) {
         if (message.equals("")) {
             JOptionPane.showMessageDialog(this, L10n.getString("Warning.EmptySelection"), L10n.getString("Warning.EmptySelectionTitle"), JOptionPane.ERROR_MESSAGE);               
@@ -356,28 +373,44 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         }
     }
 
+    /**
+     * Close this dialog.     
+     */
     public void close() {
         dispose();
     }
   
+    /**
+     * Get main table whitch displays changes of Records
+     * @return main table whitch displays changes of Records
+     */
     public JTable getTable()
     {
     	return this.tableEditList;
     }
     
-    /** Total results */
+    /** 
+     * Set number of rows in results
+     * @param resultRows number of rows in results
+     */
     public void setCountResutl(Integer resultRows)
     {
     	this.totalResultValueLabel.setText(resultRows.toString());
     }
     
-    /**Displayed rows */
+    /**
+     * Set number of rows displayed on active page 
+     * @param displayedRows number of rows displayed on active page
+     */
     public void setCurrentRowsInfo(String displayedRows)
     {
     	this.displayedValueLabel.setText(displayedRows);
     }
     
-    /**Rows to display */
+    /**
+     * Get numger of rows to displaying on one page
+     * @return numger of rows to displaying on one page
+     */
     public Integer getDisplayRows() {
          Integer countRows;
         try {
@@ -388,7 +421,10 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         return countRows;
     }
     
-    /**Rows to display*/
+    /**
+     * Set numger of rows to displaying on one page
+     * @param value numger of rows to displaying on one page
+     */
     public void setDisplayRows(Integer value) {
         this.toDisplayValueTextField.setText(value.toString());
     }  

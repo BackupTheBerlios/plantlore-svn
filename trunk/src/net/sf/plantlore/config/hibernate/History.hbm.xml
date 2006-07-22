@@ -25,6 +25,10 @@
                 length="4096"
                 name="newValue"
                 not-null="false"                
-                type="java.lang.String"/>                                              
+                type="java.lang.String"/>   
+      <property column="COLDRECORDID"                
+                name="oldRecordId"
+                not-null="false"
+                type="java.lang.Integer"/>                                                           
    </class>
 </hibernate-mapping>

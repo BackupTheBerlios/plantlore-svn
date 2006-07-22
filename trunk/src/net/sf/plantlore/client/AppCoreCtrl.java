@@ -379,7 +379,7 @@ public class AppCoreCtrl {
 		detailCtrl = new DetailCtrl(detailModel, detailView);
 	}
 
-	private void setDatabaseDependentCommandsEnabled(boolean enabled) {
+	private void setDatabaseDependentCommandsEnabled(boolean enabled) {				
 		settingsAction.setEnabled(enabled);
 		printAction.setEnabled(enabled);
 		exportAction.setEnabled(enabled);
@@ -399,7 +399,7 @@ public class AppCoreCtrl {
 		addAction.setEnabled(enabled);
 		editAction.setEnabled(enabled);
 		deleteAction.setEnabled(enabled);
-
+		
 		selectAllAction.setEnabled(enabled);
 		selectNoneAction.setEnabled(enabled);
 		invertSelectedAction.setEnabled(enabled);
@@ -407,6 +407,13 @@ public class AppCoreCtrl {
 		prevPageAction.setEnabled(enabled);
 		view.recordsPerPage.setEnabled(enabled);
 		refreshAction.setEnabled(enabled);
+		
+		if (model.getAccessRights() != null) 
+			if	(model.getAccessRights().getAdministrator() != 1) {
+				dataMetadataAction.setEnabled(false);
+				dataWholeHistoryAction.setEnabled(false);
+				dataUserAction.setEnabled(false);
+		} 
 	}
 
 	/**
@@ -1192,21 +1199,19 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Undo selected");
-			// toto volani historie nebude v menu, ale jako tlacitko pro vybrany
-			// zaznam
-			// o vybranem zaznamu predame informace, ktere chceme o nem v
-			// historii zobrazit
-			// jmeno rosliny, jmeno autora a lokaci a idOccurrences
-
-			historyModel = new History(model.getDatabase(), model
-					.getSelectedOccurrence());
+			System.out.println("History od record: "+ model.getDatabase());	
+			
+			historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());
+			if (historyModel.isError()) {				
+				JOptionPane.showMessageDialog(view, historyModel.getError(), L10n.getString("Error.HistorySearchTitle"),
+						JOptionPane.WARNING_MESSAGE);				
+			} else {	
 			historyView = new HistoryView(historyModel, view, true);
 			historyCtrl = new HistoryCtrl(historyModel, historyView);
 			historyModel.addObserver(managerBridge);
 			historyView.setVisible(true);
+			}
 		}
-
 	}
 
 	class DataWholeHistoryAction extends AbstractAction {
@@ -1215,15 +1220,22 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			System.out.println("Whole history - Undo selected");
+			System.out.println("Whole history");
 
 			wholeHistoryModel = new History(model.getDatabase());
-			wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,
-					true);
-			wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel,
-					wholeHistoryView);
-			wholeHistoryModel.addObserver(managerBridge);
-			wholeHistoryView.setVisible(true);
+			if (wholeHistoryModel.isError()) {
+				//TODO: zjistit nejdrive o jakou chybu jde
+				JOptionPane.showMessageDialog(view, wholeHistoryModel.getError(), L10n.getString("Error.HistorySearchTitle"),
+						JOptionPane.WARNING_MESSAGE);				
+				logger.error("");
+			} else {			
+				wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,
+						true);
+				wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel,
+						wholeHistoryView);
+				wholeHistoryModel.addObserver(managerBridge);
+				wholeHistoryView.setVisible(true);
+			}
 		}
 	}
 

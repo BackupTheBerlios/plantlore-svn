@@ -26,22 +26,19 @@ public class HistoryChange extends Record {
     
     /** Parameters of the HistoryChange. For detailed explanation see data model documentation. */
     private Integer id;
-    private Occurrence occurrence;
-    private int recordId;
-    private int oldRecordId;
+    private int recordId;    
     private int operation;   
     private java.util.Date when;
     private User who;
     
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";     
-    public static final String RECORDID = "recordId";
-    public static final String OLDRECORDID = "oldRecordId";
+    public static final String RECORDID = "recordId";    
     public static final String OPERATION = "operation";
     public static final String WHEN = "when";
     public static final String WHO = "who";    
     
-    //public enum Column {ID, OCCURRENCE, RECORDID, OLDRECORDID, OPERATION, WHEN, WHO};
+    //public enum Column {ID, OCCURRENCE, RECORDID, OPERATION, WHEN, WHO};
     
     /**
      *   Default constructor to create new class HistoryChange
@@ -88,26 +85,6 @@ public class HistoryChange extends Record {
         this.recordId = recordId;
     }
 
-    /**
-     *   Get old identifier of the record before his changed. 
-     *   This is defined only in case if the identifier was changed.
-     *   @return identifier of the record before his changed. 
-     *   @see setOldRecordId
-     */
-    public int getOldRecordId() {
-        return this.oldRecordId;
-    }
-    
-    /**
-     *  Set old identifier of the record before his changed. 
-     *  This is defined only in case if the identifier was changed.
-     *  @param oldRecordId string containing identifier of the record before his changed.
-     *  @see getOldRecordId
-     */
-    public void setOldRecordId(int oldRecordId) {
-        this.oldRecordId = oldRecordId;
-    }    
-    
     /**
      *   Get operation which was used. See constants defined for different operations.
      *

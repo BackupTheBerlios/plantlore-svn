@@ -11,32 +11,34 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.apache.log4j.Logger;
 
 /**
+ * Controller for the DetailsHistory dialog (part of the DetailsHistory MVC).
  *
- * @author Lada
+ * @author Lada Oberreiterova
+ * @version 1.0
  */
 public class DetailsHistoryCtrl {
-    
-    private Logger logger;   
+     
+	/** View of the DerailsHistory MVC*/
     private DetailsHistoryView view;
     
-    /** Creates a new instance of DetailsHistoryCtrl */
+    /** 
+     * Creates a new instance of DetailsHistoryCtrl
+     * @param view View of the DerailsHistory MVC 
+     */
     public DetailsHistoryCtrl(DetailsHistoryView view) {
-        
-        logger = Logger.getLogger(this.getClass().getPackage().getName());              
+                          
         this.view = view;
-        
+        // Add action listeners to buttons
         view.closeButton.addActionListener(new closeButtonListener());
         view.helpButton.addActionListener(new helpButtonListener());
     }
-     
-  
-   /**
-    * On Cancel just hides the view.
-    *
-    */
+       
+    /** 
+     * ActionListener class controlling the <b>OK</b> button on the form.
+     * On Ok makes the model store() the preferences and hides the view.     
+     */
    class closeButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
@@ -45,13 +47,12 @@ public class DetailsHistoryCtrl {
    }
    
    /**
-    * On Help should call help.
-    *
+    * ActionListener class controlling the <b>HELP</b> button on the form.
+    * Display help viewer
     */
    class helpButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
-       {    	  
-    	   // Display help viewer            
+       {    	      	           
     	   System.out.println("Tady se bude volat Help!");
        }
    }

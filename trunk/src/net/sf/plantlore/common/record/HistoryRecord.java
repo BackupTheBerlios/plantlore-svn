@@ -19,6 +19,7 @@ public class HistoryRecord extends Record {
     private HistoryChange historyChange;
     private String oldValue;
     private String newValue;
+    private int oldRecordId;
     
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
@@ -26,8 +27,9 @@ public class HistoryRecord extends Record {
     public static final String HISTORYCHANGE = "historyChange";
     public static final String OLDVALUE = "oldValue";    
     public static final String NEWVALUE = "newValue";
+    public static final String OLDRECORDID = "oldRecordId";
 
-    //public enum Column {ID, HISTORYCOLUMN, HISTORYCHANGE, OLDVALUE, NEWVALUE};
+    //public enum Column {ID, HISTORYCOLUMN, HISTORYCHANGE, OLDVALUE, NEWVALUE, OLDRECORDID};
     
     /** Creates a new instance of HistoryRecord */
     public HistoryRecord() {
@@ -124,4 +126,25 @@ public class HistoryRecord extends Record {
     public void setNewValue(String newValue) {
         this.newValue = newValue;
     }
+    
+    /**
+     *   Get old identifier of the record before his changed. 
+     *   This is defined only in case if the identifier was changed.
+     *   @return identifier of the record before his changed. 
+     *   @see setOldRecordId
+     */
+    public int getOldRecordId() {
+        return this.oldRecordId;
+    }
+    
+    /**
+     *  Set old identifier of the record before his changed. 
+     *  This is defined only in case if the identifier was changed.
+     *  @param oldRecordId string containing identifier of the record before his changed.
+     *  @see getOldRecordId
+     */
+    public void setOldRecordId(int oldRecordId) {
+        this.oldRecordId = oldRecordId;
+    }    
+    
 }

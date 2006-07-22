@@ -12,11 +12,7 @@
       <property column="CRECORDID"                
                 name="recordId"
                 not-null="true"
-                type="java.lang.Integer"/>
-      <property column="COLDRECORDID"                
-                name="oldRecordId"
-                not-null="false"
-                type="java.lang.Integer"/>                
+                type="java.lang.Integer"/>      
       <property column="COPERATION"               
                 name="operation"
                 not-null="true"
