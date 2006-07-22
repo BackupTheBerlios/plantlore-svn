@@ -44,7 +44,7 @@ CREATE TABLE TAUTHORSOCCURRENCES (
     COCCURRENCEID      INTEGER NOT NULL,
     CID                INTEGER NOT NULL,
     CROLE              VARCHAR(20),
-    CNOTE  VARCHAR(4096),
+    CNOTE              VARCHAR(4096),
     CDELETE           SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
@@ -61,6 +61,7 @@ CREATE TABLE THABITATS (
     CLATITUDE          DOUBLE PRECISION,
     CLONGITUDE         DOUBLE PRECISION,
     CNOTE              VARCHAR(4096),
+    CCREATEWHO        INTEGER NOT NULL,
     CDELETE            SMALLINT DEFAULT 0 NOT NULL,
 PRIMARY KEY (CID));
 
@@ -71,14 +72,13 @@ CREATE TABLE THISTORY (
         CCHANGEID INTEGER NOT NULL,
         COLDVALUE VARCHAR(4096),
         CNEWVALUE VARCHAR(4096),
+        COLDRECORDID   INTEGER,
 PRIMARY KEY (CID));
 
 /* Table: THISTORYCHANGE */
 CREATE TABLE THISTORYCHANGE (
-    CID            SERIAL NOT NULL,
-    COCCURRENCEID  INTEGER  DEFAULT 0,
-    CRECORDID      INTEGER  DEFAULT 0 NOT NULL,
-    COLDRECORDID   INTEGER,
+    CID            SERIAL NOT NULL,    
+    CRECORDID      INTEGER  DEFAULT 0 NOT NULL,    
     COPERATION     SMALLINT  DEFAULT 0 NOT NULL,
     CWHEN          TIMESTAMP NOT NULL,
     CWHO           INTEGER NOT NULL,
@@ -160,12 +160,12 @@ PRIMARY KEY (CID));
 /* Table: TPUBLICATIONS */
 CREATE TABLE TPUBLICATIONS (
     CID                         SERIAL NOT NULL,
-    CCOLLECTIONNAME             VARCHAR(30),
+    CCOLLECTIONNAME             VARCHAR(255),
     CCOLLECTIONYEARPUBLICATION  SMALLINT,
-    CJOURNALNAME                VARCHAR(60),
-    CJOURNALAUTHORNAME          VARCHAR(30),
-    CREFERENCECITATION          VARCHAR(255) NOT NULL,
-    CREFERENCEDETAIL            VARCHAR(20),
+    CJOURNALNAME                VARCHAR(255),
+    CJOURNALAUTHORNAME          VARCHAR(255),
+    CREFERENCECITATION          VARCHAR(4096) NOT NULL,
+    CREFERENCEDETAIL            VARCHAR(100),
     CURL                        VARCHAR(100),
     CNOTE                       VARCHAR(4096),
     CCREATEWHO                  INTEGER NOT NULL,
@@ -246,6 +246,8 @@ ALTER TABLE TUSER ADD FOREIGN KEY (CRIGHTID) REFERENCES TRIGHT (CID);
 ALTER TABLE TAUTHORS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
 
 ALTER TABLE TPUBLICATIONS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
+
+ALTER TABLE THABITATS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
 
 CREATE USER plantlore
   PASSWORD 'plantlore'
@@ -339,10 +341,10 @@ INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (6, 'PUBLICATIO
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (7, 'TERRITORY', NULL);
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (8, 'VILLAGE', NULL);
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (9, 'PHYTOCHORION', NULL);
-INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (10, 'AUTHOROCCURRENCE', 'author');
-INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (11, 'AUTHOROCCURRENCE', 'role');
-INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (12, 'AUTHOROCCURRENCE', 'resultRevision');
-INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (13, 'OCCURRENCE', 'plant');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (10, 'AUTHOROCCURRENCE', 'role');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (11, 'AUTHOROCCURRENCE', 'note');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (12, 'OCCURRENCE', 'plant');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (13, 'OCCURRENCE', 'habitat');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (14, 'OCCURRENCE', 'yearCollected');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (15, 'OCCURRENCE', 'monthCollected');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (16, 'OCCURRENCE', 'dayCollected');
@@ -354,7 +356,7 @@ INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (21, 'OCCURRENC
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (22, 'OCCURRENCE', 'note');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (23, 'HABITAT', 'territory');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (24, 'HABITAT', 'phytochorion');
-INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (25, 'HABITAT', 'nearestVillage');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (25, 'HABITAT', 'village');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (26, 'HABITAT', 'quadrant');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (27, 'HABITAT', 'description');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (28, 'HABITAT', 'country');
@@ -387,7 +389,7 @@ INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (54, 'METADATA'
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (55, 'METADATA', 'biotopeText');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (56, 'METADATA', 'versionPlantsFile');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (57, 'PUBLICATION', 'collectionName');
-INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (58, 'PUBLICATION', 'collectionYearPublication');
+INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (58, 'PUBLICATION', 'collectionYearPUBLICATION');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (59, 'PUBLICATION', 'journalName');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (60, 'PUBLICATION', 'journalAuthorName');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (61, 'PUBLICATION', 'referenceCitation');
@@ -398,4 +400,3 @@ INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (65, 'VILLAGE',
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (66, 'TERRITORY', 'name');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (67, 'PHYTOCHORIA', 'name');
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (68, 'PHYTOCHORIA', 'code');
-
