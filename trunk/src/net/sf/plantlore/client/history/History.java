@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
@@ -74,7 +75,11 @@ public class History extends Observable {
     /** List of identifier of selected item */
     private HashSet markListId = new HashSet();
     /** List of pairs (Item, identifier of the oldest change of this Item) */
-    private ArrayList<Object[]> markItem = new ArrayList<Object[]>();
+    private ArrayList<Object[]> markItem = new ArrayList<Object[]>();    
+    /** Identifier of the oldest changes which will be restored */
+    private int toResult;
+    /** Containing information about type of history (false == whole history and true == history of record) */
+    private boolean typeHistory;
     /** Information about useing function Select All*/
     private boolean selectAll;
     /** Information about useing function Unselected All*/
@@ -213,7 +218,7 @@ public class History extends Observable {
      *  Creates a new instance of History - history of specific habitat 
      *  @param database Instance of a database management object
      *  @param idObj integer containing identifier of specific habitat
-     *  @param infoHabitat 
+     *  @param innfoHabitat 
      * */
     public History(DBLayer database, int idObj, String infoHabitat)
     {
@@ -1436,7 +1441,14 @@ public class History extends Observable {
             setChanged();
             notifyObservers();
         }     
-               
+          
+        if (objects == null) {
+        	logger.error("tAuthors doesn't contain required data");  
+ 		    setError(ERROR_SEARCH_AUTHOR);		    		   
+            setChanged();
+            notifyObservers();
+        }
+        
        return objects;
     }
     
@@ -1462,47 +1474,69 @@ public class History extends Observable {
     }
     
     /**
-     *  Update data in the database.
+     *  Update data in the database and delete selected data from history tables.
+     *  Operation is executed in a separate thread using Task class.
+     *  @param toResult identifier of the oldest changes which will be restored
+     *  @param typeHistory containing information about type of history (whole history or history of record)
+     *  @return instance of the Task with the long running operation (commitUpdate)
      */
-    public void commitUpdate() {    	                
+    public Task commitUpdate(int toResult, boolean typeHistory) {   
+    	this.toResult = toResult;
+    	this.typeHistory = typeHistory;
+    	
+    	final Task task = new Task() {    		    		
+    		public Object task() throws DBLayerException, RemoteException {
+    	
+		        ArrayList<Enum> editType = new ArrayList<Enum>();
+		        int count = editObjectList.size();
+		        boolean ok = false;
+		        String type;
+		        Enum key;
         
-        ArrayList<Enum> editType = new ArrayList<Enum>();
-        String type;
-        Enum key;
-        initEditTypeHash();
-        
-    	int count = editObjectList.size();
-              	
-    	for (int i=0; i< count; i++) {
-    		try {
-    			logger.debug("Object for update: "+ ((Record)editObjectList.get(i)).getId());                         
-                type = editObjectList.get(i).getClass().getSimpleName();
-                 if (editTypeHash.containsKey(type)) {
-                         key = (Enum)editTypeHash.get(type); 
-                         if(!editType.contains(key))
-                             editType.add(key);
-                }                                                     
-                database.executeUpdateHistory(editObjectList.get(i));
-	        } catch (RemoteException e) {
-	        	logger.error("Update data failed.Remote exception caught in History. Details: "+e.getMessage());
-	       	    setError(ERROR_UPDATE);
-	       	    //Tell observers to update
-	            setChanged();
-	            notifyObservers();
-	            return;
-	        } catch (DBLayerException e) {
-	        	logger.error("Update data failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-	            setError(ERROR_UPDATE); 
-	            //Tell observers to update
-	            setChanged();
-	            notifyObservers();
-	            return;
-	        } 
-       }    	
-    	//Create array of editing object and call notifyObservers
-        informMethod(editType);
+		        initEditTypeHash();
+            	    	
+		        ok = database.beginTransaction();
+		        if (!ok) {
+		            logger.debug("History.commitUpdate(): Can't create transaction. Another is probably already running.");
+		            throw new DBLayerException("Can't create transaction. Another already running.");
+		        }
+		        
+		        try {
+			    	for (int i=0; i< count; i++) {			    		
+			    			logger.debug("Object for update: "+ ((Record)editObjectList.get(i)).getId());                         
+			                type = editObjectList.get(i).getClass().getSimpleName();
+			                 if (editTypeHash.containsKey(type)) {
+			                         key = (Enum)editTypeHash.get(type); 
+			                         if(!editType.contains(key))
+			                             editType.add(key);
+			                }                                                     
+			                database.executeUpdateHistory(editObjectList.get(i));
+			    		}
+			    	//Delete selected data from history tables 
+			    	deleteHistory();
+		        } catch (RemoteException e) {
+		        	logger.error("Process UNDO failed. Remote exception caught in History. Details: "+e.getMessage());
+		        	database.rollbackTransaction();
+                    RemoteException remex = new RemoteException(ERROR_UPDATE + e);
+                    remex.setStackTrace(e.getStackTrace());
+                    throw remex; 		           
+		       	    
+		        } catch (DBLayerException e) {
+		        	logger.error("Process UNDO failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+		        	database.rollbackTransaction();
+                    DBLayerException dbex = new DBLayerException(ERROR_UPDATE + e);
+                    dbex.setStackTrace(e.getStackTrace());
+                    throw dbex; 		            
+		        } 
+		        database.commitTransaction();	    	
+		    	//Create array of editing object and call notifyObservers
+		        informMethod(editType);	    		    	        
+		        return null;
+    		}
+	    };
+	    return task;
     }
-    
+	    
     /**
      *  Create array of editing object and give this array to parrent
      *  @param editType containing list of type of editing object 
@@ -1526,11 +1560,11 @@ public class History extends Observable {
     }
        
     /**
-     * Delete selected data from history table. During delete data from table tHistoryChange verify foring key from table tHistory.
-     * @param toResult identifier of the oldest changes which will be restored
-     * @param typeHistory containing information about type of history (whole history or history of record)
+     * Delete selected data from history table. 
+     * During delete data from table tHistoryChange verify foring key from table tHistory. 
+     * Operation is executed in a separate thread using Task class.   
      */
-    public void deleteHistory(int toResult, boolean typeHistory) {
+    public void deleteHistory() throws DBLayerException, RemoteException {
    	
     	//take from younger record to older record
     	for( int i=0; i < toResult; i++) {
@@ -1544,18 +1578,17 @@ public class History extends Observable {
 	    	try {
 				database.executeDeleteHistory(historyRecord);
 				logger.debug("Deleting historyRecord successfully. Number of result: "+i);
-			} catch (RemoteException e) {				
-				logger.error("Deleting historyRecord failed.Remote exception caught in History. Details: "+e.getMessage());
-	       	    setError(ERROR_DELETE);
-	       	    //Tell observers to update
-	            setChanged();
-	            notifyObservers();
-			} catch (DBLayerException e) {				
-				logger.error("Deleting historyRecord failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-	            setError(ERROR_DELETE); 
-	            //Tell observers to update
-	            setChanged();
-	            notifyObservers();
+			} catch (RemoteException e) {								
+				logger.error("Process UNDO failed. Deleting historyRecord failed. Remote exception caught in History. Details: "+e.getMessage());	        	
+                RemoteException remex = new RemoteException(ERROR_DELETE + e);
+                remex.setStackTrace(e.getStackTrace());
+                throw remex; 		           
+			} catch (DBLayerException e) {								
+				logger.error("Process UNDO failed. Deleting historyRecord failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+	        	database.rollbackTransaction();
+                DBLayerException dbex = new DBLayerException(ERROR_DELETE + e);
+                dbex.setStackTrace(e.getStackTrace());
+                throw dbex; 		           	          
 			}
 			int countResult = getRelationshipHistoryChange(historyChange.getId());			
 			if (countResult == 0) {				
@@ -1563,17 +1596,16 @@ public class History extends Observable {
 					database.executeDeleteHistory(historyChange);
 					logger.debug("Deleting historyChange successfully.");
 				} catch (RemoteException e) {
-					logger.error("Deleting historyChange failed.Remote exception caught in History. Details: "+e.getMessage());
-		       	    setError(ERROR_DELETE);
-		       	    //Tell observers to update
-		            setChanged();
-		            notifyObservers();
+					logger.error("Process UNDO failed. Deleting historyChange failed. Remote exception caught in History. Details: "+e.getMessage());	        	
+	                RemoteException remex = new RemoteException(ERROR_DELETE + e);
+	                remex.setStackTrace(e.getStackTrace());
+	                throw remex; 		           
 				} catch (DBLayerException e) {
-					logger.error("Deleting historyChange failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-		            setError(ERROR_DELETE); 
-		            //Tell observers to update
-		            setChanged();
-		            notifyObservers();
+					logger.error("Process UNDO failed. Deleting historyChange failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+		        	database.rollbackTransaction();
+	                DBLayerException dbex = new DBLayerException(ERROR_DELETE + e);
+	                dbex.setStackTrace(e.getStackTrace());
+	                throw dbex; 		           
 				}
 			} else {
 				logger.debug("Exist other record in the table tHistory, whitch has the same value of attribute cChangeId.");
@@ -1775,134 +1807,83 @@ public class History extends Observable {
     
     /**
      *  Delete all date from tables tHistory and tHistoryChange
+     *  Operation is executed in a separate thread using Task class.
      */
-    public void clearHistory() {        
-        
-    	//TODO uzavrit to do dlouhotrvajici transakce
+    public void clearHistory() throws RemoteException, DBLayerException {        
+            	
         try {
             //delete data from table tHistory
             database.conditionDelete(HistoryRecord.class, HistoryRecord.ID, ">", 0);
-        } catch (RemoteException e) {
-        	logger.error("Delete data from tHistory failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_HISTORY);       	   
-            setChanged();
-            notifyObservers();    
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tHistory failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_HISTORY);            
-            setChanged();
-            notifyObservers(); 
-            return;
-        }        
-        
-        try {            
             //delete data from  table tHistoryChange
             database.conditionDelete(HistoryChange.class, HistoryChange.ID, ">", 0);
         } catch (RemoteException e) {
-        	logger.error("Delete data from tHistoryChange failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_HISTORY);       	   
-            setChanged();
-            notifyObservers();  
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tHistoryChange failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_HISTORY);            
-            setChanged();
-            notifyObservers();
-            return;
-        }        
-        
+        	logger.error("Process cleare database failed. Remote exception caught in History. Details: "+e.getMessage());
+        	database.rollbackTransaction();
+            RemoteException remex = new RemoteException(ERROR_CLEAR_HISTORY + e);
+            remex.setStackTrace(e.getStackTrace());
+            throw remex; 		           
+       	    
+        } catch (DBLayerException e) {
+        	logger.error("Process cleare database failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+        	database.rollbackTransaction();
+            DBLayerException dbex = new DBLayerException(ERROR_CLEAR_HISTORY + e);
+            dbex.setStackTrace(e.getStackTrace());
+            throw dbex; 		            
+        }       
     }
     
     /**
-     * Delete records from table tAuthors, tAuthorsOccurrences, tOccurrences, tHabitats, tPublications with condition cdelete == 1 
+     * Delete records from table tAuthors, tAuthorsOccurrences, tOccurrences, tHabitats, tPublications with condition cdelete == 1
+     * and delete all date from tables tHistory and tHistoryChange
+     * Operation is executed in a separate thread using Task class. 
+     * @return instance of the Task with the long running operation (clearDatabase)
      */
-    public void clearDatabase() {
+    public Task clearDatabase() {
     	
     	//TODO - osetrit proti smazani zaznamu na ktery existuje FK
-    	//Uzavrit to do dlouho trvajici transakce, at se to provede bud vse nebo nic 
     	
-        try {
-            // delete data from table tAuthor with contidion cDelete == 1
-            database.conditionDelete(Author.class, Author.DELETED, "=", 1);
-        } catch (RemoteException e) {
-        	logger.error("Delete data from tAuthor failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_DATABASE);       	   
-            setChanged();
-            notifyObservers();   
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tAuthor failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_DATABASE);            
-            setChanged();
-            notifyObservers();  
-            return;
-        }        
-        try {
-        	//delete data from table tAuthorOccurrence with contidion cDelete > 0
-            database.conditionDelete(AuthorOccurrence.class, AuthorOccurrence.DELETED, ">", 0);
-        } catch (RemoteException e) {
-        	logger.error("Delete data from tAuthorOccurrence failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_DATABASE);       	   
-            setChanged();
-            notifyObservers();
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tAuthorOccurrence failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_DATABASE);            
-            setChanged();
-            notifyObservers();
-            return;
-        }        
-        try {
-        	// delete data from table tOccurrence with contidion cDelete == 1
-            database.conditionDelete(Occurrence.class, Occurrence.DELETED, "=", 1);
-        } catch (RemoteException e) {
-        	logger.error("Delete data from tOccurrence failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_DATABASE);       	   
-            setChanged();
-            notifyObservers();
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tOccurrence failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_DATABASE);            
-            setChanged();
-            notifyObservers();
-            return;
-        }        
-        try {
-        	// delete data from table tHabitat with contidion cDelete == 1
-            database.conditionDelete(Habitat.class, Habitat.DELETED, "=", 1);
-        } catch (RemoteException e) {
-        	logger.error("Delete data from tHabitat failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_DATABASE);       	   
-            setChanged();
-            notifyObservers();
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tHabitat failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_DATABASE);            
-            setChanged();
-            notifyObservers();
-            return;
-        }        
-        try {
-        	// delete data from table tPublication with contidion cDelete == 1
-            database.conditionDelete(Publication.class, Publication.DELETED, "=", 1);
-        } catch (RemoteException e) {
-        	logger.error("Delete data from tPublication failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_CLEAR_DATABASE);       	   
-            setChanged();
-            notifyObservers();
-            return;
-        } catch(DBLayerException e) {
-        	logger.error("Delete data from tPublication failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_CLEAR_DATABASE);            
-            setChanged();
-            notifyObservers();
-            return;
-        }        
+    	final Task task = new Task() {    		    		
+    		public Object task() throws DBLayerException, RemoteException {
+    			boolean ok = false;
+    			
+    			ok = database.beginTransaction();
+		        if (!ok) {
+		            logger.debug("History.clearDatabase(): Can't create transaction. Another is probably already running.");
+		            throw new DBLayerException("Can't create transaction. Another already running.");
+		        }
+		        
+		        try {
+		        	// delete data from table tAuthor with contidion cDelete == 1
+		            database.conditionDelete(Author.class, Author.DELETED, "=", 1);
+		            // delete data from table tAuthorOccurrence with contidion cDelete > 0
+		            database.conditionDelete(AuthorOccurrence.class, AuthorOccurrence.DELETED, ">", 0);
+		            // delete data from table tOccurrence with contidion cDelete == 1
+		            database.conditionDelete(Occurrence.class, Occurrence.DELETED, "=", 1);
+		            // delete data from table tHabitat with contidion cDelete == 1
+		            database.conditionDelete(Habitat.class, Habitat.DELETED, "=", 1);
+		            // delete data from table tPublication with contidion cDelete == 1
+		            database.conditionDelete(Publication.class, Publication.DELETED, "=", 1);
+		            //Delete all date from tables tHistory and tHistoryChange
+		            clearHistory();
+		        } catch (RemoteException e) {
+		        	logger.error("Process cleare database failed. Remote exception caught in History. Details: "+e.getMessage());
+		        	database.rollbackTransaction();
+                    RemoteException remex = new RemoteException(ERROR_CLEAR_DATABASE + e);
+                    remex.setStackTrace(e.getStackTrace());
+                    throw remex; 		           
+		       	    
+		        } catch (DBLayerException e) {
+		        	logger.error("Process cleare database failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
+		        	database.rollbackTransaction();
+                    DBLayerException dbex = new DBLayerException(ERROR_CLEAR_DATABASE + e);
+                    dbex.setStackTrace(e.getStackTrace());
+                    throw dbex; 		            
+		        } 
+		        database.commitTransaction(); 
+		        return null;
+    		}
+    	};
+    	return task;
     }
     
     /**

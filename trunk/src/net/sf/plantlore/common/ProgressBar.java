@@ -219,6 +219,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
                         setVisible(false);
                         dispose();                    
                         parent.setCursor(Cursor.getDefaultCursor());
+                        afterStopping();
                         break;
                     case STOPPED:
                         afterStopped(value);
@@ -245,6 +246,10 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
     
     public void afterStopped(Object value) {
         
+    }
+    
+    public void afterStopping() {
+    	
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

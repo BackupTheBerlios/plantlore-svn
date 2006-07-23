@@ -3,6 +3,15 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+
+import javax.swing.JOptionPane;
+
+import net.sf.plantlore.common.ProgressBar;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.l10n.L10n;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -202,23 +211,54 @@ public class HistoryCtrl {
                if (okCancle == 0){
             	   //Button OK was press
             	   logger.debug("Button OK was press.");
-            	   model.commitUpdate();
-            	   model.deleteHistory(model.getResultRows(), true);            	   
-            	   model.searchEditHistory(model.getData());
-            	   model.processResult(1,model.getDisplayRows());
-            	   view.getTable().setModel(new HistoryTableModel(model));
-            	   int resultRows = model.getResultRows();
-            	   if (resultRows == 0) {
-            		   view.setCurrentRowsInfo("0-0"); 
-            	   } else {
-            		   int from = model.getCurrentFirstRow();
-                       int to = from + view.getTable().getRowCount() - 1;               
-                       view.setCurrentRowsInfo(from + "-" + to);    
-            	   }               
-                       view.setCountResutl(resultRows);   
+            	   Task task = model.commitUpdate(model.getResultRows(), true);  
+            	   
+            	   ProgressBar progressBar = new ProgressBar(task, view, true) {		   				
+						private static final long serialVersionUID = -6065695152319199854L;
+							public void exceptionHandler(Exception e) {
+		   						if (e instanceof DBLayerException) {	   									   							
+		   							DBLayerException dbex = (DBLayerException) e;
+		   							//TODO zobrazit vlastni message - nemusi vzdy byt poskozene pripojeni k DB, nekdo mohl smazat data, atd..
+									JOptionPane.showMessageDialog(view, L10n.getString("Error.DBLayerException")+ "\n" + dbex.getErrorInfo(),
+		 							   L10n.getString("Error.DBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
+									logger.error(dbex + ": " + dbex.getErrorInfo());
+		   							getTask().stop();
+		   							return;
+		   						}
+		   						if (e instanceof RemoteException) {	 
+		   							RemoteException remex = (RemoteException) e;
+		   							//TODO zobrazit vlastni message - nemusi vzdy byt poskozene pripojeni k DB, nekdo mohl smazat data, atd..
+		   							JOptionPane.showMessageDialog(view, L10n.getString("Error.RemoteException")+ "\n" + remex.getMessage(),
+		 							   L10n.getString("Error.RemoteExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
+									logger.error(remex + ": " + remex.getMessage());
+		   							getTask().stop();
+		   							return;
+		   						}
+		   						JOptionPane.showMessageDialog(view, L10n.getString("Delete.Message.UnknownException")+ "\n" + e.getMessage(),
+			 					    L10n.getString("Delete.Message.UnknownExceptionTitle"), JOptionPane.WARNING_MESSAGE);							
+		   						logger.error(e);
+		   					}
+	
+		   					public void afterStopping() {
+		   					   model.searchEditHistory(model.getData());
+		   	            	   model.processResult(1,model.getDisplayRows());
+		   	            	   view.getTable().setModel(new HistoryTableModel(model));
+		   	            	   int resultRows = model.getResultRows();
+		   	            	   if (resultRows == 0) {
+		   	            		   view.setCurrentRowsInfo("0-0"); 
+		   	            	   } else {
+		   	            		   int from = model.getCurrentFirstRow();
+		   	                       int to = from + view.getTable().getRowCount() - 1;               
+		   	                       view.setCurrentRowsInfo(from + "-" + to);    
+		   	            	   }               
+		   	                       view.setCountResutl(resultRows);   
+		   	               } 		   					
+		   				};
+		   				progressBar.setTitle(L10n.getString("History.Undo.ProgressTitle"));	                   	                   
+	                    task.start();            	               	   
                } else {            	  
             	   logger.debug("Button Cancle was press."); 
-               }
+               }  
            } else {
         	   model.setError(null);        	           	  
            }
