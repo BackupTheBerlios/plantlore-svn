@@ -17,12 +17,14 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.common.TransferFocus;
 
 /**
- *
- * @author  Lada
+ * View for the main WholeHistory dialog (part of the WholeHistory MVC). Used for displaying the search results.
+ * @author  Lada Oberreiterová
+ * @version 1.0
  */
 public class WholeHistoryView extends javax.swing.JDialog implements Observer {
-    
-    private History model;  
+       
+	private static final long serialVersionUID = -8216564649155252124L;
+	private History model;  
   
     /**
      * Creates new form WholeHistoryView

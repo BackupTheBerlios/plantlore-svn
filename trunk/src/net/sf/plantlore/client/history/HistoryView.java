@@ -123,17 +123,17 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
-                .add(19, 19, 19)
+                .add(20, 20, 20)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(authorLabel)
                     .add(locationLabel)
                     .add(taxonLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 57, Short.MAX_VALUE)
+                .add(39, 39, 39)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(taxonValueLabel)
                     .add(authorValueLabel)
                     .add(locationValueLabel))
-                .addContainerGap(491, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -175,7 +175,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(whenInsertValueLabel)
                     .add(whoInsertValueLabel))
-                .addContainerGap(508, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -219,7 +219,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
 
         totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
 
-        toDisplayLabel.setText(L10n.getString("History.RowToDisplay"));
+        toDisplayLabel.setText(L10n.getString("History.RowsToDisplay"));
 
         toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
 

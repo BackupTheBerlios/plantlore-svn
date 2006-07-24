@@ -85,10 +85,10 @@
                   <EmptySpace pref="57" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="taxonValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="authorValueLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="authorValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="locationValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="445" max="32767" attributes="0"/>
+                  <EmptySpace pref="10" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -192,7 +192,7 @@
                       <Component id="whenInsertValueLabel" min="-2" max="-2" attributes="0"/>
                       <Component id="whoInsertValueLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="462" max="32767" attributes="0"/>
+                  <EmptySpace pref="10" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -414,7 +414,7 @@
         <Component class="javax.swing.JLabel" name="toDisplayLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;History.RowToDisplay&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;History.RowsToDisplay&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>

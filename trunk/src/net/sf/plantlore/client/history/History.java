@@ -124,19 +124,19 @@ public class History extends Observable {
     private Hashtable<String, Enum> editTypeHash;
     
     /** Constants used for description of errors */
-    public static final String ERROR_SEARCH_RECORD = L10n.getString("Error.historyRecordSearchFailed");
-    public static final String ERROR_SEARCH_DATA = L10n.getString("Error.historyDataSearchFailed");
-    public static final String ERROR_SEARCH_OBJECT = L10n.getString("Error.historyObjectSearchFailed");
-    public static final String ERROR_SEARCH_AUTHOR = L10n.getString("Error.historyAuthorSearchFailed");
-    public static final String ERROR_PROCESS = L10n.getString("Error.historyProcessResultsFailed");
-    public static final String ERROR_UPDATE = L10n.getString("Error.historyUpdateResultsFailed");
-    public static final String ERROR_DELETE = L10n.getString("Error.historyDeleteResultsFailed");  
-    public static final String ERROR_CLEAR_DATABASE = L10n.getString("Error.historyClearDatabase");
-    public static final String ERROR_CLEAR_HISTORY = L10n.getString("Error.historyClearHistory");
-    public static final String ERROR_PARSE_DATE = L10n.getString("Error.historyParseData");
-    public static final String ERROR_NUMBER_ROWS = L10n.getString("Error.historyGetNumberRows");
-    public static final String ERROR_NO_RIGHTS = L10n.getString("Error.historyNoRights"); 
-    
+    public static final String ERROR_SEARCH_RECORD = L10n.getString("Error.HistoryRecordSearchFailed");
+    public static final String ERROR_SEARCH_DATA = L10n.getString("Error.HistoryDataSearchFailed");
+    public static final String ERROR_SEARCH_OBJECT = L10n.getString("Error.HistoryObjectSearchFailed");
+    public static final String ERROR_SEARCH_AUTHOR = L10n.getString("Error.HistoryAuthorSearchFailed");
+    public static final String ERROR_PROCESS = L10n.getString("Error.HistoryProcessResultsFailed");
+    public static final String ERROR_UPDATE = L10n.getString("Error.HistoryUpdateResultsFailed");
+    public static final String ERROR_DELETE = L10n.getString("Error.HistoryDeleteResultsFailed");  
+    public static final String ERROR_CLEAR_DATABASE = L10n.getString("Error.HistoryClearDatabase");
+    public static final String ERROR_CLEAR_HISTORY = L10n.getString("Error.HistoryClearHistory");
+    public static final String ERROR_PARSE_DATE = L10n.getString("Error.HistoryParseData");
+    public static final String ERROR_NUMBER_ROWS = L10n.getString("Error.HistoryGetNumberRows");
+    public static final String ERROR_NO_RIGHTS = L10n.getString("Error.HistoryNoRights"); 
+    public static final String ERROR_TRANSACTION = L10n.getString("Error.TransactionRaceConditions");    
     /**
      * Creates a new instance of History - history of Occurrences, Habitats, Authors, 
      * Publications, Metadata, Territories, Phytochorions, Villages
@@ -477,7 +477,7 @@ public class History extends Observable {
      */
     public void undoInsertDelete(int isDelete) {
         if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)){        	
-        	Object[] object = searchObject("Occurrence",recordId);        	        	
+        	Object[] object = searchObject(PlantloreConstants.ENTITY_OCCURRENCE,recordId);        	        	
         	if (isError()) return; //tOccurrence doesn`t contain required data        	       		        		
         	Occurrence occurrence = (Occurrence)object[0];             
             occurrence.setDeleted(isDelete);                      	     	 
@@ -497,7 +497,7 @@ public class History extends Observable {
                     editObjectList.add((Record)authorOccurrence);                 
             }                                     
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {
-             Object[] object = searchObject("AuthorOccurrence",recordId);               
+             Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOROCCURRENCE,recordId);               
              if (isError()) return; //tAuthorOccurrence doesn`t contain required data
              AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];
              authorOccurrence.setDeleted(isDelete);             
@@ -505,7 +505,7 @@ public class History extends Observable {
              if (!editObjectList.contains((Record)authorOccurrence))                 
                 editObjectList.add((Record)authorOccurrence);             
        } else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {            
-               Object[] object = searchObject("Habitat",recordId);  
+               Object[] object = searchObject(PlantloreConstants.ENTITY_HABITAT,recordId);  
                if (isError()) return; //tHabitat doesn`t contain required data
                Habitat habitat = (Habitat)object[0];
                habitat.setDeleted(isDelete);
@@ -513,7 +513,7 @@ public class History extends Observable {
                if (!editObjectList.contains((Record)habitat))                 
                    editObjectList.add((Record)habitat);             
         } else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
-             Object[] object = searchObject("Metadata",recordId); 
+             Object[] object = searchObject(PlantloreConstants.ENTITY_METADATA,recordId); 
              if (isError()) return; //tMetadata doesn`t contain required data
              Metadata metadata = (Metadata)object[0];
              metadata.setDeleted(isDelete);
@@ -521,7 +521,7 @@ public class History extends Observable {
              if (!editObjectList.contains((Record)metadata))                 
                 editObjectList.add((Record)metadata);             
         } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
-             Object[] object = searchObject("Publication",recordId);
+             Object[] object = searchObject(PlantloreConstants.ENTITY_PUBLICATION,recordId);
              if (isError()) return; //tPublication doesn`t contain required data
              Publication publication = (Publication)object[0];
              publication.setDeleted(isDelete);
@@ -529,7 +529,7 @@ public class History extends Observable {
              if (!editObjectList.contains((Record)publication))                 
                 editObjectList.add((Record)publication);             
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {             
-             Object[] object = searchObject("Author",recordId);  
+             Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOR,recordId);  
              if (isError()) return; //tAuthor doesn`t contain required data
              Author author = (Author)object[0];
              author.setDeleted(isDelete);
@@ -599,7 +599,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record AuthorOccurrence where id = authorOccurrenceId 
-    		Object[] object = searchObject("AuthorOccurrence", authorOccId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOROCCURRENCE, authorOccId);
     		if (isError()) return; //tAuthorOccurrence doesn`t contain required data
             authorOccurrence = (AuthorOccurrence)object[0];
         }     	                 
@@ -673,7 +673,7 @@ public class History extends Observable {
                 
         if (!contain) {
         	// Select record Occurrence where id = occurrenceId 
-            Object[] objectOcc = searchObject("Occurrence",occurrenceId);
+            Object[] objectOcc = searchObject(PlantloreConstants.ENTITY_OCCURRENCE,occurrenceId);
             if (isError()) return; //tOccurrence doesn`t contain required data
             occ = (Occurrence)objectOcc[0];                    	
         }    
@@ -693,7 +693,7 @@ public class History extends Observable {
         case 1: //Taxon  
             if (oldRecordId > 0 ) {
                 //Select record Plant where id = oldRocordId 
-                Object[] object = searchObject("Plant",oldRecordId);
+                Object[] object = searchObject(PlantloreConstants.ENTITY_PLANT,oldRecordId);
                 if (isError()) return; //tPlant doesn`t contain required data
                 Plant plant = (Plant)object[0];
                 //Set old value to attribute plantID
@@ -765,7 +765,7 @@ public class History extends Observable {
         case 9: //Publication  
                 //Select record Publication where id = oldRocordId 
                 if (oldRecordId > 0){
-                    Object[] objectPubl = searchObject("Publication",oldRecordId);
+                    Object[] objectPubl = searchObject(PlantloreConstants.ENTITY_PUBLICATION,oldRecordId);
                     if (isError()) return; //tPublication doesn`t contain required data
                     Publication publication = (Publication)objectPubl[0];
                     //Set old value to attribute publicationID
@@ -778,7 +778,7 @@ public class History extends Observable {
         case 10: //metadata
         		//Select record Publication where id = oldRocordId 
 	            if (oldRecordId > 0){
-	                Object[] objectMetadata = searchObject("Metadata",oldRecordId);
+	                Object[] objectMetadata = searchObject(PlantloreConstants.ENTITY_METADATA,oldRecordId);
 	                if (isError()) return; //tMetadata doesn`t contain required data
 	                Metadata metadata = (Metadata)objectMetadata[0];
 	                //Set old value to attribute metadataID
@@ -791,7 +791,7 @@ public class History extends Observable {
         case 11: //habitat
         		//Select record Publication where id = oldRocordId 
 	            if (oldRecordId > 0){
-	                Object[] objectHabitat = searchObject("Habitat",oldRecordId);
+	                Object[] objectHabitat = searchObject(PlantloreConstants.ENTITY_HABITAT,oldRecordId);
 	                if (isError()) return; //tHabitat doesn`t contain required data
 	                Habitat habitat = (Habitat)objectHabitat[0];
 	                //Set old value to attribute habitatID
@@ -837,7 +837,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Habitat where id = habitatId 
-    		Object[] object = searchObject("Habitat",habitatId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_HABITAT,habitatId);
     		if (isError()) return; //tHabitat doesn`t contain required data
             hab = (Habitat)object[0];
         } 
@@ -879,7 +879,7 @@ public class History extends Observable {
         case 7: //Nearest bigger seat   	                	 	                			                		 
                 //Select record Village where id = oldRocordId 
                 if (oldRecordId != 0){
-                        Object[] objectVill = searchObject("Village",oldRecordId);
+                        Object[] objectVill = searchObject(PlantloreConstants.ENTITY_VILLAGE,oldRecordId);
                         if (isError()) return; //tVillage doesn`t contain required data
                         Village village = (Village)objectVill[0];
                 hab.setNearestVillage(village);
@@ -891,7 +891,7 @@ public class History extends Observable {
         case 8: //Phytochorion or phytochorion code 	                	             			                		 
                 // Select record Phytochoria where id = oldRocordId 
                 if (oldRecordId != 0){
-                        Object[] objectPhyt = searchObject("Phytochorion",oldRecordId);
+                        Object[] objectPhyt = searchObject(PlantloreConstants.ENTITY_PHYTOCHORION,oldRecordId);
                         if (isError()) return; //tPhytochorion doesn`t contain required data
                         Phytochorion phytochorion = (Phytochorion)objectPhyt[0];
                         hab.setPhytochorion(phytochorion);
@@ -903,7 +903,7 @@ public class History extends Observable {
         case 9:  //Territory   	                	                			                		  
                 // Select record Territory where id = oldRocordId 
                 if (oldRecordId != 0){
-                        Object[] objectTerr = searchObject("Territory",oldRecordId);
+                        Object[] objectTerr = searchObject(PlantloreConstants.ENTITY_TERRITORY,oldRecordId);
                         if (isError()) return; //tTerritory doesn`t contain required data
                         Territory territory = (Territory)objectTerr[0];
                         hab.setTerritory(territory);                                                            
@@ -952,7 +952,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Publication where id = publicationId 
-    		Object[] object = searchObject("Publication", publicationId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_PUBLICATION, publicationId);
     		if (isError()) return; //tPublication doesn`t contain required data
             publication = (Publication)object[0];
         } 
@@ -1031,7 +1031,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Author where id = authorId 
-    		Object[] object = searchObject("Author", authorId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOR, authorId);
     		if (isError()) return; //tAuthor doesn`t contain required data
             author = (Author)object[0];
         } 	
@@ -1114,7 +1114,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Metadata where id = metadataId 
-    		Object[] object = searchObject("Metadata", metadataId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_METADATA, metadataId);
     		if (isError()) return; //tMetadata doesn`t contain required data
     	    metadata = (Metadata)object[0];
         }
@@ -1218,7 +1218,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Phytochorion where id = phytochorionId 
-    		Object[] object = searchObject("Phytochorion", phytId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_PHYTOCHORION, phytId);
     		if (isError()) return; //tPhytochorion doesn`t contain required data
             phytochorion = (Phytochorion)object[0];     
         }
@@ -1265,7 +1265,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Village where id = villageId 
-    		Object[] object = searchObject("Village", villageId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_VILLAGE, villageId);
     		if (isError()) return; //tVillage doesn`t contain required data
             village = (Village)object[0];     
         }
@@ -1310,7 +1310,7 @@ public class History extends Observable {
     	
     	if (!contain) {
         	// Select record Territory where id = territoryId 
-    		Object[] object = searchObject("Territory", territoryId);
+    		Object[] object = searchObject(PlantloreConstants.ENTITY_TERRITORY, territoryId);
     		if (isError()) return; //tTerritory doesn`t contain required data
     		territory = (Territory)object[0];     
         }
@@ -1341,36 +1341,36 @@ public class History extends Observable {
     	SelectQuery query = null;
     	int resultIdObject = 0;
     	Object[] object = null;
-    	
+    	  	
         try {
-            if (typeObject.equals("Occurrence")){
+            if (typeObject.equals(PlantloreConstants.ENTITY_OCCURRENCE)){
                 query = database.createQuery(Occurrence.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, id , null);
-            } else if (typeObject.equals("AuthorOccurrence")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)){
                 query = database.createQuery(AuthorOccurrence.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.ID, null, id , null);
-            } else if (typeObject.equals("Habitat")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_HABITAT)){
                 query = database.createQuery(Habitat.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.ID, null, id , null);
-            } else if (typeObject.equals("Plant")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_PLANT)){
                 query = database.createQuery(Plant.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Plant.ID, null, id , null);
-            } else if (typeObject.equals("Author")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_AUTHOR)){
                 query = database.createQuery(Author.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Author.ID, null, id , null);
-            } else if (typeObject.equals("Publication")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_PUBLICATION)){
                 query = database.createQuery(Publication.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
-            } else if (typeObject.equals("Village")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_VILLAGE)){
                 query = database.createQuery(Village.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
-            }  else if  (typeObject.equals("Territory")){
+            }  else if  (typeObject.equals(PlantloreConstants.ENTITY_TERRITORY)){
                 query = database.createQuery(Territory.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null);
-            } else if (typeObject.equals("Phytochorion")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_PHYTOCHORION)){
                 query = database.createQuery(Phytochorion.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Phytochorion.ID, null, id , null);
-            } else if (typeObject.equals("Metadata")){
+            } else if (typeObject.equals(PlantloreConstants.ENTITY_METADATA)){
                 query = database.createQuery(Metadata.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Metadata.ID, null, id , null);
             } else {
@@ -1498,7 +1498,7 @@ public class History extends Observable {
 		        ok = database.beginTransaction();
 		        if (!ok) {
 		            logger.debug("History.commitUpdate(): Can't create transaction. Another is probably already running.");
-		            throw new DBLayerException("Can't create transaction. Another already running.");
+		            throw new DBLayerException(ERROR_TRANSACTION);
 		        }
 		        
 		        try {
@@ -1664,16 +1664,6 @@ public class History extends Observable {
     }    
 
     /**
-     * Create message containinig information about operation which will be realised    
-     * @param toDate  Date to which all the changes will be turned back.
-     * @return message containinig information about operation which will be realised
-     */
-    public String getMessageUndoToDate(String toDate) {
-        String message = "Všechny změny do " + toDate + " budou navráceny."; //All changes to 12.4.06 will be turned back.
-        return message;
-    }
-    
-    /**
      *  Create message containing details of record
      *  @param resultNumber identifier of selected record
      *  @return String containing details of record 
@@ -1689,11 +1679,19 @@ public class History extends Observable {
         tableName = historyRecord.getHistoryColumn().getTableName();
         recordId = historyChange.getRecordId();
                         
-        if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE) || tableName.equals(PlantloreConstants.ENTITY_HABITAT) || tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {           
+        if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE) || tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {           
               //Get details for occurrence
-              int occurrenceId = historyChange.getRecordId();
+        	  int occurrenceId; 
+        	  int recordId = historyChange.getRecordId();
+        	  if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)) {
+        		  occurrenceId = recordId;
+        	  } else {
+        		  Object[] objectAutOcc = searchObject(PlantloreConstants.ENTITY_AUTHOROCCURRENCE,recordId);
+                  if (isError()) return ""; //tAuthorsOccurrences doesn`t contain required data                  
+                  occurrenceId = ((AuthorOccurrence)objectAutOcc[0]).getOccurrence().getId();
+        	  }
               //Select record Occurrence where id = occurrenceId 
-              Object[] objectOcc = searchObject("Occurrence",occurrenceId);
+              Object[] objectOcc = searchObject(PlantloreConstants.ENTITY_OCCURRENCE,occurrenceId);
               if (isError()) return ""; //tOccurrence doesn`t contain required data
               Occurrence occurrence = (Occurrence)objectOcc[0]; 
               detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
@@ -1713,7 +1711,7 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NOTE) + ": " + occurrence.getHabitat().getNote() +"\n";
         }else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {
         	  //Get details for Publication
-              Object[] object = searchObject("Habitat",recordId);
+              Object[] object = searchObject(PlantloreConstants.ENTITY_HABITAT,recordId);
               if (isError()) return ""; //tHabitat doesn`t contain required data
               Habitat habitat = (Habitat)object[0];
               detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
@@ -1725,7 +1723,7 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NOTE) + ": " + habitat.getNote() +"\n";
     	}else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
               //Get details for Publication
-              Object[] object = searchObject("Publication",recordId);
+              Object[] object = searchObject(PlantloreConstants.ENTITY_PUBLICATION,recordId);
               if (isError()) return ""; //tPublication doesn`t contain required data
               Publication publication = (Publication)object[0];
               detailsMessage = L10n.getString("History.DetailsPublication") + "\n\n";
@@ -1737,7 +1735,7 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PUBLICATION +"."+ Publication.NOTE) + ": " + publication.getNote() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {
               //Get details for Author
-              Object[] object = searchObject("Author",recordId); 
+              Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOR,recordId); 
               if (isError()) return ""; //tAuthor doesn`t contain required data
               Author author = (Author)object[0];
               detailsMessage = L10n.getString("History.DetailsAuthor") + "\n\n";
@@ -1751,7 +1749,7 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_AUTHOR +"."+ Author.NOTE)+ ": "  + author.getNote() + "\n";
         }  else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
              //Get details for Metadata
-              Object[] object = searchObject("Metadata",recordId); 
+              Object[] object = searchObject(PlantloreConstants.ENTITY_METADATA,recordId); 
               if (isError()) return ""; //tMetadata doesn`t contain required data
               Metadata metadata = (Metadata)object[0];
               detailsMessage = L10n.getString("History.DetailsMetadata") + "\n\n";
@@ -1776,7 +1774,7 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_METADATA +"."+ Metadata.BIOTOPETEXT) + ": " + metadata.getBiotopeText() + "\n";                      
         } else if (tableName.equals(PlantloreConstants.ENTITY_PHYTOCHORION)) {
               //Get details for Phytochorion
-              Object[] object = searchObject("Phytochorion",recordId); 
+              Object[] object = searchObject(PlantloreConstants.ENTITY_PHYTOCHORION,recordId); 
               if (isError()) return ""; //tPhytochorion doesn`t contain required data
               Phytochorion  phytochorion = (Phytochorion)object[0];
               detailsMessage = L10n.getString("History.DetailsPhytochorion") + "\n\n";
@@ -1784,14 +1782,14 @@ public class History extends Observable {
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_PHYTOCHORION +"."+ Phytochorion.CODE) + ": " + phytochorion.getCode() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_TERRITORY)) {
               //Get details for Territory
-              Object[] object = searchObject("Territory",recordId);
+              Object[] object = searchObject(PlantloreConstants.ENTITY_TERRITORY,recordId);
               if (isError()) return ""; //tTerritory doesn`t contain required data
               Territory territory = (Territory)object[0];
               detailsMessage = L10n.getString("History.DetailsTerritory") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_TERRITORY +"."+ Territory.NAME) + ": " + territory.getName() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
               //Get details for Village
-              Object[] object = searchObject("Village",recordId);
+              Object[] object = searchObject(PlantloreConstants.ENTITY_VILLAGE,recordId);
               if (isError()) return ""; //tVillage doesn`t contain required data
               Village village = (Village)object[0];
               detailsMessage = L10n.getString("History.detailsVillage") + "\n\n";
@@ -1849,7 +1847,7 @@ public class History extends Observable {
     			ok = database.beginTransaction();
 		        if (!ok) {
 		            logger.debug("History.clearDatabase(): Can't create transaction. Another is probably already running.");
-		            throw new DBLayerException("Can't create transaction. Another already running.");
+		            throw new DBLayerException(ERROR_TRANSACTION);
 		        }
 		        
 		        try {

@@ -241,9 +241,8 @@ public class WholeHistoryCtrl {
 							public void exceptionHandler(Exception e) {
 		   						if (e instanceof DBLayerException) {	   									   							
 		   							DBLayerException dbex = (DBLayerException) e;
-		   							//TODO zobrazit vlastni message - nemusi byt vzdy byt poskozene pripojeni k DB, nekdo mohl smazat data, atd..
-									JOptionPane.showMessageDialog(view, L10n.getString("Error.DBLayerException")+ "\n" + dbex.getErrorInfo(),
-		 							   L10n.getString("Error.DBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
+									JOptionPane.showMessageDialog(view, L10n.getString("Error.HistoryDBLayerException")+ "\n" + dbex.getErrorInfo(),
+		 							   L10n.getString("Error.HistoryDBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
 									logger.error(dbex + ": " + dbex.getErrorInfo());
 		   							getTask().stop();
 		   							return;
@@ -314,7 +313,8 @@ public class WholeHistoryCtrl {
                DetailsHistoryCtrl detailsCtrl = new DetailsHistoryCtrl(detailsView);
                detailsView.setDetailsMessage(detailsMessage);
                detailsView.setVisible(true);               
-           }          
+           }    
+           model.setError(null);
        }
     }
     
@@ -345,10 +345,9 @@ public class WholeHistoryCtrl {
 						private static final long serialVersionUID = -6065695152319199854L;
 							public void exceptionHandler(Exception e) {
 		   						if (e instanceof DBLayerException) {	   									   							
-		   							DBLayerException dbex = (DBLayerException) e;
-		   							//TODO zobrazit vlastni message - nemusi vzdy byt poskozene pripojeni k DB, nekdo mohl smazat data, atd..
-									JOptionPane.showMessageDialog(view, L10n.getString("Error.DBLayerException")+ "\n" + dbex.getErrorInfo(),
-		 							   L10n.getString("Error.DBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
+		   							DBLayerException dbex = (DBLayerException) e;		   							
+									JOptionPane.showMessageDialog(view, L10n.getString("Error.HistoryDBLayerException")+ "\n" + dbex.getErrorInfo(),
+		 							   L10n.getString("Error.HistoryDBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
 									logger.error(dbex + ": " + dbex.getErrorInfo());
 		   							getTask().stop();
 		   							return;

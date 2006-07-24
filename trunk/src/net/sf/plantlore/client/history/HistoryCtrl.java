@@ -217,17 +217,15 @@ public class HistoryCtrl {
 						private static final long serialVersionUID = -6065695152319199854L;
 							public void exceptionHandler(Exception e) {
 		   						if (e instanceof DBLayerException) {	   									   							
-		   							DBLayerException dbex = (DBLayerException) e;
-		   							//TODO zobrazit vlastni message - nemusi vzdy byt poskozene pripojeni k DB, nekdo mohl smazat data, atd..
-									JOptionPane.showMessageDialog(view, L10n.getString("Error.DBLayerException")+ "\n" + dbex.getErrorInfo(),
-		 							   L10n.getString("Error.DBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
+		   							DBLayerException dbex = (DBLayerException) e;		   							
+									JOptionPane.showMessageDialog(view, L10n.getString("Error.HistoryDBLayerException")+ "\n" + dbex.getErrorInfo(),
+		 							   L10n.getString("Error.HistoryDBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
 									logger.error(dbex + ": " + dbex.getErrorInfo());
 		   							getTask().stop();
 		   							return;
 		   						}
 		   						if (e instanceof RemoteException) {	 
-		   							RemoteException remex = (RemoteException) e;
-		   							//TODO zobrazit vlastni message - nemusi vzdy byt poskozene pripojeni k DB, nekdo mohl smazat data, atd..
+		   							RemoteException remex = (RemoteException) e;		   							
 		   							JOptionPane.showMessageDialog(view, L10n.getString("Error.RemoteException")+ "\n" + remex.getMessage(),
 		 							   L10n.getString("Error.RemoteExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
 									logger.error(remex + ": " + remex.getMessage());
