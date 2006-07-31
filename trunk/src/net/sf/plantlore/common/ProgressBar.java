@@ -29,11 +29,11 @@ import org.apache.log4j.Logger;
  * @author  fraktalek
  */
 public abstract class ProgressBar extends javax.swing.JDialog implements Observer {
-    private Logger logger;
-    private Task task;
+    protected Logger logger;
+    protected Task task;
     private int statusFieldWidth;
     private double charSizeApprox = 180/27; //in 180 pixel wide JTextField first 27 characters are visible in Matisse
-    private Window parent;
+    protected Window parent;
     
     /** Creates a new progress bar, initially invisible. It becomes visible after it receives
      * a STARTING Message from the Task.
@@ -59,7 +59,8 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
         initialize();        
     }    
    
-    private void initialize() {
+    
+    protected void initialize() {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         initComponents();
         
@@ -245,7 +246,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
     }
     
     public void afterStopped(Object value) {
-        
+    	// Empty implementation = do nothing.        
     }
     
     public void afterStopping() {
@@ -254,8 +255,8 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar progressBar;
-    private javax.swing.JTextField statusField;
+    protected javax.swing.JProgressBar progressBar;
+    protected javax.swing.JTextField statusField;
     // End of variables declaration//GEN-END:variables
     
 }
