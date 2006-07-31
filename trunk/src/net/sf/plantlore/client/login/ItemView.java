@@ -17,6 +17,7 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  yaa
  */
+@Deprecated
 public class ItemView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;

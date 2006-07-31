@@ -50,6 +50,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         jScrollPane1 = new javax.swing.JScrollPane();
         choice = new javax.swing.JList();
         remember = new javax.swing.JCheckBox();
+        discard = new javax.swing.JButton();
 
         popup.setName("popup");
         add.setText(L10n.getString("Login.AddRecord"));
@@ -75,6 +76,8 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
+        discard.setText(L10n.getString("Common.Cancel"));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -85,7 +88,9 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(remember)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 151, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 74, Short.MAX_VALUE)
+                        .add(discard)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(next)))
                 .addContainerGap())
         );
@@ -97,7 +102,8 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(next)
-                    .add(remember))
+                    .add(remember)
+                    .add(discard))
                 .addContainerGap())
         );
         pack();
@@ -137,6 +143,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JMenuItem add;
     protected javax.swing.JList choice;
+    protected javax.swing.JButton discard;
     protected javax.swing.JMenuItem edit;
     private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JButton next;

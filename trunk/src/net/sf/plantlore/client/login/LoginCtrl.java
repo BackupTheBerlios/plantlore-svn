@@ -7,6 +7,7 @@ import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.l10n.L10n;
 
 
@@ -15,8 +16,8 @@ public class LoginCtrl {
 	private Login model;
 	private LoginView view;
 	
-	private ItemView itemView;
-	private ItemCtrl itemCtrl;
+	private ItemView2 itemView;
+	private ItemCtrl2 itemCtrl;
 	private AuthView authView;
 	
 	
@@ -25,8 +26,8 @@ public class LoginCtrl {
 		this.view = loginview; this.model = login;
 		
 		// Create Item Add/Edit dialog.
-		itemView = new ItemView(view, model);
-		itemCtrl = new ItemCtrl(model, itemView);
+		itemView = new ItemView2(view, model);
+		itemCtrl = new ItemCtrl2(model, itemView);
 		// Create Authorization dialog.
 		authView = new AuthView(view, model);
 		new AuthCtrl(model, authView);
@@ -36,6 +37,7 @@ public class LoginCtrl {
 		view.edit.setAction(new EditRecordAction());
 		view.remove.setAction(new RemoveRecordAction());
 		view.next.setAction(new NextAction());
+		view.discard.setAction(new DefaultCancelAction(view));
 		
 		// Select something.
 		view.choice.setSelectedIndex(0);
@@ -62,7 +64,7 @@ public class LoginCtrl {
 			putValue(NAME, L10n.getString("Login.AddRecord"));
 		}
 		public void actionPerformed(ActionEvent arg0) {
-			itemCtrl.setMode(ItemCtrl.Mode.ADD);
+			itemCtrl.setMode(ItemCtrl2.Mode.ADD);
 			itemView.setVisible(true);
 		}
 	}
@@ -84,7 +86,7 @@ public class LoginCtrl {
 		}
 		public void actionPerformed(ActionEvent arg0) {
 			if(model.getSelected() != null) {
-				itemCtrl.setMode(ItemCtrl.Mode.EDIT);
+				itemCtrl.setMode(ItemCtrl2.Mode.EDIT);
 				itemView.setVisible(true);
 			}
 		}

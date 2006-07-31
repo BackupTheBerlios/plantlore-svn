@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.client.MainConfig;
 import net.sf.plantlore.common.SwingWorker;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
@@ -228,14 +229,17 @@ public class Login extends Observable {
 	 * @param name The account name (used to access the database).  
 	 * @param password The password to the account.
 	 */
+	@Deprecated
 	synchronized public void connectToSelected(final String name, final String password) {
 		
-		if(selected == null) {
+		final DBInfo selectedClone = selected.clone();
+		
+		if(selectedClone == null) {
 			logger.debug("The System cannot create a connection when nothing was selected!");
 			return;
 		}
 		
-		final DBInfo selectedClone = selected.clone();
+		
 		
 		worker = new SwingWorker() {
 			public Object construct() {
@@ -293,9 +297,101 @@ public class Login extends Observable {
 	
 	
 	/**
+	 * Once the connection is established and the database layer is
+	 * initialized, Login must inform its observers so that they can
+	 * update their database layers.
+	 */
+	private void announceConnection() {
+		setChanged(); 
+		notifyObservers(dblayer);
+	}
+	
+	
+	/**
+	 * Create a task that will try to forge the connection to the selected database. 
+	 * First, a new database layer is created,
+	 * and second, that database layer is initialized.
+	 * <br/>
+	 * <b>Warning:</b>If there is a previously created DBLayer, 
+	 * it will be destroyed using the <code>logout()</code> method. 
+	 * 	  
+	 * @param name The account name (used to access the database).  
+	 * @param password The password to the account.
+	 */
+	synchronized public Task createConnectionTask(final String name, final String password) {
+		if(selected == null) {
+			logger.debug("The System cannot create a connection when nothing was selected!");
+			return null;
+		}
+		
+		logout();
+		
+		final DBInfo selectedClone = selected.clone();
+
+		// The current username is moved to the top of the list of names :) Nice feature.
+		selectedClone.promoteUser(name);
+		// Save the current state.
+		save();
+		
+		return new Task() {
+
+			@Override
+			public Object task() throws Exception {
+				
+				try {				
+					// Create a new database layer.
+					logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selectedClone.host + ":" + selectedClone.port);
+					setStatusMessage( L10n.getString("Login.Connecting") );
+					dblayer = factory.create( selectedClone );
+					if(isCanceled())
+						throw new Exception(L10n.getString("Common.Canceled"));
+					
+					logger.debug("Connection successful.");
+					setStatusMessage( L10n.getString("Login.Connected") );
+					
+					// Initialize the database layer.
+					setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
+					logger.debug("Initializing that DBLayer (" + selectedClone.databaseType + ", " + name + ", " + password + "...");
+					
+					Object[] init = dblayer.initialize(selectedClone.getDatabaseIdentifier(), name, password);
+					if(isCanceled())
+						throw new Exception(L10n.getString("Common.Canceled"));
+					plantloreUser = (User)init[0];
+					accessRights = (Right)init[1];
+				} 
+				catch (Exception e) {
+					logger.error("The initialization of the DBLayer failed! " + e.getMessage());
+					// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
+					// Otherwise, the server's policy may not allow another connection from this client!
+					if(dblayer != null)
+						try {
+							factory.destroy(dblayer);
+						} catch(RemoteException re) {
+							// Nothing we can do; the server is probably in trouble, or the network connection failed. 
+						}
+					// Re-throw the exception so that the view is updated as well.
+					throw e;
+				}
+				
+				setStatusMessage( L10n.getString("Login.DBLayerInitialized") );
+				logger.debug("DBLayer initialized.");
+				
+				fireStopped(null);
+				
+				// Everything went fine - 
+				// there is a new DBLayer which is to be announced to the observers of Login.
+				announceConnection();
+				return null;
+			}
+		};
+	
+	}
+	
+	/**
 	 * Cancel the login proces.
 	 *
 	 */
+	@Deprecated
 	synchronized public void interrupt() {
 		if(worker != null) {
 			worker.interrupt();
@@ -303,15 +399,13 @@ public class Login extends Observable {
 		}
 		logout();
 		setChanged(); notifyObservers(L10n.getString("Login.Interrupted"));
-	}
+	} //NO LONGER AVAILABLE (it didn't work anyway).
 	
 	
 	
 	/**
 	 * Disconnect from the current database. 
 	 * The database connection is lost, any operation in progress will cause an exception.
-	 * 
-	 * @throws RemoteException if the RMI encounters an error.
 	 */
 	public void logout() {
 		if(dblayer != null) 

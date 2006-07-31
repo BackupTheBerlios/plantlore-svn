@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 
 import net.sf.plantlore.l10n.L10n;
 
+@Deprecated
 public class ItemCtrl {
 	
 	private Login model;

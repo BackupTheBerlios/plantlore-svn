@@ -11,8 +11,6 @@ import java.awt.Dialog;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JOptionPane;
-
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
@@ -46,7 +44,6 @@ public class AuthView extends javax.swing.JDialog implements Observer {
         ((AutoComboBox)user).setStrict(false);
         password = new javax.swing.JPasswordField();
         next = new javax.swing.JButton();
-        status = new javax.swing.JLabel();
         discard = new javax.swing.JButton();
 
         setTitle(L10n.getString("Login.Authentication"));
@@ -61,19 +58,16 @@ public class AuthView extends javax.swing.JDialog implements Observer {
 
         next.setText(L10n.getString("Login.Authorize"));
 
-        status.setText(" ...");
-        status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-
         discard.setText(L10n.getString("Common.Cancel"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel1)
                             .add(jLabel2))
@@ -86,7 +80,6 @@ public class AuthView extends javax.swing.JDialog implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(next)))
                 .addContainerGap())
-            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
         );
 
         layout.linkSize(new java.awt.Component[] {discard, next}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -106,8 +99,7 @@ public class AuthView extends javax.swing.JDialog implements Observer {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(next)
                     .add(discard))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -136,22 +128,18 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     				setTitle(L10n.getString("Login.ConnectingTo") + " " + selected.toString());
     			}
     			// Exception! We must display the exception to the user.
-    			else if(arg instanceof Exception) {
-    				status.setText(L10n.getString("Login.Failed"));
-    				next.setEnabled(true);
-    				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    				JOptionPane.showMessageDialog(
-    						null, 
-    						((Exception)arg).getMessage(), 
-    						L10n.getString("Error.LoginFailed"), 
-    						JOptionPane.ERROR_MESSAGE);
-    			}
+//    			else if(arg instanceof Exception) {
+//    				next.setEnabled(true);
+//    				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//    				JOptionPane.showMessageDialog(
+//    						null, 
+//    						((Exception)arg).getMessage(), 
+//    						L10n.getString("Error.LoginFailed"), 
+//    						JOptionPane.ERROR_MESSAGE);
+//    			}
     			// The database layer has been created, we are no longer neccessary
     			else if(arg instanceof DBLayer)
     				setVisible(false); 
-    			// Some update information - display them in the status bar.
-    			else if(arg instanceof String) 
-    				status.setText("  " + (String)arg);
     		}
     	});
 	}
@@ -163,7 +151,6 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     private javax.swing.JLabel jLabel2;
     protected javax.swing.JButton next;
     protected javax.swing.JPasswordField password;
-    protected javax.swing.JLabel status;
     protected javax.swing.JComboBox user;
     // End of variables declaration//GEN-END:variables
 
