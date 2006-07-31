@@ -15,7 +15,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.log4j.Logger;
 
-import net.sf.plantlore.client.export.component.XFilter;
+import net.sf.plantlore.client.export.component.FileFormat;
 import net.sf.plantlore.client.imports.Parser.Action;
 import net.sf.plantlore.client.imports.parsers.*;
 import net.sf.plantlore.common.exception.ImportException;
@@ -50,9 +50,9 @@ public class ImportMng extends Observable implements Observer {
 	/**
 	 * List of all filters the Export Manager is capable to handle.
 	 */
-	protected XFilter[] formats = new XFilter[] {
-			new XFilter(L10n.getString("Format.XML"), true, true, ".xml"),
-			new XFilter(L10n.getString("Format.PlantloreNative"), false, false, ".xml", ".pln"),
+	protected FileFormat[] formats = new FileFormat[] {
+			new FileFormat(L10n.getString("Format.XML"), true, true, ".xml"),
+			new FileFormat(L10n.getString("Format.PlantloreNative"), false, false, ".xml", ".pln"),
 	};
 	
 	
@@ -207,8 +207,8 @@ public class ImportMng extends Observable implements Observer {
 		
 		// Create a new parser according to the format.
 		// The format is guessed based on the extension.
-		XFilter format = null;
-		for(XFilter f : formats)
+		FileFormat format = null;
+		for(FileFormat f : formats)
 			if( f.accept(file) ) {
 				format = f;
 				break;
@@ -520,7 +520,7 @@ public class ImportMng extends Observable implements Observer {
 	/**
 	 * @return The list of filters describing formats this Import Manager can handle.
 	 */
-	public XFilter[] getFilters() {
+	public FileFormat[] getFilters() {
 		return formats.clone();
 	}
 

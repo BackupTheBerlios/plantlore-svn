@@ -4,7 +4,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.AppCoreView;
-import net.sf.plantlore.client.export.component.XFilter;
+import net.sf.plantlore.client.export.component.FileFormat;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
@@ -20,7 +20,7 @@ public class TableImportMngCtrl {
 		this.view = view;
 		choice = new JFileChooser();
 		choice.setAcceptAllFileFilterUsed(false);
-		choice.addChoosableFileFilter( new XFilter("Table update files (*.xml)", ".xml") );
+		choice.addChoosableFileFilter( new FileFormat("Table update files (*.xml)", ".xml") );
 	}
 	
 	public void setVisible(boolean visible) {
