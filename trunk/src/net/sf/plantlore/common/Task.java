@@ -235,6 +235,22 @@ public abstract class Task extends Observable {
         notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
     }
     
+    
+    /**
+     * Forcibly stops (cancels) the task.
+     * <br/>
+     * This call will interrupt any blocking IO operation, wait(), sleep(), and join() 
+     * that might be blocking the current task. 
+     * This should stop the task immediately. 
+     */
+    public void kill() {
+    	canceled = true;
+    	
+    	worker.interrupt();
+    	
+    	setChanged();
+        notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
+    }
 }
 
 
