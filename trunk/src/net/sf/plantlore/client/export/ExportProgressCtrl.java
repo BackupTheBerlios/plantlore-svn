@@ -9,6 +9,7 @@ import net.sf.plantlore.l10n.L10n;
 
 //import net.sf.plantlore.l10n.L10n;
 
+@Deprecated
 public class ExportProgressCtrl {
 	
 	private ExportTask model;

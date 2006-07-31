@@ -49,11 +49,9 @@ import org.apache.log4j.Logger;
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29 
  * @version 2.0
- * @see net.sf.plantlore.client.export.DefaultDirector
  * @see net.sf.plantlore.client.export.Builder
  */
-@Deprecated
-public class ExportMng implements Observer {
+public class ExportMng2 implements Observer {
 	
 	
 	public static final String ENCODING = "UTF-8";
@@ -91,7 +89,7 @@ public class ExportMng implements Observer {
 	 * @param selection	The list of selected records. 
 	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
 	 */
-	public ExportMng(DBLayer dblayer, SelectQuery query, Selection selection, Projection template) 
+	public ExportMng2(DBLayer dblayer, SelectQuery query, Selection selection, Projection template) 
 	throws ExportException, DBLayerException, RemoteException {
 		this(dblayer, query, selection, template, null, null, false, null);
 	}
@@ -105,7 +103,7 @@ public class ExportMng implements Observer {
 	 * 
 	 * @param dblayer	The database layer mediating the access to the database.
 	 */
-	public ExportMng(DBLayer dblayer) 
+	public ExportMng2(DBLayer dblayer) 
 	throws ExportException {
 		setDBLayer(dblayer);
 		setSelection(null);
@@ -117,7 +115,7 @@ public class ExportMng implements Observer {
 	 * @param dblayer	The database layer mediating the access to the database.
 	 * @param query	The query defining the result set which is to be iterated over.
 	 */
-	public ExportMng(DBLayer dblayer, SelectQuery query) 
+	public ExportMng2(DBLayer dblayer, SelectQuery query) 
 	throws ExportException, DBLayerException, RemoteException {
 		this(dblayer, query, null, null, null, null, false, null);
 	}
@@ -135,7 +133,7 @@ public class ExportMng implements Observer {
 	 * @param useProjections	Should projections be used.
 	 * @param rootTable	The root table (only if projections are used).
 	 */
-	public ExportMng(
+	public ExportMng2(
 			DBLayer dblayer, 
 			SelectQuery query, 
 			Selection selection, 
@@ -246,7 +244,7 @@ public class ExportMng implements Observer {
 	
 	
 	
-	private Set<ExportTask> exportTasks = new HashSet<ExportTask>(8);
+	private Set<ExportTask2> exportTasks = new HashSet<ExportTask2>(8);
 	
 	
 	/**
@@ -255,7 +253,7 @@ public class ExportMng implements Observer {
 	 * @throws ExportException	If information provided is not complete.
 	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
 	 */
-	synchronized public ExportTask createExportTask() 
+	synchronized public ExportTask2 createExportTask() 
 	throws ExportException, IOException, DBLayerException {
 		if( exportTasks.size() > 4 )
 			throw new ExportException(L10n.getString("Error.TooManyTasks"));
@@ -288,10 +286,6 @@ public class ExportMng implements Observer {
 					Habitat.class, Territory.class, Village.class, Phytochorion.class );
 		}
 		
-		// Execute the query.
-		Integer resultId = db.executeQuery( query );
-		int results  = db.getNumRows( resultId );
-		
 		// Create a new file and writer (wrapper).
 		Writer writer = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(filter.suggestName(filename)),
@@ -314,23 +308,17 @@ public class ExportMng implements Observer {
 		else if(filter.getDescription().equals(L10n.getString("Format.XML")))                        
 			builder = new XMLBuilder2(template, writer);                       
 		else if(filter.getDescription().equals(L10n.getString("Format.PlantloreNative")))                        
-			builder = new XMLBuilder(writer);                       
+			builder = new XMLBuilder2(writer);                       
 		else {
 			builder = new TrainingBuilder(template);
 		}
 
-		// Create a new Director and run it in a separate thread.
-		DefaultDirector director = new DefaultDirector(
-				builder, resultId, db, selection, useProjections, 
-				template.getDescription(), rootTable);
-		director.ignoreDead( filter.ignoreDead() );
-		if( selection.size(results) > 0 ) 
-			director.setExpectedNumberOfRecords( selection.size(results) );
 		
 		// Start a new task.
-		ExportTask t = new ExportTask(db, query, director, writer, selection.size(results));
-		exportTasks.add(t);
-		t.addObserver(this);
+		ExportTask2 t = new ExportTask2(db, query, writer, builder, selection);
+		t.ignoreDead( filter.ignoreDead() );
+		/*exportTasks.add(t);
+		t.addObserver(this);*/
 		
 		// Reset variables.
 		query = null;
@@ -350,8 +338,8 @@ public class ExportMng implements Observer {
 	 * Abort every running Export. 
 	 */
 	synchronized public void abortAllTasks() {
-		for(ExportTask task : exportTasks) {
-			task.abort();
+		for(ExportTask2 task : exportTasks) {
+			task.kill();
 			task.deleteObserver(this);
 		}
 		exportTasks.clear();
@@ -365,7 +353,7 @@ public class ExportMng implements Observer {
 	/**
 	 * @return The list of filters describing formats this Export Manager can handle.
 	 */
-	public FileFormat[] getFilters() {
+	public FileFormat[] getFileFormats() {
 		return filters.clone();
 	}
 

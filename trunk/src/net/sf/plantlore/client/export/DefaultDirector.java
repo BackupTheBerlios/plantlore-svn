@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
  * @see net.sf.plantlore.client.export.Builder
  * @see net.sf.plantlore.middleware.DBLayer
  */
+@Deprecated
 public class DefaultDirector extends Observable implements Runnable {
 	
 	private Logger logger = Logger.getLogger(getClass().getPackage().getName());

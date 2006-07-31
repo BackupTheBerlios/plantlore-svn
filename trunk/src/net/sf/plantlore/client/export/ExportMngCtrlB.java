@@ -9,7 +9,7 @@ import net.sf.plantlore.l10n.L10n;
 
 
 //import net.sf.plantlore.l10n.L10n;
-
+@Deprecated
 public class ExportMngCtrlB {
 	
 	private ExportMng model;
@@ -27,7 +27,7 @@ public class ExportMngCtrlB {
 	
 	class Next extends AbstractAction {
 		public void actionPerformed(ActionEvent arg0) {
-			Template t = view.tsm.getTemplate();
+			Projection t = view.tsm.getTemplate();
 			view.setVisible(false);
 			
 			

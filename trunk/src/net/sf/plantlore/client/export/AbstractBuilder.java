@@ -23,7 +23,7 @@ public abstract class AbstractBuilder implements Builder {
 	/** For an invocation of parameterless methods. */
 	protected static final Object[] NO_PARAMETERS = new Object[0];
 	
-	protected Template template;
+	protected Projection template;
 	
 	
 	/**
@@ -31,7 +31,7 @@ public abstract class AbstractBuilder implements Builder {
 	 * 
 	 * @param template The template describing which columns are selected.
 	 */
-	public AbstractBuilder(Template template) {
+	public AbstractBuilder(Projection template) {
 		setTemplate(template);
 	}
 	
@@ -41,14 +41,14 @@ public abstract class AbstractBuilder implements Builder {
 	 *  
 	 * @param template The new template. <b>Mustn't be <i>null</i></b>.
 	 */
-	public void setTemplate(Template template) {
+	public void setTemplate(Projection template) {
 		this.template = (template == null) ? null : template.clone();
 	}
 	
 	/**
 	 * @return A clone of the template this Builder currently uses.
 	 */
-	public Template getTemplate() {
+	public Projection getTemplate() {
 		return (template == null) ? null : template.clone();
 	}
 	

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 
-
+@Deprecated
 public class ExportTask extends Observable implements Observer {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());

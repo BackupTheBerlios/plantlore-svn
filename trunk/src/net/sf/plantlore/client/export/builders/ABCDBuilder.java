@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import net.sf.plantlore.client.export.AbstractBuilder;
 import net.sf.plantlore.client.export.Builder;
-import net.sf.plantlore.client.export.Template;
+import net.sf.plantlore.client.export.Projection;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.common.record.Occurrence;

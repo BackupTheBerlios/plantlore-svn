@@ -16,6 +16,7 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  Erik Kratochvíl
  */
+@Deprecated
 public class ExportProgressView extends javax.swing.JFrame implements Observer {
 	
 	private ExportTask model;

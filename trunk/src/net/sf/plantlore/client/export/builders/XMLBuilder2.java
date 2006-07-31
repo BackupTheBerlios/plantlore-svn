@@ -3,32 +3,42 @@ package net.sf.plantlore.client.export.builders;
 import java.io.IOException;
 import java.io.Writer;
 
-import net.sf.plantlore.client.export.AbstractBuilder;
-import net.sf.plantlore.client.export.Projection;
-import net.sf.plantlore.common.record.*;
-import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
+import net.sf.plantlore.client.export.Builder;
+import net.sf.plantlore.client.export.Projection;
+import net.sf.plantlore.common.record.*;
 
 /**
- * XML Builder.
+ * An improved version of the previous XMLBuilder. 
+ * This XMLBuilder is capable of creating files of virtually any size.
+ * The builder uses the Dom4j to create just one Occurrence element
+ * at a time; that element is written down when another Occurrence
+ * record arrives to be processed. 
+ * <br/>
+ * This way, the creation of an element is handled by the Dom4j 
+ * (all those necessary conversions 
+ * of <code>&gt;</code> to <code>&amp;gt;</code> etc.)
+ * <br/>
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-07-21
  *
- * @author Lada Oberreiterová
- * @author Erik Kratochvíl
  */
-public class XMLBuilder extends AbstractBuilder {
-
-    private Document document;
+public class XMLBuilder2 implements Builder {
+	
     private Writer outputWriter;
-    private Element occurrence;
+    private XMLWriter xmlWriter;
+    private Element element;
+    protected Projection template;
     
     /**
      * Create a new XML Builder.
      * The builder receives records (holder objects from the database)
-     * decomposes them, creates an XML tree, and stores it in the specified
+     * decomposes them, creates an XML node, and stores it in the specified
      * file.
      * <br/>
      * The template holds the set of important attributes (columns) of the record
@@ -38,10 +48,7 @@ public class XMLBuilder extends AbstractBuilder {
      * @param writer	The writer that will create the file.
      * @see net.sf.plantlore.client.export.Projection
      */
-    public XMLBuilder(Projection template, Writer writer) {
-    	super(template);
-        document = DocumentHelper.createDocument();
-        document.addElement("occurrences");
+    public XMLBuilder2(Projection template, Writer writer) {
         this.outputWriter = writer;
         this.template = template;
     }
@@ -49,7 +56,7 @@ public class XMLBuilder extends AbstractBuilder {
     /**
      * Create a new XML Builder.
      * The builder receives records (holder objects from the database)
-     * decomposes them, creates an XML tree, and stores it in the specified
+     * decomposes them, creates an XML node, and stores it in the specified
      * file.
      * <br/>
      * Every attribute (column) of the whole record will be exported.
@@ -57,30 +64,55 @@ public class XMLBuilder extends AbstractBuilder {
      * @param writer	The writer that will create the file.
      * @see net.sf.plantlore.client.export.Projection
      */
-    public XMLBuilder(Writer writer) {
+    public XMLBuilder2(Writer writer) {
     	this(new Projection().setEverything(), writer);
+    }
+    
+       
+    /**
+     * Generate the header of this format.
+     */
+    public void header() 
+    throws IOException {
+    	outputWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    	outputWriter.write("\n<occurrences>\n");
+    	
+    	OutputFormat format = OutputFormat.createPrettyPrint();
+        xmlWriter = new XMLWriter( outputWriter, format );
     }
     
     /**
      * Generate the footer of this format.
      */
-    @Override
-    public void footer() throws IOException {
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter xmlwriter = new XMLWriter( outputWriter, format );
-        xmlwriter.write( document );
-        xmlwriter.close();
+    public void footer() 
+    throws IOException {
+    	outputWriter.write("</occurrences>\n");
+        xmlWriter.close();
     }
+    
+    /**
+     * Begin a new record.
+     */
+    public void startRecord() 
+    throws IOException {
+    	element = null;
+    }
+    
+    /**
+     * Finish processing of the record.
+     */
+    public void finishRecord() 
+    throws IOException {
+    	xmlWriter.write( element );
+    }
+    
 
     /**
      * Build part of the whole record.
      */
-    @Override
     public void part(Record record) 
     throws IOException {
-    	// One Occurrence can have many AuthorOccurrences [AOs]. 
-    	// All those AOs are in their own special node <authors></authors>.
-    	decompose( (record instanceof AuthorOccurrence) ? occurrence : document.getRootElement(), record);
+    	decompose( element, record);
     }
     
     /**
@@ -95,34 +127,32 @@ public class XMLBuilder extends AbstractBuilder {
     		return false;
     	
     	Class table = record.getClass();
-    	Element current = father.addElement(table.getSimpleName().toLowerCase());
-    	// Every occurrence may have 0..N associated AuthorOccurrences.
-    	if(record instanceof Occurrence) 
-    		occurrence = current;
+    	
+    	Element current;
+    	if( father == null )
+    		current = element = DocumentHelper.createElement(table.getSimpleName().toLowerCase());
+    	else
+    		current = father.addElement(table.getSimpleName().toLowerCase());
     	
     	boolean hasAtLeastOneProperty = false;
     	
     	for( String property : record.getProperties() )
     		if( template.isSet(table, property) ) {
     			Object value = record.getValue(property);
-    			current.addElement(property.toLowerCase()).setText(value == null ? "" : value.toString());
-    			hasAtLeastOneProperty = true;
+    			if( value != null && value.toString().length() > 0 ) {
+    				current.addElement(property.toLowerCase()).setText(value.toString());
+    				hasAtLeastOneProperty = true;
+    			}
     		}
     	
     	// Decompose all subrecords of this record.
-    	for(String key : record.getForeignKeys()) {
+    	for(String key : record.getForeignKeys())
     		hasAtLeastOneProperty =  decompose( current, (Record) record.getValue(key) ) || hasAtLeastOneProperty;
-    	}
     	
     	if( !hasAtLeastOneProperty )
     		current.detach();
     	
     	return hasAtLeastOneProperty;
     }
-
-	@Override
-	protected void output(Class table, String column, Object value) throws IOException {
-		// I do not need this method.
-	}
 
 }

@@ -5,9 +5,10 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import net.sf.plantlore.client.AppCoreView;
-import net.sf.plantlore.client.export.component.XFilter;
+import net.sf.plantlore.client.export.component.FileFormat;
 import net.sf.plantlore.l10n.L10n;
 
+@Deprecated
 public class ExportMngCtrlA {
 	
 	
@@ -49,7 +50,7 @@ public class ExportMngCtrlA {
 				}
 				
 				model.setSelectedFile( choice.getSelectedFile().getAbsolutePath() );
-				XFilter filter = (XFilter) choice.getFileFilter();
+				FileFormat filter = (FileFormat) choice.getFileFilter();
 				model.setActiveFileFilter( filter );
 				
 				if( filter.isColumnSelectionEnabled() )

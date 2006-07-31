@@ -9,7 +9,7 @@ package net.sf.plantlore.client.export;
 import java.awt.Frame;
 
 import net.sf.plantlore.client.export.component.TemplateSelectionModel;
-import net.sf.plantlore.client.export.component.XTree;
+import net.sf.plantlore.client.export.component.ExtendedTree;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -24,7 +24,7 @@ public class ExportMngViewB extends javax.swing.JDialog {
     public ExportMngViewB(Frame parent) {
     	super(parent, true);
     	
-    	tsm = new TemplateSelectionModel();
+    	tsm = new TemplateSelectionModel( new Projection() );
     	
         initComponents();
         getRootPane().setDefaultButton(next);
@@ -39,7 +39,7 @@ public class ExportMngViewB extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jScrollPane1 = new javax.swing.JScrollPane();
-        tree = new XTree();
+        tree = new ExtendedTree();
         next = new javax.swing.JButton();
 
         setTitle(L10n.getString("Export.SelectColumns"));

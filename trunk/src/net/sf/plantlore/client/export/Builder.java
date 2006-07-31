@@ -13,7 +13,6 @@ import net.sf.plantlore.common.record.*;
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
  * @version 1.0
- * @see net.sf.plantlore.client.export.DefaultDirector
  */
 public interface Builder {
 		

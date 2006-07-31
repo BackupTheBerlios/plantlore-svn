@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import net.sf.plantlore.client.export.AbstractBuilder;
 import net.sf.plantlore.client.export.Builder;
 import net.sf.plantlore.common.record.*;
-import net.sf.plantlore.client.export.Template;
+import net.sf.plantlore.client.export.Projection;
 
 
 /**
@@ -22,7 +22,7 @@ import net.sf.plantlore.client.export.Template;
 public class CSVBuilder implements Builder {
 	
 	private Writer stream;
-	private Template template;
+	private Projection template;
 	
 	/** Is this the first column on this line? */
 	private boolean firstColumnOnThisLine;
@@ -52,7 +52,7 @@ public class CSVBuilder implements Builder {
 	 * @param output	The writer where the output will be sent.
 	 * @param tmp	The template that describes the selected columns and tables.
 	 */
-	public CSVBuilder(Writer output, Template tmp) {
+	public CSVBuilder(Writer output, Projection tmp) {
 		this.stream = output;
 		this.template = tmp;
 	}

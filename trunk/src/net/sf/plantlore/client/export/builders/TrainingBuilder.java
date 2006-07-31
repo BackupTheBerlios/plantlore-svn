@@ -3,7 +3,7 @@ package net.sf.plantlore.client.export.builders;
 import java.io.IOException;
 
 import net.sf.plantlore.client.export.AbstractBuilder;
-import net.sf.plantlore.client.export.Template;
+import net.sf.plantlore.client.export.Projection;
 
 /**
  * A training extension of the AbstractBuilder.
@@ -27,7 +27,7 @@ public class TrainingBuilder extends AbstractBuilder {
 	
 	private int i = 0;
 	
-	public TrainingBuilder(Template template) {
+	public TrainingBuilder(Projection template) {
 		super(template);
 	}
  
