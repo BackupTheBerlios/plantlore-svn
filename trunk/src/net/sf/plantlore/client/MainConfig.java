@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.client.login.Login;
 import net.sf.plantlore.server.RMIServer;
 
 import org.apache.log4j.Logger;
@@ -157,10 +158,11 @@ public class MainConfig {
     		
     		// The list of stored users. 
     		List userList = n.selectNodes("user");
-    		users = new String[userList.size()];
+    		users = new String[ Login.MAX_NAMES /*userList.size()*/ ];
     		Node user = null;
-    		Iterator it2 = userList.iterator(); int i = 0;
-    		while (it2.hasNext()) {
+    		Iterator it2 = userList.iterator(); 
+    		int i = 0;
+    		while (it2.hasNext() && i < Login.MAX_NAMES) {
     			user = (Node) it2.next();
     			users[i] = user.getText();
     			i++;
