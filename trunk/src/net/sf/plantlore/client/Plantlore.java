@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.debug.MemoryMonitor;
 import net.sf.plantlore.common.exception.PlantloreException;
 
 import net.sf.plantlore.l10n.L10n;
@@ -90,6 +91,9 @@ public class Plantlore {
         }
         
         plantlore.run();
+        
+        
+        new MemoryMonitor();
     }
     
     
