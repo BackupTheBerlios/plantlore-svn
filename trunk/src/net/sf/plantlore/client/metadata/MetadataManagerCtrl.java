@@ -13,26 +13,40 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import net.sf.plantlore.common.PlantloreHelp;
-import net.sf.plantlore.common.record.Metadata;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.rmi.RemoteException;
+
+import net.sf.plantlore.client.history.WholeHistoryCtrl.escapeKeyPressed;
+import net.sf.plantlore.common.ProgressBar;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author Lada
+ * Controller for the main MetadataManager dialog (part of the MetadataManager MVC).
+ * 
+ * @author Lada Oberreiterova
+ * @version 1.0
  */
 public class MetadataManagerCtrl {
     
+	/** Instance of a logger */
     private Logger logger;
+    /** Model of MetadataManager MVC */
     private MetadataManager model;
+    /** View of MetadataManager MVC */
     private MetadataManagerView view;
     
-    /** Creates a new instance of MetadataManagerCtrl */
-    public MetadataManagerCtrl(MetadataManager model, MetadataManagerView view) {
+    /** Creates a new instance of MetadataManagerCtrl 
+     *  @param model model of the MetadataManager MVC
+     *  @param view  view of the MetadataManager MVC 
+     */
+    public MetadataManagerCtrl(MetadataManager modelPar, MetadataManagerView viewPar) {
         
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
-        this.model = model;
-        this.view = view;
+        this.model = modelPar;
+        this.view = viewPar;
           
         view.closeButton.addActionListener(new closeButtonListener());
         view.previousButton.addActionListener(new previousButtonListener());
@@ -45,11 +59,83 @@ public class MetadataManagerCtrl {
         view.searchButton.addActionListener(new searchUserListener());
         view.sortAscendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
         view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
+        view.sortField.addFocusListener(new SortComboFocusListener());
+        
+        // Add key listeners
+        view.closeButton.addKeyListener(new escapeKeyPressed());
+        view.previousButton.addKeyListener(new escapeKeyPressed());
+        view.nextButton.addKeyListener(new escapeKeyPressed());
+        view.addButtons.addKeyListener(new escapeKeyPressed());
+        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
+        view.helpButton.addKeyListener(new escapeKeyPressed());
+        view.editButtons.addKeyListener(new escapeKeyPressed());
+        view.deleteButton.addKeyListener(new escapeKeyPressed());
+        view.detailsButton.addKeyListener(new escapeKeyPressed());
+        view.searchButton.addKeyListener(new escapeKeyPressed());
+        view.sortField.addKeyListener(new escapeKeyPressed());
+        view.tableMetadataList.addKeyListener(new escapeKeyPressed());
+        view.sortAscendingRadioButton.addKeyListener(new escapeKeyPressed());
+        view.sortDescendingRadioButton.addKeyListener(new escapeKeyPressed());
+        view.sourceInstitutionIdText.addKeyListener(new escapeKeyPressed());           
+        view.sourceIdText.addKeyListener(new escapeKeyPressed());
+        view.dataSetTitleText.addKeyListener(new escapeKeyPressed());
+        view.addKeyListener(new escapeKeyPressed());        
+        
+        //Search metadata
+        Task task = model.searchMetadata(true);
+        
+        ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 			
+			private static final long serialVersionUID = -3944058265290571972L;
+			public void exceptionHandler(Exception e) {
+				if (e instanceof DBLayerException) {	   									   							
+   					DBLayerException dbex = (DBLayerException) e;	
+   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				if (e instanceof RemoteException) {	 
+   					RemoteException remex = (RemoteException) e;		
+   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE, MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+   				logger.error(e);
+   			}
+
+			public void afterStopping() {
+				//Process result
+		        model.processResult(1, model.getDisplayRows());
+		        //Update view dialog
+		        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
+		        int from = model.getCurrentFirstRow();
+                int to = from + view.tableMetadataList.getRowCount() - 1;
+                view.displayedValueLabel.setText(from + "-" + to);
+                view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+           } 		   					
+		};
+		progressBar.setTitle(MetadataManager.PROGRESS_SEARCH);	                   	                   
+        task.start();                                       
     }
     
-       /**
-    * On Cancel just hides the view.
-    *
+    /**     
+     * KeyListener class controlling the pressing key ESCAPE.
+     * On key ESCAPE hides the view.     
+     */
+    public class escapeKeyPressed implements KeyListener {
+    	 	 public void keyPressed(KeyEvent evt){
+    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+    	 			logger.debug("ESCAPE: " + view.getFocusOwner());
+    	 			view.close();
+    	 		}    	 		     	 		 
+    	 	 }
+    	      public void keyReleased(KeyEvent evt) {}    	     
+    	      public void keyTyped(KeyEvent evt) {}    	         
+    }
+    
+    /**
+    * ActionListener class controlling the <b>CLOSE</b> button on the form.
+    * On Close hides the view.
     */
    class closeButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
@@ -59,45 +145,61 @@ public class MetadataManagerCtrl {
    }
      
    /**
-    * 
-    *
+    *  ActionListener class controlling the <b>PREV</b> button on the form.
+    *  The button PREV is used for browsing the search results.
     */
    class previousButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-    	   //   Call processResults only if we don't see the first page (should not happen, button should be disabled)
-    	   logger.debug("FIRST");
-    	   logger.debug("current first row: "+model.getCurrentFirstRow());
-           logger.debug("num rows in the result: "+ model.getResultRows());            
-           logger.debug("display rows: "+ view.tableMetadataList.getRowCount());      
+    	   // Check whether an error flag is set
+           if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           // Get previous page of results
            if (model.getCurrentFirstRow() > 1) {
                int firstRow = Math.max(model.getCurrentFirstRow()- model.getDisplayRows(), 1);
                model.processResult(firstRow, model.getDisplayRows()); 
+               if (model.isError()) return;
                if (model.getCurrentFirstRow() > 1){
                }
                view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.tableMetadataList.getRowCount() - 1;
                view.displayedValueLabel.setText(from + "-" + to);
-           }                           
+           }      
+           //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableMetadataList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
        }
    }
    
+   
    /**
-    * 
-    *
+    * ActionListener class controlling the <b>NEXT</b> button on the form.
+    * The button NEXT is used for browsing the search results.    
     */
    class nextButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-    	   //Call processResults only if we don't see the last page
-    	   logger.debug("NEXT");
-           logger.debug("current first row: "+model.getCurrentFirstRow());
-           logger.debug("num rows in the result: "+ model.getResultRows());            
-           logger.debug("display rows: "+ model.getDisplayRows());
-           logger.debug("num rows in table (view) "+ view.tableMetadataList.getRowCount());              
+    	   //Check whether an error flag is set 
+           if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           // Get next page of result
            if (model.getCurrentFirstRow()+ view.tableMetadataList.getRowCount()<=model.getResultRows()) {
                model.processResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.tableMetadataList.getRowCount());
+               if (model.isError()) return;
                view.tableMetadataList.setModel(new MetadataManagerTableModel(model));             
                int from = model.getCurrentFirstRow();
                int to = from + view.tableMetadataList.getRowCount() - 1;
@@ -106,175 +208,360 @@ public class MetadataManagerCtrl {
                }else {
             	   view.displayedValueLabel.setText(from + "-" + to);
                }               
-           }                       
+           }  
+           //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableMetadataList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
        }
    }
    
     /**
-    * 
+    *  ActionListener class controlling the text field on the form for set number of rows to displayed.
     */
      class rowSetDisplayChangeListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent) {
-           // Save old value
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           // Save old value 
            int oldValue = model.getDisplayRows();           
            // Check whether new value > 0
            if (view.getDisplayRows() < 1) {
                view.setDisplayRows(oldValue);
                return;
-           }
-           if (view.getDisplayRows() > model.getResultRows()){
-        	   view.setDisplayRows(model.getResultRows());
-           } 
-           
+           }           
            // Set new value in the model
            model.setDisplayRows(view.getDisplayRows());
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
-           if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
+           if (oldValue != view.getDisplayRows()) {
                model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
+               if (model.isError()) return;
                view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.tableMetadataList.getRowCount() - 1;
                view.displayedValueLabel.setText(from + "-" + to);               
            }
+           // Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableMetadataList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
        }        	   
-   }
-   
+   }  
  
     /**
-    *
+    * ActionListener class controlling the <b>Add metadata</b> button on the form.
     */  
     class addMetadataListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-           //v modelu nastavim informaci o tom, ze jde o ADD
+    	   //Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           //set information abut selected operation ADD
            model.setOperation("ADD");           
-           //otevre se dialog addEdit s tim, ze mu rekneme, ze jde o ADD
-           //pozor: pri add se musi ohlidat, zda byly vyplneny povinne polozky
+           //create and open Add dialog
            AddEditMetadataView addView = new AddEditMetadataView(model, view,true);
-           AddEditMetadataCtrl addCtrl = new AddEditMetadataCtrl(addView, model);
+           new AddEditMetadataCtrl(addView, model);
            addView.setAddForm();
-           addView.setVisible(true);
-           //pokud bude pridan zaznam,je potreba ho zobrazit v tabulce = provest znovu dotaz nebo pridat do datalistu, ale tam
-           //nezarucim spravne setrizeni,takze novy dotaz bude lepsi....
-           //bylo by dobre si nekde drzet query (kdyby pouzil uzivatel search)
-           //nacteni metadat
-           model.searchMetadata();
-           //opet funkci pro vyzadani si dat postupne
-           model.processResult(1, model.getDisplayRows());
-           view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-           view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());  
+           addView.setVisible(true); 
+           //User press button close
+           if (model.usedClose()) return;
+           //save new record Metadata into database
+           Task task = model.addMetedataRecord();
+           
+           ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
+   			public void exceptionHandler(Exception e) {
+   				if (e instanceof DBLayerException) {	   									   							
+   					DBLayerException dbex = (DBLayerException) e;	
+   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				if (e instanceof RemoteException) {	 
+   					RemoteException remex = (RemoteException) e;		
+   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+   				logger.error(e);
+   			}
+   			
+   			public void afterStopping() {
+    			   //load metadata
+    	           model.searchMetadata(false);           
+    	           model.processResult(1, model.getDisplayRows());
+    	           if (model.isError()) return;
+    	           view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
+    	           view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());
+    	           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    	           
+               } 		   		
+   		};
+   		progressBar.setTitle(MetadataManager.PROGRESS_ADD);	                   	                   
+        task.start();                                       
        }
     }
     
      /**
-    *
+    * ActionListener class controlling the <b>Edit metadata</b> button on the form.
     */  
     class editMetadataListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-           if (view.tableMetadataList.getSelectedRow() < 0) {    
-               view.selectRowMessage();
+    	   //  whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           if (view.tableMetadataList.getSelectedRow() < 0) {
+        	   // Display warning message saying that no row of table has been selected.
+               view.showWarningMessage(MetadataManager.WARNING_SELECTION_TITLE, MetadataManager.WARNING_SELECTION);
            } else {
-               //v modelu nastavim informaci o tom, ze jde o EDIT
+               //Set information about selected operation - EDIT
                model.setOperation("EDIT");
-               //poznaceni si do modelu inforamce o vybranem radku pro dalsi praci
+               //Set information about selected row
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setSelectedRecord(resultNumber);
-               //vytvoreni dialogu
+               model.setMetadataRecord(resultNumber);
+               //Create edit dialog
                AddEditMetadataView editView = new AddEditMetadataView(model, view,true);
-               AddEditMetadataCtrl editCtrl = new AddEditMetadataCtrl(editView, model);
-               //nacteni dat
-               editView.loadData();               
-               //nastaveni dialogu
+               new AddEditMetadataCtrl(editView, model);
+               //Load data and setting of edit dialog
+               editView.loadData();                              
                editView.setEditForm();               
-               editView.setVisible(true);    
-               //po editaci zaznamu se musi zobrazit zmena i v tabulce
-              //nacteni metadat
-               model.searchMetadata();
-               //opet funkci pro vyzadani si dat postupne
-               model.processResult(1, model.getDisplayRows());
-               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-               view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());  
-           }          
+               editView.setVisible(true); 
+               // User press button close
+               if (model.usedClose()) return;
+               //Update metadata               
+               Task task = model.editMetadataRecord();
+               
+               ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
+          			public void exceptionHandler(Exception e) {
+          				if (e instanceof DBLayerException) {	   									   							
+           					DBLayerException dbex = (DBLayerException) e;	
+           					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+           					getTask().stop();
+           					return;
+           				}
+           				if (e instanceof RemoteException) {	 
+           					RemoteException remex = (RemoteException) e;		
+           					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+           					getTask().stop();
+           					return;
+           				}
+           				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+           				logger.error(e);
+           			}
+
+          			public void afterStopping() {
+          			   //load metadata          				
+                        if (model.isError()) return;
+                        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
+                     } 		   					
+          		};
+          		progressBar.setTitle(MetadataManager.PROGRESS_EDIT);	                   	                   
+                task.start();                                       
+              }
        }
     }
     
     /**
-    *
+    * ActionListener class controlling the <b>Details</b> button on the form.
     */  
     class detailsMetadataListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
            if (view.tableMetadataList.getSelectedRow() < 0) {    
-               view.selectRowMessage();
+               // Display warning message saying that no row of table has been selected.
+               view.showWarningMessage(MetadataManager.WARNING_SELECTION_TITLE, MetadataManager.WARNING_SELECTION);
            } else {
-               //v modelu nastavim informaci o tom, ze jde o DETAILS
+               //Set information about selected operation - DETAILS
                 model.setOperation("DETAILS");
-               //poznaceni si do modelu inforamce o vybranem radku pro dalsi praci
+               //Set information about selected row
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setSelectedRecord(resultNumber);
-               //vytvoreni dialogu
+               model.setMetadataRecord(resultNumber);
+               //Create detail dialog
                AddEditMetadataView detailsView = new AddEditMetadataView(model, view,true);
-               AddEditMetadataCtrl detailsCtrl = new AddEditMetadataCtrl(detailsView, model);
-               //nacteni dat
-               detailsView.loadData();
-               //nastaveni dialogu
+               new AddEditMetadataCtrl(detailsView, model);
+               //Load data and setting of detail dialog
+               detailsView.loadData();               
                detailsView.setDetailsForm();
                detailsView.setVisible(true); 
+               model.setUsedClose(false);
            }          
        }
     }
     
      /**
-    *
+    * ActionListener class controlling the <b>Delete metadata</b> button on the form.
     */  
     class deleteMetadataListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
            if (view.tableMetadataList.getSelectedRow() < 0) {    
-               view.selectRowMessage();
+               // Display warning message saying that no row of table has been selected.
+               view.showWarningMessage(MetadataManager.WARNING_SELECTION_TITLE, MetadataManager.WARNING_SELECTION);
            } else {
-               //smazani zaznamu
+               //Set information about selected row
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1; 
-               model.setSelectedRecord(resultNumber);
-               model.deleteMetadataRecord();        
-               //nacteni metadat
-               model.searchMetadata();
-               //opet funkci pro vyzadani si dat postupne
-               model.processResult(1, model.getDisplayRows());
-               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-               view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());  
-           }          
+               model.setMetadataRecord(resultNumber);
+               //Test if record can be deleted
+               if (!model.checkDelete(resultNumber)) {
+                   view.showErrorMessage(MetadataManager.ERROR_TITLE, MetadataManager.ERROR_CHECK_DELETE);
+               } else {
+            	   int okCancle = view.showQuestionMessage(MetadataManager.QUESTION_DELETE_TITLE, MetadataManager.QUESTION_DELETE);               
+                   if (okCancle == 0){
+                	   //Button OK was press
+                	   logger.debug("Button OK was press.");
+		               //delete selected record
+		               Task task = model.deleteMetadataRecord();
+		               
+		               ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  		   				
+						private static final long serialVersionUID = -6156468821508998437L;
+						public void exceptionHandler(Exception e) {
+							if (e instanceof DBLayerException) {	   									   							
+			   					DBLayerException dbex = (DBLayerException) e;	
+			   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+			   					getTask().stop();
+			   					return;
+			   				}
+			   				if (e instanceof RemoteException) {	 
+			   					RemoteException remex = (RemoteException) e;		
+			   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+			   					getTask().stop();
+			   					return;
+			   				}
+			   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+			   				logger.error(e);
+			   			}
+		
+                                    public void afterStopping() {
+                                       // load metadata
+		   	               model.searchMetadata(false);               
+		   	               model.processResult(1, model.getDisplayRows());
+		   	               if (model.isError()) return;
+		   	               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
+		   	               view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());
+		   	               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());		   	               
+		                } 		   					
+		   			};
+		   			progressBar.setTitle(MetadataManager.PROGRESS_DELETE);	                   	                   
+		            task.start();                                                                  
+		          }else {
+		        	  logger.debug("Button Cancle was press.");
+		          }
+	           }
+           }
        }
-    }
+   }       
     
-        class searchUserListener implements ActionListener {
+   /**
+    * * ActionListener class controlling the <b>Search/Sort</b> button on the form.    
+    */
+    class searchUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
            model.setSourceInstitutionId(view.sourceInstitutionIdText.getText());           
            model.setSourceId(view.sourceIdText.getText());
            model.setDataSetTitle(view.dataSetTitleText.getText());
             if (!(view.checkNonEmpty("sourceInstitutionId") || view.checkNonEmpty("sourceId") ||
                view.checkNonEmpty("dataSetTitle"))) {
-               view.showSearchInfoFillMessage();
+                //Display info message  saying that no search field has been filled in.
+               view.showInfoMessage(MetadataManager.INFORMATION_SEARCH_TITLE, MetadataManager.INFORMATION_SEARCH);
                model.setSourceInstitutionId("%");
            }          
-           //opet funkci pro vyzadani si dat postupne
-           model.searchMetadata();
-           //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
-           if (model.getDisplayRows() <= 0) {
-               model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
-           }
-           if (model.getResultRows() < 1) {
-               view.showSearchInfoMessage();
-           }
-           model.processResult(1, model.getDisplayRows());
-           view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());                      
+           //Load metadata with specific conditions
+           Task task = model.searchMetadata(true);   
+           
+           ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  			
+			    private static final long serialVersionUID = -7147752276335991652L; 
+				public void exceptionHandler(Exception e) {
+					if (e instanceof DBLayerException) {	   									   							
+	   					DBLayerException dbex = (DBLayerException) e;	
+	   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE, MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+	   					getTask().stop();
+	   					return;
+	   				}
+	   				if (e instanceof RemoteException) {	 
+	   					RemoteException remex = (RemoteException) e;		
+	   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+	   					getTask().stop();
+	   					return;
+	   				}
+	   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+	   				logger.error(e);
+	   			}
+
+				public void afterStopping() {
+					if (model.getDisplayRows() <= 0) {
+		               model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
+		           }
+		           //No record in result - show message to user
+		           if (model.getResultRows() < 1) {
+		               view.showInfoMessage(MetadataManager.INFORMATION_RESULT_TITLE,MetadataManager.INFORMATION_RESULT);
+		           }
+		           model.processResult(1, model.getDisplayRows());
+		           if (model.isError()) return;		           
+		           view.tableMetadataList.setModel(new MetadataManagerTableModel(model)); 		           
+		           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+		           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString()); 		           
+               } 		   					
+			};
+			progressBar.setTitle(MetadataManager.PROGRESS_SEARCH);	                   	                   
+            task.start();                                                                  
        }
     }
+    
+    /**
+     *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus 
+     *  automaticaly stores value of the field to model.
+     */
+    class SortComboFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            model.setSortField(view.sortField.getSelectedIndex());
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty, no action when focus gained
+        }
+    }    
+    
     
     /**
      *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 

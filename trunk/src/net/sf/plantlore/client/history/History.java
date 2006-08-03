@@ -113,8 +113,7 @@ public class History extends Observable {
     private Object data;        
     private HistoryRecord historyRecord;
     private HistoryChange historyChange;
-         
-    /** */    
+                
     private Hashtable<String, Integer> authorsOccurrenceHash;
     private Hashtable<String, Integer> occurrenceHash; 
     private Hashtable<String, Integer> authorHash;
@@ -369,7 +368,7 @@ public class History extends Observable {
              		objectHistory = database.more(this.resultId, 0, to-1);  
              	} catch(RemoteException e) {
              		logger.error("Remote exception caught in History (processResult). Details: "+e.getMessage());
-        			setError(ERROR_SEARCH_DATA);
+        			setError(ERROR_PROCESS);
         			setChanged();
                     notifyObservers();
                  	return;                                                                                       
@@ -2145,16 +2144,16 @@ public class History extends Observable {
 	} 
 	
 	/**
-	 * Get information about current display rows
-	 * @return information about current display rows
+	 * Get information about current display rows (from - to)
+	 * @return information about current display rows (from - to)
 	 */
 	public String getCurrentDisplayRows() {
 		  return this.displayRow;		  
 	  }
 	
 	/**
-	 * Set information about current display rows
-	 * @param displayRow information about current display rows
+	 * Set information about current display rows (from - to)
+	 * @param displayRow information about current display rows (from - to)
 	 */
 	public void setCurrentDisplayRows(String displayRow) {
 	         this.displayRow = displayRow;		  

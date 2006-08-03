@@ -1201,15 +1201,19 @@ public class AppCoreCtrl {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("History od record: "+ model.getDatabase());	
 			
-			historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());
-			if (historyModel.isError()) {				
-				JOptionPane.showMessageDialog(view, historyModel.getError(), L10n.getString("Error.HistorySearchTitle"),
-						JOptionPane.WARNING_MESSAGE);				
-			} else {	
-			historyView = new HistoryView(historyModel, view, true);
-			historyCtrl = new HistoryCtrl(historyModel, historyView);
-			historyModel.addObserver(managerBridge);
-			historyView.setVisible(true);
+			if (historyModel == null) {
+				historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());
+				if (historyModel.isError()) {				
+					JOptionPane.showMessageDialog(view, historyModel.getError(), L10n.getString("Error.HistoryCreateDialog"),
+							JOptionPane.WARNING_MESSAGE);				
+				} else {					
+				historyView = new HistoryView(historyModel, view, true);
+				historyCtrl = new HistoryCtrl(historyModel, historyView);
+				historyModel.addObserver(managerBridge);
+				historyView.setVisible(true);
+				}
+			} else {
+				historyView.setVisible(true);
 			}
 		}
 	}
@@ -1222,18 +1226,21 @@ public class AppCoreCtrl {
 		public void actionPerformed(ActionEvent actionEvent) {
 			System.out.println("Whole history");
 
-			wholeHistoryModel = new History(model.getDatabase());
-			if (wholeHistoryModel.isError()) {
-				//TODO: zjistit nejdrive o jakou chybu jde
-				JOptionPane.showMessageDialog(view, wholeHistoryModel.getError(), L10n.getString("Error.HistorySearchTitle"),
-						JOptionPane.WARNING_MESSAGE);				
-				logger.error("");
-			} else {			
-				wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,
-						true);
-				wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel,
-						wholeHistoryView);
-				wholeHistoryModel.addObserver(managerBridge);
+			if (wholeHistoryModel == null) {
+				wholeHistoryModel = new History(model.getDatabase());
+				if (wholeHistoryModel.isError()) {
+					//TODO: zjistit presneji o jakou chybu jde
+					JOptionPane.showMessageDialog(view, wholeHistoryModel.getError(), L10n.getString("Error.HistoryCreateDialog"),
+							JOptionPane.WARNING_MESSAGE);									
+				} else {			
+					wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,
+							true);
+					wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel,
+							wholeHistoryView);
+					wholeHistoryModel.addObserver(managerBridge);
+					wholeHistoryView.setVisible(true);
+				}
+			} else {
 				wholeHistoryView.setVisible(true);
 			}
 		}
@@ -1252,13 +1259,22 @@ public class AppCoreCtrl {
 		public void actionPerformed(ActionEvent actionEvent) {
 			System.out.println("Metadata Manager");
 
-			metadataManagerModel = new MetadataManager(model.getDatabase());
-			metadataManagerView = new MetadataManagerView(metadataManagerModel,
-					view, true);
-			metadataManagerCtrl = new MetadataManagerCtrl(metadataManagerModel,
-					metadataManagerView);
-			metadataManagerModel.addObserver(managerBridge);
-			metadataManagerView.setVisible(true);
+			if (metadataManagerModel == null) {
+				metadataManagerModel = new MetadataManager(model.getDatabase());
+				if (metadataManagerModel.isError()) {
+					JOptionPane.showMessageDialog(view, metadataManagerModel.getError(), L10n.getString("Error.MetadataCreateDialog"),
+							JOptionPane.WARNING_MESSAGE);									
+				} else {					
+					metadataManagerView = new MetadataManagerView(metadataManagerModel,
+							view, true);
+					metadataManagerCtrl = new MetadataManagerCtrl(metadataManagerModel,
+							metadataManagerView);
+					metadataManagerModel.addObserver(managerBridge);
+					metadataManagerView.setVisible(true);
+				}
+			} else {
+				metadataManagerView.setVisible(true);
+			}
 		}
 	}
 

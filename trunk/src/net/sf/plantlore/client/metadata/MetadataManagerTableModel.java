@@ -18,23 +18,26 @@ import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author Lada
+ * Implements a table model for the MetadataManage
+ * 
+ * @author Lada Oberreiterova
+ * @version 1.0
  */
 public class MetadataManagerTableModel  extends AbstractTableModel  {
-    
-  
-        //Logger
+     
+	private static final long serialVersionUID = 5504730682131771632L;
+	/** Instance of a logger */
     private Logger logger;
-    // MetadataManager model
-    private MetadataManager model; 
-    private ArrayList<Metadata> metadataDataList;
-    
+    /** Model of MetadataManager */
+    private MetadataManager model;
+    /** Results of a search query for displaying */
+    private ArrayList<Metadata> metadataDataList;    
     /** Names of the columns */
     private String[] columnNames;
     /** Data values displayed in the table*/
     private Object[][] data;
 
+    /** Constants used for identification of columns of table */
     public final static int SOURCEINSTITUTIONID = 0;
     public final static int SOURCEID = 1;
     public final static int DATASETTITLE = 2; 
@@ -43,7 +46,10 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
     public final static int DATECREATE = 5;
     public final static int DATEMODIFIED = 6;    
     
-    /** Creates a new instance of MetadataManagerTableModel */
+    /** 
+     * Creates a new instance of MetadataManagerTableModel 
+     * @param model model of MetadataManager MVC     
+     */
     public MetadataManagerTableModel(MetadataManager model) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
     	this.model = model;        
@@ -51,6 +57,9 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
     	initData();    	
     }  
    
+    /**
+     * Init names of columns.     
+     */
     private void initColumns() {
         columnNames = new String[7];                  
         columnNames[0] = L10n.getString("MetadataManager.SourceInstitutionId");   
@@ -68,7 +77,7 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
     public void initData() {
     	
     	logger.debug("Metadata - Init data.");
-    	
+    	//For no record in result return empty object
     	metadataDataList = model.getMetadataList();
     	if (metadataDataList.size()==0 ){
     		this.data = new Object[0][];
@@ -78,9 +87,9 @@ public class MetadataManagerTableModel  extends AbstractTableModel  {
     	int countResult = Math.min(metadataDataList.size(), firstRow+ model.getDisplayRows()-1);
     	int countRow = countResult - firstRow + 1;   
         int ii = 0;
-    	//loud data for view
-        Object[][] metadataData = new Object[countRow][7];   
-    	for (int i=firstRow-1; i < countResult; i++) {     
+    	//load data for view
+        Object[][] metadataData = new Object[countRow][7];
+        for (int i=firstRow-1; i < countResult; i++) {    	       		                    
             metadataData[ii][0] = ((Metadata)metadataDataList.get(i)).getSourceInstitutionId();  
             metadataData[ii][1] = ((Metadata)metadataDataList.get(i)).getSourceId();  
             metadataData[ii][2] = ((Metadata)metadataDataList.get(i)).getDataSetTitle();

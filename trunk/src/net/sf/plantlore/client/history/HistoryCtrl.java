@@ -3,10 +3,10 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
-
 import javax.swing.JOptionPane;
-
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -42,34 +42,46 @@ public class HistoryCtrl {
         this.model = model;        
         this.view = view;
              
-        //Add action listeners to buttons
-        view.okButton.addActionListener(new okButtonListener());
-        view.closeButton.addActionListener(new closeButtonListener());
+        //Add action listeners to buttons        
+        view.closeButton.addActionListener(new closeButtonListener());        
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());
         view.selectAllButton.addActionListener(new selectAllButtonListener());
         view.unselectAllButton.addActionListener(new unselectAllButtonListener());
         view.undoButton.addActionListener(new undoSelectedButtonListener());
-        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());           
+        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());
+        //Add key listeners
+        view.closeButton.addKeyListener(new escapeKeyPressed());
+        view.previousButton.addKeyListener(new escapeKeyPressed());
+        view.nextButton.addKeyListener(new escapeKeyPressed());
+        view.selectAllButton.addKeyListener(new escapeKeyPressed());
+        view.unselectAllButton.addKeyListener(new escapeKeyPressed());
+        view.undoButton.addKeyListener(new escapeKeyPressed());
+        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
+        view.helpButton.addKeyListener(new escapeKeyPressed());
+        view.getTable().addKeyListener(new escapeKeyPressed());
     }
     
-   /** 
-    * ActionListener class controlling the <b>OK</b> button on the form.
-    * On Ok makes the model store() the preferences and hides the view.     
-    */
-   class okButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {       
-           view.close();           
-       }
-   }
-  
-   /**
+    /**     
+     * KeyListener class controlling the pressing key ESCAPE.
+     * On key ESCAPE hides the view.     
+     */
+    public class escapeKeyPressed implements KeyListener {
+    	 	 public void keyPressed(KeyEvent evt){
+    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+    	 			view.close();
+    	 		}    	 		     	 		 
+    	 	 }
+    	      public void keyReleased(KeyEvent evt) {}    	     
+    	      public void keyTyped(KeyEvent evt) {}    	         
+    }
+    
+    /**
     * ActionListener class controlling the <b>CLOSE</b> button on the form.
     * On Close hides the view.
     */
    class closeButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
+	    public void actionPerformed(ActionEvent actionEvent)
        {
     	   view.close();
        }
@@ -206,19 +218,18 @@ public class HistoryCtrl {
            model.undoSelected();  
            // Check whether an error flag after processing selected records is set
            if (!model.isError()) {
-        	   int okCancle = view.messageUndo(model.getMessageUndo());
-               logger.debug("button "+okCancle);
+        	   int okCancle = view.messageUndo(model.getMessageUndo());               
                if (okCancle == 0){
             	   //Button OK was press
             	   logger.debug("Button OK was press.");
             	   Task task = model.commitUpdate(model.getResultRows(), true);  
             	   
             	   ProgressBar progressBar = new ProgressBar(task, view, true) {		   				
-						private static final long serialVersionUID = -6065695152319199854L;
+					  private static final long serialVersionUID = 1967781832827332268L;
 							public void exceptionHandler(Exception e) {
 		   						if (e instanceof DBLayerException) {	   									   							
 		   							DBLayerException dbex = (DBLayerException) e;		   							
-									JOptionPane.showMessageDialog(view, L10n.getString("Error.HistoryDBLayerException")+ "\n" + dbex.getErrorInfo(),
+									JOptionPane.showMessageDialog(view, L10n.getString("Error.HistoryDBLayerException")+ "\n" + dbex.getMessage(),
 		 							   L10n.getString("Error.HistoryDBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
 									logger.error(dbex + ": " + dbex.getErrorInfo());
 		   							getTask().stop();
@@ -280,16 +291,14 @@ public class HistoryCtrl {
            if (view.getDisplayRows() < 1) {
                view.setDisplayRows(oldValue);
                return;
-           }
-           if (view.getDisplayRows() > model.getResultRows()){
-        	   view.setDisplayRows(model.getResultRows());
-           }            
+           }           
            // Set new value in the model
            model.setDisplayRows(view.getDisplayRows());
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
-           if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
-               model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
+           if (oldValue != view.getDisplayRows()) {
+               logger.debug("OK"+ model.getCurrentFirstRow() + " " + view.getDisplayRows());
+        	   model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
                if (model.isError()) return;
                view.getTable().setModel(new HistoryTableModel(model));
                int from = model.getCurrentFirstRow();

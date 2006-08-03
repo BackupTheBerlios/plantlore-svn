@@ -66,9 +66,9 @@ public class PlantloreHelp {
     // Add/edit publication dialog
     public static final String PUBLICATION_ADD          = "publication.add";        
     // Description of metadata manager
-    public static final String METDATA_MANAGER          = "metdata";    
+    public static final String METDATA_MANAGER          = "metadata";    
     // Add/edit metadata dialog
-    public static final String METDATA_ADD              = "metdata.add";        
+    public static final String METDATA_ADD              = "metadata.add";        
     // Description of history manager
     public static final String HISTORY_MANAGER          = "history";
     // Desctripton of user manager

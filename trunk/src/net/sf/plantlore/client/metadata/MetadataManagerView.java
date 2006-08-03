@@ -6,31 +6,45 @@
 
 package net.sf.plantlore.client.metadata;
 
+import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- *
- * @author  Lada
+ * View for the main MetadataManager dialog (part of the History MVC). Used for displaying the search results.
+ * 
+ * @author  Lada Oberreiterova
+ * @version 1.0
  */
 public class MetadataManagerView extends javax.swing.JDialog implements Observer{
     
-    //Whole MetadataManager model
+	private static final long serialVersionUID = 251086612790983605L;
+	/** Model of the MetadataManager MVC*/
     private MetadataManager model;  
-    //data
-    private Object[][] data;
-    
-    /** Creates new form MetadataManagerView */
+ 
+    /** Creates new form MetadataManagerView
+     * 
+     * @param model model of the MetadataManager MVC
+     * @param parent parent of this dialog
+     * @param modal boolean flag whether the dialog should be modal or not
+     */
     public MetadataManagerView(MetadataManager model, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.model = model;
+        model.addObserver(this);
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
+        getRootPane().setDefaultButton(closeButton);
+        //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton);        
+        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton); 
+        
         sortButtonGroup.add(sortAscendingRadioButton);
         sortButtonGroup.add(sortDescendingRadioButton);
         sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
@@ -40,18 +54,29 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
        
     }
     
-    public void update(Observable observable, Object object)
-    {
-    }
+    /**
+     * Reload the view dialog or display some kind of error.
+     */
+      public void update(Observable observable, Object object)
+    {                                
+    	  //Check whether we have some kind of error to display
+          if (model.isError()) {
+              showErrorMessage(L10n.getString("Common.ErrorMessageTitle"), model.getError());                          
+              return;
+          } 
+    }      
     
      /**
-     *
+     *  Close this dialog.
      */
     public void close() {
         dispose();
     }
     
-    /**Rows to display */
+    /**
+     *  Get the number of rows to display per page
+     *  @return number of rows to display per page
+     */
     public Integer getDisplayRows() { 
         Integer countRows;
         try {
@@ -62,12 +87,19 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         return countRows;
     }
     
-    /**Rows to display*/
+    /**
+     *  Set the number of rows to display per page
+     *  @param value number of rows to display per page
+     */  
     public void setDisplayRows(Integer value) {
         this.toDisplayValueTextField.setText(value.toString());
     }  
     
-     public int getSortDirection() {
+    /**
+     *  Get the direction of sorting.
+     *  @return direction of sorting. 0 is ASCENDING, 1 is DESCENDING
+     */
+    int getSortDirection() {
         if (this.sortButtonGroup.isSelected(this.sortAscendingRadioButton.getModel()) == true) {
             return 0;
         } else {
@@ -75,7 +107,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         }
     }
      
-         /**
+     /**
      *  Check whether the given field is emty or not. This is used for validating user input when searching
      *  user.
      *
@@ -95,27 +127,42 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         return true;
     }
     
-      /**
-     * Display warning message saying that no row of table has been selected.
+    /**
+     *  Display generic error message.
+     *  @param title title of error message
+     *  @param message error message we want to display
      */
-    public void selectRowMessage() {    	
-        JOptionPane.showMessageDialog(this, L10n.getString("Warning.EmptySelection"), L10n.getString("Warning.EmptySelectionTitle"), JOptionPane.WARNING_MESSAGE);               
+    public void showErrorMessage(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);               
+    }
+    
+      /**
+     * Display warning message.
+     * @param title title of warning message
+     * @param message warning message we want to display
+     */
+    public void showWarningMessage(String title, String message) {    	
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);               
     }             
     
-     public int messageDelete(String message) {
-    	int okCancle = JOptionPane.showConfirmDialog(this, L10n.getString("Question.DeleteMetadata"), L10n.getString("Question.DeleteMetadataTitle"), JOptionPane.OK_CANCEL_OPTION);
+    /**
+     * Display OK_CANCLE message
+     * @param title title of question message
+     * @param message message containing same question for user
+     * @return information which button was selected - OK or Cancle 
+     */
+     public int showQuestionMessage(String title, String message) {
+    	int okCancle = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION);
     	return okCancle;
     }          
     
      /**
-     *  Display info message saying that no search field has been filled in.
+     *  Display info message 
+     *  @param title title of info message
+     *  @param message information message we want to display
      */
-    public void showSearchInfoFillMessage() {
-         JOptionPane.showMessageDialog(this, L10n.getString("Information.SearchMetadata"), L10n.getString("Information.SearchMetadataTitle"), JOptionPane.INFORMATION_MESSAGE);       
-    }
-    
-    public void showSearchInfoMessage() {
-        JOptionPane.showMessageDialog(this, L10n.getString("Information.NoMetadataInResult"), L10n.getString("Information.NoMetadataInResultTitle"), JOptionPane.INFORMATION_MESSAGE);                
+    public void showInfoMessage(String title, String message) {
+         JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);       
     }
     
     /** This method is called from within the constructor to
@@ -152,13 +199,14 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         sortDescendingRadioButton = new javax.swing.JRadioButton();
         sortAscendingRadioButton = new javax.swing.JRadioButton();
         dataSortLabel = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        sortField = new javax.swing.JComboBox();
         dataSetTitleLabel = new javax.swing.JLabel();
         dataSetTitleText = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.ListPanel")));
+        jScrollPane1.getViewport().setBackground(Color.WHITE);
         tableMetadataList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -170,6 +218,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        TransferFocus.patch(tableMetadataList);
         jScrollPane1.setViewportView(tableMetadataList);
 
         previousButton.setText(L10n.getString("MetadataManager.ButtonPrev"));
@@ -203,12 +252,12 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 12, Short.MAX_VALUE)
+                                .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(56, 56, 56)
                                 .add(totalResultLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(totalResultValueLabel)
@@ -219,7 +268,8 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                                 .add(25, 25, 25)
                                 .add(displayedLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(displayedValueLabel))
+                                .add(displayedValueLabel)
+                                .add(0, 0, Short.MAX_VALUE))
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(detailsButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -230,7 +280,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                                 .add(editButtons, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(deleteButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
@@ -278,7 +328,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
 
         dataSortLabel.setText(L10n.getString("MetadataManager.DataSort"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("MetadataManager.SourceInstitutionId"), L10n.getString("MetadataManager.SourceId"), L10n.getString("MetadataManager.DataSetTitle"), L10n.getString("MetadataManager.TechnicalContactName"),L10n.getString("MetadataManager.ContentContactName"), L10n.getString("MetadataManager.DateCreate"), L10n.getString("MetadataManager.DateModified")}));
+        sortField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("MetadataManager.SourceInstitutionId"), L10n.getString("MetadataManager.SourceId"), L10n.getString("MetadataManager.DataSetTitle"), L10n.getString("MetadataManager.TechnicalContactName"),L10n.getString("MetadataManager.ContentContactName"), L10n.getString("MetadataManager.DateCreate"), L10n.getString("MetadataManager.DateModified")}));
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -291,7 +341,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(sortDescendingRadioButton)
                     .add(sortAscendingRadioButton)
-                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 199, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(sortField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 199, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -299,7 +349,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             .add(jPanel3Layout.createSequentialGroup()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(dataSortLabel)
-                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(sortField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(sortAscendingRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -324,12 +374,12 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                             .add(sourceLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
                         .add(15, 15, 15)
                         .add(dataSetTitleLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 145, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
                     .add(searchButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(31, 31, 31)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -362,14 +412,14 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 685, Short.MAX_VALUE)
+                        .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -409,7 +459,6 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     protected javax.swing.JLabel displayedValueLabel;
     protected javax.swing.JButton editButtons;
     protected javax.swing.JButton helpButton;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -420,6 +469,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     protected javax.swing.JRadioButton sortAscendingRadioButton;
     private javax.swing.ButtonGroup sortButtonGroup;
     protected javax.swing.JRadioButton sortDescendingRadioButton;
+    protected javax.swing.JComboBox sortField;
     protected javax.swing.JTextField sourceIdText;
     private javax.swing.JLabel sourceInstitutionIdLabel;
     protected javax.swing.JTextField sourceInstitutionIdText;

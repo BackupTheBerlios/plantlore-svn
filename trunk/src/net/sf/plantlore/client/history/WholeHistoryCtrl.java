@@ -11,10 +11,13 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
 
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.client.history.HistoryCtrl.escapeKeyPressed;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -48,8 +51,7 @@ public class WholeHistoryCtrl {
         this.model = model;
         this.view = view;
           
-        // Add action listeners to buttons
-        view.okButton.addActionListener(new okButtonListener());
+        // Add action listeners to buttons        
         view.closeButton.addActionListener(new closeButtonListener());
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());     
@@ -57,19 +59,32 @@ public class WholeHistoryCtrl {
         view.detailsButton.addActionListener(new detailsHistoryListener());
         view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener()); 
         view.clearHistoryButton.addActionListener(new clearHistoryListener());
+        // Add key listeners
+        view.closeButton.addKeyListener(new escapeKeyPressed());
+        view.previousButton.addKeyListener(new escapeKeyPressed());
+        view.nextButton.addKeyListener(new escapeKeyPressed());
+        view.undoToDateButton.addKeyListener(new escapeKeyPressed());
+        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
+        view.helpButton.addKeyListener(new escapeKeyPressed());
+        view.tableHistoryList.addKeyListener(new escapeKeyPressed());
+        view.clearHistoryButton.addKeyListener(new escapeKeyPressed());
+        view.detailsButton.addKeyListener(new escapeKeyPressed());
     }
     
-    /** 
-     * ActionListener class controlling the <b>OK</b> button on the form.
-     * On Ok makes the model store() the preferences and hides the view.     
-     */  
-   class okButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {       
-           view.close();           
-       }
-   }
-  
+    /**     
+     * KeyListener class controlling the pressing key ESCAPE.
+     * On key ESCAPE hides the view.     
+     */
+    public class escapeKeyPressed implements KeyListener {
+    	 	 public void keyPressed(KeyEvent evt){
+    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+    	 			view.close();
+    	 		}    	 		     	 		 
+    	 	 }
+    	      public void keyReleased(KeyEvent evt) {}    	     
+    	      public void keyTyped(KeyEvent evt) {}    	         
+    }
+    
    /**
     * ActionListener class controlling the <b>CLOSE</b> button on the form.
     * On Close hides the view.
@@ -176,15 +191,12 @@ public class WholeHistoryCtrl {
            if (view.getDisplayRows() < 1) {
                view.setDisplayRows(oldValue);
                return;
-           }
-           if (view.getDisplayRows() > model.getResultRows()){
-        	   view.setDisplayRows(model.getResultRows());
-           }            
+           }          
            // Set new value in the model
            model.setDisplayRows(view.getDisplayRows());
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
-           if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
+           if (oldValue != view.getDisplayRows()) {
                model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
                if (model.isError()) return;
                view.tableHistoryList.setModel(new HistoryTableModel(model));
@@ -236,8 +248,8 @@ public class WholeHistoryCtrl {
 	                   logger.debug("Button OK was press.");    
 	                   Task task = model.commitUpdate(toResult, false);
 	                   
-	                   ProgressBar progressBar = new ProgressBar(task, view, true) {		   				
-						private static final long serialVersionUID = -6065695152319199854L;
+	                   ProgressBar progressBar = new ProgressBar(task, view, true) {		   										
+						  private static final long serialVersionUID = -6065695152319199854L;
 							public void exceptionHandler(Exception e) {
 		   						if (e instanceof DBLayerException) {	   									   							
 		   							DBLayerException dbex = (DBLayerException) e;

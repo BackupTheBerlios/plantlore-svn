@@ -40,8 +40,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();        
-        getRootPane().setDefaultButton(okButton);    
-        //TODO doresit ENTER
+        getRootPane().setDefaultButton(closeButton);            
         // Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
@@ -89,7 +88,6 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         displayedValueLabel = new javax.swing.JLabel();
         helpButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("History.Whole.Panel")));
@@ -189,8 +187,6 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
 
         closeButton.setText(L10n.getString("History.ButtonClose"));
 
-        okButton.setText(L10n.getString("History.ButtonOk"));
-
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -202,9 +198,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
             .add(layout.createSequentialGroup()
                 .add(30, 30, 30)
                 .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 565, Short.MAX_VALUE)
-                .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 631, Short.MAX_VALUE)
                 .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(27, 27, 27))
         );
@@ -216,8 +210,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
                 .add(15, 15, 15)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)
-                    .add(closeButton)
-                    .add(okButton))
+                    .add(closeButton))
                 .add(20, 20, 20))
         );
         pack();
@@ -304,7 +297,6 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JButton nextButton;
-    protected javax.swing.JButton okButton;
     protected javax.swing.JButton previousButton;
     protected javax.swing.JTable tableHistoryList;
     private javax.swing.JLabel toDisplayLabel;
