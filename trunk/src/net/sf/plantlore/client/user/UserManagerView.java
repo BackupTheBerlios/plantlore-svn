@@ -9,6 +9,7 @@ package net.sf.plantlore.client.user;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
@@ -30,6 +31,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
     public UserManagerView(UserManager model, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.model = model;
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.USER_MANAGER, this.helpButton);        
@@ -132,6 +134,46 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
             return false;
         }        
         return true;
+    }
+    
+    
+    
+    /**
+     *  Display generic error message.
+     *  @param title title of error message
+     *  @param message error message we want to display
+     */
+    public void showErrorMessage(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);               
+    }
+    
+      /**
+     * Display warning message.
+     * @param title title of warning message
+     * @param message warning message we want to display
+     */
+    public void showWarningMessage(String title, String message) {    	
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);               
+    }             
+    
+    /**
+     * Display OK_CANCLE message
+     * @param title title of question message
+     * @param message message containing same question for user
+     * @return information which button was selected - OK or Cancle 
+     */
+     public int showQuestionMessage(String title, String message) {
+    	int okCancle = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION);
+    	return okCancle;
+    }          
+    
+     /**
+     *  Display info message 
+     *  @param title title of info message
+     *  @param message information message we want to display
+     */
+    public void showInfoMessage(String title, String message) {
+         JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);       
     }
       
     /** This method is called from within the constructor to

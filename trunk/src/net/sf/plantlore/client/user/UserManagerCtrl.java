@@ -13,30 +13,59 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Date;
-import net.sf.plantlore.common.PlantloreHelp;
-import net.sf.plantlore.common.record.Right;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.rmi.RemoteException;
+
+import net.sf.plantlore.client.metadata.AddEditMetadataCtrl;
+import net.sf.plantlore.client.metadata.AddEditMetadataView;
+import net.sf.plantlore.client.metadata.MetadataManager;
+import net.sf.plantlore.client.metadata.MetadataManagerTableModel;
+import net.sf.plantlore.client.metadata.MetadataManagerCtrl.escapeKeyPressed;
+import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.ProgressBar;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.User;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author Lada
+* Controller for the main UserManager dialog (part of the UserManager MVC).
+ * 
+ * @author Lada Oberreiterova
+ * @version 1.0
  */
 public class UserManagerCtrl {
     
+	/** Instance of a logger */
     private Logger logger;
+    /** Model of UserManager MVC */
     private UserManager model;
+    /** View of UserManager MVC */
     private UserManagerView view;
+    /** View of add dialog*/
+    private AddEditUserView addView;
+    /** Controler of add dialog*/
+    private AddEditUserCtrl addCtrl;
+    /** View of edit dialog*/
+    private AddEditUserView editView;
+    /** Controler of edit dialog*/
+    private AddEditUserCtrl editCtrl;
+    /** View of details dialog*/
+    private AddEditUserView detailView;
+    /** Controler of details dialog*/
+    private AddEditUserCtrl detailCtrl;
     
     /**
      * Creates a new instance of UserManagerCtrl
+     *  @param model model of the MetadataManager MVC
+     *  @param view  view of the MetadataManager MVC 
      */
-    public UserManagerCtrl(UserManager model, UserManagerView view) {
+    public UserManagerCtrl(UserManager modelUser, UserManagerView viewUser) {
         
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
-        this.model = model;
-        this.view = view;
+        this.model = modelUser;
+        this.view = viewUser;
           
         view.closeButton.addActionListener(new closeButtonListener());
         view.previousButton.addActionListener(new previousButtonListener());
@@ -52,12 +81,84 @@ public class UserManagerCtrl {
         view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
         view.showAllUserRadioBUtton.addFocusListener(new ShowUserDirectionRadioFocusListener());
         view.showCurrentUserRadioButton.addFocusListener(new ShowUserDirectionRadioFocusListener());
+        
+        //Add key listeners
+        view.closeButton.addKeyListener(new escapeKeyPressed());
+        view.previousButton.addKeyListener(new escapeKeyPressed());
+        view.nextButton.addKeyListener(new escapeKeyPressed());
+        view.addButtons.addKeyListener(new escapeKeyPressed());
+        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
+        view.helpButton.addKeyListener(new escapeKeyPressed());
+        view.editButtons.addKeyListener(new escapeKeyPressed());
+        view.deleteButton.addKeyListener(new escapeKeyPressed());
+        view.detailsButton.addKeyListener(new escapeKeyPressed());
+        view.searchButton.addKeyListener(new escapeKeyPressed());
+        view.sortComboBox.addKeyListener(new escapeKeyPressed());
+        view.tableUserList.addKeyListener(new escapeKeyPressed());
+        view.sortAscendingRadioButton.addKeyListener(new escapeKeyPressed());
+        view.sortDescendingRadioButton.addKeyListener(new escapeKeyPressed());
+        view.addressSearchText.addKeyListener(new escapeKeyPressed());           
+        view.emailSearchText.addKeyListener(new escapeKeyPressed());
+        view.loginSearchText.addKeyListener(new escapeKeyPressed());
+        view.wholeNameSearchText.addKeyListener(new escapeKeyPressed());
+        view.addKeyListener(new escapeKeyPressed());
+        
+        //Search user and Load data
+        Task task = model.searchUser(true);        
+        
+        ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 						
+        	public void exceptionHandler(Exception e) {
+				if (e instanceof DBLayerException) {	   									   							
+   					DBLayerException dbex = (DBLayerException) e;	
+   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				if (e instanceof RemoteException) {	 
+   					RemoteException remex = (RemoteException) e;		
+   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE, MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+   				logger.error(e);
+   			}
+
+			public void afterStopping() {
+				//Process result
+		        model.processResult(1, model.getDisplayRows());
+		        //Update view dialog
+		        view.tableUserList.setModel(new UserManagerTableModel(model));
+		        int from = model.getCurrentFirstRow();
+                int to = from + view.tableUserList.getRowCount() - 1;
+                view.displayedValueLabel.setText(from + "-" + to);
+                view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+           } 		   					
+		};
+		progressBar.setTitle(MetadataManager.PROGRESS_SEARCH);	                   	                   
+        task.start();                                       
+    }                        
+   
+    /**     
+     * KeyListener class controlling the pressing key ESCAPE.
+     * On key ESCAPE hides the view.     
+     */
+    public class escapeKeyPressed implements KeyListener {
+    	 	 public void keyPressed(KeyEvent evt){
+    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+    	 			logger.debug("ESCAPE: " + view.getFocusOwner());
+    	 			view.close();
+    	 		}    	 		     	 		 
+    	 	 }
+    	      public void keyReleased(KeyEvent evt) {}    	     
+    	      public void keyTyped(KeyEvent evt) {}    	         
     }
+ 
     
-       /**
-    * On Cancel just hides the view.
-    *
-    */
+    /**
+     * ActionListener class controlling the <b>CLOSE</b> button on the form.
+     * On Close hides the view.
+     */
    class closeButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
@@ -66,45 +167,60 @@ public class UserManagerCtrl {
    }
      
    /**
-    * 
-    *
+    *  ActionListener class controlling the <b>PREV</b> button on the form.
+    *  The button PREV is used for browsing the search results.
     */
    class previousButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-    	   //   Call processResults only if we don't see the first page (should not happen, button should be disabled)
-    	   logger.debug("FIRST");
-    	   logger.debug("current first row: "+model.getCurrentFirstRow());
-           logger.debug("num rows in the result: "+ model.getResultRows());            
-           logger.debug("display rows: "+ view.tableUserList.getRowCount());      
+    	   // Check whether an error flag is set
+           if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           // Get previous page of results
            if (model.getCurrentFirstRow() > 1) {
                int firstRow = Math.max(model.getCurrentFirstRow()- model.getDisplayRows(), 1);
                model.processResult(firstRow, model.getDisplayRows()); 
+               if (model.isError()) return;
                if (model.getCurrentFirstRow() > 1){
                }
                view.tableUserList.setModel(new UserManagerTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.tableUserList.getRowCount() - 1;
                view.displayedValueLabel.setText(from + "-" + to);
-           }                           
+           }      
+           //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableUserList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
        }
    }
-   
+    	   
    /**
-    * 
-    *
+    * ActionListener class controlling the <b>NEXT</b> button on the form.
+    * The button NEXT is used for browsing the search results.    
     */
    class nextButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-    	   //Call processResults only if we don't see the last page
-    	   logger.debug("NEXT");
-           logger.debug("current first row: "+model.getCurrentFirstRow());
-           logger.debug("num rows in the result: "+ model.getResultRows());            
-           logger.debug("display rows: "+ model.getDisplayRows());
-           logger.debug("num rows in table (view) "+ view.tableUserList.getRowCount());              
+    	   // Check whether an error flag is set 
+           if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           // Get next page of result
            if (model.getCurrentFirstRow()+ view.tableUserList.getRowCount()<=model.getResultRows()) {
                model.processResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.tableUserList.getRowCount());
+               if (model.isError()) return;
                view.tableUserList.setModel(new UserManagerTableModel(model));             
                int from = model.getCurrentFirstRow();
                int to = from + view.tableUserList.getRowCount() - 1;
@@ -113,187 +229,354 @@ public class UserManagerCtrl {
                }else {
             	   view.displayedValueLabel.setText(from + "-" + to);
                }               
-           }                       
+           }  
+           //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableUserList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
        }
    }
-   
-    /**
-    * 
+    	   
+   /**
+    *  ActionListener class controlling the text field on the form for set number of rows to displayed.
     */
      class rowSetDisplayChangeListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent) {
-           // Save old value
+           // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           // Save old value 
            int oldValue = model.getDisplayRows();           
            // Check whether new value > 0
            if (view.getDisplayRows() < 1) {
                view.setDisplayRows(oldValue);
                return;
-           }
-           if (view.getDisplayRows() > model.getResultRows()){
-        	   view.setDisplayRows(model.getResultRows());
-           } 
-           
+           }           
            // Set new value in the model
            model.setDisplayRows(view.getDisplayRows());
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
-           if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
+           if (oldValue != view.getDisplayRows()) {
                model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
+               if (model.isError()) return;
                view.tableUserList.setModel(new UserManagerTableModel(model));
                int from = model.getCurrentFirstRow();
                int to = from + view.tableUserList.getRowCount() - 1;
                view.displayedValueLabel.setText(from + "-" + to);               
            }
+           // Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableUserList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
        }        	   
-   }
-   
- 
+   }  
+     
     /**
-    *
+    *  ActionListener class controlling the <b>Add user</b> button on the form.
     */  
     class addUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-           //v modelu nastavim informaci o tom, ze jde o ADD
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           //set information abut selected operation ADD
            model.setOperation("ADD");           
-           //otevre se dialog addEdit s tim, ze mu rekneme, ze jde o ADD
-           //pozor: pri add se musi ohlidat, zda byly vyplneny povinne polozky
-           AddEditUserView addView = new AddEditUserView(model, view,true);
-           AddEditUserCtrl addCtrl = new AddEditUserCtrl(addView, model);
-           addView.setAddForm();
-           addView.setVisible(true);           
-           //nacteni            
-           model.searchUser();
-           //opet funkci pro vyzadani si dat postupne
-           model.processResult(1, model.getDisplayRows());
-           model.setUsers();
-           view.tableUserList.setModel(new UserManagerTableModel(model));                      
-           view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());
-           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+           //create add dialog if dialog not exist and open Add dialog
+           if (addView == null) {
+       	   	    addView = new AddEditUserView(model, view,true);
+          		addCtrl = new AddEditUserCtrl(addView, model);
+          }
+          addView.setAddForm();
+          addView.setVisible(true);          
+           //User press button close
+           if (model.usedClose()) return;
+           //save new record Metadata into database
+           Task task = model.addUserRecord();
+           
+           ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
+   			public void exceptionHandler(Exception e) {
+   				if (e instanceof DBLayerException) {	   									   							
+   					DBLayerException dbex = (DBLayerException) e;	
+   					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE, UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				if (e instanceof RemoteException) {	 
+   					RemoteException remex = (RemoteException) e;		
+   					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+   					getTask().stop();
+   					return;
+   				}
+   				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+   				logger.error(e);
+   			}
+   			
+   			public void afterStopping() {
+    			   //load data
+    	           model.searchUser(false);           
+    	           model.processResult(1, model.getDisplayRows());
+    	           if (model.isError()) return;
+    	           view.tableUserList.setModel(new UserManagerTableModel(model));                      
+    	           view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());
+    	           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    	           
+               } 		   		
+   		};
+   		progressBar.setTitle(UserManager.PROGRESS_ADD);	                   	                   
+        task.start();                                       
        }
     }
-    
+        	 
      /**
-    *
+    * ActionListener class controlling the <b>Edit user</b> button on the form.
     */  
     class editUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-           if (view.tableUserList.getSelectedRow() < 0) {    
-               view.selectRowMessage();
-           } else {
-               //v modelu nastavim informaci o tom, ze jde o EDIT
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(UserManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+           if (view.tableUserList.getSelectedRow() < 0) {
+        	   // Display warning message saying that no row of table has been selected.
+               view.showWarningMessage(UserManager.WARNING_SELECTION_TITLE, UserManager.WARNING_SELECTION);
+           }else {
+               //Set information about selected operation - EDIT
                model.setOperation("EDIT");
-               //poznaceni si do modelu inforamce o vybranem radku pro dalsi praci
+               //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setSelectedRecord(resultNumber);
-               //nacteni dat do dialogu
-               User user = model.getSelectedRecord();               
-               AddEditUserView editView = new AddEditUserView(model,view,true);
-               AddEditUserCtrl editCtrl = new AddEditUserCtrl(editView, model);
-               //nacteni dat pro dialog
-               editView.loadData();               
-               //vytvoreni dialogu
+               model.setUserRecord(resultNumber);
+               //Create edit dialog
+               User user = model.getUserRecord(); 
+               if (editView == null) {
+            	   	editView = new AddEditUserView(model,view,true);
+        	   		editCtrl = new AddEditUserCtrl(editView, model);
+               }               
+               //Load data and setting of edit dialog
+               editView.loadData();                              
                editView.setEditForm();               
-               editView.setVisible(true);    
-               //nacteni uzivatelu
-               model.searchUser();
-               //opet funkci pro vyzadani si dat postupne
-               model.processResult(1, model.getDisplayRows());
-               model.setUsers();
-               view.tableUserList.setModel(new UserManagerTableModel(model));                      
-               view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());                
-           }          
+               editView.setVisible(true);               
+               // User press button close
+               if (model.usedClose()) return;
+               //Update User               
+               Task task = model.editUserRecord();
+               
+               ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
+          			public void exceptionHandler(Exception e) {
+          				if (e instanceof DBLayerException) {	   									   							
+           					DBLayerException dbex = (DBLayerException) e;	
+           					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE,UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+           					getTask().stop();
+           					return;
+           				}
+           				if (e instanceof RemoteException) {	 
+           					RemoteException remex = (RemoteException) e;		
+           					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+           					getTask().stop();
+           					return;
+           				}
+           				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+           				logger.error(e);
+           			}
+
+          			public void afterStopping() {
+          			   //load User          				
+                        if (model.isError()) return;
+                        view.tableUserList.setModel(new UserManagerTableModel(model));                         
+                     } 		   					
+          		};
+          		progressBar.setTitle(UserManager.PROGRESS_EDIT);	                   	                   
+                task.start();                                       
+              }
        }
     }
-    
+
     /**
-    *
+    *  ActionListener class controlling the <b>Details</b> button on the form.
     */  
     class detailsUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
            if (view.tableUserList.getSelectedRow() < 0) {    
-               view.selectRowMessage();
+               // Display warning message saying that no row of table has been selected.
+               view.showWarningMessage(UserManager.WARNING_SELECTION_TITLE, UserManager.WARNING_SELECTION);
            } else {
-               //v modelu nastavim informaci o tom, ze jde o DETAILS
+               //Set information about selected operation - DETAILS
                 model.setOperation("DETAILS");
-               //poznaceni si do modelu inforamce o vybranem radku pro dalsi praci
+               //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setSelectedRecord(resultNumber);
-               //nacteni dat do dialogu
-               User user = model.getSelectedRecord();               
-               AddEditUserView detailsView = new AddEditUserView(model, view,true);
-               AddEditUserCtrl detailsCtrl = new AddEditUserCtrl(detailsView, model);
-               //nacteni dat            
-               detailsView.loadData();
-               //vytvoreni dialogu
-               detailsView.setDetailsForm();
-               detailsView.setVisible(true); 
+               model.setUserRecord(resultNumber);
+               //Create detail dialog
+               User user = model.getUserRecord();               
+               if (detailView == null) {
+               		detailView = new AddEditUserView(model, view,true);
+           			detailCtrl = new AddEditUserCtrl(detailView, model);
+               }
+               //Load data and setting of detail dialog            
+               detailView.loadData();               
+               detailView.setDetailsForm();
+               detailView.setVisible(true);              
            }          
        }
     }
-    
-     /**
-    *
+    	
+    /**
+    *  ActionListener class controlling the <b>Delete metadata</b> button on the form.
     */  
     class deleteUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(UserManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
            if (view.tableUserList.getSelectedRow() < 0) {    
-               view.selectRowMessage();
+               // Display warning message saying that no row of table has been selected.
+               view.showWarningMessage(UserManager.WARNING_SELECTION_TITLE, UserManager.WARNING_SELECTION);          
            } else {
-               //smazani zaznamu
+               //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1; 
-               model.setSelectedRecord(resultNumber);
-               //informace administratorovi,o tom, ze dany uzivatel bude smazan
-               int okCancle = view.messageDelete(model.getSelectedRecord().getWholeName());
-               logger.debug(okCancle);
-               if (okCancle == 0) {
-                   logger.debug("Ok button was press");
-                   //zavolani delete na vybraneho uzivatele
-                   model.deleteUserRecord();        
-                   //nacteni metadat
-                   model.searchUser();
-                   //opet funkci pro vyzadani si dat postupne
-                   model.processResult(1, model.getDisplayRows());
-                   view.tableUserList.setModel(new UserManagerTableModel(model));                      
-                   view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());  
-                   view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+               model.setUserRecord(resultNumber);
+               //Test if record was been deleted
+               if (model.getUserRecord().getDropWhen() != null) {
+            	   view.showInfoMessage(UserManager.INFORMATION_DELETE_TITLE, UserManager.INFORMATION_DELETE);
+            	   return;
                }
-           }          
+        	   int okCancle = view.showQuestionMessage(UserManager.QUESTION_DELETE_TITLE, UserManager.QUESTION_DELETE);               
+               if (okCancle == 0){
+            	   //Button OK was press
+            	   logger.debug("Button OK was press.");
+	               //Delete selected record
+	               Task task = model.deleteUserRecord();
+	               
+	               ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  		   									
+					public void exceptionHandler(Exception e) {
+						if (e instanceof DBLayerException) {	   									   							
+		   					DBLayerException dbex = (DBLayerException) e;	
+		   					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE,UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+		   					getTask().stop();
+		   					return;
+		   				}
+		   				if (e instanceof RemoteException) {	 
+		   					RemoteException remex = (RemoteException) e;		
+		   					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+		   					getTask().stop();
+		   					return;
+		   				}
+		   				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+		   				logger.error(e);
+		   			}
+	
+                    public void afterStopping() {
+                       // load User
+	   	               model.searchUser(false);               
+	   	               model.processResult(1, model.getDisplayRows());
+	   	               if (model.isError()) return;
+	   	               view.tableUserList.setModel(new UserManagerTableModel(model));                      
+	   	               view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());
+	   	               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());		   	               
+                                }
+		   			};
+		   			progressBar.setTitle(UserManager.PROGRESS_DELETE);	                   	                   
+		            task.start();                                                                  
+		          }else {
+		        	  logger.debug("Button Cancle was press.");
+		          }	           
+           }
        }
-    }
+   }    	       
     
+    /**
+     * ActionListener class controlling the <b>Search/Sort</b> button on the form.
+     */
     class searchUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-           model.setWholeName(view.wholeNameSearchText.getText());           
+    	   // Check whether an error flag is set
+    	   if (model.isError()) {
+        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   return;
+           }
+    	   model.setWholeName(view.wholeNameSearchText.getText());           
            model.setLogin(view.loginSearchText.getText());
            model.setEmail(view.emailSearchText.getText());
            model.setAddress(view.addressSearchText.getText());
            if (!(view.checkNonEmpty("login") || view.checkNonEmpty("name") ||
                view.checkNonEmpty("email") || view.checkNonEmpty("address"))) {
-               view.showSearchInfoFillMessage();
+        	   // Display info message  saying that no search field has been filled in.
+        	   view.showInfoMessage(UserManager.INFORMATION_SEARCH_TITLE, UserManager.INFORMATION_SEARCH);
                model.setLogin("%");
            }            
-           //opet funkci pro vyzadani si dat postupne
-           model.searchUser();
-           //pokud je pocet radku pro zobrazeni roven 0, tak se nastavi defaultni hodnota
-           if (model.getDisplayRows() <= 0) {
-               model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
-           }
-           if (model.getResultRows() < 1) {
-               view.showSearchInfoMessage();
-           }
-           model.processResult(1, model.getDisplayRows());           
-           view.tableUserList.setModel(new UserManagerTableModel(model));                      
-           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());           
+                     
+           //Load User with specific conditions
+           Task task = model.searchUser(true);   
+           
+           ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  						    
+				public void exceptionHandler(Exception e) {
+					if (e instanceof DBLayerException) {	   									   							
+	   					DBLayerException dbex = (DBLayerException) e;	
+	   					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE, UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
+	   					getTask().stop();
+	   					return;
+	   				}
+	   				if (e instanceof RemoteException) {	 
+	   					RemoteException remex = (RemoteException) e;		
+	   					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
+	   					getTask().stop();
+	   					return;
+	   				}
+	   				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
+	   				logger.error(e);
+	   			}
+
+				public void afterStopping() {
+					if (model.getDisplayRows() <= 0) {
+		               model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
+		           }
+		           //No record in result - show message to user
+		           if (model.getResultRows() < 1) {
+		               view.showInfoMessage(UserManager.INFORMATION_RESULT_TITLE,UserManager.INFORMATION_RESULT);
+		           }
+		           model.processResult(1, model.getDisplayRows());
+		           if (model.isError()) return;		           
+		           view.tableUserList.setModel(new UserManagerTableModel(model)); 		           
+		           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
+		           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString()); 		           
+               } 		   					
+			};
+			progressBar.setTitle(UserManager.PROGRESS_SEARCH);	                   	                   
+            task.start();                                                                  
        }
     }
-    
-     /**
+
+    /**
      *  Focus listener for the <strong>sort combobox</strong> at the search panel. After losing focus automaticaly 
      *  stores value of the field to model.
      */

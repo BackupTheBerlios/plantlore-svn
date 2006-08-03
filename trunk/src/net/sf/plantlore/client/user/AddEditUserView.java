@@ -9,16 +9,17 @@ package net.sf.plantlore.client.user;
 import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.Pair;
+import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.common.PlantloreHelp;
-import net.sf.plantlore.common.TabTransfersFocus;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
+
 
 /**
  *
@@ -35,17 +36,27 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     public AddEditUserView(UserManager model, javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         this.model = model;
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents(); 
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_ADD, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.USER_ADD, this.helpButton);        
-        new TabTransfersFocus(noteText);
-        new TabTransfersFocus(editGroupTextArea);                
+        TransferFocus.patch(noteText);
+        TransferFocus.patch(editGroupTextArea);                
     }
     
      public void update(Observable observable, Object object)
     {
     }
-    
+   
+     /**
+      *  Display generic error message.
+      *  @param title title of error message
+      *  @param message error message we want to display
+      */
+     public void showErrorMessage(String title, String message) {
+         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);               
+     }
+     
      /*
       * nastaveni formulare pro add
       */
@@ -81,7 +92,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
       */
      public void loadData() {
            //Get selected user object
-           User user = model.getSelectedRecord();      
+           User user = model.getUserRecord();      
            loginText.setText(user.getLogin());
            passwordtext.setText(user.getPassword());
            firstNameText.setText(user.getFirstName());

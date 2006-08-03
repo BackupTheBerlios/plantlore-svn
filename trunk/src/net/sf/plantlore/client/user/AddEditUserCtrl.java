@@ -16,7 +16,6 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Date;
 import net.sf.plantlore.common.AutoTextArea;
-import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Right;
 import org.apache.log4j.Logger;
@@ -52,91 +51,79 @@ public class AddEditUserCtrl {
    class CloseButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
+    	   model.setUsedClose(true);
     	   view.close();
        }
    }
    
-   /*
-    *
+   /**
+    * ActionListener class controlling the <b>ADD</b>, <b>EDIT</b> and <b>OK</b> buttons on the form.
     */
    class OperationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent actionEvent)
-       {    	  
-    	   // zeptame se modelu, co je treba provest za akci DETEIL, ADD, EDIT
-            logger.debug(model.getOperation());
-           if (model.getOperation().equals("ADD")) {
-               logger.debug("Add of User.");
-               //otestovani, zda jsou vyplneny povinne polozky
-                if (view.checkNotNull()) {
-                   //ovezeni, zda se neopakuje login (musi byt unikatni)
-                   if (model.uniqueLogin(view.loginText.getText())) {
-                       //message s informaci, ze je dany login jiz existuje 
-                       view.checUniqueLoginMessage(view.loginText.getText());
+       {    	
+        	// Get information about operation - ADD, EDIT, DETAILS
+            logger.debug("Operation " + model.getOperation() + "was called");
+            if (model.getOperation().equals("ADD")) {
+                logger.debug("Add of User.");
+                //check wether all obligatory fields were filled 
+                 if (view.checkNotNull()) {
+                     //Check if new name of project (dataSetTitle) already exist
+                 	if (model.uniqueLogin(view.loginText.getText())){                		
+                 		view.showErrorMessage(UserManager.ERROR_TITLE, UserManager.ERROR_LOGIN);
+                 		return;
+                 	}
+                    //create new instance of User and save filed values    
+                   User user = new User();                                                                            
+                   user.setLogin(view.loginText.getText());
+                   user.setPassword(view.passwordtext.getText());
+                   user.setFirstName(view.firstNameText.getText());
+                   user.setSurname(view.surnameText.getText());
+                   user.setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
+                   user.setEmail(view.emailText.getText());
+                   user.setAddress(view.addressText.getText());
+                   user.setCreateWhen(new Date());
+                   user.setDropWhen(null);
+                   user.setNote(view.noteText.getText());
+                   //Right
+                   Right right = new Right();
+                   user.setRight(right);
+                   right.setEditGroup(model.getEditGroupID());
+                   if (view.administratorCheckBox.isSelected()) { 
+                	   right.setAdministrator(1);
                    } else {
-                        //vytvorime novy rekord a ulozime do nej nactene hodnoty
-                        User user = new User();                    
-                         //nacteni hodnot                                       
-                       user.setLogin(view.loginText.getText());
-                       user.setPassword(view.passwordtext.getText());
-                       user.setFirstName(view.firstNameText.getText());
-                       user.setSurname(view.surnameText.getText());
-                       user.setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
-                       user.setEmail(view.emailText.getText());
-                       user.setAddress(view.addressText.getText());
-                       user.setCreateWhen(new Date());
-                       user.setDropWhen(null);
-                       user.setNote(view.noteText.getText());
-                       //Right
-                       Right right = new Right();
-                       user.setRight(right);
-
-                       right.setEditGroup(model.getEditGroupID());
-
-                       if (view.administratorCheckBox.isSelected()) {
-                           right.setAdministrator(1);
-                       } else {
-                           right.setAdministrator(0);
-                       }
-                       if (view.editAllCheckBox.isSelected()) {
-                           right.setEditAll(1);
-                       } else {
-                           right.setEditAll(0);
-                       }
-                       //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
-                       //BUDE TO CHTIT CHYTRE OZNACOVANI
-
-                       if (view.addRightCheckBox.isSelected()) {
-                           right.setAdd(1);
-                       } else {
-                           right.setAdd(0);
-                       }                                       
-
-                        //mela by se tu vypsat nejaka informace pro uzivatele
-                        //pridani zaznamu do tabulky User
-
-                       //FIXME: PRIDANI PADA na vlozeni do tabulky tUser
-                        model.addUserRecord(user, right);                                                                                  
-                        //zavreni pridavaciho dialogu
-                        view.close();
-                    }                                                           
-                }
+                       right.setAdministrator(0);
+                   }
+                   if (view.editAllCheckBox.isSelected()) {
+                       right.setEditAll(1);
+                   } else {
+                       right.setEditAll(0);
+                   }
+                   if (view.addRightCheckBox.isSelected()) {
+                       right.setAdd(1);
+                   } else {
+                       right.setAdd(0);
+                   }                                       
+                    // Save new User into model
+                    model.setNewUserRecord(user);
+                    model.setRight(right);  
+                    view.close();
+                    }                                                                   
            } else if (model.getOperation().equals("EDIT")) {  
                logger.debug("Edit of User.");
-                //otestovani, zda jsou vyplneny povinne polozky
+                //check wether all obligatory fields were filled 
                 if (view.checkNotNull()) {
-                    //nacteni hodnot                                                          
-                   model.getSelectedRecord().setPassword(view.passwordtext.getText());
-                   model.getSelectedRecord().setFirstName(view.firstNameText.getText());
-                   model.getSelectedRecord().setSurname(view.surnameText.getText());
-                   model.getSelectedRecord().setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
-                   model.getSelectedRecord().setEmail(view.emailText.getText());
-                   model.getSelectedRecord().setAddress(view.addressText.getText());                  
-                   model.getSelectedRecord().setNote(view.noteText.getText());
+                    //Load data                                                          
+                   model.getUserRecord().setPassword(view.passwordtext.getText());
+                   model.getUserRecord().setFirstName(view.firstNameText.getText());
+                   model.getUserRecord().setSurname(view.surnameText.getText());
+                   model.getUserRecord().setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
+                   model.getUserRecord().setEmail(view.emailText.getText());
+                   model.getUserRecord().setAddress(view.addressText.getText());                  
+                   model.getUserRecord().setNote(view.noteText.getText());
                    //Right
-                   Right right = model.getSelectedRecord().getRight();
-                   
-                   right.setEditGroup(model.getEditGroupID());
-                   
+                   Right right = model.getUserRecord().getRight();                   
+                   right.setEditGroup(model.getEditGroupID());                   
                    if (view.administratorCheckBox.isSelected()) {
                        right.setAdministrator(1);
                    } else {
@@ -148,14 +135,12 @@ public class AddEditUserCtrl {
                        right.setEditAll(0);
                    }
                    //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
-                   //BUDE TO CHTIT CHYTRE OZNACOVANI                   
+                                
                    if (view.addRightCheckBox.isSelected()) {
                        right.setAdd(1);
                    } else {
                        right.setAdd(0);
-                   }
-                   //ulozeni uzivatele - melibychom zobrazit message,ze bude olozen novy uzivatel OK, CANCLE
-                   model.editUserRecord();
+                   }                   
                    view.close(); 
                 }
            } else if (model.getOperation().equals("DETAILS")) {
@@ -180,7 +165,7 @@ public class AddEditUserCtrl {
                 if (tmp.length() > 1) //omit empty lines
                     userList.add(tmp);
             }
-            model.setEditGroup(userList);
+            // TODO - co tu mam volat??? model.setEditGroup(userList);
         }
     }//taxonAreaListener
     
