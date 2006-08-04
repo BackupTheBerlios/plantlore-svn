@@ -1,8 +1,11 @@
 package net.sf.plantlore.common;
 
+import java.rmi.RemoteException;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -16,7 +19,6 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class DefaultProgressBarEx extends ProgressBarEx {
 	
-	
 	public DefaultProgressBarEx(Task task, JFrame parent, boolean modal) {
 		super(task, parent, modal);
 	}
@@ -26,16 +28,23 @@ public class DefaultProgressBarEx extends ProgressBarEx {
 	}
 	
 	
+
 	
 	@Override
 	public void exceptionHandler(Exception ex) {
-		JOptionPane.showMessageDialog( 
-				parent, 
-				ex.getMessage(), 
-				L10n.getString("Error.General"), 
-				JOptionPane.ERROR_MESSAGE );
+		
+		if( ex instanceof RemoteException )
+			DefaultReconnectDialog.show(parent, ex);
+		
+		else
+			JOptionPane.showMessageDialog( 
+					parent, 
+					ex.getMessage(), 
+					L10n.getString("Error.General"), 
+					JOptionPane.ERROR_MESSAGE );
+		
 		getTask().stop();
-		getTask().fireStopped(null); // So that the afterStopped() method is called! (BUG OR FEATURE in Task?)
+		
 	}
 	
 }

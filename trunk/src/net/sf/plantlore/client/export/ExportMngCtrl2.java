@@ -20,6 +20,7 @@ public class ExportMngCtrl2 {
 	private JFileChooser choice;
 	
 	private ExportMngViewB viewB;
+	
 
 	
 	public ExportMngCtrl2(ExportMng2 model, AppCoreView view) {
@@ -71,7 +72,7 @@ public class ExportMngCtrl2 {
 	private void performExport() {
 		try {
 			ExportTask2 export = model.createExportTask();
-			new DefaultProgressBarEx(export, parentView, false);
+			new DefaultProgressBarEx(export, parentView, true);
 			export.start();
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null,

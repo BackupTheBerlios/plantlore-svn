@@ -2232,11 +2232,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	if(undertaker != null) 
     		for(SelectQuery sq : queries.values()) 
     			try { UnicastRemoteObject.unexportObject(sq, true); }
-    			catch(NoSuchObjectException e) {}
+    			catch(NoSuchObjectException e) {/* Ignore it.*/}
     	queries.clear();
     	
     	//kovo by mel asi nejak poukoncovat otevreny vysledky
-    	//for each unfinished (unclosed) result do close(result)  
+    	//for each unfinished (unclosed) result do close(result)
+    	
+    	
+    	
+    	
+    	sessionFactory = null;
     	
     }
    

@@ -42,12 +42,10 @@ public class Login extends Observable {
 	 * The list of databases the User has accessed. This list is unique for every User
 	 * and is stored in his home directory. 
 	 */
-	private ArrayList<DBInfo> dbinfo = new ArrayList<DBInfo>(10);
+	private ArrayList<DBInfo> dbinfos = new ArrayList<DBInfo>(10);
 	
 	/** The currently selected record. Null means nothing is selected. */
 	private DBInfo selected = null;
-	
-	//private String  file = System.getProperty("user.home") + "/.plantlore/db.info.xml";
 	
 	private MainConfig mainConfig = null;
 	private DBLayerFactory factory = null;
@@ -56,6 +54,8 @@ public class Login extends Observable {
 	
 	private Right accessRights;
 	private User plantloreUser;
+	
+	private Task lastConnectionTask; 
 	
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
@@ -77,7 +77,7 @@ public class Login extends Observable {
 		logger.debug("Loading the stored list of databases.");
 		
 		for (DBInfo savedDBInfo: mainConfig.getDBinfos())
-			dbinfo.add(savedDBInfo);
+			dbinfos.add(savedDBInfo);
 		this.setChanged(); this.notifyObservers(UPDATE_LIST);
 
 		// Restore the last selected record.
@@ -94,7 +94,7 @@ public class Login extends Observable {
 	protected void save() {
 		logger.debug("Saving the list of databases.");
 		
-		mainConfig.setDBInfos(dbinfo, selected);
+		mainConfig.setDBInfos(dbinfos, selected);
 		try {
 			mainConfig.save();
 		}catch(IOException e) {
@@ -123,7 +123,7 @@ public class Login extends Observable {
 		DBInfo r = new DBInfo(
 				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter,
 				new String[MAX_NAMES], masterUser, masterPassword );
-		dbinfo.add(r);
+		dbinfos.add(r);
 		logger.debug("New database record has been created " + r);
 		save();
 		setChanged(); notifyObservers(UPDATE_LIST);
@@ -135,7 +135,7 @@ public class Login extends Observable {
 	 */
 	synchronized public void deleteSelectedRecord() {
 		if(selected == null) return;
-		dbinfo.remove(selected);
+		dbinfos.remove(selected);
 		logger.debug("The selected record has been removed " + selected);
 		selected = null;
 		save();
@@ -183,7 +183,7 @@ public class Login extends Observable {
 	 */
 	synchronized public DBInfo[] getRecords() {
 		// Seeing is believing: http://java.sun.com/j2se/1.5.0/docs/api/java/util/Collection.html#toArray(T[])
-		return dbinfo.toArray(new DBInfo[0]);
+		return dbinfos.toArray(new DBInfo[0]);
 	}
 	
 	private int lastIndex = Integer.MIN_VALUE;
@@ -198,7 +198,7 @@ public class Login extends Observable {
 		if(index == lastIndex) 
 			return;
 		else if(index >= 0) 
-			selected = dbinfo.get(index); 
+			selected = dbinfos.get(index); 
 		else 
 			selected = null;
 		
@@ -318,74 +318,88 @@ public class Login extends Observable {
 	 * @param name The account name (used to access the database).  
 	 * @param password The password to the account.
 	 */
-	synchronized public Task createConnectionTask(final String name, final String password) {
+	synchronized public Task createConnectionTask(String name, String password) {
 		if(selected == null) {
 			logger.debug("The System cannot create a connection when nothing was selected!");
 			return null;
 		}
 		
 		logout();
-		
-		final DBInfo selectedClone = selected.clone();
 
 		// The current username is moved to the top of the list of names :) Nice feature.
-		selectedClone.promoteUser(name);
+		selected.promoteUser(name);
 		// Save the current state.
 		save();
 		
-		return new Task() {
+		return lastConnectionTask = new ConnectionTask( selected.clone(), name, password );
 
-			@Override
-			public Object task() throws Exception {
-				
-				try {				
-					// Create a new database layer.
-					logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selectedClone.host + ":" + selectedClone.port);
-					setStatusMessage( L10n.getString("Login.Connecting") );
-					dblayer = factory.create( selectedClone );
-					if(isCanceled())
-						throw new Exception(L10n.getString("Common.Canceled"));
-					
-					logger.debug("Connection successful.");
-					setStatusMessage( L10n.getString("Login.Connected") );
-					
-					// Initialize the database layer.
-					setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
-					logger.debug("Initializing that DBLayer (" + selectedClone.databaseType + ", " + name + ", " + password + "...");
-					
-					Object[] init = dblayer.initialize(selectedClone.getDatabaseIdentifier(), name, password);
-					if(isCanceled())
-						throw new Exception(L10n.getString("Common.Canceled"));
-					plantloreUser = (User)init[0];
-					accessRights = (Right)init[1];
-				} 
-				catch (Exception e) {
-					logger.error("The initialization of the DBLayer failed! " + e.getMessage());
-					// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
-					// Otherwise, the server's policy may not allow another connection from this client!
-					if(dblayer != null)
-						try {
-							factory.destroy(dblayer);
-						} catch(RemoteException re) {
-							// Nothing we can do; the server is probably in trouble, or the network connection failed. 
-						}
-					// Re-throw the exception so that the view is updated as well.
-					throw e;
-				}
-				
-				setStatusMessage( L10n.getString("Login.DBLayerInitialized") );
-				logger.debug("DBLayer initialized.");
-				
-				fireStopped(null);
-				
-				// Everything went fine - 
-				// there is a new DBLayer which is to be announced to the observers of Login.
-				announceConnection();
-				return null;
-			}
-		};
-	
 	}
+	
+	
+	
+	private class ConnectionTask extends Task {
+		
+		private DBInfo dbinfo;
+		private transient String name, password;
+		
+		
+		public ConnectionTask(DBInfo dbinfo, String name, String password) {
+			this.dbinfo = dbinfo;
+			this.name = name;
+			this.password = password;
+		}
+		
+		@Override
+		public Object task() throws Exception {
+			
+			try {				
+				// Create a new database layer.
+				logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + dbinfo.host + ":" + dbinfo.port);
+				setStatusMessage( L10n.getString("Login.Connecting") );
+				dblayer = factory.create( dbinfo );
+				if(isCanceled())
+					throw new Exception(L10n.getString("Common.Canceled"));
+				
+				logger.debug("Connection successful.");
+				setStatusMessage( L10n.getString("Login.Connected") );
+				
+				// Initialize the database layer.
+				setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
+				logger.debug("Initializing that DBLayer (" + dbinfo.databaseType + ", " + name + ", " + password + "...");
+				
+				Object[] init = dblayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
+				if(isCanceled())
+					throw new Exception(L10n.getString("Common.Canceled"));
+				plantloreUser = (User)init[0];
+				accessRights = (Right)init[1];
+			} 
+			catch (Exception e) {
+				logger.error("The initialization of the DBLayer failed! " + e.getMessage());
+				// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
+				// Otherwise, the server's policy may not allow another connection from this client!
+				if(dblayer != null)
+					try {
+						factory.destroy(dblayer);
+					} catch(RemoteException re) {
+						// Nothing we can do; the server is probably in trouble, or the network connection failed. 
+					}
+				// Re-throw the exception so that the view is updated as well.
+				throw e;
+			}
+			
+			setStatusMessage( L10n.getString("Login.DBLayerInitialized") );
+			logger.debug("DBLayer initialized.");
+			
+			fireStopped(null);
+			
+			// Everything went fine - 
+			// there is a new DBLayer which is to be announced to the observers of Login.
+			announceConnection();
+			return null;
+		}
+	}
+	
+	
 	
 	/**
 	 * Cancel the login proces.
@@ -399,7 +413,7 @@ public class Login extends Observable {
 		}
 		logout();
 		setChanged(); notifyObservers(L10n.getString("Login.Interrupted"));
-	} //NO LONGER AVAILABLE (it didn't work anyway).
+	}
 	
 	
 	
@@ -418,6 +432,12 @@ public class Login extends Observable {
 				/*setChanged();
 				notifyObservers(e);*/ // Not this time, this is supposed to be silent.
 			}
+	}
+	
+	
+	
+	synchronized public Task getLastConnectionTask() {
+		return lastConnectionTask;
 	}
 	
 		

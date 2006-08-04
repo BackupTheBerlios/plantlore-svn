@@ -89,8 +89,7 @@ public class ExportMng2 implements Observer {
 	 * @param selection	The list of selected records. 
 	 * @param template	The list of selected columns. <b>Null means everything is selected.</b>
 	 */
-	public ExportMng2(DBLayer dblayer, SelectQuery query, Selection selection, Projection template) 
-	throws ExportException, DBLayerException, RemoteException {
+	public ExportMng2(DBLayer dblayer, SelectQuery query, Selection selection, Projection template) {
 		this(dblayer, query, selection, template, null, null, false, null);
 	}
 
@@ -103,8 +102,7 @@ public class ExportMng2 implements Observer {
 	 * 
 	 * @param dblayer	The database layer mediating the access to the database.
 	 */
-	public ExportMng2(DBLayer dblayer) 
-	throws ExportException {
+	public ExportMng2(DBLayer dblayer) {
 		setDBLayer(dblayer);
 		setSelection(null);
 	}
@@ -115,8 +113,7 @@ public class ExportMng2 implements Observer {
 	 * @param dblayer	The database layer mediating the access to the database.
 	 * @param query	The query defining the result set which is to be iterated over.
 	 */
-	public ExportMng2(DBLayer dblayer, SelectQuery query) 
-	throws ExportException, DBLayerException, RemoteException {
+	public ExportMng2(DBLayer dblayer, SelectQuery query) {
 		this(dblayer, query, null, null, null, null, false, null);
 	}
 	
@@ -142,7 +139,7 @@ public class ExportMng2 implements Observer {
 			String filename,
 			boolean useProjections,
 			Class rootTable) 
-	throws ExportException, DBLayerException, RemoteException  {
+	{
 		useProjections( useProjections );
 		setRootTable( rootTable );
 		setDBLayer(dblayer);
@@ -359,10 +356,10 @@ public class ExportMng2 implements Observer {
 
 
 	synchronized public void update(Observable source, Object arg) {
-		if( !((ExportTask)source).isExportInProgress() ) {
-			exportTasks.remove( source );
-			source.deleteObserver(this);
-		}
+//		if( !((ExportTask)source).isExportInProgress() ) {
+//			exportTasks.remove( source );
+//			source.deleteObserver(this);
+//		}
 	}
 	
 }

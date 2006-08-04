@@ -9,13 +9,10 @@ package net.sf.plantlore.client;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Frame;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -28,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.lang.Integer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,17 +32,16 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultCellEditor;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellRenderer;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -68,22 +63,22 @@ import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
+import net.sf.plantlore.common.DefaultProgressBarEx;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.StatusBarManager;
-import net.sf.plantlore.common.SwingWorker;
 import net.sf.plantlore.common.Task;
-import net.sf.plantlore.common.record.Author;
-import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.exception.ExportException;
 import net.sf.plantlore.common.exception.ImportException;
-import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
+import net.sf.plantlore.client.export.ExportMng2;
+import net.sf.plantlore.client.export.ExportMngCtrl2;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
 import net.sf.plantlore.client.imports.DecisionCtrl;
@@ -97,12 +92,9 @@ import net.sf.plantlore.client.imports.table.TableImportMngCtrl;
 import net.sf.plantlore.client.login.Login;
 import net.sf.plantlore.client.login.LoginCtrl;
 import net.sf.plantlore.client.login.LoginView;
-import net.sf.plantlore.common.record.Right;
-import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RMIDBLayerFactory;
 
 import org.apache.log4j.Logger;
@@ -210,6 +202,11 @@ public class AppCoreCtrl {
 
 	ExportProgressCtrl exportProgressCtrl;
 
+	// Export2
+	ExportMng2 exportModel2;
+
+	ExportMngCtrl2 exportCtrl2;
+
 	// Import
 	ImportMng importModel;
 
@@ -247,7 +244,7 @@ public class AppCoreCtrl {
 
 	AbstractAction helpAboutAction = new HelpAboutAction();
 
-	AbstractAction exportAction = new ExportAction();
+	AbstractAction exportAction = new ExportAction2();
 
 	AbstractAction importAction = new ImportAction();
 
@@ -291,6 +288,10 @@ public class AppCoreCtrl {
 
 	AbstractAction loginAction = new LoginAction();
 
+	AbstractAction logoutAction = new LogoutAction();
+
+	ReconnectAction reconnectAction = new ReconnectAction();
+
 	/** Creates a new instance of AppCoreCtrl */
 	public AppCoreCtrl(AppCore model, AppCoreView view) {
 		logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -332,8 +333,9 @@ public class AppCoreCtrl {
 		view.occurrencesRefresh.setAction(refreshAction);
 
 		view.overview.addKeyListener(new OverviewKeyListener());
-                view.overviewScrollPane.addComponentListener(new OverviewResizeListener());
-                
+		view.overviewScrollPane
+				.addComponentListener(new OverviewResizeListener());
+
 		view.addWindowListener(new AppWindowListener());
 		view
 				.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
@@ -342,13 +344,9 @@ public class AppCoreCtrl {
 
 		constructDialogs();
 
-		// This is here in order to skip login procedure and connect to the
-		// database automatically
-		// For developement purposes only - so that we don't have to go through
-		// login each time we run Plantlore
-		// view.initOverview();
-
 		setDatabaseDependentCommandsEnabled(false);
+		
+		DefaultReconnectDialog.setDefaultReconnectAction( reconnectAction );
 	}
 
 	private void constructDialogs() {
@@ -379,7 +377,7 @@ public class AppCoreCtrl {
 		detailCtrl = new DetailCtrl(detailModel, detailView);
 	}
 
-	private void setDatabaseDependentCommandsEnabled(boolean enabled) {				
+	private void setDatabaseDependentCommandsEnabled(boolean enabled) {
 		settingsAction.setEnabled(enabled);
 		printAction.setEnabled(enabled);
 		exportAction.setEnabled(enabled);
@@ -399,7 +397,7 @@ public class AppCoreCtrl {
 		addAction.setEnabled(enabled);
 		editAction.setEnabled(enabled);
 		deleteAction.setEnabled(enabled);
-		
+
 		selectAllAction.setEnabled(enabled);
 		selectNoneAction.setEnabled(enabled);
 		invertSelectedAction.setEnabled(enabled);
@@ -407,13 +405,13 @@ public class AppCoreCtrl {
 		prevPageAction.setEnabled(enabled);
 		view.recordsPerPage.setEnabled(enabled);
 		refreshAction.setEnabled(enabled);
-		
-		if (model.getAccessRights() != null) 
-			if	(model.getAccessRights().getAdministrator() != 1) {
+
+		if (model.getAccessRights() != null)
+			if (model.getAccessRights().getAdministrator() != 1) {
 				dataMetadataAction.setEnabled(false);
 				dataWholeHistoryAction.setEnabled(false);
 				dataUserAction.setEnabled(false);
-		} 
+			}
 	}
 
 	/**
@@ -465,9 +463,10 @@ public class AppCoreCtrl {
 					searchModel.clear();
 					searchModel.constructQuery();
 				}
-                                if (s.equals("DYNAMIC_PAGE_LOADING")) {
-                                    model.dynamicPageLoading = prefs.getBoolean(PlantloreConstants.PREF_DYNAMIC_PAGE_SIZE,false);
-                                }                                
+				if (s.equals("DYNAMIC_PAGE_LOADING")) {
+					model.dynamicPageLoading = prefs.getBoolean(
+							PlantloreConstants.PREF_DYNAMIC_PAGE_SIZE, false);
+				}
 			}
 		}
 	}
@@ -510,9 +509,13 @@ public class AppCoreCtrl {
 						"Problem while saving configuration: "
 								+ ex.getMessage());
 			}
-			// Destroy the DBLayer
-			// model.getDatabase().destroy(); --- takhle se to nesmi delat, musi
-			// ji znicit factory, ktera ji vyrobila
+
+			// The database layer created by a DBLayerFactory MUST be
+			// destroyed by that factory. There is a method which will do the
+			// trick.
+			if (loginModel != null)
+				loginModel.logout();
+
 			System.exit(0);
 		}
 	}
@@ -667,6 +670,45 @@ public class AppCoreCtrl {
 				}
 				exportCtrl.setVisible(true);
 			}
+		}
+	}
+
+	class ExportAction2 extends AbstractAction {
+
+		public ExportAction2() {
+			putValue(NAME, L10n.getString("dataExport"));
+			putValue(SHORT_DESCRIPTION, L10n.getString("dataExportTooltip"));
+			putValue(MNEMONIC_KEY, L10n.getMnemonic("dataExport"));
+		}
+
+		public void actionPerformed(ActionEvent actionEvent) {
+			// Create a new dialog if it already doesn't exist.
+			if (exportModel2 == null) {
+				exportModel2 = new ExportMng2(model.getDatabase());
+				exportCtrl2 = new ExportMngCtrl2(exportModel2, view);
+			}
+			try {
+				SelectQuery query;
+				Object[] queryParam = searchModel.constructExportQuery();
+				query = (SelectQuery) queryParam[0];
+				if ((Boolean) queryParam[1]) { // use projections
+					exportModel2.useProjections(true);
+					exportModel2.setRootTable((Class) queryParam[2]);
+				}
+
+				exportModel2.setSelectQuery(query);
+				exportModel2.setSelection(model.getTableModel().getSelection());
+			} catch (DBLayerException e) {
+				// TODO: Some errors may lead to ReconnectDialog.show()!
+				JOptionPane.showMessageDialog(view, "DBLayer Exception: "
+						+ e.getMessage());
+				return;
+			} catch (RemoteException e) {
+				DefaultReconnectDialog.show(view, e);
+				return;
+			}
+
+			exportCtrl2.setVisible(true);
 		}
 	}
 
@@ -843,8 +885,8 @@ public class AppCoreCtrl {
 
 					public void afterStopped(Object value) {
 						refreshOverview(false); // false -> do not create task,
-												// refresh the overview directly
-												// in this thread
+						// refresh the overview directly
+						// in this thread
 					}
 				};
 				progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
@@ -1143,7 +1185,7 @@ public class AppCoreCtrl {
 					true);
 			AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel,
 					authView);
-                        authModel.addObserver(managerBridge);
+			authModel.addObserver(managerBridge);
 			authView.setVisible(true);
 		}
 
@@ -1165,7 +1207,7 @@ public class AppCoreCtrl {
 					publicationManagerModel, view, true);
 			publicationManagerCtrl = new PublicationManagerCtrl(
 					publicationManagerModel, publicationManagerView);
-                        publicationManagerModel.addObserver(managerBridge);
+			publicationManagerModel.addObserver(managerBridge);
 			publicationManagerView.setVisible(true);
 		}
 	}
@@ -1309,15 +1351,18 @@ public class AppCoreCtrl {
 						// 1 anyway...
 						tf.setValue(1);
 				} else {
-                                    try {
-                                       model.setRecordsPerPage(i);                    
-                                    } catch (RemoteException ex) {  
-                                        JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
-                                        ex.printStackTrace();
-                                    } catch (DBLayerException ex) {
-                                        JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
-                                        ex.printStackTrace();
-                                    }				}
+					try {
+						model.setRecordsPerPage(i);
+					} catch (RemoteException ex) {
+						JOptionPane.showMessageDialog(view, "RemoteException: "
+								+ ex);
+						ex.printStackTrace();
+					} catch (DBLayerException ex) {
+						JOptionPane.showMessageDialog(view,
+								"DBLayerException: " + ex);
+						ex.printStackTrace();
+					}
+				}
 			}
 		}
 	}
@@ -1341,21 +1386,23 @@ public class AppCoreCtrl {
 
 	class OverviewMouseListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() >= 2)
-                    try {
-                        int resultNumber = model.getSelectedResultNumber();
-                        if (resultNumber != model.getResultsCount())
-                            model.selectAndShow(resultNumber);
-                        detailModel.load(model.getSelectedResultNumber());
-                        detailView.setVisible(true);
-                    } catch (RemoteException ex) {  
-                        JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
-                        ex.printStackTrace();
-                    } catch (DBLayerException ex) {
-                        JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
-                        ex.printStackTrace();
-                    }
-                }
+			if (e.getClickCount() >= 2)
+				try {
+					int resultNumber = model.getSelectedResultNumber();
+					if (resultNumber != model.getResultsCount())
+						model.selectAndShow(resultNumber);
+					detailModel.load(model.getSelectedResultNumber());
+					detailView.setVisible(true);
+				} catch (RemoteException ex) {
+					JOptionPane.showMessageDialog(view, "RemoteException: "
+							+ ex);
+					ex.printStackTrace();
+				} catch (DBLayerException ex) {
+					JOptionPane.showMessageDialog(view, "DBLayerException: "
+							+ ex);
+					ex.printStackTrace();
+				}
+		}
 
 		public void mousePressed(MouseEvent e) {
 		}
@@ -1380,13 +1427,13 @@ public class AppCoreCtrl {
 					int resultNumber = model.getSelectedResultNumber();
 					if (resultNumber != model.getResultsCount())
 						model.selectAndShow(resultNumber - 1);// After Enter
-																// the
-																// hyperactive
-																// JTable moves
-																// selection to
-																// next row, so
-																// we need to
-																// correct that
+					// the
+					// hyperactive
+					// JTable moves
+					// selection to
+					// next row, so
+					// we need to
+					// correct that
 					detailModel.load(model.getSelectedResultNumber());
 					detailView.setVisible(true);
 				} catch (RemoteException ex) {
@@ -1422,13 +1469,68 @@ public class AppCoreCtrl {
 			// Reuse the existing dialogs, hide'em when they're no longer
 			// needed.
 			if (loginModel == null) {
-				loginModel = new Login(new RMIDBLayerFactory(), model
-						.getMainConfig());
+				loginModel = new Login(new RMIDBLayerFactory(), model.getMainConfig());
 				loginModel.addObserver(new DatabaseChange());
 				loginView = new LoginView(view, loginModel);
 				loginCtrl = new LoginCtrl(loginModel, loginView);
 			}
 			loginCtrl.setVisible(true);
+		}
+	}
+
+	class LogoutAction extends AbstractAction {
+
+		public LogoutAction() {
+			putValue(NAME, L10n.getString("Overview.MenuFileLogout"));
+			putValue(SHORT_DESCRIPTION, L10n
+					.getString("Overview.MenuFileLogoutTT"));
+			putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuFileLogout"));
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			if (loginModel != null)
+				loginModel.logout();
+
+			/*
+			 * Do some more work here (switch the enabled/disabled menu items,
+			 * etc.)
+			 */
+
+			setDatabaseDependentCommandsEnabled(false);
+		}
+
+	}
+
+	public class ReconnectAction extends AbstractAction {
+
+		private Component parent = view;
+
+		public ReconnectAction() {
+			putValue(NAME, L10n.getString("Overview.MenuFileReconnect"));
+			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuFileReconnectTT"));
+			putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuFileReconnect"));
+		}
+
+		public ReconnectAction(Component parent) {
+			this();
+			this.parent = parent;
+		}
+
+		public void setParent(Component parent) {
+			this.parent = parent;
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			if (loginModel == null)
+				return;
+			Task t = loginModel.getLastConnectionTask();
+			if (t == null)
+				return;
+			if (parent instanceof JFrame)
+				new DefaultProgressBarEx(t, (JFrame) parent, true);
+			else if (parent instanceof JDialog)
+				new DefaultProgressBarEx(t, (JDialog) parent, true);
+			t.start();
 		}
 	}
 
@@ -1524,6 +1626,13 @@ public class AppCoreCtrl {
 				view.initOverview();
 				view.setCursor(Cursor.getDefaultCursor());
 				setDatabaseDependentCommandsEnabled(true);
+				
+				/*-------------------------------------------------------------------
+				     Distribute the database layer among existing models.
+				  -------------------------------------------------------------------*/
+				if( exportModel2 != null )
+					exportModel2.setDBLayer( dblayer );
+				
 			}
 		}
 	}
@@ -1674,37 +1783,39 @@ public class AppCoreCtrl {
 			}// if arg instanceof Table[]
 		}// update()
 	}// class ManagerBridge
-        
-    class OverviewResizeListener implements ComponentListener {
-        private final static int sub = 20; //height of the header row perhaps
-        
-        public void componentResized(ComponentEvent e) {
-            if (!model.loggedIn() || !model.dynamicPageLoading)
-                return;
-            Component c = e.getComponent();
-            int tableHeight = c.getSize().height - sub; //height of the row part of JTable ( --> without header)
-            int rowHeight = view.overview.getRowHeight();
-            int newRecordsCount = tableHeight / rowHeight;
-            try {
-                model.setRecordsPerPage(newRecordsCount);
-                view.recordsPerPage.setValue(newRecordsCount);
-            } catch (RemoteException ex) {  
-                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
-                ex.printStackTrace();
-            }
-        }
 
-        public void componentMoved(ComponentEvent e) {
-        }
+	class OverviewResizeListener implements ComponentListener {
+		private final static int sub = 20; // height of the header row perhaps
 
-        public void componentShown(ComponentEvent e) {
-        }
+		public void componentResized(ComponentEvent e) {
+			if (!model.loggedIn() || !model.dynamicPageLoading)
+				return;
+			Component c = e.getComponent();
+			int tableHeight = c.getSize().height - sub; // height of the row
+														// part of JTable ( -->
+														// without header)
+			int rowHeight = view.overview.getRowHeight();
+			int newRecordsCount = tableHeight / rowHeight;
+			try {
+				model.setRecordsPerPage(newRecordsCount);
+				view.recordsPerPage.setValue(newRecordsCount);
+			} catch (RemoteException ex) {
+				JOptionPane.showMessageDialog(view, "RemoteException: " + ex);
+				ex.printStackTrace();
+			} catch (DBLayerException ex) {
+				JOptionPane.showMessageDialog(view, "DBLayerException: " + ex);
+				ex.printStackTrace();
+			}
+		}
 
-        public void componentHidden(ComponentEvent e) {
-        }        
-    }        
+		public void componentMoved(ComponentEvent e) {
+		}
+
+		public void componentShown(ComponentEvent e) {
+		}
+
+		public void componentHidden(ComponentEvent e) {
+		}
+	}
 
 }

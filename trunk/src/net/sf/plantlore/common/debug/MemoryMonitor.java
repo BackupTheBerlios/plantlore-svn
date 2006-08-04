@@ -16,7 +16,7 @@ public class MemoryMonitor extends javax.swing.JFrame {
     public MemoryMonitor() {
         initComponents();
         
-        progress.setMaximum(512); // My computer has 512MB memory
+        progress.setMaximum(512); // My computer has 512MB memory [java -Xmx512m]
         progress.setStringPainted(true);
 
         
@@ -31,9 +31,9 @@ public class MemoryMonitor extends javax.swing.JFrame {
         Thread t = new Thread() {
         	private Thread update = new Thread() {
             	public void run() {
-            		int total = (int)( Runtime.getRuntime().totalMemory() / (1024*1024) );
-                	progress.setValue(total);
-                	progress.setString(total + "MB");
+            		float total = Runtime.getRuntime().totalMemory() / (1024.0f*1024.0f);
+                	progress.setValue( (int)total );
+                	progress.setString(Float.toString( Math.round(total*10) / 10.0f ) + "MB");
             	}
             };
             
