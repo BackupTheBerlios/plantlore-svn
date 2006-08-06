@@ -704,8 +704,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw ex;
         }
         Session session = sessionFactory.openSession();
-        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname), queries), 
-        	stub = query;
+        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname), queries);
+        SelectQuery stub = query;
         
         if(undertaker != null)
         	stub = (SelectQuery) UnicastRemoteObject.exportObject(query); 
@@ -783,7 +783,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         results.put(maxResultId, res);
         return maxResultId;
     }
-    
+       
     /**
      *  Execute SQL delete with condition. Only administrator should be allowed to run this.
      *  The method doesn't handle foreign key constraints
@@ -2212,6 +2212,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 }
             }                                  
         }
+    }
+
+    /**
+     *  Return number of open database connections (instances of Hibernate Session class)
+     *  @return number of open database connections
+     *  @throws RemoteException in case network connection failed
+     */    
+    public int getConnectionCount() throws RemoteException {
+        return sessions.size();
     }
     
     

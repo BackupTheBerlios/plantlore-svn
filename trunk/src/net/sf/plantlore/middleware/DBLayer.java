@@ -241,7 +241,7 @@ public interface DBLayer extends Remote, Serializable {
      *  @throws DBLayerException in case we are not connected to the database or an error occurred
      *                           while executing the insert
      *  @throws RemoteException in case server connection failed
-     */    
+     */        
     public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException;
             
     /**
@@ -283,7 +283,14 @@ public interface DBLayer extends Remote, Serializable {
      *  @throws RemoteException in case network connection failed
      */
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException;
-                        
+    
+    /**
+     *  Return number of open database connections (instances of Hibernate Session class)
+     *  @return number of open database connections
+     *  @throws RemoteException in case network connection failed
+     */
+    public int getConnectionCount() throws RemoteException;
+    
     /**
      * This method is intended for final cleanup. <b>Do not call this method
      * yourself! The proper way for you to get rid of a DBLayer is to call
