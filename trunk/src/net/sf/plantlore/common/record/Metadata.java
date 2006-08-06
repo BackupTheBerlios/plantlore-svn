@@ -40,6 +40,7 @@ public class Metadata extends Record {
     private String recordBasis;
     private String biotopeText;    
     private Integer deleted;
+    private Integer version;
     
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
@@ -519,5 +520,20 @@ public class Metadata extends Record {
     public void setDeleted(Integer deleted) {
     	this.deleted = deleted;
     }    
+    
+    /**
+     *  Set the row version. Version column is used by Hibernate to implement optimistic locking.
+     *  @param version version of the row
+     */    
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+    
+    /**
+     *  Get the row version. Version column is used by Hibernate to implement optimistic locking.
+     *  @return version of the row
+     */
+    public Integer getVersion() {
+        return version;
+    }        
 }
-

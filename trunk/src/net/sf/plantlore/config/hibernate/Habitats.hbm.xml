@@ -8,7 +8,7 @@
       <id column="CID" name="id" type="java.lang.Integer">
          <generator class="increment"/>
       </id>
-      
+      <version name="version" column="CVERSION"/>      
       <many-to-one name="territory" 
                    class="net.sf.plantlore.common.record.Territory" 
                    column="CTERRITORYID"

@@ -30,6 +30,7 @@ public class User extends Record {
     private java.util.Date dropWhen;
     private Right right;
     private String note;
+    private Integer version;
 
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
@@ -279,5 +280,21 @@ public class User extends Record {
      */
     public void setNote(String note) {
         this.note = note;
-    }   
+    }  
+    
+    /**
+     *  Set the row version. Version column is used by Hibernate to implement optimistic locking.
+     *  @param version version of the row
+     */    
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+    
+    /**
+     *  Get the row version. Version column is used by Hibernate to implement optimistic locking.
+     *  @return version of the row
+     */
+    public Integer getVersion() {
+        return version;
+    }    
 }

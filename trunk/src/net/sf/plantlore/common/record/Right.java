@@ -27,7 +27,8 @@ public class Right extends Record {
     private String editGroup;
     private String seeColumns;
     private int add;    
-
+    private Integer version;
+    
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
     public static final String ADMINISTRATOR = "administrator";    
@@ -153,4 +154,20 @@ public class Right extends Record {
     public void setAdd(int add) {
         this.add = add;
     }    
+    
+    /**
+     *  Set the row version. Version column is used by Hibernate to implement optimistic locking.
+     *  @param version version of the row
+     */    
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+    
+    /**
+     *  Get the row version. Version column is used by Hibernate to implement optimistic locking.
+     *  @return version of the row
+     */
+    public Integer getVersion() {
+        return version;
+    }        
 }
