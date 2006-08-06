@@ -233,9 +233,11 @@ public class OverviewTableModel extends AbstractTableModel {
             return;
         }
         this.pageSize = pageSize;
+        
+        from = (from / pageSize) * pageSize;
         if (from + pageSize > resultsCount)
-            from = resultsCount - pageSize;
-        if (from < 0) //pageSize was bigger than the number of results
+            from = resultsCount - (resultsCount % pageSize);
+        if (from < 0) //pageSize is bigger than the number of results
             from = 0;
         
         currentPage = from / pageSize + 1;
