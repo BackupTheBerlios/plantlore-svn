@@ -10,7 +10,6 @@
 package net.sf.plantlore.common;
 
 import java.util.Observable;
-import javax.swing.SwingUtilities;
 
 /** A convenience class for long task implementation.
  *
@@ -21,7 +20,7 @@ import javax.swing.SwingUtilities;
  */
 public abstract class Task extends Observable {
     private SwingWorker worker;    
-    private Object value;
+    //private Object value;
     public static enum Message {POSITION_CHANGED, MESSAGE_CHANGED, STOPPING, STOPPED, STARTING, STARTED, PROCEEDING, LENGTH_CHANGED};
     private int length = 0;
     private int position = 0;
@@ -159,6 +158,10 @@ public abstract class Task extends Observable {
      *
      */
     public void start() {
+    	
+    	// In case the task is to be started again. 
+    	done = canceled = false;
+    	
         worker = new SwingWorker() {
             public Object construct() {
                 Object value = null;

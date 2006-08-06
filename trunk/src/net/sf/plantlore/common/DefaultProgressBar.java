@@ -32,6 +32,8 @@ public class DefaultProgressBar extends ProgressBar {
 	@Override
 	public void exceptionHandler(Exception ex) {
 		
+		getTask().stop();
+		
 		if( ex instanceof RemoteException || ex instanceof DBLayerException )
 			DefaultReconnectDialog.show(parent, ex);
 		
@@ -41,8 +43,6 @@ public class DefaultProgressBar extends ProgressBar {
 					ex.getMessage(), 
 					L10n.getString("Error.General"), 
 					JOptionPane.ERROR_MESSAGE );
-		
-		getTask().stop();
 		
 	}
 	

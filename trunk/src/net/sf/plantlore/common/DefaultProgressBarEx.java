@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -33,7 +34,9 @@ public class DefaultProgressBarEx extends ProgressBarEx {
 	@Override
 	public void exceptionHandler(Exception ex) {
 		
-		if( ex instanceof RemoteException )
+		getTask().stop();
+		
+		if( ex instanceof RemoteException || ex instanceof DBLayerException )
 			DefaultReconnectDialog.show(parent, ex);
 		
 		else
@@ -42,8 +45,6 @@ public class DefaultProgressBarEx extends ProgressBarEx {
 					ex.getMessage(), 
 					L10n.getString("Error.General"), 
 					JOptionPane.ERROR_MESSAGE );
-		
-		getTask().stop();
 		
 	}
 	

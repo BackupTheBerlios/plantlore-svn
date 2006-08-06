@@ -220,9 +220,11 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
                         setVisible(false);
                         dispose();                    
                         parent.setCursor(Cursor.getDefaultCursor());
+                        logger.debug( "ProgressBar:Stopping " + task );
                         afterStopping();
                         break;
                     case STOPPED:
+                    	logger.debug( "ProgressBar:Stopped " + task );
                         afterStopped(value);
                         break;                    
                 }//switch

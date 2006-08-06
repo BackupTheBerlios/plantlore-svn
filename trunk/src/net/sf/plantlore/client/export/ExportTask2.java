@@ -114,7 +114,7 @@ private Logger logger = Logger.getLogger(getClass().getPackage().getName());
 				logger.debug("The record is in the selection. It will be exported.");
 				count++;
 				setStatusMessage(count + " " + L10n.getString("Export.RecordsExported"));
-				setLength(count);
+				setPosition(count);
 				
 				build.startRecord();
 				

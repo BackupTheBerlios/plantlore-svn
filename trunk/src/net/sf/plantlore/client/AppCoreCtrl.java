@@ -1501,6 +1501,8 @@ public class AppCoreCtrl {
 
 	}
 
+	
+	
 	public class ReconnectAction extends AbstractAction {
 
 		private Component parent = view;
@@ -1521,18 +1523,21 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
-			if (loginModel == null)
-				return;
-			Task t = loginModel.getLastConnectionTask();
-			if (t == null)
-				return;
-			if (parent instanceof JFrame)
-				new DefaultProgressBarEx(t, (JFrame) parent, true);
-			else if (parent instanceof JDialog)
-				new DefaultProgressBarEx(t, (JDialog) parent, true);
-			t.start();
+			if (loginModel != null) {
+				Task t = loginModel.getLastConnectionTask();
+				if(t != null) {
+					// 1. Log out ( ~ dispose of the current DBLayer)
+					loginModel.logout();
+					// 2. Log in again ( ~ create a new DBLayer)
+					// Note that the ProgressBar is no longer needed - 
+					// the last task surely had one and it will become
+					// active once we start the task again.
+					t.start(); 
+				}
+			}
 		}
 	}
+	
 
 	// Update all information about the database layer and inform everyone who
 	// has to be informed

@@ -55,8 +55,9 @@ public class Login extends Observable {
 	private Right accessRights;
 	private User plantloreUser;
 	
-	private Task lastConnectionTask; 
+	private Task lastConnectionTask;
 	
+
 	/**
 	 * Create a new login model. The DBLayer factory will be used to produce 
 	 * new DBLayers.
@@ -278,7 +279,7 @@ public class Login extends Observable {
 							// Nothing we can do; the server is probably in trouble, or the network connection failed. 
 						}
 					setChanged();
-					notifyObservers( e );
+					 notifyObservers( e );
 					return null;
 				}
 				
@@ -349,10 +350,14 @@ public class Login extends Observable {
 			this.password = password;
 		}
 		
+				
 		@Override
 		public Object task() throws Exception {
 			
-			try {				
+			try {
+				if(isCanceled())
+					throw new Exception(L10n.getString("Common.Canceled"));
+				
 				// Create a new database layer.
 				logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + dbinfo.host + ":" + dbinfo.port);
 				setStatusMessage( L10n.getString("Login.Connecting") );
@@ -380,7 +385,7 @@ public class Login extends Observable {
 				if(dblayer != null)
 					try {
 						factory.destroy(dblayer);
-					} catch(RemoteException re) {
+					} catch(Exception re) {
 						// Nothing we can do; the server is probably in trouble, or the network connection failed. 
 					}
 				// Re-throw the exception so that the view is updated as well.
@@ -395,8 +400,10 @@ public class Login extends Observable {
 			// Everything went fine - 
 			// there is a new DBLayer which is to be announced to the observers of Login.
 			announceConnection();
+
 			return null;
 		}
+		
 	}
 	
 	

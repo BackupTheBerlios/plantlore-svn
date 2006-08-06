@@ -6,10 +6,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
 
 import net.sf.plantlore.client.export.builders.*;
 import net.sf.plantlore.client.export.component.FileFormat;
@@ -51,7 +47,7 @@ import org.apache.log4j.Logger;
  * @version 2.0
  * @see net.sf.plantlore.client.export.Builder
  */
-public class ExportMng2 implements Observer {
+public class ExportMng2 {
 	
 	
 	public static final String ENCODING = "UTF-8";
@@ -241,9 +237,6 @@ public class ExportMng2 implements Observer {
 	
 	
 	
-	private Set<ExportTask2> exportTasks = new HashSet<ExportTask2>(8);
-	
-	
 	/**
 	 * Start the export procedure. The export will run in its own thread.
 	 * 
@@ -252,8 +245,6 @@ public class ExportMng2 implements Observer {
 	 */
 	synchronized public ExportTask2 createExportTask() 
 	throws ExportException, IOException, DBLayerException {
-		if( exportTasks.size() > 4 )
-			throw new ExportException(L10n.getString("Error.TooManyTasks"));
 		// Check if all necessary components are valid.
 		if( db == null )
 			throw new ExportException(L10n.getString("Error.InvalidDBLayer"));
@@ -314,8 +305,6 @@ public class ExportMng2 implements Observer {
 		// Start a new task.
 		ExportTask2 t = new ExportTask2(db, query, writer, builder, selection);
 		t.ignoreDead( filter.ignoreDead() );
-		/*exportTasks.add(t);
-		t.addObserver(this);*/
 		
 		// Reset variables.
 		query = null;
@@ -332,22 +321,6 @@ public class ExportMng2 implements Observer {
 	
 		
 	/**
-	 * Abort every running Export. 
-	 */
-	synchronized public void abortAllTasks() {
-		for(ExportTask2 task : exportTasks) {
-			task.kill();
-			task.deleteObserver(this);
-		}
-		exportTasks.clear();
-	}
-	
-	
-	synchronized public boolean isAnExportInProgress() {
-		return exportTasks.size() != 0;
-	}
-	
-	/**
 	 * @return The list of filters describing formats this Export Manager can handle.
 	 */
 	public FileFormat[] getFileFormats() {
@@ -355,11 +328,4 @@ public class ExportMng2 implements Observer {
 	}
 
 
-	synchronized public void update(Observable source, Object arg) {
-//		if( !((ExportTask)source).isExportInProgress() ) {
-//			exportTasks.remove( source );
-//			source.deleteObserver(this);
-//		}
-	}
-	
 }

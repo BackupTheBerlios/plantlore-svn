@@ -8,7 +8,7 @@ import net.sf.plantlore.client.AppCoreCtrl;
 
 public class DefaultReconnectDialog {
 	
-	private static String[] options = new String[] { L10n.getString("Overview.MenuFileReconnect"), L10n.getString("Common.OK") };
+	private static String[] options = new String[] { L10n.getString("Overview.MenuFileReconnect"), L10n.getString("Common.Ok") };
 	private static AppCoreCtrl.ReconnectAction defaultReconnectAction;
 
 	
