@@ -33,6 +33,8 @@ public class ItemCtrl2 {
 			view.databaseMasterUser.setText("");
 			view.databaseMasterPassword.setText("");
 			
+			view.remoteDatabaseIdentifier.setText("");
+			
 			view.setTitle(L10n.getString("Login.AddTitle"));
 			view.next.setText(L10n.getString("Login.Add"));
 			view.next.setToolTipText(L10n.getString("Login.AddTT"));
@@ -147,7 +149,8 @@ public class ItemCtrl2 {
 				
 				// Validity check...
 				if( port < 0 || view.aliasRemote.getText().length() == 0 || 
-						view.host.getText().length() == 0 ) {
+						view.host.getText().length() == 0 || 
+						view.remoteDatabaseIdentifier.getText().length() == 0 ) {
 					// Announce the problem.
 					JOptionPane.showMessageDialog(
     						view, 
@@ -164,7 +167,7 @@ public class ItemCtrl2 {
 							view.aliasRemote.getText(),
 							view.host.getText(),
 							port,
-							null, 0, null, null, null, null
+							null, 0, view.remoteDatabaseIdentifier.getText(), null, null, null
 					);
 					break;
 				case EDIT:
@@ -172,7 +175,7 @@ public class ItemCtrl2 {
 							view.aliasRemote.getText(),
 							view.host.getText(),
 							port,
-							null, 0, null, null, null, null
+							null, 0, view.remoteDatabaseIdentifier.getText(), null, null, null
 					);
 					break;
 				}

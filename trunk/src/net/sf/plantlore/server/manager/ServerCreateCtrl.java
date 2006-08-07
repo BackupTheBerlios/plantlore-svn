@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.l10n.L10n;

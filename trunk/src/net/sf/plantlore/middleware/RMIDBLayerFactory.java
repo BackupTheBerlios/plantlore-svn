@@ -50,6 +50,7 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	
 	/** Create a new instance of DBLayerFactory. */
 	public RMIDBLayerFactory() {
+		// Empty constructor
 	}
 	
 	
