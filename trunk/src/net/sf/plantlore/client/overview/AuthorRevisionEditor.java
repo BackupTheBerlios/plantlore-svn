@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -20,16 +20,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.l10n.L10n;
 
 /**
  *
  * @author fraktalek
  */
-public class AuthorRevisionEditorSearch extends AbstractCellEditor implements TableCellEditor {
+public class AuthorRevisionEditor extends AbstractCellEditor implements TableCellEditor {
     HashMap<Integer,JButton> buttonMap = new HashMap<Integer,JButton>();
     HashMap<JButton,Integer> buttonMapInverted = new HashMap<JButton,Integer>();
-    Search aemodel;
+    AddEdit aemodel;
     String value = "";
     
     class RevisionAction extends AbstractAction {
@@ -54,7 +55,7 @@ public class AuthorRevisionEditorSearch extends AbstractCellEditor implements Ta
     }
     
     /** Creates a new instance of AuthorRevisionEditor */
-    public AuthorRevisionEditorSearch(Search aemodel) {
+    public AuthorRevisionEditor(AddEdit aemodel) {
         this.aemodel = aemodel;
     }
 

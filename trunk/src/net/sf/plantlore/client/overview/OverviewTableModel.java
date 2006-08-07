@@ -5,13 +5,14 @@
  *
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.table.AbstractTableModel;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.Selection;
@@ -357,7 +358,7 @@ public class OverviewTableModel extends AbstractTableModel {
         return selectionColumnIndex;
     }
 
-    void clearSelection() {
+    public void clearSelection() {
         selection.clear();
     }
     

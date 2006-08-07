@@ -4,7 +4,7 @@
  * Created on 12. květen 2006, 16:50
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.settings;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -12,6 +12,8 @@ import java.util.Observer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.overview.Column;
 import net.sf.plantlore.l10n.L10n;
 
 /**

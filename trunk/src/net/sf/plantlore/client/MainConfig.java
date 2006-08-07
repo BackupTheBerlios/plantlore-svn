@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.client.login.Login;
+import net.sf.plantlore.client.overview.Column;
 import net.sf.plantlore.server.RMIServer;
 
 import org.apache.log4j.Logger;

@@ -7,12 +7,14 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview.detail;
 
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Observable;
 import javax.swing.table.AbstractTableModel;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.AppCore;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Author;

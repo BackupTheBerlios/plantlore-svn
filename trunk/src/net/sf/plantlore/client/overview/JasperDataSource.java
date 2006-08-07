@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

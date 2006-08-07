@@ -4,13 +4,14 @@
  * Created on 2. červen 2006, 12:25
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview.detail;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 

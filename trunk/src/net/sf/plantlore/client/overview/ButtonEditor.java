@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.l10n.L10n;
 
 /** Button Editor and Renderer used by the author table in AddEdit dialog.
@@ -29,21 +30,21 @@ import net.sf.plantlore.l10n.L10n;
  * Simply returns the buttons stored in the table model.
  * @author reimei
  */
-public class ButtonEditorSearch extends AbstractCellEditor implements TableCellEditor, TableCellRenderer  {
+public class ButtonEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer  {
     private final static String ADD = L10n.getString("AddEdit.AuthorAdd");
     private final static String REMOVE = L10n.getString("AddEdit.AuthorRemove");
-
+    
     HashMap<Integer,JButton> editors = new HashMap<Integer,JButton>();
     JButton addButton, removeButton;
-    Search aemodel;
+    AddEdit aemodel;
     
     /** Listener for buttons in the table.
      * Adds or removes rows calling the view according to the button's text.
      */
     class AuthorButtonListener implements ActionListener {
-        Search aemodel;
+        AddEdit aemodel;
 
-        public AuthorButtonListener(Search aemodel) {
+        public AuthorButtonListener(AddEdit aemodel) {
             this.aemodel = aemodel;
         }
 
@@ -58,7 +59,7 @@ public class ButtonEditorSearch extends AbstractCellEditor implements TableCellE
     }
 
     /** Creates a new instance of ButtonEditor */
-    public ButtonEditorSearch(Search aemodel) {
+    public ButtonEditor(AddEdit aemodel) {
         this.aemodel = aemodel;
         addButton = new JButton(ADD);
         removeButton = new JButton(REMOVE);

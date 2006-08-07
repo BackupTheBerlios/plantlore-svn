@@ -4,10 +4,11 @@
  * Created on 19. květen 2006, 17:13
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.print;
 
 import java.util.Observable;
 import java.util.Observer;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.l10n.L10n;
 
 /**

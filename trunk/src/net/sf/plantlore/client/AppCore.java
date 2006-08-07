@@ -16,6 +16,7 @@ import java.util.Observable;
 import java.util.prefs.Preferences;
 import javax.swing.table.TableModel;
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;

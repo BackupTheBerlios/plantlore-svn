@@ -17,6 +17,7 @@ import javax.swing.Action;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
+import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;

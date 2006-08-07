@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.print;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -27,6 +27,8 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.overview.SchedaView;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXParseException;

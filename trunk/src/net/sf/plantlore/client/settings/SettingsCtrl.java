@@ -5,7 +5,7 @@
  *
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.overview.Column;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 

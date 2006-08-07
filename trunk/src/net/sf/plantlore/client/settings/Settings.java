@@ -5,11 +5,14 @@
  *
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.settings;
 
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.AppCoreCtrl;
+import net.sf.plantlore.client.overview.Column;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;

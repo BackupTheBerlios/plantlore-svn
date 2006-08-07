@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,23 +18,21 @@ import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.overview.search.Search;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.l10n.L10n;
-import org.apache.log4j.Logger;
 
 
 /** Table model for the authors table in AddEditView.
  *
  */
-public class AuthorTableModel extends AbstractTableModel {
-    Logger logger;
+public class AuthorTableModelSearch extends AbstractTableModel {
     ArrayList<Object[]> data = new ArrayList<Object[]>();
     Object[] row;
-    AddEdit aemodel;
+    Search aemodel;
     
-    public AuthorTableModel(AddEdit aemodel) {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());
-        
+    public AuthorTableModelSearch(Search aemodel) {
         this.aemodel = aemodel;
         row = new Object[4];
         row[0] = new Pair("",0);
@@ -46,12 +44,12 @@ public class AuthorTableModel extends AbstractTableModel {
         row[3] = "";
         data.add(row);
         loadDataFromModel();
+        fireTableDataChanged();
     }
     
-    public void loadDataFromModel() {
+    private void loadDataFromModel() {
         for (int i = 0; i < aemodel.getAuthorCount(); i++)
             addRow(aemodel.getAuthor(i), aemodel.getAuthorRole(i), aemodel.getResultRevision(i));        
-        fireTableDataChanged();
     }
     
     public void reset() {
@@ -101,7 +99,7 @@ public class AuthorTableModel extends AbstractTableModel {
     }
     
     public void removeRow(int i) {
-        logger.debug("AuthorTableModel: removing row #"+i);
+        System.out.println("AuthorTableModel: removing row #"+i);
         Object[] row = data.remove(i);
 
 /*        JButton b = (JButton)row[2];
@@ -138,11 +136,8 @@ public class AuthorTableModel extends AbstractTableModel {
             return;
         Object[] row = data.get(r);
         row[c] = o;
-        if (c == 0) {
-            if (!(o instanceof Pair)) //the combobox could contain only one empty string (new AutoComboBoxNG3())
-                return;
+        if (c == 0)
             aemodel.setAuthor(r, (Pair<String, Integer>) o);
-        }
         if (c == 1)
             aemodel.setAuthorRole(r, (String) o);
         if (c == 3)

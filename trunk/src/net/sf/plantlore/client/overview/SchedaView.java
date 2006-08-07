@@ -4,7 +4,7 @@
  * Created on 18. květen 2006, 14:38
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

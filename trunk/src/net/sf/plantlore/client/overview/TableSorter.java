@@ -1,4 +1,4 @@
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;

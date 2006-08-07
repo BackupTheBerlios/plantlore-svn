@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview.search;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Observable;
 import javax.swing.text.PlainDocument;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;

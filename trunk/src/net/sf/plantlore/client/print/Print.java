@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.print;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +26,9 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.plantlore.client.*;
+import net.sf.plantlore.client.AppCoreCtrl;
+import net.sf.plantlore.client.overview.JasperDataSource;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.middleware.DBLayer;
 import org.apache.log4j.Logger;

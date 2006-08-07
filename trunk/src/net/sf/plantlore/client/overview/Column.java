@@ -7,9 +7,10 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import java.util.Date;
+import net.sf.plantlore.client.*;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
