@@ -55,8 +55,8 @@
                   <Component id="taxonLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane3" pref="270" max="32767" attributes="1"/>
-                      <Component id="jScrollPane1" alignment="0" pref="270" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" pref="245" max="32767" attributes="1"/>
+                      <Component id="jScrollPane1" alignment="0" pref="245" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
@@ -65,8 +65,8 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="townComboBox" alignment="1" pref="325" max="32767" attributes="1"/>
-                      <Component id="jScrollPane2" alignment="0" pref="325" max="32767" attributes="1"/>
+                      <Component id="townComboBox" alignment="1" pref="300" max="32767" attributes="1"/>
+                      <Component id="jScrollPane2" alignment="0" pref="300" max="32767" attributes="1"/>
                       <Component id="extendedButton" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -94,7 +94,7 @@
                           <Component id="jScrollPane1" min="-2" pref="82" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane3" pref="65" max="32767" attributes="1"/>
+                              <Component id="jScrollPane3" pref="67" max="32767" attributes="1"/>
                               <Component id="taxonLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -482,7 +482,7 @@
                               <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                               <Component id="territoryLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="territoryNameCombo" pref="173" max="32767" attributes="0"/>
+                              <Component id="territoryNameCombo" pref="177" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -527,7 +527,7 @@
                           <Component id="quadrantLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="quadrantTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="13" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -673,7 +673,7 @@
                           <Component id="sourceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sourceCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="15" max="32767" attributes="0"/>
+                      <EmptySpace pref="12" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="publicationLabel" min="-2" max="-2" attributes="0"/>
                           <Component id="publicationCombo" min="-2" max="-2" attributes="0"/>
@@ -790,7 +790,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane4" pref="279" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="219" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -798,7 +798,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane4" pref="91" max="32767" attributes="0"/>
+                      <Component id="jScrollPane4" pref="96" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -900,7 +900,7 @@
                           <Component id="longitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="longitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="43" max="32767" attributes="0"/>
+                      <EmptySpace pref="48" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1039,7 +1039,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane5" pref="279" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="219" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1047,7 +1047,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jScrollPane5" pref="113" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" pref="115" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1090,7 +1090,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="helpButton" linkSize="12" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="626" max="32767" attributes="0"/>
+                  <EmptySpace pref="598" max="32767" attributes="0"/>
                   <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>

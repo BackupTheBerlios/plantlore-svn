@@ -901,7 +901,8 @@ public class Search extends Observable {
     }
     
     public void setAuthor(int i, Pair<String,Integer> author) {
-        authorList.get(i).setFirst(author);
+        if (i < authorList.size())
+            authorList.get(i).setFirst(author);
         logger.debug("Author name in row "+i+" set to "+author);
     }
     

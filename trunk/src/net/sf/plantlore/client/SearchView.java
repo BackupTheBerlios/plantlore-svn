@@ -716,7 +716,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     }
         
     public void clearComponentData() {
-        model.clearAuthors(); resetAuthorModel(); initAuthorTable();
+        resetAuthorModel(); initAuthorTable();
         townComboBox.setSelectedIndex(0);
         taxonTextArea.setText("");
         descriptionArea.setText("");
@@ -821,8 +821,10 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         if (arg != null && arg instanceof String) {
             String s = (String) arg;
             
-            if (s.equals("CLEAR"))
+            if (s.equals("CLEAR")) {
                 clearComponentData();
+                return;
+            }
             
             if (s.equals("PLANTS_CHANGED")) {
                 logger.debug("Updating plant area");
@@ -836,6 +838,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     choices[i] = plants[i].getFirst();
                 
                 ((AutoTextArea)taxonTextArea).setChoices(choices);
+                return;
             }
             
             if (s.equals("AUTHORS_CHANGED")) {
@@ -851,6 +854,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
                 
                 tc1.setCellEditor(new DefaultCellEditor(cb));  
+                return;
             }
 
             if (s.equals("AUTHORROLES_CHANGED")) {
@@ -865,6 +869,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 TableColumn tc2 = authorTable.getColumnModel().getColumn(1);
                 
                 tc2.setCellEditor(new DefaultCellEditor(cb));                
+                return;
             }
             
             if (s.equals("VILLAGES_CHANGED")) {
@@ -874,6 +879,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     townComboBox.setModel(new DefaultComboBoxModel(model.getVillages()));
                 townComboBox.insertItemAt(model.EMPTY_PAIR,0);
+                return;
             }
             
             if (s.equals("TERRITORIES_CHANGED")) {
@@ -883,6 +889,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     territoryNameCombo.setModel(new DefaultComboBoxModel(model.getTerritories()));
                 territoryNameCombo.insertItemAt(model.EMPTY_PAIR,0);
+                return;
             }
 
             if (s.equals("PHYTNAMES_CHANGED")) {
@@ -892,6 +899,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     phytNameCombo.setModel(new DefaultComboBoxModel(model.getPhytNames()));
                 phytNameCombo.insertItemAt(model.EMPTY_PAIR,0);
+                return;
             }
 
             if (s.equals("PHYTCODES_CHANGED")) {
@@ -901,6 +909,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     phytCodeCombo.setModel(new DefaultComboBoxModel(model.getPhytCodes()));
                 phytCodeCombo.insertItemAt(model.EMPTY_PAIR,0);
+                return;
             }
 
             if (s.equals("COUNTRIES_CHANGED")) {
@@ -910,6 +919,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     phytCountryCombo.setModel(new DefaultComboBoxModel(model.getCountries()));
                 phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);
+                return;
             }
             
             if (s.equals("SOURCES_CHANGED")) {
@@ -919,6 +929,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     sourceCombo.setModel(new DefaultComboBoxModel(model.getSources()));
                 sourceCombo.insertItemAt(model.EMPTY_STRING,0);
+                return;
             }
             
             if (s.equals("PUBLICATIONS_CHANGED")) {
@@ -928,6 +939,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     publicationCombo.setModel(new DefaultComboBoxModel(model.getPublications()));
                 publicationCombo.insertItemAt(model.EMPTY_PAIR,0);
+                return;
             }
 
             if (s.equals("PROJECTS_CHANGED")) {
@@ -937,6 +949,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 else
                     projectCombo.setModel(new DefaultComboBoxModel(model.getProjects()));
                 projectCombo.insertItemAt(model.EMPTY_PAIR,0);
+                return;
             }                       
         }//instanceof String
     }
