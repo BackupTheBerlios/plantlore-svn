@@ -73,19 +73,19 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="taxonLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="authorLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="locationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="taxonLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="274" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="taxonValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="authorValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="locationValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="taxonValueLabel" alignment="0" min="-2" max="-2" attributes="1"/>
+                      <Component id="locationValueLabel" alignment="0" max="32767" attributes="1"/>
+                      <Component id="authorValueLabel" alignment="0" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace pref="228" max="32767" attributes="0"/>
+                  <EmptySpace pref="488" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -143,23 +143,17 @@
         </Component>
         <Component class="javax.swing.JLabel" name="taxonValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="model.getNamePlant()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="taxon"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="authorValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="model.getNameAuthor()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="author"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="locationValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="model.getLocation()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="location"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -189,7 +183,7 @@
                       <Component id="whenInsertValueLabel" min="-2" max="-2" attributes="0"/>
                       <Component id="whoInsertValueLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="462" max="32767" attributes="0"/>
+                  <EmptySpace pref="502" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -232,16 +226,12 @@
         </Component>
         <Component class="javax.swing.JLabel" name="whenInsertValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(model.getWhen()) " type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="when"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="whoInsertValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="model.getNameUser()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="who"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -285,7 +275,7 @@
                           <Component id="displayedLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="displayedValueLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="69" max="32767" attributes="0"/>
                           <Component id="nextButton" min="-2" pref="60" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -403,9 +393,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="totalResultValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="((Integer)model.getResultRows()).toString()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="total"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="toDisplayLabel">
@@ -417,9 +405,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="toDisplayValueTextField">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="((Integer)model.getDisplayRows()).toString()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="rows"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -434,9 +420,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="displayedValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="model.getCurrentDisplayRows()" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="displayed"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -13,20 +13,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
-
-import net.sf.plantlore.client.metadata.AddEditMetadataCtrl;
-import net.sf.plantlore.client.metadata.AddEditMetadataView;
+import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.metadata.MetadataManager;
-import net.sf.plantlore.client.metadata.MetadataManagerTableModel;
-import net.sf.plantlore.client.metadata.MetadataManagerCtrl.escapeKeyPressed;
+import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultProgressBar;
-import net.sf.plantlore.common.ProgressBar;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.common.record.User;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -42,19 +38,13 @@ public class UserManagerCtrl {
     /** Model of UserManager MVC */
     private UserManager model;
     /** View of UserManager MVC */
-    private UserManagerView view;
-    /** View of add dialog*/
+    private UserManagerView view;  
+    /** View of add dialog */
     private AddEditUserView addView;
-    /** Controler of add dialog*/
-    private AddEditUserCtrl addCtrl;
-    /** View of edit dialog*/
+    /** View of edit dialog */
     private AddEditUserView editView;
-    /** Controler of edit dialog*/
-    private AddEditUserCtrl editCtrl;
-    /** View of details dialog*/
+    /** View of details dialog */
     private AddEditUserView detailView;
-    /** Controler of details dialog*/
-    private AddEditUserCtrl detailCtrl;
     
     /**
      * Creates a new instance of UserManagerCtrl
@@ -66,8 +56,9 @@ public class UserManagerCtrl {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = modelUser;
         this.view = viewUser;
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
           
-        view.closeButton.addActionListener(new closeButtonListener());
+        view.closeButton.setAction(new DefaultCancelAction(view)); 
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());            
         view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());    
@@ -83,89 +74,79 @@ public class UserManagerCtrl {
         view.showCurrentUserRadioButton.addFocusListener(new ShowUserDirectionRadioFocusListener());
         
         //Add key listeners
-        view.closeButton.addKeyListener(new escapeKeyPressed());
-        view.previousButton.addKeyListener(new escapeKeyPressed());
-        view.nextButton.addKeyListener(new escapeKeyPressed());
-        view.addButtons.addKeyListener(new escapeKeyPressed());
-        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
-        view.helpButton.addKeyListener(new escapeKeyPressed());
-        view.editButtons.addKeyListener(new escapeKeyPressed());
-        view.deleteButton.addKeyListener(new escapeKeyPressed());
-        view.detailsButton.addKeyListener(new escapeKeyPressed());
-        view.searchButton.addKeyListener(new escapeKeyPressed());
-        view.sortComboBox.addKeyListener(new escapeKeyPressed());
-        view.tableUserList.addKeyListener(new escapeKeyPressed());
-        view.sortAscendingRadioButton.addKeyListener(new escapeKeyPressed());
-        view.sortDescendingRadioButton.addKeyListener(new escapeKeyPressed());
-        view.addressSearchText.addKeyListener(new escapeKeyPressed());           
-        view.emailSearchText.addKeyListener(new escapeKeyPressed());
-        view.loginSearchText.addKeyListener(new escapeKeyPressed());
-        view.wholeNameSearchText.addKeyListener(new escapeKeyPressed());
-        view.addKeyListener(new escapeKeyPressed());
+        view.closeButton.addKeyListener(escapeKeyPressed);
+        view.previousButton.addKeyListener(escapeKeyPressed);
+        view.nextButton.addKeyListener(escapeKeyPressed);
+        view.addButtons.addKeyListener(escapeKeyPressed);
+        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
+        view.helpButton.addKeyListener(escapeKeyPressed);
+        view.editButtons.addKeyListener(escapeKeyPressed);
+        view.deleteButton.addKeyListener(escapeKeyPressed);
+        view.detailsButton.addKeyListener(escapeKeyPressed);
+        view.searchButton.addKeyListener(escapeKeyPressed);
+        view.sortComboBox.addKeyListener(escapeKeyPressed);
+        view.tableUserList.addKeyListener(escapeKeyPressed);
+        view.sortAscendingRadioButton.addKeyListener(escapeKeyPressed);
+        view.sortDescendingRadioButton.addKeyListener(escapeKeyPressed);
+        view.addressSearchText.addKeyListener(escapeKeyPressed);           
+        view.emailSearchText.addKeyListener(escapeKeyPressed);
+        view.loginSearchText.addKeyListener(escapeKeyPressed);
+        view.wholeNameSearchText.addKeyListener(escapeKeyPressed);
+        view.showActiveUserPanel.addKeyListener(escapeKeyPressed);
+        view.showAllUserRadioBUtton.addKeyListener(escapeKeyPressed);
+        view.showCurrentUserRadioButton.addKeyListener(escapeKeyPressed);
+        view.addKeyListener(escapeKeyPressed);
         
         //Search user and Load data
         Task task = model.searchUser(true);        
         
-        ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 						
-        	public void exceptionHandler(Exception e) {
-				if (e instanceof DBLayerException) {	   									   							
-   					DBLayerException dbex = (DBLayerException) e;	
-   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				if (e instanceof RemoteException) {	 
-   					RemoteException remex = (RemoteException) e;		
-   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE, MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-   				logger.error(e);
-   			}
-
+        new DefaultProgressBar(task, view, true) {		   							 						
+        	@Override
 			public void afterStopping() {
-				//Process result
-		        model.processResult(1, model.getDisplayRows());
-		        //Update view dialog
-		        view.tableUserList.setModel(new UserManagerTableModel(model));
-		        int from = model.getCurrentFirstRow();
-                int to = from + view.tableUserList.getRowCount() - 1;
-                view.displayedValueLabel.setText(from + "-" + to);
-                view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+				//Process result and Update view dialog
+		        reloadData(1, model.getDisplayRows());		       
            } 		   					
-		};
-		progressBar.setTitle(MetadataManager.PROGRESS_SEARCH);	                   	                   
+		};		                 	                   
         task.start();                                       
-    }                        
-   
-    /**     
-     * KeyListener class controlling the pressing key ESCAPE.
-     * On key ESCAPE hides the view.     
-     */
-    public class escapeKeyPressed implements KeyListener {
-    	 	 public void keyPressed(KeyEvent evt){
-    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-    	 			logger.debug("ESCAPE: " + view.getFocusOwner());
-    	 			view.close();
-    	 		}    	 		     	 		 
-    	 	 }
-    	      public void keyReleased(KeyEvent evt) {}    	     
-    	      public void keyTyped(KeyEvent evt) {}    	         
-    }
- 
+    }  
     
     /**
-     * ActionListener class controlling the <b>CLOSE</b> button on the form.
-     * On Close hides the view.
+     * Reload new data for displaying in view dialog.
+     * @param fromRow number of the first row to show in table
+     * @param countRow number of rows to retrieve 
      */
-   class closeButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   view.close();
-       }
-   }
-     
+    public void reloadData(int fromRow, int countRow) {
+    	try {
+    		model.processResult(fromRow, countRow);     
+    		view.tableUserList.setModel(new UserManagerTableModel(model));
+	        int from = model.getCurrentFirstRow();
+            int to = from + view.tableUserList.getRowCount() - 1;
+            if (to <= 0 ) {
+            	view.displayedValueLabel.setText("0-0");
+            } else {
+            	view.displayedValueLabel.setText(from + "-" + to);
+            }
+            view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    		
+    	} catch (RemoteException e) {
+    		DefaultReconnectDialog.show(view, e);
+    	} catch (DBLayerException e) {
+    		view.showErrorMessage(e.getMessage());
+    	}    	           
+    }
+    
+    /**
+     * Display error message.
+     */
+    public void displayError() {
+    	if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
+ 		   DefaultReconnectDialog.show(view, model.getRemoteEx());
+ 	   } else {
+ 		   view.showErrorMessage(model.getError());
+ 	   }
+    	//TODO nastavit ci nenastvit null
+ 	   model.setError(null); 
+    }
+   
    /**
     *  ActionListener class controlling the <b>PREV</b> button on the form.
     *  The button PREV is used for browsing the search results.
@@ -181,14 +162,7 @@ public class UserManagerCtrl {
            // Get previous page of results
            if (model.getCurrentFirstRow() > 1) {
                int firstRow = Math.max(model.getCurrentFirstRow()- model.getDisplayRows(), 1);
-               model.processResult(firstRow, model.getDisplayRows()); 
-               if (model.isError()) return;
-               if (model.getCurrentFirstRow() > 1){
-               }
-               view.tableUserList.setModel(new UserManagerTableModel(model));
-               int from = model.getCurrentFirstRow();
-               int to = from + view.tableUserList.getRowCount() - 1;
-               view.displayedValueLabel.setText(from + "-" + to);
+               reloadData(firstRow, model.getDisplayRows());                
            }      
            //Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -219,16 +193,7 @@ public class UserManagerCtrl {
            }
            // Get next page of result
            if (model.getCurrentFirstRow()+ view.tableUserList.getRowCount()<=model.getResultRows()) {
-               model.processResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.tableUserList.getRowCount());
-               if (model.isError()) return;
-               view.tableUserList.setModel(new UserManagerTableModel(model));             
-               int from = model.getCurrentFirstRow();
-               int to = from + view.tableUserList.getRowCount() - 1;
-               if (to <= 0){
-            	   view.displayedValueLabel.setText("0-0");
-               }else {
-            	   view.displayedValueLabel.setText(from + "-" + to);
-               }               
+               reloadData(model.getCurrentFirstRow()+ model.getDisplayRows(), view.tableUserList.getRowCount());                          
            }  
            //Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -267,12 +232,7 @@ public class UserManagerCtrl {
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
            if (oldValue != view.getDisplayRows()) {
-               model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
-               if (model.isError()) return;
-               view.tableUserList.setModel(new UserManagerTableModel(model));
-               int from = model.getCurrentFirstRow();
-               int to = from + view.tableUserList.getRowCount() - 1;
-               view.displayedValueLabel.setText(from + "-" + to);               
+               reloadData(model.getCurrentFirstRow(), view.getDisplayRows());                         
            }
            // Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -302,47 +262,28 @@ public class UserManagerCtrl {
            }
            //set information abut selected operation ADD
            model.setOperation("ADD");           
-           //create add dialog if dialog not exist and open Add dialog
-           if (addView == null) {
-       	   	    addView = new AddEditUserView(model, view,true);
-          		addCtrl = new AddEditUserCtrl(addView, model);
-          }
+           //create add dialog if dialog not exist and open Add dialog                  	  
+          AddEditUserView addView = new AddEditUserView(model, view,true);
+          new AddEditUserCtrl(addView, model);          
           addView.setAddForm();
           addView.setVisible(true);          
            //User press button close
-           if (model.usedClose()) return;
+           if (model.usedClose()) return;           
            //save new record Metadata into database
            Task task = model.addUserRecord();
            
-           ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
-   			public void exceptionHandler(Exception e) {
-   				if (e instanceof DBLayerException) {	   									   							
-   					DBLayerException dbex = (DBLayerException) e;	
-   					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE, UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				if (e instanceof RemoteException) {	 
-   					RemoteException remex = (RemoteException) e;		
-   					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-   				logger.error(e);
-   			}
-   			
-   			public void afterStopping() {
+           new DefaultProgressBar(task, view, true) {		   							 
+   			   @Override
+        	   public void afterStopping() {
     			   //load data
-    	           model.searchUser(false);           
-    	           model.processResult(1, model.getDisplayRows());
-    	           if (model.isError()) return;
-    	           view.tableUserList.setModel(new UserManagerTableModel(model));                      
-    	           view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());
-    	           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    	           
+    	           model.searchUser(false);  
+    	           if (model.isError()) {
+    	        	   displayError();
+    	        	   return;
+    	           }    	
+    	           reloadData(1, model.getDisplayRows());    	             	           
                } 		   		
-   		};
-   		progressBar.setTitle(UserManager.PROGRESS_ADD);	                   	                   
+   		};   			                   	                   
         task.start();                                       
        }
     }
@@ -366,12 +307,10 @@ public class UserManagerCtrl {
                model.setOperation("EDIT");
                //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setUserRecord(resultNumber);
-               //Create edit dialog
-               User user = model.getUserRecord(); 
+               model.setUserRecord(resultNumber);                
                if (editView == null) {
             	   	editView = new AddEditUserView(model,view,true);
-        	   		editCtrl = new AddEditUserCtrl(editView, model);
+        	   		new AddEditUserCtrl(editView, model);
                }               
                //Load data and setting of edit dialog
                editView.loadData();                              
@@ -382,31 +321,14 @@ public class UserManagerCtrl {
                //Update User               
                Task task = model.editUserRecord();
                
-               ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
-          			public void exceptionHandler(Exception e) {
-          				if (e instanceof DBLayerException) {	   									   							
-           					DBLayerException dbex = (DBLayerException) e;	
-           					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE,UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-           					getTask().stop();
-           					return;
-           				}
-           				if (e instanceof RemoteException) {	 
-           					RemoteException remex = (RemoteException) e;		
-           					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-           					getTask().stop();
-           					return;
-           				}
-           				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-           				logger.error(e);
-           			}
-
-          			public void afterStopping() {
+               new DefaultProgressBar(task, view, true) {		   							 
+          		   @Override
+            	   public void afterStopping() {
           			   //load User          				
                         if (model.isError()) return;
                         view.tableUserList.setModel(new UserManagerTableModel(model));                         
                      } 		   					
-          		};
-          		progressBar.setTitle(UserManager.PROGRESS_EDIT);	                   	                   
+          		};          			                   	                  
                 task.start();                                       
               }
        }
@@ -431,12 +353,10 @@ public class UserManagerCtrl {
                 model.setOperation("DETAILS");
                //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setUserRecord(resultNumber);
-               //Create detail dialog
-               User user = model.getUserRecord();               
+               model.setUserRecord(resultNumber);                             
                if (detailView == null) {
                		detailView = new AddEditUserView(model, view,true);
-           			detailCtrl = new AddEditUserCtrl(detailView, model);
+           			new AddEditUserCtrl(detailView, model);
                }
                //Load data and setting of detail dialog            
                detailView.loadData();               
@@ -476,36 +396,19 @@ public class UserManagerCtrl {
 	               //Delete selected record
 	               Task task = model.deleteUserRecord();
 	               
-	               ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  		   									
-					public void exceptionHandler(Exception e) {
-						if (e instanceof DBLayerException) {	   									   							
-		   					DBLayerException dbex = (DBLayerException) e;	
-		   					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE,UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-		   					getTask().stop();
-		   					return;
-		   				}
-		   				if (e instanceof RemoteException) {	 
-		   					RemoteException remex = (RemoteException) e;		
-		   					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-		   					getTask().stop();
-		   					return;
-		   				}
-		   				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-		   				logger.error(e);
-		   			}
-	
-                    public void afterStopping() {
-                       // load User
-	   	               model.searchUser(false);               
-	   	               model.processResult(1, model.getDisplayRows());
-	   	               if (model.isError()) return;
-	   	               view.tableUserList.setModel(new UserManagerTableModel(model));                      
-	   	               view.displayedValueLabel.setText(1 + "-" + view.tableUserList.getRowCount());
-	   	               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());		   	               
-                                }
-		   			};
-		   			progressBar.setTitle(UserManager.PROGRESS_DELETE);	                   	                   
-		            task.start();                                                                  
+	               new DefaultProgressBar(task, view, true) {		   								  		   									
+					   @Override
+	            	   public void afterStopping() {
+	                       // load User
+		   	               model.searchUser(false); 
+		   	               if (model.isError()) {
+		    	        	   displayError();
+		    	        	   return;
+		    	           }    	
+		   	               reloadData(1, model.getDisplayRows());		   	               		   	              
+	                      }
+			   			};			   			                   	                   
+			            task.start();                                                                  
 		          }else {
 		        	  logger.debug("Button Cancle was press.");
 		          }	           
@@ -538,25 +441,9 @@ public class UserManagerCtrl {
            //Load User with specific conditions
            Task task = model.searchUser(true);   
            
-           ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  						    
-				public void exceptionHandler(Exception e) {
-					if (e instanceof DBLayerException) {	   									   							
-	   					DBLayerException dbex = (DBLayerException) e;	
-	   					view.showErrorMessage(UserManager.ERROR_DBLAYER_TITLE, UserManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-	   					getTask().stop();
-	   					return;
-	   				}
-	   				if (e instanceof RemoteException) {	 
-	   					RemoteException remex = (RemoteException) e;		
-	   					view.showErrorMessage(UserManager.ERROR_REMOTE_TITLE,UserManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-	   					getTask().stop();
-	   					return;
-	   				}
-	   				view.showErrorMessage(UserManager.ERROR_UNKNOWEN_TITLE, UserManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-	   				logger.error(e);
-	   			}
-
-				public void afterStopping() {
+           new DefaultProgressBar(task, view, true) {		   								  						    
+        	   @Override
+        	   public void afterStopping() {
 					if (model.getDisplayRows() <= 0) {
 		               model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
 		           }
@@ -564,14 +451,9 @@ public class UserManagerCtrl {
 		           if (model.getResultRows() < 1) {
 		               view.showInfoMessage(UserManager.INFORMATION_RESULT_TITLE,UserManager.INFORMATION_RESULT);
 		           }
-		           model.processResult(1, model.getDisplayRows());
-		           if (model.isError()) return;		           
-		           view.tableUserList.setModel(new UserManagerTableModel(model)); 		           
-		           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-		           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString()); 		           
+		           reloadData(1, model.getDisplayRows());		            		           
                } 		   					
-			};
-			progressBar.setTitle(UserManager.PROGRESS_SEARCH);	                   	                   
+			};				                   	                   
             task.start();                                                                  
        }
     }

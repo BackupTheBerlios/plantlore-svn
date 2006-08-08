@@ -12,6 +12,8 @@ import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+
+import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
@@ -40,18 +42,10 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();
-        getRootPane().setDefaultButton(closeButton);
+        //getRootPane().setDefaultButton(closeButton);
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton); 
-        
-        sortButtonGroup.add(sortAscendingRadioButton);
-        sortButtonGroup.add(sortDescendingRadioButton);
-        sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
-        this.tableMetadataList.setRowSelectionAllowed(true);
-        this.tableMetadataList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        this.tableMetadataList.setModel(new MetadataManagerTableModel(model));  
-       
+        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton);                  
     }
     
     /**
@@ -64,7 +58,38 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
               showErrorMessage(L10n.getString("Common.ErrorMessageTitle"), model.getError());                          
               return;
           } 
-    }      
+    }  
+      
+      /**
+       * Initialize actual data for displaying in view dialog.     
+       */
+      public void initialize() {   
+    	  model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
+          model.setCurrentFirstRow(1);
+    	  previousButton.setEnabled(false);
+    	  nextButton.setEnabled(true);
+          if (MetadataManager.DEFAULT_DISPLAY_ROWS >= model.getResultRows()) {
+          	nextButton.setEnabled(false);
+          }
+          sortButtonGroup.add(sortAscendingRadioButton);
+          sortButtonGroup.add(sortDescendingRadioButton);
+          sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
+          this.tableMetadataList.setRowSelectionAllowed(true);
+          this.tableMetadataList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+          this.tableMetadataList.setModel(new MetadataManagerTableModel(model));
+          totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+          toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
+          displayedValueLabel.setText(model.getCurrentDisplayRows());
+      }
+      
+      /**
+       *  Shows and inicialize actual data or hides this dialog depending on the value of parameter visible. 
+       *  @param visible if true, shows this component and initialize actual data; otherwise, hides this component
+       */
+      public void setVisible(boolean visible) {
+      	if (visible) initialize();
+      	super.setVisible(visible);
+      }
     
      /**
      *  Close this dialog.
@@ -134,6 +159,14 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
      */
     public void showErrorMessage(String title, String message) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);               
+    }
+    
+    /**
+     *  Display generic error message.     
+     *  @param message error message we want to display
+     */
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
     }
     
       /**

@@ -11,6 +11,8 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 
 /**
  * Controller for the DetailsHistory dialog (part of the DetailsHistory MVC).
@@ -27,33 +29,26 @@ public class DetailsHistoryCtrl {
      * Creates a new instance of DetailsHistoryCtrl
      * @param view View of the DerailsHistory MVC 
      */
-    public DetailsHistoryCtrl(DetailsHistoryView view) {
+    public DetailsHistoryCtrl(DetailsHistoryView viewDialog) {
                           
-        this.view = view;
+        this.view = viewDialog;
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
         // Add action listeners to buttons
-        view.closeButton.addActionListener(new closeButtonListener());
+        view.closeButton.setAction(new DefaultCancelAction(view));
         view.helpButton.addActionListener(new helpButtonListener());
+        // Add key listeners
+        view.closeButton.addKeyListener(escapeKeyPressed);
+        view.helpButton.addKeyListener(escapeKeyPressed);
+        view.detailsTextArea.addKeyListener(escapeKeyPressed);
     }
        
-    /** 
-     * ActionListener class controlling the <b>OK</b> button on the form.
-     * On Ok makes the model store() the preferences and hides the view.     
-     */
-   class closeButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   view.close();
-       }
-   }
-   
    /**
     * ActionListener class controlling the <b>HELP</b> button on the form.
     * Display help viewer
     */
    class helpButtonListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
-       {    	      	           
-    	   System.out.println("Tady se bude volat Help!");
+       {    	      	               	   
        }
    }
 }

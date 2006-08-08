@@ -43,14 +43,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         getRootPane().setDefaultButton(closeButton);            
         // Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
-        this.tableHistoryList.setRowSelectionAllowed(true);
-        this.tableHistoryList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-        this.tableHistoryList.setModel(new WholeHistoryTableModel(model));     
-        previousButton.setEnabled(false);
-        if (this.tableHistoryList.getRowCount() <= model.getDisplayRows()) {
-        	nextButton.setEnabled(false);
-        }
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);                
     }
     
      /**
@@ -63,6 +56,34 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
             showErrorMessage(model.getError());                          
             return;
         } 
+    }
+    
+    /**
+     * Initialize actual data for displaying in view dialog.     
+     */
+    public void initialize() {
+    	model.setDisplayRows(History.DEFAULT_DISPLAY_ROWS);
+        model.setCurrentFirstRow(1);
+    	this.tableHistoryList.setRowSelectionAllowed(true);
+        this.tableHistoryList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+        this.tableHistoryList.setModel(new WholeHistoryTableModel(model));     
+        previousButton.setEnabled(false);
+        nextButton.setEnabled(true);
+        if ((History.DEFAULT_DISPLAY_ROWS >= model.getResultRows())) {
+        	nextButton.setEnabled(false);
+        }
+        totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+        toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
+        displayedValueLabel.setText(model.getCurrentDisplayRows());
+    }
+    
+    /**
+     *  Shows and inicialize actual data or hides this dialog depending on the value of parameter visible. 
+     *  @param visible if true, shows this component and initialize actual data; otherwise, hides this component
+     */
+    public void setVisible(boolean visible) {
+    	if (visible) initialize();
+    	super.setVisible(visible);
     }
     
     /** This method is called from within the constructor to
@@ -278,6 +299,16 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         }
         return countRows;
     }
+    
+    /** 
+     * Set number of rows in results
+     * @param resultRows number of rows in results
+     */
+    public void setCountResult(Integer resultRows)
+    {
+    	if (resultRows != null)
+    		this.totalResultValueLabel.setText(resultRows.toString());
+    }    
     
     /**
      * Set numger of rows to displaying on one page

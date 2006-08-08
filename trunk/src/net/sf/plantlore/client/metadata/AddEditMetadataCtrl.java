@@ -11,11 +11,12 @@ package net.sf.plantlore.client.metadata;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Date;
 
-import net.sf.plantlore.client.history.WholeHistoryCtrl.escapeKeyPressed;
+import net.sf.plantlore.client.history.History;
+import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.record.Metadata;
 import org.apache.log4j.Logger;
 
@@ -44,56 +45,31 @@ public class AddEditMetadataCtrl {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = model;
         this.view = view;
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
         
-        // Add action listener
-        view.closeButton.addActionListener(new closeButtonListener());
+        // Add action listene
+        view.closeButton.setAction(new DefaultCancelAction(view)); 
         view.operationButton.addActionListener(new operationButtonListener());
         // Add key listener
-        view.closeButton.addKeyListener(new escapeKeyPressed());
-        view.operationButton.addKeyListener(new escapeKeyPressed());
-        view.technicalContactNameText.addKeyListener(new escapeKeyPressed());
-        view.technicalContactEmailText.addKeyListener(new escapeKeyPressed());
-        view.technicalContactAddressText.addKeyListener(new escapeKeyPressed());
-        view.contentContactNameText.addKeyListener(new escapeKeyPressed());
-        view.contentContactEmailText.addKeyListener(new escapeKeyPressed());
-        view.contectContactAddressText.addKeyListener(new escapeKeyPressed());
-        view.dataSetTitleText.addKeyListener(new escapeKeyPressed());
-        view.dataSetDetailsText.addKeyListener(new escapeKeyPressed());
-        view.sourceInstirutionIdText.addKeyListener(new escapeKeyPressed());
-        view.sourceIdText.addKeyListener(new escapeKeyPressed());
-        view.abbrevText.addKeyListener(new escapeKeyPressed());
-        view.recordbasisText.addKeyListener(new escapeKeyPressed());
-        view.biotopetextText.addKeyListener(new escapeKeyPressed());
-        view.createDateChooser.addKeyListener(new escapeKeyPressed());
-        view.helpButton.addKeyListener(new escapeKeyPressed());
+        view.closeButton.addKeyListener(escapeKeyPressed);
+        view.operationButton.addKeyListener(escapeKeyPressed);
+        view.technicalContactNameText.addKeyListener(escapeKeyPressed);
+        view.technicalContactEmailText.addKeyListener(escapeKeyPressed);
+        view.technicalContactAddressText.addKeyListener(escapeKeyPressed);
+        view.contentContactNameText.addKeyListener(escapeKeyPressed);
+        view.contentContactEmailText.addKeyListener(escapeKeyPressed);
+        view.contectContactAddressText.addKeyListener(escapeKeyPressed);
+        view.dataSetTitleText.addKeyListener(escapeKeyPressed);
+        view.dataSetDetailsText.addKeyListener(escapeKeyPressed);
+        view.sourceInstirutionIdText.addKeyListener(escapeKeyPressed);
+        view.sourceIdText.addKeyListener(escapeKeyPressed);
+        view.abbrevText.addKeyListener(escapeKeyPressed);
+        view.recordbasisText.addKeyListener(escapeKeyPressed);
+        view.biotopetextText.addKeyListener(escapeKeyPressed);
+        view.createDateChooser.addKeyListener(escapeKeyPressed);
+        view.helpButton.addKeyListener(escapeKeyPressed);
       }
-    
-    /**     
-     * KeyListener class controlling the pressing key ESCAPE.
-     * On key ESCAPE hides the view.     
-     */
-    public class escapeKeyPressed implements KeyListener {
-    	 	 public void keyPressed(KeyEvent evt){
-    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-    	 			view.close();
-    	 		}    	 		     	 		 
-    	 	 }
-    	      public void keyReleased(KeyEvent evt) {}    	     
-    	      public void keyTyped(KeyEvent evt) {}    	         
-    }
-    
-   /**
-    * ActionListener class controlling the <b>CLOSE</b> button on the form.
-    * On Close hides the view.
-    */
-   class closeButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   model.setUsedClose(true);
-    	   view.close();
-       }
-   }
-     
+   
    /**
     * ActionListener class controlling the <b>ADD</b>, <b>EDIT</b> and <b>OK</b> buttons on the form.   
     */
@@ -102,12 +78,23 @@ public class AddEditMetadataCtrl {
        {    	  
     	   // Get information about operation - ADD, EDIT, DETAILS
            logger.debug("Operation " + model.getOperation() + "was called");
+           model.setUsedClose(false);
            if (model.getOperation().equals("ADD")) {
                logger.debug("Add of Metadata.");
                //check wether all obligatory fields were filled 
                 if (view.checkNotNull()) {
                         //Check if new name of project (dataSetTitle) already exist
-                	if (!model.uniqueDatasetTitle(view.dataSetTitleText.getText())){                		
+                	if (!model.uniqueDatasetTitle(view.dataSetTitleText.getText())){       
+                		if (model.isError()) {
+                			if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
+                		 		   DefaultReconnectDialog.show(view, model.getRemoteEx());
+                		 	   } else {
+                		 		   view.showErrorMessage(model.getError());
+                		 	   }
+                			   //TODO nastavit zde null
+                		 	   model.setError(null); 
+                		 	   return;
+                		}
                 		view.showErrorMessage(MetadataManager.ERROR_TITLE, MetadataManager.ERROR_DATASETTITLE);
                 		return;
                 	}
@@ -151,6 +138,7 @@ public class AddEditMetadataCtrl {
                     model.getMetadataRecord().setOwnerOrganizationAbbrev(view.abbrevText.getText());
                     model.getMetadataRecord().setRecordBasis(view.recordbasisText.getText());
                     model.getMetadataRecord().setBiotopeText(view.biotopetextText.getText());
+                    model.getMetadataRecord().setDateModified(new Date());
                     model.getMetadataRecord().setDeleted(0);                 
                     view.close(); 
                 }

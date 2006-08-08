@@ -22,8 +22,10 @@ import net.sf.plantlore.l10n.L10n;
 
 
 /**
+ * View for the Add/Edit user dialog in the UserManager MVC.
  *
- * @author  Lada
+ * @author  Lada Oberreiterova
+ * @version 1.0
  */
 public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     
@@ -32,6 +34,9 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     
     /**
      * Creates new form AddEditUserView
+     * @param model model of UserManager MVC     
+     * @param parent parent of this dialog
+     * @param modal boolean flag whether the dialog should be modal or not
      */
     public AddEditUserView(UserManager model, javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
@@ -57,20 +62,49 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
          JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);               
      }
      
-     /*
-      * nastaveni formulare pro add
+     /**
+      * Set add form
       */
-     public void setAddForm() {
-         operationButton.setText(L10n.getString("UserManager.ButtonAdd"));
-         createWhenuser.setText("");
-         dropWhenLabel.setText("");
+     public void setAddForm() {    	 
+         operationButton.setText(L10n.getString("UserManager.ButtonAdd"));         
+         createWhenuser.setText("");        
+         dropWhenLabel.setText("");        
+         this.loginText.setText("");        
+         this.passwordtext.setText("");         
+         this.firstNameText.setText("");        
+         this.surnameText.setText("");        
+         this.emailText.setText("");         
+         this.addressText.setText("");        
+         this.administratorCheckBox.setSelected(false);        
+         this.editAllCheckBox.setSelected(false);         
+         this.addRightCheckBox.setSelected(false);         
+         this.editGroupTextArea.setText("");        
+         this.noteText.setText("");        
+         this.editGroupTextArea.setText("");        
+         
+         Pair<String, Integer>[] users = model.getUsers();
+         String[] choices = new String[users.length];
+         for (int i = 0; i < users.length; i++) {
+             choices[i] = users[i].getFirst();
+         }
+         ((AutoTextArea)editGroupTextArea).setChoices(choices);
      }
      
       public void setEditForm() {
          operationButton.setText(L10n.getString("UserManager.ButtonEdit"));
          loginText.setEditable(false);
+         
+         Pair<String, Integer>[] users = model.getUsers();
+         String[] choices = new String[users.length];
+         for (int i = 0; i < users.length; i++) {
+             choices[i] = users[i].getFirst();
+         }
+         ((AutoTextArea)editGroupTextArea).setChoices(choices);
      }
      
+      /**
+       * Set Details form       
+       */
      public void setDetailsForm() {
        operationButton.setText(L10n.getString("UserManager.ButtonOk"));
        this.loginText.setEditable(false);
@@ -88,7 +122,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
      }
      
      /**
-      * Nacteni dat pro edit/details dialog
+      * Load data for edit/details dialog
       */
      public void loadData() {
            //Get selected user object
@@ -139,14 +173,15 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     }    
      
      /**
-     *
+     * Close this dialog.
      */
     public void close() {
         dispose();
     }
     
-    /*
-     *
+    /**
+     *  Check whether the given field is empty or not. This is used for validating user input when 
+     *  add or edit metadata.
      */
     public boolean checkNotNull() {
         if (this.loginText.getText().equals("")) {
@@ -317,13 +352,13 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                     .add(dropWhenValueLabel)
                     .add(createWhenValueLabel)
                     .add(jPanel1Layout.createSequentialGroup()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(surnameText)
-                            .add(jScrollPane1)
-                            .add(addressText)
-                            .add(firstNameText)
-                            .add(passwordtext)
-                            .add(emailText)
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(surnameText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .add(addressText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .add(firstNameText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .add(passwordtext, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .add(emailText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
                             .add(loginText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
                         .add(21, 21, 21)
                         .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -333,7 +368,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -362,7 +397,8 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(noteLabel)
-                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(12, 12, 12)))
                 .add(24, 24, 24)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(createWhenuser)
@@ -371,7 +407,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(dropWhenLabel)
                     .add(dropWhenValueLabel))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .add(20, 20, 20))
         );
 
         operationButton.setText("");
@@ -388,7 +424,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .add(layout.createSequentialGroup()
                         .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)

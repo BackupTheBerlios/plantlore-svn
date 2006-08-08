@@ -161,6 +161,14 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);               
     }
     
+    /**
+     *  Display generic error message.     
+     *  @param message error message we want to display
+     */
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

@@ -16,46 +16,62 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Date;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Right;
 import org.apache.log4j.Logger;
 
 /**
+ * Controller for the Add/Edit user dialog in the UserManager MVC.
  *
  * @author Lada Oberreiterova
+ * @version 1.0
  */
 public class AddEditUserCtrl {
-        
+     
+	/** Instance of a logger */
     private Logger logger;
+    /** Model of UserManager MVC */
     private UserManager model;
+    /** View of UserManager MVC */
     private AddEditUserView view;
     
     /**
      * Creates a new instance of AddEditUserCtrl
+     * @param view View of AddEditUser
+     * @param model Model of UserManager MVC
      */
     public AddEditUserCtrl(AddEditUserView view, UserManager model) {
         
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = model;
         this.view = view;
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
         
-        view.closeButton.addActionListener(new CloseButtonListener());
+        //Add action listene
+        view.closeButton.setAction(new DefaultCancelAction(view)); 
         view.operationButton.addActionListener(new OperationButtonListener());
         view.editGroupTextArea.addFocusListener(new UserAreaListener());
+        // Add key listener
+        view.helpButton.addKeyListener(escapeKeyPressed);
+        view.closeButton.addKeyListener(escapeKeyPressed);
+        view.operationButton.addKeyListener(escapeKeyPressed);
+        view.editGroupTextArea.addKeyListener(escapeKeyPressed);
+        view.loginText.addKeyListener(escapeKeyPressed);
+        view.passwordtext.addKeyListener(escapeKeyPressed);
+        view.firstNameText.addKeyListener(escapeKeyPressed);
+        view.surnameText.addKeyListener(escapeKeyPressed);
+        view.emailText.addKeyListener(escapeKeyPressed);
+        view.addressText.addKeyListener(escapeKeyPressed);
+        view.noteText.addKeyListener(escapeKeyPressed);
+        view.addRightCheckBox.addKeyListener(escapeKeyPressed);
+        view.administratorCheckBox.addKeyListener(escapeKeyPressed);
+        view.editAllCheckBox.addKeyListener(escapeKeyPressed);
+        view.editGroupTextArea.addKeyListener(escapeKeyPressed);
     }
     
-   /**
-    * On Cancel just hides the view.
-    *
-    */
-   class CloseButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   model.setUsedClose(true);
-    	   view.close();
-       }
-   }
-   
+ 
    /**
     * ActionListener class controlling the <b>ADD</b>, <b>EDIT</b> and <b>OK</b> buttons on the form.
     */
@@ -64,6 +80,7 @@ public class AddEditUserCtrl {
        {    	
         	// Get information about operation - ADD, EDIT, DETAILS
             logger.debug("Operation " + model.getOperation() + "was called");
+            model.setUsedClose(false);
             if (model.getOperation().equals("ADD")) {
                 logger.debug("Add of User.");
                 //check wether all obligatory fields were filled 
@@ -152,6 +169,9 @@ public class AddEditUserCtrl {
         }
    }
    
+   /**    
+     *  Focus listener for the editGroupTextArea - adding user from user list.        
+    */
     class UserAreaListener implements FocusListener {
         public void focusGained(FocusEvent e) {
         }
@@ -162,11 +182,10 @@ public class AddEditUserCtrl {
             int lineCount = ta.getLineCount();
             for (int i=0; i < lineCount; i++) {
                 String tmp = ta.getLine(i);
-                if (tmp.length() > 1) //omit empty lines
+                if (tmp.length() > 1) 
                     userList.add(tmp);
-            }
-            // TODO - co tu mam volat??? model.setEditGroup(userList);
+            }            
         }
-    }//taxonAreaListener
+    }
     
 }

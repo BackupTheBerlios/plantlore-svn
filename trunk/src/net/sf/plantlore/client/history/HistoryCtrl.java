@@ -3,14 +3,14 @@ package net.sf.plantlore.client.history;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
-import javax.swing.JOptionPane;
-import net.sf.plantlore.common.ProgressBar;
+
+import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.l10n.L10n;
 
 import org.apache.log4j.Logger;
 
@@ -34,16 +34,18 @@ public class HistoryCtrl {
      *  Creates a new instance of HistoryCtrl 
      *  @param model model of the History MVC
      *  @param view  view of the History MVC
+     *  @param occId identifier of selected occurrence
      * 
      */
-    public HistoryCtrl(History model, HistoryView view)
+    public HistoryCtrl(History modelH, HistoryView viewH)
     {    	
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
-        this.model = model;        
-        this.view = view;
+        this.model = modelH;        
+        this.view = viewH;
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
              
         //Add action listeners to buttons        
-        view.closeButton.addActionListener(new closeButtonListener());        
+        view.closeButton.setAction(new DefaultCancelAction(view));        
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());
         view.selectAllButton.addActionListener(new selectAllButtonListener());
@@ -51,42 +53,41 @@ public class HistoryCtrl {
         view.undoButton.addActionListener(new undoSelectedButtonListener());
         view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());
         //Add key listeners
-        view.closeButton.addKeyListener(new escapeKeyPressed());
-        view.previousButton.addKeyListener(new escapeKeyPressed());
-        view.nextButton.addKeyListener(new escapeKeyPressed());
-        view.selectAllButton.addKeyListener(new escapeKeyPressed());
-        view.unselectAllButton.addKeyListener(new escapeKeyPressed());
-        view.undoButton.addKeyListener(new escapeKeyPressed());
-        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
-        view.helpButton.addKeyListener(new escapeKeyPressed());
-        view.getTable().addKeyListener(new escapeKeyPressed());
-    }
-    
-    /**     
-     * KeyListener class controlling the pressing key ESCAPE.
-     * On key ESCAPE hides the view.     
-     */
-    public class escapeKeyPressed implements KeyListener {
-    	 	 public void keyPressed(KeyEvent evt){
-    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-    	 			view.close();
-    	 		}    	 		     	 		 
-    	 	 }
-    	      public void keyReleased(KeyEvent evt) {}    	     
-    	      public void keyTyped(KeyEvent evt) {}    	         
+        view.closeButton.addKeyListener(escapeKeyPressed);
+        view.previousButton.addKeyListener(escapeKeyPressed);
+        view.nextButton.addKeyListener(escapeKeyPressed);
+        view.selectAllButton.addKeyListener(escapeKeyPressed);
+        view.unselectAllButton.addKeyListener(escapeKeyPressed);
+        view.undoButton.addKeyListener(escapeKeyPressed);
+        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
+        view.helpButton.addKeyListener(escapeKeyPressed);
+        view.getTable().addKeyListener(escapeKeyPressed);                                
     }
     
     /**
-    * ActionListener class controlling the <b>CLOSE</b> button on the form.
-    * On Close hides the view.
-    */
-   class closeButtonListener implements ActionListener {
-	    public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   view.close();
-       }
-   }
-   
+     * Reload new data for displaying in view dialog.
+     * @param fromRow number of the first row to show in table
+     * @param countRow number of rows to retrieve 
+     */
+    public void reloadData(int fromRow, int countRow) {
+    	try {
+    		model.processResult(fromRow, countRow);        
+            view.getTable().setModel(new HistoryTableModel(model));             
+            int from = model.getCurrentFirstRow();
+            int to = from + view.getTable().getRowCount() - 1;
+            if (to <= 0){
+         	   view.setCurrentRowsInfo("0-0");
+            }else {
+         	   view.setCurrentRowsInfo(from + "-" + to);
+            }    
+    	} catch (RemoteException e) {
+    		DefaultReconnectDialog.show(view, e);
+    	} catch (DBLayerException e) {
+    		view.showErrorMessage(e.getMessage());
+    	}
+    	           
+    }
+    
    /**
     *  ActionListener class controlling the <b>PREV</b> button on the form.
     *  The button PREV is used for browsing the search results.
@@ -102,14 +103,7 @@ public class HistoryCtrl {
            // Get previous page of results
            if (model.getCurrentFirstRow() > 1) {
                int firstRow = Math.max(model.getCurrentFirstRow()- model.getDisplayRows(), 1);
-               model.processResult(firstRow, model.getDisplayRows()); 
-               if (model.isError()) return;
-               if (model.getCurrentFirstRow() > 1){
-               }
-               view.getTable().setModel(new HistoryTableModel(model));
-               int from = model.getCurrentFirstRow();
-               int to = from + view.getTable().getRowCount() - 1;
-               view.setCurrentRowsInfo(from + "-" + to);
+               reloadData(firstRow, model.getDisplayRows());               
            }      
            //Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -140,16 +134,7 @@ public class HistoryCtrl {
            }
            // Get next page of result
            if (model.getCurrentFirstRow()+ view.getTable().getRowCount()<=model.getResultRows()) {
-               model.processResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.getTable().getRowCount());
-               if (model.isError()) return;
-               view.getTable().setModel(new HistoryTableModel(model));             
-               int from = model.getCurrentFirstRow();
-               int to = from + view.getTable().getRowCount() - 1;
-               if (to <= 0){
-            	   view.setCurrentRowsInfo("0-0");
-               }else {
-            	   view.setCurrentRowsInfo(from + "-" + to);
-               }               
+        	   reloadData(model.getCurrentFirstRow()+ model.getDisplayRows(), view.getTable().getRowCount());               
            }  
            //Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -224,51 +209,30 @@ public class HistoryCtrl {
             	   logger.debug("Button OK was press.");
             	   Task task = model.commitUpdate(model.getResultRows(), true);  
             	   
-            	   ProgressBar progressBar = new ProgressBar(task, view, true) {		   				
-					  private static final long serialVersionUID = 1967781832827332268L;
-							public void exceptionHandler(Exception e) {
-		   						if (e instanceof DBLayerException) {	   									   							
-		   							DBLayerException dbex = (DBLayerException) e;		   							
-									JOptionPane.showMessageDialog(view, L10n.getString("Error.HistoryDBLayerException")+ "\n" + dbex.getMessage(),
-		 							   L10n.getString("Error.HistoryDBLayerExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
-									logger.error(dbex + ": " + dbex.getErrorInfo());
-		   							getTask().stop();
-		   							return;
-		   						}
-		   						if (e instanceof RemoteException) {	 
-		   							RemoteException remex = (RemoteException) e;		   							
-		   							JOptionPane.showMessageDialog(view, L10n.getString("Error.RemoteException")+ "\n" + remex.getMessage(),
-		 							   L10n.getString("Error.RemoteExceptionTitle"), JOptionPane.WARNING_MESSAGE);																						
-									logger.error(remex + ": " + remex.getMessage());
-		   							getTask().stop();
-		   							return;
-		   						}
-		   						JOptionPane.showMessageDialog(view, L10n.getString("Delete.Message.UnknownException")+ "\n" + e.getMessage(),
-			 					    L10n.getString("Delete.Message.UnknownExceptionTitle"), JOptionPane.WARNING_MESSAGE);							
-		   						logger.error(e);
-		   					}
-	
+            	   new DefaultProgressBar(task, view, true) {		   									
+							@Override
 		   					public void afterStopping() {
-		   					   model.searchEditHistory(model.getData());
-		   	            	   model.processResult(1,model.getDisplayRows());
-		   	            	   view.getTable().setModel(new HistoryTableModel(model));
-		   	            	   int resultRows = model.getResultRows();
-		   	            	   if (resultRows == 0) {
-		   	            		   view.setCurrentRowsInfo("0-0"); 
-		   	            	   } else {
-		   	            		   int from = model.getCurrentFirstRow();
-		   	                       int to = from + view.getTable().getRowCount() - 1;               
-		   	                       view.setCurrentRowsInfo(from + "-" + to);    
-		   	            	   }               
-		   	                       view.setCountResutl(resultRows);   
+								try {
+			   					   model.searchEditHistory(model.getData());
+			   					   reloadData(1,model.getDisplayRows());			   	            	          
+			   	                   view.setCountResutl(model.getResultRows());
+								} catch (RemoteException e) {
+									DefaultReconnectDialog.show(view, e);
+						    	} catch (DBLayerException e) {
+						    		view.showErrorMessage(e.getMessage());
+						    	}
 		   	               } 		   					
-		   				};
-		   				progressBar.setTitle(L10n.getString("History.Undo.ProgressTitle"));	                   	                   
-	                    task.start();            	               	   
+		   				};		   					                   	                   
+	                    task.start();     	                   
                } else {            	  
             	   logger.debug("Button Cancle was press."); 
                }  
            } else {
+        	   if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
+        		   DefaultReconnectDialog.show(view, model.getRemoteEx());
+        	   } else {
+        		   view.showErrorMessage(model.getError());
+        	   }
         	   model.setError(null);        	           	  
            }
        }
@@ -298,12 +262,7 @@ public class HistoryCtrl {
            // If neccessary reload search results
            if (oldValue != view.getDisplayRows()) {
                logger.debug("OK"+ model.getCurrentFirstRow() + " " + view.getDisplayRows());
-        	   model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
-               if (model.isError()) return;
-               view.getTable().setModel(new HistoryTableModel(model));
-               int from = model.getCurrentFirstRow();
-               int to = from + view.getTable().getRowCount() - 1;
-               view.setCurrentRowsInfo(from + "-" + to);               
+        	   reloadData(model.getCurrentFirstRow(), view.getDisplayRows());                      
            }
            // Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {

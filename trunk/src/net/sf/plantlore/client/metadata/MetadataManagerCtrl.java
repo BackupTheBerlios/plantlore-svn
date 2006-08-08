@@ -13,14 +13,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
 
-import net.sf.plantlore.client.history.WholeHistoryCtrl.escapeKeyPressed;
-import net.sf.plantlore.common.ProgressBar;
+import net.sf.plantlore.client.history.History;
+import net.sf.plantlore.client.history.HistoryTableModel;
+import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -47,8 +50,9 @@ public class MetadataManagerCtrl {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = modelPar;
         this.view = viewPar;
-          
-        view.closeButton.addActionListener(new closeButtonListener());
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
+        
+        view.closeButton.setAction(new DefaultCancelAction(view)); 
         view.previousButton.addActionListener(new previousButtonListener());
         view.nextButton.addActionListener(new nextButtonListener());            
         view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());    
@@ -62,87 +66,74 @@ public class MetadataManagerCtrl {
         view.sortField.addFocusListener(new SortComboFocusListener());
         
         // Add key listeners
-        view.closeButton.addKeyListener(new escapeKeyPressed());
-        view.previousButton.addKeyListener(new escapeKeyPressed());
-        view.nextButton.addKeyListener(new escapeKeyPressed());
-        view.addButtons.addKeyListener(new escapeKeyPressed());
-        view.toDisplayValueTextField.addKeyListener(new escapeKeyPressed());
-        view.helpButton.addKeyListener(new escapeKeyPressed());
-        view.editButtons.addKeyListener(new escapeKeyPressed());
-        view.deleteButton.addKeyListener(new escapeKeyPressed());
-        view.detailsButton.addKeyListener(new escapeKeyPressed());
-        view.searchButton.addKeyListener(new escapeKeyPressed());
-        view.sortField.addKeyListener(new escapeKeyPressed());
-        view.tableMetadataList.addKeyListener(new escapeKeyPressed());
-        view.sortAscendingRadioButton.addKeyListener(new escapeKeyPressed());
-        view.sortDescendingRadioButton.addKeyListener(new escapeKeyPressed());
-        view.sourceInstitutionIdText.addKeyListener(new escapeKeyPressed());           
-        view.sourceIdText.addKeyListener(new escapeKeyPressed());
-        view.dataSetTitleText.addKeyListener(new escapeKeyPressed());
-        view.addKeyListener(new escapeKeyPressed());        
+        view.closeButton.addKeyListener(escapeKeyPressed);
+        view.previousButton.addKeyListener(escapeKeyPressed);
+        view.nextButton.addKeyListener(escapeKeyPressed);
+        view.addButtons.addKeyListener(escapeKeyPressed);
+        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
+        view.helpButton.addKeyListener(escapeKeyPressed);
+        view.editButtons.addKeyListener(escapeKeyPressed);
+        view.deleteButton.addKeyListener(escapeKeyPressed);
+        view.detailsButton.addKeyListener(escapeKeyPressed);
+        view.searchButton.addKeyListener(escapeKeyPressed);
+        view.sortField.addKeyListener(escapeKeyPressed);
+        view.tableMetadataList.addKeyListener(escapeKeyPressed);
+        view.sortAscendingRadioButton.addKeyListener(escapeKeyPressed);
+        view.sortDescendingRadioButton.addKeyListener(escapeKeyPressed);
+        view.sourceInstitutionIdText.addKeyListener(escapeKeyPressed);           
+        view.sourceIdText.addKeyListener(escapeKeyPressed);
+        view.dataSetTitleText.addKeyListener(escapeKeyPressed);
+        view.addKeyListener(escapeKeyPressed);        
         
         //Search metadata
         Task task = model.searchMetadata(true);
         
-        ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 			
-			private static final long serialVersionUID = -3944058265290571972L;
-			public void exceptionHandler(Exception e) {
-				if (e instanceof DBLayerException) {	   									   							
-   					DBLayerException dbex = (DBLayerException) e;	
-   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				if (e instanceof RemoteException) {	 
-   					RemoteException remex = (RemoteException) e;		
-   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE, MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-   				logger.error(e);
-   			}
-
-			public void afterStopping() {
-				//Process result
-		        model.processResult(1, model.getDisplayRows());
-		        //Update view dialog
-		        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
-		        int from = model.getCurrentFirstRow();
-                int to = from + view.tableMetadataList.getRowCount() - 1;
-                view.displayedValueLabel.setText(from + "-" + to);
-                view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+        new DefaultProgressBar(task, view, true) {		   							 						
+        	@Override
+        	public void afterStopping() {
+				//Process result and Update view dialog
+		        reloadData(1, model.getDisplayRows());		        		        
            } 		   					
-		};
-		progressBar.setTitle(MetadataManager.PROGRESS_SEARCH);	                   	                   
+		};			                   	                   
         task.start();                                       
-    }
+    }   
     
-    /**     
-     * KeyListener class controlling the pressing key ESCAPE.
-     * On key ESCAPE hides the view.     
+    /**
+     * Reload new data for displaying in view dialog.
+     * @param fromRow number of the first row to show in table
+     * @param countRow number of rows to retrieve 
      */
-    public class escapeKeyPressed implements KeyListener {
-    	 	 public void keyPressed(KeyEvent evt){
-    	 		if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-    	 			logger.debug("ESCAPE: " + view.getFocusOwner());
-    	 			view.close();
-    	 		}    	 		     	 		 
-    	 	 }
-    	      public void keyReleased(KeyEvent evt) {}    	     
-    	      public void keyTyped(KeyEvent evt) {}    	         
+    public void reloadData(int fromRow, int countRow) {
+    	try {
+    		model.processResult(fromRow, countRow);     
+    		view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
+	        int from = model.getCurrentFirstRow();
+            int to = from + view.tableMetadataList.getRowCount() - 1;
+            if (to <= 0 ) {
+            	view.displayedValueLabel.setText("0-0");
+            } else {
+            	view.displayedValueLabel.setText(from + "-" + to);
+            }
+            view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    		
+    	} catch (RemoteException e) {
+    		DefaultReconnectDialog.show(view, e);
+    	} catch (DBLayerException e) {
+    		view.showErrorMessage(e.getMessage());
+    	}    	           
     }
     
     /**
-    * ActionListener class controlling the <b>CLOSE</b> button on the form.
-    * On Close hides the view.
-    */
-   class closeButtonListener implements ActionListener {
-       public void actionPerformed(ActionEvent actionEvent)
-       {
-    	   view.close();
-       }
-   }
+     * Display error message.
+     */
+    public void displayError() {
+    	if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
+ 		   DefaultReconnectDialog.show(view, model.getRemoteEx());
+ 	   } else {
+ 		   view.showErrorMessage(model.getError());
+ 	   }
+    	//TODO nastavit ci nenastvit null
+ 	   model.setError(null); 
+    }
      
    /**
     *  ActionListener class controlling the <b>PREV</b> button on the form.
@@ -159,14 +150,7 @@ public class MetadataManagerCtrl {
            // Get previous page of results
            if (model.getCurrentFirstRow() > 1) {
                int firstRow = Math.max(model.getCurrentFirstRow()- model.getDisplayRows(), 1);
-               model.processResult(firstRow, model.getDisplayRows()); 
-               if (model.isError()) return;
-               if (model.getCurrentFirstRow() > 1){
-               }
-               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
-               int from = model.getCurrentFirstRow();
-               int to = from + view.tableMetadataList.getRowCount() - 1;
-               view.displayedValueLabel.setText(from + "-" + to);
+               reloadData(firstRow, model.getDisplayRows());                
            }      
            //Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -198,16 +182,7 @@ public class MetadataManagerCtrl {
            }
            // Get next page of result
            if (model.getCurrentFirstRow()+ view.tableMetadataList.getRowCount()<=model.getResultRows()) {
-               model.processResult(model.getCurrentFirstRow()+ model.getDisplayRows(), view.tableMetadataList.getRowCount());
-               if (model.isError()) return;
-               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));             
-               int from = model.getCurrentFirstRow();
-               int to = from + view.tableMetadataList.getRowCount() - 1;
-               if (to <= 0){
-            	   view.displayedValueLabel.setText("0-0");
-               }else {
-            	   view.displayedValueLabel.setText(from + "-" + to);
-               }               
+               reloadData(model.getCurrentFirstRow()+ model.getDisplayRows(), view.tableMetadataList.getRowCount());                    
            }  
            //Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -246,12 +221,7 @@ public class MetadataManagerCtrl {
            logger.debug("New display rows: "+view.getDisplayRows());
            // If neccessary reload search results
            if (oldValue != view.getDisplayRows()) {
-               model.processResult(model.getCurrentFirstRow(), view.getDisplayRows());
-               if (model.isError()) return;
-               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
-               int from = model.getCurrentFirstRow();
-               int to = from + view.tableMetadataList.getRowCount() - 1;
-               view.displayedValueLabel.setText(from + "-" + to);               
+               reloadData(model.getCurrentFirstRow(), view.getDisplayRows());                         
            }
            // Set button prev active if we see the first page, in other way set it inactive
            if (model.getCurrentFirstRow() > 1) {
@@ -291,35 +261,18 @@ public class MetadataManagerCtrl {
            //save new record Metadata into database
            Task task = model.addMetedataRecord();
            
-           ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
-   			public void exceptionHandler(Exception e) {
-   				if (e instanceof DBLayerException) {	   									   							
-   					DBLayerException dbex = (DBLayerException) e;	
-   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				if (e instanceof RemoteException) {	 
-   					RemoteException remex = (RemoteException) e;		
-   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-   					getTask().stop();
-   					return;
-   				}
-   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-   				logger.error(e);
-   			}
-   			
+           new DefaultProgressBar(task, view, true) {		   							 
+   			@Override
    			public void afterStopping() {
     			   //load metadata
-    	           model.searchMetadata(false);           
-    	           model.processResult(1, model.getDisplayRows());
-    	           if (model.isError()) return;
-    	           view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-    	           view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());
-    	           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    	           
+    	           model.searchMetadata(false);
+    	           if (model.isError()) {
+    	        	   displayError();
+    	        	   return;
+    	           }    	           
+    	           reloadData(1, model.getDisplayRows());    	                   
                } 		   		
-   		};
-   		progressBar.setTitle(MetadataManager.PROGRESS_ADD);	                   	                   
+   		};   		               	                   
         task.start();                                       
        }
     }
@@ -330,7 +283,7 @@ public class MetadataManagerCtrl {
     class editMetadataListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
        {
-    	   //  whether an error flag is set
+    	   //  Check whether an error flag is set
     	   if (model.isError()) {
         	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
         	   return;
@@ -356,31 +309,14 @@ public class MetadataManagerCtrl {
                //Update metadata               
                Task task = model.editMetadataRecord();
                
-               ProgressBar progressBar = new ProgressBar(task, view, true) {		   							 
-          			public void exceptionHandler(Exception e) {
-          				if (e instanceof DBLayerException) {	   									   							
-           					DBLayerException dbex = (DBLayerException) e;	
-           					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-           					getTask().stop();
-           					return;
-           				}
-           				if (e instanceof RemoteException) {	 
-           					RemoteException remex = (RemoteException) e;		
-           					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-           					getTask().stop();
-           					return;
-           				}
-           				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-           				logger.error(e);
-           			}
-
+               new DefaultProgressBar(task, view, true) {
+            	   @Override
           			public void afterStopping() {
           			   //load metadata          				
                         if (model.isError()) return;
                         view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
                      } 		   					
-          		};
-          		progressBar.setTitle(MetadataManager.PROGRESS_EDIT);	                   	                   
+          		};          		                 	                   
                 task.start();                                       
               }
        }
@@ -436,8 +372,12 @@ public class MetadataManagerCtrl {
                //Set information about selected row
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1; 
                model.setMetadataRecord(resultNumber);
-               //Test if record can be deleted
+               //Test if record can be deleted               
                if (!model.checkDelete(resultNumber)) {
+            	   if (model.isError()) {
+	            	   displayError();
+	            	   return;
+            	   }
                    view.showErrorMessage(MetadataManager.ERROR_TITLE, MetadataManager.ERROR_CHECK_DELETE);
                } else {
             	   int okCancle = view.showQuestionMessage(MetadataManager.QUESTION_DELETE_TITLE, MetadataManager.QUESTION_DELETE);               
@@ -447,36 +387,18 @@ public class MetadataManagerCtrl {
 		               //delete selected record
 		               Task task = model.deleteMetadataRecord();
 		               
-		               ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  		   				
-						private static final long serialVersionUID = -6156468821508998437L;
-						public void exceptionHandler(Exception e) {
-							if (e instanceof DBLayerException) {	   									   							
-			   					DBLayerException dbex = (DBLayerException) e;	
-			   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE,MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-			   					getTask().stop();
-			   					return;
-			   				}
-			   				if (e instanceof RemoteException) {	 
-			   					RemoteException remex = (RemoteException) e;		
-			   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-			   					getTask().stop();
-			   					return;
-			   				}
-			   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-			   				logger.error(e);
-			   			}
-		
-                                    public void afterStopping() {
-                                       // load metadata
-		   	               model.searchMetadata(false);               
-		   	               model.processResult(1, model.getDisplayRows());
-		   	               if (model.isError()) return;
-		   	               view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                      
-		   	               view.displayedValueLabel.setText(1 + "-" + view.tableMetadataList.getRowCount());
-		   	               view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());		   	               
+		             new DefaultProgressBar(task, view, true) {		   								  		   				
+						@Override						
+                        public void afterStopping() {
+                           // load metadata
+		   	               model.searchMetadata(false);  
+		   	               if (model.isError()) {
+		   	            	   displayError();
+		   	            	   return;
+		   	               }
+		   	               reloadData(1, model.getDisplayRows());		   	              		   	               
 		                } 		   					
-		   			};
-		   			progressBar.setTitle(MetadataManager.PROGRESS_DELETE);	                   	                   
+		   			};		   			                   	                   
 		            task.start();                                                                  
 		          }else {
 		        	  logger.debug("Button Cancle was press.");
@@ -487,7 +409,7 @@ public class MetadataManagerCtrl {
    }       
     
    /**
-    * * ActionListener class controlling the <b>Search/Sort</b> button on the form.    
+    *  ActionListener class controlling the <b>Search/Sort</b> button on the form.    
     */
     class searchUserListener implements ActionListener {
        public void actionPerformed(ActionEvent actionEvent)
@@ -509,26 +431,9 @@ public class MetadataManagerCtrl {
            //Load metadata with specific conditions
            Task task = model.searchMetadata(true);   
            
-           ProgressBar progressBar = new ProgressBar(task, view, true) {		   								  			
-			    private static final long serialVersionUID = -7147752276335991652L; 
-				public void exceptionHandler(Exception e) {
-					if (e instanceof DBLayerException) {	   									   							
-	   					DBLayerException dbex = (DBLayerException) e;	
-	   					view.showErrorMessage(MetadataManager.ERROR_DBLAYER_TITLE, MetadataManager.ERROR_DBLAYER+ "\n" + dbex.getMessage());   																				   					
-	   					getTask().stop();
-	   					return;
-	   				}
-	   				if (e instanceof RemoteException) {	 
-	   					RemoteException remex = (RemoteException) e;		
-	   					view.showErrorMessage(MetadataManager.ERROR_REMOTE_TITLE,MetadataManager.ERROR_REMOTE+ "\n" + remex.getMessage());   																				   					
-	   					getTask().stop();
-	   					return;
-	   				}
-	   				view.showErrorMessage(MetadataManager.ERROR_UNKNOWEN_TITLE, MetadataManager.ERROR_UNKNOWEN+ "\n" + e.getMessage());   						
-	   				logger.error(e);
-	   			}
-
-				public void afterStopping() {
+           new DefaultProgressBar(task, view, true) {		   								  			
+			   @Override 
+        	   public void afterStopping() {
 					if (model.getDisplayRows() <= 0) {
 		               model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
 		           }
@@ -536,14 +441,9 @@ public class MetadataManagerCtrl {
 		           if (model.getResultRows() < 1) {
 		               view.showInfoMessage(MetadataManager.INFORMATION_RESULT_TITLE,MetadataManager.INFORMATION_RESULT);
 		           }
-		           model.processResult(1, model.getDisplayRows());
-		           if (model.isError()) return;		           
-		           view.tableMetadataList.setModel(new MetadataManagerTableModel(model)); 		           
-		           view.displayedValueLabel.setText(model.getCurrentDisplayRows());  
-		           view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString()); 		           
+		           reloadData(1, model.getDisplayRows());		           		           
                } 		   					
-			};
-			progressBar.setTitle(MetadataManager.PROGRESS_SEARCH);	                   	                   
+			};			                  	                   
             task.start();                                                                  
        }
     }

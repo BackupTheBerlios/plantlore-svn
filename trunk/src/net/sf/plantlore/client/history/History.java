@@ -56,14 +56,16 @@ public class History extends Observable {
     private DBLayer database;   
     /** Exception with details about an error */
     private String error = null;
+    /** Remote exception (network communication failed)*/
+    private RemoteException remoteEx;
     /** Constant with default number of rows to display */
-    private static final int DEFAULT_DISPLAY_ROWS = 12;    
+    public static final int DEFAULT_DISPLAY_ROWS = 12;    
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;   
     /** Index of the first record shown in the table */
     private int currentFirstRow;
     /** Information about current display rows*/
-    private String displayRow;          
+    private String displayRow;              
     /** Result of the search query */
     private int resultId = 0;
     /** List of data (results of a search query) displayed in the view dialog */
@@ -110,7 +112,8 @@ public class History extends Observable {
     private String location;    
     
     /** Instances of Record */
-    private Object data;        
+    private Object data;   
+    private int dataId;
     private HistoryRecord historyRecord;
     private HistoryChange historyChange;
                 
@@ -136,6 +139,7 @@ public class History extends Observable {
     public static final String ERROR_NUMBER_ROWS = L10n.getString("Error.HistoryGetNumberRows");
     public static final String ERROR_NO_RIGHTS = L10n.getString("Error.HistoryNoRights"); 
     public static final String ERROR_TRANSACTION = L10n.getString("Error.TransactionRaceConditions");    
+    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";   
     /**
      * Creates a new instance of History - history of Occurrences, Habitats, Authors, 
      * Publications, Metadata, Territories, Phytochorions, Villages
@@ -144,12 +148,7 @@ public class History extends Observable {
     public History(DBLayer database){
           
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
-       this.database = database;
-       
-       //Search history data (without condition, order by date)
-       searchWholeHistoryData();
-       //Process results 
-       processResult(1, displayRows);
+       this.database = database;             
     }
     
     /**  
@@ -160,149 +159,158 @@ public class History extends Observable {
     public History(DBLayer database, int idObj)
     {
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
-       this.database = database;                     
-       
-       SelectQuery query = null;
-       int resultIdRecord = 0;
-       Object[] object = null;      
-       
-       try {    	  
-		    query = database.createQuery(Occurrence.class);
-      	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, idObj, null);
-      	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.DELETED, null, 0, null);    	                   
-            resultIdRecord = database.executeQuery(query);
-            object = database.next(resultIdRecord);                    
-            database.closeQuery(query);
-       } catch(RemoteException e) {
-       	    logger.error("Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_SEARCH_RECORD);
-       	    return;
-       } catch(DBLayerException e) {
-    	    logger.error("Search selected occurrence failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_SEARCH_RECORD);             
-            return;
-       }                                          
-       if (object == null) {
-    	   logger.error("tOccurrence doesn't contain required data");  
-    	   setError(ERROR_SEARCH_RECORD); 
-       } else {
-    	   
-    	   Occurrence occurrence = (Occurrence)object[0];    	   
-    	   setData(occurrence);
-    	   
-    	   //Check rights
-    	   if(! hasRights(occurrence.getCreatedWho().getId())) {
-    		   setError(ERROR_NO_RIGHTS);
-    		   return;
-    	   }
-    	   
-	       //Save basic information about specific occurrence 
-	       setNameAuthor(getAllNameOfAuthors(getAllAuthors(occurrence, 0)));
-	       setNamePlant(occurrence.getPlant().getTaxon());       
-	       setLocation(occurrence.getHabitat().getNearestVillage().getName());	            
-	       
-	       //Save information about data entries concerned with specific occurrence
-	       setWhen(occurrence.getCreatedWhen());
-	       setNameUser(occurrence.getCreatedWho().getWholeName());
-	       
-	       //Searching for information about data editing concerned with specific occurrence
-	       searchEditHistory(occurrence);
-	       
-	       //Process results of a search "edit" query 
-	       processResult(1,displayRows);
-       }
+       this.database = database;   
+       dataId = idObj;
     }	
 
-    /**  
-     *  Creates a new instance of History - history of specific habitat 
-     *  @param database Instance of a database management object
-     *  @param idObj integer containing identifier of specific habitat
-     *  @param innfoHabitat 
-     * */
-    public History(DBLayer database, int idObj, String infoHabitat)
-    {
-       logger = Logger.getLogger(this.getClass().getPackage().getName());	 
-       this.database = database;       
-       
-       SelectQuery query = null;
-       int resultIdRecord = 0;
-       Object[] object = null;      
-       
-       try {    	  
-		    query = database.createQuery(Habitat.class);
-      	    query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.ID, null, idObj, null);
-      	    query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.DELETED, null, 0, null);    	                   
-            resultIdRecord = database.executeQuery(query);
-            object = database.next(resultIdRecord);                    
-            database.closeQuery(query);
-       } catch(RemoteException e) {
-       	    logger.error("Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_SEARCH_RECORD);
-       	    return;
-       } catch(DBLayerException e) {
-    	    logger.error("Search selected habitat failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_SEARCH_RECORD);             
-            return;
-       }                                          
-       if (object == null) {
-    	   logger.error("tHabitat doesn't contain required data");  
-    	   setError(ERROR_SEARCH_RECORD); 
-       } else {
-    	   
-    	   Habitat habitat = (Habitat)object[0];    	   
-    	   setData(habitat);
-
-    	   //Check rights
-    	   if(! hasRights(habitat.getCreatedWho().getId())) {
-    		   setError(ERROR_NO_RIGHTS);
-    		   return;
-    	   }
-    	   
-    	   //TODO
-	       //Save basic information about specific habitat	             	      	  
-	       setLocation(habitat.getNearestVillage().getName());	            	       	       
-	       
-	       //Searching for information about data editing concerned with specific habitat
-	       searchEditHistory(habitat);
-	       
-	       //Process results of a search "edit" query 
-	       processResult(1,displayRows);
-       }
-    }	
+    /**
+     * Initialize actual data for History of specific occurrence. This function shall process before showing view dialog.
+     * @param idObj identifier of specific Occurrence
+     * @return instance of the Task with the long running operation (searching data)
+     */
+    public Task initialize(int idObj) {
+    	dataId = idObj;
+    	final Task task = new Task() {    		    		
+    		public Object task() throws Exception {
+    			
+    			try {
+		           //Save basic data
+		           initOccHistoryData(dataId);
+			       //Searching for information about data editing concerned with specific habitat
+			       searchEditHistory(getData());	       
+			       //Process results of a search "edit" query 
+			       processResult(1,DEFAULT_DISPLAY_ROWS);			       		      
+    			}catch (Exception e) {
+    				logger.error("Initialize of Record History failed. caught in History. Details: "+e.getMessage());
+    				throw e;
+    			}    			
+    			return null;
+    		}
+	    };
+	    return task;
+    }
     
+    /**
+     * Initialize actual data for Whole History. This function shall process before showing view dialog.
+     * @return instance of the Task with the long running operation (searching data)
+     */
+    public Task initializeWH(){
+    	final Task task = new Task() {    		    		
+    		public Object task() throws Exception {
+    		   try {
+    			   //Search history data (without condition, order by date)
+    		       searchWholeHistoryData();
+    		       //Process results 
+    		       processResult(1, DEFAULT_DISPLAY_ROWS);
+    		   } catch (Exception e) {
+    			   logger.error("Initialize of Whole History failed. caught in History. Details: "+e.getMessage());
+   				   throw e;
+    		   }
+    			return null;
+    		}
+    	};
+	    return task;
+    }
+    
+    /**
+     * Set basic data about selected occurrence
+     * @param idOcc identifier of selected occurrence
+     *  @throws DBLayerException in case search failed
+     *  @throws RemoteException in case network communication failed
+     */   
+    public void initOccHistoryData(int idOcc) throws RemoteException, DBLayerException {
+    	SelectQuery query = null;
+        int resultIdRecord = 0;
+        Object[] object = null;      
+        
+        try {    	  
+ 		    query = database.createQuery(Occurrence.class);
+       	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, idOcc, null);
+       	    query.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.DELETED, null, 0, null);    	                   
+             resultIdRecord = database.executeQuery(query);
+             object = database.next(resultIdRecord);                    
+             database.closeQuery(query);            
+        } catch(RemoteException e) {
+        	    logger.error("Remote exception caught in History. Details: "+e.getMessage());       	            	     
+        	     RemoteException remex = new RemoteException(e.getMessage());
+                 remex.setStackTrace(e.getStackTrace());
+                 throw remex; 		           		           	   
+        } catch(DBLayerException e) {
+     	    logger.error("Search selected occurrence failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                                
+             DBLayerException dbex = new DBLayerException(ERROR_SEARCH_RECORD + e.getMessage());
+             dbex.setStackTrace(e.getStackTrace());
+             throw dbex; 		           
+        }                                          
+        if (object == null) {
+     	   logger.error("tOccurrence doesn't contain required data");  
+     	   DBLayerException dbex = new DBLayerException(ERROR_SEARCH_RECORD + "tOccurrence doesn't contain required data");                      
+     	   throw dbex; 		            
+        } else {
+     	   
+     	   Occurrence occurrence = (Occurrence)object[0];    	   
+     	   setData(occurrence);
+     	        	 
+     	   //Check rights
+     	   if(! hasRights(occurrence.getCreatedWho().getId())) {
+     		   DBLayerException dbex = new DBLayerException();
+     		   dbex.setError(DBLayerException.ERROR_RIGHTS, ERROR_NO_RIGHTS);
+        	   throw dbex; 		            
+     	   }   
+     	   if (isError()) {
+     		  RemoteException remoteEx = new RemoteException(getRemoteEx().getMessage());
+     		  setError(null);
+     		  setRemoteEx(null);
+     		  throw remoteEx;
+     	   }
+     	   
+ 	       //Save basic information about specific occurrence 
+ 	       setNameAuthor(getAllNameOfAuthors(getAllAuthors(occurrence, 0))); 	       
+ 	       setNamePlant(occurrence.getPlant().getTaxon());       
+ 	       setLocation(occurrence.getHabitat().getNearestVillage().getName());	            
+ 	       
+ 	       //Save information about data entries concerned with specific occurrence
+ 	       setWhen(occurrence.getCreatedWhen());
+ 	       setNameUser(occurrence.getCreatedWho().getWholeName());	
+        }
+    }
     
     /**     
      * Searches for information about data editing concerned with specific occurrence or habitat. 
      * @param data object containing specific occurrence or habitat
+     * @throws DBLayerException in case search failed
+     *  @throws RemoteException in case network communication failed
      */     
-    public void searchEditHistory(Object data)
+    public void searchEditHistory(Object data) throws RemoteException, DBLayerException
     {    
     	//Cleare historyDataList
-    	historyDataList.clear();
-        //Create new Select query
-        SelectQuery query = null; 
+    	historyDataList.clear(); 
+    	SelectQuery queryData = null;
         int resultIdEdit = 0;
 
     	//  Select data from tHistory table
-        try {
-		    query = database.createQuery(HistoryRecord.class);
+        try {        	
+		    queryData = database.createQuery(HistoryRecord.class);
 		    // Create aliases for table tHistoryChange.      
-	        query.createAlias("historyChange", "hc");        
+	        queryData.createAlias("historyChange", "hc");        
 	        // Add restriction to COPERATION column of tHistoryChange table
 	        if (data instanceof Occurrence) {	        	       
-		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null);  
+		        queryData.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null);  
 	        } else if (data instanceof Habitat) {	        	        
-		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Habitat)data).getId(), null);  
+		        queryData.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Habitat)data).getId(), null);  
 	        }	
-	        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.operation", null, HistoryChange.HISTORYCHANGE_EDIT, null);
-	        query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
-	        resultIdEdit = database.executeQuery(query); 
+	        queryData.addRestriction(PlantloreConstants.RESTR_EQ, "hc.operation", null, HistoryChange.HISTORYCHANGE_EDIT, null);
+	        queryData.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
+	        resultIdEdit = database.executeQuery(queryData); 
 		} catch (RemoteException e) {
-			logger.error("Remote exception caught in History (searchEditHistory). Details: "+e.getMessage());
-			setError(ERROR_SEARCH_DATA);
+			logger.error("Remote exception caught in History (searchEditHistory). Details: "+e.getMessage());			
+			RemoteException remex = new RemoteException(e.getMessage());
+            remex.setStackTrace(e.getStackTrace());
+            throw remex; 		
 		} catch (DBLayerException e) {
 			logger.error("DBLayer exception caught in History (searchEditHistory). Details: "+e.getMessage());
-			setError(ERROR_SEARCH_DATA);            
+			DBLayerException dbex = new DBLayerException(ERROR_SEARCH_DATA + e.getMessage());
+            dbex.setStackTrace(e.getStackTrace());
+            throw dbex; 	            
 		}                
 		setResultId(resultIdEdit);                
     }
@@ -311,28 +319,33 @@ public class History extends Observable {
     /**
      * Searches for information about data concerned with occurrence, habitat, author, metadata, publication,
      * territory, village and phytochorion.
+     * @throws DBLayerException in case search failed
+     *  @throws RemoteException in case network communication failed
      */
-    public void searchWholeHistoryData() {
+    public void searchWholeHistoryData() throws RemoteException, DBLayerException {
         
     	// Cleare historyDataList
     	historyDataList.clear();
-        //Create new Select query
-        SelectQuery query = null;
+    	SelectQuery queryData = null;
         int resultIdWHistory = 0;
 
     	//  Select data from tHistory table
-        try {
-			query = database.createQuery(HistoryRecord.class);
+        try {        	
+			queryData = database.createQuery(HistoryRecord.class);
 			// Create aliases for table tHistoryChange.
-			query.createAlias("historyChange", "hc");			
-			query.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
-			resultIdWHistory = database.executeQuery(query);
+			queryData.createAlias("historyChange", "hc");			
+			queryData.addOrder(PlantloreConstants.DIRECT_DESC, "hc.when");
+			resultIdWHistory = database.executeQuery(queryData);
 		} catch (RemoteException e) {
 			logger.error("Remote exception caught in History (searchWholeHistoryData). Details: "+e.getMessage());
-			setError(ERROR_SEARCH_DATA);
+			RemoteException remex = new RemoteException(e.getMessage());
+            remex.setStackTrace(e.getStackTrace());
+            throw remex; 		
 		} catch (DBLayerException e) {
-			logger.error("DBLayer exception caught in History (searchWholeHistoryData). Details: "+e.getMessage());
-			setError(ERROR_SEARCH_DATA);
+			logger.error("DBLayer exception caught in History (searchWholeHistoryData). Details: "+e.getMessage());			
+			DBLayerException dbex = new DBLayerException(ERROR_SEARCH_DATA + e.getMessage());
+            dbex.setStackTrace(e.getStackTrace());
+            throw dbex; 	            
 	    }
 		setResultId(resultIdWHistory);                 
     }
@@ -342,7 +355,7 @@ public class History extends Observable {
      * @param from number of the first row to show in table. Number of the first row to retraieve is 1.
      * @param count number of rows to retrieve 
      */
-    public void processResult(int from, int count) {
+    public void processResult(int from, int count) throws RemoteException, DBLayerException{
         
         if (this.resultId != 0) {
             int currentRow = getResultRows();
@@ -368,23 +381,19 @@ public class History extends Observable {
              		objectHistory = database.more(this.resultId, 0, to-1);  
              	} catch(RemoteException e) {
              		logger.error("Remote exception caught in History (processResult). Details: "+e.getMessage());
-        			setError(ERROR_PROCESS);
-        			setChanged();
-                    notifyObservers();
-                 	return;                                                                                       
+             		RemoteException remex = new RemoteException(e.getMessage());
+                    remex.setStackTrace(e.getStackTrace());
+                    throw remex; 		                                                                                 
                 } catch (DBLayerException e) {                  
-                    logger.error("Processing search results failed: " + e.getMessage());   
-                    setError(ERROR_PROCESS);
-                    setChanged();
-                    notifyObservers();
-                    return;
+                    logger.error("Processing search results failed: " + e.getMessage());                       
+                    DBLayerException dbex = new DBLayerException(ERROR_PROCESS + e.getMessage());
+                    dbex.setStackTrace(e.getStackTrace());
+                    throw dbex; 
                 }  
                 if (objectHistory == null) {
                 	logger.error("tHistoryChange doesn`t contain required data");
-                	setError(ERROR_PROCESS);
-                    setChanged();
-                    notifyObservers();
-                    return;
+                	DBLayerException dbex = new DBLayerException(ERROR_PROCESS + "tHistoryChange doesn`t contain required data");                   
+                    throw dbex; 
                 }
                 int countResult = objectHistory.length;  
                 logger.debug("Results retrieved. Count: "+ countResult);                
@@ -486,6 +495,7 @@ public class History extends Observable {
              //Update author of specific occurrence
              isDelete = (isDelete == 1) ? 2 : isDelete;
              Object[] objects = getAllAuthors(occurrence, 2-isDelete);
+             if (isError()) return; //Search authors failed
              int countResult = objects.length;               
              for (int i=0; i<countResult; i++ ) {                    							
                 Object[] autOcc = (Object[])objects[i];          
@@ -738,6 +748,7 @@ public class History extends Observable {
                 } catch (ParseException e) {
                         logger.error("Parse time failed. "+ e);
                         setError(ERROR_PARSE_DATE);
+                        return;
                 }
                 occ.setTimeCollected(time);
                 logger.debug("Set selected value for update of attribute Time.");
@@ -1381,24 +1392,19 @@ public class History extends Observable {
             database.closeQuery(query);
         } catch(RemoteException e) {
         	logger.error("Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_SEARCH_OBJECT);
-	       	 //Tell observers to update
-	         setChanged();
-	         notifyObservers();
+       	    setError(ERROR_REMOTE_EXCEPTION);
+       	    setRemoteEx(e);	    
+       	    return null;
         } catch(DBLayerException e) {
         	logger.error("Search selected " + typeObject  +" failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_SEARCH_OBJECT);   
-            //Tell observers to update
-            setChanged();
-            notifyObservers();
+            setError(ERROR_SEARCH_OBJECT); 
+            return null;
         }
               
 	   if (object == null) {
 		   logger.error("t"+typeObject+ " doesn't contain required data");  
 		   setError(ERROR_SEARCH_OBJECT);		   
-		   //Tell observers to update
-           setChanged();
-           notifyObservers();           
+		   return null;           
 	   } 	 
        return object; 	       	          	              	        
     }
@@ -1429,23 +1435,16 @@ public class History extends Observable {
             database.closeQuery(query);
         } catch(RemoteException e) {
         	logger.error("Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_SEARCH_AUTHOR);
-       	    //Tell observers to update
-            setChanged();
-            notifyObservers();
+       	    setError(ERROR_REMOTE_EXCEPTION);
+       	    setRemoteEx(e);       	    
         } catch(DBLayerException e) {
         	logger.error("Search authors failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_SEARCH_AUTHOR); 
-            //Tell observers to update
-            setChanged();
-            notifyObservers();
+            setError(ERROR_SEARCH_AUTHOR);            
         }     
           
         if (objects == null) {
         	logger.error("tAuthors doesn't contain required data");  
- 		    setError(ERROR_SEARCH_AUTHOR);		    		   
-            setChanged();
-            notifyObservers();
+ 		    setError(ERROR_SEARCH_AUTHOR);		    		             
         }
         
        return objects;
@@ -1457,8 +1456,10 @@ public class History extends Observable {
      *  @return String containing names of authors for specific occurrence
      */
     public String getAllNameOfAuthors(Object[] objects) {
-        if (objects == null)
-            return "";
+        if (objects == null || isError()) {
+        	setError(null);
+        	return "";	
+        }            
         String allAuthor = "";
         int countResult = objects.length;  
         logger.debug("Authos of occurrence. Results retrieved. Count: "+ countResult);        
@@ -1484,7 +1485,7 @@ public class History extends Observable {
     	this.typeHistory = typeHistory;
     	
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {
+    		public Object task() throws Exception {
     	
 		        ArrayList<Enum> editType = new ArrayList<Enum>();
 		        int count = editObjectList.size();
@@ -1513,19 +1514,11 @@ public class History extends Observable {
 			    		}
 			    	//Delete selected data from history tables 
 			    	deleteHistory();
-		        } catch (RemoteException e) {
-		        	logger.error("Process UNDO failed. Remote exception caught in History. Details: "+e.getMessage());
-		        	database.rollbackTransaction();
-                    RemoteException remex = new RemoteException(ERROR_UPDATE + e);
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           
+		        } catch (Exception e) {
+		        	logger.error("Process UNDO failed. Exception caught in History. Details: "+e.getMessage());
+		        	database.rollbackTransaction();                    
+                    throw e; 		           
 		       	    
-		        } catch (DBLayerException e) {
-		        	logger.error("Process UNDO failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-                    DBLayerException dbex = new DBLayerException(ERROR_UPDATE + e);
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 		            
 		        } 
 		        database.commitTransaction();	    	
 		    	//Create array of editing object and call notifyObservers
@@ -1563,7 +1556,7 @@ public class History extends Observable {
      * During delete data from table tHistoryChange verify foring key from table tHistory. 
      * Operation is executed in a separate thread using Task class.   
      */
-    public void deleteHistory() throws DBLayerException, RemoteException {
+    public void deleteHistory() throws Exception {
    	
     	//take from younger record to older record
     	for( int i=0; i < toResult; i++) {
@@ -1577,38 +1570,22 @@ public class History extends Observable {
 	    	try {
 				database.executeDeleteHistory(historyRecord);
 				logger.debug("Deleting historyRecord successfully. Number of result: "+i);
-			} catch (RemoteException e) {								
-				logger.error("Process UNDO failed. Deleting historyRecord failed. Remote exception caught in History. Details: "+e.getMessage());	        	
-                RemoteException remex = new RemoteException(ERROR_DELETE + e);
-                remex.setStackTrace(e.getStackTrace());
-                throw remex; 		           
-			} catch (DBLayerException e) {								
-				logger.error("Process UNDO failed. Deleting historyRecord failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-	        	database.rollbackTransaction();
-                DBLayerException dbex = new DBLayerException(ERROR_DELETE + e);
-                dbex.setStackTrace(e.getStackTrace());
-                throw dbex; 		           	          
-			}
-			int countResult = getRelationshipHistoryChange(historyChange.getId());			
-			if (countResult == 0) {				
-				try {
+			} catch (Exception e) {								
+				logger.error("Process UNDO failed. Deleting historyRecord failed. Exception caught in History. Details: "+e.getMessage());	        	                
+                throw e; 		           
+			} 						
+			try {
+				int countResult = getRelationshipHistoryChange(historyChange.getId());				
+				if (countResult == 0) {	
 					database.executeDeleteHistory(historyChange);
 					logger.debug("Deleting historyChange successfully.");
-				} catch (RemoteException e) {
-					logger.error("Process UNDO failed. Deleting historyChange failed. Remote exception caught in History. Details: "+e.getMessage());	        	
-	                RemoteException remex = new RemoteException(ERROR_DELETE + e);
-	                remex.setStackTrace(e.getStackTrace());
-	                throw remex; 		           
-				} catch (DBLayerException e) {
-					logger.error("Process UNDO failed. Deleting historyChange failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-	                DBLayerException dbex = new DBLayerException(ERROR_DELETE + e);
-	                dbex.setStackTrace(e.getStackTrace());
-	                throw dbex; 		           
+				} else {
+					logger.debug("Exist other record in the table tHistory, whitch has the same value of attribute cChangeId.");
 				}
-			} else {
-				logger.debug("Exist other record in the table tHistory, whitch has the same value of attribute cChangeId.");
-			}
+			} catch (Exception e) {
+				logger.error("Process UNDO failed. Deleting historyChange failed. Exception caught in History. Details: "+e.getMessage());	        		                
+                throw e; 		           
+			} 		 
     	}    	
 		//Clear lists 
     	markListId.clear();
@@ -1620,7 +1597,7 @@ public class History extends Observable {
      * @param id identifier of historyChange record 
      * @return int number of record from tHistory, where attribute cChangeId is equaled prameter "id"
      */
-    public int getRelationshipHistoryChange(int id){    	
+    public int getRelationshipHistoryChange(int id) throws Exception {    	
     	SelectQuery query = null;
     	int resultIdChange = 0;
     	int countResult = 100;
@@ -1635,14 +1612,10 @@ public class History extends Observable {
                 database.closeQuery(query);
         } catch(RemoteException e) {
         	logger.error("Searching historyChange failed.Remote exception caught in History. Details: "+e.getMessage());
-       	    setError(ERROR_SEARCH_RECORD);       	   
-            setChanged();
-            notifyObservers();       	  
+       	    throw e;       	  
         } catch(DBLayerException e) {
         	logger.error("Searching historyChange failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-            setError(ERROR_SEARCH_RECORD);            
-            setChanged();
-            notifyObservers();       	  
+            throw e;       	  
         }        
        	return countResult;
     }
@@ -1806,27 +1779,18 @@ public class History extends Observable {
      *  Delete all date from tables tHistory and tHistoryChange
      *  Operation is executed in a separate thread using Task class.
      */
-    public void clearHistory() throws RemoteException, DBLayerException {        
+    public void clearHistory() throws Exception {        
             	
         try {
             //delete data from table tHistory
             database.conditionDelete(HistoryRecord.class, HistoryRecord.ID, ">", 0);
             //delete data from  table tHistoryChange
             database.conditionDelete(HistoryChange.class, HistoryChange.ID, ">", 0);
-        } catch (RemoteException e) {
-        	logger.error("Process cleare database failed. Remote exception caught in History. Details: "+e.getMessage());
-        	database.rollbackTransaction();
-            RemoteException remex = new RemoteException(ERROR_CLEAR_HISTORY + e);
-            remex.setStackTrace(e.getStackTrace());
-            throw remex; 		           
-       	    
-        } catch (DBLayerException e) {
-        	logger.error("Process cleare database failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-        	database.rollbackTransaction();
-            DBLayerException dbex = new DBLayerException(ERROR_CLEAR_HISTORY + e);
-            dbex.setStackTrace(e.getStackTrace());
-            throw dbex; 		            
-        }       
+        } catch (Exception e) {
+        	logger.error("Process cleare database failed. Exception caught in History. Details: "+e.getMessage());
+        	database.rollbackTransaction();           
+            throw e; 		                  	    
+        }  
     }
     
     /**
@@ -1840,7 +1804,7 @@ public class History extends Observable {
     	//TODO - osetrit proti smazani zaznamu na ktery existuje FK
     	
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {
+    		public Object task() throws Exception {
     			boolean ok = false;
     			
     			ok = database.beginTransaction();
@@ -1862,19 +1826,11 @@ public class History extends Observable {
 		            database.conditionDelete(Publication.class, Publication.DELETED, "=", 1);
 		            //Delete all date from tables tHistory and tHistoryChange
 		            clearHistory();
-		        } catch (RemoteException e) {
-		        	logger.error("Process cleare database failed. Remote exception caught in History. Details: "+e.getMessage());
-		        	database.rollbackTransaction();
-                    RemoteException remex = new RemoteException(ERROR_CLEAR_DATABASE + e);
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           
+		        } catch (Exception e) {
+		        	logger.error("Process cleare database failed. Exception caught in History. Details: "+e.getMessage());
+		        	database.rollbackTransaction();                   
+                    throw e;                     
 		       	    
-		        } catch (DBLayerException e) {
-		        	logger.error("Process cleare database failed. DBLayer exception caught in History. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-                    DBLayerException dbex = new DBLayerException(ERROR_CLEAR_DATABASE + e);
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 		            
 		        } 
 		        database.commitTransaction(); 
 		        return null;
@@ -1911,11 +1867,13 @@ public class History extends Observable {
                 return false;
             }
         } catch (RemoteException e) {
-        	logger.error("GetUserRight() failed. Remote exception caught in History. Details: "+e.getMessage());       	                
-        }
+        	logger.error("GetUserRight() failed. Remote exception caught in History. Details: "+e.getMessage());
+        	setError(ERROR_REMOTE_EXCEPTION);
+        	setRemoteEx(e);
+        }   
         return false;
     }
-    
+            
      //***************************//
     //****Init Hashtable*********//
     //**************************//
@@ -2045,7 +2003,23 @@ public class History extends Observable {
      */
     public String getError() {
         return this.error;
-    }    
+    }  
+    
+    /**
+     *  Set an remote exception (network communication failed)
+     *  @param ex  RemoteException (network communication failed)
+     */
+    public void setRemoteEx(RemoteException ex) {
+        this.remoteEx = ex;
+    }
+    
+    /**
+     *  Get remote exception (network communication failed)
+     *  @return remote exception (network communication failed)
+     */
+    public RemoteException getRemoteEx() {
+        return this.remoteEx;
+    }  
     
     /**
      * Get information about selecting of all record
@@ -2080,20 +2054,28 @@ public class History extends Observable {
 	 } 
 	 
 	/**
-	 * Get object whitch history of changes is displayed (Habitat or Occurrence) 
-	 * @return object whitch history of changes is displayed (Habitat or Occurrence)
+	 * Get object whitch history of changes is displayed (Occurrence) 
+	 * @return object whitch history of changes is displayed (Occurrence)
 	 */ 
     public Object getData() {
     	return data;
     }
        
     /**
-     * Set object whitch history of changes is displayed (Habitat or Occurrence)
-     * @param data object whitch history of changes is displayed (Habitat or Occurrence)
+     * Set object whitch history of changes is displayed (Occurrence)
+     * @param data object whitch history of changes is displayed (Occurrence)
      */
     public void setData(Object data) {
     	this.data = data;
-    }	
+    }
+    
+    /** 
+     * Get id of object whitch history of changes is displayed (Occurrence)     
+     * @return identifier of object whitch history of changes is displayed (Occurrence)
+     */
+    public int getOccId(){
+    	return this.dataId; 
+    }
     
     /**
      * Get list of identifiers of selected items (history of record)

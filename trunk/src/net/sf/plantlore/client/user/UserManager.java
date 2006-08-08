@@ -39,6 +39,8 @@ public class UserManager extends Observable {
     private DBLayer database;   
     /** Exception with details about an error */
     private String error = null;
+    /** Remote exception (network communication failed)*/
+    private RemoteException remoteEx;
     /** Constant with default number of rows to display */
     protected static final int DEFAULT_DISPLAY_ROWS = 6;    
     /** Actual number of rows to display */
@@ -56,7 +58,7 @@ public class UserManager extends Observable {
     /** Type of operation - ADD, EDIT, DELETE, DETAIL*/
     private String operation = "";
     /** Containing information about closing the addEdit dialog*/
-    private boolean usedClose = false;
+    private boolean usedClose = true;
     /** Record for add, update or delete*/
     private User userRecord;
     /** Identifier of record for add, update or delete*/
@@ -105,9 +107,12 @@ public class UserManager extends Observable {
     public static final String ERROR_TRANSACTION = L10n.getString("Error.TransactionRaceConditions");
     public static final String ERROR_CREATE_PAIRS = L10n.getString("Error.UserManagerCreatePairs"); 
     public static final String ERROR_LOGIN = L10n.getString("Error.UserManagerDuplicityLogin");
+    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
     
     public static final String QUESTION_DELETE_TITLE = L10n.getString("Question.DeleteUserTitle");
     public static final String QUESTION_DELETE = L10n.getString("Question.DeleteUser");
+    public static final String QUESTION_DROP = L10n.getString("Question.DropUser");
+    public static final String QUESTION_DROP_TITLE = L10n.getString("Question.DropUserTitle");
     
     public static final String PROGRESS_SEARCH = L10n.getString("User.Search.ProgressTitle");
     public static final String PROGRESS_ADD = L10n.getString("User.Add.ProgressTitle");
@@ -155,13 +160,13 @@ public class UserManager extends Observable {
 		    	   } catch (RemoteException e) {	            
 			            logger.error("Searching user failed. Remote exception caught in User. Details: "+e.getMessage());
 			        	database.rollbackTransaction();
-		                RemoteException remex = new RemoteException(ERROR_SEARCH + e);
+		                RemoteException remex = new RemoteException(ERROR_SEARCH + e.getMessage());
 		                remex.setStackTrace(e.getStackTrace());
 		                throw remex; 		           
 			        } catch (DBLayerException e) {
 			        	logger.error("Searching user failed. DBLayer exception caught in User. Details: "+e.getMessage());       	                                                   
 			        	database.rollbackTransaction();
-		                DBLayerException dbex = new DBLayerException(ERROR_SEARCH + e);
+		                DBLayerException dbex = new DBLayerException(ERROR_SEARCH + e.getMessage());
 		                dbex.setStackTrace(e.getStackTrace());
 		                throw dbex; 		           
 			        }					       
@@ -176,13 +181,10 @@ public class UserManager extends Observable {
 			} catch (DBLayerException e) {
 				logger.error("Searching user failed. Remote exception caught in User. Details: "+e.getMessage());
 				setError(ERROR_SEARCH);
-				setChanged();
-                notifyObservers();                
 			} catch (RemoteException e) {
-				logger.error("Searching user failed. DBLayer exception caught in User. Details: "+e.getMessage());
-				setError(ERROR_SEARCH);
-				setChanged();
-                notifyObservers();                
+				logger.error("Searching user failed. DBLayer exception caught in User. Details: "+e.getMessage());				
+				setError(ERROR_REMOTE_EXCEPTION);	
+				setRemoteEx(e);                
 			}
 			return null;
     	}
@@ -256,7 +258,7 @@ public class UserManager extends Observable {
      * @param from number of the first row to show in table. Number of the first row to retraieve is 1.
      * @param count number of rows to retrieve 
      */
-    public void processResult(int from, int count) {
+    public void processResult(int from, int count) throws RemoteException, DBLayerException {
         
         if (this.resultId != 0) {
             int currentRow = getResultRows();
@@ -278,23 +280,19 @@ public class UserManager extends Observable {
              		objectUser = database.more(this.resultId, 0, to-1);  
              	} catch(RemoteException e) {
              		logger.error("Remote exception caught in UserManager (processResult). Details: "+e.getMessage());
-        			setError(ERROR_PROCESS);
-        			setChanged();
-                    notifyObservers();
-                 	return;                                                                                       
+             		RemoteException remex = new RemoteException(e.getMessage());
+                    remex.setStackTrace(e.getStackTrace());
+                    throw remex;                                                                              
                 } catch (DBLayerException e) {                  
                     logger.error("Processing search results failed: " + e.getMessage());   
-                    setError(ERROR_PROCESS);
-                    setChanged();
-                    notifyObservers();
-                    return;
+                    DBLayerException dbex = new DBLayerException(ERROR_PROCESS + e.getMessage());
+                    dbex.setStackTrace(e.getStackTrace());
+                    throw dbex; 
                 }  
                 if (objectUser == null) {
                 	logger.error("tUser doesn`t contain required data");
-                	setError(ERROR_PROCESS);
-                    setChanged();
-                    notifyObservers();
-                    return;
+                	DBLayerException dbex = new DBLayerException(ERROR_PROCESS + "tUser doesn`t contain required data");                   
+                    throw dbex; 
                 }
                 int countResult = objectUser.length;  
                 logger.debug("Results retrieved. Count: "+ countResult);                
@@ -381,16 +379,14 @@ public class UserManager extends Observable {
     	            users[userRecord.getId()].setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
 		        }catch (RemoteException e) {
 		        	logger.error("Process update User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();
-		        	database.rollbackTransaction();
-                    RemoteException remex = new RemoteException(ERROR_EDIT + e);
+		        	database.rollbackTransaction();		        	
+                    RemoteException remex = new RemoteException(ERROR_EDIT + e.getMessage());
                     remex.setStackTrace(e.getStackTrace());
                     throw remex; 		           		       	    
 		        } catch (DBLayerException e) {
 		        	logger.error("Process update User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-		        	database.rollbackTransaction();
-                    DBLayerException dbex = new DBLayerException(ERROR_EDIT + e);
+		        	database.rollbackTransaction();		        
+                    DBLayerException dbex = new DBLayerException(ERROR_EDIT + e.getMessage());
                     dbex.setStackTrace(e.getStackTrace());
                     throw dbex; 		            
 		        } 	
@@ -420,12 +416,12 @@ public class UserManager extends Observable {
     				 database.executeUpdate(userRecord);		            
 		        }catch (RemoteException e) {
 		        	logger.error("Process delete User failed. Remote exception caught in UserManager. Details: "+e.getMessage());		        	
-                    RemoteException remex = new RemoteException(ERROR_DELETE + e);
+                    RemoteException remex = new RemoteException(ERROR_DELETE + e.getMessage());
                     remex.setStackTrace(e.getStackTrace());
                     throw remex; 		           		       	    
 		        } catch (DBLayerException e) {
 		        	logger.error("Process delete User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());       	                                                   		        	
-                    DBLayerException dbex = new DBLayerException(ERROR_DELETE + e);
+                    DBLayerException dbex = new DBLayerException(ERROR_DELETE + e.getMessage());
                     dbex.setStackTrace(e.getStackTrace());
                     throw dbex; 		            
 		        } 			        		      			        
@@ -472,12 +468,12 @@ public class UserManager extends Observable {
                 database.closeQuery(sq);
             }catch (RemoteException e) {	            
 	            logger.error("Searching user and creating Pairs (login, identifier) failed. Remote exception caught in User. Details: "+e.getMessage());	        	
-                RemoteException remex = new RemoteException(ERROR_CREATE_PAIRS + e);
+                RemoteException remex = new RemoteException(ERROR_CREATE_PAIRS + e.getMessage());
                 remex.setStackTrace(e.getStackTrace());
                 throw remex; 		           
 	        } catch (DBLayerException e) {
 	        	logger.error("Searching user and creating Pairs (login, identifier) failed. DBLayer exception caught in User. Details: "+e.getMessage());       	                                                   
-                DBLayerException dbex = new DBLayerException(ERROR_CREATE_PAIRS + e);
+                DBLayerException dbex = new DBLayerException(ERROR_CREATE_PAIRS + e.getMessage());
                 dbex.setStackTrace(e.getStackTrace());
                 throw dbex; 		           
 	        }					       
@@ -602,6 +598,22 @@ public class UserManager extends Observable {
     }      
     
     /**
+     *  Set an remote exception (network communication failed)
+     *  @param ex  RemoteException (network communication failed)
+     */
+    public void setRemoteEx(RemoteException ex) {
+        this.remoteEx = ex;
+    }
+    
+    /**
+     *  Get remote exception (network communication failed)
+     *  @return remote exception (network communication failed)
+     */
+    public RemoteException getRemoteEx() {
+        return this.remoteEx;
+    }  
+    
+    /**
      * Set true if addEdit dialog was closed by CLOSE button
      * @param usedClose containing information about closing the addEdit dialog
      */
@@ -647,7 +659,7 @@ public class UserManager extends Observable {
                 resultCount = database.getNumRows(resultId);        	
         } catch(RemoteException e) {
                 logger.error("Get number of results failed.Remote exception caught in UserManager. Details: "+e.getMessage());  
-            	setError(ERROR_NUMBER_ROWS);
+            	setError(ERROR_REMOTE_EXCEPTION);
         }
         return resultCount;
     }

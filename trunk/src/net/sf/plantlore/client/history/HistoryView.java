@@ -45,12 +45,44 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         getRootPane().setDefaultButton(closeButton);        
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
-        getTable().setModel(new HistoryTableModel(model));         
-        previousButton.setEnabled(false);
-        if (getTable().getRowCount() <= model.getDisplayRows()) {
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);                
+    }
+    
+    /**
+     * Initialize actual data for displaying in view dialog.     
+     */
+    public void initialize() {    	         
+        previousButton.setEnabled(false);             
+        model.setDisplayRows(History.DEFAULT_DISPLAY_ROWS);
+        model.setCurrentFirstRow(1);
+        model.getMarkItem().clear();
+        model.getMarkListId().clear();
+        model.setSelectAll(false);
+        model.setUnselectedAll(false);
+        if (History.DEFAULT_DISPLAY_ROWS >= model.getResultRows()) {
         	nextButton.setEnabled(false);
+        }else{
+        	nextButton.setEnabled(true);
         }
+        getTable().setModel(new HistoryTableModel(model));
+        taxonValueLabel.setText(model.getNamePlant());
+        authorValueLabel.setText(model.getNameAuthor());
+        locationValueLabel.setText(model.getLocation());
+        if (model.getWhen() != null)
+        	whenInsertValueLabel.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(model.getWhen()) );
+        whoInsertValueLabel.setText(model.getNameUser());
+        totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+        toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
+        displayedValueLabel.setText(model.getCurrentDisplayRows());
+    }
+    
+    /**
+     *  Shows and inicialize actual data or hides this dialog depending on the value of parameter visible. 
+     *  @param visible if true, shows this component and initialize actual data; otherwise, hides this component
+     */
+    public void setVisible(boolean visible) {
+    	if (visible) initialize();
+    	super.setVisible(visible);
     }
     
     /**
@@ -59,12 +91,13 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
       public void update(Observable observable, Object object)
     {                                
     	  //Check whether we have some kind of error to display
-          if (model.isError()) {
+          if (model.isError()) {        	  
               showErrorMessage(model.getError());                          
               return;
           } 
     } 
     
+     
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -112,28 +145,28 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         locationLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         locationLabel.setText(L10n.getString("History.Location"));
 
-        taxonValueLabel.setText(model.getNamePlant());
+        taxonValueLabel.setText("taxon");
 
-        authorValueLabel.setText(model.getNameAuthor());
+        authorValueLabel.setText("author");
 
-        locationValueLabel.setText(model.getLocation());
+        locationValueLabel.setText("location");
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
-                .add(19, 19, 19)
+                .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(taxonLabel)
                     .add(authorLabel)
-                    .add(locationLabel)
-                    .add(taxonLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 274, Short.MAX_VALUE)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(locationLabel))
+                .add(52, 52, 52)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(taxonValueLabel)
-                    .add(authorValueLabel)
-                    .add(locationValueLabel))
-                .addContainerGap(228, Short.MAX_VALUE))
+                    .add(locationValueLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(authorValueLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(488, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -158,9 +191,9 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         whoInsertLabel.setFont(new java.awt.Font("Tahoma", 1, 11));
         whoInsertLabel.setText(L10n.getString("History.WhoInsert"));
 
-        whenInsertValueLabel.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(model.getWhen()) );
+        whenInsertValueLabel.setText("when");
 
-        whoInsertValueLabel.setText(model.getNameUser());
+        whoInsertValueLabel.setText("who");
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -175,7 +208,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(whenInsertValueLabel)
                     .add(whoInsertValueLabel))
-                .addContainerGap(462, Short.MAX_VALUE))
+                .addContainerGap(502, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -217,15 +250,15 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
 
         totalResultLabel.setText(L10n.getString("History.TotalResult"));
 
-        totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
+        totalResultValueLabel.setText("total");
 
         toDisplayLabel.setText(L10n.getString("History.RowsToDisplay"));
 
-        toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
+        toDisplayValueTextField.setText("rows");
 
         displayedLabel.setText(L10n.getString("History.Displayed"));
 
-        displayedValueLabel.setText(model.getCurrentDisplayRows());
+        displayedValueLabel.setText("displayed");
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -255,7 +288,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
                         .add(displayedLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(displayedValueLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 69, Short.MAX_VALUE)
                         .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -368,7 +401,8 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
      */
     public void setCountResutl(Integer resultRows)
     {
-    	this.totalResultValueLabel.setText(resultRows.toString());
+    	if (resultRows != null)
+    		this.totalResultValueLabel.setText(resultRows.toString());
     }
     
     /**

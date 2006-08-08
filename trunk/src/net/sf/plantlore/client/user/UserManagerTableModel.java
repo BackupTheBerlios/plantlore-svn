@@ -20,23 +20,26 @@ import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author Lada
+ * Implements a table model for the UserManage
+ * 
+ * @author Lada Oberreiterova
+ * @version 1.0
  */
 public class UserManagerTableModel  extends AbstractTableModel  {
     
   
-        //Logger
+	/** Instance of a logger */
     private Logger logger;
-    // UserManager model
+    /** Model of userMnagre MVC*/
     private UserManager model; 
-    private ArrayList<User> userDataList;
-    
+    /** Results of a search query for displaying */
+    private ArrayList<User> userDataList;    
     /** Names of the columns */
     private String[] columnNames;
     /** Data values displayed in the table*/
     private Object[][] data;
 
+    /** Constants used for identification of columns of table */
     public final static int LOGIN = 0;
     public final static int WHOLENAME = 1;
     public final static int EMAIL = 2;       
@@ -45,6 +48,7 @@ public class UserManagerTableModel  extends AbstractTableModel  {
     
     /**
      * Creates a new instance of UserManagerTableModel
+     * @param model model of UserManager MVC 
      */
     public UserManagerTableModel(UserManager model) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -53,6 +57,9 @@ public class UserManagerTableModel  extends AbstractTableModel  {
     	initData();    	
     }  
    
+    /**
+     * Init names of columns.     
+     */
     private void initColumns() {
         columnNames = new String[5];                  
         columnNames[0] = L10n.getString("UserManager.Login");   
@@ -67,7 +74,7 @@ public class UserManagerTableModel  extends AbstractTableModel  {
      */
     public void initData() {
     	
-    	logger.debug("User - Init data.");
+    	logger.debug("UserManager - Init data.");
     	
     	userDataList = model.getUserList();
     	if (userDataList.size()==0 ){
@@ -77,10 +84,8 @@ public class UserManagerTableModel  extends AbstractTableModel  {
     	int firstRow = model.getCurrentFirstRow();
     	int countResult = Math.min(userDataList.size(), firstRow+ model.getDisplayRows()-1);
     	int countRow = countResult - firstRow + 1;   
-        int ii = 0;
-        //init Calendar for save valu of date   		
-        Calendar isoDateTime = new GregorianCalendar();
-    	//loud data for view
+        int ii = 0;        
+    	//Loud data for view
         Object[][] userData = new Object[countRow][5];   
     	for (int i=firstRow-1; i < countResult; i++) {                             
             userData[ii][0] = ((User)userDataList.get(i)).getLogin();

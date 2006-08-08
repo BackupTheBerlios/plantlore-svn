@@ -78,6 +78,7 @@ import net.sf.plantlore.client.settings.SettingsView;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
+import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.PlantloreConstants;
@@ -1259,19 +1260,19 @@ public class AppCoreCtrl {
 			System.out.println("History od record: "+ model.getDatabase());	
 			
 			if (historyModel == null) {
-				historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());
-				if (historyModel.isError()) {				
-					JOptionPane.showMessageDialog(view, historyModel.getError(), L10n.getString("Error.HistoryCreateDialog"),
-							JOptionPane.WARNING_MESSAGE);				
-				} else {					
+				historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());								
 				historyView = new HistoryView(historyModel, view, true);
 				historyCtrl = new HistoryCtrl(historyModel, historyView);
 				historyModel.addObserver(managerBridge);
-				historyView.setVisible(true);
-				}
-			} else {
-				historyView.setVisible(true);
 			}
+			Task task = historyModel.initialize(model.getSelectedOccurrence());
+			new DefaultProgressBar(task, historyView, true) {
+				@Override
+	 	    	public void afterStopping() {
+					historyView.setVisible(true);						
+	 	    	}
+			};			
+			task.start();							
 		}
 	}
 
@@ -1284,22 +1285,19 @@ public class AppCoreCtrl {
 			System.out.println("Whole history");
 
 			if (wholeHistoryModel == null) {
-				wholeHistoryModel = new History(model.getDatabase());
-				if (wholeHistoryModel.isError()) {
-					//TODO: zjistit presneji o jakou chybu jde
-					JOptionPane.showMessageDialog(view, wholeHistoryModel.getError(), L10n.getString("Error.HistoryCreateDialog"),
-							JOptionPane.WARNING_MESSAGE);									
-				} else {			
-					wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,
-							true);
-					wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel,
-							wholeHistoryView);
-					wholeHistoryModel.addObserver(managerBridge);
-					wholeHistoryView.setVisible(true);
-				}
-			} else {
-				wholeHistoryView.setVisible(true);
+				wholeHistoryModel = new History(model.getDatabase());				
+			    wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,true);
+				wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel, wholeHistoryView);
+				wholeHistoryModel.addObserver(managerBridge);
 			}
+			Task task = wholeHistoryModel.initializeWH();
+			new DefaultProgressBar(task, wholeHistoryView, true) {
+				@Override
+	 	    	public void afterStopping() {						
+					wholeHistoryView.setVisible(true);
+	 	    	}
+			};			
+			task.start();							
 		}
 	}
 
@@ -1319,6 +1317,7 @@ public class AppCoreCtrl {
 			if (metadataManagerModel == null) {
 				metadataManagerModel = new MetadataManager(model.getDatabase());
 				if (metadataManagerModel.isError()) {
+					//DefaultReconnectDialog.show(view, metadataManagerModel.getError());
 					JOptionPane.showMessageDialog(view, metadataManagerModel.getError(), L10n.getString("Error.MetadataCreateDialog"),
 							JOptionPane.WARNING_MESSAGE);									
 				} else {					
