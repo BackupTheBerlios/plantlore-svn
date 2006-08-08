@@ -130,13 +130,26 @@ public abstract class Task extends Observable {
     
     /** Returns the value constructed by the task in case it has finished already
      * or returns null otherwise.
-     *
+     *<br/>
+     * If you have to wait for the moment the task stops, use the <code>get()</code> method instead.
+     * @see #get()
      */
     public Object getValue() {
         if (worker == null)
             return null;
         
         return worker.getValue();
+    }
+    
+    /** 
+     * Returns the value returned by the task. 
+     * If the task did not finish its computations yet,
+     * this method waits until the result is available.
+     */
+    public Object get() {
+    	if(worker != null)
+    		return worker.get();
+    	return null;
     }
     
     /** Abstract method that does the actual computation.
