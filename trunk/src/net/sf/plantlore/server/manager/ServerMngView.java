@@ -9,9 +9,6 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JOptionPane;
-
-
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ConnectionInfo;
 
@@ -46,7 +43,6 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
         users = new javax.swing.JList();
         hide = new javax.swing.JButton();
         help = new javax.swing.JButton();
-        status = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         refresh = new javax.swing.JButton();
         kick = new javax.swing.JButton();
@@ -60,9 +56,6 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
         hide.setText(L10n.getString("Server.Hide"));
 
         help.setText(L10n.getString("Common.Help"));
-
-        status.setText("Server up and running");
-        status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         jToolBar1.setFloatable(false);
         refresh.setText(L10n.getString("Server.Refresh"));
@@ -86,9 +79,9 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 166, Short.MAX_VALUE)
                         .add(terminate)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(hide)))
+                        .add(hide)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addContainerGap())
-            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
             .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
         );
 
@@ -99,14 +92,13 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
             .add(layout.createSequentialGroup()
                 .add(jToolBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(hide)
-                    .add(help)
-                    .add(terminate))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(terminate)
+                    .add(help))
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -120,7 +112,6 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     private javax.swing.JToolBar jToolBar1;
     protected javax.swing.JButton kick;
     protected javax.swing.JButton refresh;
-    private javax.swing.JLabel status;
     protected javax.swing.JButton terminate;
     protected javax.swing.JList users;
     // End of variables declaration//GEN-END:variables
@@ -131,22 +122,16 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
      */
 	public void update(Observable source, final Object parameter) {
 		if(parameter == ServerMng.UPDATE_LIST){
-			ConnectionInfo[] clients = model.getConnectedUsers(false);
+			ConnectionInfo[] clients = model.getConnectedUsers();
 			if(clients != null) 
 				users.setListData(clients);
 			else 
 				users.setListData(new String[] {""});
-		} else
-			java.awt.EventQueue.invokeLater(new Runnable(){
+		} 
+		else if( parameter == ServerMng.CONNECTED ) 
+			java.awt.EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					if(parameter instanceof String)
-						status.setText((String)parameter);
-					else if(parameter instanceof Exception) {
-						JOptionPane.showMessageDialog(null,
-								((Exception)parameter).getMessage(),
-							    L10n.getString("Error.ServerOperationFailed"),
-							    JOptionPane.ERROR_MESSAGE);
-					}
+					setVisible(true);
 				}
 			});
 	}

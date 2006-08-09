@@ -3,8 +3,6 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JOptionPane;
-
 import net.sf.plantlore.l10n.L10n;
 
 
@@ -39,7 +37,6 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         help = new javax.swing.JButton();
-        status = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(L10n.getString("Server.Login"));
@@ -54,7 +51,7 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
         plantloreLogo.setLayout(plantloreLogoLayout);
         plantloreLogoLayout.setHorizontalGroup(
             plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 397, Short.MAX_VALUE)
+            .add(0, 413, Short.MAX_VALUE)
         );
         plantloreLogoLayout.setVerticalGroup(
             plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -67,9 +64,6 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
 
         help.setText(L10n.getString("Common.Help"));
 
-        status.setText("Awaiting commands");
-        status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -77,7 +71,7 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+                    .add(plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(help)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 279, Short.MAX_VALUE)
@@ -88,16 +82,15 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
                             .add(jLabel2))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
-                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))))
+                            .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                            .add(host, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE))))
                 .addContainerGap())
-            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(plantloreLogo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
@@ -110,8 +103,7 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(next)
                     .add(help))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(status))
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -126,23 +118,16 @@ public class ServerLoginView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JButton next;
     protected javax.swing.JPasswordField password;
     protected javax.swing.JPanel plantloreLogo;
-    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
     
     
     public void update(Observable source, final Object parameter) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				if(parameter instanceof String)
-					status.setText( " " + (String)parameter );
-				else if(parameter instanceof Exception) {
-					JOptionPane.showMessageDialog(null,
-							((Exception)parameter).getMessage(),
-						    L10n.getString("Error.ServerLoginFailed"),
-						    JOptionPane.ERROR_MESSAGE);
+    	if(parameter == ServerMng.CONNECTED)
+			java.awt.EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					setVisible(false);
 				}
-			}
-		});
+			});
 	}
 	
     

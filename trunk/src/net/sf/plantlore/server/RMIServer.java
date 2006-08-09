@@ -148,24 +148,12 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	}
 
 	
-	/** 
-	 * Initialize the codebase java.rmi.server.property to the specified directory or the
-	 * current working directory if the specified directory is null.
-	 * 
-	 *  @param directory	The directory that shall serve as a codebase. */
-	public static void initialize(String directory) {
-		String codebase = "file:/" + ((directory != null) ? directory : System.getProperty("user.dir")) + "/";
-		codebase = codebase.replaceAll(" ", "%20"); // to prevent the MalformedURLException
-		System.setProperty("java.rmi.server.codebase", codebase);
-		System.out.println("java.rmi.server.codebase = " + codebase);
-		
-		System.setProperty("java.rmi.dgc.leaseValue", "30000"); // 30 seconds, just for DEBUG.REASONS
-	}
+	
 	
 	
 	/** Static initialization. */
 	static {
-		initialize(null);
+		//RMI.addToCodebase( System.getProperty("user.dir") + "/" );
 	}
 	
 

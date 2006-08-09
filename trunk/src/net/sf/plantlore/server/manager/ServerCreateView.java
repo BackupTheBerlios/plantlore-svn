@@ -9,8 +9,7 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JOptionPane;
-
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ServerSettings;
 
@@ -19,17 +18,18 @@ import net.sf.plantlore.server.ServerSettings;
  * @author  yaa
  */
 public class ServerCreateView extends javax.swing.JFrame implements Observer {
-    
-	
-//	private ServerMng model;
-
 	
     /** Creates new form ServerCreateView */
     public ServerCreateView(ServerMng model) {
     	model.addObserver(this);
+    	
         initComponents();
         getRootPane().setDefaultButton(next);
         setLocationRelativeTo(null); // center of the screen
+        /*
+        PlantloreHelp.addKeyHelp(PlantloreHelp.SERVER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.SERVER, this.help);
+        */
         
         // Initialize the components' contents.
         ServerSettings settings = model.getSettings(true);
@@ -62,7 +62,6 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         serverPassword = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
         serverPort = new javax.swing.JTextField();
-        status = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         databaseType = new javax.swing.JComboBox();
@@ -130,8 +129,6 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
                     .add(serverPassword, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        status.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("Server.DatabaseSettings")));
         jLabel5.setText(L10n.getString("Server.DatabaseType"));
@@ -212,20 +209,17 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(help)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 307, Short.MAX_VALUE)
-                .add(next)
-                .addContainerGap())
-            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(help)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(next))
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                    .add(plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -240,8 +234,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(next)
                     .add(help))
-                .add(11, 11, 11)
-                .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -267,24 +260,16 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JPanel plantloreLogo;
     protected javax.swing.JPasswordField serverPassword;
     protected javax.swing.JTextField serverPort;
-    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
-
     
-	public void update(Observable source, final Object parameter) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				if(parameter instanceof String)
-					status.setText( " " + (String)parameter );
-				else if(parameter instanceof Exception) {
-					JOptionPane.showMessageDialog(null,
-							((Exception)parameter).getMessage(),
-						    L10n.getString("Error.ServerLoginFailed"),
-						    JOptionPane.ERROR_MESSAGE);
+    
+	public void update(Observable source, Object parameter) {
+		if(parameter == ServerMng.CONNECTED)
+			java.awt.EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					setVisible(false);
 				}
-			}
-		});
+			});
 	}
-	
-    
+          
 }

@@ -2,11 +2,9 @@ package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-
-import net.sf.plantlore.client.resources.Resource;
-import net.sf.plantlore.l10n.L10n;
+import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.StandardAction;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.server.ConnectionInfo;
 
 /**
@@ -16,78 +14,41 @@ import net.sf.plantlore.server.ConnectionInfo;
  */
 public class ServerMngCtrl {
 	
-	private ServerMngView view;
-	private ServerMng model;
-	private boolean terminated = false;
 	
-	public ServerMngCtrl(ServerMng model, ServerMngView view) {
-		this.model = model; this. view = view;
+	public ServerMngCtrl(final ServerMng model, final ServerMngView view) {
 		
-		view.kick.setAction(new KickUserAction());
-		view.terminate.setAction(new TerminateServerAction());
-		view.refresh.setAction(new RefreshAction());
-		view.hide.setAction(new HideAction());
+		view.kick.setAction(new StandardAction("Server.KickUser") {
+			public void actionPerformed(ActionEvent arg0) {
+				Task t = model.createKickTask( (ConnectionInfo)view.users.getSelectedValue() );
+				new DefaultProgressBar(t, view, true);
+				t.start();			
+			}
+		});
+		
+		view.terminate.setAction(new StandardAction("Server.Terminate") {
+			public void actionPerformed(ActionEvent arg0) {
+				Task t = model.createTerminateServerTask();
+				new DefaultProgressBar(t, view, true);
+				t.start();	
+			}
+		});
+		
+		view.refresh.setAction(new StandardAction("Server.Refresh") {
+			public void actionPerformed(ActionEvent arg0) {
+				Task t = model.createUpdateConnectedUsersTask();
+				new DefaultProgressBar(t, view, true);
+				t.start();
+			}
+		});
+		
+		view.hide.setAction(new StandardAction("Server.Hide") {
+			public void actionPerformed(ActionEvent ae) {
+				view.setVisible(false);
+				view.dispose();
+			}
+		});
 	}
+
 	
-	
-	class KickUserAction extends AbstractAction {
-		public KickUserAction() {
-			putValue(SHORT_DESCRIPTION, L10n.getString("Server.KickUserTT"));
-			putValue(NAME, L10n.getString("Server.KickUser"));
-            ImageIcon icon = Resource.createIcon("Server.KickUser.gif");
-			if(icon != null) putValue(SMALL_ICON, icon);
-		}
-		public void actionPerformed(ActionEvent ae) {
-			Object client = view.users.getSelectedValue();
-			if(client == null) 
-				return;
-			else if(client instanceof ConnectionInfo) 
-				model.kick( (ConnectionInfo)client );
-		}
-	}
-	
-	class TerminateServerAction extends AbstractAction {
-		public TerminateServerAction() {
-			putValue(SHORT_DESCRIPTION, L10n.getString("Server.TerminateTT"));
-			putValue(NAME, L10n.getString("Server.Terminate"));
-            ImageIcon icon = Resource.createIcon("Server.Terminate.gif");
-			if(icon != null) putValue(SMALL_ICON, icon);
-		}
-		public void actionPerformed(ActionEvent ae) {
-			model.terminateServer();
-			// Disable Terminate, Refresh and Kick buttons.
-			view.terminate.setEnabled(false);
-			view.refresh.setEnabled(false);
-			view.kick.setEnabled(false);
-			terminated = true;
-		}
-	}
-	
-	class RefreshAction extends AbstractAction {
-		public RefreshAction() {
-			putValue(SHORT_DESCRIPTION, L10n.getString("Server.RefreshTT"));
-			putValue(NAME, L10n.getString("Server.Refresh"));
-            ImageIcon icon = Resource.createIcon("Server.Refresh.gif");
-			if(icon != null) putValue(SMALL_ICON, icon);
-		}
-		public void actionPerformed(ActionEvent ae) {
-			model.getConnectedUsers(true);
-		}
-	}
-	
-	class HideAction extends AbstractAction {
-		public HideAction() {
-			putValue(SHORT_DESCRIPTION, L10n.getString("Server.HideTT"));
-			putValue(NAME, L10n.getString("Server.Hide"));
-            ImageIcon icon = Resource.createIcon("Server.Hide.gif");
-			if(icon != null) putValue(SMALL_ICON, icon);
-		}
-		public void actionPerformed(ActionEvent ae) {
-			view.setVisible(false);
-			view.dispose();
-			if(terminated)
-				System.exit(0);
-		}
-	}
 
 }

@@ -9,6 +9,11 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RMI {
 	
+	
+	public static final String PROPERTY_CODEBASE = "java.rmi.server.codebase";
+	public static final String PROPERTY_LEASEVALUE = "java.rmi.dgc.leaseValue";
+	
+	
 	public static void bind(Remote object, String name) 
 	throws RemoteException, AccessException, AlreadyBoundException {
 		
@@ -46,6 +51,35 @@ public class RMI {
 	
 	public static void unexport(Remote object) throws NoSuchObjectException {
 		UnicastRemoteObject.unexportObject(object, true);
+	}
+	
+	
+	/** 
+	 * Initialize the codebase java.rmi.server.property to the specified directory or the
+	 * current working directory if the specified directory is null.
+	 * <br/>
+	 * Do not forget that directories must end with a slash 
+	 * while JAR files must not.
+	 * 
+	 *  @param directory	The directory that shall serve as a codebase. */
+	public static void addToCodebase(String directory) {
+		String codebase = System.getProperty(PROPERTY_CODEBASE);
+		directory = "file:/" + directory.replaceAll(" ", "%20"); // to prevent the MalformedURLException
+		
+		if( codebase != null && codebase.length() > 0 ) {
+			if( !codebase.contains(directory) )
+				codebase = codebase + " " + directory;
+		}
+		else
+			codebase = directory;
+		
+		System.setProperty(PROPERTY_CODEBASE, codebase);
+		System.out.println("java.rmi.server.codebase = " + codebase);
+	}
+	
+	
+	public static void setLeaseValue(int value) {
+		System.setProperty( PROPERTY_LEASEVALUE, Integer.toString(value) ); 
 	}
 
 }
