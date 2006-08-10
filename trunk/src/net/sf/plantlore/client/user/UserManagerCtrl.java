@@ -96,7 +96,7 @@ public class UserManagerCtrl {
         view.showAllUserRadioBUtton.addKeyListener(escapeKeyPressed);
         view.showCurrentUserRadioButton.addKeyListener(escapeKeyPressed);
         view.addKeyListener(escapeKeyPressed);
-        
+    /*    
         //Search user and Load data
         Task task = model.searchUser(true);        
         
@@ -107,7 +107,8 @@ public class UserManagerCtrl {
 		        reloadData(1, model.getDisplayRows());		       
            } 		   					
 		};		                 	                   
-        task.start();                                       
+        task.start();   
+        */                                    
     }  
     
     /**
@@ -262,19 +263,24 @@ public class UserManagerCtrl {
            }
            //set information abut selected operation ADD
            model.setOperation("ADD");           
-           //create add dialog if dialog not exist and open Add dialog                  	  
-          AddEditUserView addView = new AddEditUserView(model, view,true);
-          new AddEditUserCtrl(addView, model);          
+           //create add dialog if dialog not exist and open Add dialog  
+           if (addView == null) {
+        	   addView = new AddEditUserView(model, view,true);
+        	   new AddEditUserCtrl(addView, model);
+           }                    
           addView.setAddForm();
           addView.setVisible(true);          
            //User press button close
-           if (model.usedClose()) return;           
+           if (model.usedClose()) return;
+           model.setUsedClose(true);
            //save new record Metadata into database
            Task task = model.addUserRecord();
            
            new DefaultProgressBar(task, view, true) {		   							 
    			   @Override
         	   public void afterStopping() {
+   				   if (! model.isFinishedTask()) return;
+				   model.setInfoFinishedTask(false);
     			   //load data
     	           model.searchUser(false);  
     	           if (model.isError()) {
@@ -324,6 +330,8 @@ public class UserManagerCtrl {
                new DefaultProgressBar(task, view, true) {		   							 
           		   @Override
             	   public void afterStopping() {
+          			   if (! model.isFinishedTask()) return;
+					   model.setInfoFinishedTask(false);
           			   //load User          				
                         if (model.isError()) return;
                         view.tableUserList.setModel(new UserManagerTableModel(model));                         
@@ -399,6 +407,8 @@ public class UserManagerCtrl {
 	               new DefaultProgressBar(task, view, true) {		   								  		   									
 					   @Override
 	            	   public void afterStopping() {
+						   if (! model.isFinishedTask()) return;
+						   model.setInfoFinishedTask(false);
 	                       // load User
 		   	               model.searchUser(false); 
 		   	               if (model.isError()) {
@@ -444,6 +454,8 @@ public class UserManagerCtrl {
            new DefaultProgressBar(task, view, true) {		   								  						    
         	   @Override
         	   public void afterStopping() {
+        		   if (! model.isFinishedTask()) return;
+				   model.setInfoFinishedTask(false);
 					if (model.getDisplayRows() <= 0) {
 		               model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
 		           }

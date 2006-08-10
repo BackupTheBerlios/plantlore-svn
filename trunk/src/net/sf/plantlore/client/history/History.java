@@ -58,6 +58,8 @@ public class History extends Observable {
     private String error = null;
     /** Remote exception (network communication failed)*/
     private RemoteException remoteEx;
+    /** True if MyTask finished successful*/
+    private boolean  finishedTask = false;
     /** Constant with default number of rows to display */
     public static final int DEFAULT_DISPLAY_ROWS = 12;    
     /** Actual number of rows to display */
@@ -126,20 +128,21 @@ public class History extends Observable {
     private Hashtable<String, Enum> editTypeHash;
     
     /** Constants used for description of errors */
-    public static final String ERROR_SEARCH_RECORD = L10n.getString("Error.HistoryRecordSearchFailed");
-    public static final String ERROR_SEARCH_DATA = L10n.getString("Error.HistoryDataSearchFailed");
-    public static final String ERROR_SEARCH_OBJECT = L10n.getString("Error.HistoryObjectSearchFailed");
-    public static final String ERROR_SEARCH_AUTHOR = L10n.getString("Error.HistoryAuthorSearchFailed");
-    public static final String ERROR_PROCESS = L10n.getString("Error.HistoryProcessResultsFailed");
-    public static final String ERROR_UPDATE = L10n.getString("Error.HistoryUpdateResultsFailed");
-    public static final String ERROR_DELETE = L10n.getString("Error.HistoryDeleteResultsFailed");  
-    public static final String ERROR_CLEAR_DATABASE = L10n.getString("Error.HistoryClearDatabase");
-    public static final String ERROR_CLEAR_HISTORY = L10n.getString("Error.HistoryClearHistory");
-    public static final String ERROR_PARSE_DATE = L10n.getString("Error.HistoryParseData");
-    public static final String ERROR_NUMBER_ROWS = L10n.getString("Error.HistoryGetNumberRows");
-    public static final String ERROR_NO_RIGHTS = L10n.getString("Error.HistoryNoRights"); 
-    public static final String ERROR_TRANSACTION = L10n.getString("Error.TransactionRaceConditions");    
-    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";   
+    public static final String ERROR_SEARCH_RECORD = "Error.HistoryRecordSearchFailed";
+    public static final String ERROR_SEARCH_DATA = "Error.HistoryDataSearchFailed";
+    public static final String ERROR_SEARCH_OBJECT = "Error.HistoryObjectSearchFailed";
+    public static final String ERROR_SEARCH_AUTHOR = "Error.HistoryAuthorSearchFailed";
+    public static final String ERROR_PROCESS = "Error.HistoryProcessResultsFailed";
+    public static final String ERROR_UPDATE = "Error.HistoryUpdateResultsFailed";
+    public static final String ERROR_DELETE = "Error.HistoryDeleteResultsFailed";  
+    public static final String ERROR_CLEAR_DATABASE = "Error.HistoryClearDatabase";
+    public static final String ERROR_CLEAR_HISTORY = "Error.HistoryClearHistory";
+    public static final String ERROR_PARSE_DATE = "Error.HistoryParseData";
+    public static final String ERROR_NUMBER_ROWS = "Error.HistoryGetNumberRows";
+    public static final String ERROR_NO_RIGHTS = "Error.HistoryNoRights"; 
+    public static final String ERROR_TRANSACTION = "Error.TransactionRaceConditions";    
+    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
+    
     /**
      * Creates a new instance of History - history of Occurrences, Habitats, Authors, 
      * Publications, Metadata, Territories, Phytochorions, Villages
@@ -181,9 +184,10 @@ public class History extends Observable {
 			       //Process results of a search "edit" query 
 			       processResult(1,DEFAULT_DISPLAY_ROWS);			       		      
     			}catch (Exception e) {
-    				logger.error("Initialize of Record History failed. caught in History. Details: "+e.getMessage());
+    				logger.error("Initialize of Record History failed. Exception caught in History. Details: "+e.getMessage());
     				throw e;
-    			}    			
+    			}        	
+    			setInfoFinishedTask(true);
     			return null;
     		}
 	    };
@@ -205,8 +209,9 @@ public class History extends Observable {
     		   } catch (Exception e) {
     			   logger.error("Initialize of Whole History failed. caught in History. Details: "+e.getMessage());
    				   throw e;
-    		   }
-    			return null;
+    		   }    
+    		   setInfoFinishedTask(true);
+    		   return null;
     		}
     	};
 	    return task;
@@ -1522,7 +1527,8 @@ public class History extends Observable {
 		        } 
 		        database.commitTransaction();	    	
 		    	//Create array of editing object and call notifyObservers
-		        informMethod(editType);	    		    	        
+		        informMethod(editType);
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -1832,7 +1838,8 @@ public class History extends Observable {
                     throw e;                     
 		       	    
 		        } 
-		        database.commitTransaction(); 
+		        database.commitTransaction();
+		        setInfoFinishedTask(true);
 		        return null;
     		}
     	};
@@ -1873,6 +1880,15 @@ public class History extends Observable {
         }   
         return false;
     }
+    
+    /**
+	 * Operation load, add, update or delete history data is finished successful. 
+	 * We must inform observers so that they can update their data.
+	 */
+    private void announce(Object event) {
+        this.setChanged();
+        this.notifyObservers( event );
+     }
             
      //***************************//
     //****Init Hashtable*********//
@@ -2020,6 +2036,22 @@ public class History extends Observable {
     public RemoteException getRemoteEx() {
         return this.remoteEx;
     }  
+    
+    /** 
+     *  Set true if operation in separate thread using the Task class was successful
+     *  @param true if operation in separate thread using the Task class was successful, false in other ways
+     */ 
+    public void setInfoFinishedTask(boolean finishedTask) {
+    	this.finishedTask = finishedTask;
+    }
+    
+    /**
+     * Get true if operation in separate thread using the Task class was successful, false in other ways
+     * @return true if operation in separate thread using the Task class was successful, false in other ways
+     */
+    public boolean isFinishedTask() {
+    	return this.finishedTask;
+    }
     
     /**
      * Get information about selecting of all record

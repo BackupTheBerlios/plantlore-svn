@@ -55,7 +55,23 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
      public void setAddForm() {
          operationButton.setText(L10n.getString("MetadataManager.ButtonAdd"));         
          dateCreateText.setVisible(false);
-         dateModifiedText.setVisible(false);         
+         dateModifiedText.setVisible(false);  
+         technicalContactNameText.setText("");
+         technicalContactEmailText.setText("");
+         technicalContactAddressText.setText("");
+         contentContactNameText.setText("");
+         contentContactEmailText.setText("");
+         contectContactAddressText.setText("");
+         dataSetTitleText.setText("");
+         dataSetDetailsText.setText("");
+         sourceInstirutionIdText.setText("");
+         sourceIdText.setText("");
+         abbrevText.setText("");
+         dateCreateText.setText("");
+         dateModifiedText.setText("");
+         recordbasisText.setText("");
+         biotopetextText.setText("");  
+         createDateChooser.setDate(new Date());
      }
      
      /**

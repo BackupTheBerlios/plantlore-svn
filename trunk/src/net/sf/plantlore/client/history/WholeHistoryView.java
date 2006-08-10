@@ -260,7 +260,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
      *  @param message Message we want to display
      */
     public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
+        JOptionPane.showMessageDialog(this, L10n.getString(message), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
     }  
     
     /**

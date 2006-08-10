@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.HistoryTableModel;
+import net.sf.plantlore.client.user.AddEditUserView;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultProgressBar;
@@ -40,6 +41,12 @@ public class MetadataManagerCtrl {
     private MetadataManager model;
     /** View of MetadataManager MVC */
     private MetadataManagerView view;
+    /** View of add dialog */
+    private AddEditMetadataView addView;
+    /** View of edit dialog */
+    private AddEditMetadataView editView;
+    /** View of details dialog */
+    private AddEditMetadataView detailView;
     
     /** Creates a new instance of MetadataManagerCtrl 
      *  @param model model of the MetadataManager MVC
@@ -83,19 +90,7 @@ public class MetadataManagerCtrl {
         view.sourceInstitutionIdText.addKeyListener(escapeKeyPressed);           
         view.sourceIdText.addKeyListener(escapeKeyPressed);
         view.dataSetTitleText.addKeyListener(escapeKeyPressed);
-        view.addKeyListener(escapeKeyPressed);        
-        
-        //Search metadata
-        Task task = model.searchMetadata(true);
-        
-        new DefaultProgressBar(task, view, true) {		   							 						
-        	@Override
-        	public void afterStopping() {
-				//Process result and Update view dialog
-		        reloadData(1, model.getDisplayRows());		        		        
-           } 		   					
-		};			                   	                   
-        task.start();                                       
+        view.addKeyListener(escapeKeyPressed);                   
     }   
     
     /**
@@ -252,18 +247,23 @@ public class MetadataManagerCtrl {
            //set information abut selected operation ADD
            model.setOperation("ADD");           
            //create and open Add dialog
-           AddEditMetadataView addView = new AddEditMetadataView(model, view,true);
-           new AddEditMetadataCtrl(addView, model);
+           if ( addView == null ) {
+	           addView = new AddEditMetadataView(model, view,true);
+	           new AddEditMetadataCtrl(addView, model);
+           }
            addView.setAddForm();
            addView.setVisible(true); 
            //User press button close
            if (model.usedClose()) return;
+           model.setUsedClose(true);        	
            //save new record Metadata into database
            Task task = model.addMetedataRecord();
            
            new DefaultProgressBar(task, view, true) {		   							 
    			@Override
    			public void afterStopping() {
+   				   if (! model.isFinishedTask()) return;
+				   model.setInfoFinishedTask(false);
     			   //load metadata
     	           model.searchMetadata(false);
     	           if (model.isError()) {
@@ -298,8 +298,10 @@ public class MetadataManagerCtrl {
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1;  
                model.setMetadataRecord(resultNumber);
                //Create edit dialog
-               AddEditMetadataView editView = new AddEditMetadataView(model, view,true);
-               new AddEditMetadataCtrl(editView, model);
+               if (editView == null) {
+	               editView = new AddEditMetadataView(model, view,true);
+	               new AddEditMetadataCtrl(editView, model);
+               }
                //Load data and setting of edit dialog
                editView.loadData();                              
                editView.setEditForm();               
@@ -312,6 +314,8 @@ public class MetadataManagerCtrl {
                new DefaultProgressBar(task, view, true) {
             	   @Override
           			public void afterStopping() {
+            		   if (! model.isFinishedTask()) return;
+					   model.setInfoFinishedTask(false);
           			   //load metadata          				
                         if (model.isError()) return;
                         view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
@@ -343,12 +347,14 @@ public class MetadataManagerCtrl {
                int resultNumber = view.tableMetadataList.getSelectedRow() + model.getCurrentFirstRow()-1;  
                model.setMetadataRecord(resultNumber);
                //Create detail dialog
-               AddEditMetadataView detailsView = new AddEditMetadataView(model, view,true);
-               new AddEditMetadataCtrl(detailsView, model);
+               if (detailView == null ){
+	               detailView = new AddEditMetadataView(model, view,true);
+	               new AddEditMetadataCtrl(detailView, model);
+               }
                //Load data and setting of detail dialog
-               detailsView.loadData();               
-               detailsView.setDetailsForm();
-               detailsView.setVisible(true); 
+               detailView.loadData();               
+               detailView.setDetailsForm();
+               detailView.setVisible(true); 
                model.setUsedClose(false);
            }          
        }
@@ -390,6 +396,8 @@ public class MetadataManagerCtrl {
 		             new DefaultProgressBar(task, view, true) {		   								  		   				
 						@Override						
                         public void afterStopping() {
+							if (! model.isFinishedTask()) return;
+							model.setInfoFinishedTask(false);
                            // load metadata
 		   	               model.searchMetadata(false);  
 		   	               if (model.isError()) {
@@ -434,6 +442,8 @@ public class MetadataManagerCtrl {
            new DefaultProgressBar(task, view, true) {		   								  			
 			   @Override 
         	   public void afterStopping() {
+				   if (! model.isFinishedTask()) return;
+				   model.setInfoFinishedTask(false);
 					if (model.getDisplayRows() <= 0) {
 		               model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
 		           }

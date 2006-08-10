@@ -39,6 +39,8 @@ public class MetadataManager  extends Observable {
     private String error = null;
     /** Remote exception (network communication failed)*/
     private RemoteException remoteEx;
+    /** True if MyTask finished successful*/
+    private boolean  finishedTask = false;
     /** Constant with default number of rows to display */
     public static final int DEFAULT_DISPLAY_ROWS = 14;    
     /** Actual number of rows to display */
@@ -115,7 +117,7 @@ public class MetadataManager  extends Observable {
         
        logger = Logger.getLogger(this.getClass().getPackage().getName());	 
        this.database = database;             
-    }
+    }        
     
      /**
      *  Search for metadata in the database. Operation might be executed in a separate thread using the Task class (depends
@@ -145,6 +147,7 @@ public class MetadataManager  extends Observable {
 		                dbex.setStackTrace(e.getStackTrace());
 		                throw dbex; 		           
 			        }			
+			        setInfoFinishedTask(true);
                     return null;			        
 				}
 		    };
@@ -389,7 +392,8 @@ public class MetadataManager  extends Observable {
 		        } 		       
 		        //Tell AppCore observerber
 		        setChanged(); 
-		        notifyObservers(editTypeArray);			        
+		        notifyObservers(editTypeArray);	
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -424,7 +428,8 @@ public class MetadataManager  extends Observable {
 		        } 		        
 		        //Tell AppCore observerber
 		        setChanged(); 
-		        notifyObservers(editTypeArray);		    		    		    	       
+		        notifyObservers(editTypeArray);	
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -459,7 +464,8 @@ public class MetadataManager  extends Observable {
 		        } 			        
 		        //Tell AppCore observerber
 		        setChanged(); 
-		        notifyObservers(editTypeArray);		    		    		    	       
+		        notifyObservers(editTypeArray);		
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -514,6 +520,22 @@ public class MetadataManager  extends Observable {
         return this.remoteEx;
     }  
     
+    /** 
+     *  Set true if operation in separate thread using the Task class was successful
+     *  @param true if operation in separate thread using the Task class was successful, false in other ways
+     */ 
+    public void setInfoFinishedTask(boolean finishedTask) {
+    	this.finishedTask = finishedTask;
+    }
+    
+    /**
+     * Get true if operation in separate thread using the Task class was successful, false in other ways
+     * @return true if operation in separate thread using the Task class was successful, false in other ways
+     */
+    public boolean isFinishedTask() {
+    	return this.finishedTask;
+    }
+    
     /**
      * Set true if addEdit dialog was closed by CLOSE button
      * @param usedClose containing information about closing the addEdit dialog
@@ -527,11 +549,7 @@ public class MetadataManager  extends Observable {
      * @return true if addEdit dialog was closed by CLOSE button
      */
     public boolean usedClose() {
-    	if (this.usedClose == true) {
-    		usedClose = false;
-    		return true;
-    	}
-    	return false;
+    	return this.usedClose;
     }
     
     

@@ -228,6 +228,8 @@ public class WholeHistoryCtrl {
 		   					public void afterStopping() {
 		   						logger.debug("Load Data");	   
 		   						try {
+		   						   if (! model.isFinishedTask()) return;
+		   						   model.setInfoFinishedTask(false);	
 		   						   model.searchWholeHistoryData();
 		   						   reloadData(1,model.getDisplayRows());
 		   						   view.setCountResult(model.getResultRows());

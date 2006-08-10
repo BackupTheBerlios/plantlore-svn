@@ -12,8 +12,6 @@ import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-
-import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.l10n.L10n;
@@ -67,7 +65,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
     	  model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
           model.setCurrentFirstRow(1);
     	  previousButton.setEnabled(false);
-    	  nextButton.setEnabled(true);
+    	  nextButton.setEnabled(true);    	   	  
           if (MetadataManager.DEFAULT_DISPLAY_ROWS >= model.getResultRows()) {
           	nextButton.setEnabled(false);
           }
@@ -76,7 +74,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
           sortButtonGroup.setSelected(sortAscendingRadioButton.getModel(), true);
           this.tableMetadataList.setRowSelectionAllowed(true);
           this.tableMetadataList.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
-          this.tableMetadataList.setModel(new MetadataManagerTableModel(model));
+          this.tableMetadataList.setModel(new MetadataManagerTableModel(model));          
           totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());
           toDisplayValueTextField.setText(((Integer)model.getDisplayRows()).toString());
           displayedValueLabel.setText(model.getCurrentDisplayRows());

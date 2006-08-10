@@ -1236,11 +1236,22 @@ public class AppCoreCtrl {
 		public void actionPerformed(ActionEvent actionEvent) {
 			System.out.println("UserManager");
 
-			userManagerModel = new UserManager(model.getDatabase());
-			userManagerView = new UserManagerView(userManagerModel, view, true);
-			userManagerCtrl = new UserManagerCtrl(userManagerModel,
-					userManagerView);
-			userManagerView.setVisible(true);
+			if (userManagerModel == null) {
+				userManagerModel = new UserManager(model.getDatabase());
+				userManagerView = new UserManagerView(userManagerModel, view, true);
+				userManagerCtrl = new UserManagerCtrl(userManagerModel,userManagerView);
+			}
+			Task task = userManagerModel.searchUser(true);
+			new DefaultProgressBar(task, view, true) {
+				@Override
+	 	    	public void afterStopping() {
+					if (! userManagerModel.isFinishedTask()) return;
+					userManagerModel.setInfoFinishedTask(false);
+					userManagerCtrl.reloadData(1, UserManager.DEFAULT_DISPLAY_ROWS);
+					userManagerView.setVisible(true);						
+	 	    	}
+			};			
+			task.start();					
 		}
 	}
 
@@ -1266,11 +1277,13 @@ public class AppCoreCtrl {
 				historyModel.addObserver(managerBridge);
 			}
 			Task task = historyModel.initialize(model.getSelectedOccurrence());
-			new DefaultProgressBar(task, historyView, true) {
+			new DefaultProgressBar(task, view, true) {
 				@Override
 	 	    	public void afterStopping() {
+					if (! historyModel.isFinishedTask()) return;
+					historyModel.setInfoFinishedTask(false);
 					historyView.setVisible(true);						
-	 	    	}
+	 	    	}				
 			};			
 			task.start();							
 		}
@@ -1291,19 +1304,18 @@ public class AppCoreCtrl {
 				wholeHistoryModel.addObserver(managerBridge);
 			}
 			Task task = wholeHistoryModel.initializeWH();
-			new DefaultProgressBar(task, wholeHistoryView, true) {
+			new DefaultProgressBar(task, view, true) {
 				@Override
-	 	    	public void afterStopping() {						
+	 	    	public void afterStopping() {	
+					if (! wholeHistoryModel.isFinishedTask()) return;
+					wholeHistoryModel.setInfoFinishedTask(false);
 					wholeHistoryView.setVisible(true);
 	 	    	}
 			};			
 			task.start();							
 		}
 	}
-
-	/*
-	 * 
-	 */
+	
 	class DataMetadataAction extends AbstractAction {
 		public DataMetadataAction() {
 			putValue(NAME, L10n.getString("metadataManager"));
@@ -1315,22 +1327,22 @@ public class AppCoreCtrl {
 			System.out.println("Metadata Manager");
 
 			if (metadataManagerModel == null) {
-				metadataManagerModel = new MetadataManager(model.getDatabase());
-				if (metadataManagerModel.isError()) {
-					//DefaultReconnectDialog.show(view, metadataManagerModel.getError());
-					JOptionPane.showMessageDialog(view, metadataManagerModel.getError(), L10n.getString("Error.MetadataCreateDialog"),
-							JOptionPane.WARNING_MESSAGE);									
-				} else {					
-					metadataManagerView = new MetadataManagerView(metadataManagerModel,
-							view, true);
-					metadataManagerCtrl = new MetadataManagerCtrl(metadataManagerModel,
-							metadataManagerView);
-					metadataManagerModel.addObserver(managerBridge);
-					metadataManagerView.setVisible(true);
-				}
-			} else {
-				metadataManagerView.setVisible(true);
+				metadataManagerModel = new MetadataManager(model.getDatabase());								
+				metadataManagerView = new MetadataManagerView(metadataManagerModel,	view, true);
+				metadataManagerCtrl = new MetadataManagerCtrl(metadataManagerModel,metadataManagerView);
+				metadataManagerModel.addObserver(managerBridge);								
 			}
+			Task task = metadataManagerModel.searchMetadata(true);
+			new DefaultProgressBar(task, view, true) {
+				@Override
+	 	    	public void afterStopping() {	
+					if (! metadataManagerModel.isFinishedTask()) return;
+					metadataManagerModel.setInfoFinishedTask(false);
+					metadataManagerCtrl.reloadData(1, MetadataManager.DEFAULT_DISPLAY_ROWS);
+					metadataManagerView.setVisible(true);
+	 	    	}
+			};			
+			task.start();						
 		}
 	}
 

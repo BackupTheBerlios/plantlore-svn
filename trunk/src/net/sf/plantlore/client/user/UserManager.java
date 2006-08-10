@@ -41,8 +41,10 @@ public class UserManager extends Observable {
     private String error = null;
     /** Remote exception (network communication failed)*/
     private RemoteException remoteEx;
+    /** True if MyTask finished successful*/
+    private boolean  finishedTask = false;
     /** Constant with default number of rows to display */
-    protected static final int DEFAULT_DISPLAY_ROWS = 6;    
+    public static final int DEFAULT_DISPLAY_ROWS = 12;    
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;   
     /** Index of the first record shown in the table */
@@ -169,7 +171,8 @@ public class UserManager extends Observable {
 		                DBLayerException dbex = new DBLayerException(ERROR_SEARCH + e.getMessage());
 		                dbex.setStackTrace(e.getStackTrace());
 		                throw dbex; 		           
-			        }					       
+			        }		
+			        setInfoFinishedTask(true);
                     return null;			        
 				}
 		    };
@@ -347,7 +350,8 @@ public class UserManager extends Observable {
                     DBLayerException dbex = new DBLayerException(ERROR_ADD + e);
                     dbex.setStackTrace(e.getStackTrace());
                     throw dbex; 		            
-		        } 		       		       					        
+		        } 	
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -391,6 +395,7 @@ public class UserManager extends Observable {
                     throw dbex; 		            
 		        } 	
 		        database.commitTransaction();
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -424,7 +429,8 @@ public class UserManager extends Observable {
                     DBLayerException dbex = new DBLayerException(ERROR_DELETE + e.getMessage());
                     dbex.setStackTrace(e.getStackTrace());
                     throw dbex; 		            
-		        } 			        		      			        
+		        } 		
+		        setInfoFinishedTask(true);
 		        return null;
     		}
 	    };
@@ -613,6 +619,22 @@ public class UserManager extends Observable {
         return this.remoteEx;
     }  
     
+    /** 
+     *  Set true if operation in separate thread using the Task class was successful
+     *  @param true if operation in separate thread using the Task class was successful, false in other ways
+     */ 
+    public void setInfoFinishedTask(boolean finishedTask) {
+    	this.finishedTask = finishedTask;
+    }
+    
+    /**
+     * Get true if operation in separate thread using the Task class was successful, false in other ways
+     * @return true if operation in separate thread using the Task class was successful, false in other ways
+     */
+    public boolean isFinishedTask() {
+    	return this.finishedTask;
+    }
+    
     /**
      * Set true if addEdit dialog was closed by CLOSE button
      * @param usedClose containing information about closing the addEdit dialog
@@ -626,11 +648,7 @@ public class UserManager extends Observable {
      * @return true if addEdit dialog was closed by CLOSE button
      */
     public boolean usedClose() {
-    	if (this.usedClose == true) {
-    		usedClose = false;
-    		return true;
-    	}
-    	return false;
+    	return this.usedClose;
     }
     
     /**

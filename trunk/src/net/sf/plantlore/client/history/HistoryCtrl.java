@@ -213,6 +213,8 @@ public class HistoryCtrl {
 							@Override
 		   					public void afterStopping() {
 								try {
+								   if (! model.isFinishedTask()) return;
+								   model.setInfoFinishedTask(false);	
 			   					   model.searchEditHistory(model.getData());
 			   					   reloadData(1,model.getDisplayRows());			   	            	          
 			   	                   view.setCountResutl(model.getResultRows());
