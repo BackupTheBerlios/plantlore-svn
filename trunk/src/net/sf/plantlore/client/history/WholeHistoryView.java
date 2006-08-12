@@ -83,6 +83,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
      */
     public void setVisible(boolean visible) {
     	if (visible) initialize();
+    	else model.closeQuery();
     	super.setVisible(visible);
     }
     

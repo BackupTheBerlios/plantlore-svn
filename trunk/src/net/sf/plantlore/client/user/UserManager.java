@@ -37,6 +37,8 @@ public class UserManager extends Observable {
     private Logger logger;      
     /** Instance of a database management object */
     private DBLayer database;   
+    /**Select query */
+    private SelectQuery query = null;
     /** Exception with details about an error */
     private String error = null;
     /** Remote exception (network communication failed)*/
@@ -202,7 +204,11 @@ public class UserManager extends Observable {
      */
     private int search() throws DBLayerException, RemoteException {           
         //Create new Select query
-        SelectQuery query = null;   
+    	if (query != null) {
+    		logger.debug("UserManager - close query.");
+    		database.closeQuery(query);
+    		query = null;
+    	}    	 
         int resultId = 0;
 
     	//  Select data from tUser table        
@@ -497,6 +503,18 @@ public class UserManager extends Observable {
         return userLogin.contains(login);
     }
     
+    /**
+     * Close query.    
+     */    
+    public void closeQuery() {
+    	if(query != null) try {
+		      database.closeQuery(query);
+		      query = null;
+		} catch(RemoteException e) {
+			// Never mind.
+		}
+    }
+    
     //****************************//
     //****Get and set metods*****//
     //**************************//
@@ -509,6 +527,14 @@ public class UserManager extends Observable {
    // public void setEditGroup(ArrayList<String> userLogin) {       
     //    this.userLogin = userLogin;
     //}
+    
+    /**
+	 * Set a new DBLayer.
+	 */
+	synchronized public void setDBLayer(DBLayer dblayer) {
+		closeQuery();
+		database = dblayer;
+	}
     
     /** 
      * Create and get list of names of users which have right to edit records created by specific user     

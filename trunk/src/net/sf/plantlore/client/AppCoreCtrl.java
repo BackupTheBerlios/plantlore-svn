@@ -1663,7 +1663,14 @@ public class AppCoreCtrl {
 				  -------------------------------------------------------------------*/
 				if( exportModel2 != null )
 					exportModel2.setDBLayer( dblayer );
-				
+				if (historyModel != null ) 
+					historyModel.setDBLayer( dblayer );			
+				if (wholeHistoryModel != null ) 
+					wholeHistoryModel.setDBLayer( dblayer );
+				if (userManagerModel != null )
+					userManagerModel.setDBLayer( dblayer );
+				if (metadataManagerModel != null )
+					metadataManagerModel.setDBLayer( dblayer );							
 			}
 		}
 	}

@@ -35,6 +35,8 @@ public class MetadataManager  extends Observable {
     private Logger logger;      
     /** Instance of a database management object */
     private DBLayer database;   
+    /**Select query */
+    private SelectQuery query = null;
     /** Exception with details about an error */
     private String error = null;
     /** Remote exception (network communication failed)*/
@@ -177,7 +179,11 @@ public class MetadataManager  extends Observable {
      */
     private int search() throws DBLayerException, RemoteException {
     	// Create new Select query
-        SelectQuery query = null;
+    	if (query != null) {
+    		logger.debug("MetadataManager - close query.");
+    		database.closeQuery(query);
+    		query = null;
+    	}    	
         
         query = database.createQuery(Metadata.class);    
         //Add restrictions
@@ -471,10 +477,30 @@ public class MetadataManager  extends Observable {
 	    };
 	    return task;
     } 
+    
+    /**
+     * Close query.    
+     */    
+    public void closeQuery() {
+    	if(query != null) try {
+		      database.closeQuery(query);
+		      query = null;
+		} catch(RemoteException e) {
+			// Never mind.
+		}
+    }
     	
     //****************************//
     //****Get and set metods*****//
     //**************************//
+    
+    /**
+	 * Set a new DBLayer.
+	 */
+	synchronized public void setDBLayer(DBLayer dblayer) {
+		closeQuery();
+		database = dblayer;
+	}
     
     /**
      *  Set an error flag.
