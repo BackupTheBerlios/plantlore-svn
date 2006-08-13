@@ -176,7 +176,9 @@ public abstract class Record implements Serializable {
 	 * @param value	The new value.
 	 */
 	@SuppressWarnings("unused")
-	public void setValue(String column, Object value) {}
+	public void setValue(String column, Object value) {
+		throw new Error(" This code shall not be executed. You must either override it or leave it! ");
+	}
 	
 	/**
 	 * Replace certain <code>columns</code> 
@@ -345,7 +347,7 @@ public abstract class Record implements Serializable {
 			s.setCharAt(3, Character.toUpperCase(s.charAt(3)));
 			// Take it. 
 			return table.getMethod( s.toString(), new Class[0] );
-		} catch(NoSuchMethodException e) {}
+		} catch(NoSuchMethodException e) {/* Nothing we can do.. */}
 		return null;
 	}
 	

@@ -32,8 +32,17 @@ public class MemoryMonitor extends javax.swing.JFrame {
         	private Thread update = new Thread() {
             	public void run() {
             		float total = Runtime.getRuntime().totalMemory() / (1024.0f*1024.0f);
-                	progress.setValue( (int)total );
-                	progress.setString(Float.toString( Math.round(total*10) / 10.0f ) + "MB");
+            		progress.setMaximum( (int)total );
+            		
+            		float free = Runtime.getRuntime().freeMemory() / (1024.0f*1024.0f);
+                	progress.setValue( (int)(total - free) );
+                	
+                	progress.setString(
+                			"Using " +
+                			Float.toString( Math.round((total - free)*10) / 10.0f ) + "MB of " +   
+                			Float.toString( Math.round(total*10) / 10.0f ) + "MB ( " +
+                			Integer.toString( (int)(100*(total - free) / total) ) +"% )"
+                	);
             	}
             };
             
