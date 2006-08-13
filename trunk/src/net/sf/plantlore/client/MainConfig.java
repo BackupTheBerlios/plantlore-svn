@@ -43,7 +43,8 @@ public class MainConfig {
     private ArrayList<Column> columns = null;
     private ArrayList<DBInfo> dbinfos = null;
     private DBInfo selected = null;
-    private boolean selectAutomatically = false; 
+    private boolean selectAutomatically = false;
+    private String codebase;
     
     /** Creates a new instance of MainConfigParser */
     public MainConfig(String file) throws DocumentException {
@@ -100,11 +101,24 @@ public class MainConfig {
         return columns;
     }
     
+    public String getCodebase() {
+    	Node codebaseNode = document.selectSingleNode("//config/codebase");
+    	if(codebaseNode == null)
+    		codebase = null;
+    	else
+    		codebase = codebaseNode.getText();
+    	return codebase;
+    }
+    
+    
+    private boolean isEmpty(String s) {
+    	return s == null || s.length() <= 0;
+    }
+    
     public ArrayList<DBInfo> getDBinfos() {
     	ArrayList<DBInfo> result = new ArrayList<DBInfo>();
     	
-    	String alias, host, databaseType, databaseIdentifier, 
-    	databaseParameter, masterUser, masterPassword;
+    	String alias, host, databaseType, databaseIdentifier, databaseParameter;
     	String[] users;
     	int port, databasePort;
     	
@@ -122,8 +136,7 @@ public class MainConfig {
     	Iterator it = columnList.iterator();
     	while (it.hasNext()) {
     		
-    		alias = host = databaseType = databaseIdentifier = 
-    			databaseParameter = masterUser = masterPassword = "";
+    		alias = host = databaseType = databaseIdentifier = databaseParameter = "";
     		port = RMIServer.DEFAULT_PORT; databasePort = -1;
     		
     		Node n = (Node)it.next();
@@ -143,23 +156,28 @@ public class MainConfig {
     			Number databasePortNumber = database.numberValueOf("port");
     			databasePort = ( databasePortNumber == null ? -1 : databasePortNumber.intValue() );
     			databaseParameter = database.valueOf("parameter");
-    			masterUser = database.valueOf("masteruser");
-    			masterPassword = database.valueOf("masterpassword");
     		}
     		else
-    			continue; // incomplete record (databaseType, databasePort, databaseIdentifier are obligatory).
+    			continue; // incomplete record
     		
-    		if(databasePort < 0)
-    			continue; // corrupted record (databasePort is obligatory).
+    		// Ommit corrupted records (records that miss some parts).
+    		if( host == null || host.length() <= 0 ) {
+    			if(isEmpty(databaseType) || isEmpty(databaseIdentifier) || databasePort <= 0) 
+    				continue;
+    		} // This { } block is necessary! The condition would mean something else otherwise!!!
+    		else {
+    			if(isEmpty(host) || isEmpty(databaseIdentifier) || port <= 0)
+    				continue;
+    		}
     		
-    		if(alias == null || alias.length() == 0) {
+    		if( isEmpty(alias) ) {
     			unnamedDatabase++;
-    			alias = "Database " + unnamedDatabase;
+    			alias = "DB " + unnamedDatabase;
     		}
     		
     		// The list of stored users. 
     		List userList = n.selectNodes("user");
-    		users = new String[ Login.MAX_NAMES /*userList.size()*/ ];
+    		users = new String[ Login.MAX_NAMES ];
     		Node user = null;
     		Iterator it2 = userList.iterator(); 
     		int i = 0;
@@ -173,13 +191,12 @@ public class MainConfig {
     		DBInfo dbi = new DBInfo(
     				alias, host, port, 
     				databaseType, databasePort, databaseIdentifier, databaseParameter, 
-    				users, masterUser, masterPassword );
+    				users );
     		
     		if( n instanceof Element ) {
     			Attribute attr = ((Element)n).attribute("selected");
     			if(attr != null && "true".equalsIgnoreCase(attr.getValue()) ) {
     				selected = dbi;
-    				System.out.println("SELECTED = " + dbi);
     			}
     		}
     		
@@ -245,32 +262,30 @@ public class MainConfig {
             
             // Server settings.
             Element triplet = login.addElement("triplet");
-            
             if(dbi == selected)
             	triplet.addAttribute("selected", "true");
             
-            if (dbi.getAlias() != null)
-                triplet.addElement("alias").setText(dbi.getAlias());
-            if (dbi.getHost() != null)
-                triplet.addElement("host").setText(dbi.getHost());
-            if(dbi.getPort() > 0)
-            	triplet.addElement("port").setText("" + dbi.getPort());
-            
-            // Database settings.
-            Element database = triplet.addElement("database");
-            if (dbi.getDatabaseType() != null)
-                database.addElement("engine").setText(dbi.getDatabaseType());
-            if(dbi.getDatabaseIdentifier() != null)
+            if( dbi.getHost() == null || dbi.getHost().length() <= 0) {
+            	// Local database - direct connection
+            	triplet.addElement("alias").setText(dbi.getAlias());
+            	
+            	Element database = triplet.addElement("database");
+            	database.addElement("engine").setText(dbi.getDatabaseType());
             	database.addElement("identifier").setText(dbi.getDatabaseIdentifier());
-            if(dbi.getDatabasePort() > 0)
             	database.addElement("port").setText("" + dbi.getDatabasePort());
-            if(dbi.getDatabaseParameter() != null)
-            	database.addElement("parameter").setText(dbi.getDatabaseParameter());
-            if(dbi.getMasterUser() != null)
-            	database.addElement("masteruser").setText(dbi.getMasterUser());
-            if(dbi.getMasterPassword() != null)
-            	database.addElement("masterpassword").setText(dbi.getMasterPassword());
-            
+            	if(dbi.getDatabaseParameter() != null)
+                	database.addElement("parameter").setText(dbi.getDatabaseParameter());
+            }
+            else {
+            	// Remote database - connection via the server
+            	triplet.addElement("alias").setText(dbi.getAlias());
+                triplet.addElement("host").setText(dbi.getHost());
+                triplet.addElement("port").setText("" + dbi.getPort());
+                
+                Element database = triplet.addElement("database");
+                database.addElement("identifier").setText(dbi.getDatabaseIdentifier());
+            }
+            	
             // Regular users of the database.
             String[] usrs = dbi.getUsers();
             for (int u = 0; u < usrs.length; u++) {

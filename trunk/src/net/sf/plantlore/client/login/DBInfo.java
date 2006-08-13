@@ -22,8 +22,6 @@ public class DBInfo {
 	protected String databaseIdentifier;
 	protected String databaseParameter;
 	protected String[] users;
-	protected String masterUser;
-	protected String masterPassword;
 	
 	/**
 	 * Pick a user. The selected name will be moved to the start of the list.
@@ -50,11 +48,10 @@ public class DBInfo {
 	
 	public DBInfo clone() {
 		return new DBInfo(
-				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter,
-				users, masterUser, masterPassword );
+				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter, users );
 	}
 
-	public DBInfo(String alias, String host, int port, String databaseType, int databasePort, String databaseIdentifier, String databaseParameter, String[] users, String masterUser, String masterPassword) {
+	public DBInfo(String alias, String host, int port, String databaseType, int databasePort, String databaseIdentifier, String databaseParameter, String[] users) {
 		this.alias = alias;
 		this.host = host;
 		this.port = port;
@@ -63,8 +60,6 @@ public class DBInfo {
 		this.databaseIdentifier = databaseIdentifier;
 		this.databaseParameter = databaseParameter;
 		this.users = users;
-		this.masterUser = masterUser;
-		this.masterPassword = masterPassword;
 	}
 
 	
@@ -90,14 +85,6 @@ public class DBInfo {
 
 	public String getHost() {
 		return host;
-	}
-
-	public String getMasterPassword() {
-		return masterPassword;
-	}
-
-	public String getMasterUser() {
-		return masterUser;
 	}
 
 	public int getPort() {

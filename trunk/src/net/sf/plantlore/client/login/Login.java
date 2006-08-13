@@ -117,13 +117,11 @@ public class Login extends Observable {
 			String databaseType, 
 			int databasePort, 
 			String databaseIdentifier, 
-			String databaseParameter, 
-			String masterUser, 
-			String masterPassword ) {
+			String databaseParameter) {
 
 		DBInfo r = new DBInfo(
 				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter,
-				new String[MAX_NAMES], masterUser, masterPassword );
+				new String[MAX_NAMES] );
 		dbinfos.add(r);
 		logger.debug("New database record has been created " + r);
 		save();
@@ -158,9 +156,7 @@ public class Login extends Observable {
 			String databaseType, 
 			int databasePort, 
 			String databaseIdentifier, 
-			String databaseParameter, 
-			String masterUser, 
-			String masterPassword ) {
+			String databaseParameter ) {
 
 		if(selected == null) return;
 		
@@ -171,8 +167,6 @@ public class Login extends Observable {
 		selected.databasePort = databasePort ;
 		selected.databaseIdentifier = databaseIdentifier ;
 		selected.databaseParameter = databaseParameter; 
-		selected.masterUser = masterUser;
-		selected.masterPassword = masterPassword;
 		
 		save();
 		logger.debug("The selected record has been updated " + selected);
@@ -380,6 +374,9 @@ public class Login extends Observable {
 			} 
 			catch (Exception e) {
 				logger.error("The initialization of the DBLayer failed! " + e.getMessage());
+				
+				e.printStackTrace();
+                                
 				// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 				// Otherwise, the server's policy may not allow another connection from this client!
 				if(dblayer != null)

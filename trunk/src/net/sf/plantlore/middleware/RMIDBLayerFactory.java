@@ -13,6 +13,7 @@ import net.sf.plantlore.server.DatabaseSettings;
 import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
+import net.sf.plantlore.server.tools.RMI;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
 
@@ -49,8 +50,10 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	
 	
 	/** Create a new instance of DBLayerFactory. */
-	public RMIDBLayerFactory() {
-		// Empty constructor
+	public RMIDBLayerFactory(String codebase) {
+		if(codebase == null)
+			logger.warn("The codebase may not have been set! This may cause serious problems when trying to connect to a remote database! It is imperative you make sure the codebase is set properly!!");
+		net.sf.plantlore.server.tools.RMI.addToCodebase( codebase );
 	}
 	
 	
@@ -73,7 +76,8 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 		// Some exceptional cases are handled specially.
 		String host = settings.getHost();
 		
-		if(host == null || host.equals("") || host.equalsIgnoreCase("localhost")) {
+		// ~~~ LOCAL CONNECTION ~~~
+		if(host == null || host.equals("") /*|| host.equalsIgnoreCase("localhost")*/) {
 			
 			DatabaseSettings dbSettings = new DatabaseSettings(
 					settings.getDatabaseType(),
@@ -89,24 +93,30 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 			
 			return db;
 		}
+
+		// Perform a simple check.
+		String codebase = System.getProperty(RMI.PROPERTY_CODEBASE); 
+		if( codebase  == null || codebase.length() == 0)
+			logger.warn("The codebase is not set! It is highly likely it will be impossible obtain the remote DBLayer factory or the DBLayer!");
 		
+		// ~~~ FULL REMOTE CONNECTION ~~~
 		int port = settings.getPort();
 		
 		logger.debug("Creating a new DBLayer using the RMI:");
 		
 		// Connect to the remote server and obtain the RemoteDBLayerFactory
-		logger.debug("  connecting to the remote registry @ " + host + ":" + port +" ...");
+		logger.debug("1. Connecting to the remote registry @ " + host + ":" + port +" ...");
 		Registry registry = LocateRegistry.getRegistry(host, port);
-		logger.debug("  completed");
+		logger.debug("Connected.");
 		
-		logger.debug("  obtaining the remote dblayer factory ...");
+		logger.debug("2. Obtaining the remote dblayer factory ...");
 		RemoteDBLayerFactory remoteFactory = (RemoteDBLayerFactory) registry.lookup(RemoteDBLayerFactory.ID);
-		logger.debug("  completed");
+		logger.debug("Obtained!");
 		
 		// Get the stub from the remote factory and save the information about the connection
-		logger.debug("  creating a new dblayer...");
+		logger.debug("3. Creating a new dblayer...");
 		DBLayer stub = remoteFactory.create(); // DBLayerException can spawn here (too many users!)
-		logger.debug("  completed! :)");
+		logger.debug("Created! :)");
 		
 		ConnectionInfo info = new ConnectionInfo(remoteFactory, null, stub, "localhost -> " + host + ":" + port);
 		client.put(stub, info);
@@ -145,25 +155,6 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 		
 		// Terminate all processes within the DBLayer otherwise
 		else db.shutdown(); 
-	}
-	
-	
-	/** 
-	 * Initialize the codebase java.rmi.server.property to the specified directory or the
-	 * current working directory if the specified directory is null.
-	 * 
-	 *  @param directory	The directory that shall serve as a codebase. */
-	public static void initialize(String directory) {
-		String codebase = "file:/" + ((directory != null) ? directory : System.getProperty("user.dir")) + "/";
-		codebase = codebase.replaceAll(" ", "%20"); // to prevent the MalformedURLException
-		System.setProperty("java.rmi.server.codebase", codebase);
-		System.out.println("java.rmi.server.codebase = " + codebase);
-	}
-	
-	
-	/** Static initialization. */
-	static {
-		initialize(null);
 	}
 
 }

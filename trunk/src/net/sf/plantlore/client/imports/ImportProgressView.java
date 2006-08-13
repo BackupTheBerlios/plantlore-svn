@@ -142,6 +142,8 @@ public class ImportProgressView  extends javax.swing.JFrame implements Observer 
     	if(rejected > 0)
     		sigma.append(rejected).append(' ').append(L10n.getString("Import.RecordsRejected"));
     	
+    	sigma.append("  [" + Runtime.getRuntime().freeMemory() / (1024*1024) + " MB free]");
+    	
     	return sigma.toString();
     }
     

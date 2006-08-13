@@ -30,8 +30,6 @@ public class ItemCtrl2 {
 			view.databaseIdentifier.setText("");
 			view.databasePort.setText("");
 			view.databaseParameter.setText("");
-			view.databaseMasterUser.setText("");
-			view.databaseMasterPassword.setText("");
 			
 			view.remoteDatabaseIdentifier.setText("");
 			
@@ -79,8 +77,7 @@ public class ItemCtrl2 {
 			//-------------------------------------------------
 			case 0:
 				// Validity check...
-				String dbEngine = ((javax.swing.JTextField)view.databaseEngine.getEditor().getEditorComponent()).getText(),
-				masterPassword = new String(view.databaseMasterPassword.getPassword());
+				String dbEngine = ((javax.swing.JTextField)view.databaseEngine.getEditor().getEditorComponent()).getText();
 				int dbPort = -1;
 				try {
 					dbPort = Integer.parseInt(view.databasePort.getText());
@@ -91,8 +88,6 @@ public class ItemCtrl2 {
 				if( dbEngine.length() == 0 || 
 						view.databaseIdentifier.getText().length() == 0 ||
 						dbPort < 0 ||
-						view.databaseMasterUser.getText().length() == 0 ||
-						masterPassword.length() == 0 ||
 						view.aliasLocal.getText().length() == 0 ) {
 					// Announce the problem.
 					JOptionPane.showMessageDialog(
@@ -113,9 +108,7 @@ public class ItemCtrl2 {
 							dbEngine,
 							dbPort,
 							view.databaseIdentifier.getText(),
-							view.databaseParameter.getText(),
-							view.databaseMasterUser.getText(),
-							masterPassword
+							view.databaseParameter.getText()
 					);
 					break;
 				case EDIT:
@@ -126,9 +119,7 @@ public class ItemCtrl2 {
 							dbEngine,
 							dbPort,
 							view.databaseIdentifier.getText(),
-							view.databaseParameter.getText(),
-							view.databaseMasterUser.getText(),
-							masterPassword
+							view.databaseParameter.getText()
 					);
 					break;
 				}
@@ -167,7 +158,7 @@ public class ItemCtrl2 {
 							view.aliasRemote.getText(),
 							view.host.getText(),
 							port,
-							null, 0, view.remoteDatabaseIdentifier.getText(), null, null, null
+							null, 0, view.remoteDatabaseIdentifier.getText(), null
 					);
 					break;
 				case EDIT:
@@ -175,7 +166,7 @@ public class ItemCtrl2 {
 							view.aliasRemote.getText(),
 							view.host.getText(),
 							port,
-							null, 0, view.remoteDatabaseIdentifier.getText(), null, null, null
+							null, 0, view.remoteDatabaseIdentifier.getText(), null
 					);
 					break;
 				}

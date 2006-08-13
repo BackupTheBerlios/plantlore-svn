@@ -608,9 +608,8 @@ public class AppCoreCtrl {
 			if (tableImportModel == null) {
 				try {
 					tableImportModel = new TableImportMng(model.getDatabase());
-					tableImportCtrl = new TableImportMngCtrl(tableImportModel,
-							view);
-				} catch (ImportException e) {
+					tableImportCtrl = new TableImportMngCtrl(tableImportModel, view);
+				} catch (Exception e) {
 					logger.error("Import MVC cannot be created. "
 							+ e.getMessage());
 					return;
@@ -1495,7 +1494,9 @@ public class AppCoreCtrl {
 			// Reuse the existing dialogs, hide'em when they're no longer
 			// needed.
 			if (loginModel == null) {
-				loginModel = new Login(new RMIDBLayerFactory(), model.getMainConfig());
+				loginModel = new Login(
+						new RMIDBLayerFactory( model.getMainConfig().getCodebase() ), 
+						model.getMainConfig());
 				loginModel.addObserver(new DatabaseChange());
 				loginView = new LoginView(view, loginModel);
 				loginCtrl = new LoginCtrl(loginModel, loginView);

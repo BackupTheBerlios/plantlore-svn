@@ -45,15 +45,11 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         aliasLocal = new javax.swing.JTextField();
         databaseIdentifier = new javax.swing.JTextField();
         databasePort = new javax.swing.JTextField();
         databaseParameter = new javax.swing.JTextField();
-        databaseMasterUser = new javax.swing.JTextField();
         databaseEngine = new javax.swing.JComboBox();
-        databaseMasterPassword = new javax.swing.JPasswordField();
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -78,10 +74,6 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
 
         jLabel5.setText(L10n.getString("Login.DatabaseParameter"));
 
-        jLabel6.setText(L10n.getString("Login.MasterUser"));
-
-        jLabel7.setText(L10n.getString("Login.MasterPassword"));
-
         aliasLocal.setToolTipText(L10n.getString("Login.AliasTT"));
 
         databaseIdentifier.setToolTipText(L10n.getString("Login.DatabaseIdentifierTT"));
@@ -90,13 +82,9 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
 
         databaseParameter.setToolTipText(L10n.getString("Login.DatabaseParameterTT"));
 
-        databaseMasterUser.setToolTipText(L10n.getString("Login.MasterUserTT"));
-
         databaseEngine.setEditable(true);
         databaseEngine.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "postgresql", "firebirdsql", "mysql", "oraclesql" }));
         databaseEngine.setToolTipText(L10n.getString("Login.DatabaseEngineTT"));
-
-        databaseMasterPassword.setToolTipText(L10n.getString("Login.MasterPasswordTT"));
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -109,20 +97,14 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                     .add(jLabel3)
                     .add(jLabel4)
                     .add(jLabel5)
-                    .add(jLabel6)
-                    .add(jLabel7)
                     .add(jLabel2))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(databaseMasterUser, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                     .add(databaseParameter, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                     .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                     .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                     .add(databaseEngine, 0, 270, Short.MAX_VALUE)
-                    .add(aliasLocal, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(databaseMasterPassword, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)))
+                    .add(aliasLocal, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -148,15 +130,7 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel5)
                     .add(databaseParameter, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel6)
-                    .add(databaseMasterUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel7)
-                    .add(databaseMasterPassword, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab(L10n.getString("Login.LocalDatabase"), jPanel1);
 
@@ -214,7 +188,7 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel11)
                     .add(remoteDatabaseIdentifier, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab(L10n.getString("Login.RemoteDabatase"), jPanel2);
 
@@ -278,8 +252,6 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
 						if(info.databasePort > 0)
 							databasePort.setText( Integer.toString(info.getDatabasePort()) );
 						databaseParameter.setText(info.getDatabaseParameter());
-						databaseMasterUser.setText(info.getMasterUser());
-						databaseMasterPassword.setText(info.getMasterPassword());
 						
 						// Neutralize other fields
 						aliasRemote.setText("");
@@ -303,8 +275,6 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
 						databaseIdentifier.setText("");
 						databasePort.setText("");
 						databaseParameter.setText("");
-						databaseMasterUser.setText("");
-						databaseMasterPassword.setText("");
 					}
 				}
 			}
@@ -317,8 +287,6 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextField aliasRemote;
     protected javax.swing.JComboBox databaseEngine;
     protected javax.swing.JTextField databaseIdentifier;
-    protected javax.swing.JPasswordField databaseMasterPassword;
-    protected javax.swing.JTextField databaseMasterUser;
     protected javax.swing.JTextField databaseParameter;
     protected javax.swing.JTextField databasePort;
     protected javax.swing.JButton discard;
@@ -331,8 +299,6 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;

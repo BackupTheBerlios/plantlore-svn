@@ -63,6 +63,9 @@ public class RMI {
 	 * 
 	 *  @param directory	The directory that shall serve as a codebase. */
 	public static void addToCodebase(String directory) {
+		if( directory == null  || directory.length() <= 0 )
+			return;
+		
 		String codebase = System.getProperty(PROPERTY_CODEBASE);
 		directory = "file:/" + directory.replaceAll(" ", "%20"); // to prevent the MalformedURLException
 		
