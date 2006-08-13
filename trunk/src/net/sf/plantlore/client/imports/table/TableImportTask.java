@@ -188,7 +188,7 @@ public class TableImportTask extends Task {
 					setStatusMessage( ie.getMessage() );
 				} catch(DBLayerException de) {
 					logger.error("Delete/update/insert failed! " + de.getMessage());
-					de.printStackTrace();
+					//de.printStackTrace();
 					setStatusMessage( L10n.getFormattedString("Error.UnableToProcess", count) + " " + 
 							((de.getMessage() == null) ? L10n.getString("Import.UnknownReason") : de.getMessage()) );
 				}

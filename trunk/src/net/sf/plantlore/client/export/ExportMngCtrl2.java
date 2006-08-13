@@ -75,7 +75,7 @@ public class ExportMngCtrl2 {
 			new DefaultProgressBarEx(export, parentView, true);
 			export.start();
 		} catch(Exception e) {
-			JOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(parentView,
 					e.getMessage(),
 					L10n.getString("Export.Failed"),
 					JOptionPane.WARNING_MESSAGE);

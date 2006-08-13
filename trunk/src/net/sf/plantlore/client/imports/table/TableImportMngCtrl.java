@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.AppCoreView;
 import net.sf.plantlore.client.export.component.FileFormat;
+import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
@@ -28,7 +29,7 @@ public class TableImportMngCtrl {
 			int result = choice.showDialog(view, L10n.getString("Import.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				if(choice.getSelectedFile() == null) {
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(view,
 							L10n.getString("Error.MissingFileName"),
 							L10n.getString("Error.NothingSelected"),
 						    JOptionPane.WARNING_MESSAGE);
@@ -36,10 +37,10 @@ public class TableImportMngCtrl {
 				}
 				try {
 					Task task = model.createTableImportTask(choice.getSelectedFile().getAbsolutePath(), null);
-					new TableImportProgressBar(task, view);
+					new DefaultProgressBar(task, view, true);
 					task.start();
 				} catch(Exception e) {
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(view,
 							L10n.getString("Error.ImportFailed") + " " + e.getMessage(),
 							L10n.getString("Import.Failed"),
 							JOptionPane.WARNING_MESSAGE);

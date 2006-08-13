@@ -87,7 +87,7 @@ public class ServerMng extends Observable {
 
 		// Create some default settings.
 		settings = new ServerSettings(RMIServer.DEFAULT_PORT, 3, 32, 2, 
-				new DatabaseSettings("postgresql", 5432, null, "", ""));
+				new DatabaseSettings("postgresql", 5432, null));
 		
 		try {
 			Reader reader = new BufferedReader(
@@ -107,14 +107,12 @@ public class ServerMng extends Observable {
             Node database = server.selectSingleNode("database");
             
             String databaseType = database.valueOf("engine"),
-            databaseParameter = database.valueOf("parameter"),
-            databaseMasterUser = database.valueOf("masteruser"),
-            databaseMasterPassword = database.valueOf("masterpassword");
+            databaseParameter = database.valueOf("parameter");
             Number databasePortNumber = database.numberValueOf("port");
             int databasePort = (databasePortNumber == null) ? 0 : databasePortNumber.intValue();
             
             settings = new ServerSettings(port, 3, connections, perip, 
-            		new DatabaseSettings(databaseType, databasePort, databaseParameter, databaseMasterUser, databaseMasterPassword));
+            		new DatabaseSettings(databaseType, databasePort, databaseParameter));
             
             // Load the codebase
             Node path = document.selectSingleNode("/config/codebase");
@@ -142,7 +140,6 @@ public class ServerMng extends Observable {
 		db.addElement("engine").setText( settings.getDatabaseSettings().getDatabase() );
 		db.addElement("port").setText( "" + settings.getDatabaseSettings().getPort() );
 		db.addElement("parameter").setText(settings.getDatabaseSettings().getConnectionStringSuffix());
-		db.addElement("masteruser").setText(settings.getDatabaseSettings().getMasterUser());
 		
 		// Store the current codebase
 		config.addElement("codebase").setText(codebase);

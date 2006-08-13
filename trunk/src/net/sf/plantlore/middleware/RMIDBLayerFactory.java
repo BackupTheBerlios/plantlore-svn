@@ -78,9 +78,7 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 			DatabaseSettings dbSettings = new DatabaseSettings(
 					settings.getDatabaseType(),
 					settings.getDatabasePort(),
-					settings.getDatabaseParameter(),
-					settings.getMasterUser(),
-					settings.getMasterPassword()
+					settings.getDatabaseParameter()
 			);
 			
 			DBLayer db = new HibernateDBLayer( dbSettings );

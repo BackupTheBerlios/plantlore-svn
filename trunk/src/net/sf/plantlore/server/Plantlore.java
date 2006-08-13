@@ -28,7 +28,7 @@ public class Plantlore {
 	private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
 	
 	
-	public void run(final boolean connectToExisting) {
+	public void run() {
 		// Load log4j settings
 		try {
 			ClassLoader cl = this.getClass().getClassLoader();
@@ -44,16 +44,9 @@ public class Plantlore {
         java.awt.EventQueue.invokeLater(new Runnable(){
         	public void run() {
         		ServerMng model = new ServerMng();
-        		if(connectToExisting) {
-        			ServerLoginView view = new ServerLoginView(model);
-        			/*ServerMngChooseCtrl ctrl = */new ServerLoginCtrl(model, view);
-        			view.setVisible(true);
-        		}
-        		else {
-        			ServerCreateView view = new ServerCreateView(model);
-        			/*ServerMngChooseCtrl ctrl = */new ServerCreateCtrl(model, view);
-        			view.setVisible(true);
-        		}
+        		ServerCreateView view = new ServerCreateView(model);
+        		new ServerCreateCtrl(model, view);
+        		view.setVisible(true);
         	}
         });
        	
@@ -73,10 +66,8 @@ public class Plantlore {
             UIManager.setLookAndFeel(new PlasticXPLookAndFeel()); 
         } catch (Exception e) { e.printStackTrace(); JFrame.setDefaultLookAndFeelDecorated(true); }
 		
-        if(args.length > 0 && args[0].equalsIgnoreCase("connect"))
-        	new Plantlore().run(true);
-        else
-        	new Plantlore().run(false);
+        new Plantlore().run();
+
 	}
 
 }

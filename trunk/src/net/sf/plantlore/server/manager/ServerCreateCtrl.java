@@ -20,49 +20,70 @@ public class ServerCreateCtrl {
 		
 		view.next.setAction( new StandardAction("Server.Create") {
 			public void actionPerformed(ActionEvent arg0) {
-				// Take the stored information.
-				ServerSettings settings = model.getSettings(false);
 				
-				// Gather the information from the dialog. 
+				switch( view.choicePane.getSelectedIndex() ) {
+				/* CREATE A NEW SERVER */
+				case 0:
+					// Take the stored information.
+					ServerSettings settings = model.getSettings(false);
+					
+					// Gather the information from the dialog. 
+					
+					// About the server.
+					String serverPassword = new String( view.serverPassword.getPassword() );
+					int serverPort;
+					try {
+						serverPort = Integer.parseInt(view.serverPort.getText());
+					} catch(Exception e) { serverPort = RMIServer.DEFAULT_PORT; }
+					
+					// About the database.
+					String database = ((javax.swing.JTextField)view.databaseType.getEditor().getEditorComponent()).getText(),
+					suffix = view.databaseParameter.getText();
+					
+					int databasePort;
+					try {
+						databasePort = Integer.parseInt(view.databasePort.getText());
+					} catch(Exception e) { databasePort = 5432 ; }
+					
+					settings = new ServerSettings(
+							serverPort, 
+							settings.getTimeout(), // use the stored value
+							settings.getConnectionsTotal(),  // use the stored value
+							settings.getConnectionsPerIP(), // use the stored value
+							new DatabaseSettings(
+									database, 
+									databasePort, 
+									suffix)
+					);
+					
+					// Save those settings.
+					model.setSettings( settings );
+					
+					// Create and run a new server.
+					Task createServer = model.createNewServerTask( serverPassword );
+					new DefaultProgressBar(createServer, view, true);
+					createServer.start();
+					
+					break;
 				
-				// About the server.
-				String serverPassword = new String( view.serverPassword.getPassword() );
-				int serverPort;
-				try {
-					serverPort = Integer.parseInt(view.serverPort.getText());
-				} catch(Exception e) { serverPort = RMIServer.DEFAULT_PORT; }
-				
-				// About the database.
-				String database = ((javax.swing.JTextField)view.databaseType.getEditor().getEditorComponent()).getText(),
-				databasePassword = new String( view.databasePassword.getPassword() ),
-				databaseUser = view.databaseUser.getText(),
-				suffix = view.databaseParameter.getText();
-				
-				int databasePort;
-				try {
-					databasePort = Integer.parseInt(view.databasePort.getText());
-				} catch(Exception e) { databasePort = 5432 ; }
-				
-				settings = new ServerSettings(
-						serverPort, 
-						settings.getTimeout(), // use the stored value
-						settings.getConnectionsTotal(),  // use the stored value
-						settings.getConnectionsPerIP(), // use the stored value
-						new DatabaseSettings(
-								database, 
-								databasePort, 
-								suffix, 
-								databaseUser, 
-								databasePassword)
-				);
-				
-				// Save those settings.
-				model.setSettings( settings );
-				
-				// Create and run a new server.
-				Task t = model.createNewServerTask( serverPassword );
-				new DefaultProgressBar(t, view, true);
-				t.start();
+					
+				/* CONNECT TO A RUNNING SERVER */
+				case 1:
+					
+					//	Gather the information from the dialog.
+					String password = new String( view.remoteServerPassword.getPassword() );
+					int port;
+					try {
+						port = Integer.parseInt( view.remoteServerPort.getText() );
+					} catch(Exception e) { port = RMIServer.DEFAULT_PORT; }
+					
+					Task connectToServer = model.createConnectToRunningServerTask(
+							view.remoteHost.getText(), port, password );
+					new DefaultProgressBar(connectToServer, view, true);
+					connectToServer.start();
+					
+					break;
+				}
 			}
 		} );
 	}

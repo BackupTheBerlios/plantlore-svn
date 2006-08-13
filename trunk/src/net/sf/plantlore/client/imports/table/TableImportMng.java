@@ -16,7 +16,7 @@ import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
-import static net.sf.plantlore.client.export.ExportMng.ENCODING;
+import static net.sf.plantlore.client.export.ExportMng2.ENCODING;
 
 /**
  * ImportTask factory.
@@ -30,18 +30,12 @@ public class TableImportMng {
 	private Logger logger = Logger.getLogger(TableImportMng.class.getPackage().getName());
 	private DBLayer db; 
 	
-	public TableImportMng(DBLayer db) 
-	throws ImportException {
-		setDBLayer( db );
+	public TableImportMng(DBLayer db) {
+		this.db = db;
 	}
 	
-	synchronized public void setDBLayer(DBLayer dblayer) 
-	throws ImportException {
-		if(dblayer == null) { 
-			logger.error("The database layer is null!");
-			throw new ImportException(L10n.getString("Error.InvalidDBLayer"));
-		}
-		db = dblayer;
+	public void setDBLayer(DBLayer dblayer) {
+		this.db = dblayer;
 	}
 	
 	/**
@@ -71,11 +65,10 @@ public class TableImportMng {
 			throw new ImportException(L10n.getString("Error.ReaderNotCreated"));
 		}
 		
-		TableParser parser = null;
+		UnifiedTableParser parser = null;
 		try {
-			UnifiedTableParser p = new UnifiedTableParser(reader, null);
-			table = p.getRootTable();
-			parser = p;
+			parser = new UnifiedTableParser(reader, null);
+			table = parser.getRootTable();
 		} catch(ParserException e) {
 			logger.fatal("The format of the file is corrupted!");
 			throw new ImportException(L10n.getString("Error.FileFormatCorrupted"));
