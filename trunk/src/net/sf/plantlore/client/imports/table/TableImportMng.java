@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.imports.table;
+package net.sf.plantlore.client.tableimport;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,10 +10,9 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
-import net.sf.plantlore.client.imports.table.parsers.UnifiedTableParser;
+import net.sf.plantlore.client.tableimport.parsers.UnifiedTableParser;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.ImportException;
-import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import static net.sf.plantlore.client.export.ExportMng2.ENCODING;
@@ -41,7 +40,7 @@ public class TableImportMng {
 	/**
 	 * Start the import procedure. The import will run in its own thread.
 	 */
-	synchronized public Task createTableImportTask(String filename, Class table) 
+	synchronized public Task createTableImportTask(String filename) 
 	throws ImportException, IOException, RemoteException {
 		// Check if we have all necessary components ready.
 		if( db == null )
@@ -65,16 +64,9 @@ public class TableImportMng {
 			throw new ImportException(L10n.getString("Error.ReaderNotCreated"));
 		}
 		
-		UnifiedTableParser parser = null;
-		try {
-			parser = new UnifiedTableParser(reader, null);
-			table = parser.getRootTable();
-		} catch(ParserException e) {
-			logger.fatal("The format of the file is corrupted!");
-			throw new ImportException(L10n.getString("Error.FileFormatCorrupted"));
-		}
+		UnifiedTableParser parser = new UnifiedTableParser(reader);
 
-		return new TableImportTask(db, table, parser);
+		return new TableImportTask(db, parser);
 	}
 
 	

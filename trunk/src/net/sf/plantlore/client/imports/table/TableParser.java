@@ -1,10 +1,12 @@
-package net.sf.plantlore.client.imports.table;
+package net.sf.plantlore.client.tableimport;
 
 import net.sf.plantlore.common.exception.ParserException;
 
 public interface TableParser {
 	
 	enum Action { INSERT, UPDATE, DELETE };
+	
+	void initialize() throws ParserException;
 
 	boolean hasNext();
 	

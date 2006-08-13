@@ -1,14 +1,15 @@
-package net.sf.plantlore.client.imports.table.parsers;
+package net.sf.plantlore.client.tableimport.parsers;
 
 import java.io.Reader;
 import java.util.*;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
-import net.sf.plantlore.client.imports.table.DataHolder;
-import net.sf.plantlore.client.imports.table.TableParser;
+import net.sf.plantlore.client.tableimport.DataHolder;
+import net.sf.plantlore.client.tableimport.TableParser;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
@@ -22,6 +23,8 @@ public class UnifiedTableParser implements TableParser {
 	private Class rootTable;
 	private Iterator recIterator;
 	
+	private Reader reader;
+	
 	private static Map<String, Class> tables = new Hashtable<String, Class>(10);
 	
 	static {
@@ -33,8 +36,12 @@ public class UnifiedTableParser implements TableParser {
 	}
 	
 	
-	public UnifiedTableParser(Reader reader, Class table) 
-	throws ParserException {
+	public UnifiedTableParser(Reader reader) {
+		this.reader = reader;
+	}
+	
+	
+	public void initialize() throws ParserException {
 		try {
         	SAXReader saxReader = new SAXReader();
             document = saxReader.read( reader );
@@ -42,22 +49,23 @@ public class UnifiedTableParser implements TableParser {
             Node root = document.getRootElement();
             if(root == null)
             	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
-            Class guess = tables.get( root.getName().toLowerCase() );
-            if(table != guess && guess != null)
-            	table = guess;
+            rootTable = tables.get( root.getName().toLowerCase() );
+            if(rootTable == null)
+            	throw new ParserException("Error.UnsupportedTable");
             
-            List nodes = root.selectNodes("//"+table.getSimpleName().toLowerCase());
+            List nodes = root.selectNodes("//"+rootTable.getSimpleName().toLowerCase());
             if( nodes != null) {
             	numberOfRecords = nodes.size();
             	recIterator = nodes.iterator();
             }
             else
-            	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
+            	throw new ParserException(L10n.getString("Error.EmptyXMLFile"));
 			
-			rootTable = table;
-        } catch (Exception ex) {
-            throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
-        } 
+		} catch( OutOfMemoryError er ) {
+			throw new ParserException(L10n.getString("Error.OutOfMemory"));			
+        } catch (DocumentException e) {
+        	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
+		} 
 	}
 	
 
@@ -88,12 +96,12 @@ public class UnifiedTableParser implements TableParser {
 				data.action = Action.UPDATE;
 				node = (Node) recIterator.next();
 				if(node == null)
-					throw new ParserException("Error.MissingUpdateRecord");
+					throw new ParserException(L10n.getString("Error.MissingUpdateRecord"));
 				data.replacement = (Record)rootTable.newInstance();
 				reconstruct( data.replacement, node );
 			}
 		} catch(Exception e) {
-			throw new ParserException("Import.PartialyCorruptedRecord");
+			throw new ParserException(L10n.getString("Import.PartialyCorruptedRecord"));
 		}
 		
 		return data;
@@ -104,10 +112,6 @@ public class UnifiedTableParser implements TableParser {
 		return numberOfRecords;
 	}
 	
-	public Class getRootTable() {
-		return rootTable;
-	}
-
 	
     private void reconstruct(Record part, Node node) {
     	if(part == null || node == null)
@@ -118,28 +122,5 @@ public class UnifiedTableParser implements TableParser {
     		part.setValue(property, value);
     	}
     }
-    
-    
-    
-//    public static void main(String[] args) 
-//    throws java.io.IOException, ParserException {
-//    	
-//    	TableParser p = new UnifiedTableParser(
-//    			new java.io.BufferedReader(
-//    					new java.io.InputStreamReader(new java.io.FileInputStream("c:/documents and settings/yaa/dokumenty/plantlore/tables/territories.xml"),
-//    					"UTF-8")),
-//    			Territory.class
-//    	);
-//    	
-//    	System.out.println(p.getNumberOfRecords()+"\n-----------------------------------");
-//    	
-//    	while( p.hasNext() ) {
-//    		RecordData d = p.getNext();
-//    		System.out.print(d.action+"  ("+d.record);
-//    		if(d.action == Action.UPDATE)
-//    			System.out.print(" -> "+d.replacement);
-//    		System.out.println(")\n-----------------------------------");
-//    	}
-//    }
-    
+     
 }

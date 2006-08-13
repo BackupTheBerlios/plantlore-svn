@@ -1,11 +1,11 @@
-package net.sf.plantlore.client.imports.table;
+package net.sf.plantlore.client.tableimport;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.AppCoreView;
 import net.sf.plantlore.client.export.component.FileFormat;
-import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
@@ -36,14 +36,14 @@ public class TableImportMngCtrl {
 					return;
 				}
 				try {
-					Task task = model.createTableImportTask(choice.getSelectedFile().getAbsolutePath(), null);
-					new DefaultProgressBar(task, view, true);
+					Task task = model.createTableImportTask( choice.getSelectedFile().getAbsolutePath() );
+					new DefaultProgressBarEx(task, view, true);
 					task.start();
 				} catch(Exception e) {
 					JOptionPane.showMessageDialog(view,
-							L10n.getString("Error.ImportFailed") + " " + e.getMessage(),
+							L10n.getString("Error.ImportFailed") + "\n" + e.getMessage(),
 							L10n.getString("Import.Failed"),
-							JOptionPane.WARNING_MESSAGE);
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}

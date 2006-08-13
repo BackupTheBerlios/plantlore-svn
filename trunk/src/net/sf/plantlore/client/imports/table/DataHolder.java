@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.imports.table;
+package net.sf.plantlore.client.tableimport;
 
 import net.sf.plantlore.common.record.Record;
 
