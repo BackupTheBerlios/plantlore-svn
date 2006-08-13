@@ -165,8 +165,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         	cfg.setProperty("hibernate.connection.url", settings.getConnectionStringPrefix() + dbID 
         			+ "?" + settings.getConnectionStringSuffix());
         
-        cfg.setProperty("hibernate.connection.username", settings.getMasterUser());
-        cfg.setProperty("hibernate.connection.password", settings.getMasterPassword());
+        cfg.setProperty("hibernate.connection.username", user);
+        cfg.setProperty("hibernate.connection.password", password);
         try {
             // Build session factory
             sessionFactory = cfg.buildSessionFactory();
