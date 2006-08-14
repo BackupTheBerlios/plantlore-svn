@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.rmi.RemoteException;
+import java.util.Observer;
 
 import org.apache.log4j.Logger;
 
@@ -28,9 +29,11 @@ public class TableImportMng {
 	
 	private Logger logger = Logger.getLogger(TableImportMng.class.getPackage().getName());
 	private DBLayer db; 
+	private Observer tableChangeObserver;
 	
-	public TableImportMng(DBLayer db) {
+	public TableImportMng(DBLayer db, Observer tableChangeObserver) {
 		this.db = db;
+		this.tableChangeObserver = tableChangeObserver;
 	}
 	
 	public void setDBLayer(DBLayer dblayer) {
@@ -65,8 +68,10 @@ public class TableImportMng {
 		}
 		
 		UnifiedTableParser parser = new UnifiedTableParser(reader);
-
-		return new TableImportTask(db, parser);
+		Task tableImportTask = new TableImportTask(db, parser);
+		tableImportTask.addObserver( tableChangeObserver );
+		
+		return tableImportTask;
 	}
 
 	

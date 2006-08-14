@@ -605,7 +605,7 @@ public class AppCoreCtrl {
 		public void actionPerformed(ActionEvent actionEvent) {
 			if (tableImportModel == null) {
 				try {
-					tableImportModel = new TableImportMng(model.getDatabase());
+					tableImportModel = new TableImportMng(model.getDatabase(), managerBridge);
 					tableImportCtrl = new TableImportMngCtrl(tableImportModel, view);
 				} catch (Exception e) {
 					logger.error("Import MVC cannot be created. "
@@ -1175,6 +1175,9 @@ public class AppCoreCtrl {
 	class AppWindowListener extends WindowAdapter {
 		public void windowClosing(WindowEvent e) {
 			try {
+				if(loginModel != null)
+					loginModel.logout();
+				
 				model.savePreferences();
 			} catch (IOException ex) {
 				JOptionPane.showMessageDialog(view,

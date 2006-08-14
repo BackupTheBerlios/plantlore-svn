@@ -6,7 +6,7 @@ public interface TableParser {
 	
 	enum Action { INSERT, UPDATE, DELETE };
 	
-	void initialize() throws ParserException;
+	Class initialize() throws ParserException;
 
 	boolean hasNext();
 	

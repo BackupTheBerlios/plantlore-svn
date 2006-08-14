@@ -7,6 +7,10 @@
 
 package net.sf.plantlore.common;
 
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.plantlore.common.record.*;
+
 /**
  *
  * @author Tomas Kovarik
@@ -45,6 +49,22 @@ public class PlantloreConstants {
     TERRITORY,
     USER,
     VILLAGE};
+    
+    
+    public static final Map<Class, Table> classToTable = new HashMap<Class, Table>(20);
+    
+    static {
+    	classToTable.put(AuthorOccurrence.class, Table.AUTHOROCCURRENCE);
+    	classToTable.put(Habitat.class, Table.HABITAT);
+    	classToTable.put(Metadata.class, Table.METADATA);
+    	classToTable.put(Occurrence.class, Table.OCCURRENCE);
+    	classToTable.put(Phytochorion.class, Table.PHYTOCHORION);
+    	classToTable.put(Plant.class, Table.PLANT);
+    	classToTable.put(Publication.class, Table.PUBLICATION);
+    	classToTable.put(Territory.class, Table.TERRITORY);
+    	classToTable.put(Village.class, Table.VILLAGE);
+    }
+    
     
     /** Constants for restrictions in select query */
     public static final int RESTR_BETWEEN       = 1;
@@ -105,8 +125,8 @@ public class PlantloreConstants {
     public static final String PREF_DYNAMIC_PAGE_SIZE = "Overview.dynamicPageSize";
     
     
-    /** Creates a new instance of PlantloreConstants */
-    public PlantloreConstants() {
-    }
+//    /** Creates a new instance of PlantloreConstants */
+//    public PlantloreConstants() {
+//    }
     
 }

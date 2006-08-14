@@ -41,7 +41,7 @@ public class UnifiedTableParser implements TableParser {
 	}
 	
 	
-	public void initialize() throws ParserException {
+	public Class initialize() throws ParserException {
 		try {
         	SAXReader saxReader = new SAXReader();
             document = saxReader.read( reader );
@@ -65,7 +65,9 @@ public class UnifiedTableParser implements TableParser {
 			throw new ParserException(L10n.getString("Error.OutOfMemory"));			
         } catch (DocumentException e) {
         	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
-		} 
+		}
+        
+        return rootTable;
 	}
 	
 
