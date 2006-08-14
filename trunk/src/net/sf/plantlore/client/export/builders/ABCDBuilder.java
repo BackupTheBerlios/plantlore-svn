@@ -2,14 +2,11 @@ package net.sf.plantlore.client.export.builders;
 
 import java.io.IOException;
 import java.io.Writer;
-import net.sf.plantlore.client.export.AbstractBuilder;
 import net.sf.plantlore.client.export.Builder;
-import net.sf.plantlore.client.export.Projection;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
-import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -24,15 +21,14 @@ import org.dom4j.io.XMLWriter;
  *
  */
 public class ABCDBuilder implements Builder {
-        
-    private Document document;  
+            
     private Writer outputWriter;  
-    private String projectTitle = "";
-    private Element root;
-    private Element actualUnitsElement;   
-    private Element actualAgentsElement;
+    private XMLWriter xmlWriter;   
+    private Element element;     
+    private Element actualAgents;    
     private Occurrence occurrence = null;  
     private AuthorOccurrence authorOccurrence = null;
+    private String projectTitle = "";
     
     
     /** 
@@ -44,52 +40,67 @@ public class ABCDBuilder implements Builder {
      *
      * @param writer	The writer that will create the file.     
      */
-    public ABCDBuilder(Writer writer) {                           
-        document = DocumentHelper.createDocument();        
-        this.outputWriter = writer;
-        document.addElement("dataSets");
-        root = document.getRootElement();
+    public ABCDBuilder(Writer writer) {                                           
+        outputWriter = writer;              
     }
     
-    /** Empty. */ 
-    public void header() throws IOException {	        
-    }
-
-    /*          
-     * Generate the footer of this format.
-     * Save data to XML file in ABCD Schema.
+    /**
+     * Generate the header of this format.
      */
-    public void footer() throws IOException {        
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter xmlwriter = new XMLWriter( outputWriter, format );
-        xmlwriter.write( document );
-        xmlwriter.close();
-    }
-    /** Empty. */
-    public void startRecord() throws IOException {            
+    public void header() 
+    throws IOException {
+    	outputWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    	outputWriter.write("\n<dataSets>");
+    	
+    	OutputFormat format = OutputFormat.createPrettyPrint();
+        xmlWriter = new XMLWriter( outputWriter, format );
     }
 
-    /** Empty. */
-    public void finishRecord() throws IOException {    
-    }
+    /**
+     * Generate the footer of this format.
+     */
+    public void footer() 
+    throws IOException {    	
+    	outputWriter.write("\n</dataSets>");
+        xmlWriter.close();
+    }       
     
+    /**
+     * Begin a new record.
+     */
+    public void startRecord() throws IOException {      	
+    	element = DocumentHelper.createElement("unit");       
+    }
+
+    /**
+     * Finish processing of the record.
+     */
+    public void finishRecord() throws IOException {      	      
+    	xmlWriter.write(element);
+    }
+        
     /**     
      *  Decompose the given <code>occurrence</code>, generate XML document for ABCD Schema and mapping data of occurrence.
      */
-    public void outputABCD() {
+    public void outputABCD() throws IOException {
         if (occurrence == null ) return;
         String projectName = occurrence.getMetadata().getDataSetTitle();
         if (!projectTitle.equals(projectName)) {
+        	if (!projectTitle.equals("")) {
+        		outputWriter.write("\n</units>\n");
+        		outputWriter.write("</dataSet>\n");
+        	}
             projectTitle = projectName;
-            generateDataSet();
+            generateDataSet();            
         }
-        Element unit = getActualUnitsElement().addElement("Unit");
+        
+        Element unit = element;
         Element gathering = unit.addElement("gathering");
         Element herbariumUnit = unit.addElement("herbariumUnit");
         Element identifications = unit.addElement("identifications");
         Element unitReferences = unit.addElement("unitReferences");
         
-        Element agents = gathering.addElement("agents");
+        actualAgents = gathering.addElement("agents");
         Element altitude = gathering.addElement("altitude");
         Element country = gathering.addElement("country");
         Element dateTime = gathering.addElement("dateTime");
@@ -127,57 +138,57 @@ public class ABCDBuilder implements Builder {
         specificName.addElement("fullSpecificNameString").setText(occurrence.getPlant().getSpeciesNN());
         bacterial.addElement("genusOrMonomial").setText(occurrence.getPlant().getGenusNN());        
         
-        //FIXME: nutno osetrit polozky, co mohou byt NULL - hlavne FK
-        unitReference.addElement("citationDetail").setText(occurrence.getPublication().getReferenceDetailNN());
-        unitReference.addElement("titleCitation").setText(occurrence.getPublication().getReferenceCitation());
-        unitReference.addElement("url").setText(occurrence.getPublication().getUrlNN());
-        
-        //set element AGENTS 
-        setActualAgentsElement(agents);
+        if ( occurrence.getPublication() != null) {
+	        unitReference.addElement("citationDetail").setText(occurrence.getPublication().getReferenceDetailNN());
+	        unitReference.addElement("titleCitation").setText(occurrence.getPublication().getReferenceCitation());
+	        unitReference.addElement("url").setText(occurrence.getPublication().getUrlNN());
+        }        
     }
 
     /**
-     * For each project create elements contains metadata (content contact person, technidal contact person, project descrption,...).
+     * For each occurrence create elements contains metadata (content contact person, technidal contact person, project descrption,...).
      *
      */
-    public void generateDataSet() {
-        Element contentContacts = root.addElement("contentContacts");
-        Element technicalContacts = root.addElement("technicalContacts");
-        Element metadata = root.addElement("metadata");
-        Element units = root.addElement("units");
-        
-        Element contentContact = contentContacts.addElement("contentContacts");
-        Element technicalContact = technicalContacts.addElement("technicalContact");
-        Element description = metadata.addElement("description");
-        Element owners = metadata.addElement("owners");  //dopsat elementy pro owners      
-        Element revisionData = metadata.addElement("revisionData");
-        Element representation = description.addElement("representation");
-        
-        Metadata metadataRecord = occurrence.getMetadata();    
-        
+    public void generateDataSet() throws IOException {   
+    	Metadata metadataRecord = occurrence.getMetadata();
+    	outputWriter.write("\n<dataSet>");    	
+    	
+    	Element elementHelp = null;
+    	
+    	elementHelp = DocumentHelper.createElement("contentContacts");            
+        Element contentContact = elementHelp.addElement("contentContact");
         contentContact.addElement("address").setText(metadataRecord.getContentContactAddressNN());
         contentContact.addElement("email").setText(metadataRecord.getContentContactEmailNN());
         contentContact.addElement("name").setText(metadataRecord.getContentContactName());
-        
+        xmlWriter.write(elementHelp);
+    	
+        elementHelp = DocumentHelper.createElement("technicalContacts");
+        Element technicalContact = elementHelp.addElement("technicalContact");
         technicalContact.addElement("address").setText(metadataRecord.getTechnicalContactAddressNN());
         technicalContact.addElement("email").setText(metadataRecord.getTechnicalContactEmailNN());
-        technicalContact.addElement("name").setText(metadataRecord.getTechnicalContactName());                
+        technicalContact.addElement("name").setText(metadataRecord.getTechnicalContactName());    
+        xmlWriter.write(elementHelp);
         
+        elementHelp = DocumentHelper.createElement("metadata");
+        Element description = elementHelp.addElement("description");            
+        Element revisionData = elementHelp.addElement("revisionData");
+        Element representation = description.addElement("representation");
         representation.addElement("title").setText(metadataRecord.getDataSetTitle());
         representation.addElement("details").setText(metadataRecord.getDataSetDetailsNN());
         revisionData.addElement("creators").setText(metadataRecord.getSourceInstitutionId());
         revisionData.addElement("creators").setText(metadataRecord.getSourceId());
         revisionData.addElement("dateCreated").setText(metadataRecord.getDateCreate().toString());
-        revisionData.addElement("dateModified").setText(metadataRecord.getDateModified().toString());
+        revisionData.addElement("dateModified").setText(metadataRecord.getDateModified().toString());  
+        xmlWriter.write(elementHelp);
         
-        setActualUnitsElement(units);
+        outputWriter.write("\n<units>\n");                
     }
     
-    /*
+    /**
      *  Create elements for author of occurrence.     
      */
      public void outputAuthors() {
-        Element agents = getActualAgentElement();
+        Element agents = actualAgents;
         Element gatheringAgent = agents.addElement("gatheringAgent");
         Element organization = gatheringAgent.addElement("organization");
         Element name = organization.addElement("name");
@@ -189,36 +200,19 @@ public class ABCDBuilder implements Builder {
         representation.addElement("text").setText(authorOccurrence.getAuthor().getOrganizationNN());
     }
     
-     /*
+     /**
       *  Build part of the whole record.
       */
     public void part(Record record) throws IOException {
-        if(record == null) return;        
-        Class table = record.getClass();
-        if(table == Occurrence.class) {
+        if(record == null) return;             
+        Class table = record.getClass();              
+        if(table == Occurrence.class) {        	
             //set occurrence and generate XML
-            occurrence = (Occurrence)record;
-            outputABCD();
+            occurrence = (Occurrence)record;            
+            outputABCD();            
         } else if (table == AuthorOccurrence.class) {
             authorOccurrence = (AuthorOccurrence)record;
             outputAuthors();
-        }               
-    }    
-        
-    public void setActualUnitsElement(Element unitsElement) {
-        this.actualUnitsElement = unitsElement;
-    }
-    
-    public Element getActualUnitsElement() {
-        return this.actualUnitsElement;
-    }
-
-    public void setActualAgentsElement(Element agentsElement){
-        this.actualAgentsElement = agentsElement;
-    }
-    
-    public Element getActualAgentElement(){
-        return this.actualAgentsElement;
-    }
-      
+        }
+    }           
 }
