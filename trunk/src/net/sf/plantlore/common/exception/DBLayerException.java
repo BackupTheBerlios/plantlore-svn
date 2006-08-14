@@ -41,7 +41,17 @@ public class DBLayerException extends PlantloreException {
         public static final int ERROR_RIGHTS = 10;        
         /** Database not consistent (e.g. tHistoryColumn doesn't contain data) */
         public static final int ERROR_DB = 11;
-        /** Some other error */
+        /** Transaction rolled back - possible locking conflict */ 
+        public static final int ERROR_TRANSACTION = 12;
+        /** Insufficient resources error occurred */
+        public static final int ERROR_RESOURCES = 13;
+        /** Disk full error occurred*/
+        public static final int ERROR_DISK_FULL = 14;
+        /** Out of memmory error occurred */
+        public static final int ERROR_OUT_OF_MEMORY = 15;        
+        /** Maximum number of connections achieved */
+        public static final int ERROR_MAX_CONNECTIONS = 15;                
+        /** Some other error */        
         public static final int ERROR_OTHER = 20;
         // ==============================================
         /** Create new DBLayerException without an error message */
@@ -73,5 +83,57 @@ public class DBLayerException extends PlantloreException {
          */
         public String getErrorInfo() {
             return this.errorInfo;
+        }
+        
+        /**
+         *  Translate SQL State to DBLayerException constants. SQL State is obtained from JDBC exceptions
+         *  thrown by the JDBC driver. Only several SQL States are translated, for others ERROR_OTHER is
+         *  returned.
+         *  @param sqlstate String containing SQL State constant
+         *  @return DBLayerException constant identifying a problem
+         */
+        public static int translateSQLState(String sqlstate) {
+            String errorClass = sqlstate.substring(0,2);
+            String errorDetail = sqlstate.substring(2);
+            // Connection exception - Connection does not exist, was interrupted or cannot be established
+            if (errorClass.equals("08")) {
+                return ERROR_CONNECT;
+            }
+            // Integrity constraint violation - NOT NULL, FOREIGN KEY, UNIQUE violation
+            if (errorClass.equals("23")) {
+                return ERROR_DB;
+            }
+            // Transaction rollback
+            if (errorClass.equals("40")) {
+                return ERROR_TRANSACTION;
+            }
+            // Syntax error
+            if (errorClass.equals("42")) {
+                return ERROR_DB;
+            }
+            // Insufficient Resources
+            if (errorClass.equals("53")) {
+                // Generic "Insufficient resources"
+                if (errorDetail.equals("000")) {
+                    return ERROR_RESOURCES;
+                }
+                // Disk Full
+                if (errorDetail.equals("100")) {
+                    return ERROR_DISK_FULL;
+                }
+                // Out of memory
+                if (errorDetail.equals("200")) {
+                    return ERROR_OUT_OF_MEMORY;
+                }
+                // Too many connections
+                if (errorDetail.equals("300")) {
+                    return ERROR_MAX_CONNECTIONS;
+                }                
+            }
+            // System error - External error (such as IO errors)
+            if (errorClass.equals("58")) {
+                return ERROR_OTHER;
+            }
+            return ERROR_OTHER;
         }
 }

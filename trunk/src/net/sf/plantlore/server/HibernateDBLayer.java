@@ -8,10 +8,14 @@
 package net.sf.plantlore.server;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -31,13 +35,16 @@ import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 import net.sf.plantlore.common.exception.DBLayerException;
 import org.hibernate.HibernateException;
+import org.hibernate.JDBCException;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StaleObjectStateException;
 import org.hibernate.cfg.Configuration;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -57,8 +64,7 @@ import org.hibernate.criterion.Restrictions;
  */
 public class HibernateDBLayer implements DBLayer, Unreferenced {
 	
-	
-	private static final long serialVersionUID = 2006060433222L;
+    private static final long serialVersionUID = 2006060433222L;
 	
     /** Instance of a logger */
     private Logger logger;
@@ -95,22 +101,18 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     
     private DatabaseSettings settings;
     private String currentlyConnectedUser = "";
-    
-
-    
+        
     public HibernateDBLayer(DatabaseSettings settings) {
     	this(null, settings);
     }
    
     
     /**
-     * Creates a new instance of HibernateDBLayer.
+     *  Creates a new instance of HibernateDBLayer.
      * 
      *  @param undertaker The object that is responsible for cleanup if the client crashes. 
      */
-    public HibernateDBLayer(
-    		Undertaker undertaker, 
-    		DatabaseSettings settings) {
+    public HibernateDBLayer(Undertaker undertaker, DatabaseSettings settings) {
         logger = Logger.getLogger(this.getClass().getPackage().getName());
         logger.debug("      Constructing a new HibernateDBLayer ...");
         
@@ -139,7 +141,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @param password password for the access to plantlore on the server
      *  @return array with two objects - User object with logged in user (index 0) and user's rights 
      *          (Right object, index 1)
-     *  @throws DBLayerException when the hibernate or database connection cannot be initialized
+     *  @throws DBLayerException The following errors can occurr:
+     *          ERROR_LOAD_CONFIG: Unable to load Hibernate configuration file
+     *          ERROR_CONNECT: Unable to establish database connection (build SessionFactory)
+     *          ERROR_SELECT: Unable to read contents of TUSER table
+     *          ERROR_LOGIN: Authentication failed (wrong password, username or account disabled)
      */
     public Object[] initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
         Configuration cfg;
@@ -154,52 +160,67 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             cfg = new Configuration().configure(configFile);
         } catch (HibernateException e) {
             logger.fatal("Cannot load Hibernate configuration. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Cannot load Hibernate configuration. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_LOAD_CONFIG, null);
+            DBLayerException ex = new DBLayerException("Exception.LoadConfiguration");
+            ex.setError(ex.ERROR_LOAD_CONFIG, e.getMessage());
             throw ex;
         }
-
+        // Create connections string from the provided data
         if( settings.getConnectionStringSuffix() == null || "".equals(settings.getConnectionStringSuffix()) )
         	cfg.setProperty("hibernate.connection.url", settings.getConnectionStringPrefix() + dbID);
         else
         	cfg.setProperty("hibernate.connection.url", settings.getConnectionStringPrefix() + dbID 
         			+ "?" + settings.getConnectionStringSuffix());
-        
+        // Set username and password to access database
         cfg.setProperty("hibernate.connection.username", user);
         cfg.setProperty("hibernate.connection.password", password);
+        // Build session factory        
         try {
-            // Build session factory
             sessionFactory = cfg.buildSessionFactory();
+        } catch (JDBCException e) {
+            logger.fatal("Cannot build Hibernate session factory. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.EstablishConnection");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;            
         } catch (HibernateException e) {
             logger.fatal("Cannot build Hibernate session factory. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Cannot build Hibernate session factory. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_CONNECT, null);
+            DBLayerException ex = new DBLayerException("Exception.EstablishConnection");
+            ex.setError(ex.ERROR_CONNECT, e.getMessage());
             throw ex;
-        }   
+        }         
         // Authenticate user
         Session sess = sessionFactory.openSession();            
-        // TODO: Password should probably be encrypted            
-        ScrollableResults sr = sess.createCriteria(User.class)
-            .add(Restrictions.eq(User.LOGIN, user))
-            .add(Restrictions.eq(User.PASSWORD, password))
-            .add(Restrictions.isNull(User.DROPWHEN))
-            .scroll();
+        // TODO: Password should probably be encrypted
+        ScrollableResults sr = null;
+        try {
+            sr = sess.createCriteria(User.class)
+                .add(Restrictions.eq(User.LOGIN, user))
+                .add(Restrictions.eq(User.PASSWORD, password))
+                .add(Restrictions.isNull(User.DROPWHEN))
+                .scroll();
+        } catch (HibernateException e) {            
+            logger.fatal("Selecting records from the database failed. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.SelectQuery");
+            ex.setError(ex.ERROR_SELECT, e.getMessage());
+            throw ex;            
+        }
         if (!sr.next()) {
             // Authentication failed, close DB connection
             sess.close();
             sessionFactory.close();
             sessionFactory = null;
             logger.warn("Authentication of user "+user+" failed!");
-            DBLayerException ex = new DBLayerException("Authentication of user "+user+" failed!");
-            ex.setError(ex.ERROR_LOGIN, null);
+            DBLayerException ex = new DBLayerException("Exception.AuthenticationFailed");
+            ex.setError(ex.ERROR_LOGIN, user);
             throw ex;
         } else {
+            // Save the information about authenticated user
             Object[] userinfo = sr.get();
             User clientUser = (User)userinfo[0];            
             this.rights = clientUser.getRight();           
             this.plantloreUser = clientUser;
             sess.close();
         }
+        // Return User and Right object with users details
         Object[] retValue = new Object[2];
         retValue[0] = this.plantloreUser;
         retValue[1] = this.rights;
@@ -214,14 +235,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws DBLayerException when saving data into the database fails
      */
     public int executeInsert(Object data) throws DBLayerException, RemoteException {
-        int recordId, id, result = 0;        
+        int recordId, id, result = 0;
         String table;
         HistoryColumn column;
         
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -251,7 +272,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we have sufficient rights
         checkRights(data, INSERT);
         Session session = sessionFactory.openSession();
-        Transaction tx = null;                
+        Transaction tx = null; 
+        recordId = 0;
         try {
             // Begin transaction
             tx = session.beginTransaction();            
@@ -260,16 +282,23 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Save data to history tables - only for selected tables
             saveHistory(session, data, INSERT, recordId);
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();  
+        } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while saving the record into the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.SaveRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Saving record into the database failed. Details: "+e.getMessage());
-            e.printStackTrace();
-            DBLayerException ex = new DBLayerException("Saving record into the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_SAVE, null);
-            throw ex;            
+            DBLayerException ex = new DBLayerException("Exception.SaveRecord");
+            ex.setError(ex.ERROR_SAVE, e.getMessage());
+            throw ex;  
         } finally {
             session.close();
         }
@@ -289,7 +318,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -326,14 +355,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Save item into the database
             recordId = (Integer)session.save(data);
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();  
+        } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while saving the record into the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.SaveRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;            
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Saving record into the database failed. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Saving record into the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_SAVE, null);
+            DBLayerException ex = new DBLayerException("Exception.SaveRecord");
+            ex.setError(ex.ERROR_SAVE, e.getMessage());
             throw ex;            
         } finally {
             session.close();
@@ -355,7 +392,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -366,14 +403,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Update the item in the database
             session.update(data);
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();    
+        } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while deleting the record from the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.DeleteRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;            
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Deleting record from the database failed. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Deleting record from the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_DELETE, null);
+            DBLayerException ex = new DBLayerException("Exception.DeleteRecord");
+            ex.setError(ex.ERROR_DELETE, e.getMessage());
             throw ex;            
         } finally {
             session.close();
@@ -390,7 +435,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -401,14 +446,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Save item into the database
             session.delete(data);
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();                
+        } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while deleting the record from the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.DeleteRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Deleting record from the database failed. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Deleting record from the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_DELETE, null);
+            DBLayerException ex = new DBLayerException("Exception.DeleteRecord");
+            ex.setError(ex.ERROR_DELETE, e.getMessage());
             throw ex;
         } finally {
             session.close();
@@ -427,7 +480,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -449,15 +502,30 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Save item into the database
             session.update(data);
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();  
+        } catch (StaleObjectStateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.warn("StaleObjectStateException caught (Concurrent transactions running and trying to commit). Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.ConcurrentUpdate");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;                        
+        } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while updating the record in the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.UpdateRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                                    
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
-            e.printStackTrace();
-            DBLayerException ex = new DBLayerException("Updating record in the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_UPDATE, null);
+            DBLayerException ex = new DBLayerException("Exception.UpdateRecord");
+            ex.setError(ex.ERROR_UPDATE, e.getMessage());
             throw ex;            
         } finally {
             session.close();
@@ -474,7 +542,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -494,14 +562,30 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // Save item into the database
             session.update(data);
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();  
+        } catch (StaleObjectStateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.warn("StaleObjectStateException caught (Concurrent transactions running and trying to commit). Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.ConcurrentUpdate");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;                        
+        } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while updating the record in the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.UpdateRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Updating record in the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_UPDATE, null);
+            DBLayerException ex = new DBLayerException("Exception.UpdateRecord");            
+            ex.setError(ex.ERROR_UPDATE, e.getMessage());
             throw ex;
         } finally {
             session.close();
@@ -523,7 +607,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -543,8 +627,25 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setUpdatedWho(this.plantloreUser);
             data = occ;
         }        
-        // Save item into the database
-        txSession.update(data);        
+        try {
+            // Save item into the database
+            txSession.update(data);        
+        } catch (StaleObjectStateException e) {
+            logger.warn("StaleObjectStateException caught (Concurrent transactions running and trying to commit). Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.ConcurrentUpdate");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;                        
+        } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while updating the record in the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.UpdateRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
+        } catch (HibernateException e) {
+            logger.fatal("Updating record in the database failed. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.UpdateRecord");
+            ex.setError(ex.ERROR_UPDATE, e.getMessage());
+            throw ex;
+        }
     }
     
     /**
@@ -561,14 +662,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check validity of arguments
         if (from>to) {
             logger.error("Cannot read rows from "+from+" to "+to+" because from > to");            
-            DBLayerException ex = new DBLayerException("Cannot read rows from "+from+" to "+to+" because from > to");
-            ex.setError(ex.ERROR_OTHER, null);
+            DBLayerException ex = new DBLayerException("Exception.RetrieveData");
+            ex.setError(ex.ERROR_OTHER, "Cannot read rows from "+from+" to "+to+" because from > to");
             throw ex;
         } 
         if (from < 0) {
             logger.error("Cannot read rows starting at the given index: "+from);
-            DBLayerException ex = new DBLayerException("Cannot read rows starting at the given index: "+from);
-            ex.setError(ex.ERROR_OTHER, null);
+            DBLayerException ex = new DBLayerException("Exception.RetrieveData");
+            ex.setError(ex.ERROR_OTHER, "Cannot read rows starting at the given index: "+from);
             throw ex;
         }
         // Get results for the given resultId
@@ -581,10 +682,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             } else {
                 res.beforeFirst();
             }
+        } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while retrieving the data from the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.RetrieveData");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;            
         } catch (HibernateException e) {
-            logger.error("Cannot move to the given row of results: "+from);
-            DBLayerException ex = new DBLayerException("Cannot move to the given row of results: "+from);
-            ex.setError(ex.ERROR_OTHER, null);
+            logger.error("Cannot move to the given row of results: "+from+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.RetrieveData");
+            ex.setError(ex.ERROR_LOAD_DATA, e.getMessage());
             throw ex;            
         }
         // Allocate space for data
@@ -595,15 +701,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if (res.next()) {
                     data[i] = res.get();
                 } else {
-                    logger.debug("res.get() would return: "+res.get());
                     logger.error("Result doesn't have enough rows");
-                    throw new DBLayerException("Result doesn't have enough rows");                
+                    DBLayerException ex = new DBLayerException("Exception.RetrieveData");                
+                    ex.setError(ex.ERROR_LOAD_DATA, "Result doesn't have enough rows");
+                    throw ex;
                 }                
             }
         } catch (HibernateException e) {
             logger.error("Cannot read data from the results");
-            DBLayerException ex = new DBLayerException("Cannot read data from the results");
-            ex.setError(ex.ERROR_LOAD_DATA, null);
+            DBLayerException ex = new DBLayerException("Exception.RetrieveData");
+            ex.setError(ex.ERROR_LOAD_DATA, "Cannot read data from the results");
             throw ex;            
         }
         return data;
@@ -626,9 +733,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 return null;
             }
         } catch (HibernateException e) {
-            logger.fatal("Database error occured");
-            DBLayerException ex = new DBLayerException("Database error occured");
-            ex.setError(ex.ERROR_OTHER, null);
+            logger.error("Call to next() failed");
+            DBLayerException ex = new DBLayerException("Exception.RetrieveData");
+            ex.setError(ex.ERROR_LOAD_DATA, e.getMessage());
             throw ex;            
         }        
         return res.get();        
@@ -641,6 +748,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @return number of rows in the given result
      */
     public int getNumRows(int resultId) throws RemoteException {
+        int numRows = 0;
         // Get results for the given resultId
         ScrollableResults res = results.get(resultId);
         // Get the current row in the results
@@ -655,7 +763,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         res.last();
         int last = res.getRowNumber();        
         // Find out the number of rows between the and the last row
-        int numRows = last - first + 1;
+        numRows = last - first + 1;
         // Return the pointer to it's original position
         if (currentRow == -1) {
             res.beforeFirst();
@@ -674,7 +782,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -682,8 +790,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             sessionFactory.close();
         } catch (HibernateException e) {
             logger.fatal("Cannot close session factory");
-            DBLayerException ex = new DBLayerException("Cannot close session factory");
-            ex.setError(ex.ERROR_CLOSE, null);
+            DBLayerException ex = new DBLayerException("Exception.CloseConnection");
+            ex.setError(ex.ERROR_CLOSE, e.getMessage());
             throw ex;            
         }
     }
@@ -699,12 +807,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
-        Session session = sessionFactory.openSession();
-        SelectQuery query = new SelectQueryImplementation(session.createCriteria(classname), queries);
+        SelectQuery query = null;
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            query = new SelectQueryImplementation(session.createCriteria(classname), queries);
+        } catch (HibernateException e) {
+            logger.fatal("Cannot create new query (Failed to create session)");
+            DBLayerException ex = new DBLayerException("Exception.DatabaseQuery");
+            ex.setError(ex.ERROR_SELECT, e.getMessage());
+            throw ex;                        
+        }
         SelectQuery stub = query;
         
         if(undertaker != null)
@@ -730,7 +847,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -752,7 +869,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      */
     public int executeQuery(SelectQuery query) throws DBLayerException, RemoteException {
     	SelectQuery selectQuery = queries.get(query);
-    	if(selectQuery == null) throw new DBLayerException("You can only pass queries created by this DBLayer!");
+    	if(selectQuery == null) {
+            logger.error("You can only pass queries created by this DBLayer!");
+            DBLayerException ex = new DBLayerException("Exception.DatabaseQuery");
+            ex.setError(ex.ERROR_SELECT, "You can only pass queries created by this DBLayer!");
+            throw ex;
+        }
     	
     	assert(selectQuery instanceof SelectQueryImplementation);
     	SelectQueryImplementation sq = (SelectQueryImplementation) selectQuery;
@@ -766,16 +888,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             tx = session.beginTransaction();
             // Execute detached criteria query
             sq.setProjectionList();
-                res = sq.getCriteria().scroll(); // retrieve Criteria from SelectQuery
+            res = sq.getCriteria().scroll(); // retrieve Criteria from SelectQuery
             // Commit transaction
-            tx.commit();                                      
+            tx.commit();  
+        } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while executing Select query. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.DatabaseQuery");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
             }
             logger.fatal("Selecting records from the database failed. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Selecting records from the database failed. Details: "+e.getMessage());
-            ex.setError(ex.ERROR_SELECT, null);
+            DBLayerException ex = new DBLayerException("Exception.DatabaseQuery");
+            ex.setError(ex.ERROR_SELECT, e.getMessage());
             throw ex;            
         }
         // Update current maximum result id and save the results
@@ -801,13 +928,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
         Transaction tx = null;
-        Session session = sessionFactory.openSession();
+        Session session = null;
         try {
+            session = sessionFactory.openSession();            
             tx = session.beginTransaction();
             Query hqlQuery;
             String hqlDelete = "delete "+tableClass.getName(); 
@@ -826,14 +954,24 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             deletedEntities = hqlQuery.executeUpdate();
             tx.commit();
+       } catch (JDBCException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            logger.fatal("JDBC Exception caught while deleting the record from the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.DeleteRecord");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());            
         } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }            
             logger.fatal("Cannot execute conditional delete on table "+tableClass.getName());
-            DBLayerException ex = new DBLayerException("Cannot execute conditional delete on table "+tableClass.getName());
+            DBLayerException ex = new DBLayerException("Exception.DeleteRecord");
             ex.setError(ex.ERROR_DELETE, tableClass.getName());
-            session.close();
             throw ex;
+        } finally {
+            if (session != null) session.close();
         }
-        session.close();
         return deletedEntities;
     }
     
@@ -845,8 +983,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public void closeQuery(SelectQuery query) throws RemoteException {
         
         // TODO: Problem - we don't have any session for subqueries
-        
-        Session session = sessions.remove(query);
+        // TODO: We should probably catch HibernateException...
+        Session session = sessions.remove(query);        
         session.close();     
     	// Remove the query from the list of opened queries
         SelectQuery selectQuery = queries.remove(query);        
@@ -887,7 +1025,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -895,10 +1033,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (this.longTx != null) {
             return false;               // Return with an error indicating other transaction is running
         }
-        // Open new session
-        this.txSession = sessionFactory.openSession();
-        // Begin new transaction
-        this.longTx = this.txSession.beginTransaction();        
+        try {
+            // Open new session
+            this.txSession = sessionFactory.openSession();
+            // Begin new transaction
+            this.longTx = this.txSession.beginTransaction();
+       } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while starting database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.StartTransaction");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
+        } catch (HibernateException e) {
+            logger.fatal("Cannot start database transaction");
+            DBLayerException ex = new DBLayerException("Exception.StartTransaction");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;            
+        }
         return true;                    // Transaction succesfully started
     }
 
@@ -915,7 +1064,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -923,12 +1072,23 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if ((this.longTx == null) || (this.txSession == null)) {
             return false;               // Return with an error indicating we don't have proper conditions
         }
-        // Commit the transaction
-        this.longTx.commit();
-        // Set the transaction object to null
-        this.longTx = null;
-        // Close the session
-        this.txSession.close();
+        try {
+            // Commit the transaction
+            this.longTx.commit();
+            // Set the transaction object to null
+            this.longTx = null;
+            // Close the session
+            this.txSession.close();            
+       } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while commiting database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
+        } catch (HibernateException e) {
+            logger.fatal("Cannot commit database transaction");
+            DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;            
+        }
         return true;
     }
     
@@ -946,7 +1106,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -954,12 +1114,23 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if ((this.longTx == null) || (this.txSession == null)) {
             return false;               // Return with an error indicating we don't have proper conditions
         }
-        // Rollback the transaction
-        this.longTx.rollback();
-        // Set the transaction object to null
-        this.longTx = null;
-        // Close the session
-        this.txSession.close();        
+        try {
+            // Rollback the transaction
+            this.longTx.rollback();
+            // Set the transaction object to null
+            this.longTx = null;
+            // Close the session
+            this.txSession.close();
+       } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while rollbacking database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.RollbackTransaction");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
+        } catch (HibernateException e) {
+            logger.fatal("Cannot rollback database transaction");
+            DBLayerException ex = new DBLayerException("Exception.RollbackTransaction");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;            
+        }            
         return true;        
     }
 
@@ -976,12 +1147,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @throws RemoteException in case server connection failed
      */    
     public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException {
-        int recordId;
+        int recordId = 0;
         
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("SessionFactory not available. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
             ex.setError(ex.ERROR_CONNECT, null);
             throw ex;
         }
@@ -1034,9 +1205,19 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             aut.setCreatedWho(this.plantloreUser);
             data = aut;
         }
-
-        // Save item into the database
-        recordId = (Integer)this.txSession.save(data);            
+        try {
+            // Save item into the database
+            recordId = (Integer)this.txSession.save(data);            
+       } catch (JDBCException e) {
+            logger.fatal("JDBC Exception caught while rollbacking database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.RollbackTransaction");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
+        } catch (HibernateException e) {
+            logger.fatal("Cannot rollback database transaction");
+            DBLayerException ex = new DBLayerException("Exception.RollbackTransaction");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;            
+        }            
         // Save data to history tables - only for selected tables
         saveHistory(txSession, data, INSERT, recordId);
         // Return new record identifier
@@ -2215,6 +2396,163 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
 
     /**
+     *  Method for creating new database user using CREATE USER statement. This method can only be called
+     *  as a part of long running transaction (such as executeInsertInTransaction() method).
+     *
+     *  @param name     Name of the new user
+     *  @param password Password for the new user
+     *  @param isAdmin  Flag whether created user will or will not be an administrator (admin can create other users)
+     *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the DB or the 
+     *                           execution of CREATE USER statement failed
+     *  @throws RemoteException In case connection to the server was lost
+     */
+    public void createUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException {
+        // Check whether we are connected to the database
+        if (sessionFactory == null) {
+            logger.error("SessionFactory not avilable. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
+            ex.setError(ex.ERROR_CONNECT, null);
+            throw ex;
+        }
+        // Check whether the user is administrator - only admin can modify users
+        if (this.rights.getAdministrator() != 1) {
+            logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_USER);
+            DBLayerException ex = new DBLayerException("Exception.InsufficientRights");
+            ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_USER);
+            throw ex;
+        }
+        // TODO: This is PostgreSQL specific. Think of a way how to provide different statements for
+        //       different databases
+        String admin = "";
+        if (isAdmin) {
+            admin = " CREATEUSER";
+        }        
+        try {
+            Connection conn = txSession.connection();        
+            PreparedStatement pstmt = conn.prepareStatement("CREATE USER ? WITH PASSWORD ?"+admin);
+            pstmt.setString(1, name);
+            pstmt.setString(2, password);
+            pstmt.execute();
+        } catch (HibernateException e) {
+            logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.CreateUser");
+            ex.setError(ex.ERROR_SAVE, e.getMessage());
+            throw ex;            
+        } catch (SQLException e) {
+            logger.warn("Unable to create new database user using CREATE USER statement. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.CreateUser");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
+        }
+    }
+    
+    /**
+     *  Method for modifying the database user using ALTER USER statement. This method can only 
+     *  be called as a part of long running transaction (such as executeInsertInTransaction() method).
+     *  Only password and admin flag can be modified. Name of the user cannot be modified.
+     *
+     *  @param name     Name of the user to modify
+     *  @param password New password for the user. Leave blank or null if not modified.
+     *  @param isAdmin  Flag whether the user should or should not be an administrator (admin can 
+     *                  create other users)
+     *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the 
+     *                           DB or the execution of ALTER USER statement failed
+     *  @throws RemoteException In case connection to the server was lost
+     */    
+    public void alterUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException {
+        // Check whether we are connected to the database
+        if (sessionFactory == null) {
+            logger.error("SessionFactory not avilable. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
+            ex.setError(ex.ERROR_CONNECT, null);
+            throw ex;
+        }
+        // Check whether the user is administrator - only admin can modify users
+        if (this.rights.getAdministrator() != 1) {
+            logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_USER);
+            DBLayerException ex = new DBLayerException("Exception.InsufficientRights");
+            ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_USER);
+            throw ex;
+        }
+        // TODO: This is PostgreSQL specific. Think of a way how to provide different statements for
+        //       different databases
+        try {
+            Connection conn = txSession.connection();
+            // In case password has changed, execute statement to change the password
+            if ((password != null) && (!password.equals(""))) {
+                PreparedStatement pstmt = conn.prepareStatement("ALTER USER ? SET PASSWORD TO ?");
+                pstmt.setString(1, name);
+                pstmt.setString(2, password);
+                pstmt.execute();
+            }
+            // Now set CREATEUSER/NOCREATUSER flag
+            String admin;
+            if (isAdmin) {
+                admin = "CREATEUSER";
+            } else {
+                admin = "NOCREATEUSER";
+            }
+            PreparedStatement pstmt = conn.prepareStatement("ALTER USER ? "+admin);
+            pstmt.setString(1, name);
+            pstmt.execute();            
+        } catch (HibernateException e) {
+            logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.AlterUser");
+            ex.setError(ex.ERROR_SAVE, e.getMessage());
+            throw ex;            
+        } catch (SQLException e) {
+            logger.warn("Unable to alter the database user using ALTER USER statement. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.AlterUser");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
+        }        
+    }
+    
+    /**
+     *  Method for deleting database user using DROP USER statement. This method can only 
+     *  be called as a part of long running transaction (such as executeInsertInTransaction() method).
+     *  DROP USER statement will fail in case user with the given username does not exist or in case
+     *  the given user is an owner of some database.
+     *
+     *  @param name     Name of the user to drop
+     *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the 
+     *                           DB or the execution of DROP USER statement failed
+     *  @throws RemoteException In case connection to the server was lost
+     */    
+    public void dropUser(String name) throws DBLayerException, RemoteException {
+        // Check whether we are connected to the database
+        if (sessionFactory == null) {
+            logger.error("SessionFactory not avilable. Not connected to the database.");
+            DBLayerException ex = new DBLayerException("Exception.NotConnected");
+            ex.setError(ex.ERROR_CONNECT, null);
+            throw ex;
+        }
+        // Check whether the user is administrator - only admin can modify users
+        if (this.rights.getAdministrator() != 1) {
+            logger.warn("User doesn't have sufficient rights for this operation. Entity: "+PlantloreConstants.ENTITY_USER);
+            DBLayerException ex = new DBLayerException("Exception.InsufficientRights");
+            ex.setError(ex.ERROR_RIGHTS, PlantloreConstants.ENTITY_USER);
+            throw ex;
+        }
+        try {
+            Connection conn = txSession.connection();        
+            PreparedStatement pstmt = conn.prepareStatement("DROP USER ?");
+            pstmt.setString(1, name);
+            pstmt.execute();
+        } catch (HibernateException e) {
+            logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.DropUser");
+            ex.setError(ex.ERROR_SAVE, e.getMessage());
+            throw ex;            
+        } catch (SQLException e) {
+            logger.warn("Unable to drop database user using the DROP USER statement. Details: "+e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.DropUser");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
+            throw ex;                        
+        }
+    }
+            
+    /**
      *  Return number of open database connections (instances of Hibernate Session class)
      *  @return number of open database connections
      *  @throws RemoteException in case network connection failed
@@ -2254,13 +2592,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	
     }
    
-    // TODO: IS IT OK TO OVERRIDE THIS METHOD?
-    public void destroy() throws RemoteException {
-        if (this.queries.size() > 0) {
-            logger.warn(this.queries.size()+" queries were left unclosed in the DBLayer");
-        }
-    }
-
     //===============================================================
     // What happens to unreferenced objects? They get buried by the untertaker!
     

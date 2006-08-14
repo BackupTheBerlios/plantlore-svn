@@ -283,7 +283,48 @@ public interface DBLayer extends Remote, Serializable {
      *  @throws RemoteException in case network connection failed
      */
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException;
+
+    /**
+     *  Method for creating new database user using CREATE USER statement. This method can only be called
+     *  as a part of long running transaction (such as executeInsertInTransaction() method).
+     *
+     *  @param name     Name of the new user
+     *  @param password Password for the new user
+     *  @param isAdmin  Flag whether created user will or will not be an administrator (admin can create other users)
+     *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the DB or the 
+     *                           execution of CREATE USER statement failed
+     *  @throws RemoteException In case connection to the server was lost
+     */
+    public void createUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException;
     
+    /**
+     *  Method for modifying the database user using ALTER USER statement. This method can only 
+     *  be called as a part of long running transaction (such as executeInsertInTransaction() method).
+     *  Only password and admin flag can be modified. Name of the user cannot be modified.
+     *
+     *  @param name     Name of the user to modify
+     *  @param password New password for the user. Leave blank or null if not modified.
+     *  @param isAdmin  Flag whether the user should or should not be an administrator (admin can 
+     *                  create other users)
+     *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the 
+     *                           DB or the execution of ALTER USER statement failed
+     *  @throws RemoteException In case connection to the server was lost
+     */    
+    public void alterUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException;
+    
+    /**
+     *  Method for deleting database user using DROP USER statement. This method can only 
+     *  be called as a part of long running transaction (such as executeInsertInTransaction() method).
+     *  DROP USER statement will fail in case user with the given username does not exist or in case
+     *  the given user is an owner of some database.
+     *
+     *  @param name     Name of the user to drop
+     *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the 
+     *                           DB or the execution of DROP USER statement failed
+     *  @throws RemoteException In case connection to the server was lost
+     */    
+    public void dropUser(String name) throws DBLayerException, RemoteException;
+        
     /**
      *  Return number of open database connections (instances of Hibernate Session class)
      *  @return number of open database connections
@@ -301,7 +342,5 @@ public interface DBLayer extends Remote, Serializable {
      * be used by the DBLayerFactory exclusively.
      */
     public void shutdown() throws RemoteException;
-    
-    public void destroy() throws RemoteException;
-        
+           
 }
