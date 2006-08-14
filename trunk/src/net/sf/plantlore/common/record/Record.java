@@ -334,6 +334,14 @@ public abstract class Record implements Serializable {
 		}
 		return true;
 	}
+	
+	/**
+	 * @return	True if and only if both have the same properties
+	 * (i.e. the same values in columns that are not foreign keys).
+	 */
+	public boolean equalsInProperties(Record record) {
+		return equalsUpTo(record, this.getForeignKeys().toArray(new String[0]) );
+	}
 
 	/**
 	 * Return the method that corresponds with the getter of <code>table.column</code>.  
