@@ -330,7 +330,19 @@ public class UserManager extends Observable {
     	    	
     	final Task task = new Task() {    		    		
     		public Object task() throws DBLayerException, RemoteException {
+    			
+    			boolean ok = false;
+    			ok = database.beginTransaction();
+		        if (!ok) {
+		            logger.debug("UserManager.addUserRecord(): Can't create transaction. Another is probably already running.");
+		            throw new DBLayerException(ERROR_TRANSACTION);
+		        }	
     			try {
+    				boolean isAdmin = false;
+    				if (right.getAdministrator() == 1) isAdmin = true;
+    				//Create database user
+    				database.createUser(userRecord.getLogin(),userRecord.getPassword(), isAdmin); 
+    				//Insert information about user into tRight, tUser
     				int rightId = database.executeInsert(right);
     	            right.setId(rightId);
     	            database.executeInsert(userRecord);		
@@ -347,16 +359,19 @@ public class UserManager extends Observable {
     	            //TODO overit, zda znam cID nebo je zjistit jinak ... pravdepodobne se rovna count+1    	            
     	            users = usersNew;
 		        }catch (RemoteException e) {
-		        	logger.error("Process add User failed. Remote exception caught in UserManager. Details: "+e.getMessage());		        	
+		        	logger.error("Process add User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
+		        	database.rollbackTransaction();	
                     RemoteException remex = new RemoteException(ERROR_ADD + e);
                     remex.setStackTrace(e.getStackTrace());
                     throw remex; 		           		       	    
 		        } catch (DBLayerException e) {
-		        	logger.error("Process add User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());       	                                                   		        
+		        	logger.error("Process add User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());
+		        	database.rollbackTransaction();	
                     DBLayerException dbex = new DBLayerException(ERROR_ADD + e);
                     dbex.setStackTrace(e.getStackTrace());
                     throw dbex; 		            
 		        } 	
+		        database.commitTransaction();
 		        setInfoFinishedTask(true);
 		        return null;
     		}
@@ -382,6 +397,11 @@ public class UserManager extends Observable {
 		            throw new DBLayerException(ERROR_TRANSACTION);
 		        }		      
     			try {
+    				boolean isAdmin = false;
+    				if (userRecord.getRight().getAdministrator() == 1) isAdmin = true;
+    				//Edit database user
+    				database.alterUser(userRecord.getLogin(), userRecord.getPassword(), isAdmin);
+    				//Edit information about user in database
     				database.executeUpdateInTransaction(userRecord.getRight());
     	            database.executeUpdateInTransaction(userRecord);
     	            userList.set(idRecord, userRecord);
@@ -415,27 +435,37 @@ public class UserManager extends Observable {
      *  @return instance of the Task with the long running operation (executeDelete) 
      */
     public Task deleteUserRecord() {
-    	
-    	
- //TODO pokud bude nastaveno zobrazeni jen uzivatelu, kteri maji pristup do databaze, tak je nutne smazat uzivatele z listu
-        
-        //Set actual time into param DROPWHEN - inform about deactive user account     	
+ 
+    	//Set actual time into param DROPWHEN - inform about deactive user account     	
         userRecord.setDropWhen(new Date());    	
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {    			    			
+    		public Object task() throws DBLayerException, RemoteException {  
+    			
+    			boolean ok = false;
+    			ok = database.beginTransaction();
+		        if (!ok) {
+		            logger.debug("UserManager.editUserRecord(): Can't create transaction. Another is probably already running.");
+		            throw new DBLayerException(ERROR_TRANSACTION);
+		        }	
     			try {
+    				//Drop database user
+    				database.dropUser(userRecord.getLogin());
+    				//Set information abou dropping user into database
     				 database.executeUpdate(userRecord);		            
 		        }catch (RemoteException e) {
-		        	logger.error("Process delete User failed. Remote exception caught in UserManager. Details: "+e.getMessage());		        	
+		        	logger.error("Process delete User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
+		        	database.rollbackTransaction();
                     RemoteException remex = new RemoteException(ERROR_DELETE + e.getMessage());
                     remex.setStackTrace(e.getStackTrace());
                     throw remex; 		           		       	    
 		        } catch (DBLayerException e) {
-		        	logger.error("Process delete User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());       	                                                   		        	
+		        	logger.error("Process delete User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());
+		        	database.rollbackTransaction();
                     DBLayerException dbex = new DBLayerException(ERROR_DELETE + e.getMessage());
                     dbex.setStackTrace(e.getStackTrace());
                     throw dbex; 		            
 		        } 		
+		        database.commitTransaction();
 		        setInfoFinishedTask(true);
 		        return null;
     		}
@@ -518,15 +548,7 @@ public class UserManager extends Observable {
     //****************************//
     //****Get and set metods*****//
     //**************************//
-   
-     /** 
-      * Set list of users with right to edit records created by specific user
-      * @param userList users names list
-      */ 
-    //TODO userList - urcite se to musi jmenovat jinak- jde o jmena v texArea u ADD, EDIT!!!
-   // public void setEditGroup(ArrayList<String> userLogin) {       
-    //    this.userLogin = userLogin;
-    //}
+     
     
     /**
 	 * Set a new DBLayer.
