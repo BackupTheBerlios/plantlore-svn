@@ -89,7 +89,8 @@ public class PlantloreConstants {
     public static final int RESTR_NE_PROPERTY   = 20;    
     
     public static final int SUBQUERY_GEALL      = 30;
-    public static final int SUBQUERY_LEALL      = 31;    
+    public static final int SUBQUERY_LEALL      = 31;   
+    public static final int SUBQUERY_IN         = 32;
     
     /** Constants for projections in select query */
     public static final int PROJ_AVG            = 40;

@@ -194,6 +194,12 @@ public class SelectQueryImplementation implements SelectQuery {
             	if( subQuery != null)
             		criteria.add(Subqueries.propertyLeAll(firstPropertyName, subQuery.getCriteria()));
                 break;                
+            case PlantloreConstants.SUBQUERY_IN:
+            	// It may happen we got only the STUB, yet what we need is the remote object!
+            	subQuery = (SubQueryImplementation)translation.get( value );
+            	if( subQuery != null)
+            		criteria.add(Subqueries.propertyIn(firstPropertyName, subQuery.getCriteria()));
+                break;                                
             default:
                 
         }
