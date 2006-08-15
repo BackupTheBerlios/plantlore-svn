@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Deletable;
 import net.sf.plantlore.common.record.Habitat;
@@ -30,6 +31,7 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.common.exception.ImportException;
 
 import org.apache.log4j.Logger;
 
@@ -60,12 +62,18 @@ public class DBLayerUtils {
 		parentTable.put(Territory.class, Habitat.class);
 		parentTable.put(Metadata.class, Occurrence.class);
 		parentTable.put(Plant.class, Occurrence.class);
+		parentTable.put(Habitat.class, Occurrence.class);
+		parentTable.put(Author.class, AuthorOccurrence.class);
+		// >>Occurrence<< MUST NOT BE LISTED HERE!
+		// It would cause problems with DELETE and INSERT...
 
 		parentColumn.put(Village.class, Habitat.VILLAGE);
 		parentColumn.put(Phytochorion.class, Habitat.PHYTOCHORION);
 		parentColumn.put(Territory.class, Habitat.TERRITORY);
 		parentColumn.put(Metadata.class, Occurrence.METADATA);
 		parentColumn.put(Plant.class, Occurrence.PLANT);
+		parentColumn.put(Habitat.class, Occurrence.HABITAT);
+		parentColumn.put(Author.class, AuthorOccurrence.AUTHOR);
 	}
     
     
@@ -105,6 +113,16 @@ public class DBLayerUtils {
         return (Record)tmp[0];
     }
 
+    /**
+     * 
+     * @param o
+     * @return
+     * @throws DBLayerException
+     * @throws RemoteException
+     * 
+     * @see #findAllAuthors(Occurrence)
+     */
+    @Deprecated
     public AuthorOccurrence[] getAuthorsOf(Occurrence o) throws DBLayerException, RemoteException {
         AuthorOccurrence[] authorResults = null;
         SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
@@ -179,26 +197,47 @@ public class DBLayerUtils {
     
     
     
-    
 	/**
-	 * Find out whether some records share the supplied <code>record</code>.
+	 * Find out how many records share the supplied <code>record</code>.
+	 * <b>Intended use: records from basic tables only!</b>
 	 * 
-	 * @param record	The record to be tested.
+	 * @param record	The record in question.
 	 * @return	The number of records that share the supplied <code>record</code>. 
 	 */
-	public int sharedBy(Record record) 
+    public int sharedBy(Record record)
+    throws RemoteException {
+    	return sharedBy(record, true);
+    }
+    
+	/**
+	 * Find out how many records share the supplied <code>record</code>.
+	 * <b>Intended use: records from basic tables only!</b>
+	 * 
+	 * @param record	The record in question.
+	 * @param aliveOnly	Ommit records marked as deleted.
+	 * @return	The number of records that share the supplied <code>record</code>. 
+	 */
+	public int sharedBy(Record record, boolean aliveOnly) 
 	throws RemoteException {
 		if(record.getId() == null)
 			return 0;
+		
+		if( !Record.BASIC_TABLES.contains(record.getClass()) )
+			throw new IllegalArgumentException(L10n.getString("Error.DiscouragedUse"));
 		
 		SelectQuery q = null;
 		int rows = 0;
 		try {
 			Class parent = parentTable.get( record.getClass() );
 			String column = parentColumn.get( record.getClass() );
+			// Records from this table do not have a parent table.
+			if(parent == null || column == null)
+				return 0;
 			
 			q = db.createQuery( parent );
 			q.addRestriction(RESTR_EQ, column, null, record, null);
+			if( aliveOnly && record instanceof Deletable )
+				q.addRestriction(RESTR_EQ, "DELETED", null, 0, null);
 			int resultset = db.executeQuery(q); 
 			rows = db.getNumRows(resultset);
 		} catch (DBLayerException e) {
@@ -210,20 +249,33 @@ public class DBLayerUtils {
 		return rows;
 	}
     
+	/**
+	 * Find all AuthorOccurrences that share the specified Occurrence.
+	 * 
+	 * @param occurrence	The instance of some record.
+	 * @return	All AuthorOccurrences refering to the supplied Occurrence.
+	 */	
+	public AuthorOccurrence[] findAllAuthors(Occurrence occurrence)
+	throws RemoteException, DBLayerException {
+		return findAllAuthors(occurrence, true);
+	}
     
 	/**
 	 * Find all AuthorOccurrences that share the specified Occurrence.
 	 * 
-	 * @param occurrence	The instance of some record
+	 * @param occurrence	The instance of some record.
+	 * @param aliveOnly	Ommit records marked as deleted.
 	 * @return	All AuthorOccurrences refering to the supplied Occurrence.
 	 */
-	public AuthorOccurrence[] findAllAuthors(Occurrence occurrence) 
+	public AuthorOccurrence[] findAllAuthors(Occurrence occurrence, boolean aliveOnly) 
 	throws RemoteException, DBLayerException {
 		SelectQuery q = null;
-		AuthorOccurrence[] sharers = new AuthorOccurrence[0];
+		AuthorOccurrence[] sharers = null;
 		try {
 			q = db.createQuery(AuthorOccurrence.class);
 			q.addRestriction(RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, occurrence, null);
+			if( aliveOnly )
+				q.addRestriction(RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
 			int resultset = db.executeQuery(q),
 			rows = db.getNumRows(resultset);
 			if(rows > 0) {
@@ -338,7 +390,21 @@ public class DBLayerUtils {
 	 * @param record	The record to be inserted (including all of its subrecords).
  	 * @return The inserted record with its new ID set.
 	 */
-	public Record insert(Record record) 
+	public Record highLevelInsert(Record record) 
+	throws RemoteException, DBLayerException {
+		if( !db.beginTransaction() )
+			throw new DBLayerException(L10n.getString("Error.TransactionRaceConditions"));
+		try {
+			Record r = insert( record );
+			db.commitTransaction();
+			return r;
+		} catch( DBLayerException e ) {
+			db.rollbackTransaction();
+			throw e;
+		}
+	}
+	
+	private Record insert(Record record) 
 	throws RemoteException, DBLayerException {
 		logger.debug("Inserting ["+record+"] into the database.");
 		
@@ -572,41 +638,126 @@ public class DBLayerUtils {
 //		}
 //	}
 	
+	
+	
 	/**
+	 * High-level delete.
 	 * Delete the specified record properly.
-	 * Do not forget the record must be in the database! 
+	 * Do not forget the record must be in the database!
+	 * <b>Intended use: records from basic tables only!</b> 
+	 * Records from other tables may require a special attention when deleted. 
 	 * <br/>
-	 * Some records must be deleted very carefully 
-	 * in order to be able to "revive" them using the Undo operation, 
-	 * while other records must be deleted directly from the table without
-	 * creating a record in the history. 
+	 * We recognize three types of records:
+	 * <ol>
+	 * <li>
+	 * <b>(O)</b> Occurrence records. Deleting an Occurrence requires the deletion of
+	 * all associated authors (AuthorOccurrences) and the associated habitat. 
+	 * </li>
+	 * <li>
+	 * <b>(D)</b> Deletable records. Deletable records should be only marked as deleted so that
+	 * the User can revive them later (using the History.Undo operation). It is not possible 
+	 * to delete a record of the type (D), if there are at least two undeleted records refering to it.
+	 * Deletable records are: Author, AuthorOccurrence, Habitat, Publication. 
+	 * </li>
+	 * <li>
+	 * <b>(I)</b> Immutable records. Immutable records belong to immutable tables and should be deleted
+	 * for good. <b>This kind of records cannot be handled in here!</b>
+	 * </li>
+	 * <br/>
 	 * 
 	 * @param record	The record that will be deleted. 
 	 * @return Either the record, if it has been marked as deleted (but physically remains in the database), 
 	 * or null, if the record was deleted from the database for good and is no longer available.
+	 * 
+	 * @see #deleteImmutableRecord(Record)
 	 */
-	public Record delete(Record record) 
+	public Record highLevelDelete(Record record) 
+	throws RemoteException, DBLayerException {
+		if( !db.beginTransaction() )
+			throw new DBLayerException(L10n.getString("Error.TransactionRaceConditions"));
+		try {
+			Record r = delete( record );
+			db.commitTransaction();
+			return r;
+		} catch( DBLayerException e ) {
+			db.rollbackTransaction();
+			throw e;
+		}
+	}
+
+	private boolean deletingAllAuthorOccurrences = false;
+	
+	private Record delete(Record record) 
 	throws RemoteException, DBLayerException {
 		logger.info("Deleting [" + record + "] from the database.");
-		// Deletable records are records that must be marked as deleted. 
-		// They will appear to be dead and the User can revive them later (using Undo).
+		if( !Record.BASIC_TABLES.contains(record.getClass()) )
+			throw new IllegalArgumentException(L10n.getString("Error.DiscouragedUse"));
+		
+		// (O) OCCURRENCE RECORDS
+		if( record instanceof Occurrence ) {
+			Occurrence occ = (Occurrence)record;
+			occ.setDeleted( 1 );
+			// Delete the Occurrence first.
+			db.executeUpdateInTransaction( occ );
+			// Try to delete the Habitat of this Occurrence.
+			delete( occ.getHabitat() );
+			// Delete all authors associated with this Occurrence
+			AuthorOccurrence[] aos = findAllAuthors( occ );
+			deletingAllAuthorOccurrences = true;
+			if( aos != null ) // Although this should not happen, every Occurrence must have at least one AO!
+				for( AuthorOccurrence ao : aos )
+					delete( ao );
+			deletingAllAuthorOccurrences = false;
+		}
+		// (D) DELETABLE RECORDS
 		if(record instanceof Deletable) {
-			((Deletable)record).setDeleted( 1 );
-			db.executeUpdateInTransaction( record );
-		} 
-		// Other recods, mostly from the immutable tables, must be removed from the database
-		// for good. It is the only way how to get rid of them.
-		// Note that if such record is shared, it cannot be deleted - other records may refer to it!
-		else if(record.getId() != null) {
+			// How many records, that are alive, share this one?
 			int sharers = sharedBy( record );
-			if( sharers > 0 ) {
+			if( sharers > 1 ) {
 				logger.error("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
 				throw new DBLayerException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
 			}
+			// Mark the record as deleted.
+			// [!] If all AuthorOccurrences are to be deleted because their Occurrence is deleted, 
+			// the delete value is 2 (instead of 1), so that they can be revived properly 
+			// when the Occurrence is revived!  
+			((Deletable)record).setDeleted( 
+					(record instanceof AuthorOccurrence && deletingAllAuthorOccurrences) ? 2 : 1 );
+			db.executeUpdateInTransaction( record );
+		}
+		// (I) IMMUTABLE RECORDS
+		else {
+			throw new IllegalArgumentException(L10n.getString("Error.DiscouragedUse"));
+			/* 
+			 * Proper handling:
+			 * 
+			int sharers = sharedBy( record, false );
+			if( sharers > 0 ) {
+				logger.error("The "+record+" is in use by "+sharers+" other record(s). It cannot be deleted!");
+				throw new DBLayerException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
+			}
+			
 			db.executeDeleteHistory( record );
 			record = null;
+			 */
 		}
+		
 		return record;
 	}
-    
+	
+	/**
+	 * It is impossible to delete a record of the type (I), if there is at least one
+	 * record refering to it (undeleted as well as deleted).
+    */
+	public void deleteImmutableRecord(Record record)
+	throws RemoteException, DBLayerException {
+		int sharers = sharedBy( record, false );
+		if( sharers > 0 ) {
+			logger.error("The "+record+" is in use by "+sharers+" other record(s). It cannot be deleted!");
+			throw new DBLayerException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
+		}
+		
+		db.executeDeleteHistory( record );
+	}
+	
 }
