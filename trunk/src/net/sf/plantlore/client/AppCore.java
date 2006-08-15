@@ -379,6 +379,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         plants = new Pair[resultsCount];
         for (int i = 0; i < resultsCount; i++)
         {
@@ -409,6 +410,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         authors = new Pair[resultsCount];
         for (int i = 0; i < resultsCount; i++)
         {
@@ -463,6 +465,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         villages = new Pair[resultsCount];
         for (int i = 0; i < resultsCount; i++)
         {
@@ -489,6 +492,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         territories = new Pair[resultsCount];
         for (int i = 0; i < resultsCount; i++)
         {
@@ -515,6 +519,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         phytNames = new Pair[resultsCount];
         phytCodes = new Pair[resultsCount];
         for (int i = 0; i < resultsCount; i++)
@@ -548,6 +553,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         countries = new String[resultsCount];
         for (int i = 0; i < resultsCount; i++)
         {
@@ -573,6 +579,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         sources = new String[resultsCount];
         for (int i = 0; i < resultsCount; i++)
             sources[i] = (String)((Object[])records[i])[0];
@@ -599,6 +606,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         publications = new Pair[resultsCount+1];
         publications[0] = new Pair<String,Integer>("",-1); //allow the user to enter a null value
         for (int i = 0; i < resultsCount; i++)
@@ -628,6 +636,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
+        database.closeQuery(sq);
         projects = new Pair[resultsCount];
         for (int i = 0; i < resultsCount; i++)
         {
