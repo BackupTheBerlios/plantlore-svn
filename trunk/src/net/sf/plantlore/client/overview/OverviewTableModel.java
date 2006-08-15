@@ -51,6 +51,11 @@ public class OverviewTableModel extends AbstractTableModel {
     private Selection selection = new Selection();    
     private Object[][] data;
     
+    /** The currently open select query that we need to close
+     * when we receive a requirement for loading data from
+     * a new select query.
+     *
+     */
     private SelectQuery oldSelectQuery;
     
     /** Simple mode if true - only first three columns are displayed
@@ -88,7 +93,7 @@ public class OverviewTableModel extends AbstractTableModel {
             ///!!!
             Object[][] data = new Object[to - from + 1][];
             logger.debug("data.length = "+data.length);
-            records = db.more(getResultId(), from, to);
+            records = db.more(getResultId(), from, to);            
             logger.debug("records.length = " + records.length);
 
             for (int i = 0; i < data.length ; i++) {
@@ -295,6 +300,7 @@ public class OverviewTableModel extends AbstractTableModel {
         if (oldSelectQuery != null)
             db.closeQuery(oldSelectQuery);
         
+        oldSelectQuery = sq;
         logger.debug("Setting resultid to "+resultId);
         this.resultId = resultId;
         from = 0;
