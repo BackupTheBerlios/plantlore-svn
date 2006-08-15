@@ -67,6 +67,7 @@ public class Search extends Observable {
     private String localityDescription;
     private Integer year;
     private String habitatNote;
+    private Integer habitatId;
     private String occurrenceNote;
     private Pair<String, Integer> territoryName = new Pair<String,Integer>("",-1);
     private Pair<String, Integer> phytName = new Pair<String,Integer>("",-1);
@@ -159,6 +160,12 @@ public class Search extends Observable {
         return year;
     }
 
+    /** Allows for special queries based only on habitat id.
+     *
+     */
+    public void setHabitatId(Integer id) {
+        this.habitatId = id;
+    }
 
     public String getHabitatNote() {
         return habitatNote;
@@ -745,6 +752,12 @@ public class Search extends Observable {
                     restrictions.add(new Restriction(RESTR_LIKE, Occurrence.NOTE, "%"+occurrenceNote+"%"));
                 }
                 
+                if (isNotEmpty(habitatId)) {
+                    arg = dlu.getObjectFor(habitatId,Habitat.class);
+                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HABITAT,null,arg,null);
+                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.HABITAT, arg));                    
+                }
+                
                 if (isNotEmpty(habitatNote)) {
                     sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
                     restrictions.add(new Restriction(RESTR_LIKE, habitatAlias+Habitat.NOTE, "%"+habitatNote+"%"));
@@ -862,6 +875,7 @@ public class Search extends Observable {
         localityDescription = null;
         year = null;
         habitatNote = null;
+        habitatId = null;
         occurrenceNote = null;
         territoryName = null;
         phytName = null;

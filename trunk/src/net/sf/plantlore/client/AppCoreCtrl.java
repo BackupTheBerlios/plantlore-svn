@@ -63,6 +63,10 @@ import net.sf.plantlore.client.overview.detail.DetailView;
 import net.sf.plantlore.client.overview.search.Search;
 import net.sf.plantlore.client.overview.search.SearchCtrl;
 import net.sf.plantlore.client.overview.search.SearchView;
+import net.sf.plantlore.client.overview.tree.HabitatTree;
+import net.sf.plantlore.client.overview.tree.HabitatTreeCtrl;
+import net.sf.plantlore.client.overview.tree.HabitatTreeView;
+import net.sf.plantlore.client.overview.tree.NodeInfo;
 import net.sf.plantlore.client.print.Print;
 import net.sf.plantlore.client.print.PrintCtrl;
 import net.sf.plantlore.client.print.PrintView;
@@ -80,6 +84,8 @@ import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultProgressBarEx;
+import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.ProgressBar;
@@ -245,9 +251,15 @@ public class AppCoreCtrl {
 	DetailView detailView;
 
 	DetailCtrl detailCtrl;
+        
+        //HabitatTree
+        HabitatTree habitatTreeModel;
+        HabitatTreeView habitatTreeView;
+        HabitatTreeCtrl habitatTreeCtrl;
 
 	// Bridges
 	ManagerBridge managerBridge = new ManagerBridge();
+        HabitatTreeBridge habitatTreeBridge = new HabitatTreeBridge();
 
 	// Actions
 	AbstractAction settingsAction = new SettingsAction();
@@ -281,6 +293,7 @@ public class AppCoreCtrl {
 	AbstractAction schedaAction = new SchedaAction();
 
 	AbstractAction searchAction = new SearchAction();
+        AbstractAction habitatTreeAction = new HabitatTreeAction();
 
 	AbstractAction addAction = new AddAction();
 
@@ -329,6 +342,8 @@ public class AppCoreCtrl {
 		view.addDataWholeHistoryAction(dataWholeHistoryAction);
 		view.addDataUserAction(dataUserAction);
 
+                view.habitatTreeButton.setAction(habitatTreeAction);
+                
 		view.setSearchAction(searchAction);
 		view.setAddAction(addAction);
 		view.setEditAction(editAction);
@@ -389,6 +404,12 @@ public class AppCoreCtrl {
 		detailModel = new Detail(model);
 		detailView = new DetailView(detailModel, view, true);
 		detailCtrl = new DetailCtrl(detailModel, detailView);
+                
+                // --- HabitatTree ---
+                habitatTreeModel = new HabitatTree();
+                habitatTreeView = new HabitatTreeView(view,true,habitatTreeModel);
+                habitatTreeCtrl = new HabitatTreeCtrl(habitatTreeModel, habitatTreeView);
+                habitatTreeModel.addObserver(new HabitatTreeBridge());
 	}
 
 	private void setDatabaseDependentCommandsEnabled(boolean enabled) {
@@ -408,6 +429,7 @@ public class AppCoreCtrl {
 		historyAction.setEnabled(enabled);
 		schedaAction.setEnabled(enabled);
 		searchAction.setEnabled(enabled);
+                habitatTreeAction.setEnabled(enabled);
 		addAction.setEnabled(enabled);
 		editAction.setEnabled(enabled);
 		deleteAction.setEnabled(enabled);
@@ -970,6 +992,34 @@ public class AppCoreCtrl {
 		}
 	}
 
+	class HabitatTreeAction extends AbstractAction {
+		public HabitatTreeAction() {
+			if (showButtonText)
+				putValue(NAME, L10n.getString("Overview.HabitatTree"));
+			putValue(SMALL_ICON, Resource.createIcon("/toolbarButtonGraphics/development/Application24.gif"));
+			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.HabitatTreeTT"));
+			//putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
+			//		ActionEvent.CTRL_MASK));
+
+			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Search"));
+		}
+
+		public void actionPerformed(ActionEvent actionEvent) {
+                        habitatTreeModel.setDBLayer(model.getDatabase());
+                        try {
+                            habitatTreeModel.loadData();
+                            habitatTreeView.setVisible(true);
+                        } catch (Exception ex) {
+                            if (ex instanceof DBLayerException || ex instanceof RemoteException) {
+                                DefaultReconnectDialog.show(view,ex);
+                            } else {
+                                logger.error("Exception: "+ex);
+                                ex.printStackTrace(); //FIXME
+                            }
+                        }
+		}
+	}
+
 	class SearchBridge implements Observer {
 		public void update(Observable o, Object arg) {
 			if (arg != null && arg instanceof Integer) {
@@ -999,6 +1049,20 @@ public class AppCoreCtrl {
 		}
 
 	}
+        
+        class HabitatTreeBridge implements Observer {
+            public void update(Observable o, Object arg) {
+                if (arg != null && arg instanceof NodeInfo) {                    
+                    NodeInfo nodeInfo = (NodeInfo)arg;
+                    switch (nodeInfo.getType()) {
+                        case HABITAT:
+                            searchModel.clear();
+                            searchModel.setHabitatId(nodeInfo.getId());
+                            searchModel.constructQuery();
+                    }//switch
+                }//if
+            }//update
+        }//class HabitatTreeBridge
 
 	class SchedaAction extends AbstractAction {
 		public SchedaAction() {

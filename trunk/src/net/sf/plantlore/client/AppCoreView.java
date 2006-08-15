@@ -62,6 +62,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         searchButton = new javax.swing.JButton();
         schedaButton = new javax.swing.JButton();
         historyButton = new javax.swing.JButton();
+        habitatTreeButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         pageToolBar = new javax.swing.JToolBar();
@@ -134,6 +135,9 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         historyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/History24.gif")));
         mainToolBar.add(historyButton);
+
+        habitatTreeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/toolbarButtonGraphics/development/Application24.gif")));
+        mainToolBar.add(habitatTreeButton);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         statusLabel.setText(L10n.getString("Overview.StatusReady"));
@@ -227,7 +231,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         );
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -703,6 +707,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem filePrint;
     private javax.swing.JMenuItem fileSettings;
+    protected javax.swing.JButton habitatTreeButton;
     protected javax.swing.JMenuItem helpAbout;
     protected javax.swing.JMenuItem helpContents;
     protected javax.swing.JMenu helpMenu;
