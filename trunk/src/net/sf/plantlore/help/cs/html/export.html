@@ -1,8 +1,8 @@
-<html>
+﻿<html>
 	
 	<head>
 		<meta http-equiv="Content-Language" content="cs-CZ" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<!--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
 		<title>Export dat</title>
 	</head>
 
@@ -13,47 +13,51 @@
 	<p>
 	Vaše nálezová data jsou při práci s Plantlore ukládána do databáze. 
 	K databázi nelze přistupovat přímo a pokud byste chtěli svoje data přenášet i na jiné
-	počítače, je potřeba použít Export. Export dat tedy slouží k "vytažení" nálezových dat z databáze
+	počítače, je potřeba použít Export. Export dat slouží k "vytažení" nálezových dat z databáze
 	a uložení do souboru na disku Vašeho počítače.
 	</p>
 
 	<p>
-	Export lze provádět po přihlášení k jakékoli databázi - tedy i k databázi vzdálené.
-	Zde je ovšem nutné zvážit přenosovou kapacitu linky, kterou používáte pro připojení,
+	Export lze provádět po připojení k jakékoli databázi - tedy i k databázi vzdálené.
+	Tehdy se vyplatí zvážit přenosovou kapacitu linky, kterou používáte pro připojení,
 	neboť se může přenášet velké množství dat a doba nutná k vyexportování nálezových dat
 	by byla neúnosná.
 	</p>
 
-	<p>
-	Export probíhá v několika krocích, které jsou detailněji popsány níže.
-	</p>
 
-
-	<h2>Dříve, než začnete exportovat</h2>
+	<h2>1. Dříve, než začnete exportovat</h2>
 
 	<p>
-	Před samotným exportem je nejprve nutné vybrat nálezové záznamy, 
+	Před vlastním exportem je nejprve nutné vybrat (označit) nálezové záznamy, 
 	které chcete exportovat. 
-	K tomu slouží <a href="./search.html">Vyhledávání</a>.
-	Ve vyhledávacím formuláři zadáte požadovaná kriteria -
-	řekněme, že budete chtít vyhledat nálezová data související s projektem "Mapování Krušných hor"
-	v roce 2003 - a v základním <a href="./overview.html">Přehledu</a> se zobrazí všechny relevantní
+	Pro zúžení okruhu, z něhož budete záznamy vybírat, slouží <a href="./search.html">Vyhledávání</a>.
+	Ve vyhledávacím formuláři zadáte požadovaná kriteria a v 
+	<a href="./overview.html">Přehledu</a> se zobrazí všechny relevantní
 	záznamy uložené v databázi. Z těchto záznamů můžete ještě explicitně označit ty, které jsou
 	pro vás důležité. Neoznačíte-li žádné záznamy, Plantlore se bude chovat, jako byste označili
-	všechny - tím Vám usnadní práci s jejich výběrem.
+	všechny; tím Vám usnadní práci s jejich označováním.
+	</p>
+
+	<p>
+	Na následujícím obrázku je označeno 11 záznamů z devatenácti.
+	</p>
+
+	<p>
+	<img src="picture/ExportSelectingRecords.png" alt="Označování záznamů pro export.">
 	</p>
 
 
-	<h2>Vlastní export dat</h2>
+
+	<h2>2. Vlastní export dat</h2>
 
 	<p>
-	Export probíhá ve třech krocích.
+	Export probíhá ve dvou krocích.
 	</p>
 
-	<h3>1. Jméno souboru a formát dat</h3>
+	<h3>2.1. Volba jména souboru a formátu dat</h3>
 
 	<p>
-	Zvolte jméno souboru, do kterého se mají data uložit a jeho formát.
+	Zvolte jméno souboru, do kterého se mají data uložit, a jeho formát.
 	K dispozici je několik základních formátů:
 	<ul>
 		<li>PlantloreNative je formát, který je navržen přímo pro pohodlný přenos dat mezi
@@ -61,7 +65,7 @@
 		doporučujeme vybrat tento.
 		</li>
 		<li>XML je formát využívající tzv. Extensible Markup Language (XML). Data jsou ukládána v přehledné
-		stromové struktuře uvozené tzv. tagy. Formát navíc umožňuje konkrétní výběr částí záznamu,
+		stromové struktuře uvozené tzv. tagy. Formát navíc umožňuje výběr konkrétních částí záznamu,
 		které chcete exportovat. Tento formát je vhodný jak pro přenášení dat, tak pro jejich vizualizaci
 		např. v programu Internet Explorer.
 		</li>
@@ -79,8 +83,7 @@
 		</li>
 		<li>StdOut neukládá záznamy do souboru, ale na tzv. standardní výstup. Data jsou odesílána 
 		ve velmi čitelné podobě. Tento druh formátu je určen pro testování nebo proudové zpracování
-		v příkazové řádce nebo shellu. Tuto možnost mohou využít uživatelé operačního systému Windows 
-		v programu PowerShell i uživatelé linuxových distribucí ve svých shellech jako je bash.
+		v příkazové řádce nebo shellu. 
 		</li>
 	</ul>
 	Nejste-li si jisti, který formát je pro Vás ten správný, doporučujeme volit PlantloreNative,
@@ -88,15 +91,15 @@
 	</p>
 
 	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/ExportFileFormat.jpg" alt="Výběr jména souboru a jeho formátu.">
+	<img src="picture/ExportSupplyingName.png" alt="Zadávání jména souboru a formátu dat.">
 	</div>
 
 
-	<h3>2. Atributy záznamů</h3>
+	<h3>2.2. Atributy záznamů (volitelně)</h3>
 
 	<p>
 	Tento krok je volitelný a nabízí jej pouze formáty XML, CSV a StdOut. Zbylé formáty automaticky exportují
-	záznam se všemi jeho atributy. Volba atributů (též sloupečků) záznamu se provádí označováním
+	záznam se všemi jeho atributy. Volba atributů (též sloupečků) nálezového záznamu se provádí označováním
 	položek v zobrazeném stromě. Červeně jsou označeny položky, které je nutné vybrat, pokud budete chtít
 	data znovu nahrát do Plantlore (více viz <a href="./import.html">Import</a>).
 	</p>
@@ -105,41 +108,31 @@
 	Nevyberete-li žádné sloupečky, předpokládá se, že jste označili všechny.
 	</p>
 
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/ExportColumns.jpg" alt="Výběr atributů záznamu.">
-	</div>
+	<p>
+	<img src="picture/ExportSelectingColumns.png" alt="Výběr atributů nálezových záznamů.">
+	</p>
 
 
-	<h3>3. Export záznamů</h3>
+	<h3>2.3. Export záznamů</h3>
 
 	<p>
 	Po dokončení výběru atributů se spustí Export. Průběh procesu můžete sledovat v otevřeném okně.
-	Zavřete-li okno klinutím na křížek, Export se nezruší, pouze bude skryto okno zobrazující průběh.
-	Toto okno pak můžete znovu kdykoliv otevřít výběrem položky Export v hlavním menu aplikace,
-	o průběhu exportu tedy můžete být informováni - pokud již Export ovšem mezitím neskončil. 
+	Rozhodnete-li se Export zrušit, stiskněte tlačítko <i>Storno</i> a export bude předčasně ukončen.
 	</p>
 
 	<p>
-	Rozhodnete-li se Export zrušit, stiskněte tlačítko "Zrušit". Export bude předčasně ukončen.
-	</p>
-
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/ExportProgress.jpg" alt="Průběh exportu.">
-	</div>
+	<img src="picture/ExportProgress.png" alt="Průběh exportu.">
+	<p>
 
 
 
-
-	<h2>Omezení při Exportu</h2>
+	<h2>3. Omezení, která je nutno zvážit při Exportu</h2>
 
 	<p>
-	Exportovat lze jakákoli nálezová data, která jste označili - a tudíž máte právo je prohlížet.
-	Pamatujte: "nic znamená vše" - neoznačíte-li explicitně žádné záznamy nebo sloupečky, Plantlore
-	se chová, jako byste vybrali všechny. Tím Vám šetří práci.
-	</p>
-
-	<p>
-	Současně může probíhat pouze jeden Export dat.
+	Exportovat lze jakákoli nálezová data, která jste označili a tedy máte právo je prohlížet.
+	Pamatujte: <i>nic znamená vše</i> - neoznačíte-li explicitně žádné záznamy nebo sloupečky, Plantlore
+	se chová, jako byste vybrali všechny. 
+	Současně může probíhat v jedné instanci programu Plantlore pouze jeden Export nálezových dat.
 	</p>
 
 </body>
