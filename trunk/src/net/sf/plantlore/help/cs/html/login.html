@@ -3,113 +3,346 @@
 	<head>
 		<meta http-equiv="Content-Language" content="cs-CZ" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Přihlašování</title>
+		<title>Připojování k databázi</title>
 	</head>
 
 <body>
 
-	<h1>Přihlašování k databázi</h1>
+	<h1>Připojování k databázi</h1>
 
 	<p>
-	První krok, který po spuštění Plantlore musíte učinit, je přihlášení k databázi, se kterou chcete pracovat.
-	Přihlášení k databázi je snadné a intuitivní, probíhá ve dvou krocích.
-	</p>
-
-	<h3>1. Výběr databáze</h3>
-
-	<p>
-	Pokud jste se k nějaké databázi dříve přihlašovali, pravděpodobně už máte seznam neprázdný.
-	Není-li tomu tak, postupte na sekci "Přidávání, mazání a editace záznamů".
-	</p>
-
-	<p>
-	V opačném případě vyberte jednu z databází v seznamu a pokračujte kliknutím na tlačítko "Pokračovat".
-	</p>
-
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/LoginDBSelection.jpg" alt="Volba databáze.">
-	</div>
-
-	<p>
-	Chcete-li se v budoucnu vždycky přihlašovat k vybrané databázi, zaškrtněte políčko
-	"Vybrat automaticky". Tuto možnost lze vybrat pouze v případě, že je v seznamu 
-	k disposici pouze jeden záznam.
+	V této sekci se dozvíte:
+	<ol>
+		<li><a href="#NewConnection">Jak se připojit k databázi.</a></li>
+		<li><a href="#AddDBInfo">Jak vytvořit nový záznam pro připojení k databázi.</a></li>
+		<li><a href="#EditDeleteDBInfo">Jak upravit nebo vymazat záznam pro připojení k databázi.</a></li>
+		<li><a href="#LoginErrorMessages">Jaké problémy při připojování mohou nastat a jak je řešit.</a></li>
+	</ol>
 	</p>
 
 
-	<h3>2. Autentifikace</h3>
+	<hr/>
+
+
+	<h2 id="NewConnection">1. Jak se připojit k databázi</h2>
+
+	<p>
+	Přihlášení k databázi, kde jsou Vaše data uložena, je první krok při práci s Plantlore. 
+	</p>
+
+	<h3>1.1. Výběr databáze</h3>
+	
+	<p>
+	<img src="picture/LoginDBSelection.png" alt="Volba databáze.">
+	</p>
+
+	<p>
+	Po instalaci Plantlore je k disposici pouze jedna databáze pojmenovaná <i>Ukázková databáze</i>.
+	Tato databáze neobsahuje žádné záznamy, žádná nálezová data, a je připravena pro započetí práce.
+	</p>
+
+	<p>
+	Neobsahuje-li seznam databází žádný záznam, budete jej muset nejprve <a href="#AddDBInfo">vytvořit</a>. 
+	Po jisté době používání Plantlore může Váš seznam databází vypadat podobně jako ten na obrázku.
+	Plantlore automaticky zvýrazní jako vybranou tu databázi, kterou jste zvolili při posledním
+	přihlašování.
+	Vyberte jednu z databází v seznamu a stiskněte tlačítko <i>Pokračuj</i>.
+	</p>
+
+
+	<h3>1.2. Autentifikace - prokazování totožnosti</h3>
 
 	<p>
 	Pro přihlášení k databázi je potřeba se prokázat přihlašovacími údaji 
-	- uživatelským jménem a heslem.
+	- uživatelským jménem a heslem. 
+
+	Pokud se přihlašujete poprvé, zadejte přihlašovací údaje, 
+	které jste použili při instalaci Plantlore.
+
+	Nové uživatelské jméno a heslo smí přidělit pouze správce databáze.
 	</p>
 	
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/LoginAuthentication2.jpg" alt="Vkládání přihlašovacích údajů.">
-	</div>
+	<p>
+	<img src="picture/LoginAuthentication.png" alt="Vkládání přihlašovacích údajů.">
+	</p>
 
 	<p>
-	Po zadání údajů stiskněte tlačítko "Přihlásit". 
-	Pokud se přihlášení z nějakého důvodu nezdaří, budete o tom informováni krátkou zprávou.
+	Plantlore si pamatuje několik posledních uživatelských jmen vkládaných při přihlášování;
+	můžete vybrat jedno z připraveného seznamu, nebo zadat jiné uživatelské jméno.
+	Hesla si Plantlore nikdy neukládá - automaticky je tedy nenabízí.
+	Po zadání údajů stiskněte tlačítko <i>Přihlásit</i>. 
+	</p>
+
+	<p>
+	Stiskem tlačítka přihlásit se Plantlore pokusí připojit k vybrané databázi se zadanými
+	přihlašovacími údaji. Připojení může (zejména pokud se připojujete ke vzdálené databázi)
+	trvat delší dobu - o průběhu připojování informuje jednoduchý dialog.
+	</p>
+
+	<p>
+	<img src="picture/LoginInitialization.png" alt="Průběh připojování k databázi.">
+	</p>
+
+	<p>
+	Pokud se přihlášení z nějakého důvodu nezdaří, budete o tom informováni krátkou 
+	<a href=#LoginErrorMessages">zprávou</a>.
+	 
 	V opačném případě Plantlore zobrazí základní <a href="./overview.html">Přehled</a>.
 	</p>
 
+
+	<h2 id="AddDBInfo">2. Jak vytvořit a přidat nový záznam</h2>
+
 	<p>
-	Poznámka: Přihlašujete-li se ke vzdálené databázi, může přihlašování trvat delší dobu.
+	Chcete-li se připojit k jiné databázi, 
+	kterou jste sami vytvořili nebo kterou vytvořil někdo jiný na svém počítači,
+	musíte vytvořit nový záznam, který popisuje, kde se databáze nachází a jak je nastavena.
 	</p>
 
-
-	<h2>Přidávání, mazání a editace záznamů</h2>
+	<p>
+	Kontextové menu pro vytvoření, upravení nebo vymazání záznamu lze vyvolat stiskem pravého
+	tlačítka myši. Vyberte položku <i>Přidat</i> a klikněte na ni.
+	</p>
 
 	<p>
-	V seznamu databází, k nimž se lze přihlásit, lze provádět následující operace:
+	<img src="picture/LoginAddMenu.png" alt="Přidání nového záznamu.">
+	</p>
+
+	<p>
+	Přidání nového záznamu pro připojení k jiné databázi je rozděleno na dvě části, 
+	jimž odpovídají dvě záložky na dialogu. 
 	<ul>
-		<li>Přidat nový záznam</li>
-		<li>Editovat vybraný záznam</li>
-		<li>Smazat označený záznam</li>
-	</ul>
-	</p>
-
-	<p>
-	K těmto operacím lze přistupovat pomocí kontextového menu (stiskem pravého tlačítka myši).
-	</p>
-
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/LoginContextMenu.jpg" alt="Kontextové menu s operacemi.">
-	</div>
-
-	<p>
-	Přidání nového záznamu nebo editace stávajícího záznamu používají stejný dialog.
-	</p>
-
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/LoginAddRecord.jpg" alt="Přidání záznamu.">
-	</div>
-
-	<p>
-	Dialog obsahuje tyto tři položky:
-	<ul>
-		<li><b>Alias</b>.
-		Alias je jméno pro záznam, které se bude zobrazovat v seznamu databází.
-		Typicky se jedná o výstižný popis dané databáze, například "Moje domácí databáze"
-		nebo "Vzdálená databáze na serveru ČBS".
+		<li>
+		První z nich je <b>přímé připojení</b>, neboli lokální připojení. 
+		Přímé připojení k databázi lze použít pouze v případě,
+		že vytvořená databáze se nachází v databázovém stroji (database engine), který běží na
+		tomto počítači, tzv. lokálně. Přímé připojení vyžaduje poněkud odlišné parametry než 
+		připojení ke vzdálené databázi. Výhodou přímého připojení je jeho rychlost - komunikace
+		s databází se nemusí nijak upravovat pro přenos po síti.
 		</li>
-		<li><b>Host</b>.
-		Jméno počítače, kde je databáze uložena. Jedná-li se o lokální databázi, tj. 
-		databázi nacházející se na vašem počítači, nechejte políčko prázdné.
-		</li>
-		<li><b>Databáze</b>.
-		Identifikátor databáze na počítači. TODO: jak přesně bude identifikátor vypadat se ještě řeší,
-		ale je to detail.
+		<li>
+		Druhá možnost je tzv. <b>vzdálené připojení</b>, neboli připojení ke vzdálené databázi.
+		Vzdálená databáze se typicky nachází v databázovém stroji (database engine), který je
+		spuštěn na jiném počítači v síti. Pomocí tohoto připojení je možné pracovat s databází
+		"na dálku". Nevýhodou je zpomalení dané jednak propustností datové linky a jednak 
+		nutností speciálně upravovat přenášená data kvůli přenosu po síti. 
 		</li>
 	</ul>
-	Přidáváte-li nový záznam, žádná nová databáze se ve skutečnosti nevytváří; vytváří se pouze
-	reference na nějakou existující databázi.
+	Popišme si parametry nutné pro přímé a vzdálené přihlašování.
+	</p>
+
+
+	<h3>A. Přímé připojení k databázi (lokální připojení)</h3>
+
+	<p>
+	Parametry popisující přímé připojení:
+	<table>
+		<tr>
+			<th>Název</th>
+			<th>Význam</th>
+		</tr>
+		<tr>
+			<td>Alias</td>
+			<td>
+				Alias je krátký řetězec, který umožňuje snadnou identifikaci databáze uživatelem.
+				Tento řetězec je zobrazován v seznamu databází. Měl by být krátký a výstižný,
+				kupříkladu: <i>Domácí databáze</i>, <i>Projekt mapování Českého středohoří</i>.
+			</td>
+		</tr>
+		<tr>
+			<td>Databázový stoj (engine)</td>
+			<td>
+				Existuje několik databázových strojů (database engine), které umožňují snadnou
+				práci s databázemi, tabulkami, uživateli, dotazy a daty.
+				Každý databázový stroj může obsahovat několik různě pojmenovaných databází
+				s různou strukturou a s různým obsahem. Mezi nejznámější databázové stroje
+				bezesporu patří Oracle, MSSQL, MySQL, Postgre a Firebird.
+				Plantlore podporuje práci s různými databázovými stroji,
+				ale je nutné přesně specifikovat, o který se jedná, 
+				aby s ním mohl bezchybně komunikovat. Plantlore je standardně dodáván
+				s Postgre. Aktuálně podporované DB stroje jsou sepsány v rozbalovací
+				nabídce, ale je možné specifikovat i jiný.
+			</td>
+		</tr>
+		<tr>
+			<td>Identifikátor DB</td>
+			<td>
+				Databázový stroj může obsahovat několik různých databází s různou strukturou
+				a obsahem. Databáze Plantlore mají vlastní specifickou strukturu. 
+				Pro správné připojení je nutné, aby uživatel vyplnil i identifikátor (jméno)
+				databáze, se kterou chce pracovat.
+			</td>
+		</tr>
+		<tr>
+			<td>Port DB</td>
+			<td>
+				Databázové stroje umožňují připojení pouze přes tzv. port. Každý databázový
+				stroj má tento port jiný a navíc jej lze snadno změnit. Aby Plantlore věděl,
+				kde má databázový stroj kontaktovat, musí znát port, na kterém stroj naslouchá.
+				Port je číslo v rozsahu 0 až 65.535, přičemž je běžné, že databázové stroje
+				využívají porty v rozsahu 1.024 až 10.000. Kupříkladu standardní port databázového
+				stroje Postgre je 5432.
+			</td>
+		</tr>
+		<tr>
+			<td>Parametr</td>
+			<td>
+				Databázový stroj může být potřeba ještě nakonfigurovat nějakým specifickým
+				způsobem. Některé stroje kupříkladu vyžadují explicitní nastavení kódování
+				znaků (UTF-8, ISO-8859-2, Windows CodePage 1250, apod.) Tenot parametr slouží
+				pro správné nastavení dodatečných paremetrů připojení k databázovému stroji.
+				Připojení k Postgre žádný parametr nevyžaduje, ale např. pro správné zobrazení
+				diakritiky od Firebird je potřeba kódování nastavit.
+				<br/>
+				Odborné: parametr je hodnota předávaná v připojovacím JDBC řetězci za ?
+			</td>
+		</tr>
+	</table>
 	</p>
 
 	<p>
-	Editační dialog mění ony tři vlastnosti vybraného záznamu. Lze jej využít v případě, že se
-	např. změnilo jméno počítače, kde je DB hostována.
+	Na ukázku uveďme, jak by vypadalo lokální připojení k databázi nazvané <i>plantlore</i>,
+	která je uložena v databázovém stroji <i>Postgre</i>, který naslouchá na portu <i>5432</i>.
+	</p>
+
+	<p>
+	<img src="picture/LoginDBDirectConnection.png" alt="Přidání nového záznamu.">
+	</p>
+
+
+	<h3>B. Vzdálené připojení k databázi</h3>
+
+	<p>
+	Parametry popisující vzdálené připojení:
+	<table>
+		<tr>
+			<th>Název</th>
+			<th>Význam</th>
+		</tr>
+		<tr>
+			<td>Alias</td>
+			<td>
+				Alias je krátký řetězec, který umožňuje snadnou identifikaci databáze uživatelem.
+				Tento řetězec je zobrazován v seznamu databází. Měl by být krátký a výstižný,
+				kupříkladu: <i>Oficiální databáze Jihočeské pobočky ČBS</i>.
+			</td>
+		</tr>
+		<tr>
+			<td>Host</td>
+			<td>
+				Databázový stroj obsahující databázi, k níž se chceme připojit, běží na jiném
+				počítači v síti. Tento parametr identifikuje tento počítač a to buď podle
+				jeho tzv. hostname nebo IP adresy. Každý počítač připojený k síti musí mít
+				svou vlastní unikátní IP adresu, podle níž je rozpoznán. IP adresa je 
+				nejčastěji čtveřice čísel oddělená tečkami, kupř. <i>192.168.0.247</i>.
+				Některé počítače mají kromě IP adresy přidělena i jména, např. 
+				<i>data.domacisit.info</i>. Cílový počítač lze tedy identifikovat 
+				oběma způsoby.
+			</td>
+		</tr>
+		<tr>
+			<td>Port</td>
+			<td>
+				Aby bylo možné se připojit ke vzdálenému databázovému stroji, je nutné
+				na uvedeném vzdáleném počítači kontaktovat 
+				<a href="./server.html">Plantlore Server</a>, což je speciální
+				aplikace, která má za úkol zprostředkovávat připojení vzdáleným klientům a
+				dohlížet na počet připojených uživatelů. Tato služba (aplikace) musí být přístupná
+				na vzdáleném počítači, kde se nachází i vzdálený databázový stroj, 
+				a naslouchá na nějakém portu. Standardní port, na kterém je tato služba
+				dostupná, je 1099.
+			</td>
+		</tr>
+		<tr>
+			<td>Identifikátor DB</td>
+			<td>
+				Databázový stroj může obsahovat několik různých databází s různou strukturou
+				a obsahem. Databáze Plantlore mají vlastní specifickou strukturu. 
+				Pro správné připojení je nutné, aby uživatel vyplnil i identifikátor (jméno)
+				databáze, se kterou chce pracovat.
+			</td>
+		</tr>
+	</table>
+	</p>
+	
+	<p>
+	Na ukázku uveďme, jak by vypadalo nastavení pro vzdálené připojení k databázi nazvané <i>plantlore</i>,
+	která je uložena v databázovém stroji, 
+	který se nachází na počítači s adresou <i>192.168.0.247</i>, 
+	a Plantlore Server naslouchá na portu <i>1099</i>.
+	</p>
+
+	<p>
+	<img src="picture/LoginDBRemoteConnection.png" alt="Přidání nového záznamu.">
+	</p>
+
+
+	<p>
+	<b>
+		Přidáváte-li nový záznam, žádná nová databáze se nikde nevytváří; vytváří se pouze
+		reference (odkaz) na nějakou existující databázi.
+	</b>
+	</p>
+
+
+
+	<h2 id="EditDeleteDBInfo">3. Jak upravit nebo vymazat záznam pro připojení k databázi</h2>
+
+	<p>
+	V seznamu databází označte záznam, který chcete upravit nebo smazat.
+	Kontextové menu pro vytvoření, upravení nebo vymazání záznamu lze vyvolat stiskem pravého tlačítka myši. 
+	Vyberte položku Editovat nebo Odstranit a klikněte na ni.
+	</p>
+
+	<p>
+	<img src="picture/LoginEditMenu.png" alt="Úprava stávajícího záznamu.">
+	</p>
+
+	<p>
+	Úprava záznamů je shodná s dialogem pro přidání záznamu, ale obsahuje předvyplněné hodnoty.
+	Detailní popis lze najít v části <a href="#AddDBInfo">Jak vytvořit nový záznam pro připojení k databázi</a>.
+	</p>
+
+	<p>
+	Odstranění záznamu se provádí úplně stejně.
+	</p>
+
+	<p>
+	<img src="picture/LoginDeleteMenu.png" alt="Vymazání existujícího záznamu.">
+	</p>
+
+
+	<p>
+	<b>
+		Mažete-li existující záznam, žádná databáze se nikde nemaže; ruší se pouze
+		reference (odkaz) na nějakou existující databázi.
+	</b>
+	</p>
+
+
+
+	<h2 id="LoginErrorMessages">Jaké problémy při připojování mohou nastat a jak je řešit</h2>
+
+	<p>
+	Nejčastější problémy při připojování jsou tyto:
+	<ul>
+		<li>
+		Nesprávně vyplněné přihlašovací údaje - uživatelské jméno nebo špatně zadané heslo.
+		Ověřte, zda jste správně vložili obě hodnoty, případně zda máte vytvořený
+		odpovídající uživatelský účet v databázi, k níž se připojujete.
+		</li>
+		<li>
+		Nesprávně zadané parametry pro přímé nebo vzdálené připojení k databázi.
+		Ověřte, zda jsou vyplněny všechny položky správně a zda obsahují aktuální data. 
+		Např. mohlo dojít ke změně IP adresy počítače, ke kterému se přihlašujete, nebo jste
+		udělali překlep při zadávání identifikátoru databáze.
+		</li>
+		<li>
+		Vypnutý databázový stroj nebo Plantlore Server.
+		Ověřte, že databázový stroj je zapnutý, resp. se ujistěte, že na vzdáleném počítači
+		je spuštěn Plantlore Server.
+		</li>
+	</ul>
 	</p>
 
 
