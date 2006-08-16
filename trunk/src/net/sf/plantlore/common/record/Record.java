@@ -29,16 +29,17 @@ public abstract class Record implements Serializable {
 	 * The other tables are database specific and are used by our System only
 	 * (concerns History, LastUpdate, User, AccessRights, and possibly more).
 	 */
-	public final static Class[] BASIC_TABLES = new Class[] {
+	public final static Set<Class> BASIC_TABLES = new HashSet<Class>( Arrays.asList(
 		Occurrence.class, Habitat.class, Territory.class, Village.class, Phytochorion.class,
-		Plant.class, Metadata.class, Publication.class, Author.class, AuthorOccurrence.class 
-	};
+		Plant.class, Metadata.class, Publication.class, Author.class, AuthorOccurrence.class) 
+	);
 	        
 	/**
 	 * A set of tables that cannot be changed.
 	 */
 	public final static HashSet<Class> IMMUTABLE = new HashSet<Class>( Arrays.asList(
-			Plant.class, Territory.class, Village.class, Phytochorion.class, Metadata.class) );
+			Plant.class, Territory.class, Village.class, Phytochorion.class, Metadata.class) 
+	);
 	
 	
 	/** The list of all getters (of all properties of all tables). */
