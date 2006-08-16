@@ -1,0 +1,222 @@
+<html>
+
+	
+	<head>
+		<meta http-equiv="Content-Language" content="cs-CZ" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Import dat</title>
+
+	</head>
+
+<body>
+
+	<h1>Import dat do tabulek</h1>
+
+	<p>
+	Import dat do tabulek je určen pouze pro administrátory databáze a slouží k aktualizaci (především k opravě)
+	dat v následujících tabulkách: 
+	Rostliny (Plants), Metadata, Fytochoriony, Teritoria a Nejbližší větší sídla (Villages).
+	</p>
+
+	<p>
+	Předpokládá se, že Plantlore bude dodáván se seznamem rostlin, Fytochorionů, Teritorií a
+	Nejbližších větších sídel; záznamy obsažené v těchto tabulkách mohou vznikat, zanikat, 
+	nebo obsahovat chyby. Jejich úpravu lze zajistit naimportováním speciálního souboru.
+	</p>
+
+
+	<h2>1. Vlastní import dat do tabulek</h2>
+
+	<p>
+	Import začíná výběrem souboru, v němž jsou uložena data.
+	Formát souboru je speciální a je popsán níže.
+	</p>
+
+	<p>
+	Po výběru souboru je zobrazeno okno zobrazující průběh procesu importování dat. 
+	Import lze přerušit stiskem tlačítka <i>Storno</i>. 
+	Přerušíte-li Import, nálezová data, která se stihla naimportovat, v databázi zůstanou.
+	</p>
+
+
+	<h2>2. Formát souboru pro import dat do tabulek - pro Administrátory databáze</h2>
+
+	<p>
+	Formát souboru dovoluje přidávání nových záznamů, odmazávání původních záznamů v tabulkách
+	a aktualizaci stávajících záznamů. Základem je XML strom obsahující na tři větve - ADD, DELETE
+	a UPDATE. Kořen stromu určuje tabulku, do která budou data náležet.
+	</p>
+
+
+	<p>
+	<table>
+		<tr>
+			<th>Kořenový tag</th><th>Tabulka</th>
+		</tr>
+		<tr>
+ 			<td>plants</td><td>plant (rostliny)</td>
+		</tr>
+		<tr>
+			<td>villages</td><td>village (nejbližší větší sídla)</td>
+		</tr>
+		<tr>
+			<td>phytochoria</td><td>phytochorion (fytochoriony)</td>
+		</tr>
+		<tr>
+			<td>territories</td><td>territory (teritorium)</td>
+		</tr>
+		<tr>
+			<td>metadata</td><td>metadata (meta-data)</td>
+		</tr>
+	</table>
+	</p>
+
+	<p>
+	Ukázka XML stromu pro úpravu tabulky rostlin (Plants):
+	</p>
+
+
+	<p>
+	<pre>
+	&lt;plants&gt;
+
+	  &lt;add&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		...
+	  &lt;/add&gt;
+
+	  &lt;delete&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		...
+	  &lt;/delete&gt;
+
+	  &lt;update&gt;	  
+		&lt;plant&gt;&lt;/plant&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		...
+	  &lt;/update&gt;
+
+	&lt;/plants&gt;
+	</pre>
+	</p>
+	
+		  
+
+	<p>
+	</p>
+
+
+	<h3>2.1. Vložení nového záznamu - ADD</h3>
+
+	<p>
+	Větev ADD obsahuje záznamy, které mají být do databáze přidány. Pokud se v databázi již nachází,
+	nejsou vkládány znovu, aby nedocházelo k vytváření duplicitních záznamů.
+	</p>
+
+	<p>
+	<pre>
+	  &lt;add&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;ACIARVACoacg&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+	  &lt;/add&gt;
+	</pre>
+	</p>
+
+
+
+	<h3>2.2. Vymazání existujícího záznamu - DELETE </h3>
+
+	<p>
+	Větev DELETE obsahuje záznamy určené k vymazání. Záznam z tabulky nelze smazat, pokud na něj
+	existují reference.
+	</p>
+
+	<p>
+	<pre>
+	  &lt;delete&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;ACIARVACoacg&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+	  &lt;/delete&gt;
+	</pre>
+	</p>
+
+
+
+	<h3>2.3. Akutalizace existujícího záznamu - UPDATE </h3>
+
+	<p>
+	Větev UPDATE obsahuje dvojice po sobě jdoucích záznamů - <i>originál</i> a <i>náhradu</i>. 
+	Pokud se originál v tabulce nenachází,
+	provede se s <i>náhradou</i> operace vložení (jako kdyby byla ve větvi ADD).
+	Pokud už se <i>náhrada</i> v databázi nalézá, 
+	provede se s <i>originálem</i> operace smazání (jako kdyby byl umístěn ve větvi DELETE).
+	</p>
+
+	<p>
+	<pre>
+	  &lt;update&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;<font color=RED>ARVACoacg</font>&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;<font color=RED>ACIARVACoacg</font>&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+	  &lt;/update&gt;
+	</pre>
+	</p>
+
+
+
+
+
+	<h2>3. Omezení, která je nutno zvážit při Importu do tabulek</h2>
+
+	<p>
+	Import do zmiňovaných tabulek je výsadou administrátora databáze. Jedná se o data, 
+	která musí být udržována jednotná napříč všemi databázemi, a tedy o jejich aktualizaci
+	by měla pečovat zodpovědná osoba. Nálezová data, která obsahují záznamy s neplatnými údaji 
+	v těchto tabulkách, není možné naimportovat z důvodu ochrany kvality nálezových dat.
+	Není např. možné při <a href="./import.html">Importu nálezových dat</a> vložit záznam
+	obsahující neplatné (tj. v tabulce Plants neexistující) jméno rostliny.
+	</p>
+
+	<p>
+	Import do tabulek je primárně navržen pro práci s malými rozdílovými seznamy
+	(obsahující řádově tisíce záznamů). Větší soubory mohou mít neúnosné paměťové
+	nároky.
+	</p>
+
+</body>
+</html>
