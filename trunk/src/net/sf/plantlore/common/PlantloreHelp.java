@@ -80,7 +80,15 @@ public class PlantloreHelp {
     // Import feature description
     public static final String IMPORT                   = "import";
     // Export feature description
-    public static final String EXPORT                   = "export";   
+    public static final String EXPORT                   = "export"; 
+    // Desctripton of server
+    public static final String SERVER                   = "server"; 
+    //  Desctripton of create server, connect to server and running Server
+    public static final String SERVER_CONNECT           = "server.connect"; 
+    //  Desctripton of server manager
+    public static final String SERVER_MANAGER           = "server.manager"; 
+    //  Desctripton of server info
+    public static final String SERVER_INFO              = "server.info"; 
 
     /* Instance of a logger */
     private static Logger logger = Logger.getLogger(PlantloreHelp.class.getPackage().getName());

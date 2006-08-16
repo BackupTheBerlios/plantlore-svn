@@ -36,4 +36,9 @@
     </tocitem>
     <tocitem target="import" text="Import"/>
     <tocitem target="export" text="Export"/>
+    <tocitem target="server" text="Server">
+        <tocitem target="server.connection" text="Create server, Connect to server, Running server"/>
+        <tocitem target="server.manager" text="Server manager"/>        
+        <tocitem target="server.info" text="Server info"/>        
+    </tocitem>
   </toc>

@@ -36,4 +36,9 @@
     </tocitem>
     <tocitem target="import" text="Import dat"/>
     <tocitem target="export" text="Export dat"/>
+    <tocitem target="server" text="Server">
+        <tocitem target="server.connection" text="Vytvořeni a připojení se k serveru"/>
+        <tocitem target="server.manager" text="Správa serveru"/>        
+        <tocitem target="server.info" text="Server info"/>        
+    </tocitem>
   </toc>
