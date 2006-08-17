@@ -6,10 +6,19 @@
 </head>
 <body>
 <h1>Vyhledávání v nálezových datech</h1>
-<p>Dialog pro vyhledávání se velmi podobá dialogům pro přidávání a editaci nálezu, 
-obsahuje ovšem i několik odlišností. Těmi hlavními je nemožnost zadávat taxony ze 
-škrtáku, a naopak možnost vyhledávat podle měsíce v roce nebo časového intervalu. Další 
-odlišnosti spočívají v chování dialogu.</p>
+
+<p>V Plantlore existují dva způsoby jak vyhledávat data - pomocí vyhledávacího dialgu 
+a pomocí tzv. stromu lokalit.</p>
+
+<h2>Vyhledávací dialog</h2>
+<p>Vyhledávací dialog obsahuje téměř stejná pole jako dialog pro přidávání a editaci nálezů. Vyhledávat
+je tedy možné podle jakýchkoli zadaných údajů.</p>
+
+<img src="picture/search_dialog_simple_cz.png" alt="Základní vyhledávací dialog">
+<br>
+
+<p>Všechna pole se zobrazí až v rozšířeném dialogu po kliknutí na tlačítko Extended.</p>
+<img src="picture/search_dialog_extended_cz.png" alt="Rozšířená část vyhledávacího dialogu">
 
 <p>Dialog se otevírá prázdný. Pokud jej prázdný necháte a rovnou stisknete Ok, tak
 se v <a href="overview.html">Přehledu nálezů</a> objeví seznam všech nálezů. Což je tedy
@@ -20,7 +29,7 @@ dialog povolí. Nepovolí například současné zadání časového intervalu a
 jako dialogy pro přidávání a editaci kontroluje správnost zadaných hodnot. Tj. například, že 
 nadmořská výška obsahuje číselný údaj.</p>
 
-<h2>Přidávání autorů</h2>
+<h3>Přidávání autorů</h3>
 <p>Zadání autora, role či poznámky u autora se provádí stejně jako u Přidávacího a editovacího dialogu.
 Pro přidání autora klikněte na tlačítko Přidej/Add v levé horní části základního formuláře.
 Objeví se nový řádek. Zde je možné vyplnit jméno autora nebo roli autora nebo poznámku
@@ -32,7 +41,7 @@ roli "collect". V druhém řádku zadá autora "Široký" a roli "revised". Poku
 se v přehledu nálezů objeví všechny nálezy u nichž je jako jeden z autorů uveden buď Novák nebo Široký
 a také se zobrazí všechny nálezy, u kterých existuje autor v roli "collect" nebo autor v roli "revised".</p>
 
-<h2>Logika vyhledávání</h2>
+<h3>Logika vyhledávání</h3>
 <p>Jak funguje dotaz v případě autorů, rolí a poznámek autorů k nálezům jsme si již popsali. 
 Zbytek už je přímočarý. Pokud zadáte dva nebo více taxonů, například Pampelišku a Heřmánek, tak se vyhledávají nálezy
 zadaných taxonů spojených spojkou NEBO, tedy v našem příkladu  se hledají nálezy buď Pampelišek 
@@ -45,6 +54,27 @@ zadaným textem, ale hledá se zadaný text jako podřetězec poznámky nebo pop
 místa. Zadáte-li tedy do popisu místa slovo louka a stisknete Ok, zobrazí se v
  přehledu všechny nálezy, které v popisu místa nálezu obsahují řetězec "louka".
  Stejně je tomu u hledání v poznámce k nálezu a v poznámce k místu.</p>
+ 
+ <h2>Strom lokalit</h2>
+ <p>Strom lokalit slouží k rychlému hledání v nálezech podle geografického členění. Je možné ho vyvolat z panelu nástrojů
+ v hlavním okně aplikace.</p>
+ 
+ <img src="picture/habitat_tree_cz.png" alt="Strom lokalit">
+ 
+ <p>První vrstva stromu obsahuje teritoria, každý uzel teritoria pak obsahuje fytochoriony a konečně uzel každého
+ fytochorionu obsahuje seznam lokalit. Strom obsahuje pouze ty fytochoriony a teritoria, které už nějaký nález obsahují.
+  Fytochoriony neobsahující žádný nález zobrazeny nejsou. Stejně tak teritoria, která neobsahují alespoň jeden fytochorion
+  obsahující nález nejsou zobrazena.</p>
+  
+  <p>Zobrazit nálezy v dané lokalitě lze buď dvojklikem na uzel lokality anebo je možné jednoduchým kliknutím uzel označit
+   a pak buď kliknout na levé dolní tlačítko hledat anebo pravým kliknutím myši vyvolat kontextové menu a v něm kliknout
+   na "Hledat".</p>
+   
+   <p>Informace ve stromu se automaticky neaktualizují spolu s editací databáze, aby se předešlo neočekávanému zpomalení 
+   aplikace při pomalém připojení k serveru Plantlore při komunikaci přes síť. Seznam lokalit ve fytochorionu lze 
+   jednoduše zavřením a opětovným rozbalením uzlu daného fytochorionu. Pro nové načtení celé struktury stromu slouží pravé
+   dolní tlačítko Obnovit. Funkci Obnovit lze vyvolat i z kontextového menu.
+   </p>
  
 </p>
 </body>
