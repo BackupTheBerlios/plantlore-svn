@@ -17,13 +17,13 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="1">
+                  <Group type="102" alignment="1" attributes="0">
                       <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="360" max="32767" attributes="0"/>
+                      <EmptySpace pref="331" max="32767" attributes="0"/>
                       <Component id="operationButton" min="-2" pref="100" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
@@ -35,9 +35,9 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jPanel1" pref="525" max="32767" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace min="-2" max="-2" attributes="1"/>
+              <Component id="jPanel1" pref="515" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -64,10 +64,10 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jPanel4" alignment="0" max="32767" attributes="2"/>
                       <Component id="jPanel5" alignment="0" max="32767" attributes="1"/>
+                      <Component id="jPanel4" alignment="1" max="32767" attributes="2"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -77,9 +77,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" max="-2" attributes="0">
                   <Component id="jPanel4" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="jPanel5" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -104,13 +104,13 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="sourceInstitutionIdLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="abbrevLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="abbrevLabel" min="-2" max="-2" attributes="0"/>
+                                  <Component id="sourceInstitutionIdLabel" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="abbrevText" pref="165" max="32767" attributes="2"/>
-                                  <Component id="sourceInstirutionIdText" alignment="0" pref="165" max="32767" attributes="2"/>
+                                  <Component id="abbrevText" pref="136" max="32767" attributes="2"/>
+                                  <Component id="sourceInstirutionIdText" alignment="0" pref="136" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace min="-2" pref="335" max="-2" attributes="0"/>
                           </Group>
@@ -130,8 +130,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="sourceInstitutionIdLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sourceInstirutionIdText" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="sourceInstitutionIdLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -172,9 +172,9 @@
                           </Group>
                           <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="technicalContactAddressText" alignment="0" pref="165" max="32767" attributes="2"/>
-                              <Component id="technicalContactNameText" alignment="0" pref="165" max="32767" attributes="2"/>
-                              <Component id="technicalContactEmailText" alignment="0" pref="165" max="32767" attributes="2"/>
+                              <Component id="technicalContactAddressText" alignment="0" pref="136" max="32767" attributes="2"/>
+                              <Component id="technicalContactNameText" alignment="0" pref="136" max="32767" attributes="2"/>
+                              <Component id="technicalContactEmailText" alignment="0" pref="136" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -198,7 +198,7 @@
                               <Component id="technivalContactAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="technicalContactAddressText" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="24" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -207,21 +207,21 @@
                 <Component class="javax.swing.JLabel" name="technicalContactNameLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.TechnicalContactName&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.TechnicalContactName&quot;)+ &quot;: (*) &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="technicalContactEmailLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.TechnicalContactEmail&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.TechnicalContactEmail&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="technivalContactAddressLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.TechnicalContactAddress&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.TechnicalContactAddress&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -291,7 +291,7 @@
                               <Component id="contectContactAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="contectContactAddressText" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="24" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -300,21 +300,21 @@
                 <Component class="javax.swing.JLabel" name="contentContactNameLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.ContentContactName&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.ContentContactName&quot;)+ &quot;: (*) &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="contentContactEmail">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.ContentContactEmail&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.ContentContactEmail&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="contectContactAddressLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.ContentContactAddress&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.ContentContactAddress&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -338,14 +338,14 @@
             <Component class="javax.swing.JLabel" name="sourceInstitutionIdLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;MetadataManager.SourceInstitutionId&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;MetadataManager.SourceInstitutionId&quot;)+ &quot;: (*) &quot;" type="code"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="abbrevLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;MetadataManager.OwnerOrganizationAbbrev&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;MetadataManager.OwnerOrganizationAbbrev&quot;)+ &quot;: &quot;" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -380,26 +380,26 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Component id="jPanel6" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="jPanel7" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jPanel7" pref="277" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="jPanel8" max="32767" attributes="2"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel6" max="32767" attributes="2"/>
-                          <Component id="jPanel7" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jPanel6" max="32767" attributes="3"/>
+                          <Component id="jPanel7" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel8" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -454,7 +454,7 @@
                               <Component id="sourceIdLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="sourceIdText" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="22" max="32767" attributes="0"/>
+                          <EmptySpace pref="33" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -463,21 +463,21 @@
                 <Component class="javax.swing.JLabel" name="dataSetTitleLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.DataSetTitle&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.DataSetTitle&quot;)+ &quot;: (*) &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="dataSetDetailsLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.DataSetDetails&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.DataSetDetails&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="sourceIdLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.SourceId&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.SourceId&quot;)+ &quot;: (*) &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -514,14 +514,14 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="recordbasisLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="biotopetextLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="notetextLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="biotopetextText" pref="146" max="32767" attributes="2"/>
-                              <Component id="recordbasisText" alignment="0" pref="146" max="32767" attributes="2"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="recordbasisText" max="32767" attributes="3"/>
+                              <Component id="jScrollPane1" alignment="0" pref="170" max="32767" attributes="1"/>
                           </Group>
-                          <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -534,11 +534,11 @@
                               <Component id="recordbasisText" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="biotopetextLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="biotopetextText" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="notetextLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="jScrollPane1" min="-2" pref="66" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="47" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -547,14 +547,14 @@
                 <Component class="javax.swing.JLabel" name="recordbasisLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.Recordbasis&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.Recordbasis&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="biotopetextLabel">
+                <Component class="javax.swing.JLabel" name="notetextLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.Biotopetext&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.Note&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -563,11 +563,21 @@
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
                 </Component>
-                <Component class="javax.swing.JTextField" name="biotopetextText">
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                  </AuxValues>
-                </Component>
+                <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTextArea" name="noteTextArea">
+                      <Properties>
+                        <Property name="columns" type="int" value="20"/>
+                        <Property name="rows" type="int" value="5"/>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                      </AuxValues>
+                    </Component>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="jPanel8">
@@ -624,7 +634,7 @@
                               <Component id="dateModifiedEmptyLable" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="dateModifiedText" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="13" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -633,14 +643,14 @@
                 <Component class="javax.swing.JLabel" name="dateCreateLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.DateCreate&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.DateCreate&quot;) + &quot;: (*) &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="dateModifiedLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="L10n.getString(&quot;MetadataManager.DateModified&quot;)" type="code"/>
+                      <Connection code="L10n.getString(&quot;MetadataManager.DateModified&quot;)+ &quot;: &quot;" type="code"/>
                     </Property>
                   </Properties>
                 </Component>

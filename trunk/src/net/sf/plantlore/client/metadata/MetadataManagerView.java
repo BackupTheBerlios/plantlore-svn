@@ -284,11 +284,11 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(previousButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(56, 56, 56)
                                 .add(totalResultLabel)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -312,7 +312,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                                 .add(editButtons, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(deleteButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(nextButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
@@ -344,10 +344,10 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         helpButton.setText(L10n.getString("MetadataManager.ButtonHelp"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.SearchPanel")));
-        sourceInstitutionIdLabel.setText(L10n.getString("MetadataManager.SourceInstitutionId")
+        sourceInstitutionIdLabel.setText(L10n.getString("MetadataManager.SourceInstitutionId") + ": "
         );
 
-        sourceLabel.setText(L10n.getString("MetadataManager.SourceId"));
+        sourceLabel.setText(L10n.getString("MetadataManager.SourceId")+ ": ");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.SortPanel")));
         sortDescendingRadioButton.setText(L10n.getString("MetadataManager.SortDescending"));
@@ -358,7 +358,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         sortAscendingRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         sortAscendingRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        dataSortLabel.setText(L10n.getString("MetadataManager.DataSort"));
+        dataSortLabel.setText(L10n.getString("MetadataManager.DataSort")+ ": ");
 
         sortField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("MetadataManager.SourceInstitutionId"), L10n.getString("MetadataManager.SourceId"), L10n.getString("MetadataManager.DataSetTitle"), L10n.getString("MetadataManager.TechnicalContactName"),L10n.getString("MetadataManager.ContentContactName"), L10n.getString("MetadataManager.DateCreate"), L10n.getString("MetadataManager.DateModified")}));
 
@@ -389,7 +389,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        dataSetTitleLabel.setText(L10n.getString("MetadataManager.DataSetTitle"));
+        dataSetTitleLabel.setText(L10n.getString("MetadataManager.DataSetTitle")+ ": ");
 
         searchButton.setText(L10n.getString("MetadataManager.ButtonSearch"));
 
@@ -406,12 +406,12 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                             .add(sourceLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
-                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
+                            .add(sourceInstitutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                            .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
                         .add(15, 15, 15)
                         .add(dataSetTitleLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
+                        .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
                     .add(searchButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(31, 31, 31)
                 .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -446,9 +446,9 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 685, Short.MAX_VALUE)
-                        .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 665, Short.MAX_VALUE)
+                        .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())

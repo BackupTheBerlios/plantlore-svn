@@ -2,9 +2,104 @@
 <head>
 <meta http-equiv="Content-Language" content="cs-CZ" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Spr�va metadat</title>
+<title>Správa metadat</title>
 </head>
 <body>
-<h1>Spr�va metadat</h1>
+<h1>Správa metadat</h1>
+<img src="picture/metadataEnter_cs.png">
+<br><br>
+
+Správce metadat umožňuje administrátorovi přidávat, editovat a mazat metadata jednotlivých projektů.  
+Správce metadat otevřete z menu <b>Data/Správa metadat</b> nebo klávesovou zkratkou CTRL + M.
+
+<h5>Dialog správce metadat</h5>
+
+<img src="picture/metadataDialog_cs.png">
+<br><br>
+Dialog pro správu metadat je rozdělen do dvou částí:
+<ul>
+  <li><b>Seznam metadat projektů</b> - zobrazení seznamu metadat existujících projektů podle kriterií zadaných pro vyhledávání a setřízení 
+  <li><b>Vyhledávání</b> - zadání požadavků pro vyhledávání a setřízení metadat
+</ul>
+
+<h2>Seznam metadat</h2>
+
+Po úspěšném vyhledávání je v této části zobrazen seznam vyhledaných metadat projektů. Počet projektů zobrazených v tabulce si můžete sami nastavit přepsáním 
+hodnoty pro <b><i>Zobrazit řádků</i></b> a potvrzením nové hodnoty klávesovým tlačítkem ENTER. V tabulce se přepínáte na další nebo předchozí 
+seznam uživatelů pomocí tlačítek <b><i>Předchozí</i></b> a <b><i>Následující</i></b>. Informace o aktuálně zobrazeném seznamu metadat projektů jsou uvedeny v části 
+pod tabulkou. 
+<br>
+Pro práci se záznamem jsou zde k dispozici tlačítka:
+<ul>    
+   <li><i><b>Přidej metadata</i></b> - <a href=#add>přidání metadat projektu</a></li>
+   <li><i><b>Edituj metadata</i></b> - <a href=#edit>editace metadat projektu</a></li>
+   <li><i><b>Detail metadat</i></b> - <a href=#detail>detailní metadata projektu</a></li>
+   <li><i><b>Smaž metadata</i></b> - <a href=#drop>smazání metadat projektu</a></li> 
+</ul>   
+  
+<h2>Vyhledávání</h2>
+
+Správce metadat nábízí administrátorovi možnost vyhledávat podle tří parametrů: instituce, název projektu a zdroj dat. Výsledek může být setřízen 
+podle názvu instituce, názvu projektu, zdroji dat, jméno osoby pro technickou podporu, jméno osoby pro obsahovou podporu, datumu vytvoření projektu a 
+datumu poslední modifikace projektu. Pokud nejsou zadány, žadné parametry a omezení budou vyhledány všechny metadata projektů. 
+<br><br>
+<b>Pozor:</b>  při vyhledávání jsou rozlišévána velká a malá písmena (case insensitive).
+
+<a name="add"></a><h2>Přidání metadat projektu</h2>
+  
+  <h5>Dialog pro přidání metadat</h5>
+  
+  <img src="picture/metadataAdd_cs.png">
+  <br><br>
+  Dialog pro přidání nového projektu můžete otevřít ze Správce metadat. V zobrazeném okně jsou k vyplnění následující položky:
+  <ul>
+    <li><b>Instituce</b> - jednoznačný identifikátor instituce, která je vlastníkem originálního datového zdroje.
+    Tato položka je povinná a bez jejího vyplnění vám aplikace nedovolí metadata přidat.</li>
+    <li><b>Organizace</b> - zkratka organizace.</li>
+    <li><b>Technická podpora</b> - jméno osoby, která se stará o technickou část projektu. Tato položka je povinná.</li>
+    <li><b>Technická podpora - email</b> - kontaktní email na osobu, která se stará o technickou část projektu.</li>
+    <li><b>Technická podpora - adresa</b> - kontaktní adresa na osobu,  která se stará o technickou část projektu.</li>
+    <li><b>Obsahová podpora</b> - jméno osoby, které má na starosti obsahovou část projektu. Tato položka je povinná.</li>
+    <li><b>Obsahová podpora - email</b> - kontaktní email na osobu, které má na starosti obsahovou projektu.</li>
+    <li><b>Obsahová podpora - adresa</b> - kontaktní adresa na osobu, které má na starosti obsahovou část projektu.</li>
+    <li><b>Název projektu</b> - krátký název projektu. Název projektu je povinná položka a musí být v rámci databáze jednoznačná.</li>
+    <li><b>Detail k projektu</b> - podrobnější popis projektu.</li>
+    <li><b>Zdroj</b> - jméno nebo kód datového zdroje. Tato položka je povinná.</li>
+    <li><b>Basis</b> -  informace o tom, co dané záznamy popisují (preservedSpecimen, ...).</li>
+    <li><b>Poznámka</b> - poznámka k projektu.</li>
+    <li><b>Datum vytvoření projektu</b> - datum a čas, kdy byl projekt vytvořen. Tato položka je povinná.</li>
+    <li><b>Datum poslední modifikace projektu</b> - datum a čas, kdy v projektu byly záznamy naposled modifikovány, vloženy nebo smazány.</li>        
+ </ul>
+ 
+<a name="edit"></a><h2>Editace uživatele</h2>
+  Dialog pro editaci metadat existujícího projektu otevřete ze Správce metadat. Nezapomeňte, že pro otevření dialogu musíte mít označený projekt, 
+  k jehož matadata se chystáte editovat. Vzhled edit dialogu je téměř totožný s add dialogem. Povinné položky jsou: Instituce, jméno osoby pro Technickou podporu, 
+  jméno osoby pro Obsahovou podporu, Název projektu a Zdroj dat. <br>
+  Needitovatelené položky jsou: 
+  
+  <ul>    
+    <li><b>Datum vytvoření projektu</b> - datum a čas informující o vytvoření uživatele. Needitovatelná položka. </li>
+    <li><b>Datum poslední modifikace projektu</b> - datum a čas informující o zrušení přístupu uživatele do aplikace. Needitovatelná položka.</li>
+  </ul>
+
+  Informace o změnách provedených v jednolivých metadatech může administrátor dohledat v dialogu <a href="./history.html#historyData">celkové historie</a>,
+  kde může využít i možnosti návratu k dřívějším hodnotám. 
+
+<a name="detail"></a><h2>Detailní metadata projektu</h2>
+
+  Dialog zobrazující detailní informaci o metadatech projektu. Pro otevření tohoto dialogu je nutné 
+  označit požadovaný projekt. Dialog je téměř totožný s edit dialogem. Všechny položky jsou needitovatelné, mají jen 
+  informační charakter.
+  
+<a name="drop"></a><h2>Smazání metadat projektu</h2>
+
+  Pro smazání metadat příslušného projektu se použije tlačítko <i><b>Smaž metadata</b></i> ve správci metadat. Před stisknutím tohoto tlačítka je nutné
+  označi požadované metadata. Po stisku tohoto tlačítka bude uživatel informován o operaci, kterou se chystá provést. Potvrzením
+  této operace budou metadata smazány.   
+  <br><br>
+  <img src="picture/metadataDelete_cs.png">
+  <br><br>
+  Obnovení smazaných metadat může administrátor prostřednicvím dialogu pro sledování <a href="./history.html#historyData">celkové historie</a> 
+  nálezových dat.       
 </body>
 </html>

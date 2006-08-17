@@ -80,6 +80,18 @@ public class HistoryCtrl {
             }else {
          	   view.setCurrentRowsInfo(from + "-" + to);
             }    
+            // Set button next inactive if we see the last page, in other way set it active.
+           if (model.getCurrentFirstRow()+ view.getTable().getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);                             
+           }else{
+        	   view.nextButton.setEnabled(false); 
+           }
+            //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
     	} catch (RemoteException e) {
     		DefaultReconnectDialog.show(view, e);
     	} catch (DBLayerException e) {

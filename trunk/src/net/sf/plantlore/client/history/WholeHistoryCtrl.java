@@ -85,6 +85,18 @@ public class WholeHistoryCtrl {
             }else {
          	   view.displayedValueLabel.setText(from + "-" + to);
             }    
+            //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
+           //Set button next inactive if we see the last page, in other way set it active
+           if (model.getCurrentFirstRow()+ view.tableHistoryList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);
+           } else {
+        	   view.nextButton.setEnabled(false);
+           }
     	} catch (RemoteException e) {
     		DefaultReconnectDialog.show(view, e);
     	} catch (DBLayerException e) {
@@ -280,13 +292,15 @@ public class WholeHistoryCtrl {
                new DetailsHistoryCtrl(detailsView);
                detailsView.setDetailsMessage(detailsMessage);
                detailsView.setVisible(true);               
-           }    
-           if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
-    		   DefaultReconnectDialog.show(view, model.getRemoteEx());
-    	   } else {
-    		   view.showErrorMessage(model.getError());
-    	   }
-    	   model.setError(null); 
+           } 
+           if (model.getError() != null) {
+	           if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
+	    		   DefaultReconnectDialog.show(view, model.getRemoteEx());
+	    	   } else {
+	    		   view.showErrorMessage(model.getError());
+	    	   }
+	    	   model.setError(null); 
+           }
        }
     }
     

@@ -25,9 +25,9 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" alignment="0" attributes="1">
-                      <Component id="helpButton" min="-2" pref="60" max="-2" attributes="0"/>
-                      <EmptySpace pref="685" max="32767" attributes="0"/>
-                      <Component id="closeButton" min="-2" pref="60" max="-2" attributes="0"/>
+                      <Component id="helpButton" min="-2" pref="80" max="-2" attributes="0"/>
+                      <EmptySpace pref="665" max="32767" attributes="0"/>
+                      <Component id="closeButton" min="-2" pref="80" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jPanel2" alignment="0" max="32767" attributes="2"/>
                   <Component id="jPanel1" alignment="0" max="32767" attributes="2"/>
@@ -70,11 +70,11 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="779" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="799" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="previousButton" min="-2" pref="60" max="-2" attributes="0"/>
+                                  <Component id="previousButton" min="-2" pref="80" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                                   <Component id="totalResultLabel" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -102,7 +102,7 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="deleteButton" min="-2" pref="100" max="-2" attributes="1"/>
                               </Group>
-                              <Component id="nextButton" alignment="1" min="-2" pref="60" max="-2" attributes="1"/>
+                              <Component id="nextButton" alignment="1" min="-2" pref="80" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -321,13 +321,13 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="sourceInstitutionIdText" pref="124" max="32767" attributes="1"/>
-                              <Component id="sourceIdText" alignment="0" pref="124" max="32767" attributes="1"/>
+                              <Component id="sourceInstitutionIdText" pref="134" max="32767" attributes="1"/>
+                              <Component id="sourceIdText" alignment="0" pref="134" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Component id="dataSetTitleLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="dataSetTitleText" pref="124" max="32767" attributes="1"/>
+                          <Component id="dataSetTitleText" pref="134" max="32767" attributes="1"/>
                       </Group>
                       <Component id="searchButton" min="-2" pref="120" max="-2" attributes="1"/>
                   </Group>
@@ -368,14 +368,14 @@
         <Component class="javax.swing.JLabel" name="sourceInstitutionIdLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;MetadataManager.SourceInstitutionId&quot;)&#xa;       " type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.SourceInstitutionId&quot;) + &quot;: &quot;&#xa;       " type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="sourceLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;MetadataManager.SourceId&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.SourceId&quot;)+ &quot;: &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -472,7 +472,7 @@
             <Component class="javax.swing.JLabel" name="dataSortLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="L10n.getString(&quot;MetadataManager.DataSort&quot;)" type="code"/>
+                  <Connection code="L10n.getString(&quot;MetadataManager.DataSort&quot;)+ &quot;: &quot;" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -491,7 +491,7 @@
         <Component class="javax.swing.JLabel" name="dataSetTitleLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;MetadataManager.DataSetTitle&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;MetadataManager.DataSetTitle&quot;)+ &quot;: &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>

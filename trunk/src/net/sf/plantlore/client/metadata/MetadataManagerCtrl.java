@@ -100,16 +100,28 @@ public class MetadataManagerCtrl {
      */
     public void reloadData(int fromRow, int countRow) {
     	try {
-    		model.processResult(fromRow, countRow);     
-    		view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
-	        int from = model.getCurrentFirstRow();
+            model.processResult(fromRow, countRow);     
+            view.tableMetadataList.setModel(new MetadataManagerTableModel(model));
+            int from = model.getCurrentFirstRow();
             int to = from + view.tableMetadataList.getRowCount() - 1;
             if (to <= 0 ) {
             	view.displayedValueLabel.setText("0-0");
             } else {
             	view.displayedValueLabel.setText(from + "-" + to);
             }
-            view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());    		
+            view.totalResultValueLabel.setText(((Integer)model.getResultRows()).toString());  
+            // Set button next inactive if we see the last page, in other way set it active.
+           if (model.getCurrentFirstRow()+ view.tableMetadataList.getRowCount() - 1 < model.getResultRows()) {
+        	   view.nextButton.setEnabled(true);                             
+           }else{
+        	   view.nextButton.setEnabled(false); 
+           }
+            //Set button prev active if we see the first page, in other way set it inactive
+           if (model.getCurrentFirstRow() > 1) {
+        	   view.previousButton.setEnabled(true);
+           } else {
+        	   view.previousButton.setEnabled(false);
+           }
     	} catch (RemoteException e) {
     		DefaultReconnectDialog.show(view, e);
     	} catch (DBLayerException e) {
