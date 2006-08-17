@@ -29,7 +29,10 @@
     <tocitem target="metadata" text="Metadata">
         <tocitem target="metadata.add" text="Přidej/edituj metadata"/>
     </tocitem>
-    <tocitem target="history" text="Historie úprav"/>
+    <tocitem target="history" text="Historie úprav">
+        <tocitem target="overview.history" text="Historie úprav nálezů"/>
+        <tocitem target="history.data" text="Celková historie úprav"/>
+    </tocitem>
     <tocitem target="user" text="Uživatelé">
         <tocitem target="user.add" text="Přidej/uprav uživatele"/>
         <tocitem target="user.rights" text="Uživatelské práva"/>        

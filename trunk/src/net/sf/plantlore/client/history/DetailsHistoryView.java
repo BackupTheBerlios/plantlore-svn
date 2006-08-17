@@ -33,8 +33,8 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents(); 
         //Init Help
-        PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_MANAGER, this.helpButton);        
+        PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_DATA, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);        
         this.detailsTextArea.setEditable(false);
     }
         

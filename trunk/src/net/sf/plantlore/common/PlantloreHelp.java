@@ -70,7 +70,9 @@ public class PlantloreHelp {
     // Add/edit metadata dialog
     public static final String METDATA_ADD              = "metadata.add";        
     // Description of history manager
-    public static final String HISTORY_MANAGER          = "history";
+    public static final String HISTORY                   = "history";    
+    // Description of whole history manager
+    public static final String HISTORY_DATA              = "history.data";    
     // Desctripton of user manager
     public static final String USER_MANAGER             = "user";    
     // Add/edit user dialog

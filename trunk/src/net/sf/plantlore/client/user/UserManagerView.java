@@ -35,7 +35,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();        
-        getRootPane().setDefaultButton(closeButton);
+        // getRootPane().setDefaultButton(closeButton);
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.USER_MANAGER, this.helpButton);                
     }
@@ -339,7 +339,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(totalResultLabel)
@@ -364,9 +364,9 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         helpButton.setText(L10n.getString("UserManager.ButtonHelp"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserMnager.SearchPanel")));
-        wholeNameLabel.setText(L10n.getString("UserManager.Name"));
+        wholeNameLabel.setText(L10n.getString("UserManager.Name")+ ": ");
 
-        loginLabel.setText(L10n.getString("UserManager.Login"));
+        loginLabel.setText(L10n.getString("UserManager.Login")+ ": ");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserManager.SortPanel")));
         sortDescendingRadioButton.setText(L10n.getString("UserManager.SortDescending"));
@@ -377,7 +377,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         sortAscendingRadioButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         sortAscendingRadioButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jLabel5.setText(L10n.getString("UserManager.DataSort"));
+        jLabel5.setText(L10n.getString("UserManager.DataSort")+ ": ");
 
         sortComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { L10n.getString("UserManager.Login"), L10n.getString("UserManager.FirstName"), L10n.getString("UserManager.Surname"), L10n.getString("UserManager.CreateWhen")}));
 
@@ -399,17 +399,17 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel5)
-                    .add(sortComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(sortComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel5))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(sortAscendingRadioButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(sortDescendingRadioButton))
         );
 
-        emailLabel.setText(L10n.getString("UserManager.Email"));
+        emailLabel.setText(L10n.getString("UserManager.Email")+ ": ");
 
-        addressLabel.setText(L10n.getString("UserManager.Address"));
+        addressLabel.setText(L10n.getString("UserManager.Address")+ ": ");
 
         searchButton.setText(L10n.getString("UserManager.ButtonSearch"));
 
@@ -494,7 +494,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
                         .add(searchButton))
                     .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(showActiveUserPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(5, 5, 5))
+                .add(11, 11, 11))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
@@ -517,7 +517,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(15, 15, 15)
-                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 129, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)

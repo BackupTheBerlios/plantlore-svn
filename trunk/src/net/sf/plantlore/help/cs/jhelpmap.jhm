@@ -14,14 +14,15 @@
     <mapID target="overview.addoccurrence.extended" url="html/addoccurrence.html#extended"/>
     <mapID target="overview.addoccurrence.checklist" url="html/addoccurrence.html#checklist"/>
     <mapID target="overview.search" url="html/search.html"/>
-    <mapID target="overview.history" url="html/occurr_history.html"/>
+    <mapID target="overview.history" url="html/history.html#historyRecord"/>
     <mapID target="author" url="html/author.html"/>
     <mapID target="author.add" url="html/author.html#add"/>
     <mapID target="publication" url="html/publication.html"/>
     <mapID target="publication.add" url="html/publication.html#add"/>
     <mapID target="metadata" url="html/metadata.html"/>
     <mapID target="metadata.add" url="html/metadata.html#add"/>
-    <mapID target="history" url="html/history.html"/>
+    <mapID target="history" url="html/history.html"/>    
+    <mapID target="history.data" url="html/history.html#historyData"/>    
     <mapID target="user" url="html/user.html"/>
     <mapID target="user.add" url="html/user.html#add"/>
     <mapID target="user.rights" url="html/user.html#rights"/>

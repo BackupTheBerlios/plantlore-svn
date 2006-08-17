@@ -416,8 +416,7 @@ public class History extends Observable {
                 // Cast the results to the HistoryRecord objects
                 for (int i=0; i<countResult; i++ ) {                    							
 					Object[] objHis = (Object[])objectHistory[i];
-                    this.historyDataList.add((HistoryRecord)objHis[0]);
-                    logger.debug("RESULT: " + ((HistoryRecord)objHis[0]).getId());
+                    this.historyDataList.add((HistoryRecord)objHis[0]);                    
                 }
                
                 // Update current first displayed row                
@@ -1519,8 +1518,7 @@ public class History extends Observable {
 		        try {
 			    	for (int i=0; i< count; i++) {			    		
 			    			logger.debug("Object for update: "+ ((Record)editObjectList.get(i)).getId());                         
-			                type = editObjectList.get(i).getClass().getSimpleName();
-			                logger.debug("WWWW: " + type + " cislo: " + i);			               
+			                type = editObjectList.get(i).getClass().getSimpleName();			                		               
 			                 if (editTypeHash.containsKey(type)) {
 			                         key = (Enum)editTypeHash.get(type); 
 			                         if(!editType.contains(key))
@@ -1704,11 +1702,11 @@ public class History extends Observable {
               Object[] object = searchObject(PlantloreConstants.ENTITY_HABITAT,recordId);
               if (isError()) return ""; //tHabitat doesn`t contain required data
               Habitat habitat = (Habitat)object[0];
-              detailsMessage = L10n.getString("History.DetailsOccurrence") + "\n\n";
+              detailsMessage = L10n.getString("History.DetailsHabitat") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NEARESTVILLAGE) + ": "+ habitat.getNearestVillage().getName() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.DESCRIPTION) + ": "+ habitat.getDescription() + "\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.TERRITORY) + ": "+ habitat.getTerritory().getName() + "\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.PHYTOCHORION) + ": "+ habitat.getPhytochorion().getName() +" (Code: " + habitat.getPhytochorion().getCode() + ")\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.PHYTOCHORION) + ": "+ habitat.getPhytochorion().getName() + " (" + L10n.getString("HABITAT.phytochorion.code") +": " + habitat.getPhytochorion().getCode() + ")\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.COUNTRY) + ": " + habitat.getCountry() +"\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_HABITAT +"."+ Habitat.NOTE) + ": " + habitat.getNote() +"\n";
     	}else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
@@ -2049,7 +2047,7 @@ public class History extends Observable {
      *  Get error message for the error that occured
      *  @return message explaining the error which occured
      */
-    public String getError() {
+    public String getError() {    	
         return this.error;
     }  
     

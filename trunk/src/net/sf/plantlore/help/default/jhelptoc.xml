@@ -29,7 +29,10 @@
     <tocitem target="metadata" text="Metadata">
         <tocitem target="metadata.add" text="Add/Edit metadata"/>                
     </tocitem>
-    <tocitem target="history" text="History"/>    
+    <tocitem target="history" text="History">
+        <tocitem target="overview.history" text="Occurrence history"/>
+        <tocitem target="history.data" text="Whole history"/>
+    </tocitem>    
     <tocitem target="user" text="Users">
         <tocitem target="user.add" text="Add/edit user"/>
         <tocitem target="user.rights" text="User rights"/>        

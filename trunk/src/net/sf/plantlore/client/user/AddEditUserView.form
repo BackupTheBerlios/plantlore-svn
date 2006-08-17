@@ -18,19 +18,19 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jPanel1" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="275" max="32767" attributes="0"/>
+                      <EmptySpace pref="254" max="32767" attributes="0"/>
                       <Component id="operationButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -39,15 +39,15 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="1"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="operationButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="closeButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -70,34 +70,52 @@
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="loginLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="addressLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="emailLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="surnameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="firstNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="noteLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="createWhenuser" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="dropWhenLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="dropWhenValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="createWhenValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="surnameText" pref="223" max="32767" attributes="2"/>
-                              <Component id="jScrollPane1" alignment="0" pref="223" max="32767" attributes="2"/>
-                              <Component id="addressText" alignment="0" pref="223" max="32767" attributes="2"/>
-                              <Component id="firstNameText" alignment="0" pref="223" max="32767" attributes="2"/>
-                              <Component id="passwordtext" alignment="0" pref="223" max="32767" attributes="2"/>
-                              <Component id="emailText" alignment="0" pref="223" max="32767" attributes="2"/>
-                              <Component id="loginText" alignment="0" pref="223" max="32767" attributes="2"/>
+                              <Component id="loginLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="surnameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="noteLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="createWhenuser" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="dropWhenLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="firstNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="emailLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                          <Component id="jPanel2" min="-2" max="-2" attributes="2"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="surnameText" alignment="0" pref="220" max="32767" attributes="2"/>
+                                      <Component id="firstNameText" alignment="0" pref="220" max="32767" attributes="2"/>
+                                      <Component id="passwordtext" alignment="0" pref="220" max="32767" attributes="2"/>
+                                      <Component id="loginText" alignment="0" pref="220" max="32767" attributes="2"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="emailText" pref="220" max="32767" attributes="2"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="dropWhenValueLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="createWhenValueLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jScrollPane1" alignment="1" pref="220" max="32767" attributes="2"/>
+                                      <Component id="addressText" alignment="0" pref="220" max="32767" attributes="2"/>
+                                  </Group>
+                              </Group>
+                          </Group>
                       </Group>
+                      <Component id="addressLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <Component id="jPanel2" min="-2" max="-2" attributes="2"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -105,7 +123,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
@@ -118,10 +136,10 @@
                               <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="passwordtext" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="firstNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="firstNameText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="firstNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -130,10 +148,10 @@
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="emailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="emailText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="emailLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="addressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="addressText" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -143,20 +161,19 @@
                               <Component id="noteLabel" min="-2" max="-2" attributes="0"/>
                               <Component id="jScrollPane1" min="-2" max="-2" attributes="2"/>
                           </Group>
-                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                  <EmptySpace pref="36" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="createWhenuser" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="createWhenValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="dropWhenLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="dropWhenValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -165,42 +182,42 @@
         <Component class="javax.swing.JLabel" name="loginLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Login&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Login&quot;) + &quot;: (*) &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="firstNameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.FirstName&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.FirstName&quot;)+ &quot;: (*) &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="surnameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Surname&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Surname&quot;)+ &quot;: (*) &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="emailLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Email&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Email&quot;)+ &quot;: (*) &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="addressLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Address&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Address&quot;)+ &quot;: &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="createWhenuser">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.CreateWhen&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.CreateWhen&quot;)+ &quot;: &quot;" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -233,7 +250,7 @@
         <Component class="javax.swing.JLabel" name="noteLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Note&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Note&quot;)+ &quot;: &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -258,7 +275,7 @@
         <Component class="javax.swing.JLabel" name="dropWhenLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.DropWhen&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.DropWhen&quot;)+ &quot;: &quot;" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -273,7 +290,7 @@
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Password&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Password&quot;)+ &quot;: (*) &quot;" type="code"/>
             </Property>
           </Properties>
         </Component>
@@ -310,14 +327,14 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" min="-2" pref="180" max="-2" attributes="1"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="administratorCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="editAllCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="addRightCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="editGroupLabel" alignment="0" min="-2" pref="180" max="-2" attributes="1"/>
+                          <Component id="editGroupLabel" alignment="0" pref="180" max="32767" attributes="1"/>
+                          <Component id="jScrollPane3" alignment="0" pref="182" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="21" max="32767" attributes="0"/>
+                      <EmptySpace pref="12" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -331,10 +348,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="addRightCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                      <Component id="editGroupLabel" pref="28" max="32767" attributes="0"/>
+                      <Component id="editGroupLabel" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane3" min="-2" pref="73" max="-2" attributes="1"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
