@@ -12,9 +12,14 @@ package net.sf.plantlore.common;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.Action;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
@@ -31,7 +36,7 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.common.exception.ImportException;
+import net.sf.plantlore.client.imports.Parser.Intention;
 
 import org.apache.log4j.Logger;
 
@@ -51,7 +56,8 @@ public class DBLayerUtils {
     private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
     private boolean isCacheEnabled = true;
     
-    
+    private Action decisionCallback;
+    private Intention intention; 
     
 	private static Map<Class, Class> parentTable = new Hashtable<Class, Class>();
 	private static Map<Class, String> parentColumn = new Hashtable<Class, String>();
@@ -79,7 +85,7 @@ public class DBLayerUtils {
     
     /** Creates a new instance of TempClass */
     public DBLayerUtils(DBLayer db) {
-        this(db, true);
+        this(db, null, true);
     }
     
     /**
@@ -87,10 +93,39 @@ public class DBLayerUtils {
      * @param isCacheEnabled	Gives you the possibility to switch off the cache 
      * (which is enabled by default), because it is highly likely it will not contain up-to-date data.
      */
-    public DBLayerUtils(DBLayer db, boolean isCacheEnabled) {
+    public DBLayerUtils(DBLayer db, Action decisionCallback, boolean isCacheEnabled) {
     	this.db = db;
     	this.isCacheEnabled = isCacheEnabled;
+    	this.decisionCallback = decisionCallback;
     }
+    
+    
+    
+    public void setIntention(Intention intention) {
+    	this.intention = intention;
+    	this.notify();
+    }
+    
+    
+    /**
+     * There are some cases in which DBLayer utils needs assistance.
+     *
+     * You must call setIntention(Intention.SOMETHING);
+     */
+    private Intention expectDecision() {
+    	if(decisionCallback == null)
+    		return intention = Intention.INSERT;
+    	
+    	intention = Intention.UNKNOWN;
+    	new Thread() {
+    		public void run() { decisionCallback.actionPerformed(null); }
+    	}.start();
+    	while( intention == Intention.UNKNOWN )
+    		try { wait(); } catch(InterruptedException e) { /* Do nothing.*/ }
+    		
+    	return intention;
+    }
+    
     
     /** Gets an object according to it's id.
      *
@@ -401,6 +436,9 @@ public class DBLayerUtils {
 		} catch( DBLayerException e ) {
 			db.rollbackTransaction();
 			throw e;
+		} catch( RemoteException e ) {
+			db.rollbackTransaction();
+			throw e;
 		}
 	}
 	
@@ -458,185 +496,186 @@ public class DBLayerUtils {
 	}
 	
 	
+	public Record insertImmutableRecord(Record record)
+	throws RemoteException, DBLayerException {
+		if( !Record.IMMUTABLE.contains(record) )
+			throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
+		
+		Record recordInDB = findMatchInDB( record );
+		if( recordInDB != null)
+			return recordInDB;
+		
+		Integer newId = db.executeInsertHistory( record );
+		record.setId( newId );
+		return record;
+	}
 	
-//	/**
-//	 * THIS MUST BE REVISED!!! 
-//	 * 
-//	 * Update the <code>current</code> record (which is in the database) 
-//	 * according to the other <code>record</code>.
-//	 * <br/> 
-//	 * The <code>source</code> record is
-//	 * always kept up-to-date and its 
-//	 * members always belong to the database.
-//	 * <br/>
-//	 * It is possible that nothing will be inserted or updated at all 
-//	 * (if everything is up-to-date).
-//	 * 
-//	 * @param current	The source record - the record from the database that needs to be updated.
-//	 * @param replacement	The record containing changes the <code>current</code> record must undergo.
-//	 * @return The <code>current</code> record updated using the <code>replacement</code>.
-//	 * This record is always in the database already.
-//	 */
-//	public Record update(Record current, Record replacement) 
-//	throws RemoteException, DBLayerException, ImportException {
-//		
-//		return update(current, replacement, null, null);
-//	}
-//
-//	
-//	private Record update(Record current, Record replacement, Class father, String foreignKey) 
-//	throws RemoteException, DBLayerException, ImportException {		
-//		logger.debug("Updating ["+current+"] with ["+replacement+"].");
-//		
-//		boolean immutable = Record.IMMUTABLE.contains( current.getClass() ) ;
-//		/*
-//		 * We have an immutable table here - 
-//		 * therefore the replacement must match something 
-//		 * that is in the database already.
-//		 */
-//		if( immutable ) {
-//			logger.debug("The record belongs to an immutable table "+current.getClass().getSimpleName());
-//			// Don't they happen to be the same?
-//			if( doPropertiesMatch(current, replacement) )
-//				return current;
-//			// Try to find that record in the database.
-//			Record counterpart = findMatchInDB( replacement );
-//			if( counterpart == null ) {
-//				logger.fatal("The counterpart for the record (in the immutable table " +
-//						current.getClass().getSimpleName()	+ ") was not found!");
-//				throw new ImportException(L10n.getString("Error.RecordNotFound"), replacement);
-//			}
-//			return counterpart;
-//		}
-//		
-//		/*
-//		 * It is a little bit trickier now, because UPDATE may sometimes in fact
-//		 * mean INSERT or nothing :). 
-//		 */
-//		else {
-//			List<String> keys = replacement.getForeignKeys();
-//			boolean propertiesMatch = doPropertiesMatch(current, replacement);
-//			
-//			logger.debug("The record belongs to a common table "+current.getClass().getSimpleName());
-//			
-//			// [A] There are no foreign keys.
-//			// (Publication)
-//			if( keys.size() == 0 ) {
-//				// Both records have the same properties.
-//				if( propertiesMatch )
-//					return current;
-//				// Try to find a match in the database.
-//				Record counterpart = findMatchInDB( replacement );
-//				// A match has been found - use it.
-//				if(counterpart != null)
-//					return counterpart;
-//				// There is no match in the table.
-//				// I.e. the `replacement` is not in the table = 
-//				// the record we want `current` to be transformed to was not found.
-//				
-//				// There are two options now.
-//				//    EITHER
-//				// we insert the record into the database causing no damage to other records 
-//				//    OR
-//				// update the existing one risking that it will affect some other records
-//				// that share the `current`.
-//				
-////				if( sharedBy(current, father, foreignKey) > 1 ) {
-////					// This is up to the User.
-////					logger.info("The record ["+current+"] is shared!");
-////					insertUpdateDecision = lastDecision;
-////					if(!useLastDecision) // ASK THE USER!
-////						insertUpdateDecision = expectDecision( replacement );
-////				}
-////				else
-////					insertUpdateDecision = Action.UPDATE;
-////				
-////				if( insertUpdateDecision == Action.UPDATE ) { // update the current record
-////					logger.debug("Updating the current record.");
-////					// Replace the values with new ones - fortunately, there are no FK involved.
-////					current.replaceWith( replacement );
-////					db.executeUpdateInTransaction( current );
-////					return current;
-////				}
-////				else /*if( decision == Action.INSERT )*/ {
-//					logger.debug("Inserting a new record.");
-//					// Insert the replacement as a new record [DEFAULT OPERATION].
-//					Integer newId = db.executeInsertInTransaction(replacement);
-//					replacement.setId( newId );
-//					return replacement;
-////				}
-//			}
-//			// [B] There are some foreign keys.
-//			// (Habitat, Occurrence)
-//			else {
-//				logger.debug("The common table contains foreign keys.");
-//				
-//				// Indicate, whether the record needed some changes.
-//				boolean dirty = false;
-//				// Deal with the AuthorOccurence - 
-//				// a new AuthorOccurrence MUSTN'T cause an update of the Occurrence.
-//				if(current instanceof AuthorOccurrence)
-//					keys.remove(AuthorOccurrence.OCCURRENCE);
-//				// Replace all foreign keys with records that already are in the database.
-//				for(String key : keys) {
-//					Object 
-//					currentSubrecord = current.getValue(key),
-//					replacementSubrecord = replacement.getValue(key);
-//					if(currentSubrecord == null || replacementSubrecord == null)
-//						throw new ImportException(L10n.getString("Error.FKIsNull"));
-//					
-//					Record 
-//					suggestion =  update( 
-//							(Record)currentSubrecord, 
-//							(Record)replacementSubrecord,
-//							current.getClass(), key);
-//					
-//					// The sub-record doesn't have to be changed.
-//					if( currentSubrecord == suggestion ) // == suffices (there's no need for equals()).
-//						continue;
-//					
-//					// The replacement is needed.
-//					current.setValue(key, suggestion);
-//					dirty = true;
-//				}
-//				
-//				// Replace the properties of the `current` with the ones of the `replacement`.
-//				if( !propertiesMatch )
-//					for(String property : current.getProperties()) 
-//						current.setValue(property, replacement.getValue(property));
-//				
-//				// Update the record in the database.
-//				if( dirty || !propertiesMatch ) {
-//					logger.debug("Updating the current record.");
-//					// Occurrences are always UPDATED
-//					if( current instanceof Occurrence )
-//						db.executeUpdateInTransaction(current);
-//					else {
-//						boolean shared = sharedBy(current, father, foreignKey) > 1;
-//						// If the record is not shared, it is safe to performt he udpate.
-//						if( !shared ) 
-//							db.executeUpdateInTransaction(current);
-//						else {
-////							// If the record is shared.
-////							insertUpdateDecision = lastDecision;
-////							if(!useLastDecision) 
-////								insertUpdateDecision = expectDecision( replacement );
-////							if(insertUpdateDecision == Action.UPDATE) 
-////								// User decided to update (potentially dangerous).
-////								db.executeUpdateInTransaction(current);
-////							else {
-//								// User decided to insert new copy (safer).
-//								Integer newId = db.executeInsertInTransaction(current);
-//								current.setId(newId);
-////							}
-//						}
-//					}
-//				}
-//				// Return the current record (updated).
-//				return current;
-//			}
-//		}
-//	}
+	/**
+	 * Update the <code>current</code> record (which is in the database) 
+	 * according to the other <code>record</code>.
+	 * <br/> 
+	 * The <code>source</code> record is
+	 * always kept up-to-date and its 
+	 * members always belong to the database.
+	 * <br/>
+	 * It is possible that nothing will be inserted or updated at all 
+	 * (if everything is up-to-date).
+	 * 
+	 * @param current	The source record - the record from the database that needs to be updated.
+	 * @param replacement	The record containing changes the <code>current</code> record must undergo.
+	 * @return The <code>current</code> record updated using the <code>replacement</code>.
+	 * This record is always in the database already.
+	 */
+	public Record highLeveUpdate(Record current, Record replacement) 
+	throws RemoteException, DBLayerException {
+		if( !db.beginTransaction() )
+			throw new DBLayerException(L10n.getString("Error.TransactionRaceConditions"));
+		try {
+			Record r = update(current, replacement);
+			db.commitTransaction();
+			return r;
+		} catch( DBLayerException e ) {
+			db.rollbackTransaction();
+			throw e;
+		} catch( RemoteException e ) {
+			db.rollbackTransaction();
+			throw e;
+		}
+	}
+
+	
+	private Record update(Record current, Record replacement) 
+	throws RemoteException, DBLayerException{		
+		logger.debug("Updating ["+current+"] with ["+replacement+"].");
+		
+		boolean 
+			immutable = Record.IMMUTABLE.contains( current.getClass() ),
+			propertiesMatch = current.equalsInProperties( replacement );
+		
+		/*
+		 * We have an immutable table here - 
+		 * therefore the replacement must match something 
+		 * that is in the database already.
+		 */
+		if( immutable ) {
+			logger.debug("The record belongs to an immutable table "+current.getClass().getSimpleName());
+			// Don't they happen to be the same?
+			if( propertiesMatch )
+				return current;
+			// Try to find that record in the database.
+			Record counterpart = findMatchInDB( replacement );
+			if( counterpart == null ) {
+				logger.fatal("The counterpart for the record (in the immutable table " +
+						current.getClass().getSimpleName()	+ ") was not found!");
+				throw new DBLayerException(L10n.getFormattedString("Error.RecordNotFound", replacement.getClass()) );
+			}
+			return counterpart;
+		}
+		
+		/*
+		 * It is a little bit trickier now, because UPDATE may sometimes in fact
+		 * mean INSERT or nothing :). 
+		 */
+		logger.debug("The record belongs to a common table "+current.getClass().getSimpleName());
+		List<String> keys = replacement.getForeignKeys();
+			
+			
+		// Indicate, whether the record needed some changes.
+		boolean dirty = !propertiesMatch;
+				
+		// Deal with the AuthorOccurence - 
+		// a new AuthorOccurrence MUSTN'T cause an update of the Occurrence.
+		if(current instanceof AuthorOccurrence)
+			keys.remove(AuthorOccurrence.OCCURRENCE);
+		
+		// Replace all foreign keys with records that already are in the database
+		// (where possible).
+		if( !keys.isEmpty() ) {
+			for(String key : keys) {
+				Object 
+					currentSubrecord = current.getValue(key),
+					replacementSubrecord = replacement.getValue(key);
+				if(currentSubrecord == null || replacementSubrecord == null)
+					throw new DBLayerException(L10n.getString("Error.FKIsNull"));
+				
+				Record suggestion =  update( 
+						(Record)currentSubrecord, 
+						(Record)replacementSubrecord 
+				);
+				
+				// The sub-record doesn't have to be changed.
+				if( currentSubrecord == suggestion ) // == suffices (there's no need for equals()).
+					continue;
+				
+				// The replacement is needed.
+				current.setValue(key, suggestion);
+				dirty = true;
+			}
+		}
+				
+		// Replace the properties of the `current` with the ones of the `replacement`.
+		if( !propertiesMatch )
+			for(String property : current.getProperties()) 
+				current.setValue(property, replacement.getValue(property));
+		
+				
+		// Finally, update the record in the database.
+		if( dirty ) {
+			logger.debug("Updating the current record.");
+			
+			// Occurrences are always UPDATED
+			if( current instanceof Occurrence )
+				db.executeUpdateInTransaction(current);
+			
+			else {
+				// If the record is not shared, it is safe to perform the udpate.
+				if( sharedBy(current) <= 1 ) 
+					db.executeUpdateInTransaction(current);
+				// The record is shared - the assistance of a "supreme authority" is desired.
+				else {
+					if( expectDecision() == Intention.UPDATE) 
+						// User decided to update (potentially dangerous).
+						db.executeUpdateInTransaction(current);
+					else {
+						// User decided to insert new copy (safer).
+						Integer newId = db.executeInsertInTransaction(current);
+						current.setId(newId);
+					}
+				}
+			}
+		}
+		// Return the current record (updated).
+		return current;
+	}
+	
+	
+	public Record updateImmutableRecord(Record current, Record replacement) 
+	throws RemoteException, DBLayerException {
+		if( !Record.IMMUTABLE.contains(current) ||
+				replacement.getClass() != current.getClass()
+		)
+			throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
+		
+		Record
+			currentInDB = findMatchInDB(current),
+			replacementInDB = findMatchInDB(replacement);
+		
+		if( replacementInDB == null ) {
+			if( currentInDB == null ) {
+				Integer newId = db.executeInsertHistory( replacement );
+				replacement.setId( newId );
+				return replacement;
+			}
+			else {
+				for(String property : current.getProperties())
+					currentInDB.setValue(property, replacement.getValue(property));
+				db.executeUpdateHistory( current );
+				return current;
+			}
+		}
+		
+		return replacementInDB;
+	}
 	
 	
 	
@@ -680,6 +719,9 @@ public class DBLayerUtils {
 			db.commitTransaction();
 			return r;
 		} catch( DBLayerException e ) {
+			db.rollbackTransaction();
+			throw e;
+		} catch( RemoteException e ) {
 			db.rollbackTransaction();
 			throw e;
 		}
@@ -751,6 +793,9 @@ public class DBLayerUtils {
     */
 	public void deleteImmutableRecord(Record record)
 	throws RemoteException, DBLayerException {
+		if( !Record.IMMUTABLE.contains(record) )
+			throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
+		
 		int sharers = sharedBy( record, false );
 		if( sharers > 0 ) {
 			logger.error("The "+record+" is in use by "+sharers+" other record(s). It cannot be deleted!");
@@ -759,5 +804,86 @@ public class DBLayerUtils {
 		
 		db.executeDeleteHistory( record );
 	}
+	
+	
+	/**
+	 * In case you wish to present some record(s) to the User
+	 * a simple table will be created from supplied record(s).
+	 * 
+	 * @param records
+	 * @return
+	 */
+	public TableModel createTableFor(Record... records) {
+		return new RecordTable(records);
+	}
+	
+
+	private class RecordTable extends AbstractTableModel {
+		
+		private ArrayList<String>[] value;
+		private String[] columnNames;
+		
+		@SuppressWarnings("unchecked")
+		public RecordTable(Record... records) {
+			int n = records.length;
+			value = new ArrayList[ n + 1 ];
+			columnNames = new String[ n + 1 ];
+			for(int i = 0; i <= n; i++) {
+				value[i] = new ArrayList<String>(20);
+				columnNames[i] = L10n.getString("Record.Value") + " " + i; 
+			}
+			columnNames[0] =  L10n.getString("Record.Property"); 
+			
+			traverse(records);
+		}
+
+		
+		private void traverse(Record...r) {
+			int n;
+			for(n = 0; n < r.length; n++) 
+				if(r[n] != null) break;
+			
+			if(r[n] == null)
+				return;
+			
+			Class table = r[n].getClass(); 
+			for( String property : r[n].getProperties()) {
+				value[0].add(L10n.getString(table.getSimpleName()+"."+property));
+				
+				for(int i = 0; i < r.length; i++) { 
+					Object v = (r[i] == null) ? null : r[i].getValue(property);
+					value[i + 1].add( (v == null) ? "" : v.toString() );
+				}
+			}
+			
+			
+			Record[] subrecords = new Record[r.length];
+			for( String key : r[n].getForeignKeys() ) {
+				for(int i = 0; i < r.length; i++)
+					subrecords[i] = (Record)r[i].getValue(key);
+				
+				traverse( subrecords );
+			}
+		}
+		
+		
+		public int getRowCount() {
+			return value[0].size(); 
+		}
+		
+		public int getColumnCount() {
+			return columnNames.length;
+		}
+		
+		public String getColumnName(int column) {
+			return columnNames[column];
+		}
+		
+		public Object getValueAt(int row, int column) {
+			return value[column].get(row);
+		}
+	}
+	
+	
 	
 }

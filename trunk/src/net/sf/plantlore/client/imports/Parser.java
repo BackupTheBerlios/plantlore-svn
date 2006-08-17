@@ -15,7 +15,7 @@ import net.sf.plantlore.common.record.*;
  * parser.initialize();
  * 
  * while( parser.hasNextRecord() ) {
- *   Action intention = parser.fetchNextRecord();
+ *   Intention intention = parser.fetchNextRecord();
  *   Occurrence occ = parser.nextPart(Occurrence.class);
  *   dealWithOccurrenceRecord( occ, intention );
  *   
@@ -33,7 +33,7 @@ import net.sf.plantlore.common.record.*;
  * parser.initialize();
  * 
  * while( parser.hasNextRecord() ) {
- *   Action intention = parser.fetchNextRecord();
+ *   Intention intention = parser.fetchNextRecord();
  *   Plant plant = (Plant)parsers.nextPart(Plant.class);
  *   dealWithPlant( plant, intention );
  * }
@@ -61,7 +61,7 @@ public interface Parser {
 	 * @author Erik Kratochvíl (discontinuum@gmail.com)
 	 * @since 2006-05-08
 	 */
-	public enum Action { UNKNOWN, INSERT, DELETE, UPDATE };
+	public enum Intention { UNKNOWN, INSERT, DELETE, UPDATE };
 
 	/**
 	 * Initialize the parser - 
@@ -92,7 +92,7 @@ public interface Parser {
 	 * @return	The action the whole record is supposed to undergo.
 	 * @see #getNextPart(Class)
 	 */
-	Action fetchNextRecord() throws ParserException;
+	Intention fetchNextRecord() throws ParserException;
 	
 	/**
 	 * Get a part of the whole record. 
@@ -124,7 +124,7 @@ public interface Parser {
 	 * 
 	 * @return	The operation the last subrecord should undergo. 
 	 */
-	Action intentedFor();
+	Intention intentedFor();
 	
 	/**
 	 * The file contains several records. The Parser may (or may not)

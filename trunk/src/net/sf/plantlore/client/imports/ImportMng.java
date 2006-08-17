@@ -16,7 +16,7 @@ import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
 
 import net.sf.plantlore.client.export.component.FileFormat;
-import net.sf.plantlore.client.imports.Parser.Action;
+import net.sf.plantlore.client.imports.Parser.Intention;
 import net.sf.plantlore.client.imports.parsers.*;
 import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.common.exception.ParserException;
@@ -138,7 +138,7 @@ public class ImportMng extends Observable implements Observer {
 	 * 
 	 * @param decision	The decision the user has made.
 	 */
-	public void makeDecision(Action decision) {
+	public void makeDecision(Intention decision) {
 		if(director != null) 
 			director.makeDecision(decision);
 	}

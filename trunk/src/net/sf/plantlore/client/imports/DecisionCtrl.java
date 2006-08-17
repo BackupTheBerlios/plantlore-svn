@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import net.sf.plantlore.client.imports.Parser.Action;
+import net.sf.plantlore.client.imports.Parser.Intention;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.l10n.L10n;
@@ -28,9 +28,9 @@ public class DecisionCtrl {
 			Object issue = model.getIssue();
 			if(issue instanceof Record)
 				if(issue instanceof Occurrence)
-					model.makeDecision(Action.UNKNOWN);
+					model.makeDecision(Intention.UNKNOWN);
 				else
-					model.makeDecision(Action.INSERT);
+					model.makeDecision(Intention.INSERT);
 			view.setVisible(false);
 		}
 	}
@@ -41,9 +41,9 @@ public class DecisionCtrl {
 			Object issue = model.getIssue();
 			if(issue instanceof Record)
 				if(issue instanceof Occurrence)
-					model.makeDecision(Action.UPDATE);
+					model.makeDecision(Intention.UPDATE);
 				else
-					model.makeDecision(Action.UPDATE);
+					model.makeDecision(Intention.UPDATE);
 			view.setVisible(false);
 		}
 	}

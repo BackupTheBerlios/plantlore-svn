@@ -27,8 +27,8 @@ public class AbstractParser implements Parser {
 		return false;
 	}
 	
-	public Action fetchNextRecord() throws ParserException {
-		return Action.UNKNOWN;
+	public Intention fetchNextRecord() throws ParserException {
+		return Intention.UNKNOWN;
 	}
 
 	public boolean hasNextPart(Class table) {
@@ -39,8 +39,8 @@ public class AbstractParser implements Parser {
 		return null;
 	}
 	
-	public Action intentedFor() {
-		return Action.UNKNOWN;
+	public Intention intentedFor() {
+		return Intention.UNKNOWN;
 	}
 	
 	public int getNumberOfRecords() {

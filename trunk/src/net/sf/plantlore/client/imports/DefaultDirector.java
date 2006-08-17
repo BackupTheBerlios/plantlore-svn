@@ -17,7 +17,7 @@ import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
-import net.sf.plantlore.client.imports.Parser.Action;
+import net.sf.plantlore.client.imports.Parser.Intention;
 
 
 /**
@@ -51,8 +51,8 @@ public class DefaultDirector extends Observable implements Runnable {
 	private DBLayer db;
 	private int count = 0, inserted = 0, updated = 0, deleted = 0;
 	
-	private Action 
-		lastDecision = Action.UNKNOWN,
+	private Intention 
+		lastDecision = Intention.UNKNOWN,
 		insertUpdateDecision = null,
 		dateDecision = null;
 	
@@ -179,7 +179,7 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @param decision	The decision the User has come to.
 	 * @see #expectDecision()
 	 */
-	synchronized public void makeDecision(Action decision) {
+	synchronized public void makeDecision(Intention decision) {
 		this.lastDecision = decision;
 		notify();
 	}
@@ -207,11 +207,11 @@ public class DefaultDirector extends Observable implements Runnable {
 	 * @return	The decision the User has made.
 	 * @see #observerNotifier
 	 */
-	synchronized protected Action expectDecision(Record about) {
-		lastDecision = Action.UNKNOWN;
+	synchronized protected Intention expectDecision(Record about) {
+		lastDecision = Intention.UNKNOWN;
 		problematicRecord = about;
 		observerNotifier.start(); // must be another thread
-		while( lastDecision == Action.UNKNOWN && !aborted ) {
+		while( lastDecision == Intention.UNKNOWN && !aborted ) {
 			try { wait(); } catch( InterruptedException e ) {/* Never mind. */}
 		}
 		return lastDecision;
@@ -249,7 +249,7 @@ public class DefaultDirector extends Observable implements Runnable {
 			
 			// Reset the counters.
 			count = inserted = updated = deleted = 0;
-			Action takenAction = Action.UNKNOWN;
+			Intention takenAction = Intention.UNKNOWN;
 			
 			// Go through the whole file.
 			while( !aborted && parser.hasNextRecord() ) {
@@ -258,7 +258,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				logger.debug("Fetching a new record from the Parser.");
 				// What is supposed to happen with the occurrence.
-				Action intention = parser.fetchNextRecord(); 
+				Intention intention = parser.fetchNextRecord(); 
 				// Get a new Occurrence.
 				Occurrence occ = null;
 				try {
@@ -279,7 +279,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				
 				// If the record in the file is dead, then it is clearly meant to be deleted!
 				if( recordFromFile.isDead() )
-					intention = Action.DELETE;
+					intention = Intention.DELETE;
 				
 				logger.debug("New record No. "+count+" fetched: "+occ);
 				logger.debug("Intention: " + intention);
@@ -337,7 +337,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						if( !doNotAskAboutDateAgain ) 
 							dateDecision = expectDecision( occInDB );
 						
-						if( dateDecision != Action.UPDATE && dateDecision != Action.INSERT ) 
+						if( dateDecision != Intention.UPDATE && dateDecision != Intention.INSERT ) 
 							continue;
 					}
 				}
@@ -359,11 +359,11 @@ public class DefaultDirector extends Observable implements Runnable {
 							switch(intention) {
 							case DELETE:
 								// Nothing to be done, the record is already dead.
-								takenAction = Action.DELETE;
+								takenAction = Intention.DELETE;
 								break;
 							default:
 								occInDB = (Occurrence) update( occInDB, occ );
-								takenAction = Action.UPDATE;
+								takenAction = Intention.UPDATE;
 								break;
 							}
 						else
@@ -373,14 +373,14 @@ public class DefaultDirector extends Observable implements Runnable {
 								// By a common decision: If the habitat is not shared it should be marked as deleted, too.
 								if( sharedBy(occInDB.getHabitat(), Occurrence.class, Occurrence.HABITAT) > 1 )
 									delete( occInDB.getHabitat(), 1 );
-								takenAction = Action.DELETE;
+								takenAction = Intention.DELETE;
 								break;
 							default:
 								if(occInDB.equals(occ))
 									occ = occInDB;
 								else
 									occInDB = (Occurrence) update( occInDB, occ );
-								takenAction = Action.UPDATE;
+								takenAction = Intention.UPDATE;
 								break;
 							}
 					}
@@ -391,11 +391,11 @@ public class DefaultDirector extends Observable implements Runnable {
 						switch(intention) {
 						case DELETE:	
 							// There's nothing to delete.
-							takenAction = Action.DELETE;
+							takenAction = Intention.DELETE;
 							break;
 						default:
 							occInDB = (Occurrence) insert( occ );
-							takenAction = Action.INSERT;
+							takenAction = Intention.INSERT;
 							break;
 						}
 				}
@@ -426,7 +426,7 @@ public class DefaultDirector extends Observable implements Runnable {
 				if( isInDB ) 
 					sharers = findAllSharers(occInDB);
 				// If the Occurrence record should have been DELETED, all associated AuthorOccurrences should be deleted as well.
-				if( intention == Action.DELETE && sharers != null ) {
+				if( intention == Intention.DELETE && sharers != null ) {
 					logger.debug("Deleting all associated data (Author, AuthorOccurrence).");
 					numberOfUndeadAuthors = 1; // so that the transaction is confirmed
 					
@@ -481,7 +481,7 @@ public class DefaultDirector extends Observable implements Runnable {
 						intention = parser.intentedFor();
 						// If the record is dead, we are supposed to delete it.
 						if( ao.isDead() )
-							intention = Action.DELETE;
+							intention = Intention.DELETE;
 						
 						logger.debug("New author-occurence record: " + ao);
 						logger.debug("Intention: " + intention);
@@ -887,16 +887,16 @@ public class DefaultDirector extends Observable implements Runnable {
 						insertUpdateDecision = expectDecision( replacement );
 				}
 				else
-					insertUpdateDecision = Action.UPDATE;
+					insertUpdateDecision = Intention.UPDATE;
 				
-				if( insertUpdateDecision == Action.UPDATE ) { // update the current record
+				if( insertUpdateDecision == Intention.UPDATE ) { // update the current record
 					logger.debug("Updating the current record.");
 					// Replace the values with new ones - fortunately, there are no FK involved.
 					current.replaceWith( replacement );
 					db.executeUpdateInTransaction( current );
 					return current;
 				}
-				else /*if( decision == Action.INSERT )*/ {
+				else /*if( decision == Intention.INSERT )*/ {
 					logger.debug("Inserting a new record.");
 					// Insert the replacement as a new record [DEFAULT OPERATION].
 					Integer newId = db.executeInsertInTransaction(replacement);
@@ -964,7 +964,7 @@ public class DefaultDirector extends Observable implements Runnable {
 							insertUpdateDecision = lastDecision;
 							if(!useLastDecision) 
 								insertUpdateDecision = expectDecision( replacement );
-							if(insertUpdateDecision == Action.UPDATE) 
+							if(insertUpdateDecision == Intention.UPDATE) 
 								// User decided to update (potentially dangerous).
 								db.executeUpdateInTransaction(current);
 							else {

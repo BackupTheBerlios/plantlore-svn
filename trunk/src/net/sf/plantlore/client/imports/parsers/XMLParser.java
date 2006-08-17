@@ -57,6 +57,7 @@ public class XMLParser extends AbstractParser {
             else
             	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
         } catch (Exception ex) {
+        	System.out.println("CHYBA INICIALIZACE PARSERU: " + ex.getMessage());
             throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));            
         } 
     }
@@ -69,7 +70,7 @@ public class XMLParser extends AbstractParser {
 
 
     @Override
-    public Action fetchNextRecord() 
+    public Intention fetchNextRecord() 
     throws ParserException {
     	currentOccurrence = (Node) occIterator.next();
     	List authors = currentOccurrence.selectNodes(AuthorOccurrence.class.getSimpleName().toLowerCase());
@@ -81,7 +82,7 @@ public class XMLParser extends AbstractParser {
     	occ = ao.getOccurrence();
     	reconstruct( occ, currentOccurrence );
     	
-        return Action.UNKNOWN;
+        return Intention.UNKNOWN;
     }
 
     
