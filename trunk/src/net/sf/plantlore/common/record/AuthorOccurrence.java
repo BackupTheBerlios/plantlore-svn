@@ -59,17 +59,17 @@ public class AuthorOccurrence extends Record implements Deletable {
     	if(value instanceof String && "".equals(value) )
     		value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(AUTHOR)) setAuthor((Author)value);
-		else if(column.equals(OCCURRENCE)) setOccurrence((Occurrence)value);
-		else if(column.equals(ROLE)) setRole((String)value);
-		else if(column.equals(NOTE)) setNote((String)value);
-		else if(column.equals(DELETED)) {
+		else if(column.equalsIgnoreCase(AUTHOR)) setAuthor((Author)value);
+		else if(column.equalsIgnoreCase(OCCURRENCE)) setOccurrence((Occurrence)value);
+		else if(column.equalsIgnoreCase(ROLE)) setRole((String)value);
+		else if(column.equalsIgnoreCase(NOTE)) setNote((String)value);
+		else if(column.equalsIgnoreCase(DELETED)) {
 			if(value != null && value instanceof String) 
 				setDeleted(Integer.parseInt((String) value));
 			else 

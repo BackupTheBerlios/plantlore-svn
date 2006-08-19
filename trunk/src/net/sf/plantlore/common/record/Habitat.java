@@ -84,44 +84,44 @@ public class Habitat extends Record implements Deletable {
     	if(value instanceof String && "".equals(value) )
     		value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(TERRITORY)) setTerritory((Territory)value);
-		else if(column.equals(PHYTOCHORION)) setPhytochorion((Phytochorion)value);
-		else if(column.equals(NEARESTVILLAGE) || column.equals(VILLAGE)) setNearestVillage((Village)value);
-		else if(column.equals(QUADRANT)) setQuadrant((String)value);
-		else if(column.equals(DESCRIPTION)) setDescription((String)value);
-		else if(column.equals(COUNTRY)) setCountry((String)value);
-		else if(column.equals(CREATEDWHO)) setCreatedWho((User)value); 
-		else if(column.equals(ALTITUDE)) {
+		else if(column.equalsIgnoreCase(TERRITORY)) setTerritory((Territory)value);
+		else if(column.equalsIgnoreCase(PHYTOCHORION)) setPhytochorion((Phytochorion)value);
+		else if(column.equalsIgnoreCase(NEARESTVILLAGE) || column.equals(VILLAGE)) setNearestVillage((Village)value);
+		else if(column.equalsIgnoreCase(QUADRANT)) setQuadrant((String)value);
+		else if(column.equalsIgnoreCase(DESCRIPTION)) setDescription((String)value);
+		else if(column.equalsIgnoreCase(COUNTRY)) setCountry((String)value);
+		else if(column.equalsIgnoreCase(CREATEDWHO)) setCreatedWho((User)value); 
+		else if(column.equalsIgnoreCase(ALTITUDE)) {
 			if (value != null && value instanceof String) 
 				setAltitude(Double.parseDouble((String) value));
 			else 
 				setAltitude((Double)value);
 		}
-		else if(column.equals(LATITUDE)) {
+		else if(column.equalsIgnoreCase(LATITUDE)) {
 			if (value != null && value instanceof String) 
 				setLatitude(Double.parseDouble((String) value));
 			else 
 				setLatitude((Double)value);
 		}
-		else if(column.equals(LONGITUDE)) { 
+		else if(column.equalsIgnoreCase(LONGITUDE)) { 
 			if (value != null && value instanceof String) 
 				setLongitude(Double.parseDouble((String) value));
 			else 
 				setLongitude((Double)value);
 		}
-		else if(column.equals(DELETED)) {
+		else if(column.equalsIgnoreCase(DELETED)) {
 			if (value != null && value instanceof String) 
 				setDeleted(Integer.parseInt((String) value));
 			else 
 				setDeleted((Integer)value);
 		}
-		else if(column.equals(NOTE)) setNote((String)value);
+		else if(column.equalsIgnoreCase(NOTE)) setNote((String)value);
     }
     
     /**

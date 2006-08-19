@@ -89,33 +89,33 @@ public class Metadata extends Record {
         if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(TECHNICALCONTACTADDRESS)) setTechnicalContactAddress((String)value);
-		else if(column.equals(TECHNICALCONTACTEMAIL)) setTechnicalContactEmail((String)value);
-		else if(column.equals(TECHNICALCONTACTNAME)) setTechnicalContactName((String)value);
-		else if(column.equals(CONTENTCONTACTADDRESS)) setContentContactAddress((String)value);
-		else if(column.equals(CONTENTCONTACTEMAIL)) setContentContactEmail((String)value);
-		else if(column.equals(CONTENTCONTACTNAME)) setContentContactName((String)value);
-		else if(column.equals(DATASETDETAILS)) setDataSetDetails((String)value);
-		else if(column.equals(DATASETTITLE)) setDataSetTitle((String)value);
-		else if(column.equals(SOURCEID)) setSourceId((String)value);
-		else if(column.equals(SOURCEINSTITUTIONID)) setSourceInstitutionId((String)value);
-		else if(column.equals(OWNERORGANIZATIONABBREV)) setOwnerOrganizationAbbrev((String)value);
-		else if(column.equals(BIOTOPETEXT)) setBiotopeText((String)value);
-		else if(column.equals(RECORDBASIS)) setRecordBasis((String)value);
-		else if(column.equals(DELETED)) {
+		else if(column.equalsIgnoreCase(TECHNICALCONTACTADDRESS)) setTechnicalContactAddress((String)value);
+		else if(column.equalsIgnoreCase(TECHNICALCONTACTEMAIL)) setTechnicalContactEmail((String)value);
+		else if(column.equalsIgnoreCase(TECHNICALCONTACTNAME)) setTechnicalContactName((String)value);
+		else if(column.equalsIgnoreCase(CONTENTCONTACTADDRESS)) setContentContactAddress((String)value);
+		else if(column.equalsIgnoreCase(CONTENTCONTACTEMAIL)) setContentContactEmail((String)value);
+		else if(column.equalsIgnoreCase(CONTENTCONTACTNAME)) setContentContactName((String)value);
+		else if(column.equalsIgnoreCase(DATASETDETAILS)) setDataSetDetails((String)value);
+		else if(column.equalsIgnoreCase(DATASETTITLE)) setDataSetTitle((String)value);
+		else if(column.equalsIgnoreCase(SOURCEID)) setSourceId((String)value);
+		else if(column.equalsIgnoreCase(SOURCEINSTITUTIONID)) setSourceInstitutionId((String)value);
+		else if(column.equalsIgnoreCase(OWNERORGANIZATIONABBREV)) setOwnerOrganizationAbbrev((String)value);
+		else if(column.equalsIgnoreCase(BIOTOPETEXT)) setBiotopeText((String)value);
+		else if(column.equalsIgnoreCase(RECORDBASIS)) setRecordBasis((String)value);
+		else if(column.equalsIgnoreCase(DELETED)) {
 			if (value != null && value instanceof String) 
 				setDeleted(Integer.parseInt((String) value));
 			else 
 				setDeleted((Integer)value);
 		}
-		else if(column.equals(DATECREATE)) setDateCreate((java.util.Date)value);
-		else if(column.equals(DATEMODIFIED)) setDateModified((java.util.Date)value);
+		else if(column.equalsIgnoreCase(DATECREATE)) setDateCreate((java.util.Date)value);
+		else if(column.equalsIgnoreCase(DATEMODIFIED)) setDateModified((java.util.Date)value);
     }
     
     /**

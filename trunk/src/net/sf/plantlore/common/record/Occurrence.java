@@ -104,44 +104,44 @@ public class Occurrence extends Record implements Deletable {
     	if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(UNITIDDB)) setUnitIdDb((String)value);
-		else if(column.equals(UNITVALUE)) setUnitValue((String)value);
-		else if(column.equals(HABITAT)) setHabitat((Habitat)value);
-		else if(column.equals(PLANT)) setPlant((Plant)value);
-		else if(column.equals(YEARCOLLECTED)) {
+		else if(column.equalsIgnoreCase(UNITIDDB)) setUnitIdDb((String)value);
+		else if(column.equalsIgnoreCase(UNITVALUE)) setUnitValue((String)value);
+		else if(column.equalsIgnoreCase(HABITAT)) setHabitat((Habitat)value);
+		else if(column.equalsIgnoreCase(PLANT)) setPlant((Plant)value);
+		else if(column.equalsIgnoreCase(YEARCOLLECTED)) {
 			if (value != null && value instanceof String)  
 				setYearCollected(Integer.parseInt((String) value));
 			else 
 				setYearCollected((Integer)value);
 		}
-		else if(column.equals(MONTHCOLLECTED)) {
+		else if(column.equalsIgnoreCase(MONTHCOLLECTED)) {
 			if (value != null && value instanceof String) 
 				setMonthCollected(Integer.parseInt((String) value));
 			else 
 				setMonthCollected((Integer)value);
 		}
-		else if(column.equals(DAYCOLLECTED)) { 
+		else if(column.equalsIgnoreCase(DAYCOLLECTED)) { 
 			if (value != null && value instanceof String) 
 				setDayCollected(Integer.parseInt((String) value));
 			else  
 				setDayCollected((Integer)value);
 		}
-		else if(column.equals(TIMECOLLECTED)) setTimeCollected(checkDate(value));
-		else if(column.equals(ISODATETIMEBEGIN)) setIsoDateTimeBegin(checkDate(value));
-		else if(column.equals(DATASOURCE)) setDataSource((String)value);
-		else if(column.equals(PUBLICATION)) setPublication((Publication)value);
-		else if(column.equals(HERBARIUM)) setHerbarium((String)value);
-		else if(column.equals(CREATEDWHEN)) setCreatedWhen(checkDate(value));
-		else if(column.equals(UPDATEDWHEN)) setUpdatedWhen(checkDate(value));
-		else if(column.equals(METADATA)) setMetadata((Metadata)value);
-		else if(column.equals(NOTE)) setNote((String)value);
-		else if(column.equals(DELETED)) {
+		else if(column.equalsIgnoreCase(TIMECOLLECTED)) setTimeCollected(checkDate(value));
+		else if(column.equalsIgnoreCase(ISODATETIMEBEGIN)) setIsoDateTimeBegin(checkDate(value));
+		else if(column.equalsIgnoreCase(DATASOURCE)) setDataSource((String)value);
+		else if(column.equalsIgnoreCase(PUBLICATION)) setPublication((Publication)value);
+		else if(column.equalsIgnoreCase(HERBARIUM)) setHerbarium((String)value);
+		else if(column.equalsIgnoreCase(CREATEDWHEN)) setCreatedWhen(checkDate(value));
+		else if(column.equalsIgnoreCase(UPDATEDWHEN)) setUpdatedWhen(checkDate(value));
+		else if(column.equalsIgnoreCase(METADATA)) setMetadata((Metadata)value);
+		else if(column.equalsIgnoreCase(NOTE)) setNote((String)value);
+		else if(column.equalsIgnoreCase(DELETED)) {
 			if(value != null && value instanceof String)
 				setDeleted(Integer.parseInt((String)value));
 			else

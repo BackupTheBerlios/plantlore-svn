@@ -111,7 +111,7 @@ public abstract class Record implements Serializable {
 	 * @return	The subrecord of the specified type.
 	 */
 	public Record findSubrecord(Class type) {
-		return getClass().equals(type) ? this : findSubrecord(this, type);
+		return findSubrecord(this, type);
 	}
 
 	/**
@@ -121,13 +121,36 @@ public abstract class Record implements Serializable {
 	 * @param type	The type of the subrecord.
 	 * @return	The subrecord of the specified type.
 	 */
-	public Record findSubrecord(Record base, Class type) {
+	public static Record findSubrecord(Record base, Class type) {
+		if(base.getClass().equals(type))
+			return base;
 		for(String key : base.getForeignKeys()) {
 			Record sub = (Record)base.getValue(key);
 			if(sub == null) continue; // As a matter of fact this can happen - Publication can be NULL.
 			if(sub.getClass().equals(type)) return sub;
 			sub = findSubrecord( sub, type); // dig deeper...
 			if(sub != null) return sub;
+		}
+		return null;
+	}
+	
+	
+	public Record findSubrecord(String name) {
+		return findSubrecord(this, name);
+	}
+	
+	public static Record findSubrecord(Record base, String name) {
+		if( base.getClass().getSimpleName().equalsIgnoreCase(name) )
+			return base;
+		for(String key : base.getForeignKeys()) {
+			Record sub = (Record) base.getValue(key);
+			if(sub == null) 
+				continue;
+			if(sub.getClass().getSimpleName().equalsIgnoreCase(name)) 
+				return sub;
+			sub = findSubrecord(sub, name);
+			if(sub != null)
+				return sub;
 		}
 		return null;
 	}
@@ -166,8 +189,16 @@ public abstract class Record implements Serializable {
 	 * @param value	The value to be set to that column.
 	 */
 	public void setValue(Class table, String column, Object value) {
-		Record subrecord = (  getClass().equals(table) ? this : findSubrecord(this, table)  );
-		if(subrecord != null) subrecord.setValue(column, value);
+		Record subrecord = findSubrecord(table);
+		if(subrecord != null) 
+			subrecord.setValue(column, value);
+	}
+	
+	
+	public void setValue(String table, String column, Object value) {
+		Record subrecord = findSubrecord(table);
+		if(subrecord != null) 
+			subrecord.setValue(column, value);
 	}
 	
 	/**
@@ -384,15 +415,18 @@ public abstract class Record implements Serializable {
 	 */
 	@Override
 	public String toString() {
+		
 		StringBuilder sigma = new StringBuilder();
 		for(String property : this.getProperties())
 			sigma.append(getClass().getSimpleName()).append('.').
-			append(property).append(" = ").append(this.getValue(property)).append(";");
+			append(property).append(" = ").append(this.getValue(property)).append(";\n");
 		for(String key : getForeignKeys()) {
 			Record subrecord = (Record)getValue(key); 
 			if(subrecord != null)	sigma.append( subrecord.toString() );
 		}
 		return sigma.toString();
+		
+		//return this.getClass().getSimpleName();
 	}
 	                
 }

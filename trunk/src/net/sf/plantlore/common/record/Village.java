@@ -37,13 +37,13 @@ public class Village extends Record {
     	if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(NAME)) setName((String)value);
+		else if(column.equalsIgnoreCase(NAME)) setName((String)value);
     }
     
     /** Creates a new instance of Village */

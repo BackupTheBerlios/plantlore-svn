@@ -71,32 +71,32 @@ public class Publication extends Record implements Deletable  {
     	if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(COLLECTIONNAME)) setCollectionName((String)value);
-		else if(column.equals(COLLECTIONYEARPUBLICATION)) { 
+		else if(column.equalsIgnoreCase(COLLECTIONNAME)) setCollectionName((String)value);
+		else if(column.equalsIgnoreCase(COLLECTIONYEARPUBLICATION)) { 
 			if (value != null && value instanceof String)
 				setCollectionYearPublication(Integer.parseInt((String) value));
 			else 
 				setCollectionYearPublication((Integer)value);
 		}
-		else if(column.equals(JOURNALNAME)) setJournalName((String)value);
-		else if(column.equals(JOURNALAUTHORNAME)) setJournalAuthorName((String)value);
-		else if(column.equals(REFERENCECITATION)) setReferenceCitation((String)value);
-		else if(column.equals(REFERENCEDETAIL)) setReferenceDetail((String)value);
-		else if(column.equals(URL)) setUrl((String)value);
-		else if(column.equals(DELETED)) {
+		else if(column.equalsIgnoreCase(JOURNALNAME)) setJournalName((String)value);
+		else if(column.equalsIgnoreCase(JOURNALAUTHORNAME)) setJournalAuthorName((String)value);
+		else if(column.equalsIgnoreCase(REFERENCECITATION)) setReferenceCitation((String)value);
+		else if(column.equalsIgnoreCase(REFERENCEDETAIL)) setReferenceDetail((String)value);
+		else if(column.equalsIgnoreCase(URL)) setUrl((String)value);
+		else if(column.equalsIgnoreCase(DELETED)) {
 			if (value != null && value instanceof String) 
 				setDeleted(Integer.parseInt((String) value));
 			else 
 				setDeleted((Integer)value);
 		}
-		else if(column.equals(CREATEDWHO)) setCreatedWho((User)value);                
-		else if(column.equals(NOTE)) setNote((String)value);
+		else if(column.equalsIgnoreCase(CREATEDWHO)) setCreatedWho((User)value);                
+		else if(column.equalsIgnoreCase(NOTE)) setNote((String)value);
     }
     
     @Override 

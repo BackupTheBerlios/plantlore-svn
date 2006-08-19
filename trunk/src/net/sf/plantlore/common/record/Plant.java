@@ -66,20 +66,20 @@ public class Plant extends Record {
     	if(value instanceof String && "".equals(value))
         	value = null;
     	
-		if(column.equals(ID)) {
+		if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-		else if(column.equals(SURVEYTAXID)) setSurveyTaxId((String)value);
-		else if(column.equals(TAXON)) setTaxon((String)value);
-		else if(column.equals(GENUS)) setGenus((String)value);
-		else if(column.equals(SPECIES)) setSpecies((String)value);
-		else if(column.equals(SCIENTIFICNAMEAUTHOR)) setScientificNameAuthor((String)value);
-		else if(column.equals(CZECHNAME)) setCzechName((String)value);
-		else if(column.equals(SYNONYMS)) setSynonyms((String)value);
-		else if(column.equals(NOTE)) setNote((String)value);
+		else if(column.equalsIgnoreCase(SURVEYTAXID)) setSurveyTaxId((String)value);
+		else if(column.equalsIgnoreCase(TAXON)) setTaxon((String)value);
+		else if(column.equalsIgnoreCase(GENUS)) setGenus((String)value);
+		else if(column.equalsIgnoreCase(SPECIES)) setSpecies((String)value);
+		else if(column.equalsIgnoreCase(SCIENTIFICNAMEAUTHOR)) setScientificNameAuthor((String)value);
+		else if(column.equalsIgnoreCase(CZECHNAME)) setCzechName((String)value);
+		else if(column.equalsIgnoreCase(SYNONYMS)) setSynonyms((String)value);
+		else if(column.equalsIgnoreCase(NOTE)) setNote((String)value);
     }
     
     /**

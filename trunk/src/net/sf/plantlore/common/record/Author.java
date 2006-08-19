@@ -67,22 +67,22 @@ public class Author extends Record implements Deletable {
     	if(value instanceof String && "".equals(value) )
     		value = null;
     	
-    	if(column.equals(ID)) {
+    	if(column.equalsIgnoreCase(ID)) {
 			if(value != null && value instanceof String)
 				setId(Integer.parseInt((String)value));
 			else
 				setId((Integer)value);
 		}
-    	else if(column.equals(WHOLENAME)) setWholeName((String)value);
-    	else if(column.equals(ORGANIZATION)) setOrganization((String)value);
-    	else if(column.equals(ROLE)) setRole((String)value);
-    	else if(column.equals(ADDRESS)) setAddress((String)value);
-    	else if(column.equals(PHONENUMBER)) setPhoneNumber((String)value);
-    	else if(column.equals(EMAIL)) setEmail((String)value);
-    	else if(column.equals(URL)) setUrl((String)value);
-    	else if(column.equals(NOTE)) setNote((String)value);
-        else if(column.equals(CREATEDWHO)) setCreatedWho((User)value);                        
-        else if(column.equals(DELETED)) { 
+    	else if(column.equalsIgnoreCase(WHOLENAME)) setWholeName((String)value);
+    	else if(column.equalsIgnoreCase(ORGANIZATION)) setOrganization((String)value);
+    	else if(column.equalsIgnoreCase(ROLE)) setRole((String)value);
+    	else if(column.equalsIgnoreCase(ADDRESS)) setAddress((String)value);
+    	else if(column.equalsIgnoreCase(PHONENUMBER)) setPhoneNumber((String)value);
+    	else if(column.equalsIgnoreCase(EMAIL)) setEmail((String)value);
+    	else if(column.equalsIgnoreCase(URL)) setUrl((String)value);
+    	else if(column.equalsIgnoreCase(NOTE)) setNote((String)value);
+        else if(column.equalsIgnoreCase(CREATEDWHO)) setCreatedWho((User)value);                        
+        else if(column.equalsIgnoreCase(DELETED)) { 
         	if (value != null && value instanceof String) 
         		setDeleted(Integer.parseInt((String) value));
         	else 

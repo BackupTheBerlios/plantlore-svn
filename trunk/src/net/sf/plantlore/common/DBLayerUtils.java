@@ -886,4 +886,176 @@ public class DBLayerUtils {
 	
 	
 	
+	
+	/**
+	 * NOT TESTED!
+	 * 
+	 * High-level record processor. 
+	 * Incorporates all rules that bind the record processing. 
+	 * 
+	 * @param occ	The basic occurrence record.
+	 * @param aos	All AuthorOccurrences belonging to the <code>occ</code>.
+	 */
+	public void processRecord(Occurrence occ, AuthorOccurrence... aos) 
+	throws DBLayerException, RemoteException {
+		
+		// Preliminary validity check.
+		if( !occ.areAllNNSet() )
+			throw new DBLayerException(L10n.getString("Error.IncompleteRecord"));
+		
+		// If the record is dead, then it is clearly meant to be deleted!
+		Intention intention =  occ.isDead() ? Intention.DELETE : Intention.UNKNOWN; 
+			
+		 // Try to find a matching Occurrence record in the database.
+		SelectQuery q = db.createQuery(Occurrence.class);
+		q.addRestriction(RESTR_EQ, Occurrence.UNITIDDB, null, occ.getUnitIdDb(), null);
+		q.addRestriction(RESTR_EQ, Occurrence.UNITVALUE, null, occ.getUnitValue(), null);
+		int resultId = db.executeQuery( q );
+		int rows = db.getNumRows( resultId );
+		if(rows > 1)
+			throw new DBLayerException(L10n.getString("Error.AmbiguousRecord"));
+
+		boolean isInDB = (rows != 0);
+		Occurrence occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
+		db.closeQuery(q); 
+		boolean isDead = isInDB ? occInDB.isDead() : false;
+			
+		// Begin a new transaction.
+		db.beginTransaction();
+			
+		try {
+			// The `occ` IS in the database as `occInDB` already.  
+			if( isInDB ) {
+				if( isDead )
+					switch(intention) {
+					case DELETE:
+						// Nothing to be done, the record is already dead.
+						break;
+					default:
+						occInDB = (Occurrence) update( occInDB, occ );
+					}
+				else
+					switch(intention) {
+					case DELETE:
+						occInDB = (Occurrence) delete( occInDB );
+						break;
+					default:
+						if( occInDB.equals(occ) )
+							occ = occInDB;
+						else
+							occInDB = (Occurrence) update( occInDB, occ );
+					}
+			}
+			// The `occ` is NOT in the database. 
+			else  
+				switch(intention) {
+				case DELETE:	
+					// There's nothing to delete.
+					break;
+				default:
+					occInDB = (Occurrence) insert( occ );
+				}
+			
+		} catch(DBLayerException e) {
+			// Roll back the transaction.
+			db.rollbackTransaction();
+			throw e;
+		} catch(RemoteException e) {
+			// Roll back the transaction.
+			db.rollbackTransaction();
+			throw e;
+		}
+			
+		 // Now, deal with Authors associated with this Occurrence.
+		int numberOfUndeadAuthors = 0; 
+			
+		// If the Occurrence record should have been DELETED,
+		// there is nothing more to be done.
+		if( intention == Intention.DELETE ) {
+			db.commitTransaction();
+		}
+		// The intention was to ADD or UPDATE the existing Occurrence record.  
+		else {
+			AuthorOccurrence[] aosInDB = new AuthorOccurrence[0];
+			if( isInDB ) 
+				aosInDB = findAllAuthors(occInDB, false);
+			// Compute the number of undead authors (authors, that are not marked as deleted). 
+			for(AuthorOccurrence ao : aosInDB) {
+				ao.setOccurrence( null ); // simplify the comparison
+				if( !ao.isDead() ) 
+					numberOfUndeadAuthors++ ;
+			}
+				
+			for( AuthorOccurrence ao : aos ) {
+				if( !ao.areAllNNSet() ) {
+					logger.warn("The AuthorOccurrence is incomplete - the Author is missing or a NN column is not set!");
+					continue;
+				}
+					
+				// Simplify the comparison (the Occurrence is known...)
+				ao.setOccurrence( null );
+					
+				// Check if that AuthorOccurrence is already in the database.
+				AuthorOccurrence aoInDB = null;
+				for( AuthorOccurrence alpha : aosInDB ) {
+					if( alpha.equalsUpTo( ao, AuthorOccurrence.DELETED ) ) {
+						aoInDB = alpha;
+						break;
+					}
+				}
+					
+				//	The Occurrence `occInDB` is in the database, that is for sure.
+				// The ao.Occurrence, however, is NOT from the database.
+				ao.setOccurrence( occInDB ); // now it's fine
+					
+				// The intention with this AuthorOccurrence. 
+				intention = ao.isDead() ? Intention.DELETE : Intention.UNKNOWN;
+					
+				try {
+					// [A] AO is not in the database.
+					if(aoInDB == null)
+						switch(intention) {
+						case DELETE:
+							break;
+						default:
+							insert( ao );							
+							numberOfUndeadAuthors++;
+						}
+						// [B] AO is in the database already.
+						else
+							switch(intention) {
+							case DELETE:
+								if( !aoInDB.isDead() ) {
+									aoInDB.setOccurrence( occInDB ); // repair the simplified ao
+									delete( aoInDB ); // delete the ao
+									numberOfUndeadAuthors--;
+								}
+								break;
+							default:
+								if( aoInDB.isDead() ) {
+									aoInDB.setOccurrence( occInDB ); // repair the simplified ao
+									aoInDB.setDeleted(0);
+									db.executeUpdateInTransaction( aoInDB ); // revive the ao
+									numberOfUndeadAuthors++;
+								}
+								break;
+							}
+				} catch (DBLayerException e) {
+					continue;
+				}
+					
+			}
+			
+			// Transaction is valid iff everything went fine and the number of undead authors is positive.
+			if( numberOfUndeadAuthors > 0 )
+				db.commitTransaction();
+			else {
+				db.rollbackTransaction();
+				throw new DBLayerException(L10n.getString("Error.NoAuthorsLeft"));
+			}
+			
+			
+		}
+	}
+	
 }
