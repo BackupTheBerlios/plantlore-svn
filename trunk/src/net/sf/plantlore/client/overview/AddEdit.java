@@ -124,6 +124,9 @@ public class AddEdit extends Observable {
      *
      * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
      *
+     * @throws DBLayerException
+     * @throws RemoteException
+     *
      * @return >=0 if everything was OK
      * @return -1 if the Occurrence table overflew
      */
@@ -184,6 +187,39 @@ public class AddEdit extends Observable {
         else
             return 0;
     }
+    
+    /** Preloads habitat data. Used in add mode when adding into a habitat (using the habitat tree).
+     *
+     * @throws DBLayerException
+     * @throws RemoteException
+     *
+     * @return >=0 if everything was OK
+     * @return -1 if the Occurrence table overflew
+     */
+    public int setHabitat(Integer habitatId) throws DBLayerException, RemoteException {
+        logger.debug("Loading AddEdit habitat data for habitat id "+habitatId);
+        
+        DBLayerUtils dlu = new DBLayerUtils(database);
+        Habitat h = (Habitat) dlu.getObjectFor(habitatId, Habitat.class);
+                
+        village = new Pair(h.getNearestVillage().getName(), h.getNearestVillage().getId());                
+        habitatDescription = h.getDescription();
+        habitatNote = h.getNote();
+        territoryName = new Pair(h.getTerritory().getName(),h.getTerritory().getId());
+        phytName = new Pair(h.getPhytochorion().getName(), h.getPhytochorion().getId());
+        phytCode = new Pair(h.getPhytochorion().getCode(), h.getPhytochorion().getId());
+        phytCountry = h.getCountry();
+        quadrant = h.getQuadrant();
+        altitude = h.getAltitude();
+        longitude = h.getLongitude();
+        latitude = h.getLatitude();
+
+        int result = occurrenceTableModel.load(h.getId());
+        if (result < 0)
+            return -1;
+        else
+            return 0;        
+    }//setHabitat
 
     public Pair<String, Integer> getAuthor(int i) {
         return ((Pair<Pair<String,Integer>,String>)authorList.get(i)).getFirst();
@@ -218,6 +254,9 @@ public class AddEdit extends Observable {
     }
 
     public String getTaxon(int i) {
+        if (taxonList == null)
+            return "";
+        
         return (String) taxonList.get(i);
     }
 
@@ -1008,35 +1047,28 @@ public class AddEdit extends Observable {
         return new Pair<Boolean,String>(true,"");
     }
     
-    private void loadHabitatSharingOccurrences() {
+    private void loadHabitatSharingOccurrences() throws DBLayerException, RemoteException {
         Habitat h = o.getHabitat();
-        //FIXME:
-        try {
-            SelectQuery sq = database.createQuery(Occurrence.class);        
-            sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
-            int resultid = database.executeQuery(sq);
-            int resultCount = database.getNumRows(resultid);
-            habitatSharingOccurrences = new Occurrence[resultCount];
-            
-            Object[] results = database.more(resultid, 0, resultCount-1);
-            Object[] tmp;
-            Occurrence occurrence;
-            for (int i = 0; i < resultCount; i++) {
-                tmp = (Object[]) results[i];
-                occurrence = (Occurrence)tmp[0];
-                habitatSharingOccurrences[i] = occurrence;
-            }
-            database.closeQuery(sq);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
+        SelectQuery sq = database.createQuery(Occurrence.class);        
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
+        int resultid = database.executeQuery(sq);
+        int resultCount = database.getNumRows(resultid);
+        habitatSharingOccurrences = new Occurrence[resultCount];
+
+        Object[] results = database.more(resultid, 0, resultCount-1);
+        Object[] tmp;
+        Occurrence occurrence;
+        for (int i = 0; i < resultCount; i++) {
+            tmp = (Object[]) results[i];
+            occurrence = (Occurrence)tmp[0];
+            habitatSharingOccurrences[i] = occurrence;
         }
+        database.closeQuery(sq);
     }
     
     /** returns all occurrences sharing the habitat - that means including the current working occurrence
      */
-    public  Occurrence[] getHabitatSharingOccurrences() {
+    public  Occurrence[] getHabitatSharingOccurrences() throws DBLayerException, RemoteException {
         //sdili je? mozna s kym
             //ano - zmena u vsech? ... zmenime to normalne - to co mame
             //ne  - zmena jen u naseho zaznamu, tj. new Habitat h, insert(h), o.setHabitat(h), update(o) 

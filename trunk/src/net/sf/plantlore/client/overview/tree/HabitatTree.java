@@ -19,6 +19,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import net.sf.plantlore.common.DBLayerUtils;
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Habitat;
@@ -182,7 +183,7 @@ public class HabitatTree extends Observable {
     public void search() {
         if (selectedNode != null) {
             setChanged();
-            notifyObservers((NodeInfo)selectedNode.getUserObject());
+            notifyObservers(new Pair<String,NodeInfo>("SEARCH",(NodeInfo)selectedNode.getUserObject()));
         }
     }
     
@@ -194,6 +195,16 @@ public class HabitatTree extends Observable {
     public void reload() throws DBLayerException, RemoteException {
         rootNode.removeAllChildren();
         loadData();
+    }
+    
+    /** Invokes the Add dialog on given habitat.
+     *
+     */
+    public void add() {
+        if (selectedNode != null) {
+            setChanged();
+            notifyObservers(new Pair<String,NodeInfo>("ADD",(NodeInfo)selectedNode.getUserObject()));
+        }
     }
     
     public DefaultTreeModel getTreeModel() {

@@ -39,6 +39,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
         popupMenu = new javax.swing.JPopupMenu();
         searchMenuItem = new javax.swing.JMenuItem();
         refreshMenuItem = new javax.swing.JMenuItem();
+        addMenuItem = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         habitatTree = new JTree(model.getTreeModel());
         jPanel1 = new javax.swing.JPanel();
@@ -50,6 +51,9 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
 
         refreshMenuItem.setText("Refresh");
         popupMenu.add(refreshMenuItem);
+
+        addMenuItem.setText("Item");
+        popupMenu.add(addMenuItem);
 
         jScrollPane1.setViewportView(habitatTree);
 
@@ -110,6 +114,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JMenuItem addMenuItem;
     protected javax.swing.JTree habitatTree;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

@@ -49,6 +49,7 @@ import net.sf.plantlore.client.checklist.ChecklistCtrl;
 import net.sf.plantlore.client.checklist.ChecklistView;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -499,11 +500,11 @@ public class AddEditCtrl {
             } catch (RemoteException ex) {
                 logger.error("Remote problem: "+ex);
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(view,"RemoteException: "+ex);
+                DefaultReconnectDialog.show(view,ex);
             } catch (DBLayerException ex) {
                 logger.error("Database problem: "+ex);
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(view,"DBLayerException: "+ex);
+                DefaultReconnectDialog.show(view,ex);
             }
         }//mouseClicked
             

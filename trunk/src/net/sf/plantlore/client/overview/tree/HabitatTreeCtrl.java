@@ -52,6 +52,7 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
         view.searchMenuItem.setAction(new SearchItemAction());
         view.refreshButton.setAction(new RefreshAction());
         view.refreshMenuItem.setAction(new RefreshItemAction());
+        view.addMenuItem.setAction(new AddItemAction());
     }
 
     /** Expansion event handler.
@@ -200,6 +201,17 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
                 }
             }
     }//RefreshAction
+    
+    class AddItemAction extends AbstractAction {
+        public AddItemAction() {
+            putValue(NAME, L10n.getString("Overview.Tree.Add"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.Tree.AddTT"));            
+        }
+        
+        public void actionPerformed(ActionEvent ae) {
+            model.add();
+        }
+    }//AddItemAction
 
     class PopupMouseAdapter extends MouseAdapter {
          public void mousePressed(MouseEvent e) {
