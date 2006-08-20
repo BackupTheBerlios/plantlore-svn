@@ -279,7 +279,7 @@ public class AppCore extends Observable
     public void setSelectedRow(int i) 
     {
         selectedRow = i;
-        logger.debug("Selected row #"+i);
+        logger.debug("Selected row #"+i+" occurrence id is "+tableModel.getOccurrenceId(i));
     }
     
     public void selectAndShow(int resultNumber) throws DBLayerException, RemoteException {
