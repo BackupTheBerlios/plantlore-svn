@@ -84,7 +84,6 @@ public class AddEditCtrl {
         view.townComboBox.addActionListener(new CommonActionListener());
         view.territoryNameCombo.addActionListener(new CommonActionListener());
         view.phytNameCombo.addActionListener(new CommonActionListener());
-        view.phytCodeCombo.addActionListener(new CommonActionListener());
         view.phytCountryCombo.addActionListener(new CommonActionListener());
         view.sourceCombo.addActionListener(new CommonActionListener());
         view.publicationCombo.addActionListener(new CommonActionListener());
@@ -106,13 +105,12 @@ public class AddEditCtrl {
         //------- Spinners --------
         view.yearSpinner.addChangeListener(new YearListener());
         view.monthChooser.addPropertyChangeListener("month", new MonthChangeListener());
-        view.dayChooser.addPropertyChangeListener("day", new DayChangeListener());
         view.timeTextField.addFocusListener(new TimeListener());
         
         //------- RadioButtons --------
-        view.WGS84Button.addActionListener(new CoordinateSystemListener());
-        view.S42Button.addActionListener(new CoordinateSystemListener());
-        view.SJTSKButton.addActionListener(new CoordinateSystemListener());
+//        view.WGS84Button.addActionListener(new CoordinateSystemListener());
+//        view.S42Button.addActionListener(new CoordinateSystemListener());
+//        view.SJTSKButton.addActionListener(new CoordinateSystemListener());
         
         //------- Buttons --------
         view.extendedButton.addMouseListener(new ExtendedButtonListener());
@@ -120,7 +118,7 @@ public class AddEditCtrl {
         view.cancelButton.addMouseListener(new CancelButtonListener());
         view.checklistButton.setAction(new ChecklistAction());
         
-        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
+//        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
     
@@ -428,10 +426,10 @@ public class AddEditCtrl {
             Integer i = (Integer) evt.getNewValue();
             if (!i.equals(12)) { //there is an empty string at the 12th position in the combobox
                 model.setMonth(i);
-                view.dayChooser.setEnabled(true);
+                //view.dayChooser.setEnabled(true);
             } else {
                 model.setMonth(null);
-                view.dayChooser.setEnabled(false);
+                //view.dayChooser.setEnabled(false);
             }
         } 
     }

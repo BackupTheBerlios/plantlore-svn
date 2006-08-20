@@ -109,19 +109,25 @@ public class AddEdit extends Observable {
     private Boolean editMode = false;
     private Boolean preloadAuthors = false;
     
+    private OccurrenceTableModel occurrenceTableModel;
+    
     
     /** Creates a new instance of AddEdit */
     public AddEdit(DBLayer database, Boolean editMode) {
         this.database = database;
         this.editMode = editMode;
         logger = Logger.getLogger(this.getClass().getPackage().getName());      
+        occurrenceTableModel = new OccurrenceTableModel();
     }
  
     /** Makes the model load data from the parameter ao.
      *
      * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
+     *
+     * @return >=0 if everything was OK
+     * @return -1 if the Occurrence table overflew
      */
-    public void setRecord(Integer occurrenceId) throws DBLayerException, RemoteException {
+    public int setRecord(Integer occurrenceId) throws DBLayerException, RemoteException {
         logger.debug("Loading AddEdit data for occurrence id "+occurrenceId);
         
         DBLayerUtils dlu = new DBLayerUtils(database);
@@ -171,6 +177,12 @@ public class AddEdit extends Observable {
         
         //we also must determine (again) who shares habitat data with us
         loadHabitatSharingOccurrences();
+
+        int result = occurrenceTableModel.load(o.getHabitat().getId());
+        if (result < 0)
+            return -1;
+        else
+            return 0;
     }
 
     public Pair<String, Integer> getAuthor(int i) {
@@ -438,6 +450,7 @@ public class AddEdit extends Observable {
 
     public void setDatabase(DBLayer database) {
         this.database = database;
+        occurrenceTableModel.setDBLayer(database);
     }
 
     public Pair<String, Integer> getProject() {
@@ -1267,12 +1280,18 @@ public class AddEdit extends Observable {
         month = Calendar.getInstance().get(Calendar.MONTH);
         day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         time = null;
+        
+        occurrenceTableModel.clear();
         setChanged();
         notifyObservers("CLEAR");
     }
  
     public void setPreloadAuthorsEnabled(boolean preloadAuthors) {
         this.preloadAuthors = preloadAuthors;
+    }
+    
+    public OccurrenceTableModel getOccurrenceTableModel() {
+        return occurrenceTableModel;
     }
 }
 

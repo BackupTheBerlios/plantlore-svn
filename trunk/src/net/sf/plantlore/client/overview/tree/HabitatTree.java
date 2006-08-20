@@ -22,6 +22,7 @@ import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Habitat;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.Village;
@@ -59,6 +60,7 @@ public class HabitatTree extends Observable {
     public void loadData() throws DBLayerException, RemoteException {
         SelectQuery subQuery = dblayer.createSubQuery(Habitat.class,"h");
         subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY,"h." + Habitat.TERRITORY);
+        subQuery.addRestriction(PlantloreConstants.RESTR_EQ,"h."+Habitat.DELETED,null,0,null);
         
         SelectQuery query = dblayer.createQuery(Territory.class);
         query.addRestriction(PlantloreConstants.SUBQUERY_IN,Territory.ID,null,subQuery,null);
@@ -84,6 +86,22 @@ public class HabitatTree extends Observable {
         SelectQuery query = dblayer.createQuery(Habitat.class);
         query.addRestriction(PlantloreConstants.RESTR_EQ,Habitat.TERRITORY,null,t,null);
         query.addProjection(PlantloreConstants.PROJ_COUNT_DISTINCT,Habitat.PHYTOCHORION);
+        int resultid = dblayer.executeQuery(query);
+        int rowCount = dblayer.getNumRows(resultid);
+        
+        assert rowCount == 1;
+        
+        Object[] o = dblayer.more(resultid, 0, 0);
+        dblayer.closeQuery(query);
+        return (Integer)((Object[])(o[0]))[0];
+    }
+    
+    public int getOccurrenceCount(Integer habitatId) throws RemoteException, DBLayerException {
+        SelectQuery query = dblayer.createQuery(Occurrence.class);
+        query.createAlias(Occurrence.HABITAT,"h");
+        query.addRestriction(PlantloreConstants.RESTR_EQ,"h."+Habitat.ID,null,habitatId,null);
+        query.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DELETED,null,0,null);
+        query.addProjection(PlantloreConstants.PROJ_COUNT_DISTINCT,Occurrence.ID);
         int resultid = dblayer.executeQuery(query);
         int rowCount = dblayer.getNumRows(resultid);
         
@@ -144,6 +162,7 @@ public class HabitatTree extends Observable {
         for (Object record : records) {
             Object[] obj = (Object[])record;
             String name = ((Village)obj[2]).getName() + " - " + obj[1] + " (quadrant " + obj[3] + ")";
+            name = "("+getOccurrenceCount((Integer)obj[0])+") "+name;
             node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.HABITAT,name,(Integer)obj[0],-1));
             treeModel.insertNodeInto(node, phytNode,0);
             //phytNode.add(node);

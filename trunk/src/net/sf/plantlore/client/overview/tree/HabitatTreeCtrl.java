@@ -127,7 +127,7 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
        if (!(obj instanceof NodeInfo))
            return;
        nodeInfo = (NodeInfo) node.getUserObject();
-       logger.debug("HabitatTree: valueChanged event on node "+nodeInfo+" ("+nodeInfo.getType()+") with "+node.getChildCount()+" children.");
+       logger.debug("HabitatTree: valueChanged event on node "+nodeInfo+" ("+nodeInfo.getType()+", "+nodeInfo.getId()+") with "+node.getChildCount()+" children.");
        switch (nodeInfo.getType()) {
            case HABITAT:
                model.setSelectedNode(node);
