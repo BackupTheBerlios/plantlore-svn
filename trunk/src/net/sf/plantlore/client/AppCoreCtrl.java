@@ -87,6 +87,7 @@ import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
@@ -1052,14 +1053,45 @@ public class AppCoreCtrl {
         
         class HabitatTreeBridge implements Observer {
             public void update(Observable o, Object arg) {
-                if (arg != null && arg instanceof NodeInfo) {                    
-                    NodeInfo nodeInfo = (NodeInfo)arg;
-                    switch (nodeInfo.getType()) {
-                        case HABITAT:
-                            searchModel.clear();
-                            searchModel.setHabitatId(nodeInfo.getId());
-                            searchModel.constructQuery();
-                    }//switch
+                if (arg != null && arg instanceof Pair) {                    
+                    Pair<String,NodeInfo> pair = (Pair<String,NodeInfo>) arg;
+                    String message = pair.getFirst();
+                    NodeInfo nodeInfo = pair.getSecond();
+                    
+                    if (message.equals("SEARCH")) {
+                        switch (nodeInfo.getType()) {
+                            case HABITAT:
+                                searchModel.clear();
+                                searchModel.setHabitatId(nodeInfo.getId());
+                                searchModel.constructQuery();
+                        }//switch
+                    }//if search
+                    
+                    if (message.equals("ADD")) {
+			try {
+				if (model.getDatabase().getUserRights().getAdd() != 1) {
+					JOptionPane.showMessageDialog(view, L10n
+							.getString("AddEdit.InsufficientAddRights"), L10n
+							.getString("AddEdit.InsufficientRightsTitle"),
+							JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+			} catch (RemoteException ex) {
+                            DefaultReconnectDialog.show(view,ex);
+                            logger.error(ex);
+			}
+			addModel.clear();
+                        try {
+                            addModel.setHabitat(nodeInfo.getId());
+                        } catch (RemoteException ex) {
+                            DefaultReconnectDialog.show(view,ex);
+                        } catch (DBLayerException ex) {
+                            DefaultReconnectDialog.show(view,ex);
+                        }
+                        addView.loadComponentData();
+			addView.setVisible(true);         
+//                        habitatTreeView.setVisible(false);
+                    }//if ADD
                 }//if
             }//update
         }//class HabitatTreeBridge
@@ -1740,6 +1772,7 @@ public class AppCoreCtrl {
 			}
 		}
 	}
+
 
 	private Task refreshOverview(boolean createTask) {
 		if (createTask) {

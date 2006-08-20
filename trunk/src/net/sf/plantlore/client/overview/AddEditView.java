@@ -140,7 +140,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         locationNoteLabel = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         locationNoteArea = new javax.swing.JTextArea();
-        jButton4 = new javax.swing.JButton();
+        clearLocationButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
 
@@ -170,7 +170,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jScrollPane1 = new javax.swing.JScrollPane();
         authorTable = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
+        clearOccurrenceButton = new javax.swing.JButton();
         requiredInfoLabel = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
@@ -332,7 +332,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         new TabTransfersFocus(locationNoteArea);
         jScrollPane4.setViewportView(locationNoteArea);
 
-        jButton4.setText("Vyma\u017e");
+        clearLocationButton.setText("Vyma\u017e");
 
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -379,7 +379,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                                         .add(locationNoteLabel)
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 135, Short.MAX_VALUE))
                                     .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                                    .add(jButton4))))
+                                    .add(clearLocationButton))))
                         .addContainerGap())))
         );
 
@@ -413,7 +413,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jButton4))
+                    .add(clearLocationButton))
                 .addContainerGap())
         );
 
@@ -536,7 +536,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         jLabel1.setText("Occurrence note:");
 
-        jButton5.setText("Vyma\u017e");
+        clearOccurrenceButton.setText("Vyma\u017e");
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -576,7 +576,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                         .addContainerGap())
                     .add(jPanel7Layout.createSequentialGroup()
-                        .add(jButton5)
+                        .add(clearOccurrenceButton)
                         .addContainerGap())))
         );
         jPanel7Layout.setVerticalGroup(
@@ -617,7 +617,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jScrollPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jButton5))
+                        .add(clearOccurrenceButton))
                     .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -849,7 +849,11 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         resetAuthorModel();
         initAuthorTable();
         
-        townComboBox.setSelectedItem(model.getVillage());
+        if (model.getVillage() != null)
+            townComboBox.setSelectedItem(model.getVillage());
+        else
+            townComboBox.setSelectedIndex(0);
+        
         taxonTextArea.setText(model.getTaxon(0));
         descriptionArea.setText(model.getHabitatDescription());
         yearSpinner.setValue(model.getYear());
@@ -865,8 +869,12 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         quadrantTextField.setText(model.getQuadrant());
         
         if (model.getAltitude() != null) altitudeTextField.setText(""+model.getAltitude());
+            else altitudeTextField.setText("");
         if (model.getLongitude() != null) longitudeTextField.setText(""+model.getLongitude());
+            else longitudeTextField.setText("");
         if (model.getLatitude() != null) latitudeTextField.setText(""+model.getLatitude());
+            else latitudeTextField.setText("");
+        
         if (model.getSource() != null) 
             sourceCombo.setSelectedItem(model.getSource());
         else
@@ -876,13 +884,21 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         else
             publicationCombo.setSelectedIndex(0);
         
-        projectCombo.setSelectedItem(model.getProject());
+        if (model.getProject() != null)
+            projectCombo.setSelectedItem(model.getProject());
+        else
+            projectCombo.setSelectedIndex(0);
         herbariumTextField.setText(model.getHerbarium());
         
         if (model.getMonth() != null) {
             monthChooser.setMonth(model.getMonth());
         } else
             ((JComboBox)monthChooser.getComboBox()).setSelectedIndex(12);
+        
+        if (model.getDay() != null)
+            dayTextField.setText(""+model.getDay());
+        else
+            dayTextField.setText("");
     }//loadComponentData
     
     public void clearComponentData() {
@@ -997,6 +1013,12 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             if (s.equals("CLEAR"))
                 clearComponentData();
             
+            if (s.equals("CLEAR_LOCATION"))
+                loadComponentData();
+            
+            if (s.equals("CLEAR_OCCURRENCE"))
+                loadComponentData();
+
             if (s.equals("PLANTS_CHANGED")) {
                 logger.debug("Updating plant area");
                 if (model.getPlants() == null) {
@@ -1112,6 +1134,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     private javax.swing.JButton calendarButton;
     protected javax.swing.JButton cancelButton;
     protected javax.swing.JButton checklistButton;
+    protected javax.swing.JButton clearLocationButton;
+    protected javax.swing.JButton clearOccurrenceButton;
     private javax.swing.ButtonGroup convertCoordinatesGroup;
     private javax.swing.JLabel coordinateSystemLabel;
     protected javax.swing.JLabel countryLabel;
@@ -1130,8 +1154,6 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel herbariumLabel;
     protected javax.swing.JTextField herbariumTextField;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     protected javax.swing.JPanel jPanel1;
     protected javax.swing.JPanel jPanel4;

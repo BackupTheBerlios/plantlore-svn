@@ -119,6 +119,9 @@ public class AddEditCtrl {
         view.cancelButton.addMouseListener(new CancelButtonListener());
         view.checklistButton.setAction(new ChecklistAction());
         
+        view.clearLocationButton.setAction(new ClearLocationAction());
+        view.clearOccurrenceButton.setAction(new ClearOccurrenceAction());
+        
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
@@ -516,6 +519,28 @@ public class AddEditCtrl {
             view.setVisible(false);
         }
     }//CancelButtonListener
+    
+    class ClearLocationAction extends AbstractAction {
+        public ClearLocationAction() {
+            putValue(NAME, L10n.getString("AddEdit.ClearLocation"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("AddEdit.ClearLocationTT"));                        
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            model.clearLocation();
+        }
+    }
+    
+    class ClearOccurrenceAction extends AbstractAction {
+        public ClearOccurrenceAction() {
+            putValue(NAME, L10n.getString("AddEdit.ClearOccurrence"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("AddEdit.ClearOccurrenceTT"));                        
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            model.clearOccurrence();
+        }
+    }
     
     class PreloadCheckBox implements ActionListener {
         public void actionPerformed(ActionEvent e) {

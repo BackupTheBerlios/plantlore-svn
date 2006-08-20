@@ -76,6 +76,7 @@ public class OccurrenceTableModel extends AbstractTableModel {
      */
     public void clear() {
         data = null;
+        fireTableDataChanged();
     }
     
     /** Loads data for given habitat.

@@ -1317,7 +1317,48 @@ public class AddEdit extends Observable {
         setChanged();
         notifyObservers("CLEAR");
     }
+    
+    public void clearLocation() {
+        logger.debug("Clearing Location part of add model");
+        
+        village = null;
+        habitatDescription = null;
+        habitatNote = null;
+        phytCountry = null;
+        phytCode = null;
+        phytName = null;
+        territoryName = null;
+        quadrant = null;
+        altitude = null;
+        longitude = null;
+        latitude = null;
+
+        occurrenceTableModel.clear();
+
+        setChanged();
+        notifyObservers("CLEAR_LOCATION");        
+    }
  
+    public void clearOccurrence() {
+        logger.debug("Clearing Occurrence part of add model");
+        
+        clearAuthors();
+        year = Calendar.getInstance().get(Calendar.YEAR);
+        occurrenceNote = null;
+        source = null;
+        publication = null;//new Pair<String,Integer>("",-1);
+        herbarium = null;
+        
+        month = Calendar.getInstance().get(Calendar.MONTH);
+        day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        time = null;
+        
+        taxonList = null;
+        
+        setChanged();
+        notifyObservers("CLEAR_OCCURRENCE");
+    }
+
     public void setPreloadAuthorsEnabled(boolean preloadAuthors) {
         this.preloadAuthors = preloadAuthors;
     }
