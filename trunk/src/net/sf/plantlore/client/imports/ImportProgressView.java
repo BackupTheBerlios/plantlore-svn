@@ -8,7 +8,7 @@ import javax.swing.text.PlainDocument;
 import net.sf.plantlore.l10n.L10n;
 
 
-
+@Deprecated
 public class ImportProgressView  extends javax.swing.JFrame implements Observer {
 
 	private ImportMng model;

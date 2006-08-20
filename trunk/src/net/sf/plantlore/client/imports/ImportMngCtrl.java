@@ -8,7 +8,7 @@ import javax.swing.filechooser.FileFilter;
 
 import net.sf.plantlore.l10n.L10n;
 
-
+@Deprecated
 public class ImportMngCtrl {
 	
 	private ImportMng model;

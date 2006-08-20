@@ -22,6 +22,7 @@ import org.dom4j.io.SAXReader;
  * @author Lada Oberreiterová
  * @author Erik Kratochvíl
  */
+@Deprecated
 public class XMLParser extends AbstractParser {
 
     private Document document;

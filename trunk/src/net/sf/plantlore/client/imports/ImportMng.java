@@ -33,6 +33,7 @@ import static net.sf.plantlore.client.export.ExportMng.ENCODING;
  * @since 2006-05-08
  * @version 1.0
  */
+@Deprecated
 public class ImportMng extends Observable implements Observer {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());

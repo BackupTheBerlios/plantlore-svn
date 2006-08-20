@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 
 import net.sf.plantlore.l10n.L10n;
 
-
+@Deprecated
 public class ImportProgressCtrl {
 	
 	

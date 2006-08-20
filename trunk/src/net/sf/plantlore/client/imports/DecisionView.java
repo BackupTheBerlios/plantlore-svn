@@ -6,6 +6,7 @@
 
 package net.sf.plantlore.client.imports;
 
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,6 +18,7 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  yaa
  */
+@Deprecated
 public class DecisionView extends javax.swing.JFrame implements Observer {
 	
 	ImportMng model;

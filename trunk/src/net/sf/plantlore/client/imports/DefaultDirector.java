@@ -43,6 +43,7 @@ import net.sf.plantlore.client.imports.Parser.Intention;
  * @version 1.0
  * @see net.sf.plantlore.client.imports.Parser
  */
+@Deprecated
 public class DefaultDirector extends Observable implements Runnable {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -191,7 +192,7 @@ public class DefaultDirector extends Observable implements Runnable {
 		public void run() {
 			setChanged(); notifyObservers( problematicRecord );
 		}
-	};
+	}
 	
 	private ObserverNotifier observerNotifier = new ObserverNotifier();
 	

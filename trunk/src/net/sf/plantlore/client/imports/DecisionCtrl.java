@@ -9,6 +9,7 @@ import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.l10n.L10n;
 
+@Deprecated
 public class DecisionCtrl {
 	
 	ImportMng model;

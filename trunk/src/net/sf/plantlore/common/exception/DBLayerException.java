@@ -1,5 +1,6 @@
 package net.sf.plantlore.common.exception;
 
+
 /**
  * An exception thrown every time something in the database layer
  * (DBLayer) went wrong.
@@ -54,10 +55,19 @@ public class DBLayerException extends PlantloreException {
         /** Some other error */        
         public static final int ERROR_OTHER = 20;
         // ==============================================
+        
+        
+           
         /** Create new DBLayerException without an error message */
         public DBLayerException() { super(); }
-	/** Create new DBLayerException with an error message */
-	public DBLayerException(String message) { super(message); }
+        
+        /** Create new DBLayerException with an error message */
+        public DBLayerException(String message) { super(message); }
+        
+        
+        public boolean isReconnectNecessary() {
+        	return errorCode == ERROR_CONNECT;
+        }
         
         /**
          *  Set error this exception represents.

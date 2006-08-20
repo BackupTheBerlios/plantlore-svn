@@ -5,6 +5,7 @@ import java.io.Reader;
 import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.*;
 
+@Deprecated
 public class AbstractParser implements Parser {
 	
 	protected Reader reader;

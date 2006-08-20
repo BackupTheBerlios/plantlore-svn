@@ -24,8 +24,10 @@ public class Resource {
 	public static ImageIcon createIcon(String name) {
 		URL url = Resource.class.getResource(name);
 		if(url == null) {
-                    logger.warn("Missing resource for "+name);
-                    return null;
-                } else return new ImageIcon( url );
+			logger.warn("Missing resource for "+name);
+			return null;
+		} 
+		else 
+			return new ImageIcon( url );
 	}
 }

@@ -44,6 +44,7 @@ import net.sf.plantlore.common.record.*;
  * @since 2006-05-08
  * @version 1.0
  */
+@Deprecated
 public interface Parser {
 	
 	/**

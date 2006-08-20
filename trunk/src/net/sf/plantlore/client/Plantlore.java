@@ -97,6 +97,7 @@ public class Plantlore {
         plantlore.run();
                
         new MemoryMonitor();        
+      
     }
     
     
