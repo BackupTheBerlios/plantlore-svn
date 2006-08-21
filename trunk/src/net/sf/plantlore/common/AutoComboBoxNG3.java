@@ -61,7 +61,8 @@ import javax.swing.text.PlainDocument;
  *		});
  *</pre>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author Erik Kratochvíl
+ * @author Jakub Kotowski (several bugfixes: MetalComboBoxEditor, ...)
  * @version 3.0
  */
 public class AutoComboBoxNG3 extends JComboBox {

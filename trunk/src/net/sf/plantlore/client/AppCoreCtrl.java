@@ -46,16 +46,14 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
-import net.sf.plantlore.client.export.ExportMng;
-import net.sf.plantlore.client.export.ExportMngCtrlA;
-import net.sf.plantlore.client.export.ExportProgressCtrl;
-import net.sf.plantlore.client.export.ExportProgressView;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.client.history.WholeHistoryCtrl;
 import net.sf.plantlore.client.history.WholeHistoryView;
 import net.sf.plantlore.client.metadata.MetadataManager;
 import net.sf.plantlore.client.metadata.MetadataManagerCtrl;
 import net.sf.plantlore.client.metadata.MetadataManagerView;
+import net.sf.plantlore.client.occurrenceimport.OccurrenceImportMng;
+import net.sf.plantlore.client.occurrenceimport.OccurrenceImportMngCtrl;
 import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.client.overview.detail.Detail;
 import net.sf.plantlore.client.overview.detail.DetailCtrl;
@@ -104,12 +102,6 @@ import net.sf.plantlore.client.export.ExportMng2;
 import net.sf.plantlore.client.export.ExportMngCtrl2;
 import net.sf.plantlore.client.history.HistoryCtrl;
 import net.sf.plantlore.client.history.HistoryView;
-import net.sf.plantlore.client.imports.DecisionCtrl;
-import net.sf.plantlore.client.imports.DecisionView;
-import net.sf.plantlore.client.imports.ImportMng;
-import net.sf.plantlore.client.imports.ImportMngCtrl;
-import net.sf.plantlore.client.imports.ImportProgressCtrl;
-import net.sf.plantlore.client.imports.ImportProgressView;
 import net.sf.plantlore.client.login.Login;
 import net.sf.plantlore.client.login.LoginCtrl;
 import net.sf.plantlore.client.login.LoginView;
@@ -215,31 +207,15 @@ public class AppCoreCtrl {
 	LoginCtrl loginCtrl;
 
 	// Export
-	ExportMng exportModel;
+	ExportMng2 exportModel;
 
-	ExportMngCtrlA exportCtrl;
-
-	ExportProgressView exportProgressView;
-
-	ExportProgressCtrl exportProgressCtrl;
-
-	// Export2
-	ExportMng2 exportModel2;
-
-	ExportMngCtrl2 exportCtrl2;
+	ExportMngCtrl2 exportCtrl;
 
 	// Import
-	ImportMng importModel;
+	OccurrenceImportMng importModel;
 
-	ImportMngCtrl importCtrl;
+	OccurrenceImportMngCtrl importCtrl;
 
-	ImportProgressView importProgressView;
-
-	ImportProgressCtrl importProgressCtrl;
-
-	DecisionView importDecisionView;
-
-	DecisionCtrl importDecisionCtrl;
 
 	// Immutable Table Import
 	TableImportMng tableImportModel;
@@ -590,30 +566,10 @@ public class AppCoreCtrl {
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			if (importModel == null) {
-				try {
-					importModel = new ImportMng(model.getDatabase());
-					importProgressView = new ImportProgressView(importModel);
-					importProgressCtrl = new ImportProgressCtrl(importModel,
-							importProgressView);
-
-					importCtrl = new ImportMngCtrl(importModel, view,
-							importProgressView);
-
-					importDecisionView = new DecisionView(importModel);
-					importDecisionCtrl = new DecisionCtrl(importModel,
-							importDecisionView);
-				} catch (ImportException e) {
-					logger.error("Import MVC cannot be created. "
-							+ e.getMessage());
-					return;
-				}
+					importModel = new OccurrenceImportMng(model.getDatabase(), managerBridge);
+					importCtrl = new OccurrenceImportMngCtrl(importModel, view);
 			}
-
-			if (importModel.isImportInProgress())
-				importProgressView.setVisible(true);
-			else
-				importCtrl.setVisible(true);
-
+			importCtrl.setVisible(true);
 		}
 	}
 
@@ -627,87 +583,14 @@ public class AppCoreCtrl {
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			if (tableImportModel == null) {
-				try {
 					tableImportModel = new TableImportMng(model.getDatabase(), managerBridge);
 					tableImportCtrl = new TableImportMngCtrl(tableImportModel, view);
-				} catch (Exception e) {
-					logger.error("Import MVC cannot be created. "
-							+ e.getMessage());
-					return;
-				}
 			}
-
 			tableImportCtrl.setVisible(true);
 		}
 	}
 
-	class ExportAction extends AbstractAction {
-		public ExportAction() {
-			putValue(NAME, L10n.getString("dataExport"));
-			putValue(SHORT_DESCRIPTION, L10n.getString("dataExportTooltip"));
-			putValue(MNEMONIC_KEY, L10n.getMnemonic("dataExport"));
-		}
 
-		public void actionPerformed(ActionEvent actionEvent) {
-			// Create a new dialog if it already doesn't exist.
-			if (exportModel == null) {
-				try {
-					exportModel = new ExportMng(model.getDatabase());
-					exportProgressView = new ExportProgressView(null);
-					exportProgressCtrl = new ExportProgressCtrl(null,
-							exportProgressView);
-					exportCtrl = new ExportMngCtrlA(exportModel, view,
-							exportProgressView, exportProgressCtrl);
-				} catch (ExportException e) {
-					logger.error("Export MVC cannot be created. "
-							+ e.getMessage());
-					return;
-				}
-			}
-			// Display the progress view if an export is already running.
-			if (exportModel.isAnExportInProgress())
-				exportProgressView.setVisible(true);
-			// Display the Export dialog.
-			else {
-				try {
-					/*
-					 * ==============================================================
-					 * Right after the startup the searchModel may not be
-					 * initialized! (if Export is called prior to Search...)
-					 * 
-					 * FIXME: Solve this with Jakub.
-					 * ==============================================================
-					 */
-					SelectQuery query;
-					if (searchModel == null) {
-						System.out.println(">>>>>>>> CREATING A FAKE QUERY");
-						query = model.getDatabase().createQuery(
-								Occurrence.class); // fake the query
-					} else {
-						Object[] queryParam = searchModel
-								.constructExportQuery();
-						query = (SelectQuery) queryParam[0];
-						if ((Boolean) queryParam[1]) { // use projections
-							exportModel.useProjections(true);
-							exportModel.setRootTable((Class) queryParam[2]);
-						}
-					}
-					exportModel.setSelectQuery(query);
-					exportModel.setSelection(model.getTableModel()
-							.getSelection());
-				} catch (DBLayerException e) {
-					JOptionPane.showMessageDialog(view, "DBLayer Exception: "
-							+ e);
-					return;
-				} catch (RemoteException e) {
-					JOptionPane.showMessageDialog(view, "Remote Exception: "
-							+ e);
-					return;
-				}
-				exportCtrl.setVisible(true);
-			}
-		}
-	}
 
 	class ExportAction2 extends AbstractAction {
 
@@ -719,21 +602,21 @@ public class AppCoreCtrl {
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			// Create a new dialog if it already doesn't exist.
-			if (exportModel2 == null) {
-				exportModel2 = new ExportMng2(model.getDatabase());
-				exportCtrl2 = new ExportMngCtrl2(exportModel2, view);
+			if (exportModel == null) {
+				exportModel = new ExportMng2(model.getDatabase());
+				exportCtrl = new ExportMngCtrl2(exportModel, view);
 			}
 			try {
 				SelectQuery query;
 				Object[] queryParam = searchModel.constructExportQuery();
 				query = (SelectQuery) queryParam[0];
 				if ((Boolean) queryParam[1]) { // use projections
-					exportModel2.useProjections(true);
-					exportModel2.setRootTable((Class) queryParam[2]);
+					exportModel.useProjections(true);
+					exportModel.setRootTable((Class) queryParam[2]);
 				}
 
-				exportModel2.setSelectQuery(query);
-				exportModel2.setSelection(model.getTableModel().getSelection());
+				exportModel.setSelectQuery(query);
+				exportModel.setSelection(model.getTableModel().getSelection());
 			} catch (DBLayerException e) {
 				// TODO: Some errors may lead to ReconnectDialog.show()!
 				JOptionPane.showMessageDialog(view, "DBLayer Exception: "
@@ -744,7 +627,7 @@ public class AppCoreCtrl {
 				return;
 			}
 
-			exportCtrl2.setVisible(true);
+			exportCtrl.setVisible(true);
 		}
 	}
 
@@ -1759,8 +1642,8 @@ public class AppCoreCtrl {
 				/*-------------------------------------------------------------------
 				     Distribute the database layer among existing models.
 				  -------------------------------------------------------------------*/
-				if( exportModel2 != null )
-					exportModel2.setDBLayer( dblayer );
+				if( exportModel != null )
+					exportModel.setDBLayer( dblayer );
 				if (historyModel != null ) 
 					historyModel.setDBLayer( dblayer );			
 				if (wholeHistoryModel != null ) 
