@@ -23,7 +23,7 @@ import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
-import static net.sf.plantlore.client.export.ExportMng.ENCODING;
+import static net.sf.plantlore.client.export.ExportMng2.ENCODING;
 
 /**
  * The Import Manager.
