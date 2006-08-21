@@ -194,7 +194,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         try {
             sr = sess.createCriteria(User.class)
                 .add(Restrictions.eq(User.LOGIN, user))
-                .add(Restrictions.eq(User.PASSWORD, password))
+                /*.add(Restrictions.eq(User.PASSWORD, password))*/
                 .add(Restrictions.isNull(User.DROPWHEN))
                 .scroll();
         } catch (HibernateException e) {            
