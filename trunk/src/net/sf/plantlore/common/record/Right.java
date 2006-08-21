@@ -24,8 +24,7 @@ public class Right extends Record {
     private Integer id;   
     private int administrator;
     private int editAll;    
-    private String editGroup;
-    private String seeColumns;
+    private String editGroup;    
     private int add;    
     private Integer version;
     
@@ -33,11 +32,10 @@ public class Right extends Record {
     public static final String ID = "id";
     public static final String ADMINISTRATOR = "administrator";    
     public static final String EDITALL = "editAll";          
-    public static final String EDITGROUP = "editGroup";    
-    public static final String SEECOLUMNS = "seeColumns";    
+    public static final String EDITGROUP = "editGroup";           
     public static final String ADD = "add";    
 
-    //public enum Column {ID, ADMINISTRATOR, EDITALL, EDITGROUP, SEECOLUMNS, ADD};
+    //public enum Column {ID, ADMINISTRATOR, EDITALL, EDITGROUP, ADD};
     
     /**
      *   Default constructor to create new class Right
@@ -117,25 +115,7 @@ public class Right extends Record {
      */
     public void setEditGroup(String editGroup) {
         this.editGroup = editGroup;
-    }
-    
-    /**
-     *   Get the list of columns the user can see
-     *   @return list of columns the user can see
-     *   @see setSeeColumns
-     */
-    public String getSeeColumns() {
-        return this.seeColumns;
-    }
-    
-    /**
-     *   Set the list of columns the user can see
-     *   @param seeColumns the list of columns the user can see
-     *   @see getSeeColumns
-     */
-    public void setSeeColumns(String seeColumns) {
-        this.seeColumns = seeColumns;
-    }
+    }     
     
     /**
      *   Get 

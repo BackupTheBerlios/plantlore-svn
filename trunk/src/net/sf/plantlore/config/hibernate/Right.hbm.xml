@@ -21,12 +21,7 @@
                 length = "255"            
                 name="editGroup"
                 not-null="false"
-                type="java.lang.String"/>                                                
-      <property column="CSEECOLUMNS"    
-                length = "4096"
-                name="seeColumns"
-                not-null="false"
-                type="java.lang.String"/>
+                type="java.lang.String"/>                   
       <property column="CADD"    
                 name="add"
                 not-null="true"
