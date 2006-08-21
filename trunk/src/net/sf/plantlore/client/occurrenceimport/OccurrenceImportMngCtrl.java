@@ -21,7 +21,7 @@ public class OccurrenceImportMngCtrl {
 		this.view = view;
 		choice = new JFileChooser();
 		choice.setAcceptAllFileFilterUsed(false);
-		choice.addChoosableFileFilter( new FileFormat("Table update files (*.xml)", ".xml") );
+		choice.addChoosableFileFilter( new FileFormat(L10n.getString("Format.XML"), true, true, ".xml") ); 
 	}
 	
 	public void setVisible(boolean visible) {

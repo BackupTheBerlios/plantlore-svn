@@ -46,7 +46,7 @@ public class OccurrenceImportMng {
 		if( filename == null ) 
 			throw new ImportException(L10n.getString("Error.MissingFileName"));
 			
-		logger.debug("Initializing the table-import environment.");
+		logger.debug("Initializing the occurrence-import environment.");
 		
 		// Create a new reader.
 		File file = new File( filename );
@@ -62,10 +62,12 @@ public class OccurrenceImportMng {
 			throw new ImportException(L10n.getString("Error.ReaderNotCreated"));
 		}
 		
+		logger.debug("Preparing new OccurrenceImport task.");
 		OccurrenceParser parser = new XMLOccurrenceParser(reader);
 		Task occurrenceImportTask = new OccurrenceImportTask(db, parser);
 		occurrenceImportTask.addObserver( tableChangeObserver );
 		
+		logger.debug("OccurrenceImport task prepared.");
 		return occurrenceImportTask;
 	}
 

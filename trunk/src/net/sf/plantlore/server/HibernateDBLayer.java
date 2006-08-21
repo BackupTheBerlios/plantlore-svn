@@ -1178,33 +1178,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             Author aut = (Author)data;
             aut.setCreatedWho(this.plantloreUser);
             data = aut;
-        }        
+        }
+        if( data instanceof Metadata) {
+        	Metadata met = (Metadata)data;
+        	met.setDateCreate(new java.util.Date());
+        	met.setDateModified(new java.util.Date());
+        	data = met;
+        }
         // Check whether we have rights for this operation
         checkRights(data, INSERT);
         
-        if (data instanceof Occurrence) {
-            Occurrence occ = (Occurrence)data;
-            occ.setCreatedWhen(new java.util.Date());
-            occ.setUpdatedWhen(new java.util.Date());
-            occ.setCreatedWho(this.plantloreUser);
-            occ.setUpdatedWho(this.plantloreUser);
-            data = occ;
-        }
-        if (data instanceof Habitat) {
-            Habitat hab = (Habitat)data;
-            hab.setCreatedWho(this.plantloreUser);
-            data = hab;
-        }
-        if (data instanceof Publication) {
-            Publication pub = (Publication)data;
-            pub.setCreatedWho(this.plantloreUser);
-            data = pub;
-        }
-        if (data instanceof Author) {
-            Author aut = (Author)data;
-            aut.setCreatedWho(this.plantloreUser);
-            data = aut;
-        }
         try {
             // Save item into the database
             recordId = (Integer)this.txSession.save(data);            
@@ -1213,7 +1196,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             DBLayerException ex = new DBLayerException("Exception.RollbackTransaction");
             ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
         } catch (HibernateException e) {
-            logger.fatal("Cannot rollback database transaction");
+        	e.printStackTrace();
+        	/*-------------------------------------------------------------------------------------
+        	 * FIXME:
+        	 * 
+        	 * THIS NEEDS A SERIOUS UPDATE! 
+        	 * If txSession.save() fails, it certainly does not mean there are problems with rollback!
+        	 * Or does it?!
+        	 *-------------------------------------------------------------------------------------*/
+            logger.fatal("Cannot rollback database transaction"); 
             DBLayerException ex = new DBLayerException("Exception.RollbackTransaction");
             ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
             throw ex;            
@@ -1269,32 +1260,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             aut.setCreatedWho(this.plantloreUser);
             data = aut;
         }        
+        if( data instanceof Metadata) {
+        	Metadata met = (Metadata)data;
+        	met.setDateCreate(new java.util.Date());
+        	met.setDateModified(new java.util.Date());
+        	data = met;
+        }
         // Check whether we have rights for this operation
         checkRights(data, INSERT);
-        
-        if (data instanceof Occurrence) {
-            Occurrence occ = (Occurrence)data;
-            occ.setCreatedWhen(new java.util.Date());
-            occ.setUpdatedWhen(new java.util.Date());
-            occ.setCreatedWho(this.plantloreUser);
-            occ.setUpdatedWho(this.plantloreUser);
-            data = occ;
-        }
-        if (data instanceof Habitat) {
-            Habitat hab = (Habitat)data;
-            hab.setCreatedWho(this.plantloreUser);
-            data = hab;
-        }
-        if (data instanceof Publication) {
-            Publication pub = (Publication)data;
-            pub.setCreatedWho(this.plantloreUser);
-            data = pub;
-        }
-        if (data instanceof Author) {
-            Author aut = (Author)data;
-            aut.setCreatedWho(this.plantloreUser);
-            data = aut;
-        }
 
         // Save item into the database
         recordId = (Integer)this.txSession.save(data);            

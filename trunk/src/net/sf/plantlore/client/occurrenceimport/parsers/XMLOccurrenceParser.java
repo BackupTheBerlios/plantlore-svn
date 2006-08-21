@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -21,6 +22,8 @@ import net.sf.plantlore.common.record.Record;
 
 
 public class XMLOccurrenceParser extends DefaultHandler implements OccurrenceParser {
+	
+	private Logger logger = Logger.getLogger(XMLOccurrenceParser.class.getPackage().getName());
 	
 	private RecordProcessor processor;
 	private XMLReader xmlReader;
@@ -52,6 +55,7 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 	throws IOException, SAXException {
 		try {
 			
+			logger.debug("Executing the parsing routines...");
 			xmlReader.parse( new InputSource(reader) );
 			
 		} finally {
@@ -64,6 +68,7 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 	@Override
 	public void startDocument() {
 		ao = (AuthorOccurrence) new AuthorOccurrence().createTorso();
+		stack.push(ao);
 	}
 	
 	@Override

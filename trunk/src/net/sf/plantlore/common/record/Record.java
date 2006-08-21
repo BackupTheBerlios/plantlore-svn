@@ -38,7 +38,7 @@ public abstract class Record implements Serializable {
 	 * A set of tables that cannot be changed.
 	 */
 	public final static HashSet<Class> IMMUTABLE = new HashSet<Class>( Arrays.asList(
-			Plant.class, Territory.class, Village.class, Phytochorion.class, Metadata.class) 
+			Plant.class, Territory.class, Village.class, Phytochorion.class/*, Metadata.class*/) 
 	);
 	
 	
@@ -387,7 +387,7 @@ public abstract class Record implements Serializable {
 			s.setCharAt(3, Character.toUpperCase(s.charAt(3)));
 			// Take it. 
 			return table.getMethod( s.toString(), new Class[0] );
-		} catch(NoSuchMethodException e) {/* Nothing we can do.. */}
+		} catch(NoSuchMethodException e) { e.printStackTrace(); }
 		return null;
 	}
 	
@@ -419,7 +419,7 @@ public abstract class Record implements Serializable {
 		StringBuilder sigma = new StringBuilder();
 		for(String property : this.getProperties())
 			sigma.append(getClass().getSimpleName()).append('.').
-			append(property).append(" = ").append(this.getValue(property)).append(";\n");
+			append(property).append(" = ").append(this.getValue(property)).append("; ");
 		for(String key : getForeignKeys()) {
 			Record subrecord = (Record)getValue(key); 
 			if(subrecord != null)	sigma.append( subrecord.toString() );

@@ -38,6 +38,7 @@ import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.client.imports.Parser.Intention;
 
+
 import org.apache.log4j.Logger;
 
 /** 
@@ -73,7 +74,7 @@ public class DBLayerUtils {
 		// >>Occurrence<< MUST NOT BE LISTED HERE!
 		// It would cause problems with DELETE and INSERT...
 
-		parentColumn.put(Village.class, Habitat.VILLAGE);
+		parentColumn.put(Village.class, Habitat.NEARESTVILLAGE);
 		parentColumn.put(Phytochorion.class, Habitat.PHYTOCHORION);
 		parentColumn.put(Territory.class, Habitat.TERRITORY);
 		parentColumn.put(Metadata.class, Occurrence.METADATA);
@@ -372,30 +373,32 @@ public class DBLayerUtils {
 		// Create a query that will look for the record with the same properties.
 		SelectQuery query = db.createQuery( table );
 
-		// Equal properties.
-		for(String property : record.getProperties()) {
-			Object value = record.getValue(property);
-			if( value != null ) 
-				query.addRestriction(RESTR_EQ, property, null, value, null);
+		try {
+			// Equal properties.
+			for(String property : record.getProperties()) {
+				Object value = record.getValue(property);
+				if( value != null ) 
+					query.addRestriction(RESTR_EQ, property, null, value, null);
+			}
+			// Equal foreign keys (by their ID's)!
+			for(String key : record.getForeignKeys() ) {
+				Record subrecord = (Record) record.getValue(key);
+				query.addRestriction(RESTR_EQ, key, null, subrecord, null);
+			}
+			
+			// Is there such record?
+			int results = db.executeQuery( query );
+			int rows = db.getNumRows( results );
+			if( rows > 1 ) 
+				logger.info("There are " + rows + 
+						" completely identical records in the " + table.getSimpleName() + " table!");
+			
+			record = null;
+			if( rows != 0 ) 
+				record = (Record)((Object[])(db.more(results, 0, 0)[0]))[0]; // Well, THIS is ugly!
+		} finally {
+			db.closeQuery( query );
 		}
-		// Equal foreign keys (by their ID's)!
-		for(String key : record.getForeignKeys() ) {
-			Record subrecord = (Record) record.getValue(key);
-			query.addRestriction(RESTR_EQ, key, null, subrecord, null);
-		}
-		
-		// Is there such record?
-		int results = db.executeQuery( query );
-		int rows = db.getNumRows( results );
-		if( rows > 1 ) 
-			logger.info("There are " + rows + 
-					" completely identical records in the " + table.getSimpleName() + " table!");
-		
-		record = null;
-		if( rows != 0 ) 
-			record = (Record)((Object[])(db.more(results, 0, 0)[0]))[0]; // Well, THIS is ugly!
-		
-		db.closeQuery( query );
 		
 		// Update the cache appropriately - store the record for future generations.
 		if( record != null && isCacheEnabled ) {
@@ -733,7 +736,7 @@ public class DBLayerUtils {
 	throws RemoteException, DBLayerException {
 		logger.info("Deleting [" + record + "] from the database.");
 		if( !Record.BASIC_TABLES.contains(record.getClass()) )
-			throw new IllegalArgumentException(L10n.getString("Error.DiscouragedUse"));
+			throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
 		
 		// (O) OCCURRENCE RECORDS
 		if( record instanceof Occurrence ) {
@@ -755,21 +758,21 @@ public class DBLayerUtils {
 		if(record instanceof Deletable) {
 			// How many records, that are alive, share this one?
 			int sharers = sharedBy( record );
-			if( sharers > 1 ) {
-				logger.error("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
-				throw new DBLayerException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
+			if( sharers == 0 ) {
+				// Mark the record as deleted.
+				// [!] If all AuthorOccurrences are to be deleted because their Occurrence is deleted, 
+				// the delete value is 2 (instead of 1), so that they can be revived properly 
+				// when the Occurrence is revived!  
+				((Deletable)record).setDeleted( 
+						(record instanceof AuthorOccurrence && deletingAllAuthorOccurrences) ? 2 : 1 );
+				db.executeUpdateInTransaction( record );
 			}
-			// Mark the record as deleted.
-			// [!] If all AuthorOccurrences are to be deleted because their Occurrence is deleted, 
-			// the delete value is 2 (instead of 1), so that they can be revived properly 
-			// when the Occurrence is revived!  
-			((Deletable)record).setDeleted( 
-					(record instanceof AuthorOccurrence && deletingAllAuthorOccurrences) ? 2 : 1 );
-			db.executeUpdateInTransaction( record );
+			else 
+				logger.info("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
 		}
 		// (I) IMMUTABLE RECORDS
 		else {
-			throw new IllegalArgumentException(L10n.getString("Error.DiscouragedUse"));
+			throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
 			/* 
 			 * Proper handling:
 			 * 
@@ -906,19 +909,24 @@ public class DBLayerUtils {
 		// If the record is dead, then it is clearly meant to be deleted!
 		Intention intention =  occ.isDead() ? Intention.DELETE : Intention.UNKNOWN; 
 			
+		boolean isInDB, isDead;
+		Occurrence occInDB;
 		 // Try to find a matching Occurrence record in the database.
 		SelectQuery q = db.createQuery(Occurrence.class);
-		q.addRestriction(RESTR_EQ, Occurrence.UNITIDDB, null, occ.getUnitIdDb(), null);
-		q.addRestriction(RESTR_EQ, Occurrence.UNITVALUE, null, occ.getUnitValue(), null);
-		int resultId = db.executeQuery( q );
-		int rows = db.getNumRows( resultId );
-		if(rows > 1)
-			throw new DBLayerException(L10n.getString("Error.AmbiguousRecord"));
-
-		boolean isInDB = (rows != 0);
-		Occurrence occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
-		db.closeQuery(q); 
-		boolean isDead = isInDB ? occInDB.isDead() : false;
+		try {
+			q.addRestriction(RESTR_EQ, Occurrence.UNITIDDB, null, occ.getUnitIdDb(), null);
+			q.addRestriction(RESTR_EQ, Occurrence.UNITVALUE, null, occ.getUnitValue(), null);
+			int resultId = db.executeQuery( q );
+			int rows = db.getNumRows( resultId );
+			if(rows > 1)
+				throw new DBLayerException(L10n.getString("Error.AmbiguousRecord"));
+			
+			isInDB = (rows != 0);
+			occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
+			isDead = isInDB ? occInDB.isDead() : false;
+		} finally {
+			db.closeQuery(q);	
+		}
 			
 		// Begin a new transaction.
 		db.beginTransaction();
@@ -956,62 +964,53 @@ public class DBLayerUtils {
 					occInDB = (Occurrence) insert( occ );
 				}
 			
-		} catch(DBLayerException e) {
-			// Roll back the transaction.
-			db.rollbackTransaction();
-			throw e;
-		} catch(RemoteException e) {
-			// Roll back the transaction.
-			db.rollbackTransaction();
-			throw e;
-		}
 			
-		 // Now, deal with Authors associated with this Occurrence.
-		int numberOfUndeadAuthors = 0; 
+			// Now, deal with Authors associated with this Occurrence.
+			int numberOfUndeadAuthors = 0; 
 			
-		// If the Occurrence record should have been DELETED,
-		// there is nothing more to be done.
-		if( intention == Intention.DELETE ) {
-			db.commitTransaction();
-		}
-		// The intention was to ADD or UPDATE the existing Occurrence record.  
-		else {
-			AuthorOccurrence[] aosInDB = new AuthorOccurrence[0];
-			if( isInDB ) 
-				aosInDB = findAllAuthors(occInDB, false);
-			// Compute the number of undead authors (authors, that are not marked as deleted). 
-			for(AuthorOccurrence ao : aosInDB) {
-				ao.setOccurrence( null ); // simplify the comparison
-				if( !ao.isDead() ) 
-					numberOfUndeadAuthors++ ;
+			// If the Occurrence record should have been DELETED,
+			// there is nothing more to be done.
+			if( intention == Intention.DELETE ) {
+				db.commitTransaction();
+				return;
 			}
+			// The intention was to ADD or UPDATE the existing Occurrence record.  
+			else {
+				AuthorOccurrence[] aosInDB = new AuthorOccurrence[0];
+				if( isInDB ) 
+					aosInDB = findAllAuthors(occInDB, false);
+				// Compute the number of undead authors (authors, that are not marked as deleted). 
+				for(AuthorOccurrence ao : aosInDB) {
+					ao.setOccurrence( null ); // simplify the comparison
+					if( !ao.isDead() ) numberOfUndeadAuthors++ ;
+				}
 				
-			for( AuthorOccurrence ao : aos ) {
-				if( !ao.areAllNNSet() ) {
-					logger.warn("The AuthorOccurrence is incomplete - the Author is missing or a NN column is not set!");
-					continue;
-				}
-					
-				// Simplify the comparison (the Occurrence is known...)
-				ao.setOccurrence( null );
-					
-				// Check if that AuthorOccurrence is already in the database.
-				AuthorOccurrence aoInDB = null;
-				for( AuthorOccurrence alpha : aosInDB ) {
-					if( alpha.equalsUpTo( ao, AuthorOccurrence.DELETED ) ) {
-						aoInDB = alpha;
-						break;
+				for( AuthorOccurrence ao : aos ) {
+					if( !ao.areAllNNSet() ) {
+						logger.warn("The AuthorOccurrence is incomplete - the Author is missing or a NN column is not set!");
+						continue;
 					}
-				}
 					
-				//	The Occurrence `occInDB` is in the database, that is for sure.
-				// The ao.Occurrence, however, is NOT from the database.
-				ao.setOccurrence( occInDB ); // now it's fine
+					// Simplify the comparison (the Occurrence is known...)
+					ao.setOccurrence( null );
 					
-				// The intention with this AuthorOccurrence. 
-				intention = ao.isDead() ? Intention.DELETE : Intention.UNKNOWN;
+					// Check if that AuthorOccurrence is already in the database.
+					AuthorOccurrence aoInDB = null;
+					for( AuthorOccurrence alpha : aosInDB ) {
+						if( alpha.equalsUpTo( ao, AuthorOccurrence.DELETED ) ) {
+							aoInDB = alpha;
+							break;
+						}
+					}
 					
-				try {
+					//	The Occurrence `occInDB` is in the database, that is for sure.
+					// The ao.Occurrence, however, is NOT from the database.
+					ao.setOccurrence( occInDB ); // now it's fine
+					
+					// The intention with this AuthorOccurrence. 
+					intention = ao.isDead() ? Intention.DELETE : Intention.UNKNOWN;
+					
+
 					// [A] AO is not in the database.
 					if(aoInDB == null)
 						switch(intention) {
@@ -1019,42 +1018,44 @@ public class DBLayerUtils {
 							break;
 						default:
 							insert( ao );							
-							numberOfUndeadAuthors++;
+						numberOfUndeadAuthors++;
 						}
-						// [B] AO is in the database already.
-						else
-							switch(intention) {
-							case DELETE:
-								if( !aoInDB.isDead() ) {
-									aoInDB.setOccurrence( occInDB ); // repair the simplified ao
-									delete( aoInDB ); // delete the ao
-									numberOfUndeadAuthors--;
-								}
-								break;
-							default:
-								if( aoInDB.isDead() ) {
-									aoInDB.setOccurrence( occInDB ); // repair the simplified ao
-									aoInDB.setDeleted(0);
-									db.executeUpdateInTransaction( aoInDB ); // revive the ao
-									numberOfUndeadAuthors++;
-								}
-								break;
+					// [B] AO is in the database already.
+					else
+						switch(intention) {
+						case DELETE:
+							if( !aoInDB.isDead() ) {
+								aoInDB.setOccurrence( occInDB ); // repair the simplified ao
+								delete( aoInDB ); // delete the ao
+								numberOfUndeadAuthors--;
 							}
-				} catch (DBLayerException e) {
-					continue;
+							break;
+						default:
+							if( aoInDB.isDead() ) {
+								aoInDB.setOccurrence( occInDB ); // repair the simplified ao
+								aoInDB.setDeleted(0);
+								db.executeUpdateInTransaction( aoInDB ); // revive the ao
+								numberOfUndeadAuthors++;
+							}
+						}
 				}
-					
-			}
 			
-			// Transaction is valid iff everything went fine and the number of undead authors is positive.
-			if( numberOfUndeadAuthors > 0 )
+				// Transaction is valid iff everything went fine and the number of undead authors is positive.
+				if( numberOfUndeadAuthors <= 0 )
+					throw new DBLayerException(L10n.getString("Error.NoAuthorsLeft"));
+				
 				db.commitTransaction();
-			else {
-				db.rollbackTransaction();
-				throw new DBLayerException(L10n.getString("Error.NoAuthorsLeft"));
 			}
 			
-			
+		} catch(DBLayerException e) {
+			// Roll back the transaction.
+			e.printStackTrace();
+			db.rollbackTransaction();
+			throw e;
+		} catch(RemoteException e) {
+			// Roll back the transaction.
+			db.rollbackTransaction();
+			throw e;
 		}
 	}
 	
