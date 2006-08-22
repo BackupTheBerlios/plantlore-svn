@@ -268,9 +268,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 if(saveHistory) saveHistory(session, data, INSERT, recordId);
                 break;
         	case UPDATE:
+        		session.update(data);
+                if(saveHistory) saveHistory(session, data, UPDATE, null);
         	case DELETE:
-                 session.update(data);
-                 if(saveHistory) saveHistory(session, data, operation, null);
+                 session.delete(data);
+                 if(saveHistory) saveHistory(session, data, DELETE, null);
         		break;
         	default:
         		throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
