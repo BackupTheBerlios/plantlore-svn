@@ -17,7 +17,7 @@ public class DBLayerException extends PlantloreException {
 	private static final long serialVersionUID = 2006060411002L;
 	
         /** Error code */
-        private int errorCode;
+        private int errorCode = 0;
         /** Additional error info */
         private String errorInfo;
     

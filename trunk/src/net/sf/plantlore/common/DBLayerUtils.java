@@ -241,7 +241,7 @@ public class DBLayerUtils {
 	 * @return	The number of records that share the supplied <code>record</code>. 
 	 */
     public int sharedBy(Record record)
-    throws RemoteException {
+    throws RemoteException, DBLayerException {
     	return sharedBy(record, true);
     }
     
@@ -254,7 +254,7 @@ public class DBLayerUtils {
 	 * @return	The number of records that share the supplied <code>record</code>. 
 	 */
 	public int sharedBy(Record record, boolean aliveOnly) 
-	throws RemoteException {
+	throws RemoteException, DBLayerException {
 		if(record.getId() == null)
 			return 0;
 		
@@ -276,8 +276,6 @@ public class DBLayerUtils {
 				q.addRestriction(RESTR_EQ, "DELETED", null, 0, null);
 			int resultset = db.executeQuery(q); 
 			rows = db.getNumRows(resultset);
-		} catch (DBLayerException e) {
-			//e.printStackTrace();
 		} finally {
 			if(q != null)
 				db.closeQuery(q);
@@ -389,9 +387,10 @@ public class DBLayerUtils {
 			// Is there such record?
 			int results = db.executeQuery( query );
 			int rows = db.getNumRows( results );
-			if( rows > 1 ) 
-				logger.info("There are " + rows + 
-						" completely identical records in the " + table.getSimpleName() + " table!");
+			if( rows > 1 ) {
+				logger.warn("There are " + rows + " completely identical records in the " + table.getSimpleName() + " table!");
+				throw new DBLayerException(L10n.getString("Error.AmbiguousRecord"));
+			}
 			
 			record = null;
 			if( rows != 0 ) 
@@ -745,7 +744,12 @@ public class DBLayerUtils {
 			// Delete the Occurrence first.
 			db.executeUpdateInTransaction( occ );
 			// Try to delete the Habitat of this Occurrence.
-			delete( occ.getHabitat() );
+			try {
+				delete( occ.getHabitat() );
+			} catch(DBLayerException e) {
+				if( e.getMessage() != L10n.getString("Error.DeletingSharedRecord") )
+					throw e;
+			}
 			// Delete all authors associated with this Occurrence
 			AuthorOccurrence[] aos = findAllAuthors( occ );
 			deletingAllAuthorOccurrences = true;
@@ -767,8 +771,10 @@ public class DBLayerUtils {
 						(record instanceof AuthorOccurrence && deletingAllAuthorOccurrences) ? 2 : 1 );
 				db.executeUpdateInTransaction( record );
 			}
-			else 
-				logger.info("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
+			else {
+				logger.warn("The "+record+" is in use by "+sharers+" other records. It cannot be deleted!");
+				throw new DBLayerException(L10n.getString("Error.DeletingSharedRecord"));
+			}
 		}
 		// (I) IMMUTABLE RECORDS
 		else {
@@ -802,7 +808,7 @@ public class DBLayerUtils {
 		int sharers = sharedBy( record, false );
 		if( sharers > 0 ) {
 			logger.error("The "+record+" is in use by "+sharers+" other record(s). It cannot be deleted!");
-			throw new DBLayerException(L10n.getFormattedString("Error.DeletingSharedRecord", record, sharers));
+			throw new DBLayerException(L10n.getString("Error.DeletingSharedRecord"));
 		}
 		
 		db.executeDeleteHistory( record );
