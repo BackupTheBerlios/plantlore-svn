@@ -52,6 +52,7 @@ import java.util.ArrayList;
 
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.JDBCConnectionException;
 
 
 /**
@@ -146,10 +147,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *          ERROR_SELECT: Unable to read contents of TUSER table
      *          ERROR_LOGIN: Authentication failed (wrong password, username or account disabled)
      */
-    public Object[] initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
+    public Object[] initialize(String dbID, String user, String password) 
+    throws DBLayerException, RemoteException {
         Configuration cfg;
-        int result = 0;
-        
         currentlyConnectedUser = user;
         
         // File containing Hibernate configuration
@@ -159,9 +159,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             cfg = new Configuration().configure(configFile);
         } catch (HibernateException e) {
             logger.fatal("Cannot load Hibernate configuration. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Exception.LoadConfiguration");
-            ex.setError(ex.ERROR_LOAD_CONFIG, e.getMessage());
-            throw ex;
+            throw new DBLayerException(L10n.getString("Error.InvalidConfiguration"), DBLayerException.ERROR_LOAD_CONFIG, e);
         }
         // Create connections string from the provided data
         if( settings.getConnectionStringSuffix() == null || "".equals(settings.getConnectionStringSuffix()) )
@@ -172,58 +170,35 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Set username and password to access database
         cfg.setProperty("hibernate.connection.username", user);
         cfg.setProperty("hibernate.connection.password", password);
-        // Build session factory        
-        try {
-            sessionFactory = cfg.buildSessionFactory();
-        } catch (JDBCException e) {
-            logger.fatal("Cannot build Hibernate session factory. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Exception.EstablishConnection");
-            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());
-            throw ex;            
-        } catch (HibernateException e) {
-            logger.fatal("Cannot build Hibernate session factory. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Exception.EstablishConnection");
-            ex.setError(ex.ERROR_CONNECT, e.getMessage());
-            throw ex;
-        }         
+        
+        // Build session factory & create a new session.
+        Session sess = null;
         // Authenticate user
-        Session sess = sessionFactory.openSession();            
-        // TODO: Password should probably be encrypted
-        ScrollableResults sr = null;
         try {
-            sr = sess.createCriteria(User.class)
+        	sessionFactory = cfg.buildSessionFactory();
+            sess = sessionFactory.openSession();
+        	
+            ScrollableResults sr = sess.createCriteria(User.class)
                 .add(Restrictions.eq(User.LOGIN, user))
-                /*.add(Restrictions.eq(User.PASSWORD, password))*/
                 .add(Restrictions.isNull(User.DROPWHEN))
                 .scroll();
-        } catch (HibernateException e) {            
-            logger.fatal("Selecting records from the database failed. Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Exception.SelectQuery");
-            ex.setError(ex.ERROR_SELECT, e.getMessage());
-            throw ex;            
-        }
-        if (!sr.next()) {
-            // Authentication failed, close DB connection
-            sess.close();
+            
+            sr.next();
+            plantloreUser = (User)(sr.get())[0];
+            rights = plantloreUser.getRight();
+        } 
+        catch (JDBCException e) {
             sessionFactory.close();
             sessionFactory = null;
-            logger.warn("Authentication of user "+user+" failed!");
-            DBLayerException ex = new DBLayerException("Exception.AuthenticationFailed");
-            ex.setError(ex.ERROR_LOGIN, user);
-            throw ex;
-        } else {
-            // Save the information about authenticated user
-            Object[] userinfo = sr.get();
-            User clientUser = (User)userinfo[0];            
-            this.rights = clientUser.getRight();           
-            this.plantloreUser = clientUser;
-            sess.close();
+            logger.fatal("Selecting records from the database failed. Details: "+e.getMessage());
+            throw new DBLayerException(L10n.getString("Error.AuthenticationFailed"), e);
         }
+        finally {
+        	if(sess != null) sess.close();
+        }
+        
         // Return User and Right object with users details
-        Object[] retValue = new Object[2];
-        retValue[0] = this.plantloreUser;
-        retValue[1] = this.rights;
-        return retValue;
+        return new Object[] { plantloreUser, rights };
     }
     
     
@@ -235,24 +210,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setUpdatedWhen(now);
             occ.setCreatedWho(this.plantloreUser);
             occ.setUpdatedWho(this.plantloreUser);
-            record = occ;
+            /*
+             * UNIQUE ID MUST BE SET AS WELL
+             */
         } else if(record instanceof Habitat) {
             Habitat hab = (Habitat)record;
             hab.setCreatedWho(this.plantloreUser);
-            record = hab;
         } else if(record instanceof Publication) {
             Publication pub = (Publication)record;
             pub.setCreatedWho(this.plantloreUser);
-            record = pub;
         } else if(record instanceof Author) {
             Author aut = (Author)record;
             aut.setCreatedWho(this.plantloreUser);
-            record = aut;
         } else if(record instanceof Metadata) {
         	Metadata met = (Metadata)record;
         	met.setDateCreate(now);
         	met.setDateModified(now);
-        	record = met;
         }
     }
     
@@ -268,7 +241,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     
     protected int lowLevelOperation(int operation, Object data, boolean saveHistory, boolean useOwnTransaction) 
     throws DBLayerException, RemoteException {
-    	 // Check whether the connection to the databse has been established/
+    	 // Check whether the connection to the databse has been established.
         checkConnection();
         
         // Fill in missing parts that DBLayer must complete.
@@ -279,11 +252,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 
         // Perform the Operation.
         Transaction tx = null;
-        Session session = sessionFactory.openSession();
+
+        // If we should not use our own transaction, we must use the stored one.
+        Session session = useOwnTransaction ? sessionFactory.openSession() : this.txSession;
         int recordId = -1;
         try {
         	
-            // Begin transaction.
+            // Begin transaction, if it is required. If not, the `tx` stays null.
         	if(useOwnTransaction) tx = session.beginTransaction();
         	
             // Make changes in the database.
@@ -332,7 +307,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             throw new DBLayerException(L10n.getString("Error.DatabaseOperationFailed"), exceptionType, e);
         } finally {
-            session.close();
+        	// We must close only our own sessions!
+            if(useOwnTransaction) session.close();
         }
         
         return recordId;
