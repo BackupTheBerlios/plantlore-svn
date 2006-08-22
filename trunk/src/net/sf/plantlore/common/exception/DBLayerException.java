@@ -17,13 +17,13 @@ public class DBLayerException extends PlantloreException {
 	private static final long serialVersionUID = 2006060411002L;
 	
         /** Error code */
-        private int errorCode = 0;
+        private int errorCode = ERROR_UNSPECIFIED;
         /** Additional error info */
         private String errorInfo;
     
         // ================= ERROR CODES ===============
-        /** It was not possible to detect the reason why the operation failed. */
-        public static final int ERROR_UNKNOWN = -1;
+        /** It was not possible to detect the precise reason why the operation failed. */
+        public static final int ERROR_UNSPECIFIED = 0;
         /** Database configuration cannot be loaded properly */
         public static final int ERROR_LOAD_CONFIG = 1;
         /** Connection to the database failed or no connection available */

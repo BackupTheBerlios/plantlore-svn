@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import net.sf.plantlore.client.occurrenceimport.parsers.XMLOccurrenceParser;
+
+import org.apache.log4j.Logger;
+
 
 /**
  * The common ancestor of all records. 
@@ -20,6 +24,8 @@ import java.util.*;
  * @version 2.0
  */
 public abstract class Record implements Serializable {
+	
+	private Logger logger = Logger.getLogger(XMLOccurrenceParser.class.getPackage().getName());
 	
 	
 	private static final long serialVersionUID = 20060604000L;
@@ -210,6 +216,19 @@ public abstract class Record implements Serializable {
 	@SuppressWarnings("unused")
 	public void setValue(String column, Object value) {
 		throw new Error(" This code shall not be executed. You must either override it or leave it! ");
+	}
+
+	/**
+	 * Set the value in the specified column. Ignore all errors (such as NumberFormatException).
+	 * @param column
+	 * @param value
+	 */
+	public void setValueSafe(String column, Object value) {
+		try {
+			setValue(column, value);
+		} catch(Exception e) {
+			logger.error("Unable to set "+getClass().getSimpleName()+"."+column+" = "+value+"! " + e.getMessage() );
+		}
 	}
 	
 	/**

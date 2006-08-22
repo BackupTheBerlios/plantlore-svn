@@ -1644,6 +1644,10 @@ public class AppCoreCtrl {
 				  -------------------------------------------------------------------*/
 				if( exportModel != null )
 					exportModel.setDBLayer( dblayer );
+				if( importModel != null )
+					importModel.setDBLayer( dblayer );
+				if( tableImportModel != null )
+					tableImportModel.setDBLayer( dblayer );
 				if (historyModel != null ) 
 					historyModel.setDBLayer( dblayer );			
 				if (wholeHistoryModel != null ) 

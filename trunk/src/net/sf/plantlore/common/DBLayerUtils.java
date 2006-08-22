@@ -235,8 +235,7 @@ public class DBLayerUtils {
     
 	/**
 	 * Find out how many records share the supplied <code>record</code>.
-	 * <b>Intended use: records from basic tables only!</b>
-	 * 
+	 *  
 	 * @param record	The record in question.
 	 * @return	The number of records that share the supplied <code>record</code>. 
 	 */
@@ -247,8 +246,7 @@ public class DBLayerUtils {
     
 	/**
 	 * Find out how many records share the supplied <code>record</code>.
-	 * <b>Intended use: records from basic tables only!</b>
-	 * 
+	 * 	 * 
 	 * @param record	The record in question.
 	 * @param aliveOnly	Ommit records marked as deleted.
 	 * @return	The number of records that share the supplied <code>record</code>. 
@@ -257,9 +255,6 @@ public class DBLayerUtils {
 	throws RemoteException, DBLayerException {
 		if(record.getId() == null)
 			return 0;
-		
-		if( !Record.BASIC_TABLES.contains(record.getClass()) )
-			throw new IllegalArgumentException(L10n.getString("Error.DiscouragedUse"));
 		
 		SelectQuery q = null;
 		int rows = 0;
@@ -746,10 +741,7 @@ public class DBLayerUtils {
 			// Try to delete the Habitat of this Occurrence.
 			try {
 				delete( occ.getHabitat() );
-			} catch(DBLayerException e) {
-				if( e.getMessage() != L10n.getString("Error.DeletingSharedRecord") )
-					throw e;
-			}
+			} catch(DBLayerException e) {/* No matter. */}
 			// Delete all authors associated with this Occurrence
 			AuthorOccurrence[] aos = findAllAuthors( occ );
 			deletingAllAuthorOccurrences = true;
@@ -909,8 +901,10 @@ public class DBLayerUtils {
 	throws DBLayerException, RemoteException {
 		
 		// Preliminary validity check.
-		if( !occ.areAllNNSet() )
+		if( occ == null || !occ.areAllNNSet() ) {
+			logger.error("Cannot process incomplete records ["+occ+"]");
 			throw new DBLayerException(L10n.getString("Error.IncompleteRecord"));
+		}
 		
 		// If the record is dead, then it is clearly meant to be deleted!
 		Intention intention =  occ.isDead() ? Intention.DELETE : Intention.UNKNOWN; 
@@ -918,14 +912,17 @@ public class DBLayerUtils {
 		boolean isInDB, isDead;
 		Occurrence occInDB;
 		 // Try to find a matching Occurrence record in the database.
+		logger.debug("Looking for a match in the database.");
 		SelectQuery q = db.createQuery(Occurrence.class);
 		try {
 			q.addRestriction(RESTR_EQ, Occurrence.UNITIDDB, null, occ.getUnitIdDb(), null);
 			q.addRestriction(RESTR_EQ, Occurrence.UNITVALUE, null, occ.getUnitValue(), null);
 			int resultId = db.executeQuery( q );
 			int rows = db.getNumRows( resultId );
-			if(rows > 1)
-				throw new DBLayerException(L10n.getString("Error.AmbiguousRecord"));
+			if(rows > 1) {
+				logger.error("There are " + rows + " identical (with the same unique id) occurrence records! Which one shall be processed?");
+				throw new DBLayerException(L10n.getString("Error.AmbiguousUniqueIdentifier"));
+			}
 			
 			isInDB = (rows != 0);
 			occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
@@ -993,7 +990,7 @@ public class DBLayerUtils {
 				
 				for( AuthorOccurrence ao : aos ) {
 					if( !ao.areAllNNSet() ) {
-						logger.warn("The AuthorOccurrence is incomplete - the Author is missing or a NN column is not set!");
+						logger.warn("The AuthorOccurrence is incomplete! It will be skipped.");
 						continue;
 					}
 					
@@ -1047,8 +1044,10 @@ public class DBLayerUtils {
 				}
 			
 				// Transaction is valid iff everything went fine and the number of undead authors is positive.
-				if( numberOfUndeadAuthors <= 0 )
+				if( numberOfUndeadAuthors <= 0 ) {
+					logger.error("It is not possible to store a record without an author. It will be rejected.");
 					throw new DBLayerException(L10n.getString("Error.NoAuthorsLeft"));
+				}
 				
 				db.commitTransaction();
 			}

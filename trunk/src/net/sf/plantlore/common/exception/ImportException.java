@@ -12,6 +12,10 @@ public class ImportException extends PlantloreException {
 	
 	public ImportException(String message) { super(message); }
 	
+	public ImportException(String message, Throwable exception) { super(message, exception); }
+	
+	public ImportException(Throwable exception) { super(exception); }
+	
 	public ImportException(String message, Record problematicRecord) {
 		super(message);
 		this.problematicRecord = problematicRecord; 

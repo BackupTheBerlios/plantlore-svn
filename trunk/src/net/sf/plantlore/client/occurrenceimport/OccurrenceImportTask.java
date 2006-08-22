@@ -1,13 +1,15 @@
 package net.sf.plantlore.client.occurrenceimport;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
+
 import net.sf.plantlore.common.DBLayerUtils;
-import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.PlantloreConstants.Table;
 import net.sf.plantlore.common.exception.*;
@@ -17,16 +19,28 @@ import net.sf.plantlore.middleware.DBLayer;
 
 public class OccurrenceImportTask extends Task implements RecordProcessor {
 	
-	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
+	//private Logger logger = Logger.getLogger(OccurrenceImportTask.class.getPackage().getName());
+	
 	private OccurrenceParser parser;
 	private int count;
 	private DBLayerUtils dbutils;
 	
-	private DBLayerException fakeException = new DBLayerException();
+	private DBLayerException canceledByUser = new DBLayerException(L10n.getString("Import.CanceledByUser"));
 	
-	private static Table[] TABLES_TO_UPDATE = new PlantloreConstants.Table[] { 
-		Table.AUTHOR, Table.AUTHOROCCURRENCE, Table.HABITAT,
-		Table.METADATA, Table.OCCURRENCE, Table.PUBLICATION };
+	private static Table[] TABLES_TO_UPDATE = new Table[] { 
+		Table.AUTHOR, 
+		Table.AUTHOROCCURRENCE, 
+		Table.HABITAT,
+		Table.METADATA, 
+		Table.OCCURRENCE, 
+		Table.PUBLICATION };
+	
+	private static Set<Integer> IGNORE_ERRORS = new HashSet<Integer>(Arrays.asList(
+			DBLayerException.ERROR_UNSPECIFIED,
+			DBLayerException.ERROR_DELETE, 
+			DBLayerException.ERROR_SAVE,
+			DBLayerException.ERROR_UPDATE,
+			DBLayerException.ERROR_RIGHTS));
 	
 	
 	public OccurrenceImportTask(DBLayer db, OccurrenceParser parser) {
@@ -36,27 +50,26 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 	}
 
 	@Override
-	public Object task() throws IOException, SAXException {
+	public Object task() throws Exception {
 		count = 0;
-		
 		try {
 			parser.startParsing();
 		} catch(SAXException e) {
-			if(e.getException() != fakeException)
-				throw e;
+			// Some exceptions may be wrapped in the SAXException
+			// because the handler cannot throw anything else :/
+			if(e.getException() != null)
+				throw e.getException();
 		} finally {
 			setStatusMessage(L10n.getString("Import.UpdatingEnvironment"));
 			setChanged();
 			notifyObservers( TABLES_TO_UPDATE );
 		}
-		
 		fireStopped(null);
 		return null;
 	}
 	
 	/**
 	 * Import is a very delicate procedure, it should not be restarted.
-	 * 
 	 */
 	@Override
 	public void proceed() {
@@ -66,30 +79,18 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 	
 	public void processRecord(AuthorOccurrence... aos) 
 	throws DBLayerException, RemoteException {
-		
-		if( isCanceled() )
-			throw fakeException;
-		
+		if( isCanceled() ) 
+			throw canceledByUser;
 		count++;
-		setStatusMessage(L10n.getFormattedString("Import.RecordsImported", count));
+		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count));
 		try {
-			
-			if(aos == null || aos.length == 0)
-				throw new DBLayerException(L10n.getString("Error.IncompleteRecord"));
-				
 			dbutils.processRecord(aos[0].getOccurrence(), aos);
-			
-		} catch(DBLayerException e) {
-			logger.error("Unable to process record No. "+count+". Here's why " + e.getMessage());
-			if( e.isReconnectNecessary() )
+		} 
+		catch(DBLayerException e) {
+			if( IGNORE_ERRORS.contains(e.getErrorCode()) )
+				setStatusMessage( e.getMessage() );
+			else
 				throw e;
-			setStatusMessage(e.getMessage());
-		} catch(RemoteException e) {
-			logger.error("Unable to process record No. "+count+". Here's why " + e.getMessage());
-			throw e;
 		}
 	}
-	
-	
-
 }
