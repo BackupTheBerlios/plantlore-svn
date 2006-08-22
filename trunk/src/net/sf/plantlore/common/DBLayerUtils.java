@@ -35,8 +35,8 @@ import net.sf.plantlore.common.record.Village;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
+import net.sf.plantlore.common.PlantloreConstants.Intention;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.client.imports.Parser.Intention;
 
 
 import org.apache.log4j.Logger;

@@ -51,7 +51,25 @@ public class PlantloreConstants {
     VILLAGE};
     
     
-    public static final Map<Class, Table> classToTable = new HashMap<Class, Table>(20);
+    /**
+	 * Some record may have been intended for a certain action.
+	 * These can be:
+	 * <ul>
+	 * <li><b>UNKNOWN</b> - usually means the default action,</li>
+	 * <li><b>INSERT</b> - the record should be inserted, or updated if it is already in the database,</li>
+	 * <li><b>UPDATE</b> - the record should be updated, or inserted if it is not in the database,</li>
+	 * <li><b>DELETE</b> - the record should be deleted.</li>
+	 * </ul>
+	 * The Default Director may use this information to perform a certain action
+	 * more cleanly.
+	 * 
+	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @since 2006-05-08
+	 */
+	public static enum Intention { UNKNOWN, INSERT, DELETE, UPDATE }
+
+
+	public static final Map<Class, Table> classToTable = new HashMap<Class, Table>(20);
     
     static {
     	classToTable.put(AuthorOccurrence.class, Table.AUTHOROCCURRENCE);
