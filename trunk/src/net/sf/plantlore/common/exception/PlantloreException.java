@@ -18,4 +18,8 @@ public class PlantloreException extends Exception implements Serializable {
 	public PlantloreException() { super(); }
 
 	public PlantloreException(String message) { super(message); }
+	
+	public PlantloreException(Throwable exception) { super(exception); }
+	
+	public PlantloreException(String message, Throwable exception) { super(message, exception); }
 }

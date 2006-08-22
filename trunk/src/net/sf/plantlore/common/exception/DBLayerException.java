@@ -1,5 +1,7 @@
 package net.sf.plantlore.common.exception;
 
+import org.hibernate.JDBCException;
+
 
 /**
  * An exception thrown every time something in the database layer
@@ -20,6 +22,8 @@ public class DBLayerException extends PlantloreException {
         private String errorInfo;
     
         // ================= ERROR CODES ===============
+        /** It was not possible to detect the reason why the operation failed. */
+        public static final int ERROR_UNKNOWN = -1;
         /** Database configuration cannot be loaded properly */
         public static final int ERROR_LOAD_CONFIG = 1;
         /** Connection to the database failed or no connection available */
@@ -63,6 +67,19 @@ public class DBLayerException extends PlantloreException {
         
         /** Create new DBLayerException with an error message */
         public DBLayerException(String message) { super(message); }
+        
+        // Better constructor to allow proper exception wrapping.
+        public DBLayerException(String message, Throwable originalException) {
+        	super(message, originalException);
+        	if(originalException instanceof JDBCException)        	
+        		setError( translateSQLState( ((JDBCException)originalException).getSQLState()), originalException.getMessage() );
+        }
+        
+        // Better constructor to allow proper exception wrapping.
+        public DBLayerException(String message, int error, Throwable originalException) {
+        	super(message, originalException);
+        	setError( error, originalException.getMessage() );
+        }
         
         
         public boolean isReconnectNecessary() {
