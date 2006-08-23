@@ -257,26 +257,27 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Session session = useOwnTransaction ? sessionFactory.openSession() : this.txSession;
         int recordId = -1;
         try {
-        	
+            
             // Begin transaction, if it is required. If not, the `tx` stays null.
-        	if(useOwnTransaction) tx = session.beginTransaction();
-        	
+            if(useOwnTransaction) tx = session.beginTransaction();
+            
             // Make changes in the database.
-        	switch(operation) {
-        	case INSERT:
-                recordId = (Integer)session.save(data);            
-                if(saveHistory) saveHistory(session, data, INSERT, recordId);
-                break;
-        	case UPDATE:
-        		session.update(data);
-                if(saveHistory) saveHistory(session, data, UPDATE, null);
-        	case DELETE:
-                 session.delete(data);
-                 if(saveHistory) saveHistory(session, data, DELETE, null);
-        		break;
-        	default:
-        		throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
-        	}
+            switch(operation) {
+                case INSERT:
+                    recordId = (Integer)session.save(data);
+                    if(saveHistory) saveHistory(session, data, INSERT, recordId);
+                    break;
+                case UPDATE:
+                    session.update(data);
+                    if(saveHistory) saveHistory(session, data, UPDATE, null);
+                    break;
+                case DELETE:
+                    session.delete(data);
+                    if(saveHistory) saveHistory(session, data, DELETE, null);
+                    break;
+                default:
+                    throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
+            }
 
             // Commit transaction.
             if(useOwnTransaction) tx.commit();
