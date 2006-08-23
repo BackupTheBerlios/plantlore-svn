@@ -125,6 +125,8 @@ public class OccurrenceTableModel extends AbstractTableModel {
                                              // in case that other threads want to read the data.
                 
         Object[] records = dblayer.more(resultid, 0, resultCount - 1);
+        dblayer.closeQuery(sq);
+
         Object[] projArray;
         Integer id = -1;
         Row row = null;

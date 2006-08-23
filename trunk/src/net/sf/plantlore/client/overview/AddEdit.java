@@ -134,6 +134,9 @@ public class AddEdit extends Observable {
     public int setRecord(Integer occurrenceId) throws DBLayerException, RemoteException {
         logger.debug("Loading AddEdit data for occurrence id "+occurrenceId);
         
+        clearOccurrence();
+        clearLocation();
+        
         DBLayerUtils dlu = new DBLayerUtils(database);
         this.o = (Occurrence) dlu.getObjectFor(occurrenceId, Occurrence.class);
         coordinateSystem = WGS84;
@@ -1098,42 +1101,37 @@ public class AddEdit extends Observable {
     /**As a side effect stores the AuthorOccurrence objects into <code>authorOccurrences</code>
      * Also creates new resultRevision arrayList and loads data into it... :-/
      */
-    private ArrayList<Pair<Pair<String,Integer>,String>> getAuthorsOf(Occurrence o) {
+    private ArrayList<Pair<Pair<String,Integer>,String>> getAuthorsOf(Occurrence o) throws RemoteException, DBLayerException {
         ArrayList<Pair<Pair<String,Integer>,String>> authorResults = new ArrayList<Pair<Pair<String,Integer>,String>>();
         authorOccurrences = new HashMap<Integer,AuthorOccurrence>();
         resultRevision = new ArrayList();
-        //FIXME:
-        try {
-            //Pair<Pair<String,Integer>,Pair<String,Integer>> p;
-            SelectQuery sq = database.createQuery(AuthorOccurrence.class);        
-            sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
-            sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
-            int resultid = database.executeQuery(sq);
-            int resultCount = database.getNumRows(resultid);
-            Object[] results = database.more(resultid, 0, resultCount-1);
-            Object[] tmp;
-            AuthorOccurrence ao;
-            Author a;
-            for (int i = 0; i < resultCount; i++) {
-                tmp = (Object[]) results[i];
-                ao = (AuthorOccurrence)tmp[0];
-                a = ao.getAuthor();
-                String role = ao.getRole();
-                if (role == null)
-                    role = "";/* avoid problems with null value... (we need to compare role for example in checkData() where we do role.equals())
-                            * so if we didn't set it here to empty string a NullPointerException could be thrown
-                            */
-                authorResults.add(new Pair<Pair<String,Integer>,String>(
-                        new Pair<String,Integer>(a.getWholeName(),a.getId()),role ) );
-                authorOccurrences.put(a.getId(),ao);
-                resultRevision.add(ao.getNote());
-            }
-            database.closeQuery(sq);
-        } catch (DBLayerException ex) {
-            ex.printStackTrace();
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
+
+        //Pair<Pair<String,Integer>,Pair<String,Integer>> p;
+        SelectQuery sq = database.createQuery(AuthorOccurrence.class);        
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
+        int resultid = database.executeQuery(sq);
+        int resultCount = database.getNumRows(resultid);
+        Object[] results = database.more(resultid, 0, resultCount-1);
+        Object[] tmp;
+        AuthorOccurrence ao;
+        Author a;
+        for (int i = 0; i < resultCount; i++) {
+            tmp = (Object[]) results[i];
+            ao = (AuthorOccurrence)tmp[0];
+            a = ao.getAuthor();
+            String role = ao.getRole();
+            if (role == null)
+                role = "";/* avoid problems with null value... (we need to compare role for example in checkData() where we do role.equals())
+                        * so if we didn't set it here to empty string a NullPointerException could be thrown
+                        */
+            authorResults.add(new Pair<Pair<String,Integer>,String>(
+                    new Pair<String,Integer>(a.getWholeName(),a.getId()),role ) );
+            authorOccurrences.put(a.getId(),ao);
+            resultRevision.add(ao.getNote());
         }
+        database.closeQuery(sq);
+        
         return authorResults;
     }
     
@@ -1308,28 +1306,8 @@ public class AddEdit extends Observable {
     //the not null values are forced by calling checkData before store()
     public void clear() {
         logger.debug("Clearing add model");
-        if (! preloadAuthors)
-            clearAuthors();
-        habitatDescription = null;
-        year = Calendar.getInstance().get(Calendar.YEAR);
-        habitatNote = null;
-        occurrenceNote = null;
-        phytCountry = null;
-        quadrant = null;
-        altitude = null;
-        longitude = null;
-        latitude = null;
-        source = null;
-        publication = null;//new Pair<String,Integer>("",-1);
-        herbarium = null;
-        
-        month = Calendar.getInstance().get(Calendar.MONTH);
-        day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        time = null;
-        
-        occurrenceTableModel.clear();
-        setChanged();
-        notifyObservers("CLEAR");
+        clearLocation();
+        clearOccurrence();
     }
     
     public void clearLocation() {
