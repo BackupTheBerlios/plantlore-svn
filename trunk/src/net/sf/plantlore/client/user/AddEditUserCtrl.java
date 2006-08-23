@@ -81,7 +81,7 @@ public class AddEditUserCtrl {
         	// Get information about operation - ADD, EDIT, DETAILS
             logger.debug("Operation " + model.getOperation() + "was called");
             model.setUsedClose(false);
-            if (model.getOperation().equals("ADD")) {
+            if (model.getOperation().equals(UserManager.ADD)) {
                 logger.debug("Add of User.");
                 //check wether all obligatory fields were filled 
                  if (view.checkNotNull()) {
@@ -93,7 +93,7 @@ public class AddEditUserCtrl {
                     //create new instance of User and save filed values    
                    User user = new User();                                                                            
                    user.setLogin(view.loginText.getText());
-                   user.setPassword(view.passwordtext.getText());
+                   model.setPassword(view.passwordtext.getText());
                    user.setFirstName(view.firstNameText.getText());
                    user.setSurname(view.surnameText.getText());
                    user.setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
@@ -126,12 +126,12 @@ public class AddEditUserCtrl {
                     model.setRight(right);  
                     view.close();
                     }                                                                   
-           } else if (model.getOperation().equals("EDIT")) {  
+           } else if (model.getOperation().equals(UserManager.EDIT)) {  
                logger.debug("Edit of User.");
                 //check wether all obligatory fields were filled 
                 if (view.checkNotNull()) {
                     //Load data                                                          
-                   model.getUserRecord().setPassword(view.passwordtext.getText());
+                   model.setPassword(view.passwordtext.getText());
                    model.getUserRecord().setFirstName(view.firstNameText.getText());
                    model.getUserRecord().setSurname(view.surnameText.getText());
                    model.getUserRecord().setWholeName(view.firstNameText.getText()+" "+view.surnameText.getText());
@@ -157,10 +157,11 @@ public class AddEditUserCtrl {
                        right.setAdd(1);
                    } else {
                        right.setAdd(0);
-                   }                   
+                   }    
+                   model.setRight(right);  
                    view.close(); 
                 }
-           } else if (model.getOperation().equals("DETAILS")) {
+           } else if (model.getOperation().equals(UserManager.DETAIL)) {
                 logger.debug("Details of User.");
                 view.close();
            } else {

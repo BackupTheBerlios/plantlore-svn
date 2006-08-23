@@ -93,6 +93,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
       public void setEditForm() {
          operationButton.setText(L10n.getString("UserManager.ButtonEdit"));
          loginText.setEditable(false);
+         passwordLabel.setText(L10n.getString("UserManager.Password")+ ": (**) ");
          
          Pair<String, Integer>[] users = model.getUsers();
          String[] choices = new String[users.length];
@@ -119,6 +120,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
        this.editGroupTextArea.setEditable(false);
        this.noteText.setEditable(false);
        this.editGroupTextArea.setEditable(false);
+       passwordtext.setText("******");
      }
      
      /**
@@ -128,7 +130,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
            //Get selected user object
            User user = model.getUserRecord();      
            loginText.setText(user.getLogin());
-           passwordtext.setText(user.getPassword());
+           passwordtext.setText("");
            firstNameText.setText(user.getFirstName());
            surnameText.setText(user.getSurname());
            emailText.setText(user.getEmail());
@@ -187,7 +189,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         if (this.loginText.getText().equals("")) {
             JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Login") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
-        } else if (this.passwordtext.getText().equals("")) {
+        } else if (this.passwordtext.getText().equals("") && model.getOperation().equals(UserManager.ADD)) {
             JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Password") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (this.firstNameText.getText().equals("")) {
@@ -227,7 +229,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         noteText = new javax.swing.JTextArea();
         dropWhenLabel = new javax.swing.JLabel();
         passwordtext = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        passwordLabel = new javax.swing.JLabel();
         createWhenValueLabel = new javax.swing.JLabel();
         dropWhenValueLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -275,7 +277,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
 
         dropWhenLabel.setText(L10n.getString("UserManager.DropWhen")+ ": ");
 
-        jLabel2.setText(L10n.getString("UserManager.Password")+ ": (*) ");
+        passwordLabel.setText(L10n.getString("UserManager.Password")+ ": (*) ");
 
         createWhenValueLabel.setText("");
 
@@ -342,7 +344,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(loginLabel)
                             .add(surnameLabel)
-                            .add(jLabel2)
+                            .add(passwordLabel)
                             .add(noteLabel)
                             .add(createWhenuser)
                             .add(dropWhenLabel)
@@ -387,7 +389,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                             .add(loginText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel2)
+                            .add(passwordLabel)
                             .add(passwordtext, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -492,7 +494,6 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     private javax.swing.JLabel firstNameLabel;
     protected javax.swing.JTextField firstNameText;
     protected javax.swing.JButton helpButton;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -502,6 +503,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     private javax.swing.JLabel noteLabel;
     protected javax.swing.JTextArea noteText;
     protected javax.swing.JButton operationButton;
+    protected javax.swing.JLabel passwordLabel;
     protected javax.swing.JTextField passwordtext;
     private javax.swing.JLabel surnameLabel;
     protected javax.swing.JTextField surnameText;

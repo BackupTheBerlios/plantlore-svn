@@ -74,7 +74,9 @@ public class UserManager extends Observable {
     /** Direction of type user. 0 = All user,1 = Current user. Default is All user.*/
     private int showUserDirection = 0;    
     /** User login */
-    private String login;        
+    private String login;   
+    /**User password */
+    private String password;
     /** Firstname and surname of user */
     private String wholeName;
     /** Email of user */
@@ -93,6 +95,11 @@ public class UserManager extends Observable {
     public static final int SORT_FIRST_NAME = 1;
     public static final int SORT_SURNAME = 2;
     public static final int SORT_CREATEWHEN = 3;
+    
+    /** Constants used for operations */
+    public static final String ADD = "ADD";
+    public static final String EDIT = "EDIT";
+    public static final String DETAIL = "DETAILS";
   
     /** Constants with error descriptions */
     public static final String ERROR_SEARCH = L10n.getString("Error.UserSearchFailed");
@@ -341,29 +348,29 @@ public class UserManager extends Observable {
     				boolean isAdmin = false;
     				if (right.getAdministrator() == 1) isAdmin = true;
     				//Create database user
-    				database.createUser(userRecord.getLogin(),userRecord.getPassword(), isAdmin); 
+    				database.createUser(userRecord.getLogin(), getPassword(), isAdmin); 
     				//Insert information about user into tRight, tUser
     				int rightId = database.executeInsert(right);
-    	            right.setId(rightId);
-    	            database.executeInsert(userRecord);		
-    	            logger.debug("EXECUTE OK");
-    	            //Add new name (login) of user to user list    	            
-    	            int count = users.length;
-    	            Pair<String, Integer>[] usersNew = new Pair[count+1];
-    	            for(int i=0; i<count; i++) {
-    	            	usersNew[i] = users[i];
-    	            	logger.debug(i + ": " + usersNew.length);
-    	            }
-    	            usersNew[count] = new Pair(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )", userRecord.getId());
-    	            logger.debug(userRecord.getId());
-    	            //TODO overit, zda znam cID nebo je zjistit jinak ... pravdepodobne se rovna count+1    	            
-    	            users = usersNew;
-		        }catch (RemoteException e) {
-		        	logger.error("Process add User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();	
-                    RemoteException remex = new RemoteException(ERROR_ADD + e);
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           		       	    
+                                right.setId(rightId);
+                                database.executeInsert(userRecord);		
+                                logger.debug("EXECUTE OK");
+                                //Add new name (login) of user to user list    	            
+                                int count = users.length;
+                                Pair<String, Integer>[] usersNew = new Pair[count+1];
+                                for(int i=0; i<count; i++) {
+                                    usersNew[i] = users[i];
+                                    logger.debug(i + ": " + usersNew.length);
+                                }
+                                usersNew[count] = new Pair(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )", userRecord.getId());
+                                logger.debug(userRecord.getId());
+                                //TODO overit, zda znam cID nebo je zjistit jinak ... pravdepodobne se rovna count+1    	            
+                                users = usersNew;
+                        }catch (RemoteException e) {
+                                logger.error("Process add User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
+                                database.rollbackTransaction();	
+                                RemoteException remex = new RemoteException(ERROR_ADD + e);
+                                remex.setStackTrace(e.getStackTrace());
+                                throw remex; 		           		       	    
 		        } catch (DBLayerException e) {
 		        	logger.error("Process add User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();	
@@ -400,27 +407,31 @@ public class UserManager extends Observable {
     				boolean isAdmin = false;
     				if (userRecord.getRight().getAdministrator() == 1) isAdmin = true;
     				//Edit database user
-    				database.alterUser(userRecord.getLogin(), userRecord.getPassword(), isAdmin);
-    				//Edit information about user in database
+                                if (!getPassword().equals("")) {
+                                    database.alterUser(userRecord.getLogin(), getPassword(), isAdmin);
+                                    logger.debug("Alter USER");
+                                }
+    				//Edit information about user in database                                
     				database.executeUpdateInTransaction(userRecord.getRight());
-    	            database.executeUpdateInTransaction(userRecord);
-    	            userList.set(idRecord, userRecord);
-    	            //Update list of names (logins) of users
-    	            users[userRecord.getId()].setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
+                                database.executeUpdateInTransaction(userRecord);                                
+                                userList.set(idRecord, userRecord);
+                                //Update list of names (logins) of users
+                                users[userRecord.getId()].setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
 		        }catch (RemoteException e) {
 		        	logger.error("Process update User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();		        	
-                    RemoteException remex = new RemoteException(ERROR_EDIT + e.getMessage());
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           		       	    
+                                RemoteException remex = new RemoteException(ERROR_EDIT + e.getMessage());
+                                remex.setStackTrace(e.getStackTrace());
+                                throw remex; 		           		       	    
 		        } catch (DBLayerException e) {
 		        	logger.error("Process update User failed. DBLayer exception caught in UserManager. Details: "+e.getMessage());       	                                                   
 		        	database.rollbackTransaction();		        
-                    DBLayerException dbex = new DBLayerException(ERROR_EDIT + e.getMessage());
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 		            
+                                DBLayerException dbex = new DBLayerException(ERROR_EDIT + e.getMessage());
+                                dbex.setStackTrace(e.getStackTrace());
+                                throw dbex; 		            
 		        } 	
 		        database.commitTransaction();
+                        logger.debug("Transakce v editu byla ukoncena.");
 		        setInfoFinishedTask(true);
 		        return null;
     		}
@@ -967,5 +978,23 @@ public class UserManager extends Observable {
     public void setRight(Right right) {
         this.right = right;
     }
+    
+      /**
+     *   Get password of the user
+     *   @return password of the user
+     *   @see setPassword
+     */
+    public String getPassword() {
+        return this.password;
+    }
+    
+    /**
+     *   Set password of the user
+     *   @param password string containing password of the user
+     *   @see getPassword
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }   
     
   }

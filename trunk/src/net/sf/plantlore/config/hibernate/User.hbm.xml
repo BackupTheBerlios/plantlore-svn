@@ -13,12 +13,7 @@
                 length="20"
                 name="login"
                 not-null="true"
-                type="java.lang.String"/>
-      <property column="CPASSWORD"
-                length="20"
-                name="password"
-                not-null="true"
-                type="java.lang.String"/>
+                type="java.lang.String"/>     
       <property column="CFIRSTNAME"
                 length="20"
                 name="firstName"

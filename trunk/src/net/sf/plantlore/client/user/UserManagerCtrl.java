@@ -274,7 +274,7 @@ public class UserManagerCtrl {
         	   return;
            }
            //set information abut selected operation ADD
-           model.setOperation("ADD");           
+           model.setOperation(UserManager.ADD);           
            //create add dialog if dialog not exist and open Add dialog  
            if (addView == null) {
         	   addView = new AddEditUserView(model, view,true);
@@ -322,13 +322,13 @@ public class UserManagerCtrl {
                view.showWarningMessage(UserManager.WARNING_SELECTION_TITLE, UserManager.WARNING_SELECTION);
            }else {
                //Set information about selected operation - EDIT
-               model.setOperation("EDIT");
+               model.setOperation(UserManager.EDIT);
                //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
                model.setUserRecord(resultNumber);                
                if (editView == null) {
             	   	editView = new AddEditUserView(model,view,true);
-        	   		new AddEditUserCtrl(editView, model);
+        	   	new AddEditUserCtrl(editView, model);
                }               
                //Load data and setting of edit dialog
                editView.loadData();                              
@@ -336,6 +336,7 @@ public class UserManagerCtrl {
                editView.setVisible(true);               
                // User press button close
                if (model.usedClose()) return;
+               model.setUsedClose(true);
                //Update User               
                Task task = model.editUserRecord();
                
@@ -370,13 +371,13 @@ public class UserManagerCtrl {
                view.showWarningMessage(UserManager.WARNING_SELECTION_TITLE, UserManager.WARNING_SELECTION);
            } else {
                //Set information about selected operation - DETAILS
-                model.setOperation("DETAILS");
+                model.setOperation(UserManager.DETAIL);
                //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
                model.setUserRecord(resultNumber);                             
                if (detailView == null) {
                		detailView = new AddEditUserView(model, view,true);
-           			new AddEditUserCtrl(detailView, model);
+                        new AddEditUserCtrl(detailView, model);
                }
                //Load data and setting of detail dialog            
                detailView.loadData();               

@@ -19,8 +19,7 @@ public class User extends Record {
 	
     /** Parameters of the user */
     private Integer id;
-    private String login;
-    private String password;
+    private String login;    
     private String firstName;
     private String surname;
     private String wholeName;
@@ -34,8 +33,7 @@ public class User extends Record {
 
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
-    public static final String LOGIN = "login";    
-    public static final String PASSWORD = "password";
+    public static final String LOGIN = "login";        
     public static final String FIRSTNAME = "firstName";    
     public static final String SURNAME = "surname";    
     public static final String WHOLENAME = "wholeName";    
@@ -46,7 +44,7 @@ public class User extends Record {
     public static final String RIGHT = "right";    
     public static final String NOTE = "note";    
 
-    //public enum Column {ID, LOGIN, PASSWORD, FIRSTNAME, SURNAME, WHOLENAME, EMAIL, ADDRESS, CREATEWHEN, DROPWHEN, RIGHT, NOTE};
+    //public enum Column {ID, LOGIN, FIRSTNAME, SURNAME, WHOLENAME, EMAIL, ADDRESS, CREATEWHEN, DROPWHEN, RIGHT, NOTE};
         
     /** Creates a new instance of UserRecord */
     public User() {
@@ -97,27 +95,7 @@ public class User extends Record {
      */
     public void setLogin(String login) {
         this.login = login;
-    }
-    
-    
-    /**
-     *   Get password of the user
-     *   @return password of the user
-     *   @see setPassword
-     */
-    public String getPassword() {
-        return this.password;
-    }
-    
-    /**
-     *   Set password of the user
-     *   @param password string containing password of the user
-     *   @see getPassword
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
+    }     
     
     /**
      *   Get first name of the user
