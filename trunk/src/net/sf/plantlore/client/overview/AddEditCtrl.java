@@ -496,9 +496,11 @@ public class AddEditCtrl {
                             model.storeRecord(true);
                             view.setVisible(false);                    
                     }
+                    JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.EditConfirmation"),L10n.getString("AddEdit.EditConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
                 } else {//inAddMode
                     model.storeRecord(true);
-                    view.setVisible(false);
+                    JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.AddConfirmation"),L10n.getString("AddEdit.AddConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    //view.setVisible(false);
                 }
             } catch (RemoteException ex) {
                 logger.error("Remote problem: "+ex);
@@ -515,7 +517,7 @@ public class AddEditCtrl {
     
     class CancelButtonListener extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            System.out.println("Cancel");
+            logger.info("AddEdit dialog cancelled");
             view.setVisible(false);
         }
     }//CancelButtonListener

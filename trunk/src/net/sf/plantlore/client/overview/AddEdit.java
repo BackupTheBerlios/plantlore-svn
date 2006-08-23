@@ -32,6 +32,7 @@ import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.Village;
@@ -756,6 +757,7 @@ public class AddEdit extends Observable {
     }
     
     public void storeRecord(boolean updateAllPlants) throws DBLayerException, RemoteException {
+        boolean newOccurrenceInserted = false;
         DBLayerUtils dlu = new DBLayerUtils(database);
 
         logger.info("Storing occurrence record...");
@@ -874,6 +876,7 @@ public class AddEdit extends Observable {
                             aoTmp.setDeleted(0);
                             database.executeInsertInTransaction(aoTmp);
                             logger.debug("AuthorOccurrence for "+pTmp.getFirst().getFirst()+" inserted. Id="+aoTmp.getId());
+                            newOccurrenceInserted = true;
                         }
                     }
                     
@@ -903,6 +906,8 @@ public class AddEdit extends Observable {
                         }
                     
                     database.commitTransaction();
+                    occurrenceTableModel.reload();
+                    newOccurrenceInserted = false;
                     
                 } else { //Add Mode
                     Village v;
@@ -931,9 +936,16 @@ public class AddEdit extends Observable {
                     }
                     
                     logger.info("Creating a shared habitat");
-                    int habId = database.executeInsertInTransaction(h);//insert the shared habitat
-                    h.setId(habId);
-                    logger.debug("Shared habitat created. Id="+h.getId());
+                    Record rec = dlu.findMatchInDB(h);
+                    if (rec == null) {
+                        logger.debug("THIS HABITAT is NOT in the database yet. Creating a new one.");
+                        int habId = database.executeInsertInTransaction(h);//insert the shared habitat
+                        h.setId(habId);
+                        logger.debug("Shared habitat created. Id="+h.getId());
+                    } else {
+                        logger.debug("THIS HABITAT ALREADY IS in the database! Using it.");
+                        h = (Habitat) rec;
+                    }
                         
                     for (int j = 0; j < taxonList.size(); j++) {
                         logger.info("Creating an Occurrence using the shared habitat");
@@ -956,7 +968,9 @@ public class AddEdit extends Observable {
                     }// for taxonList
                     
                     database.commitTransaction();
+                    occurrenceTableModel.load(h.getId());
                 }//add mode
+                
         } catch (DBLayerException ex) {
             database.rollbackTransaction();
             DBLayerException dbex = new DBLayerException("Add/Edit was rolled back. Some database problem occurred during processing: "+ex);

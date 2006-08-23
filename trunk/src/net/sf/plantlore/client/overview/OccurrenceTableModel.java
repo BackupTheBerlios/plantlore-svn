@@ -45,6 +45,8 @@ public class OccurrenceTableModel extends AbstractTableModel {
     private Object[] data;
     private DBLayerUtils dlu;
     
+    /** used for reloading */
+    private Integer currentHabitatId;
     /** Creates a new instance of OccurrenceTableModel */
     public OccurrenceTableModel() {
     }
@@ -92,6 +94,7 @@ public class OccurrenceTableModel extends AbstractTableModel {
      */
     public int load(Integer habitatId) throws DBLayerException, RemoteException {
         boolean occurrenceCountOverflow = false;
+        this.currentHabitatId = habitatId;
         logger.info("OccurenceTableModel: loading occurrences for habitat "+habitatId);
         SelectQuery sq = dblayer.createQuery(AuthorOccurrence.class);
         sq.createAlias(AuthorOccurrence.AUTHOR,"author");
@@ -147,6 +150,13 @@ public class OccurrenceTableModel extends AbstractTableModel {
             return -1;
         else
             return resultCount;
+    }//load()
+    
+    /** Loads the occurrences for last habitat again.
+     *
+     */
+    public void reload() throws DBLayerException, RemoteException {
+        load(currentHabitatId);
     }
     
     public void setDBLayer(DBLayer dblayer) {
