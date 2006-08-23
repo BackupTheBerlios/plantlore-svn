@@ -223,8 +223,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             Author aut = (Author)record;
             aut.setCreatedWho(this.plantloreUser);
         } else if(record instanceof Metadata) {
-        	Metadata met = (Metadata)record;
-        	met.setDateCreate(now);
+        	Metadata met = (Metadata)record;        	
         	met.setDateModified(now);
         }
     }
