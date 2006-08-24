@@ -73,7 +73,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 	 */
 	protected boolean strict = true;
 	
-	protected final int CAPACITY = 32;
+	protected int capacity = 32;
 	
 	
 	/**
@@ -214,7 +214,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 						}
 					}
 				
-					if(!strict && !prefix.equals(previousPrefix) && prefix.length() < CAPACITY) { // non-strict mode allows entering an unknown value 
+					if(!strict && !prefix.equals(previousPrefix) && prefix.length() < capacity) { // non-strict mode allows entering an unknown value 
 						super.remove(0, getLength());
 						super.insertString(0, prefix, null);
 						previousPrefix = prefix;
@@ -283,6 +283,14 @@ public class AutoComboBoxNG3 extends JComboBox {
 		public void keyTyped(KeyEvent arg0) {}
 		public void keyReleased(KeyEvent arg0) {}
 		public void focusGained(FocusEvent arg0) {}
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
 	}
 
 }
