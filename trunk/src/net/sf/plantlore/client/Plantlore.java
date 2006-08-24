@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import net.sf.plantlore.client.AppCore;
 import net.sf.plantlore.client.AppCoreCtrl;
 import net.sf.plantlore.client.AppCoreView;
+import net.sf.plantlore.common.GlobalExceptionHandler;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.debug.ConnectionMonitor;
 import net.sf.plantlore.common.debug.MemoryMonitor;
@@ -151,6 +152,10 @@ public class Plantlore {
             view.setVisible(true);
             EventQueue.invokeLater( new SplashScreenCloser() );
             logger.info("AppCore MVC constructed. Plantlore client should be visible now.");
+            
+            logger.debug("Installing global exception handler.");
+            GlobalExceptionHandler.install( ctrl.silentFinalAction );
+            
         } catch(RuntimeException e) {
             //new ExceptionDialog(view,"Some exception was thrown: "+e);
             e.printStackTrace();

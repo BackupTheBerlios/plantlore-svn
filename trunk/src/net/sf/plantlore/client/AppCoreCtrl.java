@@ -295,6 +295,8 @@ public class AppCoreCtrl {
 	AbstractAction logoutAction = new LogoutAction();
 
 	ReconnectAction reconnectAction = new ReconnectAction();
+	
+	ExitListener silentFinalAction = new ExitListener();
 
 	/** Creates a new instance of AppCoreCtrl */
 	public AppCoreCtrl(AppCore model, AppCoreView view) {
@@ -305,7 +307,7 @@ public class AppCoreCtrl {
 		this.view = view;
 		view.setSettingsAction(settingsAction);
 		view.setPrintAction(printAction);
-		view.addExitListener(new ExitListener());
+		view.addExitListener(silentFinalAction);
 		view.setHelpContentsAction(helpContentsAction);
 		view.setHelpAboutAction(helpAboutAction);
 		view.setExportAction(exportAction);
@@ -518,9 +520,9 @@ public class AppCoreCtrl {
 			try {
 				model.savePreferences();
 			} catch (IOException ex) {
-				JOptionPane.showMessageDialog(view,
-						"Problem while saving configuration: "
-								+ ex.getMessage());
+//				JOptionPane.showMessageDialog(view,
+//						"Problem while saving configuration: "
+//								+ ex.getMessage());
 			}
 
 			// The database layer created by a DBLayerFactory MUST be
@@ -614,7 +616,7 @@ public class AppCoreCtrl {
 					exportModel.useProjections(true);
 					exportModel.setRootTable((Class) queryParam[2]);
 				}
-
+				
 				exportModel.setSelectQuery(query);
 				exportModel.setSelection(model.getTableModel().getSelection());
 			} catch (DBLayerException e) {
