@@ -202,30 +202,37 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     }
     
     
+    protected void touchRecord(Object record) {
+    	java.util.Date now = new Date();
+        if(record instanceof Occurrence) {
+            Occurrence occ = (Occurrence)record;
+            occ.setUpdatedWhen(now);
+            occ.setUpdatedWho(this.plantloreUser);
+        } else if(record instanceof Metadata) {
+        	((Metadata)record).setDateModified(now);
+        }
+    }
+    
     protected void completeRecord(Object record) {
     	java.util.Date now = new Date();
         if(record instanceof Occurrence) {
             Occurrence occ = (Occurrence)record;
             occ.setCreatedWhen(now);
-            occ.setUpdatedWhen(now);
             occ.setCreatedWho(this.plantloreUser);
-            occ.setUpdatedWho(this.plantloreUser);
             /*
-             * UNIQUE ID MUST BE SET AS WELL
+             * TODO: UNIQUE ID MUST BE SET AS WELL
              */
         } else if(record instanceof Habitat) {
-            Habitat hab = (Habitat)record;
-            hab.setCreatedWho(this.plantloreUser);
+            ((Habitat)record).setCreatedWho(this.plantloreUser);
         } else if(record instanceof Publication) {
-            Publication pub = (Publication)record;
-            pub.setCreatedWho(this.plantloreUser);
+            ((Publication)record).setCreatedWho(this.plantloreUser);
         } else if(record instanceof Author) {
-            Author aut = (Author)record;
-            aut.setCreatedWho(this.plantloreUser);
+            ((Author)record).setCreatedWho(this.plantloreUser);
         } else if(record instanceof Metadata) {
-        	Metadata met = (Metadata)record;        	
-        	met.setDateModified(now);
+        	((Metadata)record).setDateCreate(now);
         }
+        
+        touchRecord(record);
     }
     
     protected void checkConnection()
@@ -243,8 +250,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	 // Check whether the connection to the databse has been established.
         checkConnection();
         
-        // Fill in missing parts that DBLayer must complete.
-        completeRecord(data);
+        // INSERT: Fill in missing parts that DBLayer must complete.
+        // UPDATE & DELETE: Update timestamps of the record.
+        if(operation == INSERT)
+        	completeRecord(data);
+        else
+        	touchRecord(data);
         
         // Check whether we have sufficient rights.
         checkRights(data, operation);
