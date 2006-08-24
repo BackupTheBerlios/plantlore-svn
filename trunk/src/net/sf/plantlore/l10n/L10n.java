@@ -32,6 +32,7 @@ public class L10n
     private static Preferences prefs;
     private static Logger logger = Logger.getLogger(L10n.class.getPackage().getName());
     private static Locale currentLocale;
+    private static String languageLocale;
     
     /** Creates a new instance of L10n */
     public L10n()
@@ -47,8 +48,11 @@ public class L10n
      */
     public static void load() throws IOException {
         prefs = Preferences.userNodeForPackage(L10n.class);
-        String locale = prefs.get("locale","DUMMY_DEFAULT");
-        
+        languageLocale = prefs.get("locale","DUMMY_DEFAULT");
+        load(languageLocale);
+    }
+    
+    public static void load(String locale) throws IOException {        
         Locale loc;
         if (locale.equals("DUMMY_DEFAULT")) {
             loc = Locale.getDefault();
@@ -149,5 +153,9 @@ public class L10n
     
     public static Locale getCurrentLocale() {
         return (Locale) currentLocale.clone();
+    }
+    
+    public static String getLanguageLocale() {
+    	return languageLocale;
     }
 }

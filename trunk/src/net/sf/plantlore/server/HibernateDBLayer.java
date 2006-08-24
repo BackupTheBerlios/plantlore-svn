@@ -8,6 +8,7 @@
 package net.sf.plantlore.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -130,6 +131,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
         
         this.undertaker = undertaker;
+    }
+    
+    /**
+     * Set the language mutation in order to send messages in same the language
+     * the (possibly remote) User is currently using on his machine.
+     */
+    public void setLanguage(String locale) 
+    throws DBLayerException, RemoteException {
+    	try {
+    		L10n.load(locale);
+    	} catch(IOException e) {}
     }
     
     /**

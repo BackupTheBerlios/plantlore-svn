@@ -36,6 +36,18 @@ public interface DBLayer extends Remote, Serializable {
     public Object[] initialize(String dbID, String user, String password) throws DBLayerException, RemoteException;
 
     /**
+     * The database layer performs several kinds of operations each of which may
+     * fail at any time. In order to notify the User and present him with a reasonable
+     * string describing the problem in the language that the User has set
+     * on the (possibly remote) client, database layer must allow the client to set
+     * the language mutation.
+     * 
+     * @param locale	The string describing the language so that it can be used
+     * in L10n.load() method.
+     */
+    public void setLanguage(String locale) throws DBLayerException, RemoteException;
+    
+    /**
      *  Insert data into the database.
      *
      *  @param data data to insert (one of the data holder objects)

@@ -14,6 +14,7 @@ import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.server.tools.RMI;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
 
@@ -107,19 +108,23 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 		// Connect to the remote server and obtain the RemoteDBLayerFactory
 		logger.debug("1. Connecting to the remote registry @ " + host + ":" + port +" ...");
 		Registry registry = LocateRegistry.getRegistry(host, port);
-		logger.debug("Connected.");
+		
 		
 		logger.debug("2. Obtaining the remote dblayer factory ...");
 		RemoteDBLayerFactory remoteFactory = (RemoteDBLayerFactory) registry.lookup(RemoteDBLayerFactory.ID);
-		logger.debug("Obtained!");
+		
 		
 		// Get the stub from the remote factory and save the information about the connection
 		logger.debug("3. Creating a new dblayer...");
 		DBLayer stub = remoteFactory.create(); // DBLayerException can spawn here (too many users!)
-		logger.debug("Created! :)");
+		
 		
 		ConnectionInfo info = new ConnectionInfo(remoteFactory, null, stub, "localhost -> " + host + ":" + port);
 		client.put(stub, info);
+		
+		// Set the same language on the server side.
+		logger.debug("4. Setting the language...");
+		stub.setLanguage( L10n.getLanguageLocale() );
 		
 		logger.info("New DBLayer created: " + info);
 		
