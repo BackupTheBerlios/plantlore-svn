@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class AuthorOccurrence extends Record implements Deletable {
     private String note;
     private Integer deleted;
     private Integer version;
-    
+        
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
     public static final String AUTHOR = "author";    
@@ -38,7 +39,14 @@ public class AuthorOccurrence extends Record implements Deletable {
     public static final String ROLE = "role";
     public static final String NOTE = "note";
     public static final String DELETED = "deleted";
-    
+
+    private static Hashtable<String,Integer> columnSizes;
+
+    static {
+        columnSizes = new Hashtable<String,Integer>();
+        columnSizes.put(ROLE,20);
+        columnSizes.put(NOTE,4096);        
+    }
     //public enum Column {ID, AUTHOR, OCCURRENCE, ROLE, NOTE, DELETED }
     
     @Override
@@ -52,6 +60,10 @@ public class AuthorOccurrence extends Record implements Deletable {
     
     public List<String> getHistoryColumns() {
         return asList( ROLE, NOTE);
+    }
+    
+    public static int getColumnSize(String columnConst) {
+        return columnSizes.get(columnConst);
     }
     
     @Override
@@ -88,7 +100,6 @@ public class AuthorOccurrence extends Record implements Deletable {
      *   Default constructor to create new class AuthorOccurrences
      */
     public AuthorOccurrence() {
-        
     }
     
     /**

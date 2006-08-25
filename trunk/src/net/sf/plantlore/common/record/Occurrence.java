@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -49,7 +50,7 @@ public class Occurrence extends Record implements Deletable {
     private Integer deleted;
     private String note;
     private Integer version;
-    
+        
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
     public static final String UNITIDDB = "unitIdDb";    
@@ -71,6 +72,20 @@ public class Occurrence extends Record implements Deletable {
     public static final String METADATA = "metadata";    
     public static final String DELETED = "deleted";
     public static final String NOTE = "note";        
+    
+    private static Hashtable<String,Integer> columnSizes;
+    
+    static {
+        columnSizes = new Hashtable<String,Integer>();
+        columnSizes.put(YEARCOLLECTED,2);
+        columnSizes.put(MONTHCOLLECTED,2);
+        columnSizes.put(DAYCOLLECTED,2);
+        columnSizes.put(TIMECOLLECTED,8);
+        columnSizes.put(ISODATETIMEBEGIN,8);
+        columnSizes.put(DATASOURCE,50);
+        columnSizes.put(HERBARIUM,20);
+        columnSizes.put(NOTE,4096);        
+    }
     
     //public enum Column {ID, UNITIDDB, UNITVALUE, HABITAT, PLANT, YEARCOLLECTED, MONTHCOLLECTED, DAYCOLLECTED, TIMECOLLECTED, ISODATETIMEBEGIN, DATASOURCE, PUBLICATION,
     //HERBARIUM, CREATEDWHEN, CREATEDWHO, UPDATEDWHEN, UPDATEDWHO, METADATA, DELETED, NOTE};
@@ -99,6 +114,10 @@ public class Occurrence extends Record implements Deletable {
     	return nn;
     }
     
+    public static int getColumnSize(String columnConst) {
+        return columnSizes.get(columnConst);
+    }
+
     @Override
     public void setValue(String column, Object value) {
     	if(value instanceof String && "".equals(value))
@@ -170,7 +189,6 @@ public class Occurrence extends Record implements Deletable {
     
     /** Creates a new instance of OccurrenceRecord */
     public Occurrence() {
-        
     }        
     
     /**

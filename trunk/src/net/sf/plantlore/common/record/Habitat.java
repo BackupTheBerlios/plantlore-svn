@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class Habitat extends Record implements Deletable {
     private User createdWho;
     private String note;
     private Integer version;
-    
+        
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
     public static final String TERRITORY = "territory";    
@@ -55,6 +56,19 @@ public class Habitat extends Record implements Deletable {
     
     public static final String VILLAGE = "village";
     
+    
+    private static Hashtable<String, Integer> columnSizes;
+    static {
+        columnSizes = new Hashtable<String,Integer>();
+        columnSizes.put(QUADRANT,10);
+        columnSizes.put(DESCRIPTION,255);
+        columnSizes.put(COUNTRY,30);
+        columnSizes.put(ALTITUDE,6);
+        columnSizes.put(LATITUDE,8);
+        columnSizes.put(LONGITUDE,8);
+        columnSizes.put(NOTE,4096);        
+    }
+    
     //public enum Column {ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, DELETED, NOTE};
     
     @Override
@@ -70,6 +84,10 @@ public class Habitat extends Record implements Deletable {
     public List<String> getHistoryColumns() {
         return asList(  TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
                         QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE);
+    }
+    
+    public static int getColumnSize(String columnConst) {
+        return columnSizes.get(columnConst);
     }
     
     @Override 
@@ -128,7 +146,6 @@ public class Habitat extends Record implements Deletable {
      * Default constructor to create new class Habitat
      */
     public Habitat() {
-        
     }
     
     /**
