@@ -44,6 +44,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         initOverview();
         
+        setLocationRelativeTo(null);
         model.addObserver(this); 
         model.addObserver(sbm);
     }

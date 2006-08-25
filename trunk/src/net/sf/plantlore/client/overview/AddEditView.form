@@ -158,7 +158,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
+                                              <Component id="gpsPanel" min="-2" max="-2" attributes="1"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="clearLocationButton" min="-2" max="-2" attributes="0"/>
                                           </Group>
@@ -226,7 +226,7 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
+                                  <Component id="gpsPanel" min="-2" max="-2" attributes="1"/>
                                   <Component id="clearLocationButton" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -357,7 +357,7 @@
                         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                       </AuxValues>
                     </Component>
-                    <Container class="javax.swing.JPanel" name="jPanel1">
+                    <Container class="javax.swing.JPanel" name="gpsPanel">
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -497,33 +497,54 @@
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Load"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="gpsShowButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Show"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JTextField" name="gpsSymbolTextField">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="gpsSymbolLabel">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Symbol:"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="gpsTableLabel">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="GPS table:"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="coordinateSystemLabel">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Coordinate system:"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="gpsChangeButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Change"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -531,6 +552,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Location note:"/>
                       </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                      </AuxValues>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="jScrollPane4">
                       <AuxValues>
@@ -619,7 +643,7 @@
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="occurrenceNoteLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="jScrollPane5" alignment="0" min="-2" max="-2" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -633,7 +657,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="occurrenceNoteLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jScrollPane5" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -828,6 +852,9 @@
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Time:"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JTextField" name="timeTextField">
                           <Properties>
@@ -998,10 +1025,13 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Component class="javax.swing.JLabel" name="jLabel1">
+                    <Component class="javax.swing.JLabel" name="occurrenceNoteLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Occurrence note:"/>
                       </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                      </AuxValues>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearOccurrenceButton">
                       <Properties>
@@ -1034,7 +1064,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="helpButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButton1" linkSize="12" min="-2" max="-2" attributes="0"/>
+                          <Component id="settingsButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                           <Component id="requiredInfoLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="350" max="32767" attributes="0"/>
@@ -1051,7 +1081,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="helpButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="settingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="cancelButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="okButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -1089,10 +1119,13 @@
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButton1">
+                <Component class="javax.swing.JButton" name="settingsButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Nastaven&#xed;"/>
                   </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="requiredInfoLabel">
                   <Properties>

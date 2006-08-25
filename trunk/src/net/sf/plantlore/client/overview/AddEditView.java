@@ -35,6 +35,7 @@ import net.sf.plantlore.client.*;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreHelp;
@@ -88,7 +89,9 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         //occurrenceTable.setRowSelectionAllowed(false);
         
         extendedPanel.setVisible(visible);
-        this.pack();        
+        setLocationRelativeTo(parent);
+        this.pack();
+        new DefaultEscapeKeyPressed(this);
     }
     
            
@@ -118,7 +121,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jScrollPane2 = new javax.swing.JScrollPane();
         descriptionArea = new javax.swing.JTextArea();
         placeDescriptionLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        gpsPanel = new javax.swing.JPanel();
         altitudeLabel = new javax.swing.JLabel();
         latitudeLabel = new javax.swing.JLabel();
         longitudeLabel = new javax.swing.JLabel();
@@ -164,13 +167,13 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         occurrenceNoteArea = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         authorTable = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
+        occurrenceNoteLabel = new javax.swing.JLabel();
         clearOccurrenceButton = new javax.swing.JButton();
         buttonPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        settingsButton = new javax.swing.JButton();
         requiredInfoLabel = new javax.swing.JLabel();
         extendedPanel = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -217,7 +220,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         placeDescriptionLabel.setText("Place description:");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.GPSPanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10)));
+        gpsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.GPSPanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 10)));
         altitudeLabel.setText("Altitude:");
 
         latitudeLabel.setText("Latitude:");
@@ -240,29 +243,29 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         gpsChangeButton.setText("Change");
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
+        org.jdesktop.layout.GroupLayout gpsPanelLayout = new org.jdesktop.layout.GroupLayout(gpsPanel);
+        gpsPanel.setLayout(gpsPanelLayout);
+        gpsPanelLayout.setHorizontalGroup(
+            gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(gpsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(gpsLoadButton)
                     .add(gpsShowButton))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createSequentialGroup()
+                .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(gpsPanelLayout.createSequentialGroup()
                         .add(gpsSymbolLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(gpsSymbolTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(latitudeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
-                    .add(jPanel1Layout.createSequentialGroup()
+                    .add(gpsPanelLayout.createSequentialGroup()
                         .add(gpsTableLabel)
                         .add(155, 155, 155)))
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(jPanel1Layout.createSequentialGroup()
+                .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(gpsPanelLayout.createSequentialGroup()
                         .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(longitudeLabel)
@@ -272,21 +275,21 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .add(altitudeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 77, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel1Layout.createSequentialGroup()
+                    .add(gpsPanelLayout.createSequentialGroup()
                         .add(coordinateSystemLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(gpsChangeButton)))
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(new java.awt.Component[] {gpsChangeButton, gpsLoadButton, gpsShowButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        gpsPanelLayout.linkSize(new java.awt.Component[] {gpsChangeButton, gpsLoadButton, gpsShowButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        jPanel1Layout.linkSize(new java.awt.Component[] {altitudeTextField, gpsSymbolTextField, latitudeTextField, longitudeTextField}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        gpsPanelLayout.linkSize(new java.awt.Component[] {altitudeTextField, gpsSymbolTextField, latitudeTextField, longitudeTextField}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+        gpsPanelLayout.setVerticalGroup(
+            gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(gpsPanelLayout.createSequentialGroup()
+                .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(gpsLoadButton)
                     .add(gpsSymbolLabel)
                     .add(gpsSymbolTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -297,14 +300,14 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(altitudeLabel)
                     .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(gpsShowButton)
                     .add(gpsTableLabel)
                     .add(gpsChangeButton)
                     .add(coordinateSystemLabel)))
         );
 
-        jPanel1Layout.linkSize(new java.awt.Component[] {gpsLoadButton, gpsShowButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+        gpsPanelLayout.linkSize(new java.awt.Component[] {gpsLoadButton, gpsShowButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         locationNoteLabel.setText("Location note:");
 
@@ -349,7 +352,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel5Layout.createSequentialGroup()
-                                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(gpsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(clearLocationButton))
                             .add(jPanel5Layout.createSequentialGroup()
@@ -401,7 +404,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(gpsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(clearLocationButton))
                 .addContainerGap())
         );
@@ -531,7 +534,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         ));
         jScrollPane1.setViewportView(authorTable);
 
-        jLabel1.setText("Occurrence note:");
+        occurrenceNoteLabel.setText("Occurrence note:");
 
         clearOccurrenceButton.setText("Vyma\u017e");
 
@@ -573,7 +576,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .add(19, 19, 19))
                     .add(jPanel7Layout.createSequentialGroup()
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel1)
+                            .add(occurrenceNoteLabel)
                             .add(jScrollPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())))
         );
@@ -585,7 +588,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             .add(jPanel7Layout.createSequentialGroup()
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel7Layout.createSequentialGroup()
-                        .add(jLabel1)
+                        .add(occurrenceNoteLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jScrollPane5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanel7Layout.createSequentialGroup()
@@ -657,7 +660,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             }
         });
 
-        jButton1.setText("Nastaven\u00ed");
+        settingsButton.setText("Nastaven\u00ed");
 
         requiredInfoLabel.setText("requiredInfoLabel");
 
@@ -669,7 +672,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(helpButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButton1)
+                .add(settingsButton)
                 .add(64, 64, 64)
                 .add(requiredInfoLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 350, Short.MAX_VALUE)
@@ -679,7 +682,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        buttonPanelLayout.linkSize(new java.awt.Component[] {cancelButton, helpButton, jButton1, okButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        buttonPanelLayout.linkSize(new java.awt.Component[] {cancelButton, helpButton, okButton, settingsButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         buttonPanelLayout.setVerticalGroup(
             buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -687,7 +690,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)
-                    .add(jButton1)
+                    .add(settingsButton)
                     .add(cancelButton)
                     .add(okButton)
                     .add(requiredInfoLabel))
@@ -1144,24 +1147,22 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JButton clearLocationButton;
     protected javax.swing.JButton clearOccurrenceButton;
     private javax.swing.ButtonGroup convertCoordinatesGroup;
-    private javax.swing.JLabel coordinateSystemLabel;
+    protected javax.swing.JLabel coordinateSystemLabel;
     protected javax.swing.JLabel countryLabel;
     protected javax.swing.JLabel dayLabel;
     protected javax.swing.JTextField dayTextField;
     protected javax.swing.JTextArea descriptionArea;
     private javax.swing.JPanel extendedPanel;
-    private javax.swing.JButton gpsChangeButton;
-    private javax.swing.JButton gpsLoadButton;
-    private javax.swing.JButton gpsShowButton;
-    private javax.swing.JLabel gpsSymbolLabel;
-    private javax.swing.JTextField gpsSymbolTextField;
-    private javax.swing.JLabel gpsTableLabel;
+    protected javax.swing.JButton gpsChangeButton;
+    protected javax.swing.JButton gpsLoadButton;
+    protected javax.swing.JPanel gpsPanel;
+    protected javax.swing.JButton gpsShowButton;
+    protected javax.swing.JLabel gpsSymbolLabel;
+    protected javax.swing.JTextField gpsSymbolTextField;
+    protected javax.swing.JLabel gpsTableLabel;
     protected javax.swing.JButton helpButton;
     protected javax.swing.JLabel herbariumLabel;
     protected javax.swing.JTextField herbariumTextField;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    protected javax.swing.JPanel jPanel1;
     protected javax.swing.JPanel jPanel4;
     protected javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
@@ -1175,12 +1176,13 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel latitudeLabel;
     protected javax.swing.JTextField latitudeTextField;
     protected javax.swing.JTextArea locationNoteArea;
-    private javax.swing.JLabel locationNoteLabel;
+    protected javax.swing.JLabel locationNoteLabel;
     protected javax.swing.JLabel longitudeLabel;
     protected javax.swing.JTextField longitudeTextField;
     protected com.toedter.calendar.JMonthChooser monthChooser;
     protected javax.swing.JLabel monthLabel;
     protected javax.swing.JTextArea occurrenceNoteArea;
+    protected javax.swing.JLabel occurrenceNoteLabel;
     protected javax.swing.JTable occurrenceTable;
     protected javax.swing.JButton okButton;
     protected javax.swing.JComboBox phytCountryCombo;
@@ -1194,13 +1196,14 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel quadrantLabel;
     protected javax.swing.JTextField quadrantTextField;
     private javax.swing.JLabel requiredInfoLabel;
+    protected javax.swing.JButton settingsButton;
     protected javax.swing.JComboBox sourceCombo;
     protected javax.swing.JLabel sourceLabel;
     protected javax.swing.JLabel taxonLabel;
     protected javax.swing.JTextArea taxonTextArea;
     protected javax.swing.JComboBox territoryNameCombo;
     protected javax.swing.JLabel territoryNameLabel;
-    private javax.swing.JLabel timeLabel;
+    protected javax.swing.JLabel timeLabel;
     protected javax.swing.JTextField timeTextField;
     private javax.swing.JPanel topPanel;
     protected javax.swing.JComboBox townComboBox;

@@ -56,6 +56,7 @@ import net.sf.plantlore.client.checklist.ChecklistView;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreHelp;
@@ -132,7 +133,7 @@ public class AddEditCtrl {
         view.clearLocationButton.setAction(new ClearLocationAction());
         view.clearOccurrenceButton.setAction(new ClearOccurrenceAction());
         view.calendarButton.setAction(new CalendarAction());
-        
+        view.settingsButton.setAction(new SettingsAction());
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
@@ -709,6 +710,7 @@ public class AddEditCtrl {
             calendarDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
             calendarDialog.pack();
             calendarDialog.setLocationRelativeTo(view);
+            DefaultEscapeKeyPressed dekp = new DefaultEscapeKeyPressed(calendarDialog);
             
             calendar.getYearChooser().addPropertyChangeListener("year",new CalendarYearChangeListener());
             calendar.getMonthChooser().addPropertyChangeListener("month",new CalendarMonthChangeListener());
@@ -718,6 +720,21 @@ public class AddEditCtrl {
             calendarDialog.setVisible(true);
         }
     }//CalendarAction
+    
+    class SettingsAction extends AbstractAction {
+        AddEditSettingsView settingsView;
+        
+        public SettingsAction() {
+            putValue(NAME, L10n.getString("AddEdit.Settings"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("AddEdit.SettingsTT"));   
+            AddEditSettings sm = new AddEditSettings(view);
+            settingsView = new AddEditSettingsView(view,false,sm);
+            AddEditSettingsCtrl cm = new AddEditSettingsCtrl(sm,settingsView);
+        }
+        public void actionPerformed(ActionEvent e) {
+            settingsView.setVisible(true);
+        }
+    }//class SettingsAction
 }
 
 
