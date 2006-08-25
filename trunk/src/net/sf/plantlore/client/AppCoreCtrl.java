@@ -360,12 +360,14 @@ public class AppCoreCtrl {
 	private void constructDialogs() {
 		// --- Add ---
 		addModel = new AddEdit(model.getDatabase(), false);
+                addModel.addObserver(managerBridge);
 		addView = new AddEditView(view, true, addModel, false);
 		addView.setTitle(L10n.getString("AddEdit.AddDialogTitle"));
 		addCtrl = new AddEditCtrl(addModel, addView, false);
 
 		// --- Edit ---
 		editModel = new AddEdit(model.getDatabase(), true);
+                editModel.addObserver(managerBridge);
 		editView = new AddEditView(view, true, editModel, true);
 		editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
 		editCtrl = new AddEditCtrl(editModel, editView, true);
@@ -1609,15 +1611,15 @@ public class AppCoreCtrl {
 				try {
 					model.setDatabase(dblayer);
 				} catch (RemoteException ex) {
-					JOptionPane.showMessageDialog(view, "Remote problem",
-							"Some remote problem occurred:\n" + ex,
-							JOptionPane.WARNING_MESSAGE);
-					return;
+                                    logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
+                                    ex.printStackTrace();
+                                    DefaultReconnectDialog.show(view,ex);
+                                    return;
 				} catch (DBLayerException ex) {
-					JOptionPane.showMessageDialog(view, "Database problem",
-							"Some database problem occurred:\n" + ex,
-							JOptionPane.WARNING_MESSAGE);
-					return;
+                                    logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
+                                    ex.printStackTrace();
+                                    DefaultReconnectDialog.show(view,ex);
+                                    return;
 				}
 				// distribute database to dialogs
 				addModel.setDatabase(dblayer);
@@ -1744,8 +1746,18 @@ public class AppCoreCtrl {
 							searchModel.setProjects(model.getProjects());
 							break;
 						case OCCURRENCE:
-							refreshAction.actionPerformed(null);
-							break;
+                                                    model.loadSources();
+                                                    addModel.setSources(model.getSources());
+                                                    editModel.setSources(model.getSources());
+                                                    searchModel.setSources(model.getSources());
+                                                    refreshAction.actionPerformed(null);
+                                                    break;
+                                                case HABITAT:
+                                                        model.loadCountries();
+                                                        addModel.setCountries(model.getCountries());
+                                                        editModel.setCountries(model.getCountries());
+                                                        searchModel.setCountries(model.getCountries());
+                                                        break;
 						case PHYTOCHORION:
 							model.loadPhytCodes();
 							model.loadPhytNames();

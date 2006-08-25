@@ -4,18 +4,6 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="convertCoordinatesGroup">
     </Component>
-    <Component class="javax.swing.JToggleButton" name="extendedButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Extended"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="extendedButtonActionPerformed"/>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="extendedButtonMouseClicked"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-      </AuxValues>
-    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -852,6 +840,9 @@
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JTextField" name="dayTextField">
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JLabel" name="yearLabel">
                           <Properties>
@@ -876,6 +867,9 @@
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Calendar"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>

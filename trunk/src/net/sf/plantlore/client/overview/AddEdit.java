@@ -90,8 +90,15 @@ public class AddEdit extends Observable {
     private Pair<String,Integer> project;
     private Integer month = null;
     private Integer day = null;
-    private Date time = null;
+    private Date time = null;    
     private Occurrence[] habitatSharingOccurrences = null;
+    
+    private boolean dayValid = true;
+    private boolean timeValid = true;
+    
+    private boolean altitudeValid = true;
+    private boolean latitudeValid = true;
+    private boolean longitudeValid = true;
     
     private Pair<String, Integer>[] plants = null;
     private Pair<String, Integer>[] authors = null;
@@ -401,8 +408,17 @@ public class AddEdit extends Observable {
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
         logger.debug("Altitude set to "+altitude);
+        altitudeValid = true;
     }
 
+    public void setAltitudeValid(boolean valid) {
+        altitudeValid = valid;
+        if (valid)
+            logger.debug("Altitude set VALID");
+        else
+            logger.debug("Altitude set INVALID");
+    }
+    
     public Double getLongitude() {
         return longitude;
     }
@@ -410,8 +426,17 @@ public class AddEdit extends Observable {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
         logger.debug("Longitude set to "+longitude);
+        longitudeValid = true;
     }
 
+    public void setLongitudeValid(boolean valid) {
+        longitudeValid = valid;
+        if (valid)
+            logger.debug("Longitude set VALID");
+        else
+            logger.debug("Longitude set INVALID");
+    }
+    
     public Double getLatitude() {
         return latitude;
     }
@@ -419,8 +444,17 @@ public class AddEdit extends Observable {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
         logger.debug("Latitude set to "+latitude);
+        latitudeValid = true;
     }
 
+    public void setLatitudeValid(boolean valid) {
+        latitudeValid = valid;
+        if (valid)
+            logger.debug("Latitude set VALID");
+        else
+            logger.debug("Latitude set INVALID");
+    }
+    
     public String getSource() {
         return source;
     }
@@ -473,18 +507,42 @@ public class AddEdit extends Observable {
         return day;
     }
 
+    /** Sets the model's day variable and sets <code>dayValid</code> to true
+     *
+     */
     public void setDay(Integer day) {
         this.day = day;
         logger.debug("Day set to "+day);
+        setDayValid(true);
+    }
+    
+    public void setDayValid(boolean valid) {
+        if (valid)
+            logger.debug("Day set VALID.");
+        else
+            logger.debug("Day set INVALID.");                    
+        dayValid = valid;
     }
 
     public Date getTime() {
         return time;
     }
 
+    /** Sets the model's time variable and sets <code>timeValid</code> to true
+     *
+     */
     public void setTime(Date time) {
         this.time = time;
         logger.debug("Time set to "+time);
+        setTimeValid(true);
+    }
+    
+    public void setTimeValid(boolean valid) {
+        if (valid)
+            logger.debug("Time set VALID.");
+        else
+            logger.debug("Time set INVALID.");                    
+        timeValid = valid;
     }
     
     public DBLayer getDatabase() {
@@ -606,6 +664,7 @@ public class AddEdit extends Observable {
         if (occurrenceNote != null) occ.setNote(occurrenceNote);
         occ.setPlant(plant);
         occ.setYearCollected(year);
+        occ.setDataSource(source);        
         
         occ.setDeleted(0);
         
@@ -707,7 +766,8 @@ public class AddEdit extends Observable {
         o.setPlant(plant);
         o.setPublication(publ);
         o.setTimeCollected(time);
-        o.setYearCollected(year);        
+        o.setYearCollected(year);     
+        o.setDataSource(source);
     }
     
     /** Creates a clone of the AddEdit's occurrence o.
@@ -973,15 +1033,59 @@ public class AddEdit extends Observable {
                     database.commitTransaction();
                     occurrenceTableModel.load(h.getId());
                 }//add mode
-                
         } catch (DBLayerException ex) {
             database.rollbackTransaction();
             DBLayerException dbex = new DBLayerException("Add/Edit was rolled back. Some database problem occurred during processing: "+ex);
             dbex.setStackTrace(ex.getStackTrace());
             throw dbex;
         }        
-    }//createRecord()
+        
+        checkAndPropagateChanges();
+    }//storeRecord()
 
+    /** Checks whether the user created a new country or data source.
+     *
+     * If yes then notifies the rest of the application about that change.
+     *
+     */
+    private void checkAndPropagateChanges() {
+        int i = 0;
+        
+        boolean isCountryNew = true;
+        for (String country : countries)
+            if (country.equals(phytCountry)) {
+                isCountryNew = false;
+                break;
+            }
+        if (isCountryNew)
+            i++;
+        
+        boolean isSourceNew = true;
+        for (String s : sources)
+            if (s.equals(source)) {
+                isSourceNew = false;
+                break;
+            }
+        if (isSourceNew)
+            i++;
+            
+        if (i > 0) { //there's been some change we must report
+            System.out.println("REPORTING CHANGE!");
+            PlantloreConstants.Table[] changedTables = new PlantloreConstants.Table[i];
+            if (isCountryNew) {
+                i--;
+                changedTables[i] = PlantloreConstants.Table.HABITAT;
+            }
+            if (isSourceNew) {
+                i--;
+                changedTables[i] = PlantloreConstants.Table.OCCURRENCE;
+            }
+            
+            setChanged();
+            notifyObservers(changedTables);
+        }
+    }
+    
     public boolean isNotEmpty(String s) {
         if (s != null && !s.equals(""))
             return true;
@@ -1010,17 +1114,21 @@ public class AddEdit extends Observable {
             return false;
     }
     
+    /** Checks that user entered all compulsory data and that it is correct.
+     *
+     * @return Pair<Boolean,String> where the Boolean is true if the data is fine, otherwise it is false in which case the String contains a message for the user
+     */
     public Pair<Boolean,String> checkData() throws RemoteException {
         if (authorList.size() < 1)
-            return new Pair<Boolean,String>(false, "You have to add at least one author!");
+            return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.AtLeastOneAuthor"));
         else {
             for (Pair<Pair<String,Integer>,String> author : authorList) {
                 if (author.getFirst().getFirst().equals(""))
-                    return new Pair<Boolean,String>(false, "Some of the authors is empty. Enter it or remove it please.");
+                    return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.EmptyAuthor"));
             }
         }
         if (taxonList == null || taxonList.size() < 1)
-            return new Pair<Boolean,String>(false, "You have to add at least one taxon!");
+            return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.AtLeastOneTaxon"));
         
         if (editMode && taxonList.size() > 1 && database.getUserRights().getAdd() != 1 && database.getUserRights().getAdministrator() != 1) { //the user is not allowed to add new records
             return new Pair<Boolean,String>(false, L10n.getString("AddEdit.InsufficientAddRights"));
@@ -1040,27 +1148,61 @@ public class AddEdit extends Observable {
                 Integer ajId = aj.getFirst().getSecond();
                 String ajRole = aj.getSecond();
                 if (aiId.equals(ajId) && aiRole.equals(ajRole)) {
-                    return new Pair<Boolean,String>(false, "Author can appear only once in each role. Please modify "+ai.getFirst().getFirst());
+                    return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.OneRolePerAuthor")+ai.getFirst().getFirst());
                 }
             }
         }
         
         if (!isNotEmpty(village)) {
-            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the nearest village.");
+            return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.CompulsoryNearestVillage"));
         }
         
         if (!isNotEmpty(territoryName)) {
-            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the territory name.");            
+            return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.CompulsoryTerritory"));            
         }
         
         if (!isNotEmpty(phytCode)) {
-            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the phytochoria code or name.");            
+            return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.CompulsoryPhytochorion"));            
         }
 
         if (!isNotEmpty(project)) {
-            return new Pair<Boolean,String>(false,"You have to enter all requested data. Please fill in the project.");            
+            return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.CompulsoryProject"));            
         }
 
+        if (day != null && month != null) //it is not possible to set the year null in the form
+        {
+            try {
+            Calendar cal = Calendar.getInstance();
+            cal.setLenient(false);
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, day);           
+            cal.getTime();  //throws an exception if the date is invalid          
+            } catch(Exception ex) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidDate"));
+            }
+        }
+        
+        if (!dayValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidDay"));            
+        }
+        
+        if (!timeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidTime"));                        
+        }
+        
+        if (!altitudeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidAltitude"));            
+        }
+        
+        if (!longitudeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidLongitude"));            
+        }
+        
+        if (!latitudeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidLatitude"));            
+        }
+        
         return new Pair<Boolean,String>(true,"");
     }
     

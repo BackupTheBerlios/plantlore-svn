@@ -538,6 +538,16 @@ public class AppCore extends Observable
         return phytCodes;
     }
     
+    /** Loads countries from the database.
+     *
+     * Leaves out null values. Notifies about the begining and end of loading.
+     *
+     * @throws DBLayerException
+     * @throws RemoteException
+     *
+     * @return array of Strings with the countries
+     *
+     */
     public String[] loadCountries() throws DBLayerException, RemoteException {
         SelectQuery sq;
         int resultid;
@@ -554,18 +564,35 @@ public class AppCore extends Observable
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
-        countries = new String[resultsCount];
+        
+        ArrayList<String> al = new ArrayList<String>();
         for (int i = 0; i < resultsCount; i++)
         {
-            country = (String)((Object[])records[i])[0];
-            countries[i] = country;
+            String tmp = (String)((Object[])records[i])[0];
+            if (tmp == null)
+                continue;
+            al.add(tmp);
         }
 
+        countries = new String[al.size()];
+        countries = al.toArray(countries);
+        
         logger.info("Loaded: "+resultsCount+" countries.");
         setChanged(); notifyObservers("LOADED");
         return countries;
     }
     
+    
+    /** Loads sources from the database.
+     *
+     * Leaves out null values.  Notifies about the begining and end of loading.
+     *
+     * @throws DBLayerException
+     * @throws RemoteException
+     *
+     * @return array of Strings with the sources
+     *
+     */
     public String[] loadSources() throws DBLayerException, RemoteException {
         SelectQuery sq;
         int resultid;
@@ -580,15 +607,33 @@ public class AppCore extends Observable
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
-        sources = new String[resultsCount];
-        for (int i = 0; i < resultsCount; i++)
-            sources[i] = (String)((Object[])records[i])[0];
-
+        String tmp;
+        ArrayList<String> al = new ArrayList<String>();
+        for (int i = 0; i < resultsCount; i++) {
+            tmp = (String)((Object[])records[i])[0];
+            if (tmp == null)
+                continue;
+            al.add(tmp);
+        }
+        
+        sources = new String[al.size()];
+        sources = (String[]) al.toArray(sources);
+        
         logger.info("Loaded: "+resultsCount+" sources.");
         setChanged(); notifyObservers("LOADED");
         return sources;
     }
     
+    /** Loads publications from the database.
+     *
+     * Leaves out null values.  Notifies about the begining and end of loading.
+     *
+     * @throws DBLayerException
+     * @throws RemoteException
+     *
+     * @return array of Pairs with the publications.
+     *
+     */
     public Pair<String, Integer>[] loadPublications() throws DBLayerException, RemoteException {
         SelectQuery sq;
         int resultid;
@@ -607,13 +652,18 @@ public class AppCore extends Observable
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
-        publications = new Pair[resultsCount+1];
-        publications[0] = new Pair<String,Integer>("",-1); //allow the user to enter a null value
+
+        ArrayList<Pair> al = new ArrayList<Pair>();
         for (int i = 0; i < resultsCount; i++)
         {
             row = (Object[])records[i];
-            publications[i] = new Pair(row[0], row[1]);
+            if (row == null)
+                continue;
+            al.add(new Pair(row[0], row[1]));
         }
+        
+        publications = new Pair[al.size()];
+        publications = (Pair[])al.toArray(publications);
 
         logger.info("Loaded: "+resultsCount+" publications.");
         setChanged(); notifyObservers("LOADED");

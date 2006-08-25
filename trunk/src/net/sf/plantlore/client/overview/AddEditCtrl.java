@@ -9,6 +9,8 @@
 
 package net.sf.plantlore.client.overview;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -34,6 +36,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
@@ -41,13 +44,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
+import com.toedter.calendar.JCalendar;
 import net.sf.plantlore.client.*;
 
 import net.sf.plantlore.client.checklist.ChecklistCtrl;
 import net.sf.plantlore.client.checklist.ChecklistView;
 import net.sf.plantlore.common.AutoComboBox;
+import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
@@ -67,6 +74,9 @@ public class AddEditCtrl {
     private boolean inAddMode = true;
     private AddEdit model;
     private AddEditView view;
+    private final static int MAXIMUM_FRACTION_DIGITS = 5;
+    private final static int MAXIMUM_INTEGER_DIGITS = 4;
+    private final static Color COLOR_INVALID = Color.RED;
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
     private ChecklistView checklistView;
@@ -93,9 +103,9 @@ public class AddEditCtrl {
         //------- TextFields --------        
         view.herbariumTextField.addFocusListener(new HerbariumListener());
         view.quadrantTextField.addFocusListener(new QuadrantListener());
-        view.altitudeTextField.addFocusListener(new AltitudeListener());
-        view.longitudeTextField.addFocusListener(new LongitudeListener());
-        view.latitudeTextField.addFocusListener(new LatitudeListener());
+        view.altitudeTextField.getDocument().addDocumentListener(new AltitudeListener());
+        view.longitudeTextField.getDocument().addDocumentListener(new LongitudeListener());
+        view.latitudeTextField.getDocument().addDocumentListener(new LatitudeListener());
         
         //------- TextAreas --------        
         view.taxonTextArea.addPropertyChangeListener(AutoTextArea.UPDATE_LIST_OF_PLANTS, new TaxonAreaListener());
@@ -106,21 +116,22 @@ public class AddEditCtrl {
         //------- Spinners --------
         view.yearSpinner.addChangeListener(new YearListener());
         view.monthChooser.addPropertyChangeListener("month", new MonthChangeListener());
-        view.timeTextField.addFocusListener(new TimeListener());
-        
+        view.dayTextField.getDocument().addDocumentListener(new DayListener());
+        view.timeTextField.getDocument().addDocumentListener(new TimeListener());
+                
         //------- RadioButtons --------
 //        view.WGS84Button.addActionListener(new CoordinateSystemListener());
 //        view.S42Button.addActionListener(new CoordinateSystemListener());
 //        view.SJTSKButton.addActionListener(new CoordinateSystemListener());
         
         //------- Buttons --------
-        view.extendedButton.addMouseListener(new ExtendedButtonListener());
         view.okButton.addMouseListener(new OkButtonListener());
         view.cancelButton.addMouseListener(new CancelButtonListener());
         view.checklistButton.setAction(new ChecklistAction());
         
         view.clearLocationButton.setAction(new ClearLocationAction());
         view.clearOccurrenceButton.setAction(new ClearOccurrenceAction());
+        view.calendarButton.setAction(new CalendarAction());
         
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
@@ -171,11 +182,11 @@ public class AddEditCtrl {
                 //System.out.println("c.getSelectedItem(): "+c.getSelectedItem());
                 model.setPhytCode((Pair<String, Integer>) c.getSelectedItem());
            
-            if (command.equals("phytCountryCombo") && (c.getSelectedItem() instanceof String))
-                model.setPhytCountry((String) c.getSelectedItem());
+            if (command.equals("phytCountryCombo") && (((AutoComboBoxNG3)c).getValue() instanceof String))
+                model.setPhytCountry((String) ((AutoComboBoxNG3)c).getValue());
 
-            if (command.equals("sourceCombo") && (c.getSelectedItem() instanceof String))
-                model.setSource((String) c.getSelectedItem());
+            if (command.equals("sourceCombo") && (((AutoComboBoxNG3)c).getValue() instanceof String))
+                model.setSource((String) ((AutoComboBoxNG3)c).getValue());
            
             if (command.equals("publicationCombo") && (c.getSelectedItem() instanceof Pair))
                 model.setPublication((Pair<String, Integer>) c.getSelectedItem());
@@ -265,19 +276,6 @@ public class AddEditCtrl {
         }
     }//QuadrantListener
     
-    class MonthListener implements ChangeListener {
-        public void stateChanged(ChangeEvent e) {
-            JSpinner s = (JSpinner) e.getSource();
-            model.setMonth((Integer)s.getValue());
-        }
-    }//MonthListener
-    class DayListener implements ChangeListener {
-        public void stateChanged(ChangeEvent e) {
-            JSpinner s = (JSpinner) e.getSource();
-            model.setDay((Integer)s.getValue());
-        }
-    }//DayListener
-    
     class YearListener implements ChangeListener {
         public void stateChanged(ChangeEvent e) {
             JSpinner s = (JSpinner) e.getSource();
@@ -285,143 +283,274 @@ public class AddEditCtrl {
         }
     }//YearListener
 
-    class AltitudeListener implements FocusListener {
+    class AltitudeListener implements DocumentListener {
         NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
-        NumberFormat nfUS = NumberFormat.getNumberInstance( Locale.US );
+        Color oldColor;
 
-        public void focusGained(FocusEvent e) {
+        public AltitudeListener() {
+            oldColor = view.altitudeTextField.getForeground();
+            nf.setMaximumFractionDigits(MAXIMUM_FRACTION_DIGITS);
+            nf.setMaximumIntegerDigits(MAXIMUM_INTEGER_DIGITS);
         }
 
-        public void focusLost(FocusEvent e) {
-            JTextField tf = (JTextField) e.getSource();
-            if (tf.getText().trim().equals("")) {
+        public void processEvent(DocumentEvent e) {
+            if (e.getDocument().getLength() == 0) {
                 model.setAltitude(null);
                 return;
             }
+            String text = null;
+            try { text = e.getDocument().getText(0, e.getDocument().getLength()); } 
+            catch (BadLocationException ex) { 
+                logger.warn("AltitudeListener in AddEditCtrl: unexpected BadLocationException: "+ex); 
+                return;//shouldn't happen, just ignore it }
+            }
             
+            if (text.trim().equals("")) {
+                model.setAltitude(null);
+                return;
+            }
+
             Double value;
             try {
-                value = nf.parse(tf.getText()).doubleValue();
+                value = nf.parse(text).doubleValue();
                 String s = nf.format(value);
-                if (!s.equals(tf.getText().trim()))
+                if (!s.equals(text.trim()))
                     throw new ParseException("Parsing could stop at decimal point. Take a closer look.",0);
                 model.setAltitude(value);
+                view.altitudeTextField.setForeground(oldColor);
             } catch (ParseException ex) {
-                try {
-                    value = nfUS.parse(tf.getText()).doubleValue();
-                    model.setAltitude(value);
-                    tf.setText(nf.format(value)); //print the number using proper decimal point
-                } catch (ParseException ex2) {
-                    if (model.getAltitude() != null) {
-                        tf.setText(""+nf.format(model.getAltitude()));
-                    } else
-                        tf.setText("");
-                    return;
-                }
+                    view.altitudeTextField.setForeground(COLOR_INVALID);
+                    model.setAltitudeValid(false);
             }
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            processEvent(e);
         }
     }//AltitudeListener
 
-    class LatitudeListener implements FocusListener {
+    class LatitudeListener implements DocumentListener {
         NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
-        NumberFormat nfUS = NumberFormat.getNumberInstance( Locale.US );
+        Color oldColor;
 
-        public void focusGained(FocusEvent e) {
+        public LatitudeListener() {
+            oldColor = view.latitudeTextField.getForeground();
+            nf.setMaximumFractionDigits(MAXIMUM_FRACTION_DIGITS);
+            nf.setMaximumIntegerDigits(MAXIMUM_INTEGER_DIGITS);
         }
 
-        public void focusLost(FocusEvent e) {
-            JTextField tf = (JTextField) e.getSource();
-            if (tf.getText().trim().equals("")) {
+        public void processEvent(DocumentEvent e) {
+            System.out.println("LATITUDE old COLOR = "+oldColor);
+            if (e.getDocument().getLength() == 0) {
+                model.setLatitude(null);
+                return;
+            }
+            String text = null;
+            try { text = e.getDocument().getText(0, e.getDocument().getLength()); } 
+            catch (BadLocationException ex) { 
+                logger.warn("LatitudeListener in AddEditCtrl: unexpected BadLocationException: "+ex); 
+                return;//shouldn't happen, just ignore it }
+            }
+            
+            if (text.trim().equals("")) {
                 model.setLatitude(null);
                 return;
             }
             
             Double value;
             try {
-                value = nf.parse(tf.getText()).doubleValue();
+                value = nf.parse(text).doubleValue();
                 String s = nf.format(value);
-                if (!s.equals(tf.getText().trim()))
+                if (!s.equals(text.trim()))
                     throw new ParseException("Parsing could stop at decimal point. Take a closer look.",0);
                 model.setLatitude(value);
+                view.latitudeTextField.setForeground(oldColor);
             } catch (ParseException ex) {
-                try {
-                    value = nfUS.parse(tf.getText()).doubleValue();
-                    tf.setText(nf.format(value)); //print the number using proper decimal point
-                    model.setLatitude(value);                    
-                } catch (ParseException ex2) {
-                    if (model.getLatitude() != null)
-                        tf.setText(""+model.getLatitude());
-                    else
-                        tf.setText("");
-                    return;
-                }
+                view.latitudeTextField.setForeground(COLOR_INVALID);
+                model.setLatitudeValid(false);
             }
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            processEvent(e);
         }
     }//LatitudeListener
 
-    class LongitudeListener implements FocusListener {
+    class LongitudeListener implements DocumentListener {
         NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
-        NumberFormat nfUS = NumberFormat.getNumberInstance( Locale.US );
-        
-        public void focusGained(FocusEvent e) {
+        Color oldColor;
+
+        public LongitudeListener() {
+            oldColor = view.longitudeTextField.getForeground();
+            nf.setMaximumFractionDigits(MAXIMUM_FRACTION_DIGITS);
+            nf.setMaximumIntegerDigits(MAXIMUM_INTEGER_DIGITS);
         }
 
-        public void focusLost(FocusEvent e) {
-            JTextField tf = (JTextField) e.getSource();
-            if (tf.getText().trim().equals("")) {
+        public void processEvent(DocumentEvent e) {
+            if (e.getDocument().getLength() == 0) {
+                model.setLongitude(null);
+                return;
+            }
+            String text = null;
+            try { text = e.getDocument().getText(0, e.getDocument().getLength()); } 
+            catch (BadLocationException ex) { 
+                logger.warn("LongitudeListener in AddEditCtrl: unexpected BadLocationException: "+ex); 
+                return;//shouldn't happen, just ignore it }
+            }
+            
+            if (text.trim().equals("")) {
                 model.setLongitude(null);
                 return;
             }
             
             Double value;
             try {
-                value = nf.parse(tf.getText()).doubleValue();
+                value = nf.parse(text).doubleValue();
                 String s = nf.format(value);
-                if (!s.equals(tf.getText().trim()))
+                if (!s.equals(text.trim()))
                     throw new ParseException("Parsing could stop at decimal point. Take a closer look.",0);
                 model.setLongitude(value);
+                view.longitudeTextField.setForeground(oldColor);
             } catch (ParseException ex) {
-                try {
-                    value = nfUS.parse(tf.getText()).doubleValue();
-                    tf.setText(nf.format(value)); //print the number using proper decimal point
-                    model.setLongitude(value);                    
-                } catch (ParseException ex2) {
-                    if (model.getLongitude() != null)
-                        tf.setText(""+model.getLongitude());
-                    else
-                        tf.setText("");
-                    return;
-                }
+                model.setLongitudeValid(false);
+                view.longitudeTextField.setForeground(COLOR_INVALID);
             }
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            processEvent(e);
         }
     }//LongitudeListener
     
-    class TimeListener implements FocusListener {
+    class DayListener implements DocumentListener {
+        Color oldColor;
+        public DayListener() {
+            oldColor = view.dayTextField.getForeground();
+        }
+        
+        public void processEvent(DocumentEvent e) {
+            if (e.getDocument().getLength() == 0) {
+                model.setDay(null);
+                return;
+            }
+            String text = null;
+            try { text = e.getDocument().getText(0, e.getDocument().getLength()); } 
+            catch (BadLocationException ex) { 
+                logger.warn("DayChangeListener in AddEditCtrl: unexpected BadLocationException: "+ex); 
+                return;//shouldn't happen, just ignore it }
+            }
+            
+            if (text.trim().equals("")) {
+                model.setDay(null);
+                return;
+            }
+
+            int day;
+            try {
+                day = Integer.parseInt(text);
+            } catch (Exception ex) {
+                model.setDayValid(false);
+                view.dayTextField.setForeground(COLOR_INVALID);
+                return;
+            }
+            
+            //we can do date validation only after the whole date has been set
+            //that means we should do it in AddEdit.storeRecord()
+            if (day > 0 && day <= 31) {
+                model.setDay(day);
+            } else {
+                view.dayTextField.setForeground(COLOR_INVALID);
+                model.setDayValid(false);
+                return;                
+            }
+            view.dayTextField.setForeground(oldColor);
+        }//DayListener
+        
+        public void insertUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            processEvent(e);
+        }        
+    }
+    
+    class TimeListener implements DocumentListener {
+        Color oldColor;
         DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
         Calendar c = Calendar.getInstance();
         
-        public void focusGained(FocusEvent e) {
+        public TimeListener() {
+            oldColor = view.timeTextField.getForeground();
         }
-
-        public void focusLost(FocusEvent e) {
-            JTextField tf = (JTextField) e.getSource();
-            if (tf.getText().trim().equals("")) {
+        
+        public void processEvent(DocumentEvent e) {
+            if (e.getDocument().getLength() == 0) {
+                model.setTime(null);
+                return;
+            }
+            String text = null;
+            try { text = e.getDocument().getText(0, e.getDocument().getLength()); } 
+            catch (BadLocationException ex) { 
+                logger.warn("DayChangeListener in AddEditCtrl: unexpected BadLocationException: "+ex); 
+                return;//shouldn't happen, just ignore it }
+            }
+            
+            if (text.trim().equals("")) {
                 model.setTime(null);
                 return;
             }
             
             Date value;
             try {
-                value = df.parse(tf.getText());
+                value = df.parse(text);
                 model.setTime(value);
             } catch (ParseException ex) {
-                if (model.getTime() != null) {
-                    c.setTime(model.getTime());
-                    tf.setText(""+c.get(Calendar.HOUR_OF_DAY)+":"+Calendar.MINUTE);
-                } else
-                    tf.setText("");
+                model.setTimeValid(false);
+                view.timeTextField.setForeground(COLOR_INVALID);
                 return;
             }
+            view.timeTextField.setForeground(oldColor);
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            processEvent(e);
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            processEvent(e);
         }
     }//TimeListener
     
@@ -438,17 +567,31 @@ public class AddEditCtrl {
         } 
     }
     
-    class DayChangeListener implements PropertyChangeListener {
+    class CalendarDayChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            model.setDay((Integer) evt.getNewValue());
+            Integer i = (Integer) evt.getNewValue();
+            //model.setDay(i);
+            view.dayTextField.setText(""+i);
+        } 
+    }
+
+    class CalendarMonthChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
+            Integer i = (Integer) evt.getNewValue();
+            //model.setDay(i);
+            if (i != null)
+                view.monthChooser.setMonth(i);
         } 
     }
     
-    class ExtendedButtonListener extends MouseAdapter {
-        public void mouseClicked(MouseEvent e) {
-            view.switchExtended();
-        }
-    }//ExtendedButtonListener
+    class CalendarYearChangeListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
+            Integer i = (Integer) evt.getNewValue();
+            //model.setYear(i);
+            if (i != null)
+                view.yearSpinner.setValue(i);
+        } 
+    }
     
     class OkButtonListener extends MouseAdapter {
         private String ALL = L10n.getString("AddEdit.All");
@@ -461,7 +604,7 @@ public class AddEditCtrl {
             try {
                 Pair<Boolean,String> check = model.checkData();
                 if (!check.getFirst()) {
-                    JOptionPane.showMessageDialog(view,check.getSecond());
+                    JOptionPane.showMessageDialog(view,check.getSecond(),L10n.getString("AddEdit.CheckFailedTitle"),JOptionPane.INFORMATION_MESSAGE);
                     return;
                 } 
                 if (inEditMode) {
@@ -496,7 +639,6 @@ public class AddEditCtrl {
                             model.storeRecord(true);
                             view.setVisible(false);                    
                     }
-                    JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.EditConfirmation"),L10n.getString("AddEdit.EditConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
                 } else {//inAddMode
                     model.storeRecord(true);
                     JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.AddConfirmation"),L10n.getString("AddEdit.AddConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
@@ -550,5 +692,33 @@ public class AddEditCtrl {
             model.setPreloadAuthorsEnabled(cb.isSelected());
         }        
     }
+    
+    /**
+     *
+     */
+    class CalendarAction extends AbstractAction {
+        JDialog calendarDialog;
+        public CalendarAction() {
+            putValue(NAME, L10n.getString("AddEdit.Calendar"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("AddEdit.CalendarTT"));   
+            calendarDialog = new JDialog(view);
+            BorderLayout bl = new BorderLayout();
+            calendarDialog.setLayout(bl);            
+            JCalendar calendar = new JCalendar();
+            calendarDialog.add(calendar,BorderLayout.CENTER);
+            calendarDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            calendarDialog.pack();
+            calendarDialog.setLocationRelativeTo(view);
+            
+            calendar.getYearChooser().addPropertyChangeListener("year",new CalendarYearChangeListener());
+            calendar.getMonthChooser().addPropertyChangeListener("month",new CalendarMonthChangeListener());
+            calendar.getDayChooser().addPropertyChangeListener("day",new CalendarDayChangeListener());
+        }
+        public void actionPerformed(ActionEvent e) {
+            calendarDialog.setVisible(true);
+        }
+    }//CalendarAction
 }
+
+
 

@@ -24,19 +24,24 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.text.PlainDocument;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TabTransfersFocus;
 import net.sf.plantlore.common.record.AuthorOccurrence;
+import net.sf.plantlore.common.record.Habitat;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
@@ -47,13 +52,15 @@ import org.apache.log4j.Logger;
 public class AddEditView extends javax.swing.JDialog implements Observer {
     private Logger logger;
     private static final int DIALOG_WIDTH = 1000;
+    private static final int MAX_GPS_SYMBOL_LENGTH = 20;
     private static final String REQUIRED_STRING  = "(*)";
     private boolean visible=true;
     private AddEdit model;
     private boolean inEditMode = false;
     private boolean inAddMode = true;
     protected AuthorTableModel tableModel;
-    
+    private NumberFormat numberFormat = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
+
     /** Creates new form AddEdit2 */
     public AddEditView(java.awt.Frame parent, boolean modal, AddEdit model, boolean edit) {
         super(parent, modal);
@@ -74,24 +81,13 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         
         setLabels();
         
+        setSizeRestrictions();
+        
         occurrenceTable.setModel(model.getOccurrenceTableModel());
         occurrenceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         //occurrenceTable.setRowSelectionAllowed(false);
-        //if (inEditMode)
-        //    loadComponentData();
         
-        /*if (inEditMode)
-            preloadAuthorsCheckBox.setVisible(false);
-        else
-            preloadAuthorsCheckBox.setVisible(true);
-        */
-        
-        extendedButton.setVisible(false); //the button is of no use
         extendedPanel.setVisible(visible);
-        /*basicPanel.setPreferredSize(new Dimension(DIALOG_WIDTH,740));
-        extendedPanel.setPreferredSize(new Dimension(DIALOG_WIDTH,130));
-        buttonPanel.setPreferredSize(new Dimension(DIALOG_WIDTH,50));
-         */
         this.pack();        
     }
     
@@ -104,7 +100,6 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         convertCoordinatesGroup = new javax.swing.ButtonGroup();
-        extendedButton = new javax.swing.JToggleButton();
         jScrollPane8 = new javax.swing.JScrollPane();
         topPanel = new javax.swing.JPanel();
         basicPanel = new javax.swing.JPanel();
@@ -180,18 +175,6 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         extendedPanel = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         occurrenceTable = new javax.swing.JTable();
-
-        extendedButton.setText("Extended");
-        extendedButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                extendedButtonActionPerformed(evt);
-            }
-        });
-        extendedButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                extendedButtonMouseClicked(evt);
-            }
-        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jScrollPane8.setPreferredSize(new java.awt.Dimension(920, 685));
@@ -780,14 +763,6 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
 // TODO add your handling code here:
     }//GEN-LAST:event_helpButtonActionPerformed
-
-    private void extendedButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extendedButtonActionPerformed
-// TODO add your handling code here:
-    }//GEN-LAST:event_extendedButtonActionPerformed
-
-    private void extendedButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_extendedButtonMouseClicked
-// TODO add your handling code here:
-    }//GEN-LAST:event_extendedButtonMouseClicked
     
     
     //musn't delete contents of tableModel, because it's also called to update the table's user interface unfortunately...
@@ -887,11 +862,11 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             phytCountryCombo.setSelectedIndex(0);
         quadrantTextField.setText(model.getQuadrant());
         
-        if (model.getAltitude() != null) altitudeTextField.setText(""+model.getAltitude());
+        if (model.getAltitude() != null) altitudeTextField.setText(""+numberFormat.format(model.getAltitude()));
             else altitudeTextField.setText("");
-        if (model.getLongitude() != null) longitudeTextField.setText(""+model.getLongitude());
+        if (model.getLongitude() != null) longitudeTextField.setText(""+numberFormat.format(model.getLongitude()));
             else longitudeTextField.setText("");
-        if (model.getLatitude() != null) latitudeTextField.setText(""+model.getLatitude());
+        if (model.getLatitude() != null) latitudeTextField.setText(""+numberFormat.format(model.getLatitude()));
             else latitudeTextField.setText("");
         
         if (model.getSource() != null) 
@@ -983,18 +958,30 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         requiredInfoLabel.setText(L10n.getFormattedString("AddEdit.RequiredInfoLabel",arg));
     }
     
-    public void switchExtended() {
-        visible = !visible;
-        double height = topPanel.getSize().getHeight();
-        double width = topPanel.getSize().getWidth();
-        extendedPanel.setVisible(visible);
-        basicPanel.setPreferredSize(new Dimension(DIALOG_WIDTH,740));
-        buttonPanel.setPreferredSize(new Dimension(DIALOG_WIDTH,50));
-        height = !visible ? height + 150 : height - 150;
-        topPanel.setPreferredSize(new Dimension((int)width,(int)height));
-        this.pack();        
+    private void setSizeRestrictions() {
+        PlainDocument pd = (PlainDocument) herbariumTextField.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(20));
+
+        pd = (PlainDocument) quadrantTextField.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(10));
+        
+        ((AutoComboBoxNG3)phytCountryCombo).setCapacity(Habitat.getColumnSize(Habitat.COUNTRY));
+        
+        pd = (PlainDocument) descriptionArea.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Habitat.getColumnSize(Habitat.DESCRIPTION)));
+        
+        pd = (PlainDocument) locationNoteArea.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Habitat.getColumnSize(Habitat.NOTE)));
+        
+        pd = (PlainDocument) gpsSymbolTextField.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(MAX_GPS_SYMBOL_LENGTH));
+
+        ((AutoComboBoxNG3)sourceCombo).setCapacity(Occurrence.getColumnSize(Occurrence.DATASOURCE));
+
+        pd = (PlainDocument) occurrenceNoteArea.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Occurrence.getColumnSize(Occurrence.NOTE)));
     }
-    
+        
     /**
      * @param args the command line arguments
      */
@@ -1142,7 +1129,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             }
             
         }
-    }
+    }//update
         
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1151,7 +1138,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTable authorTable;
     protected javax.swing.JPanel basicPanel;
     private javax.swing.JPanel buttonPanel;
-    private javax.swing.JButton calendarButton;
+    protected javax.swing.JButton calendarButton;
     protected javax.swing.JButton cancelButton;
     protected javax.swing.JButton checklistButton;
     protected javax.swing.JButton clearLocationButton;
@@ -1160,9 +1147,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     private javax.swing.JLabel coordinateSystemLabel;
     protected javax.swing.JLabel countryLabel;
     protected javax.swing.JLabel dayLabel;
-    private javax.swing.JTextField dayTextField;
+    protected javax.swing.JTextField dayTextField;
     protected javax.swing.JTextArea descriptionArea;
-    protected javax.swing.JToggleButton extendedButton;
     private javax.swing.JPanel extendedPanel;
     private javax.swing.JButton gpsChangeButton;
     private javax.swing.JButton gpsLoadButton;
