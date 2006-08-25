@@ -143,6 +143,8 @@ public class AutoComboBoxNG3 extends JComboBox {
 			String prefix = editor.getText();
 			for(int i = 0; i < getItemCount(); i++) {
 				Object value = getItemAt(i); 
+                                if (value == null)
+                                    continue;
 				String item = value.toString();
 				if(item.length() >= prefix.length() && item.startsWith(prefix))
 					return value;
@@ -196,7 +198,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 					// Find the first suitable choice and select it.
 					for(int i = 0; i < getItemCount(); i++) {
 						Object selected = getItemAt(i);
-						String item = selected.toString(); // test the i-th choice
+						String item = selected == null ? "" : selected.toString(); // test the i-th choice
 						if( prefix.length() <= item.length() && 
 								(strict ? prefix.equalsIgnoreCase(item.substring(0, prefix.length())) :
 									prefix.equals(item.substring(0, prefix.length())) ) ) {
@@ -284,7 +286,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 		public void keyReleased(KeyEvent arg0) {}
 		public void focusGained(FocusEvent arg0) {}
 	}
-
+    
 	public int getCapacity() {
 		return capacity;
 	}
