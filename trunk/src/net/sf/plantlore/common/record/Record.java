@@ -291,10 +291,26 @@ public abstract class Record implements Serializable {
 	 */
 	public List<String> getForeignKeys() { return new ArrayList<String>(0); }
 	
+	
+	public boolean isForeignKey(String key) {
+		for(String fk : getForeignKeys())
+			if( key.equalsIgnoreCase(fk) )
+				return true;
+		return false;
+	}
+	
 	/**
 	 * @return The set of names of all columns of the table.
 	 */
 	public List<String> getColumns() { return new ArrayList<String>(0); }
+	
+	
+	public boolean isColumn(String property) {
+		for(String column : getColumns())
+			if( property.equalsIgnoreCase(column) )
+				return true;
+		return false;
+	}
 	
 	/**
 	 * @return The set of names of columns that are not foreign keys.
@@ -434,6 +450,10 @@ public abstract class Record implements Serializable {
 	 */
 	@Override
 	public String toString() {
+		return this.getClass().getSimpleName();
+	}
+	
+	public String toFullString() {
 		
 		StringBuilder sigma = new StringBuilder();
 		for(String property : this.getProperties())

@@ -73,11 +73,11 @@ public class Habitat extends Record implements Deletable {
     
     @Override
     public List<String> getForeignKeys() { 
-    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
+    	return asList( TERRITORY, PHYTOCHORION, /*NEAREST*/VILLAGE ); 
     }
     
     public List<String> getColumns() {
-    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
+    	return asList( TERRITORY, PHYTOCHORION, /*NEAREST*/VILLAGE, 
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     

@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
-
 
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Task;
@@ -19,7 +18,7 @@ import net.sf.plantlore.middleware.DBLayer;
 
 public class OccurrenceImportTask extends Task implements RecordProcessor {
 	
-	//private Logger logger = Logger.getLogger(OccurrenceImportTask.class.getPackage().getName());
+	private Logger logger = Logger.getLogger(OccurrenceImportTask.class.getPackage().getName());
 	
 	private OccurrenceParser parser;
 	private int count;
@@ -84,6 +83,10 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 		count++;
 		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count));
 		try {
+			if(aos == null || aos.length == 0) {
+				logger.error("The occurrence record is either corrupted or incomplete. It will be skipped.");
+				throw new DBLayerException(L10n.getString("Error.CorruptedRecord"));
+			}
 			dbutils.processRecord(aos[0].getOccurrence(), aos);
 		} 
 		catch(DBLayerException e) {
