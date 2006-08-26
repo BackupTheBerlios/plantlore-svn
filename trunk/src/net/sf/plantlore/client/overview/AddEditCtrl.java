@@ -92,6 +92,8 @@ public class AddEditCtrl {
         
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
 
+        new DefaultEscapeKeyPressed(view, new CancelButtonAction());
+        
         //------- ComboBoxes --------
         view.townComboBox.addActionListener(new CommonActionListener());
         view.territoryNameCombo.addActionListener(new CommonActionListener());
@@ -126,8 +128,8 @@ public class AddEditCtrl {
 //        view.SJTSKButton.addActionListener(new CoordinateSystemListener());
         
         //------- Buttons --------
-        view.okButton.addMouseListener(new OkButtonListener());
-        view.cancelButton.addMouseListener(new CancelButtonListener());
+        view.okButton.setAction(new OkButtonAction());
+        view.cancelButton.setAction(new CancelButtonAction());
         view.checklistButton.setAction(new ChecklistAction());
         
         view.clearLocationButton.setAction(new ClearLocationAction());
@@ -594,13 +596,18 @@ public class AddEditCtrl {
         } 
     }
     
-    class OkButtonListener extends MouseAdapter {
+    class OkButtonAction extends AbstractAction {
         private String ALL = L10n.getString("AddEdit.All");
         private String JUST_THIS = L10n.getString("AddEdit.JustThis");
         private String CANCEL = L10n.getString("Common.Cancel");
         private String TITLE = L10n.getString("AddEdit.QuestionDialogTitle");
         
-        public void mouseClicked(MouseEvent e) {
+        public OkButtonAction() {
+            putValue(NAME, L10n.getString("Common.Ok"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Common.Ok"));
+        }
+        
+        public void actionPerformed(ActionEvent e) {
             int choice=-1;
             try {
                 Pair<Boolean,String> check = model.checkData();
@@ -610,7 +617,10 @@ public class AddEditCtrl {
                 } 
                 if (inEditMode) {
                     Occurrence[] sharedOcc = model.getHabitatSharingOccurrences();
-                    if (sharedOcc.length > 1) {
+                    if (sharedOcc.length > 1 && model.hasHabitatChanged()) //the habitat has changed and is shared by at least two occurrences
+                                                                           //we have to ask the user whether he wants to make the change for all occurrences
+                                                                           //or to create a new habitat
+                    {
                         Object[] arg = {""+(sharedOcc.length-1)};
                         String formattedQuestion = L10n.getFormattedString("AddEdit.OkQuestion",arg);
 
@@ -658,8 +668,13 @@ public class AddEditCtrl {
             
     }//OkButtonListener
     
-    class CancelButtonListener extends MouseAdapter {
-        public void mouseClicked(MouseEvent e) {
+    class CancelButtonAction extends AbstractAction {
+        public CancelButtonAction() {
+            putValue(NAME, L10n.getString("Common.Cancel"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Common.Cancel"));            
+        }
+        
+        public void actionPerformed(ActionEvent e) {
             logger.info("AddEdit dialog cancelled");
             view.setVisible(false);
         }

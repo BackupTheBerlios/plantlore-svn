@@ -423,7 +423,7 @@ public class AppCore extends Observable
     }
     
     public String[] loadAuthorRoles() throws DBLayerException, RemoteException {
-        authorRoles = new String[] {"collected","revised","other"};
+        authorRoles = new String[] {"collected","identified","revised","other"};
         return authorRoles;
         /*SelectQuery sq;
         int resultid;

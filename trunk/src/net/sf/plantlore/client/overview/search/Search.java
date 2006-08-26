@@ -84,6 +84,9 @@ public class Search extends Observable {
     private Integer month;
     private Date fromDate, toDate;
         
+    private boolean altitudeValid = true;
+    private boolean latitudeValid = true;
+    private boolean longitudeValid = true;
     
     private Pair<String, Integer>[] plants = null;
     private Pair<String, Integer>[] authors = null;
@@ -277,7 +280,12 @@ public class Search extends Observable {
 
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
+        altitudeValid = true;
         logger.debug("Altitude set to "+altitude);
+    }
+    
+    public void setAltitudeValid(boolean valid) {
+        this.altitudeValid = valid;
     }
 
     public Double getLongitude() {
@@ -286,7 +294,12 @@ public class Search extends Observable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+        longitudeValid = true;
         logger.debug("Longitude set to "+longitude);
+    }
+
+    public void setLongitudeValid(boolean valid) {
+        this.longitudeValid = valid;
     }
 
     public Double getLatitude() {
@@ -295,7 +308,12 @@ public class Search extends Observable {
 
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
+        latitudeValid = true;
         logger.debug("Latitude set to "+latitude);
+    }
+
+    public void setLatitudeValid(boolean valid) {
+        this.latitudeValid = valid;
     }
 
     public String getSource() {
@@ -511,6 +529,19 @@ public class Search extends Observable {
         if (timeChoice == MONTH)
             if (isNotEmpty(month) && !month.equals(12)) //12 is the index of the empty String in the MonthChooser's ComboBox, the empty String is added in Post-init code in SearchView
                 allNull = false;
+
+        if (!altitudeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidAltitude"));            
+        }
+        
+        if (!longitudeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidLongitude"));            
+        }
+        
+        if (!latitudeValid) {
+                return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidLatitude"));            
+        }
+        
         
        /* if (allNull)
             return new Pair<Boolean,String>(false,"You have to fill in at least one field.");
@@ -586,6 +617,7 @@ public class Search extends Observable {
                 SelectQuery subQuery = database.createSubQuery(AuthorOccurrence.class, "ao");
                 // In the subquery select authors for the given occurrence (occurrence comes from the main query)
                 subQuery.addRestriction(PlantloreConstants.RESTR_EQ_PROPERTY, "ao."+AuthorOccurrence.OCCURRENCE, "occ."+Occurrence.ID, null, null);
+                subQuery.addRestriction(PlantloreConstants.RESTR_EQ, "ao."+AuthorOccurrence.DELETED, null, 0, null);
                 subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY, AuthorOccurrence.AUTHOR);
                 // create the main query
                 sq = database.createQuery(AuthorOccurrence.class);
@@ -600,7 +632,8 @@ public class Search extends Observable {
                 sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
                 sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
                 // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
-                sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);                
+                sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);    
+                sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
                 sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
                 sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
                 for (Column column : columns) {

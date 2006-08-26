@@ -93,6 +93,20 @@ public class AddEdit extends Observable {
     private Date time = null;    
     private Occurrence[] habitatSharingOccurrences = null;
     
+    //---variables for old habitat values---
+    private String habitatDescriptionOld;
+    private String habitatNoteOld = null;
+    private Pair<String, Integer> territoryNameOld;
+    private Pair<String, Integer> phytNameOld;
+    private Pair<String, Integer> phytCodeOld;
+    private String phytCountryOld;
+    private String quadrantOld = null;
+    private Double altitudeOld = null;
+    private Double longitudeOld = null;
+    private Double latitudeOld = null;
+    private Pair<String,Integer> villageOld;
+    //--------------------------------------
+    
     private boolean dayValid = true;
     private boolean timeValid = true;
     
@@ -119,7 +133,6 @@ public class AddEdit extends Observable {
     
     private OccurrenceTableModel occurrenceTableModel;
     
-    
     /** Creates a new instance of AddEdit */
     public AddEdit(DBLayer database, Boolean editMode) {
         this.database = database;
@@ -128,9 +141,9 @@ public class AddEdit extends Observable {
         occurrenceTableModel = new OccurrenceTableModel();
     }
  
-    /** Makes the model load data from the parameter ao.
+    /** Makes the model load data from for the occurrence with id occurrenceId.
      *
-     * @param ao Assumes it is from database and therefore assumes WGS84 coordinate system.
+     * @param occurrenceId id of the occurrence to load
      *
      * @throws DBLayerException
      * @throws RemoteException
@@ -162,12 +175,14 @@ public class AddEdit extends Observable {
         }
                 
         village = new Pair(o.getHabitat().getNearestVillage().getName(), o.getHabitat().getNearestVillage().getId());
+        villageOld = new Pair(o.getHabitat().getNearestVillage().getName(), o.getHabitat().getNearestVillage().getId());
         
         taxonList = new ArrayList();
         taxonOriginal = o.getPlant().getTaxon();
         taxonList.add(taxonOriginal);
         
         habitatDescription = o.getHabitat().getDescription();
+        habitatDescriptionOld = o.getHabitat().getDescription();
         year = o.getYearCollected();
         
         occurrenceNote = o.getNote();
@@ -180,6 +195,17 @@ public class AddEdit extends Observable {
         altitude = o.getHabitat().getAltitude();
         longitude = o.getHabitat().getLongitude();
         latitude = o.getHabitat().getLatitude();
+//--
+        habitatNoteOld = o.getHabitat().getNote();
+        territoryNameOld = new Pair(o.getHabitat().getTerritory().getName(),o.getHabitat().getTerritory().getId());
+        phytNameOld = new Pair(o.getHabitat().getPhytochorion().getName(), o.getHabitat().getPhytochorion().getId());
+        phytCodeOld = new Pair(o.getHabitat().getPhytochorion().getCode(), o.getHabitat().getPhytochorion().getId());
+        phytCountryOld = o.getHabitat().getCountry();
+        quadrantOld = o.getHabitat().getQuadrant();
+        altitudeOld = o.getHabitat().getAltitude();
+        longitudeOld = o.getHabitat().getLongitude();
+        latitudeOld = o.getHabitat().getLatitude();
+//--        
         source = o.getDataSource();
         if (o.getPublication() != null)
             publication = new Pair(o.getPublication().getReferenceCitation(), o.getPublication().getId());
@@ -232,6 +258,36 @@ public class AddEdit extends Observable {
             return 0;        
     }//setHabitat
 
+    /** Convenience method for {@link hasHabitatChanged()}.
+     *
+     */
+    private boolean equal(Object o1, Object o2) {
+        if (o1 == null && o2 != null)
+            return false;
+        return (o1 == null && o2 == null) || o1.equals(o2);
+    }
+    
+    /** Determines whether the habitat changed from the last call to {@link setRecord()} method.
+     *
+     * We need to keep track of changes to habitat for the case that it is shared by two and more occurrences. 
+     * In that case we have to ask user whether he wants to divide this habitat or change it for all occurrences.
+     */
+    public boolean hasHabitatChanged() {
+    return !( 
+            equal(habitatDescriptionOld,habitatDescription) &&
+            equal(habitatNoteOld,habitatNote)  &&
+            equal(territoryNameOld,territoryName) &&
+            equal(phytNameOld,phytNameOld) &&
+            equal(phytCodeOld,phytCode) &&
+            equal(phytCountryOld,phytCountry) &&
+            equal(quadrantOld,quadrant) &&
+            equal(altitudeOld,altitude) &&
+            equal(longitudeOld,longitude) &&
+            equal(latitudeOld,latitude) &&
+            equal(villageOld,village)
+            );
+    }
+    
     public Pair<String, Integer> getAuthor(int i) {
         return ((Pair<Pair<String,Integer>,String>)authorList.get(i)).getFirst();
     }
@@ -333,6 +389,8 @@ public class AddEdit extends Observable {
             return;
         }
         this.phytName = phytName;
+
+        
         if (phytCodes != null)
             for (int i=0; i < phytCodes.length; i++) {
                 if (phytCodes[i].getSecond().equals(phytName.getSecond())) {
@@ -362,6 +420,8 @@ public class AddEdit extends Observable {
             return;
         }
         this.phytCode = phytCode;
+
+
         if (phytNames != null)
             for (int i=0; i < phytNames.length; i++) {
                 if (phytNames[i].getSecond().equals(phytCode.getSecond())) {
@@ -1299,6 +1359,10 @@ public class AddEdit extends Observable {
     }
     
     public void setAuthor(int i, Pair<String,Integer> author) {
+        if (i >= authorList.size()) {
+            logger.error("AddEdit: trying to add an author to a non-existent row!");
+            return;
+        }
         authorList.get(i).setFirst(author);
         logger.debug("Author name in row "+i+" set to "+author);
     }

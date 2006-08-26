@@ -14,14 +14,19 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.table.TableColumn;
+import javax.swing.text.PlainDocument;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TabTransfersFocus;
+import net.sf.plantlore.common.record.Habitat;
+import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
@@ -49,6 +54,10 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         getRootPane().setDefaultButton(okButton);
         
         setLabels();
+        
+        setSizeRestrictions();
+        
+        new DefaultEscapeKeyPressed(this);
         
         jPanel3.setVisible(visible);
         jPanel2.setPreferredSize(new Dimension(DIALOG_WIDTH,210));
@@ -779,13 +788,29 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         
         helpButton.setText(L10n.getString("Common.Help"));
         helpButton.setMnemonic(L10n.getMnemonic("Common.Help"));
-        okButton.setText(L10n.getString("Common.Ok"));
-        okButton.setMnemonic(L10n.getMnemonic("Common.Ok"));
-        cancelButton.setText(L10n.getString("Common.Cancel"));
-        cancelButton.setMnemonic(L10n.getMnemonic("Common.Cancel"));
-        
     }
-    
+
+    private void setSizeRestrictions() {
+        PlainDocument pd = (PlainDocument) herbariumTextField.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Occurrence.getColumnSize(Occurrence.HERBARIUM)));
+
+        pd = (PlainDocument) quadrantTextField.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Habitat.getColumnSize(Habitat.QUADRANT)));
+        
+        ((AutoComboBoxNG3)phytCountryCombo).setCapacity(Habitat.getColumnSize(Habitat.COUNTRY));
+        
+        pd = (PlainDocument) descriptionArea.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Habitat.getColumnSize(Habitat.DESCRIPTION)));
+        
+        pd = (PlainDocument) locationNoteArea.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Habitat.getColumnSize(Habitat.NOTE)));
+        
+        ((AutoComboBoxNG3)sourceCombo).setCapacity(Occurrence.getColumnSize(Occurrence.DATASOURCE));
+
+        pd = (PlainDocument) occurrenceNoteArea.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Occurrence.getColumnSize(Occurrence.NOTE)));
+    }
+   
     /**
      * @param args the command line arguments
      */

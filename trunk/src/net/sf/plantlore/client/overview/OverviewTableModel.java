@@ -77,7 +77,10 @@ public class OverviewTableModel extends AbstractTableModel {
         this.db = db;
     }
         
-    private void loadData() throws DBLayerException, RemoteException {
+    private synchronized void loadData() throws DBLayerException, RemoteException {
+        if (oldSelectQuery == null) //the query hasn't been created yet
+            return;
+        
         resultsCount = db.getNumRows(getResultId());
         logger.debug("resultsCount="+resultsCount);
         Object[] records;
@@ -123,7 +126,6 @@ public class OverviewTableModel extends AbstractTableModel {
             this.data = data;
         } else
             this.data = null;
-        
     }
             
     public Integer getOccurrence(int i) throws DBLayerException, RemoteException {
@@ -247,6 +249,7 @@ public class OverviewTableModel extends AbstractTableModel {
             from = 0;
         
         currentPage = from / pageSize + 1;
+        
         loadData();
         fireTableDataChanged();
     }

@@ -297,6 +297,7 @@ public class AppCoreCtrl {
 	ReconnectAction reconnectAction = new ReconnectAction();
 	
 	ActionListener silentFinalAction = new ExitListener();
+        OverviewResizeListener overviewResizeListener = new OverviewResizeListener();
 
 	/** Creates a new instance of AppCoreCtrl */
 	public AppCoreCtrl(AppCore model, AppCoreView view) {
@@ -341,8 +342,6 @@ public class AppCoreCtrl {
 		view.occurrencesRefresh.setAction(refreshAction);
 
 		view.overview.addKeyListener(new OverviewKeyListener());
-		view.overviewScrollPane
-				.addComponentListener(new OverviewResizeListener());
 
 		view.addWindowListener(new AppWindowListener());
 		view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
@@ -1506,6 +1505,11 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
+                        //must be done to prevent problems when this listener would send commands to load data for a query
+                        //that doesn't exist, or when the dblayer doesn't exist..
+                        //it's again installed in the DatabaseChange bridge
+                        view.overviewScrollPane.removeComponentListener(overviewResizeListener);
+
                         model.logout();
                     
 			if (loginModel != null)
@@ -1651,6 +1655,12 @@ public class AppCoreCtrl {
 				view.setCursor(Cursor.getDefaultCursor());
 				setDatabaseDependentCommandsEnabled(true);
 				
+                                
+                                //this can't be done earlier. must be done after the query is created
+                                //otherwise this listener would give the overview table model commands to load data
+                                //for a query that doesn't exist yet
+                                view.overviewScrollPane.addComponentListener(overviewResizeListener);
+
 				/*-------------------------------------------------------------------
 				     Distribute the database layer among existing models.
 				  -------------------------------------------------------------------*/

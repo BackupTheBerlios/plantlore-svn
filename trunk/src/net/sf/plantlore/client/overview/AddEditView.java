@@ -91,7 +91,6 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         extendedPanel.setVisible(visible);
         setLocationRelativeTo(parent);
         this.pack();
-        new DefaultEscapeKeyPressed(this);
     }
     
            
@@ -963,10 +962,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     
     private void setSizeRestrictions() {
         PlainDocument pd = (PlainDocument) herbariumTextField.getDocument();
-        pd.setDocumentFilter(new DocumentSizeFilter(20));
+        pd.setDocumentFilter(new DocumentSizeFilter(Occurrence.getColumnSize(Occurrence.HERBARIUM)));
 
         pd = (PlainDocument) quadrantTextField.getDocument();
-        pd.setDocumentFilter(new DocumentSizeFilter(10));
+        pd.setDocumentFilter(new DocumentSizeFilter(Habitat.getColumnSize(Habitat.QUADRANT)));
         
         ((AutoComboBoxNG3)phytCountryCombo).setCapacity(Habitat.getColumnSize(Habitat.COUNTRY));
         
