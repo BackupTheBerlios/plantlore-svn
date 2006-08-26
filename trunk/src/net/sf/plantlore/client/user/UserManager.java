@@ -77,6 +77,8 @@ public class UserManager extends Observable {
     private String login;   
     /**User password */
     private String password;
+    /** Value of admin right before editing */
+    private int oldSetAdmin = 0;
     /** Firstname and surname of user */
     private String wholeName;
     /** Email of user */
@@ -139,6 +141,8 @@ public class UserManager extends Observable {
     public static final String INFORMATION_SEARCH = L10n.getString("Information.SearchUser");    
     public static final String INFORMATION_DELETE_TITLE = L10n.getString("Information.UserDeleteTitle");
     public static final String INFORMATION_DELETE = L10n.getString("Information.UserDelete");    
+    public static final String INFORMATION_EDIT_TITLE = L10n.getString("Information.UserCannotEditTitle");
+    public static final String INFORMATION_EDIT = L10n.getString("Information.UserCannotEdit");    
    
     /**
      * Creates a new instance of UserManager
@@ -352,14 +356,12 @@ public class UserManager extends Observable {
     				//Insert information about user into tRight, tUser
     				int rightId = database.executeInsert(right);
                                 right.setId(rightId);
-                                database.executeInsert(userRecord);		
-                                logger.debug("EXECUTE OK");
+                                database.executeInsert(userRecord);		                                
                                 //Add new name (login) of user to user list    	            
                                 int count = users.length;
                                 Pair<String, Integer>[] usersNew = new Pair[count+1];
                                 for(int i=0; i<count; i++) {
-                                    usersNew[i] = users[i];
-                                    logger.debug(i + ": " + usersNew.length);
+                                    usersNew[i] = users[i];                                    
                                 }
                                 usersNew[count] = new Pair(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )", userRecord.getId());
                                 logger.debug(userRecord.getId());
@@ -407,16 +409,18 @@ public class UserManager extends Observable {
     				boolean isAdmin = false;
     				if (userRecord.getRight().getAdministrator() == 1) isAdmin = true;
     				//Edit database user
-                                if (!getPassword().equals("")) {
-                                    database.alterUser(userRecord.getLogin(), getPassword(), isAdmin);
-                                    logger.debug("Alter USER");
-                                }
+                                if (!getPassword().equals("") || (userRecord.getRight().getAdministrator() != oldSetAdmin)) {                                    
+                                    database.alterUser(userRecord.getLogin(), getPassword(), isAdmin);                                    
+                                }                                
     				//Edit information about user in database                                
-    				database.executeUpdateInTransaction(userRecord.getRight());
-                                database.executeUpdateInTransaction(userRecord);                                
-                                userList.set(idRecord, userRecord);
+    				database.executeUpdateInTransaction(userRecord.getRight());                                
+                                database.executeUpdateInTransaction(userRecord);                                 
+                                userList.set(idRecord, userRecord);                                  
                                 //Update list of names (logins) of users
-                                users[userRecord.getId()].setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
+                                Pair<String, Integer> userTmp = users[userRecord.getId()];
+                                userTmp.setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
+                                logger.debug(userTmp.getFirst());
+                                users[userRecord.getId()] = userTmp;                                                               
 		        }catch (RemoteException e) {
 		        	logger.error("Process update User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();		        	
@@ -429,9 +433,8 @@ public class UserManager extends Observable {
                                 DBLayerException dbex = new DBLayerException(ERROR_EDIT + e.getMessage());
                                 dbex.setStackTrace(e.getStackTrace());
                                 throw dbex; 		            
-		        } 	
-		        database.commitTransaction();
-                        logger.debug("Transakce v editu byla ukoncena.");
+		        } 	                        
+		        database.commitTransaction();                                                
 		        setInfoFinishedTask(true);
 		        return null;
     		}
@@ -846,6 +849,7 @@ public class UserManager extends Observable {
     	logger.debug("User: "+ userId + ": " + ((User)userList.get(userId)).getFirstName() + " list.length= " + userList.size());
         this.userRecord = (User)(userList.get(userId));
         this.idRecord = userId;
+        this.oldSetAdmin = userRecord.getRight().getAdministrator();
     }
     
     /**

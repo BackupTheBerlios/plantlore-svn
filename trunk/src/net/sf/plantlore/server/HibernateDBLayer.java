@@ -2033,10 +2033,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             admin = " CREATEUSER";
         }        
         try {
-            Connection conn = txSession.connection();        
-            PreparedStatement pstmt = conn.prepareStatement("CREATE USER ? WITH PASSWORD ?"+admin);
-            pstmt.setString(1, name);
-            pstmt.setString(2, password);
+            Connection conn = txSession.connection();                    
+            PreparedStatement pstmt = conn.prepareStatement("CREATE USER " +name+ " WITH PASSWORD '" +password+ "' "+admin);            
             pstmt.execute();
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
@@ -2082,24 +2080,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // TODO: This is PostgreSQL specific. Think of a way how to provide different statements for
         //       different databases
         try {
-            Connection conn = txSession.connection();
-            // In case password has changed, execute statement to change the password
-            if ((password != null) && (!password.equals(""))) {
-                PreparedStatement pstmt = conn.prepareStatement("ALTER USER ? SET PASSWORD TO ?");
-                pstmt.setString(1, name);
-                pstmt.setString(2, password);
-                pstmt.execute();
-            }
+            Connection conn = txSession.connection();            
             // Now set CREATEUSER/NOCREATUSER flag
             String admin;
             if (isAdmin) {
                 admin = "CREATEUSER";
             } else {
                 admin = "NOCREATEUSER";
-            }
-            PreparedStatement pstmt = conn.prepareStatement("ALTER USER ? "+admin);
-            pstmt.setString(1, name);
-            pstmt.execute();            
+            }            
+            // In case password has changed, execute statement to change the password
+            if ((password != null) && (!password.equals(""))) {                                    
+                PreparedStatement pstmt = conn.prepareStatement("ALTER USER " +name+ " WITH PASSWORD '" +password+ "' " +admin);                
+                pstmt.execute();
+            } else {                
+                PreparedStatement pstmt = conn.prepareStatement("ALTER USER " +name+ " " +admin);                
+                pstmt.execute();            
+            }            
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
             DBLayerException ex = new DBLayerException("Exception.AlterUser");
@@ -2141,8 +2137,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         try {
             Connection conn = txSession.connection();        
-            PreparedStatement pstmt = conn.prepareStatement("DROP USER ?");
-            pstmt.setString(1, name);
+            PreparedStatement pstmt = conn.prepareStatement("DROP USER " + name);            
             pstmt.execute();
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());

@@ -203,7 +203,7 @@
         <Component class="javax.swing.JLabel" name="emailLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;UserManager.Email&quot;)+ &quot;: (*) &quot;" type="code"/>
+              <Connection code="L10n.getString(&quot;UserManager.Email&quot;)" type="code"/>
             </Property>
           </Properties>
         </Component>

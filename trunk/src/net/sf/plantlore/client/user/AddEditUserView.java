@@ -198,10 +198,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         } else if (this.surnameText.getText().equals("")) {
             JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Surname") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
             return false;
-        } else if (this.emailText.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, L10n.getString("UserManager.Email") + L10n.getString("Error.MissingCompulsoryField"), L10n.getString("Error.MissingCompulsoryFieldTitle"), JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
+        } 
         return true;
     }
     
@@ -257,7 +254,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
 
         surnameLabel.setText(L10n.getString("UserManager.Surname")+ ": (*) ");
 
-        emailLabel.setText(L10n.getString("UserManager.Email")+ ": (*) ");
+        emailLabel.setText(L10n.getString("UserManager.Email"));
 
         addressLabel.setText(L10n.getString("UserManager.Address")+ ": ");
 

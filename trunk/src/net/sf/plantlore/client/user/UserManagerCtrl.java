@@ -325,7 +325,12 @@ public class UserManagerCtrl {
                model.setOperation(UserManager.EDIT);
                //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1;  
-               model.setUserRecord(resultNumber);                
+               model.setUserRecord(resultNumber);    
+           if (model.getUserRecord().getDropWhen() != null)    {
+               //Display information message - user cannot be edited. User was droped
+               view.showInfoMessage(UserManager.INFORMATION_EDIT_TITLE, UserManager.INFORMATION_EDIT);
+               return;
+           }
                if (editView == null) {
             	   	editView = new AddEditUserView(model,view,true);
         	   	new AddEditUserCtrl(editView, model);
