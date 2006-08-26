@@ -34,6 +34,9 @@ public class GlobalExceptionHandler implements UncaughtExceptionHandler {
 				"The application will be terminated."
 		);
 		
+                //FIXME (maybe)
+                e.printStackTrace();
+                
 		JOptionPane.showMessageDialog( 
 				null,
 				L10n.getString("Error.UnhandledExceptionalState") +
