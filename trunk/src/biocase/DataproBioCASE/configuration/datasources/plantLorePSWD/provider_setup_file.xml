@@ -1,64 +1,75 @@
 
-<Provider xmlns='http://www.biocase.org/schemas/providersetup/1.5' adminpassword='xcvbnm'>
+<Provider xmlns='http://www.biocase.org/schemas/providersetup/1.5' adminpassword='ACDC'>
   <Host>
-    <User>postgres</User>
-    <Password>masterkey</Password>
-    <Datasource>plantloreKovo</Datasource>
+    <User>www</User>
+    <Password>plantlore</Password>
+    <Datasource>plantloreOK</Datasource>
     <DB_IP>localhost</DB_IP>
     <DBMS>postgres</DBMS>
   </Host>
   <DB>
     <TextEncoding>utf_8</TextEncoding>
-    <TableAlias alias='authors' tablename='tauthors'>
+    <TableAlias alias='authorscollected' tablename='vauthorscollected'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
-    </TableAlias>
-    <TableAlias alias='authorsOccurrences' tablename='tauthorsoccurrences'>
-      <PrimaryKey>
-        <Attribute dbType='int'>cid</Attribute>
-      </PrimaryKey>
-      <ForeignKey target='authors'>
-        <Attribute dbType='int'>cauthorid</Attribute>
-      </ForeignKey>
       <ForeignKey target='occurrences'>
         <Attribute dbType='int'>coccurrenceid</Attribute>
       </ForeignKey>
     </TableAlias>
-    <TableAlias alias='habitats' tablename='thabitats'>
+    <TableAlias alias='authorsidentified' tablename='vauthorsidentified'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
+      <ForeignKey target='occurrences'>
+        <Attribute dbType='int'>coccurrenceid</Attribute>
+      </ForeignKey>
+    </TableAlias>
+    <TableAlias alias='authorsrevised' tablename='vauthorsrevised'>
+      <PrimaryKey>
+        <Attribute dbType='int'>cid</Attribute>
+      </PrimaryKey>
+      <ForeignKey target='occurrences'>
+        <Attribute dbType='int'>coccurrenceid</Attribute>
+      </ForeignKey>
+    </TableAlias>
+    <TableAlias alias='habitats' tablename='vhabitats'>
+      <PrimaryKey>
+        <Attribute dbType='int'>cid</Attribute>
+      </PrimaryKey>
+      <ForeignKey target='territory'>
+        <Attribute dbType='int'>cterritoryid</Attribute>
+      </ForeignKey>
+      <ForeignKey target='village'>
+        <Attribute dbType='int'>cnearestvillageid</Attribute>
+      </ForeignKey>
       <ForeignKey target='phytochoria'>
         <Attribute dbType='int'>cphytochoriaid</Attribute>
       </ForeignKey>
-      <ForeignKey target='villages'>
-        <Attribute dbType='int'>cnearestvillageid</Attribute>
-      </ForeignKey>
-      <ForeignKey target='territories'>
-        <Attribute dbType='int'>cterritoryid</Attribute>
-      </ForeignKey>
     </TableAlias>
-    <TableAlias alias='metadata' tablename='tmetadata'>
+    <TableAlias alias='metadata' tablename='vmetadata'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
     </TableAlias>
-    <TableAlias alias='occurrences' tablename='toccurrences'>
+    <TableAlias alias='occurrences' tablename='voccurrences'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
-      <ForeignKey target='habitats'>
-        <Attribute dbType='int'>chabitatid</Attribute>
+      <ForeignKey target='metadata'>
+        <Attribute dbType='int'>cmetadataid</Attribute>
+      </ForeignKey>
+      <ForeignKey target='publication'>
+        <Attribute dbType='int'>cpublicationsid</Attribute>
       </ForeignKey>
       <ForeignKey target='plants'>
         <Attribute dbType='int'>cplantid</Attribute>
       </ForeignKey>
-      <ForeignKey target='publications'>
-        <Attribute dbType='int'>cpublicationsid</Attribute>
+      <ForeignKey target='habitats'>
+        <Attribute dbType='int'>chabitatid</Attribute>
       </ForeignKey>
-      <ForeignKey target='metadata'>
-        <Attribute dbType='int'>cmetadataid</Attribute>
+      <ForeignKey target='user'>
+        <Attribute dbType='int'>ccreatewho</Attribute>
       </ForeignKey>
     </TableAlias>
     <TableAlias alias='phytochoria' tablename='tphytochoria'>
@@ -71,17 +82,22 @@
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
     </TableAlias>
-    <TableAlias alias='publications' tablename='tpublications'>
+    <TableAlias alias='publication' tablename='vpublications'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
     </TableAlias>
-    <TableAlias alias='territories' tablename='tterritories'>
+    <TableAlias alias='territory' tablename='tterritories'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
     </TableAlias>
-    <TableAlias alias='villages' tablename='tvillages'>
+    <TableAlias alias='user' tablename='tuser'>
+      <PrimaryKey>
+        <Attribute dbType='int'>cid</Attribute>
+      </PrimaryKey>
+    </TableAlias>
+    <TableAlias alias='village' tablename='tvillages'>
       <PrimaryKey>
         <Attribute dbType='int'>cid</Attribute>
       </PrimaryKey>
@@ -89,10 +105,10 @@
   </DB>
   <SupportedSchemas>
     <Schema namespace='http://www.tdwg.org/schemas/abcd/1.2' request='1' response='1'>cmf_ABCD_1.20.xml</Schema>
-    <Schema namespace='http://www.namespacetbd.org/darwin2' request='1' response='1'>cmf_DarwinCore_2.xml</Schema>
     <Schema namespace='http://www.tdwg.org/schemas/abcd/2.06' request='1' response='1'>cmf_ABCD_2.06.xml</Schema>
+    <Schema namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' request='1' response='1'>cmf_DarwinCore_2.xml</Schema>
   </SupportedSchemas>
   <WrapperBehavior>
-    <RecordResultLimit>100</RecordResultLimit>
+    <RecordResultLimit>0</RecordResultLimit>
   </WrapperBehavior>
 </Provider>

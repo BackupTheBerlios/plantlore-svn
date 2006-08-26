@@ -9,10 +9,10 @@ A single mapping contains one to many literals (fixed strings) or database attri
 Valid datatypes for the dbAttribute type are: text, date, integer, float
 
 <dataElement>  OR  <attribute>
-	<mapping>
-	  <literal value="The value taken from the database is: "/>
-	  <dbAttribute attribute='COLUMN_NAME' tablealias='TABLEALIAS' type='text'/>
-	</mapping>
+    <mapping>
+      <literal value="The value taken from the database is: "/>
+      <dbAttribute attribute='COLUMN_NAME' tablealias='TABLEALIAS' type='text'/>
+    </mapping>
 
 ********************************
 CONDITIONAL MAPPING:
@@ -21,35 +21,35 @@ A single mapping can be set up as a conditional mapping.
 Only if a certain condition is true (depending on the source data), the mapping takes place.
 
 Currently only the following filters are allowed:
-	
+    
 <equals attribute='ext_cat_fk' tablealias='extension' type='integer'>3</equals>
 <notEquals attribute='ext_cat_fk' tablealias='extension' type='integer'>3</notEquals>
 <in attribute='ext_cat_fk' tablealias='extension' type='integer'>
-	<value>13</value>
-	<value>14</value>
-	<value>23</value>
-	<value>24</value>
-	...
+    <value>13</value>
+    <value>14</value>
+    <value>23</value>
+    <value>24</value>
+    ...
 </in>
 
-Example:	
+Example:    
 <dataElement>  OR  <attribute>
-	<mapping>
-		<literal value="The value taken from the database is: "/>
-		<if>
-		   <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
-		</if>
-	</mapping>
+    <mapping>
+        <literal value="The value taken from the database is: "/>
+        <if>
+           <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
+        </if>
+    </mapping>
 
 
 GLOBAL FILTER:
 A global filter filters the source data before it is passed on to the mappings and all subelements
 of the element. A global filter therefore affects all child nodes.
 
-Example:	
+Example:    
 <dataElement>  OR  <attribute>
    <filterRecords>
-	   <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
+       <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
    </filterRecords>
 
 ********************************
@@ -60,13 +60,13 @@ You can map the controlled value items of the schema to the ones used in the dat
 
 <vocabulary>
   <term schemaTerm='accepted'>
-	<dbTerm>1</dbTerm>
+    <dbTerm>1</dbTerm>
   </term>
   
 -->
 <conceptMapping xmlns='http://www.biocase.org/schemas/conceptmapping/2.1'>
   <metadata>
-    <generated when='2006-01-18 12:13:32.40' by='Configtool lib $Revision: 362 $'/>
+    <generated when='2006-08-21 12:05:02.32' by='Configtool lib $Revision: 572 $'/>
     <name>
     </name>
   </metadata>
@@ -89,18 +89,18 @@ You can map the controlled value items of the schema to the ones used in the dat
                 <childElements>
                   <dataElement name='Name' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/TechnicalContacts/TechnicalContact/Name'>
                     <mapping>
-                      <dbAttribute attribute='CTECHNICALCONTACTNAME' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='ctechnicalcontactname' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='Email' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/TechnicalContacts/TechnicalContact/Email'>
                     <mapping>
-                      <dbAttribute attribute='CTECHNICALCONTACTEMAIL' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='ctechnicalcontactemail' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='Phone' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/TechnicalContacts/TechnicalContact/Phone'/>
                   <dataElement name='Address' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/TechnicalContacts/TechnicalContact/Address'>
                     <mapping>
-                      <dbAttribute attribute='CTECHNICALCONTACTADDRESS' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='ctechnicalcontactaddress' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                 </childElements>
@@ -116,18 +116,18 @@ You can map the controlled value items of the schema to the ones used in the dat
                 <childElements>
                   <dataElement name='Name' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/ContentContacts/ContentContact/Name'>
                     <mapping>
-                      <dbAttribute attribute='CCONTENTCONTACTNAME' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='ccontentcontactname' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='Email' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/ContentContacts/ContentContact/Email'>
                     <mapping>
-                      <dbAttribute attribute='CCONTENTCONTACTEMAIL' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='ccontentcontactemail' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='Phone' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/ContentContacts/ContentContact/Phone'/>
                   <dataElement name='Address' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/ContentContacts/ContentContact/Address'>
                     <mapping>
-                      <dbAttribute attribute='CCONTENTCONTACTADDRESS' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='ccontentcontactaddress' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                 </childElements>
@@ -145,21 +145,17 @@ You can map the controlled value items of the schema to the ones used in the dat
                 <childElements>
                   <dataElement path='/DataSets/DataSet/Metadata/Description/Representation' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Representation' min='1'>
                     <attributes>
-                      <attribute path='/DataSets/DataSet/Metadata/Description/Representation[@language]' name='language' w3cType='language' min='1'>
-                        <mapping>
-                          <literal value='CS_CZ'/>
-                        </mapping>
-                      </attribute>
+                      <attribute path='/DataSets/DataSet/Metadata/Description/Representation[@language]' name='language' w3cType='language' min='1'/>
                     </attributes>
                     <childElements>
                       <dataElement name='Title' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Description/Representation/Title'>
                         <mapping>
-                          <dbAttribute attribute='CDATASETTITLE' tablealias='metadata' type='text' nosearch='0'/>
+                          <dbAttribute attribute='cdatasettitle' tablealias='metadata' type='text' nosearch='0'/>
                         </mapping>
                       </dataElement>
                       <dataElement name='Details' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Description/Representation/Details'>
                         <mapping>
-                          <dbAttribute attribute='CDATASETDETAILS' tablealias='metadata' type='text' nosearch='0'/>
+                          <dbAttribute attribute='cdatasetdetails' tablealias='metadata' type='text' nosearch='0'/>
                         </mapping>
                       </dataElement>
                       <dataElement name='Coverage' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Description/Representation/Coverage'/>
@@ -203,21 +199,21 @@ You can map the controlled value items of the schema to the ones used in the dat
                 <childElements>
                   <dataElement name='Creators' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/RevisionData/Creators'>
                     <mapping>
-                      <dbAttribute attribute='CSOURCEINSTITUTIONID' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='csourceinstitutionid' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                     <mapping>
-                      <dbAttribute attribute='CSOURCEID' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='csourceid' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='Contributors' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/RevisionData/Contributors'/>
                   <dataElement name='DateCreated' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='dateTime' path='/DataSets/DataSet/Metadata/RevisionData/DateCreated'>
                     <mapping>
-                      <dbAttribute attribute='CDATECREATE' tablealias='metadata' type='date' nosearch='0'/>
+                      <dbAttribute attribute='cdatecreate' tablealias='metadata' type='date' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='DateModified' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='dateTime' path='/DataSets/DataSet/Metadata/RevisionData/DateModified'>
                     <mapping>
-                      <dbAttribute attribute='CDATEMODIFIED' tablealias='metadata' type='date' nosearch='0'/>
+                      <dbAttribute attribute='cdatemodified' tablealias='metadata' type='date' nosearch='0'/>
                     </mapping>
                   </dataElement>
                 </childElements>
@@ -254,11 +250,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                       </dataElement>
                       <dataElement path='/DataSets/DataSet/Metadata/Owners/Owner/Person' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Person' min='0'>
                         <childElements>
-                          <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Owners/Owner/Person/FullName'>
-                            <mapping>
-                              <dbAttribute attribute='CCONTENTCONTACTNAME' tablealias='metadata' type='text' nosearch='0'/>
-                            </mapping>
-                          </dataElement>
+                          <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Owners/Owner/Person/FullName'/>
                           <dataElement name='SortingName' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Owners/Owner/Person/SortingName'/>
                           <dataElement path='/DataSets/DataSet/Metadata/Owners/Owner/Person/AtomisedName' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='AtomisedName' min='0'>
                             <childElements>
@@ -283,9 +275,6 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement path='/DataSets/DataSet/Metadata/Owners/Owner/Addresses' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Addresses' min='0'>
                         <childElements>
                           <dataElement name='Address' min='0' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Owners/Owner/Addresses/Address'>
-                            <mapping>
-                              <dbAttribute attribute='CCONTENTCONTACTADDRESS' tablealias='metadata' type='text' nosearch='0'/>
-                            </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Metadata/Owners/Owner/Addresses/Address[@language]' name='language' w3cType='language' min='0'/>
                               <attribute path='/DataSets/DataSet/Metadata/Owners/Owner/Addresses/Address[@preferred]' name='preferred' w3cType='boolean' min='0'/>
@@ -314,9 +303,6 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement path='/DataSets/DataSet/Metadata/Owners/Owner/EmailAddresses' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='EmailAddresses' min='0'>
                         <childElements>
                           <dataElement name='EmailAddress' min='0' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Metadata/Owners/Owner/EmailAddresses/EmailAddress'>
-                            <mapping>
-                              <dbAttribute attribute='CCONTENTCONTACTEMAIL' tablealias='metadata' type='text' nosearch='0'/>
-                            </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Metadata/Owners/Owner/EmailAddresses/EmailAddress[@preferred]' name='preferred' w3cType='boolean' min='0'/>
                             </attributes>
@@ -448,24 +434,24 @@ You can map the controlled value items of the schema to the ones used in the dat
                   <dataElement name='UnitGUID' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/UnitGUID'/>
                   <dataElement name='SourceInstitutionID' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/SourceInstitutionID'>
                     <mapping>
-                      <dbAttribute attribute='CSOURCEINSTITUTIONID' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='csourceinstitutionid' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='SourceID' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/SourceID'>
                     <mapping>
-                      <dbAttribute attribute='CSOURCEID' tablealias='metadata' type='text' nosearch='0'/>
+                      <dbAttribute attribute='csourceid' tablealias='metadata' type='text' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='UnitID' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/UnitID'>
                     <mapping>
-                      <dbAttribute attribute='CID' tablealias='occurrences' type='int' nosearch='0'/>
+                      <dbAttribute attribute='cid' tablealias='occurrences' type='int' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement name='UnitIDNumeric' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='int' path='/DataSets/DataSet/Units/Unit/UnitIDNumeric'/>
                   <dataElement name='LastEditor' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/LastEditor'/>
                   <dataElement name='DateLastEdited' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='dateTime' path='/DataSets/DataSet/Units/Unit/DateLastEdited'>
                     <mapping>
-                      <dbAttribute attribute='CUPDATEWHEN' tablealias='occurrences' type='date' nosearch='0'/>
+                      <dbAttribute attribute='cupdatewhen' tablealias='occurrences' type='date' nosearch='0'/>
                     </mapping>
                   </dataElement>
                   <dataElement path='/DataSets/DataSet/Units/Unit/Owner' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Owner' min='0'>
@@ -498,7 +484,11 @@ You can map the controlled value items of the schema to the ones used in the dat
                       </dataElement>
                       <dataElement path='/DataSets/DataSet/Units/Unit/Owner/Person' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Person' min='0'>
                         <childElements>
-                          <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Owner/Person/FullName'/>
+                          <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Owner/Person/FullName'>
+                            <mapping>
+                              <dbAttribute attribute='cwholename' tablealias='user' type='text' nosearch='0'/>
+                            </mapping>
+                          </dataElement>
                           <dataElement name='SortingName' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Owner/Person/SortingName'/>
                           <dataElement path='/DataSets/DataSet/Units/Unit/Owner/Person/AtomisedName' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='AtomisedName' min='0'>
                             <childElements>
@@ -523,6 +513,9 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement path='/DataSets/DataSet/Units/Unit/Owner/Addresses' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Addresses' min='0'>
                         <childElements>
                           <dataElement name='Address' min='0' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Owner/Addresses/Address'>
+                            <mapping>
+                              <dbAttribute attribute='caddress' tablealias='user' type='text' nosearch='0'/>
+                            </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Units/Unit/Owner/Addresses/Address[@language]' name='language' w3cType='language' min='0'/>
                               <attribute path='/DataSets/DataSet/Units/Unit/Owner/Addresses/Address[@preferred]' name='preferred' w3cType='boolean' min='0'/>
@@ -551,6 +544,9 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement path='/DataSets/DataSet/Units/Unit/Owner/EmailAddresses' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='EmailAddresses' min='0'>
                         <childElements>
                           <dataElement name='EmailAddress' min='0' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Owner/EmailAddresses/EmailAddress'>
+                            <mapping>
+                              <dbAttribute attribute='cemail' tablealias='user' type='text' nosearch='0'/>
+                            </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Units/Unit/Owner/EmailAddresses/EmailAddress[@preferred]' name='preferred' w3cType='boolean' min='0'/>
                             </attributes>
@@ -792,17 +788,17 @@ You can map the controlled value items of the schema to the ones used in the dat
                         <childElements>
                           <dataElement name='TitleCitation' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/UnitReferences/UnitReference/TitleCitation'>
                             <mapping>
-                              <dbAttribute attribute='CCOLLECTIONNAME' tablealias='publications' type='text' nosearch='0'/>
+                              <dbAttribute attribute='ccollectionname' tablealias='publication' type='text' nosearch='0'/>
                             </mapping>
                           </dataElement>
                           <dataElement name='CitationDetail' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/UnitReferences/UnitReference/CitationDetail'>
                             <mapping>
-                              <dbAttribute attribute='CREFERENCEDETAIL' tablealias='publications' type='text' nosearch='0'/>
+                              <dbAttribute attribute='creferencedetail' tablealias='publication' type='text' nosearch='0'/>
                             </mapping>
                           </dataElement>
                           <dataElement name='URI' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='anyURI' path='/DataSets/DataSet/Units/Unit/UnitReferences/UnitReference/URI'>
                             <mapping>
-                              <dbAttribute attribute='CURL' tablealias='publications' type='text' nosearch='0'/>
+                              <dbAttribute attribute='curl' tablealias='publication' type='text' nosearch='0'/>
                             </mapping>
                           </dataElement>
                         </childElements>
@@ -831,18 +827,14 @@ You can map the controlled value items of the schema to the ones used in the dat
                                     <childElements>
                                       <dataElement name='FullScientificNameString' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/FullScientificNameString'>
                                         <mapping>
-                                          <dbAttribute attribute='CSPECIES' tablealias='plants' type='text' nosearch='0'/>
+                                          <dbAttribute attribute='ctaxon' tablealias='plants' type='text' nosearch='0'/>
                                         </mapping>
                                       </dataElement>
                                       <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='NameAtomised' min='0'>
                                         <childElements>
                                           <dataElement name='Bacterial' min='0' max='1' choiceElemId='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' choiceNodeId='3' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Bacterial'>
                                             <childElements>
-                                              <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Bacterial/GenusOrMonomial'>
-                                                <mapping>
-                                                  <dbAttribute attribute='CGENUS' tablealias='plants' type='text' nosearch='0'/>
-                                                </mapping>
-                                              </dataElement>
+                                              <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Bacterial/GenusOrMonomial'/>
                                               <dataElement name='Subgenus' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Bacterial/Subgenus'/>
                                               <dataElement name='SubgenusAuthorAndYear' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Bacterial/SubgenusAuthorAndYear'/>
                                               <dataElement name='SpeciesEpithet' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Bacterial/SpeciesEpithet'/>
@@ -891,7 +883,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                             <childElements>
                                               <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Viral/GenusOrMonomial'/>
                                               <dataElement name='ViralSpeciesDesignation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Viral/ViralSpeciesDesignation'/>
-                                              <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Viral/Acronym' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Acronym' min='0'/>
+                                              <dataElement name='Acronym' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/NameAtomised/Viral/Acronym'/>
                                             </childElements>
                                           </dataElement>
                                         </childElements>
@@ -950,7 +942,11 @@ You can map the controlled value items of the schema to the ones used in the dat
                                 <childElements>
                                   <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/Identifier/PersonName' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='PersonName' min='0'>
                                     <childElements>
-                                      <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/Identifier/PersonName/FullName'/>
+                                      <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/Identifier/PersonName/FullName'>
+                                        <mapping>
+                                          <dbAttribute attribute='cwholename' tablealias='authorsidentified' type='text' nosearch='0'/>
+                                        </mapping>
+                                      </dataElement>
                                       <dataElement name='SortingName' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/Identifier/PersonName/SortingName'/>
                                       <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/Identifier/PersonName/AtomisedName' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='AtomisedName' min='0'>
                                         <childElements>
@@ -991,7 +987,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                   </dataElement>
                                 </childElements>
                               </dataElement>
-                              <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentifiersText' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='IdentifiersText' min='0'/>
+                              <dataElement name='IdentifiersText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentifiersText'/>
                               <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentificationSource' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='IdentificationSource' min='0'>
                                 <childElements>
                                   <dataElement name='TitleCitation' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentificationSource/TitleCitation'/>
@@ -999,7 +995,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                   <dataElement name='URI' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='anyURI' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentificationSource/URI'/>
                                 </childElements>
                               </dataElement>
-                              <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentifierRole' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='IdentifierRole' min='0'/>
+                              <dataElement name='IdentifierRole' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifiers/IdentifierRole'/>
                             </childElements>
                           </dataElement>
                           <dataElement path='/DataSets/DataSet/Units/Unit/Identifications/Identification/References' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='References' min='0'>
@@ -1042,11 +1038,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement name='IdentificationHistory' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Identifications/IdentificationHistory'/>
                     </childElements>
                   </dataElement>
-                  <dataElement name='RecordBasis' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='Name' path='/DataSets/DataSet/Units/Unit/RecordBasis'>
-                    <mapping>
-                      <dbAttribute attribute='CRECORDBASIS' tablealias='metadata' type='text' nosearch='0'/>
-                    </mapping>
-                  </dataElement>
+                  <dataElement name='RecordBasis' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='Name' path='/DataSets/DataSet/Units/Unit/RecordBasis'/>
                   <dataElement name='KindOfUnit' min='0' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/KindOfUnit'>
                     <attributes>
                       <attribute path='/DataSets/DataSet/Units/Unit/KindOfUnit[@language]' name='language' w3cType='language' min='0'/>
@@ -1448,7 +1440,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                   <attribute path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnits/PreviousUnit[@sequence]' name='sequence' w3cType='int' min='0'/>
                                 </attributes>
                                 <childElements>
-                                  <dataElement path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnits/PreviousUnit/PreviousSourceInstitutionID' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='PreviousSourceInstitutionID' min='1'/>
+                                  <dataElement name='PreviousSourceInstitutionID' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnits/PreviousUnit/PreviousSourceInstitutionID'/>
                                   <dataElement name='PreviousSourceID' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnits/PreviousUnit/PreviousSourceID'/>
                                   <dataElement name='PreviousUnitID' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnits/PreviousUnit/PreviousUnitID'/>
                                   <dataElement path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnits/PreviousUnit/Date' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Date' min='0'>
@@ -1478,7 +1470,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                               </dataElement>
                             </childElements>
                           </dataElement>
-                          <dataElement path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnitsText' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='PreviousUnitsText' min='0'/>
+                          <dataElement name='PreviousUnitsText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/History/PreviousUnitsText'/>
                         </childElements>
                       </dataElement>
                       <dataElement path='/DataSets/DataSet/Units/Unit/SpecimenUnit/NomenclaturalTypeDesignations' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='NomenclaturalTypeDesignations' min='0'>
@@ -1537,7 +1529,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                         <childElements>
                                           <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/NomenclaturalTypeDesignations/NomenclaturalTypeDesignation/TypifiedName/NameAtomised/Viral/GenusOrMonomial'/>
                                           <dataElement name='ViralSpeciesDesignation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/NomenclaturalTypeDesignations/NomenclaturalTypeDesignation/TypifiedName/NameAtomised/Viral/ViralSpeciesDesignation'/>
-                                          <dataElement path='/DataSets/DataSet/Units/Unit/SpecimenUnit/NomenclaturalTypeDesignations/NomenclaturalTypeDesignation/TypifiedName/NameAtomised/Viral/Acronym' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Acronym' min='0'/>
+                                          <dataElement name='Acronym' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/NomenclaturalTypeDesignations/NomenclaturalTypeDesignation/TypifiedName/NameAtomised/Viral/Acronym'/>
                                         </childElements>
                                       </dataElement>
                                     </childElements>
@@ -1579,7 +1571,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                           </dataElement>
                         </childElements>
                       </dataElement>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/SpecimenUnit/DuplicatesDistributedTo' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='DuplicatesDistributedTo' min='0'/>
+                      <dataElement name='DuplicatesDistributedTo' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/SpecimenUnit/DuplicatesDistributedTo'/>
                     </childElements>
                   </dataElement>
                   <dataElement name='ObservationUnit' min='0' max='1' choiceElemId='2' namespace='http://www.tdwg.org/schemas/abcd/2.06' choiceNodeId='4' path='/DataSets/DataSet/Units/Unit/ObservationUnit'>
@@ -1608,9 +1600,9 @@ You can map the controlled value items of the schema to the ones used in the dat
                           </dataElement>
                         </childElements>
                       </dataElement>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/Strain' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Strain' min='0'/>
+                      <dataElement name='Strain' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/Strain'/>
                       <dataElement name='SerovarOrSerotype' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/SerovarOrSerotype'/>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/Pathovar' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Pathovar' min='0'/>
+                      <dataElement name='Pathovar' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/Pathovar'/>
                       <dataElement name='Mutant' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/Mutant'/>
                       <dataElement name='Genotype' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/Genotype'/>
                       <dataElement name='GrowthConditions' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/CultureCollectionUnit/GrowthConditions'>
@@ -1696,7 +1688,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                     <childElements>
                       <dataElement name='Exsiccatum' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/HerbariumUnit/Exsiccatum'>
                         <mapping>
-                          <dbAttribute attribute='CHERBARIUM' tablealias='occurrences' type='text' nosearch='0'/>
+                          <dbAttribute attribute='cherbarium' tablealias='occurrences' type='text' nosearch='0'/>
                         </mapping>
                       </dataElement>
                       <dataElement name='DuplicatesDistributedTo' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/HerbariumUnit/DuplicatesDistributedTo'/>
@@ -1721,10 +1713,10 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement name='AccessionLineage' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/AccessionLineage'/>
                       <dataElement name='DonorCategory' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='byte' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/DonorCategory'/>
                       <dataElement name='Cultivation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/Cultivation'/>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/PlantingDate' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='PlantingDate' min='0'/>
+                      <dataElement name='PlantingDate' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='date' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/PlantingDate'/>
                       <dataElement name='Propagation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/Propagation'/>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/Perennation' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Perennation' min='0'/>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/BreedingSystem' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='BreedingSystem' min='0'/>
+                      <dataElement name='Perennation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/Perennation'/>
+                      <dataElement name='BreedingSystem' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/BreedingSystem'/>
                       <dataElement name='IPEN' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/BotanicalGardenUnit/IPEN'/>
                     </childElements>
                   </dataElement>
@@ -1732,7 +1724,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                     <childElements>
                       <dataElement name='NationalInventoryCode' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/NationalInventoryCode'/>
                       <dataElement name='BreedingInstitutionCode' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/BreedingInstitutionCode'/>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/BreedingCountryCode' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='BreedingCountryCode' min='0'/>
+                      <dataElement name='BreedingCountryCode' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/BreedingCountryCode'/>
                       <dataElement name='BiologicalStatus' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='integer' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/BiologicalStatus'/>
                       <dataElement name='AncestralData' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/AncestralData'>
                         <attributes>
@@ -1746,11 +1738,11 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement name='DecodedBreedingInstitute' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/DecodedBreedingInstitute'/>
                       <dataElement name='DecodedDonorInstitute' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/DecodedDonorInstitute'/>
                       <dataElement name='DecodedLocationSafetyDuplicates' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/DecodedLocationSafetyDuplicates'/>
-                      <dataElement path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/GatheringInstitutionCode' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='GatheringInstitutionCode' min='0'/>
+                      <dataElement name='GatheringInstitutionCode' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/GatheringInstitutionCode'/>
                       <dataElement path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/AccessionNames' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='AccessionNames' min='0'>
                         <childElements>
-                          <dataElement path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/AccessionNames/AccessionName' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='AccessionName' min='0'/>
-                          <dataElement path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/AccessionNames/AccessionNameText' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='AccessionNameText' min='0'/>
+                          <dataElement name='AccessionName' min='0' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/AccessionNames/AccessionName'/>
+                          <dataElement name='AccessionNameText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/PlantGeneticResourcesUnit/AccessionNames/AccessionNameText'/>
                         </childElements>
                       </dataElement>
                     </childElements>
@@ -1992,11 +1984,15 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement name='Code' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Code'/>
                       <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/DateTime' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='DateTime' min='0'>
                         <childElements>
-                          <dataElement name='DateText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/DateTime/DateText'/>
+                          <dataElement name='DateText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/DateTime/DateText'>
+                            <mapping>
+                              <dbAttribute attribute='cyearcollected' tablealias='occurrences' type='int' nosearch='0'/>
+                            </mapping>
+                          </dataElement>
                           <dataElement name='TimeZone' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/DateTime/TimeZone'/>
                           <dataElement name='ISODateTimeBegin' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/DateTime/ISODateTimeBegin'>
                             <mapping>
-                              <dbAttribute attribute='CISODATETIMEBEGIN' tablealias='occurrences' type='date' nosearch='0'/>
+                              <dbAttribute attribute='cisodatetimebegin' tablealias='occurrences' type='date' nosearch='0'/>
                             </mapping>
                           </dataElement>
                           <dataElement name='DayNumberBegin' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='integer' path='/DataSets/DataSet/Units/Unit/Gathering/DateTime/DayNumberBegin'/>
@@ -2022,16 +2018,12 @@ You can map the controlled value items of the schema to the ones used in the dat
                                     <childElements>
                                       <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Organisation/Name/Representation' max='-1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Representation' min='1'>
                                         <attributes>
-                                          <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Organisation/Name/Representation[@language]' name='language' w3cType='language' min='1'>
-                                            <mapping>
-                                              <literal value='CS_CZ'/>
-                                            </mapping>
-                                          </attribute>
+                                          <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Organisation/Name/Representation[@language]' name='language' w3cType='language' min='1'/>
                                         </attributes>
                                         <childElements>
                                           <dataElement name='Text' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Organisation/Name/Representation/Text'>
                                             <mapping>
-                                              <dbAttribute attribute='CORGANIZATION' tablealias='authors' type='text' nosearch='0'/>
+                                              <dbAttribute attribute='corganization' tablealias='authorscollected' type='text' nosearch='0'/>
                                             </mapping>
                                           </dataElement>
                                           <dataElement name='Abbreviation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Organisation/Name/Representation/Abbreviation'/>
@@ -2054,7 +2046,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                 <childElements>
                                   <dataElement name='FullName' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Person/FullName'>
                                     <mapping>
-                                      <dbAttribute attribute='CWHOLENAME' tablealias='authors' type='text' nosearch='0'/>
+                                      <dbAttribute attribute='cwholename' tablealias='authorscollected' type='text' nosearch='0'/>
                                     </mapping>
                                   </dataElement>
                                   <dataElement name='SortingName' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgent/Person/SortingName'/>
@@ -2072,6 +2064,9 @@ You can map the controlled value items of the schema to the ones used in the dat
                             </childElements>
                           </dataElement>
                           <dataElement name='GatheringAgentsText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgentsText'>
+                            <mapping>
+                              <dbAttribute attribute='cnote' tablealias='occurrences' type='text' nosearch='0'/>
+                            </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Agents/GatheringAgentsText[@language]' name='language' w3cType='language' min='0'/>
                             </attributes>
@@ -2090,9 +2085,6 @@ You can map the controlled value items of the schema to the ones used in the dat
                       <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/Project' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Project' min='0'>
                         <childElements>
                           <dataElement name='ProjectTitle' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Project/ProjectTitle'>
-                            <mapping>
-                              <dbAttribute attribute='CDATASETTITLE' tablealias='metadata' type='text' nosearch='0'/>
-                            </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Project/ProjectTitle[@language]' name='language' w3cType='language' min='0'/>
                             </attributes>
@@ -2208,7 +2200,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                       </dataElement>
                       <dataElement name='LocalityText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/LocalityText'>
                         <mapping>
-                          <dbAttribute attribute='CNAME' tablealias='villages' type='text' nosearch='0'/>
+                          <dbAttribute attribute='cdescription' tablealias='habitats' type='text' nosearch='0'/>
                         </mapping>
                         <attributes>
                           <attribute path='/DataSets/DataSet/Units/Unit/Gathering/LocalityText[@language]' name='language' w3cType='language' min='0'/>
@@ -2218,7 +2210,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                         <childElements>
                           <dataElement name='Name' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Country/Name'>
                             <mapping>
-                              <dbAttribute attribute='CCOUNTRY' tablealias='habitats' type='text' nosearch='0'/>
+                              <dbAttribute attribute='ccountry' tablealias='habitats' type='text' nosearch='0'/>
                             </mapping>
                             <attributes>
                               <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Country/Name[@language]' name='language' w3cType='language' min='0'/>
@@ -2250,7 +2242,11 @@ You can map the controlled value items of the schema to the ones used in the dat
                                 </attributes>
                               </dataElement>
                               <dataElement name='AreaCodeStandard' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/NamedAreas/NamedArea/AreaCodeStandard'/>
-                              <dataElement name='AreaCode' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/NamedAreas/NamedArea/AreaCode'/>
+                              <dataElement name='AreaCode' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/NamedAreas/NamedArea/AreaCode'>
+                                <mapping>
+                                  <dbAttribute attribute='ccode' tablealias='phytochoria' type='text' nosearch='0'/>
+                                </mapping>
+                              </dataElement>
                               <dataElement name='DataSource' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/NamedAreas/NamedArea/DataSource'/>
                             </childElements>
                           </dataElement>
@@ -2264,6 +2260,9 @@ You can map the controlled value items of the schema to the ones used in the dat
                             </attributes>
                             <childElements>
                               <dataElement name='NearNamedPlace' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'>
+                                <mapping>
+                                  <dbAttribute attribute='cname' tablealias='village' type='text' nosearch='0'/>
+                                </mapping>
                                 <attributes>
                                   <attribute path='/DataSets/DataSet/Units/Unit/Gathering/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace[@language]' name='language' w3cType='language' min='0'/>
                                 </attributes>
@@ -2298,12 +2297,12 @@ You can map the controlled value items of the schema to the ones used in the dat
                               <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='CoordinatesUTM' min='0'>
                                 <childElements>
                                   <dataElement name='UTMZone' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMZone'/>
-                                  <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMSubzone' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='UTMSubzone' min='0'/>
-                                  <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMNS' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='UTMNS' min='0'/>
-                                  <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMZoneFull' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='UTMZoneFull' min='0'/>
+                                  <dataElement name='UTMSubzone' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMSubzone'/>
+                                  <dataElement name='UTMNS' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMNS'/>
+                                  <dataElement name='UTMZoneFull' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMZoneFull'/>
                                   <dataElement name='UTMEasting' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMEasting'/>
                                   <dataElement name='UTMNorthing' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMNorthing'/>
-                                  <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMDatum' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='UTMDatum' min='0'/>
+                                  <dataElement name='UTMDatum' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMDatum'/>
                                   <dataElement name='UTMText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesUTM/UTMText'/>
                                 </childElements>
                               </dataElement>
@@ -2318,19 +2317,19 @@ You can map the controlled value items of the schema to the ones used in the dat
                                 <childElements>
                                   <dataElement name='LongitudeDecimal' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='decimal' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LongitudeDecimal'>
                                     <mapping>
-                                      <dbAttribute attribute='CLONGITUDE' tablealias='habitats' type='float' nosearch='0'/>
+                                      <dbAttribute attribute='clongitude' tablealias='habitats' type='float' nosearch='0'/>
                                     </mapping>
                                   </dataElement>
                                   <dataElement name='LatitudeDecimal' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='decimal' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LatitudeDecimal'>
                                     <mapping>
-                                      <dbAttribute attribute='CLATITUDE' tablealias='habitats' type='float' nosearch='0'/>
+                                      <dbAttribute attribute='clatitude' tablealias='habitats' type='float' nosearch='0'/>
                                     </mapping>
                                   </dataElement>
                                   <dataElement name='SpatialDatum' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/SpatialDatum'/>
                                   <dataElement name='AccuracyStatement' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/AccuracyStatement'/>
                                   <dataElement name='CoordinateErrorDistanceInMeters' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='decimal' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/CoordinateErrorDistanceInMeters'/>
                                   <dataElement name='CoordinateErrorMethod' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/CoordinateErrorMethod'/>
-                                  <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/CoordinatesText' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='CoordinatesText' min='0'/>
+                                  <dataElement name='CoordinatesText' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/CoordinatesText'/>
                                 </childElements>
                               </dataElement>
                             </childElements>
@@ -2361,7 +2360,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                               </dataElement>
                               <dataElement name='LowerValue' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Altitude/MeasurementOrFactAtomised/LowerValue'>
                                 <mapping>
-                                  <dbAttribute attribute='CALTITUDE' tablealias='habitats' type='float' nosearch='0'/>
+                                  <dbAttribute attribute='caltitude' tablealias='habitats' type='float' nosearch='0'/>
                                 </mapping>
                                 <attributes>
                                   <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Altitude/MeasurementOrFactAtomised/LowerValue[@language]' name='language' w3cType='language' min='0'/>
@@ -2846,12 +2845,20 @@ You can map the controlled value items of the schema to the ones used in the dat
                                   </dataElement>
                                   <dataElement name='ScientificName' min='0' max='1' choiceElemId='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' choiceNodeId='6' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName'>
                                     <childElements>
-                                      <dataElement name='FullScientificNameString' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/FullScientificNameString'/>
+                                      <dataElement name='FullScientificNameString' min='1' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/FullScientificNameString'>
+                                        <mapping>
+                                          <dbAttribute attribute='cspecies' tablealias='plants' type='text' nosearch='0'/>
+                                        </mapping>
+                                      </dataElement>
                                       <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='NameAtomised' min='0'>
                                         <childElements>
                                           <dataElement name='Bacterial' min='0' max='1' choiceElemId='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' choiceNodeId='7' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Bacterial'>
                                             <childElements>
-                                              <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Bacterial/GenusOrMonomial'/>
+                                              <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Bacterial/GenusOrMonomial'>
+                                                <mapping>
+                                                  <dbAttribute attribute='cgenus' tablealias='plants' type='text' nosearch='0'/>
+                                                </mapping>
+                                              </dataElement>
                                               <dataElement name='Subgenus' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Bacterial/Subgenus'/>
                                               <dataElement name='SubgenusAuthorAndYear' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Bacterial/SubgenusAuthorAndYear'/>
                                               <dataElement name='SpeciesEpithet' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Bacterial/SpeciesEpithet'/>
@@ -2896,7 +2903,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                                             <childElements>
                                               <dataElement name='GenusOrMonomial' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Viral/GenusOrMonomial'/>
                                               <dataElement name='ViralSpeciesDesignation' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Viral/ViralSpeciesDesignation'/>
-                                              <dataElement path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Viral/Acronym' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' name='Acronym' min='0'/>
+                                              <dataElement name='Acronym' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='string' path='/DataSets/DataSet/Units/Unit/Gathering/Synecology/AssociatedTaxa/TaxonIdentified/ScientificName/NameAtomised/Viral/Acronym'/>
                                             </childElements>
                                           </dataElement>
                                         </childElements>
@@ -2981,7 +2988,7 @@ You can map the controlled value items of the schema to the ones used in the dat
                       </dataElement>
                       <dataElement name='Notes' min='0' max='1' namespace='http://www.tdwg.org/schemas/abcd/2.06' w3cType='normalizedString' path='/DataSets/DataSet/Units/Unit/Gathering/Notes'>
                         <mapping>
-                          <dbAttribute attribute='CNOTE' tablealias='habitats' type='text' nosearch='0'/>
+                          <dbAttribute attribute='cnote' tablealias='habitats' type='text' nosearch='0'/>
                         </mapping>
                         <attributes>
                           <attribute path='/DataSets/DataSet/Units/Unit/Gathering/Notes[@language]' name='language' w3cType='language' min='0'/>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Skin xmlns="http://www.biocase.org/schemas/qtprefs/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.biocase.org/schemas/qtprefs/1.1">		
+    	
+	<Schema ns="http://www.tdwg.org/schemas/abcd/1.2" label="ABCD 1.20">
+		<Concepts>
+			<Concept cops='~' label='Taxon' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/NameAuthorYearString'/>
+			<Concept cops='~' label='Higher_Taxon' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/HigherTaxa/HigherTaxon'/>
+			<Concept cops='~' label='Genus' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/ScientificNameAtomized/Botanical/Genus'/>
+			<Concept cops='~' label='Stat' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/Country/CountryName'/>
+			<Concept cops='&lt;=&gt;' label='Datum nalezu (d.m.r)' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/ISODateTimeBegin'/>
+			<Concept cops='&lt;=&gt;' label='Zemepisna sirka' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LatitudeDecimal'/>
+			<Concept cops='&lt;=&gt;' label='Zemepisna delka' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LongitudeDecimal'/>
+			<Concept cops='~' label='Identifikacni cislo' path='/DataSets/DataSet/Units/Unit/UnitID'/>
+			<Concept cops='~' label='Nejblizsi obec' path='DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
+			<Concept cops='~' label='Rok nalezu' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/DateText'/>
+			
+			<Concept cops='&lt;=&gt;' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/DateSupplied'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Description'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/CopyrightDeclaration'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/IPRDeclaration'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/Addresses/Address'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/EmailAddresses/EmailAddress'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/Organisation/OrganisationCodes/OrganisationCode'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/Organisation/OrganisationName'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/Person/PersonName'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/TelephoneNumbers/TelephoneNumber/Number'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/LegalOwner/URLs/URL'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/RightsURL'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/SpecificRestrictions'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Rights/TermsOfUse'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Statements/Acknowledgement'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Statements/Disclaimer'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Statements/LogoURL'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Statements/StatementURL'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/Addresses/Address'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/EmailAddresses/EmailAddress'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/Organisation/OrganisationCodes/OrganisationCode'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/Organisation/OrganisationName'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/Person/PersonName'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/TelephoneNumbers/TelephoneNumber/Number'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Supplier/URLs/URL'/>
+			<Concept cops='&lt;=&gt;' label='' path='/DataSets/DataSet/OriginalSource/SourceExpiryDate'/>
+			<Concept cops='~' label='Source_Institution_Code' path='/DataSets/DataSet/OriginalSource/SourceInstitutionCode'/>
+			<Concept cops='&lt;=&gt;' label='' path='/DataSets/DataSet/OriginalSource/SourceLastUpdatedDate'/>
+			<Concept cops='~' label='Source_Name' path='/DataSets/DataSet/OriginalSource/SourceName'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/OriginalSource/SourceNumberOfRecords'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/OriginalSource/SourceVersion'/>
+			<Concept cops='~' label='' path='/DataSets/DataSet/OriginalSource/SourceWebAddress'/>
+			<Concept cops='~' label='Collector' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringAgents/GatheringAgent/AgentText'/>
+			<Concept cops='~' label='Collector_(person)' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringAgents/GatheringAgent/Person/PersonName'/>			
+			<Concept cops='~' label='Biotope' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/BiotopeData/BiotopeText'/>
+			<Concept cops='~' label='Country_ISO_Code' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/Country/ISO2Letter'/>
+			<Concept cops='~' label='Locality' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/LocalityText'/>
+			<Concept cops='~' label='Named_Area_Class' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NamedAreas/NamedArea/NamedAreaClass'/>
+			<Concept cops='~' label='Named_Area_Name' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NamedAreas/NamedArea/NamedAreaName'/>
+			<Concept cops='~' label='Project_Title' path='/DataSets/DataSet/Units/Unit/Gathering/Project/ProjectTitle'/>
+			<Concept cops='~' label='Identification_Date' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/IdentificationDate/DateText'/>
+			<Concept cops='~' label='Identifier' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/Identifier/IdentifierPersonName/PersonName'/>
+			<Concept cops='~' label='Author' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/AuthorString'/>
+			<Concept cops='~' label='Higher_Taxon_Rank' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/HigherTaxa/HigherTaxon[@TaxonRank]'/>
+			<Concept cops='~' label='Epithet' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/ScientificNameAtomized/Botanical/FirstEpithet'/>
+			<Concept cops='~' label='Rank' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/ScientificNameAtomized/Botanical/Rank'/>
+			<Concept cops='~' label='Second_Epithet' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/ScientificNameAtomized/Botanical/SecondEpithet'/>
+			<Concept cops='b' label='Preferred_Identification' path='/DataSets/DataSet/Units/Unit/Identifications/Identification[@PreferredIdentificationFlag]'/>
+			<Concept cops='~' label='Record_Basis' path='/DataSets/DataSet/Units/Unit/RecordBasis'/>
+			<Concept cops='~' label='Unit_Description' path='/DataSets/DataSet/Units/Unit/UnitDescription'/>
+			<Concept cops='~' label='Terms_of_Use' path='/DataSets/DataSet/Units/Unit/UnitDigitalImages/UnitDigitalImage/ImageIPR/TermsOfUse'/>
+			<Concept cops='~' label='Terms_of_Use_language' path='/DataSets/DataSet/Units/Unit/UnitDigitalImages/UnitDigitalImage/ImageIPR/TermsOfUse[@Language]'/>
+			<Concept cops='~' label='Type_Status' path='/DataSets/DataSet/Units/Unit/UnitStateDomain/SpecimenUnit/NomenclaturalTypeDesignations/NomenclaturalTypeDesignation/TypeStatus'/>
+		</Concepts>
+		<Grouping concept="/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/NameAuthorYearString"/>
+		<Recordlist stylesheet="en_ABCD1.2_DataSetOverview.xslt" limit="10">
+			<NoRecordMessage>There is no valid record available for your query! &lt;br/&gt;All available records were invalid.</NoRecordMessage>
+		</Recordlist>
+		<Details>
+			<Detail name="unit" stylesheet="en_ABCD1.2_UnitDetail.xslt">
+				<RecordID parametername="inst" path="/DataSets/DataSet/OriginalSource/SourceInstitutionCode"/>
+				<RecordID parametername="col" path="/DataSets/DataSet/OriginalSource/SourceName"/>
+				<RecordID parametername="cat" path="/DataSets/DataSet/Units/Unit/UnitID"/>
+				<NotAvailableMessage>The original data provider seems to be out of service. &lt;br/&gt;No details currently available.</NotAvailableMessage>
+			</Detail>
+		</Details>
+	</Schema>
+	
+	<Schema ns="http://www.tdwg.org/schemas/abcd/2.06" label="ABCD 2.06">
+		<Concepts>
+			<Concept cops="~" label="Taxon" path="/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/FullScientificNameString" />
+			<Concept cops="~" label="Higher_Taxon" path="/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/HigherTaxa/HigherTaxon/HigherTaxonName" />
+			<Concept cops="~" label="Stat" path="/DataSets/DataSet/Units/Unit/Gathering/Country/Name"/>			
+			<Concept cops="~" label="Locality" path="/DataSets/DataSet/Units/Unit/Gathering/LocalityText"/>
+			<Concept cops="~" label="Identifikacni cislo" path="/DataSets/DataSet/Units/Unit/UnitID"/>
+			
+		</Concepts>
+		<Grouping concept="/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/FullScientificNameString"/>
+		<Recordlist stylesheet="en_ABCD2.0_DataSetOverview_short.xslt" limit="10">
+			<NoRecordMessage>There is no valid record available for your query! &lt;br/&gt;All available records were invalid.</NoRecordMessage>
+		</Recordlist>
+		<Details>
+			<Detail name="unit" stylesheet="en_ABCD2.0_UnitDetail.xslt">
+				<RecordID parametername="inst" path="/DataSets/DataSet/Units/Unit/SourceInstitutionID"/>
+				<RecordID parametername="col" path="/DataSets/DataSet/Units/Unit/SourceID"/>
+				<RecordID parametername="cat" path="/DataSets/DataSet/Units/Unit/UnitID"/>
+				<NotAvailableMessage>The original data provider seems to be out of service. &lt;br/&gt;No details currently available.</NotAvailableMessage>
+			</Detail>
+			
+		</Details>
+	</Schema>
+	
+	<Schema ns="http://digir.net/schema/conceptual/darwin/2003/1.0" label="DarwinCore">
+		<!-- most common darwin core -->
+		<Concepts>
+			<Concept cops="~" label="Taxon" path="/recordset/record/ScientificName"/>
+			<Concept cops="~" label="Family" path="/recordset/record/Family"/>
+			<Concept cops="~" label="Genus" path="/recordset/record/Genus"/>
+			<Concept cops="~" label="Nejblizsi obec" path="/recordset/record/County"/>
+			<Concept cops="~" label="Stat" path="/recordset/record/Country"/>
+			<Concept cops="~" label="Rok nalezu" path="/recordset/record/YearCollected"/>
+		</Concepts>
+		<Grouping concept="/recordset/record/ScientificName"/>
+		<Recordlist stylesheet="DarwinCore_Overview.xslt" limit="25">
+			<NoRecordMessage>There is no valid record available for your query! &lt;br/&gt;All available records were invalid.</NoRecordMessage>
+		</Recordlist>
+		<Details>
+			<Detail name="unit" stylesheet="DarwinCore_UnitDetail.xslt">
+			<!--
+				<RecordID parametername="inst" path="/recordset/record/InstitutionCode"/>
+				<RecordID parametername="col" path="/recordset/record/CollectionCode"/>
+			-->
+				<RecordID parametername="cat" path="/recordset/record/CatalogNumber"/>
+				<NotAvailableMessage>The original data provider was out of service. &lt;br/&gt;No details currently available.</NotAvailableMessage>
+			</Detail>
+		</Details>
+	</Schema>
+</Skin>

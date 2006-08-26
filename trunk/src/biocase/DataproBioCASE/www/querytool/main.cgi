@@ -1,11 +1,11 @@
-#!C:\PROGRA~1\Python23\python.exe
+#!C:\PROGRA~1\PYTHON\PYTHON23\python.exe
 # -*- coding: UTF-8 -*-
 
 '''
 $RCSfile: main.py,v $
-$Revision: 400 $
+$Revision: 735 $
 $Author: markus $
-$Date: 2005-10-19 17:24:36 +0200 (Mi, 19 Okt 2005) $
+$Date: 2006-06-26 13:09:24 +0200 (Mon, 26 Jun 2006) $
 The BioCASE querytool
 '''
 
@@ -23,12 +23,12 @@ from biocase.querytool.general import *
 #===========================================================================================================
 
 
-# DSA BY NEMELO BYT NIKDY NONE - POKUD BUDE, MELA BY BYT VYPSANA CHYBOVA HLASKA S RADOU CO SKONTROLOVAT A EMAIL NA ADMINA
 # display global DSA select box?
 if dsa is None:
     # use the datasource.html template to select a datasource first
     tmpl = PageMacro('Content', PageMacro.DELMODE)
-    tmpl.load('Content', os.path.join(templateDir, 'error.html'))    
+    tmpl.load('Content', os.path.join(plantloreDir, 'error1.html')) 
+    # get list of available dsa's 
 else:
     #PRIDANO
     if dsa == "plantlorePSWD":
@@ -39,40 +39,39 @@ else:
 
     # generate the search form for this dsa. use the form.html template
     tmpl = PageMacro('Content', PageMacro.DELMODE)
-    tmpl.load('Content', os.path.join(templateDir, 'form.html'))    
+    tmpl.load('Content', os.path.join(templateDir, 'form.html'))
     tmpl['wrapper_url'] = wrapper_url
     tmpl['dsa'] = dsa
     tmpl['id'] = MD5Passwd
     tmpl['login'] = login
-    tmpl['schema'] = schema
     # get the relevant form fields from preferences
     concepts = []
-    if prefs.schemas.has_key(schema):
-        debug + "Use schema %s to build the form."%schema
-        schemaObj = prefs.schemas[schema]
-        for label in schemaObj.form:
-            conObj = schemaObj.concepts[label]
-            conDict = {'label_display':label.replace('_',' '), 'label':label}
+    if schemaObj is not None:                
+        log.info("Use schema %s to build the form."%schema)       
+        schema = schemaObj.NS
+        for conObj in schemaObj.concepts:
+            conDict = {'label_display':conObj.label.replace('_',' '), 'label':conObj.label}
             if not conObj.cops == u'~':
-                optionHtml = getDropDownHtml('cop%s'%label, [c for c in conObj.cops] )
+                optionHtml = getDropDownHtml('cop%s'%conObj.label, [c for c in conObj.cops] )
             else:
                 optionHtml = ''
             conDict['copOptions'] = optionHtml
             concepts.append(conDict)
         # create grouping drop down
         valDict = {}
-        for c in schemaObj.form:
-            valDict[c.replace('_',' ')] = c
-        tmpl['groupby_options'] = getDropDownOptionHtml(vals=valDict, default=schemaObj.grouping)
+        for c in schemaObj.concepts:
+            valDict[c.label.replace('_',' ')] = c.label
+        tmpl['groupby_options'] = getDropDownOptionHtml(vals=valDict, default=schemaObj.grouping.label)
     else:
-        debug + "Cant find preferences for the selected schema %s."%schema
+        log.info("Cant find preferences for the selected schema %s."%schema)
     tmpl.expand('Content', 'conceptlist', concepts)
     # create alternative schema selection
-    tmpl['schema_options'] = getDropDownOptionHtml(vals=prefs.schemas.keys(), default=schema)
+    tmpl['schema'] = schema
+    tmpl['schema_options'] = getDropDownOptionHtml(vals=dict([('','')] + [(s.label,s.NS) for s in prefs.schemas if s.NS != schema and s.hasConcepts()]))
 
 #
 # print HTML !
 #
-printOverHTTP( tmpl, debug )
+printOverHTTP( tmpl )
         
 

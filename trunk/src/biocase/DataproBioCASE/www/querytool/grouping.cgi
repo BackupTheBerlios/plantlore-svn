@@ -1,11 +1,11 @@
-#!C:\PROGRA~1\Python23\python.exe
+#!C:\PROGRA~1\PYTHON\PYTHON23\python.exe
 # -*- coding: UTF-8 -*-
 
 '''
 $RCSfile: grouping.py,v $
-$Revision: 400 $
+$Revision: 735 $
 $Author: markus $
-$Date: 2005-10-19 17:24:36 +0200 (Mi, 19 Okt 2005) $
+$Date: 2006-06-26 13:09:24 +0200 (Mon, 26 Jun 2006) $
 The BioCASE querytool
 '''
 
@@ -34,18 +34,16 @@ tmpl = PageMacro('Content', PageMacro.DELMODE)
 tmpl.load('Content', os.path.join(templateDir, 'grouping.html'))
 
 try:
-    # get the schema object being used
-    schemaObj = prefs.schemas[schema]
-
+    
     # build a new filter object from form values
     filterObj = createFilter(form, schemaObj)
-    debug + "FILTER OBJ: %s"%str(filterObj)
+    log.info("FILTER OBJ: %s"%str(filterObj))
     
     # generate the protocol
-    QG = QueryGenerator()
+    QG = QueryGenerator(protocol)
     groupConcept = form['groupby'].value
-    protocolXML = QG.getScanProtocol(concept=schemaObj.concepts[groupConcept].path, NS=schemaObj.NS, filterObj=filterObj)
-    debug + "QUERY PROTOCOL CREATED:\n%s"%escapeHtml(protocolXML)
+    protocolXML = QG.getScanProtocol(concept=schemaObj.getConcept(groupConcept).path, NS=schemaObj.NS, filterObj=filterObj)
+    log.info("QUERY PROTOCOL CREATED:\n%s"%escapeHtml(protocolXML))
     
     # update template
     tmpl['dsa'] = dsa
@@ -57,33 +55,31 @@ try:
         tmpl['filter'] = str(filterObj)
     tmpl['filter_display'] = escapeHtml( str(filterObj).replace('_', ' ') )
     tmpl['groupingCon'] = groupConcept
-    tmpl['groupby_options'] = getDropDownOptionHtml(vals=['---None---']+schemaObj.form, default='---None---')
+    tmpl['groupby_options'] = getDropDownOptionHtml(vals=['---None---']+[c.label for c in schemaObj.concepts], default='---None---')
     if wrapper_url is not None:
         tmpl['wrapper_url'] = wrapper_url
     
     # query the wrapper
-    QD = QueryDispatcher(debug)
+    QD = QueryDispatcher(protocolNS=protocol)
     recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
     if recStatus is None:
-    	# wrapper results:
-    	tmpl['hits'] = "0"
-    	debug.display = True
+        # wrapper results:
+        tmpl['hits'] = "0"
     else:
-    	valuelist = QD.getScanValues()
-    	diagnostics = QD.getDiagnostics()
+        valuelist = QD.getScanValues()
+        logDiagnostics(QD.getDiagnostics())
     
-    	# wrapper results:
-    	tmpl['hits'] = str(recStatus.count)
-    	valueTemplateList = [{'val':v} for v in valuelist]
-    	tmpl.expand('Content', 'grouplist', valueTemplateList)
+    
+        # wrapper results:
+        tmpl['hits'] = str(recStatus.count)
+        valueTemplateList = [{'val':v} for v in valuelist]
+        tmpl.expand('Content', 'grouplist', valueTemplateList)
     
     #
     # print HTML !
     #
-    printOverHTTP( tmpl, debug, diagnostics )
+    printOverHTTP( tmpl )
 except:
-    tmpl.load('Content', os.path.join(templateDir, 'error.html')) 
-    printOverHTTP( tmpl, debug, diagnostics )
+    tmpl.load('Content', os.path.join(plantloreDir, 'error1.html')) 
+    printOverHTTP( tmpl)
     sys.exit()
-
-    

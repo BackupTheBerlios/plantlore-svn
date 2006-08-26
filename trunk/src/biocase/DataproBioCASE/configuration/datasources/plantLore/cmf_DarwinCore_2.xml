@@ -9,10 +9,10 @@ A single mapping contains one to many literals (fixed strings) or database attri
 Valid datatypes for the dbAttribute type are: text, date, integer, float
 
 <dataElement>  OR  <attribute>
-	<mapping>
-	  <literal value="The value taken from the database is: "/>
-	  <dbAttribute attribute='COLUMN_NAME' tablealias='TABLEALIAS' type='text'/>
-	</mapping>
+    <mapping>
+      <literal value="The value taken from the database is: "/>
+      <dbAttribute attribute='COLUMN_NAME' tablealias='TABLEALIAS' type='text'/>
+    </mapping>
 
 ********************************
 CONDITIONAL MAPPING:
@@ -21,35 +21,35 @@ A single mapping can be set up as a conditional mapping.
 Only if a certain condition is true (depending on the source data), the mapping takes place.
 
 Currently only the following filters are allowed:
-	
+    
 <equals attribute='ext_cat_fk' tablealias='extension' type='integer'>3</equals>
 <notEquals attribute='ext_cat_fk' tablealias='extension' type='integer'>3</notEquals>
 <in attribute='ext_cat_fk' tablealias='extension' type='integer'>
-	<value>13</value>
-	<value>14</value>
-	<value>23</value>
-	<value>24</value>
-	...
+    <value>13</value>
+    <value>14</value>
+    <value>23</value>
+    <value>24</value>
+    ...
 </in>
 
-Example:	
+Example:    
 <dataElement>  OR  <attribute>
-	<mapping>
-		<literal value="The value taken from the database is: "/>
-		<if>
-		   <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
-		</if>
-	</mapping>
+    <mapping>
+        <literal value="The value taken from the database is: "/>
+        <if>
+           <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
+        </if>
+    </mapping>
 
 
 GLOBAL FILTER:
 A global filter filters the source data before it is passed on to the mappings and all subelements
 of the element. A global filter therefore affects all child nodes.
 
-Example:	
+Example:    
 <dataElement>  OR  <attribute>
    <filterRecords>
-	   <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
+       <notEquals attribute='Status' tablealias='Taxon' type='unicode'>accepted</notEquals>
    </filterRecords>
 
 ********************************
@@ -60,7 +60,7 @@ You can map the controlled value items of the schema to the ones used in the dat
 
 <vocabulary>
   <term schemaTerm='accepted'>
-	<dbTerm>1</dbTerm>
+    <dbTerm>1</dbTerm>
   </term>
   
 -->
@@ -74,139 +74,91 @@ You can map the controlled value items of the schema to the ones used in the dat
     <rootTableAlias>occurrences</rootTableAlias>
     <SPICE/>
   </settings>
-  <recordIdentifier>/RecordSet/Record</recordIdentifier>
-  <dataElement path='/RecordSet' max='1' namespace='http://www.namespaceTBD.org/darwin2' name='RecordSet' min='1'>
+  <recordIdentifier>/recordset/record</recordIdentifier>
+  <dataElement path='/recordset' max='1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' name='recordset' min='1'>
     <childElements>
-      <dataElement path='/RecordSet/Record' max='-1' namespace='http://www.namespaceTBD.org/darwin2' name='Record' min='1'>
+      <dataElement path='/recordset/record' max='-1' namespace='http://digir.net/schema/protocol/2003/1.0' name='record' min='1'>
         <childElements>
-          <dataElement name='DateLastModified' min='1' max='1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='dateTime' path='/RecordSet/Record/DateLastModified'>
+          <dataElement name='DateLastModified' min='1' max='1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='dateTime' path='/recordset/record/DateLastModified'>
             <mapping>
-              <dbAttribute attribute='CDATEMODIFIED' tablealias='metadata' type='date' nosearch='0'/>
+              <dbAttribute attribute='cdatemodified' tablealias='metadata' type='date' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='InstitutionCode' min='1' max='1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/InstitutionCode'>
+          <dataElement name='InstitutionCode' min='1' max='1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/InstitutionCode'>
             <mapping>
-              <dbAttribute attribute='COWNERORGANIZATIONABBREV' tablealias='metadata' type='text' nosearch='0'/>
+              <dbAttribute attribute='cownerorganizationabbrev' tablealias='metadata' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='CollectionCode' min='1' max='1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/CollectionCode'>
+          <dataElement name='CollectionCode' min='1' max='1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/CollectionCode'>
             <mapping>
-              <dbAttribute attribute='CDATASETTITLE' tablealias='metadata' type='text' nosearch='0'/>
+              <dbAttribute attribute='cdatasettitle' tablealias='metadata' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='CatalogNumber' min='1' max='1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/CatalogNumber'>
+          <dataElement name='CatalogNumber' min='1' max='1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/CatalogNumber'>
             <mapping>
-              <dbAttribute attribute='CID' tablealias='occurrences' type='int' nosearch='0'/>
+              <dbAttribute attribute='cid' tablealias='occurrences' type='int' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='ScientificName' min='1' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/ScientificName'>
+          <dataElement name='ScientificName' min='1' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/ScientificName'>
             <mapping>
-              <dbAttribute attribute='CPUBLISHABLENAME' tablealias='plants' type='text' nosearch='0'/>
+              <dbAttribute attribute='ctaxon' tablealias='plants' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='BasisOfRecord' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/BasisOfRecord'>
+          <dataElement name='BasisOfRecord' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/BasisOfRecord'/>
+          <dataElement name='Kingdom' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Kingdom'/>
+          <dataElement name='Phylum' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Phylum'/>
+          <dataElement name='Class' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Class'/>
+          <dataElement name='Order' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Order'/>
+          <dataElement name='Family' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Family'/>
+          <dataElement name='Genus' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Genus'/>
+          <dataElement name='Species' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Species'/>
+          <dataElement name='Subspecies' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Subspecies'/>
+          <dataElement name='ScientificNameAuthor' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/ScientificNameAuthor'/>
+          <dataElement name='IdentifiedBy' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/IdentifiedBy'/>
+          <dataElement name='YearIdentified' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='gYear' path='/recordset/record/YearIdentified'/>
+          <dataElement name='MonthIdentified' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/MonthIdentified'/>
+          <dataElement name='DayIdentified' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/DayIdentified'/>
+          <dataElement name='TypeStatus' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/TypeStatus'/>
+          <dataElement name='CollectorNumber' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/CollectorNumber'/>
+          <dataElement name='FieldNumber' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/FieldNumber'/>
+          <dataElement name='Collector' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Collector'/>
+          <dataElement name='YearCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='gYear' path='/recordset/record/YearCollected'>
             <mapping>
-              <dbAttribute attribute='CRECORDBASIS' tablealias='metadata' type='text' nosearch='0'/>
+              <dbAttribute attribute='cyearcollected' tablealias='occurrences' type='int' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='Kingdom' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Kingdom'/>
-          <dataElement name='Phylum' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Phylum'/>
-          <dataElement name='Class' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Class'/>
-          <dataElement name='Order' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Order'/>
-          <dataElement name='Family' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Family'/>
-          <dataElement name='Genus' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Genus'>
+          <dataElement name='MonthCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/MonthCollected'/>
+          <dataElement name='DayCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/DayCollected'/>
+          <dataElement name='JulianDay' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/JulianDay'/>
+          <dataElement name='TimeOfDay' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/TimeOfDay'/>
+          <dataElement name='ContinentOcean' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/ContinentOcean'/>
+          <dataElement name='Country' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Country'>
             <mapping>
-              <dbAttribute attribute='CGENUS' tablealias='plants' type='text' nosearch='0'/>
+              <dbAttribute attribute='ccountry' tablealias='habitats' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='Species' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Species'/>
-          <dataElement name='Subspecies' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Subspecies'/>
-          <dataElement name='ScientificNameAuthor' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/ScientificNameAuthor'>
+          <dataElement name='StateProvince' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/StateProvince'/>
+          <dataElement name='County' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/County'>
             <mapping>
-              <dbAttribute attribute='CSCIENTIFICNAMEAUTHOR' tablealias='plants' type='text' nosearch='0'/>
+              <dbAttribute attribute='cname' tablealias='village' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='IdentifiedBy' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/IdentifiedBy'>
-            <mapping>
-              <dbAttribute attribute='CSCIENTIFICNAMEAUTHOR' tablealias='plants' type='text' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='YearIdentified' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='gYear' path='/RecordSet/Record/YearIdentified'/>
-          <dataElement name='MonthIdentified' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='nonNegativeInteger' path='/RecordSet/Record/MonthIdentified'/>
-          <dataElement name='DayIdentified' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='nonNegativeInteger' path='/RecordSet/Record/DayIdentified'/>
-          <dataElement name='TypeStatus' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/TypeStatus'/>
-          <dataElement name='CollectorNumber' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/CollectorNumber'/>
-          <dataElement name='FieldNumber' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/FieldNumber'/>
-          <dataElement name='Collector' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Collector'>
-            <mapping>
-              <dbAttribute attribute='CWHOLENAME' tablealias='authors' type='text' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='YearCollected' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='gYear' path='/RecordSet/Record/YearCollected'>
-            <mapping>
-              <dbAttribute attribute='CYEARCOLLECTED' tablealias='occurrences' type='int' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='MonthCollected' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='nonNegativeInteger' path='/RecordSet/Record/MonthCollected'>
-            <mapping>
-              <dbAttribute attribute='CMONTHCOLLECTED' tablealias='occurrences' type='int' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='DayCollected' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='nonNegativeInteger' path='/RecordSet/Record/DayCollected'>
-            <mapping>
-              <dbAttribute attribute='CDAYCOLLECTED' tablealias='occurrences' type='int' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='JulianDay' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/JulianDay'/>
-          <dataElement name='TimeOfDay' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/TimeOfDay'>
-            <mapping>
-              <dbAttribute attribute='CTIMECOLLECTED' tablealias='occurrences' type='date' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='ContinentOcean' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/ContinentOcean'/>
-          <dataElement name='Country' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Country'>
-            <mapping>
-              <dbAttribute attribute='CCOUNTRY' tablealias='habitats' type='text' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='StateProvince' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/StateProvince'/>
-          <dataElement name='County' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/County'>
-            <mapping>
-              <dbAttribute attribute='CNAME' tablealias='villages' type='text' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='Locality' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Locality'>
-            <mapping>
-              <dbAttribute attribute='CDESCRIPTION' tablealias='habitats' type='text' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='Longitude' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/Longitude'>
-            <mapping>
-              <dbAttribute attribute='CLONGITUDE' tablealias='habitats' type='float' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='Latitude' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/Latitude'>
-            <mapping>
-              <dbAttribute attribute='CLATITUDE' tablealias='habitats' type='float' nosearch='0'/>
-            </mapping>
-          </dataElement>
-          <dataElement name='CoordinatePrecision' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/CoordinatePrecision'/>
-          <dataElement name='BoundingBox' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/BoundingBox'/>
-          <dataElement name='MinimumElevation' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/MinimumElevation'/>
-          <dataElement name='MaximumElevation' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/MaximumElevation'/>
-          <dataElement name='MinimumDepth' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/MinimumDepth'/>
-          <dataElement name='MaximumDepth' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='decimal' path='/RecordSet/Record/MaximumDepth'/>
-          <dataElement name='Sex' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Sex'/>
-          <dataElement name='PreparationType' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/PreparationType'/>
-          <dataElement name='IndividualCount' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='nonNegativeInteger' path='/RecordSet/Record/IndividualCount'/>
-          <dataElement name='PreviousCatalogNumber' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/PreviousCatalogNumber'/>
-          <dataElement name='RelationshipType' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/RelationshipType'/>
-          <dataElement name='RelatedCatalogItem' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/RelatedCatalogItem'/>
-          <dataElement name='Notes' min='0' max='-1' namespace='http://www.namespaceTBD.org/darwin2' w3cType='string' path='/RecordSet/Record/Notes'>
-            <mapping>
-              <dbAttribute attribute='CNOTE' tablealias='occurrences' type='text' nosearch='0'/>
-            </mapping>
-          </dataElement>
+          <dataElement name='Locality' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Locality'/>
+          <dataElement name='Longitude' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/Longitude'/>
+          <dataElement name='Latitude' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/Latitude'/>
+          <dataElement name='CoordinatePrecision' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/CoordinatePrecision'/>
+          <dataElement name='BoundingBox' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/BoundingBox'/>
+          <dataElement name='MinimumElevation' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/MinimumElevation'/>
+          <dataElement name='MaximumElevation' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/MaximumElevation'/>
+          <dataElement name='MinimumDepth' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/MinimumDepth'/>
+          <dataElement name='MaximumDepth' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/MaximumDepth'/>
+          <dataElement name='Sex' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Sex'/>
+          <dataElement name='PreparationType' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/PreparationType'/>
+          <dataElement name='IndividualCount' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/IndividualCount'/>
+          <dataElement name='PreviousCatalogNumber' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/PreviousCatalogNumber'/>
+          <dataElement name='RelationshipType' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/RelationshipType'/>
+          <dataElement name='RelatedCatalogItem' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/RelatedCatalogItem'/>
+          <dataElement name='Notes' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Notes'/>
         </childElements>
       </dataElement>
     </childElements>

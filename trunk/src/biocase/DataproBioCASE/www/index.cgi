@@ -1,4 +1,4 @@
-#!C:\PROGRA~1\Python23\python.exe
+#!C:\PROGRA~1\PYTHON\PYTHON23\python.exe
 # -*- coding: UTF-8 -*-
 
 import os, sys

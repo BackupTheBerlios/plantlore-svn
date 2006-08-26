@@ -1,11 +1,11 @@
-#!C:\PROGRA~1\Python23\python.exe
+#!C:\PROGRA~1\PYTHON\PYTHON23\python.exe
 # -*- coding: UTF-8 -*-
 
 '''
 $RCSfile: index.cgi,v $
-$Revision: 400 $
+$Revision: 743 $
 $Author: markus $
-$Date: 2005-10-19 17:24:36 +0200 (Mi, 19 Okt 2005) $
+$Date: 2006-06-26 14:30:31 +0200 (Mon, 26 Jun 2006) $
 The deafult BioCASe provider software page
 '''
 
@@ -28,33 +28,6 @@ try:
     # get config data
     cfg=biocase.configuration.Cfg()
     
-    
-    #Transformaion of the metadata -----------------------------------------------------
-    xsl_path = os.path.join( cfg.xslLocator, 'service_metadata.xsl')
-    xml_path = os.path.join( cfg.configurationLocator, 'metadata.xml')
-    
-    
-    #Do the transformation of the biocase\configuration\pywrapper\metadata.xml file to HTML to present it
-    #If the necesary libraries are not installed then do not process the metadata and present a message inicating it.
-    
-    #try:
-    #	import libxml2
-    #	import libxslt
-    #
-    #	styledoc = libxml2.parseFile(xsl_path)
-    #	style = libxslt.parseStylesheetDoc(styledoc)
-    #	doc = libxml2.parseFile(xml_path)
-    #	result = style.applyStylesheet(doc, None)
-    #	metadata = style.saveResultToString(result)	# get the metadata transformed
-    #	service_name = doc.children.next.children.next.content
-    #	style.freeStylesheet()
-    #	doc.freeDoc()
-    #	result.freeDoc()
-    #	
-    #	
-    #except:
-    #	metadata = 'The metadata is not available, please check that you have the <a href="utilities/testlibs.cgi">libxml2 library</a> installed in your system and that you have set up your metadata files.'
-    #	service_name = 'not available'	
     service_name = 'BioCASe Provider Software 2'
     metadata = ''
     
@@ -71,7 +44,7 @@ try:
     pm.expand('Content', 'DataSourcesList', dsaListOfHash )
     
     
-    #Print the headers	
+    #Print the headers  
     print 'Content-Type: text/html; charset=UTF-8'
     print # Blank line marking end of HTTP headers
     

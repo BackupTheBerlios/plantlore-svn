@@ -2,93 +2,82 @@
 <head>
 <title>Nálezová databáze Jihočeské pobočky ČBS</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="plantlore/position.css">
 <link rel="stylesheet" type="text/css" href="plantlore/styles.css">
-<link rel="SHORTCUT ICON" href="../resources/images/favicon.ico">
-<script language="JavaScript" type="text/JavaScript">
+<link rel="SHORTCUT ICON" href="plantlore/images/favicon1.ico">
+<<script language="JavaScript" type="text/JavaScript">
     function updateForm(start){
         document.recordlist.start.value=start;
 		document.recordlist.submit();
     };
 </script>
 </head>
-<body id="page">
-<div id="headContainer">
-    <div id="head"></div>
-    <div id="menu">
-       <div id="menuUvod"><a href="plantlore/uvod.html"><img src="plantlore/images/menuUvod4.gif"></a></div>
-        <div id="menuNews"><a href="plantlore/aktuality.html"><img src="plantlore/images/menuAktuality2.gif"></a></div>
-        <div id="menuDB"><a href="plantlore/databaze.html"><img src="plantlore/images/menuDB2.gif"></a></div>
-        <div id="menuRef"><a href="plantlore/odkazy.html"><img src="plantlore/images/menuOdkazy2.gif"></a></div>
-        <div id="menuEmpty"></div>
-    </div>       
-</div>
-<div id="mainContainer">   
-    <div id="lineLeft"></div>
-    <div id="lineRight"></div>  
-                                                 
-            <h1>Nálezová data</h1>                                                             
 
-<div  style="background-color: white;">
-<table>
-<tr>
-<td style="border-width: 0px; border-right: 1px; border-style: solid; border-color: #DCDDDE; width: 144;"></td>
-<td style="width:15"></td>
-<td style="width:472">
-
-  <p><em><br><!--VAR:filter_display--><br></em></p>
-
-  <table height="13" width="100%" class="layout">
-    <tr width="100%"  style="font-size: 14px; font-style: italic">
-      <td class="layout" nowrap><span class="label">Results <strong><!--VAR:result_start-->-<!--VAR:result_ende--></strong></span></td>
-  	  <td class="layout" nowrap><span class="label">&nbsp;&nbsp;&nbsp;Paging:</span>
-
-	    <!-- block paging_list1 start -->
-  	  <a href="Javascript:updateForm('<!--VAR:start_index1-->')"><!--VAR:label_num1--></a>
-	    <!-- block paging_list1 end -->
-
-  	  <strong><!--VAR:num_this--><strong>
-
-	    <!-- block paging_list2 start -->
-  	  <a href="Javascript:updateForm('<!--VAR:start_index2-->')"><!--VAR:label_num2--></a>
-	    <!-- block paging_list2 end -->
-
-  	  <a href="Javascript:updateForm('<!--VAR:next_start-->')"><!--VAR:next_num--></a>
-  	  </td>
+<body>
+<center>
+  <table cellpadding="0" cellspacing="0" border="0" width="780" >
+    <tr>
+      <td>
+         <img src="plantlore/images/menu4.jpg" weight="760" height="58" usemap="#menu" border="0"/>    
+          
+          <h1>Nálezová data</h1>   
+    
+          <table height="13" width="100%" class="layout">
+          <tr width="760">
+            <td class="layout" nowrap><span class="label">Výsledek od-do: <b><!--VAR:result_start-->-<!--VAR:result_ende--></b></span></td>
+        	</tr>
+          <tr>  
+            <td class="layout" nowrap><span class="label">Číslo zobrazené stránky:</span>
+      
+      	    <!-- block paging_list1 start -->
+        	  <a href="Javascript:updateForm('<!--VAR:start_index1-->')"><!--VAR:label_num1--></a>
+      	    <!-- block paging_list1 end -->
+      
+        	  <strong><!--VAR:num_this--><strong>
+      
+      	    <!-- block paging_list2 start -->
+        	  <a href="Javascript:updateForm('<!--VAR:start_index2-->')"><!--VAR:label_num2--></a>
+      	    <!-- block paging_list2 end -->
+      
+        	  <a href="Javascript:updateForm('<!--VAR:next_start-->')"><!--VAR:next_num--></a>
+        	  </td>
+           </tr>
+         </table>
+      
+         <form name="recordlist" method="post" action="recordlist.cgi">
+          <input type="hidden" name="dsa" value="<!--VAR:dsa-->">
+          <input type="hidden" name="id" value="<!--VAR:id-->">
+          <input type="hidden" name="login" value="<!--VAR:login-->">
+          <input type="hidden" name="wrapper_url" value="<!--VAR:wrapper_url-->">
+          <input type="hidden" name="schema" value="<!--VAR:schema-->">
+          <input type="hidden" name="filter" value="<!--VAR:filter-->">
+          <input type="hidden" name="start" value="<!--VAR:next_start-->">
+          <input type="hidden" name="history" value="<!--VAR:history-->">
+        </form>        
+      
+          <!-- here goes the stylesheet generated part of the page -->
+      
+              <!--VAR:XSL-->
+      
+         <!-- end of stylesheet generated part -->
+      
+        <p class="label">&nbsp;</p>
+        <!-- <p class="label">[<a href="raw.cgi?dsa=<!--VAR:dsa-->&filter=<!--VAR:filter-->">View raw XML</a>] </p> -->
+        <!--VAR:diagnostics-->
+      
+        <!--VAR:debug-->            
+      
+        <div id="Footer"> <img src="../resources/images/biocase_powered.gif" alt="powered by Biocase" width="112" height="34" border="0"></div>                                                
+      </td>
     </tr>
-  </table>
-
-  <form name="recordlist" method="post" action="recordlist.cgi">
-    <input type="hidden" name="dsa" value="<!--VAR:dsa-->">
-    <input type="hidden" name="id" value="<!--VAR:id-->">
-    <input type="hidden" name="login" value="<!--VAR:login-->">
-    <input type="hidden" name="wrapper_url" value="<!--VAR:wrapper_url-->">
-    <input type="hidden" name="schema" value="<!--VAR:schema-->">
-    <input type="hidden" name="filter" value="<!--VAR:filter-->">
-    <input type="hidden" name="start" value="<!--VAR:next_start-->">
-    <input type="hidden" name="history" value="<!--VAR:history-->">
-  </form>
-  <p class="label">&nbsp;</p>
-
-<!-- here goes the stylesheet generated part of the page -->
-
-        <!--VAR:XSL-->
-
-<!-- end of stylesheet generated part -->
-
-  <p class="label">&nbsp;</p>
-  <!-- <p class="label">[<a href="raw.cgi?dsa=<!--VAR:dsa-->&filter=<!--VAR:filter-->">View raw XML</a>] </p> -->
-  <!--VAR:diagnostics-->
-
-  <!--VAR:debug-->
-
-<div id="Footer"> <img src="../resources/images/biocase_powered.gif" alt="powered by Biocase" width="112" height="34" border="0"></div>
-</td>
-<td style="border-width: 0px; border-left: 1px; border-style: solid; border-color: #DCDDDE;"></td>
-</tr>
-</table>
-</div>
+  </table>       
+</center>    
+     
+  <MAP NAME="menu">
+    <AREA SHAPE="rect" ALT="" COORDS="417,11,512,31" HREF="plantlore/odkazy.html">
+    <AREA SHAPE="rect" ALT="" COORDS="211,11,409,31" HREF="plantlore/databaze.html">
+    <AREA SHAPE="rect" ALT="" COORDS="93,11,202,30" HREF="plantlore/aktuality.html">
+    <AREA SHAPE="rect" ALT="" COORDS="7,11,85,30" HREF="plantlore/uvod.html">
+  </MAP>         
 
 </body>
-</html>
-
+</html>    

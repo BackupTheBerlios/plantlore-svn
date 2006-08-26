@@ -1,11 +1,11 @@
-#!C:\PROGRA~1\Python23\python.exe
+#!C:\PROGRA~1\PYTHON\PYTHON23\python.exe
 # -*- coding: UTF-8 -*-
 
 '''
 $RCSfile: details.py,v $
-$Revision: 400 $
+$Revision: 735 $
 $Author: markus $
-$Date: 2005-10-19 17:24:36 +0200 (Mi, 19 Okt 2005) $
+$Date: 2006-06-26 13:09:24 +0200 (Mon, 26 Jun 2006) $
 The BioCASE querytool
 '''
 
@@ -31,41 +31,35 @@ if dsa == "plantlorePSWD":
       if not MD5Passwd:
           authenticationForm(script='raw.cgi', dsa=dsa) 
 
-# get the schema object being used
-schemaObj = prefs.schemas[schema]
-debug + unicode(schemaObj)
-
-debug + "ORIGINAL FILTER STRING: %s"%unicode(form['filter'].value, errors='replace')
+log.info("ORIGINAL FILTER STRING: %s"%unicode(form['filter'].value, errors='replace'))
 filterObj = createFilterObjFromString(form['filter'].value, schemaObj)
-debug + "FILTER OBJ: %s"%unicode(str(filterObj), errors='replace')
+log.info("FILTER OBJ: %s"%unicode(str(filterObj), errors='replace'))
 
 # generate the protocol
-QG = QueryGenerator()
-protocolXML = QG.getSearchProtocol(reqNS=schemaObj.NS, respNS=schemaObj.NS, count=False, filterObj=filterObj)
-debug + "QUERY PROTOCOL CREATED:\n%s"%protocolXML
+QG = QueryGenerator(protocol)
+protocolXML = QG.getSearchProtocol(NS=schemaObj.NS, respNS=schemaObj.NS, count=False, filterObj=filterObj, destination=wrapper_url)
+log.info("QUERY PROTOCOL CREATED:\n%s"%protocolXML)
 
 # query the wrapper
-QD = QueryDispatcher(debug)
+QD = QueryDispatcher(protocolNS=protocol)
 recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
+
 content = QD.getContent()
-diagnostics = QD.getDiagnostics()
+logDiagnostics(QD.getDiagnostics())
+
 
 if content is None:
     # no wrapper results found
-    debug + "ERROR: NO PROTOCOL CONTENT FOUND"
+    log.info("ERROR: NO PROTOCOL CONTENT FOUND")
     print 'Content-Type: text/plain; charset=utf-8\n\n'
     print '-----------------------------'
     print 'There was no wrapper result !'
+    print 'Please check debug log.'
     print '-----------------------------'
-    print '\n\nDebug data:'
-    print '-----------'
-    debug.escapeHtml = False
-    print str(debug)
 else:
-    debug + "CONTENT ROOT %s"%content.name
+    log.debug("CONTENT ROOT %s"%content.name)
     # apply stylesheet
     print 'Content-Type: text/xml; charset=utf-8\n'
-    #print "<debug>%s</debug>"%str(debug)
     print content.serialize()
 
 
