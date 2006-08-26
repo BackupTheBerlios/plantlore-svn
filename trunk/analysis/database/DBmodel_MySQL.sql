@@ -286,7 +286,6 @@ INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (69, 'HABITAT',
 
 /* CREATE USER was added in MySQL 5.0.2 therefore this was not tested... */
 
-/*
 CREATE USER 'plantlore' IDENTIFIED BY PASSWORD 'plantlore';
 CREATE USER 'www' IDENTIFIED BY PASSWORD 'www';
 
@@ -307,62 +306,49 @@ GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TVILLAGES TO plantlore;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPUBLICATIONS TO plantlore;
 GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TLASTDATAVERSION TO plantlore;
 
-GRANT SELECT ON TAUTHORS TO www;
-GRANT SELECT ON TAUTHORSOCCURRENCES TO www;
-GRANT SELECT ON THABITATS TO www;
-GRANT SELECT ON THISTORY TO www;
-GRANT SELECT ON THISTORYCHANGE TO www;
-GRANT SELECT ON THISTORYCOLUMN TO www;
-GRANT SELECT ON TMETADATA TO www;
-GRANT SELECT ON TOCCURRENCES TO www;
-GRANT SELECT ON TPHYTOCHORIA TO www;
-GRANT SELECT ON TPLANTS TO www;
-GRANT SELECT ON TTERRITORIES TO www;
-GRANT SELECT ON TUSER TO www;
-GRANT SELECT ON TRIGHT TO www;
-GRANT SELECT ON TVILLAGES TO www;
-GRANT SELECT ON TPUBLICATIONS TO www;
-GRANT SELECT ON TLASTDATAVERSION TO www;
-*/
+GRANT SELECT ON vhabitats TO www;
+GRANT SELECT ON vmetadata TO www;
+GRANT SELECT ON voccurrences TO www;
+GRANT SELECT ON tphytochoria TO www;
+GRANT SELECT ON tplants TO www;
+GRANT SELECT ON tterritories TO www;
+GRANT SELECT ON tuser TO www;
+GRANT SELECT ON tvillages TO www;
+GRANT SELECT ON vpublications TO www;
+GRANT SELECT ON vauthorscollected TO www;
+GRANT SELECT ON vauthorsrevised TO www;
+GRANT SELECT ON vauthorsidentified TO www;
 
-/* CREATE VIEW was added in MySQL 5.0.1 therefore this was not tested ... was MySQL a database system prior to 5.0? */
+/*View: VOCCURRENCES - active occurrence */
+CREATE VIEW voccurrences
+AS SELECT * FROM toccurrences WHERE cdelete = 0;        
 
-/*
-CREATE VIEW TAUTHORREVISION(
-    CID,
-    COCCURRENCEID,
-    CWHOLENAME,
-    CEMAIL,
-    CADDRESS,
-    CNOTE,
-    CDAY,
-    CMONTH,
-    CYEAR)
-AS
-select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.CNOTE, O.cdaycollected, O.cmonthcollected, O.cyearcollected
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO JOIN toccurrences O  ON (A.CID = AO.cauthorid) ON (AO.coccurrenceid = O.cid)
-WHERE AO.crole = 'revision';
+/*View: VMETADATA - active metadata */
+CREATE VIEW vmetadata
+AS SELECT * FROM tmetadata WHERE cdelete = 0;
 
-CREATE VIEW TAUTHORCOLLECT(
-    CID,    
-    COCCURRENCEID,
-    CWHOLENAME,
-    CORGANIZATION,
-    CEMAIL,
-    CADDRESS)
-AS
-select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CORGANIZATION, A.CEMAIL, A.CADDRESS
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
-WHERE AO.crole = 'collect';
+/*View: VHABITAT - active habitat */
+CREATE VIEW vhabitats
+AS SELECT * FROM thabitats WHERE cdelete = 0;
 
-CREATE VIEW TAUTHORIDENTIFY(
-    CID,
-    COCCURRENCEID,
-    CWHOLENAME,
-    CEMAIL,
-    CADDRESS)
-AS
-select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CEMAIL, A.CADDRESS
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
-WHERE AO.crole = 'identify';
-*/
+/*View: VPUBLICATIONS - active publications */
+CREATE VIEW vpublications
+AS SELECT * FROM tpublications WHERE cdelete = 0;
+
+/* View: VAUTHORSCOLLECTED */
+CREATE OR REPLACE VIEW vauthorscollected
+AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
+FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
+WHERE ao.crole = 'collected' AND ao.cdelete = 0
+
+/* View: VAUTHORSREVISED */
+CREATE OR REPLACE VIEW vauthorsrevised
+AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
+FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
+WHERE ao.crole = 'revised' AND ao.cdelete = 0
+
+/* View: VAUTHORSIDENTIFIED */
+CREATE OR REPLACE VIEW vauthorsidentified
+AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
+FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
+WHERE ao.crole = 'identified' AND ao.cdelete = 0

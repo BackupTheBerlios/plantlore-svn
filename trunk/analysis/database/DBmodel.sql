@@ -264,74 +264,93 @@ ALTER TABLE TPUBLICATIONS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
 ALTER TABLE THABITATS ADD FOREIGN KEY (CCREATEWHO) REFERENCES TUSER (CID);
 
 /* Grant role for this database */
+CREATE ROLE adminPlantlore;
+CREATE ROLE userPlantlore;
+CREATE ROLE wwwPlantlore;
 
-/* Role: BOTANIK, Owner: SYSDBA */
-CREATE ROLE defaultAdmin;
-CREATE ROLE defaultUser;
-CREATE ROLE WWW;
+/* Grant permissions for this database - defaoutl administrator */
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORS TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORSOCCURRENCES TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THABITATS TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORY TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCHANGE TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCOLUMN TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMETADATA TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TOCCURRENCES TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPHYTOCHORIA TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPLANTS TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TTERRITORIES TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TUSER TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TRIGHT TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TVILLAGES TO ROLE adminPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPUBLICATIONS TO ROLE adminPlantlore;
 
-/* Grant permissions for this database */
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORS TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORSOCCURRENCES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THABITATS TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORY TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCHANGE TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCOLUMN TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMETADATA TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TOCCURRENCES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPHYTOCHORIA TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPLANTS TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TTERRITORIES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TUSER TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TRIGHT TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TVILLAGES TO ROLE defaultAdmin;
-GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPUBLICATIONS TO ROLE defaultAdmin;
-GRANT defaultAdmin TO LADA;
-GRANT defaultAdmin TO SYSDBA;
+/* Grant permissions for this database - defaoutl user */
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORS TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TAUTHORSOCCURRENCES TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THABITATS TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORY TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON THISTORYCHANGE TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TMETADATA TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TOCCURRENCES TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPHYTOCHORIA TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPLANTS TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TTERRITORIES TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TVILLAGES TO ROLE userPlantlore;
+GRANT DELETE, INSERT, SELECT, UPDATE, REFERENCES ON TPUBLICATIONS TO ROLE userPlantlore;
 
-/* View: TAUTHORREVISION */
-CREATE VIEW TAUTHORREVISION(
-    CID,
-    COCCURRENCEID,
-    CWHOLENAME,
-    CEMAIL,
-    CADDRESS,
-    CNOTE,
-    CDAY,
-    CMONTH,
-    CYEAR)
-AS
-select AO.CID, AO.coccurrenceid, A.cwholename, A.CEMAIL, A.CADDRESS, AO.CNOTE, O.cdaycollected, O.cmonthcollected, O.cyearcollected
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO JOIN toccurrences O  ON (A.CID = AO.cauthorid) ON (AO.coccurrenceid = O.cid)
-WHERE AO.crole = 'revision'
-;
+/* Grant permissions for this database - www user */
+GRANT SELECT ON vhabitats TO wwwPlantlore;
+GRANT SELECT ON vmetadata TO wwwPlantlore;
+GRANT SELECT ON voccurrences TO wwwPlantlore;
+GRANT SELECT ON tphytochoria TO wwwPlantlore;
+GRANT SELECT ON tplants TO wwwPlantlore;
+GRANT SELECT ON tterritories TO wwwPlantlore;
+GRANT SELECT ON tuser TO wwwPlantlore;
+GRANT SELECT ON tvillages TO wwwPlantlore;
+GRANT SELECT ON vpublications TO wwwPlantlore;
+GRANT SELECT ON vauthorscollected TO wwwPlantlore;
+GRANT SELECT ON vauthorsrevised TO wwwPlantlore;
+GRANT SELECT ON vauthorsidentified TO wwwPlantlore;
 
-/* View: TAUTHORCOLLECT */
-CREATE VIEW TAUTHORCOLLECT(
-    CID,    
-    COCCURRENCEID,
-    CWHOLENAME,
-    CORGANIZATION,
-    CEMAIL,
-    CADDRESS)
-AS
-select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CORGANIZATION, A.CEMAIL, A.CADDRESS
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
-WHERE AO.crole = 'collect'
-;
+/*Create default users and set grant */
+CREATE USER www PASSWORD 'plantlore' ;
+GRANT wwwPlantlore TO www;
 
-/* View: TAUTHORIDENTIFY */
-CREATE VIEW TAUTHORIDENTIFY(
-    CID,
-    COCCURRENCEID,
-    CWHOLENAME,
-    CEMAIL,
-    CADDRESS)
-AS
-select AO.CID, AO.coccurrenceid, A.CWHOLENAME, A.CEMAIL, A.CADDRESS
-from TAUTHORS A JOIN TAUTHORSOCCURRENCES AO ON (A.CID = AO.cauthorid)
-WHERE AO.crole = 'identify'
-;
+/*View: VOCCURRENCES - active occurrence */
+CREATE VIEW voccurrences
+AS SELECT * FROM toccurrences WHERE cdelete = 0;        
+
+/*View: VMETADATA - active metadata */
+CREATE VIEW vmetadata
+AS SELECT * FROM tmetadata WHERE cdelete = 0;
+
+/*View: VHABITAT - active habitat */
+CREATE VIEW vhabitats
+AS SELECT * FROM thabitats WHERE cdelete = 0;
+
+/*View: VPUBLICATIONS - active publications */
+CREATE VIEW vpublications
+AS SELECT * FROM tpublications WHERE cdelete = 0;
+
+/* View: VAUTHORSCOLLECTED */
+CREATE OR REPLACE VIEW vauthorscollected
+AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
+FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
+WHERE ao.crole = 'collected' AND ao.cdelete = 0
+
+/* View: VAUTHORSREVISED */
+CREATE OR REPLACE VIEW vauthorsrevised
+AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
+FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
+WHERE ao.crole = 'revised' AND ao.cdelete = 0
+
+/* View: VAUTHORSIDENTIFIED */
+CREATE OR REPLACE VIEW vauthorsidentified
+AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
+FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
+WHERE ao.crole = 'identified' AND ao.cdelete = 0
+
 
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (1, 'AUTHOROCCURRENCE', NULL);
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (2, 'OCCURRENCE', NULL);
