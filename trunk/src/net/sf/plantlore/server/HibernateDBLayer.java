@@ -527,6 +527,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         int numRows = 0;
         // Get results for the given resultId
         ScrollableResults res = results.get(resultId);
+        
+        if (res == null) {
+            logger.error("HibernateDBLayer: getNumRows(): trying to ask about nonexisting resultId.");                    
+            return 0; //this may be better than throwing nullpointerexception on res.getRowNumber() a few lines lower
+                      //the application may well recover from this state later
+        }
+        
         // Get the current row in the results
         int currentRow = res.getRowNumber();
         // Go to the first row of the results        
