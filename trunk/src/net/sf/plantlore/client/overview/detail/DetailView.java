@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import net.sf.plantlore.client.*;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
@@ -30,6 +31,8 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         this.model = model;
         model.addObserver(this);
         initComponents();
+        
+        new DefaultEscapeKeyPressed(this);
     }
     
     /** This method is called from within the constructor to

@@ -710,6 +710,12 @@ public class AppCore extends Observable
         tableSorter.setDatabase(database);
     }
 
+    public void logout() {
+        database = null;
+        tableSorter.setDatabase(null);
+        loggedIn = false;
+    }
+    
     public boolean loggedIn() {
         return loggedIn;
     }

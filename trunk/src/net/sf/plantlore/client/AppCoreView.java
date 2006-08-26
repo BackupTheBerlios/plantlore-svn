@@ -44,6 +44,10 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         initOverview();
         
+        fileExit.setText(L10n.getString("Overview.MenuFileExit"));
+        fileExit.setToolTipText(L10n.getString("Overview.MenuFileExitTT"));
+        fileExit.setMnemonic(L10n.getMnemonic("Overview.MenuFileExit"));
+        
         setLocationRelativeTo(null);
         model.addObserver(this); 
         model.addObserver(sbm);
@@ -86,6 +90,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         jMenuBar1 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         fileLogin = new javax.swing.JMenuItem();
+        fileLogout = new javax.swing.JMenuItem();
+        fileReconnect = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         dataImport = new javax.swing.JMenuItem();
         dataImportTable = new javax.swing.JMenuItem();
@@ -232,7 +238,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         );
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -274,6 +280,12 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         fileMenu.setText(L10n.getString("Overview.MenuFile"));
         fileLogin.setText("Item");
         fileMenu.add(fileLogin);
+
+        fileLogout.setText("Item");
+        fileMenu.add(fileLogout);
+
+        fileReconnect.setText("Item");
+        fileMenu.add(fileReconnect);
 
         fileMenu.add(jSeparator2);
 
@@ -509,7 +521,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     /** Adds listener to the exit menu item.
      *
      */
-    public void addExitListener(ActionListener al) {
+    public void addExitAction(ActionListener al) {
         fileExit.addActionListener(al);
     }
     /** Adds listener to the HelpContents menu item.
@@ -705,8 +717,10 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     protected javax.swing.JButton editButton;
     private javax.swing.JMenuItem fileExit;
     private javax.swing.JMenuItem fileLogin;
+    protected javax.swing.JMenuItem fileLogout;
     protected javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem filePrint;
+    protected javax.swing.JMenuItem fileReconnect;
     private javax.swing.JMenuItem fileSettings;
     protected javax.swing.JButton habitatTreeButton;
     protected javax.swing.JMenuItem helpAbout;

@@ -186,6 +186,8 @@ public abstract class Task extends Observable {
                     setChanged();
                     notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
                 } catch (Exception ex) {
+                    //FIXME:
+                    ex.printStackTrace();
                     setChanged();
                     notifyObservers(ex);
                 }

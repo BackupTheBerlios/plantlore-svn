@@ -129,6 +129,7 @@ public class Detail extends Observable {
         assert resultsCount == 1;
         
         Object[] records = database.more(resultId, 0, resultsCount - 1);
+        database.closeQuery(sq);
         Object[] pa = (Object[]) records[0];
         source = (String)pa[0];
         herbarium = (String)pa[1];
@@ -208,6 +209,7 @@ public class Detail extends Observable {
             assert resultsCount > 0;
             data = new Object[resultsCount][];
             Object[] records = database.more(resultId, 0, resultsCount - 1);
+            database.closeQuery(sq);
             for (int i=0; i < resultsCount ; i++) {
                 Object[] pa = (Object[]) records[i];
                 String[] row = new String[3];

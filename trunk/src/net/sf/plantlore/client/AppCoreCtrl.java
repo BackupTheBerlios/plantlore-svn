@@ -296,7 +296,7 @@ public class AppCoreCtrl {
 
 	ReconnectAction reconnectAction = new ReconnectAction();
 	
-	ExitListener silentFinalAction = new ExitListener();
+	ActionListener silentFinalAction = new ExitListener();
 
 	/** Creates a new instance of AppCoreCtrl */
 	public AppCoreCtrl(AppCore model, AppCoreView view) {
@@ -307,7 +307,7 @@ public class AppCoreCtrl {
 		this.view = view;
 		view.setSettingsAction(settingsAction);
 		view.setPrintAction(printAction);
-		view.addExitListener(silentFinalAction);
+		view.addExitAction(silentFinalAction);
 		view.setHelpContentsAction(helpContentsAction);
 		view.setHelpAboutAction(helpAboutAction);
 		view.setExportAction(exportAction);
@@ -345,11 +345,12 @@ public class AppCoreCtrl {
 				.addComponentListener(new OverviewResizeListener());
 
 		view.addWindowListener(new AppWindowListener());
-		view
-				.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
+		view.setRecordsPerPageListener(new RecordsPerPagePropertyChangeListener());
 
 		view.setLoginAction(loginAction);
-
+                view.fileLogout.setAction(logoutAction);
+                view.fileReconnect.setAction(reconnectAction);
+                
 		constructDialogs();
 
 		setDatabaseDependentCommandsEnabled(false);
@@ -423,6 +424,10 @@ public class AppCoreCtrl {
 		view.recordsPerPage.setEnabled(enabled);
 		refreshAction.setEnabled(enabled);
 
+                logoutAction.setEnabled(enabled);
+                reconnectAction.setEnabled(enabled);
+                loginAction.setEnabled(!enabled);
+                
 		if (model.getAccessRights() != null)
 			if (model.getAccessRights().getAdministrator() != 1) {
 				dataMetadataAction.setEnabled(false);
@@ -522,11 +527,14 @@ public class AppCoreCtrl {
 			try {
 				model.savePreferences();
 			} catch (IOException ex) {
-//				JOptionPane.showMessageDialog(view,
-//						"Problem while saving configuration: "
-//								+ ex.getMessage());
+                            //FIXME - aspon lokalizovat
+				JOptionPane.showMessageDialog(view,
+						"Problem while saving configuration: "
+								+ ex.getMessage());
 			}
 
+                        model.logout();
+                                
 			// The database layer created by a DBLayerFactory MUST be
 			// destroyed by that factory. There is a method which will do the
 			// trick.
@@ -911,8 +919,7 @@ public class AppCoreCtrl {
 	class SearchBridge implements Observer {
 		public void update(Observable o, Object arg) {
 			if (arg != null && arg instanceof Integer) {
-				logger
-						.debug("Fetching new result id from Search model. Storing it to AppCore model.");
+				logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
 				try {
 					model.setResultId(searchModel.getNewResultId(), searchModel
 							.getNewSelectQuery());
@@ -1499,6 +1506,8 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
+                        model.logout();
+                    
 			if (loginModel != null)
 				loginModel.logout();
 
@@ -1633,8 +1642,7 @@ public class AppCoreCtrl {
 				view.getSBM().display(L10n.getString("Message.FillingDialogs"));
 				fillDialogModels();
 
-				view.getSBM().display(
-						L10n.getString("Message.LoadingOverviewData"));
+				view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
 				searchModel.clear();
 				searchModel.constructQuery();
 				view.getSBM().displayDefaultText();
