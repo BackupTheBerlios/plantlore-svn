@@ -1551,11 +1551,13 @@ public class AppCoreCtrl {
 				Task t = loginModel.getLastConnectionTask();
 				if(t != null) {
 					// 1. Log out ( ~ dispose of the current DBLayer)
+					logger.debug("Logging out...");
 					loginModel.logout();
 					// 2. Log in again ( ~ create a new DBLayer)
 					// Note that the ProgressBar is no longer needed - 
 					// the last task surely had one and it will become
 					// active once we start the task again.
+					logger.debug("Performing the connection procedure again...");
 					t.start(); 
 				}
 			}
@@ -1616,7 +1618,7 @@ public class AppCoreCtrl {
 				loginAction.setEnabled(false);
 				view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-				System.out.println("[!] DBLayer retrieval.");
+				logger.debug("Database layer retrieval.");
 				DBLayer dblayer = loginModel.getDBLayer();
 
 				// FIXME: neni potreba zresetovat stav treba loginModelu, pokdu
@@ -1662,22 +1664,30 @@ public class AppCoreCtrl {
                                 view.overviewScrollPane.addComponentListener(overviewResizeListener);
 
 				/*-------------------------------------------------------------------
-				     Distribute the database layer among existing models.
-				  -------------------------------------------------------------------*/
-				if( exportModel != null )
-					exportModel.setDBLayer( dblayer );
-				if( importModel != null )
-					importModel.setDBLayer( dblayer );
-				if( tableImportModel != null )
-					tableImportModel.setDBLayer( dblayer );
-				if (historyModel != null ) 
-					historyModel.setDBLayer( dblayer );			
-				if (wholeHistoryModel != null ) 
-					wholeHistoryModel.setDBLayer( dblayer );
-				if (userManagerModel != null )
-					userManagerModel.setDBLayer( dblayer );
-				if (metadataManagerModel != null )
-					metadataManagerModel.setDBLayer( dblayer );							
+				 *  This is no longer necessary:
+				 *------------------------------------------------------------------*/
+//                logger.debug("Distributing the new database layer to:");
+//                logger.debug(" # export ");
+//				if( exportModel != null )
+//					exportModel.setDBLayer( dblayer );
+//				logger.debug(" # occurrence data import ");
+//				if( importModel != null )
+//					importModel.setDBLayer( dblayer );
+//				logger.debug(" # table data import ");
+//				if( tableImportModel != null )
+//					tableImportModel.setDBLayer( dblayer );
+//				logger.debug(" # record history ");
+//				if (historyModel != null ) 
+//					historyModel.setDBLayer( dblayer );
+//				logger.debug(" # complete history ");
+//				if (wholeHistoryModel != null ) 
+//					wholeHistoryModel.setDBLayer( dblayer );
+//				logger.debug(" # user manager ");
+//				if (userManagerModel != null )
+//					userManagerModel.setDBLayer( dblayer );
+//				logger.debug(" # metadata manager ");
+//				if (metadataManagerModel != null )
+//					metadataManagerModel.setDBLayer( dblayer );							
 			}
 		}
 	}

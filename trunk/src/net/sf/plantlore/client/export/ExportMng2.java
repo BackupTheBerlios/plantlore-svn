@@ -170,7 +170,7 @@ public class ExportMng2 {
 	synchronized public void setDBLayer(DBLayer dblayer) {
 		if(query != null) try {
 			db.closeQuery(query);
-		} catch(RemoteException e) {
+		} catch(Exception e) {
 			// Never mind.
 		}
 		db = dblayer;
@@ -227,7 +227,7 @@ public class ExportMng2 {
 		// Close the previous query!
 		if(this.query != null) try {
 			db.closeQuery(this.query);  // This must go here because of the RMI!
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			// Never mind.
 		}
 		this.query = query;

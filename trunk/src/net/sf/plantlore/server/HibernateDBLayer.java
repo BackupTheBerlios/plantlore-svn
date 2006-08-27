@@ -17,8 +17,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.record.Author;
@@ -561,22 +563,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *
      *  @throws DBLayerException when closing session fails
      */
+    @Deprecated
     public void close() throws DBLayerException, RemoteException {    
-        // Check whether we are connected to the database
-        if (sessionFactory == null) {
-            logger.warn("SessionFactory not avilable. Not connected to the database.");
-            DBLayerException ex = new DBLayerException("Exception.NotConnected");
-            ex.setError(ex.ERROR_CONNECT, null);
-            throw ex;
-        }
-        try {
-            sessionFactory.close();
-        } catch (HibernateException e) {
-            logger.fatal("Cannot close session factory");
-            DBLayerException ex = new DBLayerException("Exception.CloseConnection");
-            ex.setError(ex.ERROR_CLOSE, e.getMessage());
-            throw ex;            
-        }
+    	throw new Error("THIS CODE MUST NOT BE INVOKED YOU IDIOT! SEE shutdown() INSTEAD!");
     }
     
     /**
@@ -763,16 +752,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *
      *  @param query query we want to close
      */
-    public void closeQuery(SelectQuery query) throws RemoteException {
+    public void closeQuery(SelectQuery query) throws RemoteException, DBLayerException {
         
         // TODO: Problem - we don't have any session for subqueries
         // TODO: We should probably catch HibernateException...
-        Session session = sessions.remove(query);        
+        Session session = sessions.remove(query);
+        if(session == null) {
+        	logger.warn("Client wants to close a query this database layer did not create! " + query);
+        	throw new DBLayerException(L10n.getString("Error.ClosingFakeQuery"));
+        }
         session.close();     
     	// Remove the query from the list of opened queries
         SelectQuery selectQuery = queries.remove(query);        
         // Unexport the SelectQuery object
-        if(undertaker != null) {
+        if(undertaker != null && selectQuery != null) {
             try {
                 UnicastRemoteObject.unexportObject(selectQuery, true);
             } catch(NoSuchObjectException e) {}
@@ -2183,20 +2176,47 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      */
     public void shutdown() /* throws RemoteException */ {
     	
-    	if(undertaker != null) 
-    		for(SelectQuery sq : queries.values()) 
-    			try { UnicastRemoteObject.unexportObject(sq, true); }
-    			catch(NoSuchObjectException e) {/* Ignore it.*/}
-    	queries.clear();
-    	
-    	//kovo by mel asi nejak poukoncovat otevreny vysledky
-    	//for each unfinished (unclosed) result do close(result)
+//    	if(undertaker != null) 
+//    		for(SelectQuery sq : queries.values()) 
+//    			try { UnicastRemoteObject.unexportObject(sq, true); }
+//    			catch(NoSuchObjectException e) {/* Ignore it.*/}
+//    	queries.clear();
     	
     	
+    	// Some queries may still be open!
+    	logger.debug("Closing unfinished select-queries... (there are " + sessions.size() + " select queries).");
+    	Set<SelectQuery> openedQueries = new HashSet<SelectQuery>( sessions.keySet() );
+    	for(SelectQuery query : openedQueries) { 
+    		try {
+    			closeQuery( query );    		
+    		} catch(Exception e) {
+    			// Maintain silence.
+    		}
+    	}
+    	sessions.clear();
     	
+    	logger.debug("Rolling back a possibly unfinished transaction...");
+    	// Some transactions may still run!
+    	try {
+    		rollbackTransaction();
+    	} catch(Exception e) {
+    		// Maintain silence.
+    	}
     	
+        // Check whether we are connected to the database
+    	logger.debug("Closing the session factory itself...");
+    	if (sessionFactory != null) { 
+    		try {
+    			sessionFactory.close();
+    		} catch (Exception e) {
+    			// Maintain silence...
+    		}
+    	}
+
+    	logger.debug("Invalidating this database layer...");
     	sessionFactory = null;
     	
+    	logger.info("Database layer destroyed properly. It will not be available any longer.");
     }
    
     //===============================================================

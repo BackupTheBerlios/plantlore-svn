@@ -140,13 +140,7 @@ public interface DBLayer extends Remote, Serializable {
      */    
     public int getNumRows(int resultId) throws RemoteException;
        
-    /**
-     *  Close the DBLayer. Close the session factory
-     *
-     *  @throws DBLayerException when closing session fails
-     */    
-    public void close() throws DBLayerException, RemoteException;
-    
+   
     /**
      *  Start building a select query.
      *
@@ -182,7 +176,7 @@ public interface DBLayer extends Remote, Serializable {
      *
      *  @param query query we want to close
      */    
-    public void closeQuery(SelectQuery query) throws RemoteException;
+    public void closeQuery(SelectQuery query) throws RemoteException, DBLayerException;
 
     /**
      *  Execute SQL delete with condition. Only administrator should be allowed to run this.

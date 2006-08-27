@@ -485,7 +485,7 @@ public class MetadataManager  extends Observable {
     	if(query != null) try {
 		      database.closeQuery(query);
 		      query = null;
-		} catch(RemoteException e) {
+		} catch(Exception e) {
 			// Never mind.
 		}
     }

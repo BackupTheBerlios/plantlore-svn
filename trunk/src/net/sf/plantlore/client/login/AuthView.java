@@ -138,8 +138,10 @@ public class AuthView extends javax.swing.JDialog implements Observer {
 //    						JOptionPane.ERROR_MESSAGE);
 //    			}
     			// The database layer has been created, we are no longer neccessary
-    			else if(arg instanceof DBLayer)
-    				setVisible(false); 
+    			else if(arg instanceof DBLayer) {
+    				setVisible(false);
+    				password.setText(""); // Erase the password from the field.
+    			}
     		}
     	});
 	}

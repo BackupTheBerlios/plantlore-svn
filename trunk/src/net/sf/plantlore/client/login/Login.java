@@ -5,8 +5,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.client.MainConfig;
-import net.sf.plantlore.common.SwingWorker;
 import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
@@ -15,6 +15,7 @@ import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.DBLayerFactory;
+import net.sf.plantlore.middleware.SelectQuery;
 
 /**
  * Login is responsible for the following tasks:
@@ -36,7 +37,7 @@ public class Login extends Observable {
 	public static final int MAX_NAMES = 5;
 	public static final Object UPDATE_LIST = new Object();
 	
-	private SwingWorker worker;
+
 
 	/** 
 	 * The list of databases the User has accessed. This list is unique for every User
@@ -49,7 +50,8 @@ public class Login extends Observable {
 	
 	private MainConfig mainConfig = null;
 	private DBLayerFactory factory = null;
-	private DBLayer dblayer;
+	private DBLayer currentDBLayer; 
+	private DBLayerProxy proxyLayer;
 	private Logger logger  = Logger.getLogger(this.getClass().getPackage().getName());
 	
 	private Right accessRights;
@@ -68,6 +70,7 @@ public class Login extends Observable {
 		this.factory = factory;
 		this.mainConfig = mainConfig;
 		load();
+		this.proxyLayer = new DBLayerProxy();
 	}
 	
 	
@@ -214,93 +217,18 @@ public class Login extends Observable {
 	
 	
 	/**
-	 * Connect to the selected database. 
-	 * First, a new database layer is created,
-	 * and second, that database layer is initialized.
-	 * <br/>
-	 * <b>Warning:</b>If there is a previously created DBLayer, 
-	 * it will be destroyed using the <code>logout()</code> method. 
-	 * 	  
-	 * @param name The account name (used to access the database).  
-	 * @param password The password to the account.
-	 */
-	@Deprecated
-	synchronized public void connectToSelected(final String name, final String password) {
-		
-		final DBInfo selectedClone = selected.clone();
-		
-		if(selectedClone == null) {
-			logger.debug("The System cannot create a connection when nothing was selected!");
-			return;
-		}
-		
-		
-		
-		worker = new SwingWorker() {
-			public Object construct() {
-				
-				logout();
-				try {
-					// The current username is moved to the top of the list of names :) Nice feature.
-					selectedClone.promoteUser(name);
-					// Save the current state.
-					save();
-					
-					// Create a new database layer.
-					logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + selectedClone.host + ":" + selectedClone.port);
-					setChanged(); notifyObservers(L10n.getString("Login.Connecting"));
-					dblayer = factory.create( selectedClone );
-					
-					logger.debug("Connection successful.");
-					setChanged(); notifyObservers(L10n.getString("Login.Connected"));
-					
-					// Initialize the database layer.
-					setChanged(); notifyObservers(L10n.getString("Login.InitializingDBLayer"));
-					logger.debug("Initializing that DBLayer (" + selectedClone.databaseType + ", " + name + ", " + password + "...");
-					
-					Object[] init = dblayer.initialize(selectedClone.getDatabaseIdentifier(), name, password);
-					plantloreUser = (User)init[0];
-					accessRights = (Right)init[1];
-				} 
-				catch (Exception e) {
-					logger.error("The initialization of the DBLayer failed! " + e.getMessage());
-					// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
-					// If it is not, the server's policy may not allow another connection from this client!
-					if(dblayer != null)
-						try {
-							factory.destroy(dblayer);
-						} catch(RemoteException re) {
-							// Nothing we can do; the server is probably in trouble, or the network connection failed. 
-						}
-					setChanged();
-					 notifyObservers( e );
-					return null;
-				}
-				
-				setChanged(); 
-				notifyObservers(L10n.getString("Login.DBLayerInitialized"));
-				logger.debug("DBLayer initialized.");
-				
-				// Everything went fine.
-				setChanged(); notifyObservers(dblayer);
-				return null;
-			}
-		};
-		
-		worker.start();
-	}
-	
-	
-	/**
 	 * Once the connection is established and the database layer is
 	 * initialized, Login must inform its observers so that they can
 	 * update their database layers.
 	 */
 	private void announceConnection() {
+		logger.debug("New database layer created for " + proxyLayer);
 		setChanged(); 
-		notifyObservers(dblayer);
+		notifyObservers(proxyLayer);
+		logger.debug("Observers notified.");
 	}
 	
+
 	
 	/**
 	 * Create a task that will try to forge the connection to the selected database. 
@@ -336,6 +264,7 @@ public class Login extends Observable {
 		
 		private DBInfo dbinfo;
 		private transient String name, password;
+		private boolean noMoreNotification = false;
 		
 		
 		public ConnectionTask(DBInfo dbinfo, String name, String password) {
@@ -355,7 +284,7 @@ public class Login extends Observable {
 				// Create a new database layer.
 				logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + dbinfo.host + ":" + dbinfo.port);
 				setStatusMessage( L10n.getString("Login.Connecting") );
-				dblayer = factory.create( dbinfo );
+				currentDBLayer = factory.create( dbinfo );
 				if(isCanceled())
 					throw new Exception(L10n.getString("Common.Canceled"));
 				
@@ -366,7 +295,7 @@ public class Login extends Observable {
 				setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
 				logger.debug("Initializing that DBLayer (" + dbinfo.databaseType + ", " + name + ", " + password + "...");
 				
-				Object[] init = dblayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
+				Object[] init = currentDBLayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
 				if(isCanceled())
 					throw new Exception(L10n.getString("Common.Canceled"));
 				plantloreUser = (User)init[0];
@@ -379,15 +308,17 @@ public class Login extends Observable {
                                 
 				// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 				// Otherwise, the server's policy may not allow another connection from this client!
-				if(dblayer != null)
+				if(currentDBLayer != null)
 					try {
-						factory.destroy(dblayer);
+						factory.destroy(currentDBLayer);
 					} catch(Exception re) {
 						// Nothing we can do; the server is probably in trouble, or the network connection failed. 
 					}
 				// Re-throw the exception so that the view is updated as well.
 				throw e;
 			}
+			
+			proxyLayer.wrap( currentDBLayer );
 			
 			setStatusMessage( L10n.getString("Login.DBLayerInitialized") );
 			logger.debug("DBLayer initialized.");
@@ -396,7 +327,10 @@ public class Login extends Observable {
 			
 			// Everything went fine - 
 			// there is a new DBLayer which is to be announced to the observers of Login.
-			announceConnection();
+			if( !noMoreNotification ) {
+				noMoreNotification = true;
+				announceConnection();
+			}
 			
 			return null;
 		}
@@ -406,30 +340,17 @@ public class Login extends Observable {
 	
 	
 	/**
-	 * Cancel the login proces.
-	 *
-	 */
-	@Deprecated
-	synchronized public void interrupt() {
-		if(worker != null) {
-			worker.interrupt();
-			worker = null;
-		}
-		logout();
-		setChanged(); notifyObservers(L10n.getString("Login.Interrupted"));
-	}
-	
-	
-	
-	/**
 	 * Disconnect from the current database. 
 	 * The database connection is lost, any operation in progress will cause an exception.
 	 */
 	public void logout() {
-		if(dblayer != null) 
+		if(currentDBLayer != null) 
 			try {
-				factory.destroy(dblayer);
-				dblayer = null; accessRights = null; plantloreUser = null;
+				factory.destroy(currentDBLayer);
+				currentDBLayer = null; accessRights = null; plantloreUser = null;
+				
+				proxyLayer.wrap( null );
+				
 				logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
 			} catch(RemoteException e) {
 				logger.warn("Unable to disconnect from the server. " + e.getMessage());
@@ -449,7 +370,7 @@ public class Login extends Observable {
 	 * @return The last DBLayer that has been created.  
 	 */	
 	synchronized public DBLayer getDBLayer() { 
-		return dblayer; 
+		return proxyLayer; 
 	}
 	
 	/**
@@ -465,6 +386,187 @@ public class Login extends Observable {
 	 */
 	synchronized public Right getAccessRights() {
 		return accessRights;
+	}
+	
+	
+	
+	
+	private class DBLayerProxy implements DBLayer {
+		
+		private DBLayer wrappedDBLayer;
+		
+		private void verifyValidity() {
+			if(wrappedDBLayer == null)
+				throw new Error(L10n.getString("Error.SloppyProgramming"));
+		}
+		
+				
+		synchronized public void wrap(DBLayer db) {
+			this.wrappedDBLayer = db;
+		}
+
+		synchronized public Object[] initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.initialize(dbID, user, password);
+		}
+
+		synchronized public void setLanguage(String locale) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.setLanguage(locale);
+		}
+
+		synchronized public int executeInsert(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.executeInsert(data);
+		}
+
+		synchronized public void executeDelete(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeDelete(data);
+		}
+
+		synchronized public void executeUpdate(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeUpdate(data);
+		}
+
+		synchronized public int executeInsertHistory(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.executeInsertHistory(data);
+		}
+
+		synchronized public void executeDeleteHistory(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeDeleteHistory(data);
+		}
+
+		synchronized public void executeUpdateHistory(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeUpdateHistory(data);
+		}
+
+		synchronized public void executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeUpdateInTransactionHistory(data);
+		}
+
+		synchronized public Object[] more(int resultId, int from, int to) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.more(resultId, from, to);
+		}
+
+		synchronized public Object[] next(int resultId) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.next(resultId);
+		}
+
+		synchronized public int getNumRows(int resultId) throws RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.getNumRows(resultId);
+		}
+
+		synchronized public SelectQuery createQuery(Class classname) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.createQuery(classname);
+		}
+
+		synchronized public SelectQuery createSubQuery(Class classname, String alias) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.createSubQuery(classname, alias);
+		}
+
+		synchronized public int executeQuery(SelectQuery query) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.executeQuery(query);
+		}
+
+		synchronized public void closeQuery(SelectQuery query) throws RemoteException, DBLayerException {
+			verifyValidity();
+			wrappedDBLayer.closeQuery(query);
+		}
+
+		synchronized public int conditionDelete(Class tableClass, String column, String operation, Object value) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.conditionDelete(tableClass, column, operation, value);
+		}
+
+		synchronized public User getUser() throws RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.getUser();
+		}
+
+		synchronized public Right getUserRights() throws RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.getUserRights();
+		}
+
+		synchronized public boolean beginTransaction() throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.beginTransaction();
+		}
+
+		synchronized public boolean commitTransaction() throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.commitTransaction();
+		}
+
+		synchronized public boolean rollbackTransaction() throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.rollbackTransaction();
+		}
+
+		synchronized public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.executeInsertInTransaction(data);
+		}
+
+		synchronized public int executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.executeInsertInTransactionHistory(data);
+		}
+
+		synchronized public void executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeUpdateInTransaction(data);
+		}
+
+		synchronized public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.executeDeleteInTransaction(data);
+			
+		}
+
+		synchronized public void createUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.createUser(name, password, isAdmin);
+		}
+
+		synchronized public void alterUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.alterUser(name, password, isAdmin);
+			
+		}
+
+		synchronized public void dropUser(String name) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.dropUser(name);
+			
+		}
+
+		synchronized public int getConnectionCount() throws RemoteException {
+			verifyValidity();
+			return wrappedDBLayer.getConnectionCount();
+		}
+
+		synchronized public void shutdown() throws RemoteException {
+			throw new Error("YOU SHOULD NEVER CALL DBLayer.shutdown() YOU IDIOT!");
+		}
+		
+		@Override
+		public String toString() {
+			return "Safety wrapper of " + super.toString();
+		}
+		
 	}
         
 }
