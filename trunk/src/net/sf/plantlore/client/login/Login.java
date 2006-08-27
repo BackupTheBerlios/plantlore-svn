@@ -264,7 +264,6 @@ public class Login extends Observable {
 		
 		private DBInfo dbinfo;
 		private transient String name, password;
-		private boolean noMoreNotification = false;
 		
 		
 		public ConnectionTask(DBInfo dbinfo, String name, String password) {
@@ -327,10 +326,7 @@ public class Login extends Observable {
 			
 			// Everything went fine - 
 			// there is a new DBLayer which is to be announced to the observers of Login.
-			if( !noMoreNotification ) {
-				noMoreNotification = true;
-				announceConnection();
-			}
+			announceConnection();
 			
 			return null;
 		}

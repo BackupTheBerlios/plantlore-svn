@@ -1664,30 +1664,30 @@ public class AppCoreCtrl {
                                 view.overviewScrollPane.addComponentListener(overviewResizeListener);
 
 				/*-------------------------------------------------------------------
-				 *  This is no longer necessary:
+				 *  This may no longer be necessary:
 				 *------------------------------------------------------------------*/
-//                logger.debug("Distributing the new database layer to:");
-//                logger.debug(" # export ");
-//				if( exportModel != null )
-//					exportModel.setDBLayer( dblayer );
-//				logger.debug(" # occurrence data import ");
-//				if( importModel != null )
-//					importModel.setDBLayer( dblayer );
-//				logger.debug(" # table data import ");
-//				if( tableImportModel != null )
-//					tableImportModel.setDBLayer( dblayer );
-//				logger.debug(" # record history ");
-//				if (historyModel != null ) 
-//					historyModel.setDBLayer( dblayer );
-//				logger.debug(" # complete history ");
-//				if (wholeHistoryModel != null ) 
-//					wholeHistoryModel.setDBLayer( dblayer );
-//				logger.debug(" # user manager ");
-//				if (userManagerModel != null )
-//					userManagerModel.setDBLayer( dblayer );
-//				logger.debug(" # metadata manager ");
-//				if (metadataManagerModel != null )
-//					metadataManagerModel.setDBLayer( dblayer );							
+                logger.debug("Distributing the new database layer to:");
+                logger.debug(" # export ");
+				if( exportModel != null )
+					exportModel.setDBLayer( dblayer );
+				logger.debug(" # occurrence data import ");
+				if( importModel != null )
+					importModel.setDBLayer( dblayer );
+				logger.debug(" # table data import ");
+				if( tableImportModel != null )
+					tableImportModel.setDBLayer( dblayer );
+				logger.debug(" # record history ");
+				if (historyModel != null ) 
+					historyModel.setDBLayer( dblayer );
+				logger.debug(" # complete history ");
+				if (wholeHistoryModel != null ) 
+					wholeHistoryModel.setDBLayer( dblayer );
+				logger.debug(" # user manager ");
+				if (userManagerModel != null )
+					userManagerModel.setDBLayer( dblayer );
+				logger.debug(" # metadata manager ");
+				if (metadataManagerModel != null )
+					metadataManagerModel.setDBLayer( dblayer );							
 			}
 		}
 	}
