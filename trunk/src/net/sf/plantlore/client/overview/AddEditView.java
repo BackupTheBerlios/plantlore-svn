@@ -7,6 +7,7 @@
 package net.sf.plantlore.client.overview;
 
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -28,6 +29,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.text.PlainDocument;
@@ -767,6 +770,31 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     }//GEN-LAST:event_helpButtonActionPerformed
     
     
+    /** Used for to hack DefaultCellEditor's behaviour with JComboBox. Fix of Bug #008588	Author table breaks sometimes
+     *
+     * Normally the editing doesn't stop when the comboboxe's popup menu is cancelled (user didn't choose an item and clicked somewhere else).
+     * This listener cancels further editing which makes the combobox disappear as it should have (I think).
+     */
+    class PopupListener implements PopupMenuListener {
+        DefaultCellEditor dce;
+        
+        public void setCellEditor(DefaultCellEditor dce) {
+            assert dce != null;
+            
+            this.dce = dce;
+        }
+        
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        }
+
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        }
+
+        public void popupMenuCanceled(PopupMenuEvent e) {
+            dce.cancelCellEditing();
+        }
+    }
+    
     //musn't delete contents of tableModel, because it's also called to update the table's user interface unfortunately...
     protected void initAuthorTable() {
         if (tableModel == null) 
@@ -804,14 +832,18 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         else
             cb = new JComboBox(model.getAuthors());
         
-        tc1.setCellEditor(new DefaultCellEditor(cb));  
+        //Fix of Bug #008588	Author table breaks sometimes
+        PopupListener pl = new PopupListener(); cb.addPopupMenuListener(pl); DefaultCellEditor dce = new DefaultCellEditor(cb); pl.setCellEditor(dce);
+        tc1.setCellEditor(dce);  
         
         if (model.getAuthorRoles() == null) 
             cb = new JComboBox();
         else
             cb = new JComboBox(model.getAuthorRoles());
         
-        tc2.setCellEditor(new DefaultCellEditor(cb));
+        //Fix of Bug #008588	Author table breaks sometimes
+        pl = new PopupListener(); cb.addPopupMenuListener(pl); dce = new DefaultCellEditor(cb); pl.setCellEditor(dce);
+        tc2.setCellEditor(dce);
 //  
         ButtonEditor be = new ButtonEditor(model);
         tc3.setCellEditor(be);

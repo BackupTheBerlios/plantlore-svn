@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_BETWEEN;
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_LIKE;
+import static net.sf.plantlore.common.PlantloreConstants.RESTR_ILIKE;
 
 /**
  *
@@ -776,13 +777,13 @@ public class Search extends Observable {
                     restrictions.add(new Restriction(-1, null, exportQueryArgs));
                 }
                 if (isNotEmpty(localityDescription)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
-                    restrictions.add(new Restriction(RESTR_LIKE, habitatAlias+Habitat.DESCRIPTION, "%"+localityDescription+"%"));
+                    sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
+                    restrictions.add(new Restriction(RESTR_ILIKE, habitatAlias+Habitat.DESCRIPTION, "%"+localityDescription+"%"));
                 }
                 
                 if (isNotEmpty(occurrenceNote)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_LIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
-                    restrictions.add(new Restriction(RESTR_LIKE, Occurrence.NOTE, "%"+occurrenceNote+"%"));
+                    sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
+                    restrictions.add(new Restriction(RESTR_ILIKE, Occurrence.NOTE, "%"+occurrenceNote+"%"));
                 }
                 
                 if (isNotEmpty(habitatId)) {
@@ -792,8 +793,8 @@ public class Search extends Observable {
                 }
                 
                 if (isNotEmpty(habitatNote)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_LIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
-                    restrictions.add(new Restriction(RESTR_LIKE, habitatAlias+Habitat.NOTE, "%"+habitatNote+"%"));
+                    sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
+                    restrictions.add(new Restriction(RESTR_ILIKE, habitatAlias+Habitat.NOTE, "%"+habitatNote+"%"));
                 }
                 
                 if (isNotEmpty(territoryName)) {
@@ -956,7 +957,8 @@ public class Search extends Observable {
     }
     
     public void setAuthorRole(int i, String role) {
-        authorList.get(i).setSecond(role);
+        if (i < authorList.size())
+            authorList.get(i).setSecond(role);
         logger.debug("Author role in row "+i+" set to "+role);
     }
     

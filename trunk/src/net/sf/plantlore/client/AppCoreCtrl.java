@@ -1696,7 +1696,7 @@ public class AppCoreCtrl {
 	private Task refreshOverview(boolean createTask) {
 		if (createTask) {
 			Task task = new Task() {
-				public Object task() {
+				public Object task() throws DBLayerException, RemoteException {
 					searchModel.clear();
 					searchModel.constructQuery();
 					fireStopped(null);
@@ -1727,15 +1727,8 @@ public class AppCoreCtrl {
 		public void actionPerformed(ActionEvent e) {
 			// e can be null !!! - we call actionPerformed(null) in DeleteAction
 			Task task = refreshOverview(true);
-			ProgressBar progressBar = new ProgressBar(task, view, true) {
-				public void exceptionHandler(Exception ex) {
-					// FIXME
-					ex.printStackTrace();
-					getTask().stop();
-				}
-			};
-			progressBar.setTitle(L10n
-					.getString("Overview.Refresh.ProgressTitle"));
+			ProgressBar progressBar = new DefaultProgressBar(task, view, true);
+			progressBar.setTitle(L10n.getString("Overview.Refresh.ProgressTitle"));
 
 			task.start();
 		}

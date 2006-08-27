@@ -1368,6 +1368,10 @@ public class AddEdit extends Observable {
     }
     
     public void setAuthorRole(int i, String role) {
+        if (i >= authorList.size()) {
+            logger.error("AddEdit: trying to add an author to a non-existent row!");
+            return;            
+        }
         authorList.get(i).setSecond(role);
         logger.debug("Author role in row "+i+" set to "+role);
     }
