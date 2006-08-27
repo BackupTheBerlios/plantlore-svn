@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public interface Deletable extends Serializable {
 	
+	static final String DELETED = "deleted";
+	
 	void setDeleted(Integer arg);
 	
 	Integer getDeleted();

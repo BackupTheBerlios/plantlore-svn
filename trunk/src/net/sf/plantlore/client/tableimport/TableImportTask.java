@@ -33,7 +33,7 @@ public class TableImportTask extends Task {
 	private DBLayerUtils dbutils;
 	
 //	private static Set<Class> supportedTables = new HashSet<Class>(
-//			Arrays.asList(Metadata.class, Plant.class, Village.class, Phytochorion.class, Territory.class));
+//			Arrays.asList(Metadata.class, Plant.class, NearestVillage.class, Phytochorion.class, Territory.class));
 	
 	/**
 	 * 

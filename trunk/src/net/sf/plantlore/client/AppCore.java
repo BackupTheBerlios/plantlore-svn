@@ -32,7 +32,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 
 // Imports for temporary db access
@@ -458,10 +458,10 @@ public class AppCore extends Observable
         Object[] row;
 
         setChanged(); notifyObservers("LOADING_VILLAGES");
-        sq = database.createQuery(Village.class);
-        sq.addOrder(PlantloreConstants.DIRECT_ASC, Village.NAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.NAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Village.ID);
+        sq = database.createQuery(NearestVillage.class);
+        sq.addOrder(PlantloreConstants.DIRECT_ASC, NearestVillage.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, NearestVillage.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY, NearestVillage.ID);
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         records = database.more(resultid, 0, resultsCount-1);

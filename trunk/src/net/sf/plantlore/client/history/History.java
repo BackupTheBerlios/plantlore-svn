@@ -33,7 +33,7 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -901,15 +901,15 @@ public class History extends Observable {
                 logger.debug("Set selected value for update of attribute Longitude.");                
                 break;
         case 7: //Nearest bigger seat   	                	 	                			                		 
-                //Select record Village where id = oldRocordId 
+                //Select record NearestVillage where id = oldRocordId 
                 if (oldRecordId != 0){
                         Object[] objectVill = searchObject(PlantloreConstants.ENTITY_VILLAGE,oldRecordId);
                         if (isError()) return; //tVillage doesn`t contain required data
-                        Village village = (Village)objectVill[0];
+                        NearestVillage village = (NearestVillage)objectVill[0];
                 hab.setNearestVillage(village);
                 logger.debug("Set selected value for update of attribute NearesVillage.");
                 } else {
-                        logger.error("UNDO - Incorrect oldRecordId for Village.");
+                        logger.error("UNDO - Incorrect oldRecordId for NearestVillage.");
                 }                
             break;
         case 8: //Phytochorion or phytochorion code 	                	             			                		 
@@ -1272,34 +1272,34 @@ public class History extends Observable {
     public void undoVillage() {
        
     	int villageId = historyChange.getRecordId();	        
-        Village village = null;
+        NearestVillage village = null;
     	int placings = 0;
     	boolean contain = false;
     	for (int i=0; i < editObjectList.size(); i++) {
-    		if (editObjectList.get(i) instanceof Village) {    			
-    			int listVillId = ((Village)(editObjectList.get(i))).getId();
+    		if (editObjectList.get(i) instanceof NearestVillage) {    			
+    			int listVillId = ((NearestVillage)(editObjectList.get(i))).getId();
     			if (villageId == listVillId) {
     				contain = true;
     				placings = i; 
-    				village = (Village)(editObjectList.get(i));
+    				village = (NearestVillage)(editObjectList.get(i));
     				break;
     			}
     		}
     	} 
     	
     	if (!contain) {
-        	// Select record Village where id = villageId 
+        	// Select record NearestVillage where id = villageId 
     		Object[] object = searchObject(PlantloreConstants.ENTITY_VILLAGE, villageId);
     		if (isError()) return; //tVillage doesn`t contain required data
-            village = (Village)object[0];     
+            village = (NearestVillage)object[0];     
         }
        
        // Save new value for the column
         if (columnName.equals("nameVillage")) {
             village.setName(oldValue);	                 
-            logger.debug("Village - Set selected value for update of attribute Name.");                 	
+            logger.debug("NearestVillage - Set selected value for update of attribute Name.");                 	
         } else {
-            logger.error("Village - No column defined for name "+ columnName);	                   
+            logger.error("NearestVillage - No column defined for name "+ columnName);	                   
         }   
         
         if (contain) {        	
@@ -1386,8 +1386,8 @@ public class History extends Observable {
                 query = database.createQuery(Publication.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Publication.ID, null, id , null);
             } else if (typeObject.equals(PlantloreConstants.ENTITY_VILLAGE)){
-                query = database.createQuery(Village.class);
-                query.addRestriction(PlantloreConstants.RESTR_EQ, Village.ID, null, id, null);
+                query = database.createQuery(NearestVillage.class);
+                query.addRestriction(PlantloreConstants.RESTR_EQ, NearestVillage.ID, null, id, null);
             }  else if  (typeObject.equals(PlantloreConstants.ENTITY_TERRITORY)){
                 query = database.createQuery(Territory.class);
                 query.addRestriction(PlantloreConstants.RESTR_EQ, Territory.ID, null, id , null);
@@ -1776,12 +1776,12 @@ public class History extends Observable {
               detailsMessage = L10n.getString("History.DetailsTerritory") + "\n\n";
               detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_TERRITORY +"."+ Territory.NAME) + ": " + territory.getName() + "\n";
         } else if (tableName.equals(PlantloreConstants.ENTITY_VILLAGE)) {
-              //Get details for Village
+              //Get details for NearestVillage
               Object[] object = searchObject(PlantloreConstants.ENTITY_VILLAGE,recordId);
               if (isError()) return ""; //tVillage doesn`t contain required data
-              Village village = (Village)object[0];
+              NearestVillage village = (NearestVillage)object[0];
               detailsMessage = L10n.getString("History.detailsVillage") + "\n\n";
-              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_VILLAGE +"."+ Village.NAME) + ": " + village.getName() + "\n";
+              detailsMessage = detailsMessage + L10n.getString(PlantloreConstants.ENTITY_VILLAGE +"."+ NearestVillage.NAME) + ": " + village.getName() + "\n";
         } else {
             logger.error("No table defined");
             detailsMessage = "No details for selected row.";
@@ -1994,7 +1994,7 @@ public class History extends Observable {
         editTypeHash.put("Author", PlantloreConstants.Table.AUTHOR);
         editTypeHash.put("Metadata", PlantloreConstants.Table.METADATA);
         editTypeHash.put("Publication", PlantloreConstants.Table.PUBLICATION);
-        editTypeHash.put("Village", PlantloreConstants.Table.VILLAGE);
+        editTypeHash.put("NearestVillage", PlantloreConstants.Table.VILLAGE);
         editTypeHash.put("Territory", PlantloreConstants.Table.TERRITORY);
         editTypeHash.put("Phytochorion", PlantloreConstants.Table.PHYTOCHORION);        
     }

@@ -36,7 +36,7 @@ public abstract class Record implements Serializable {
 	 * (concerns History, LastUpdate, User, AccessRights, and possibly more).
 	 */
 	public final static Set<Class> BASIC_TABLES = new HashSet<Class>( Arrays.asList(
-		Occurrence.class, Habitat.class, Territory.class, Village.class, Phytochorion.class,
+		Occurrence.class, Habitat.class, Territory.class, NearestVillage.class, Phytochorion.class,
 		Plant.class, Metadata.class, Publication.class, Author.class, AuthorOccurrence.class) 
 	);
 	        
@@ -44,7 +44,7 @@ public abstract class Record implements Serializable {
 	 * A set of tables that cannot be changed.
 	 */
 	public final static HashSet<Class> IMMUTABLE = new HashSet<Class>( Arrays.asList(
-			Plant.class, Territory.class, Village.class, Phytochorion.class/*, Metadata.class*/) 
+			Plant.class, Territory.class, NearestVillage.class, Phytochorion.class/*, Metadata.class*/) 
 	);
 	
 	
@@ -173,12 +173,9 @@ public abstract class Record implements Serializable {
 	public Record createTorso() {
 		StringBuilder className;
 		for(String key : getForeignKeys()) {
-			if(key.equals(Habitat.NEARESTVILLAGE))
-				className = new StringBuilder("Village");
-			else {
-				className = new StringBuilder(key);
-				className.setCharAt(0, Character.toUpperCase(className.charAt(0)));
-			}
+			className = new StringBuilder(key);
+			className.setCharAt(0, Character.toUpperCase(className.charAt(0)));
+
 			try {
 				Record subrecord = (Record)Class.forName(pckg+className).newInstance();
 				subrecord.createTorso();

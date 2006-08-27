@@ -397,7 +397,7 @@ public class Login extends Observable {
 			// Everything went fine - 
 			// there is a new DBLayer which is to be announced to the observers of Login.
 			announceConnection();
-
+			
 			return null;
 		}
 		

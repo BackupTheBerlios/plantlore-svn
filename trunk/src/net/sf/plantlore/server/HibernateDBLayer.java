@@ -35,7 +35,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -1061,12 +1061,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // Check rights for table TRIGHT, TPHYTOCHORIA, TVILLAGES, TTERRITORIES, TPLANTS, TMETADATA
         if ((data instanceof Right) || (data instanceof Phytochorion) ||
-            (data instanceof Village) || (data instanceof Territory) ||
+            (data instanceof NearestVillage) || (data instanceof Territory) ||
             (data instanceof Plant) || (data instanceof Metadata)) {
             String entity = "";
             if (data instanceof Right) { entity = PlantloreConstants.ENTITY_RIGHT; }
             if (data instanceof Phytochorion) { entity = PlantloreConstants.ENTITY_PHYTOCHORION; }
-            if (data instanceof Village) { entity = PlantloreConstants.ENTITY_VILLAGE; }
+            if (data instanceof NearestVillage) { entity = PlantloreConstants.ENTITY_VILLAGE; }
             if (data instanceof Territory) { entity = PlantloreConstants.ENTITY_TERRITORY; }
             if (data instanceof Plant) { entity = PlantloreConstants.ENTITY_PLANT; }            
             if (data instanceof Metadata) { entity = PlantloreConstants.ENTITY_METADATA; }
@@ -1414,7 +1414,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	            table = PlantloreConstants.ENTITY_AUTHOR;                        
 	        } else if (data instanceof Phytochorion) {
 	            table = PlantloreConstants.ENTITY_PHYTOCHORION;                        
-	        } else if (data instanceof Village) {
+	        } else if (data instanceof NearestVillage) {
 	            table = PlantloreConstants.ENTITY_VILLAGE;
 	        } else if (data instanceof Territory) {
 	            table = PlantloreConstants.ENTITY_TERRITORY;                        
@@ -1524,7 +1524,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             if ((data instanceof Author) || (data instanceof Publication) ||
                 (data instanceof Territory) || (data instanceof Phytochorion) ||
-                (data instanceof Village) || (data instanceof Metadata) ||
+                (data instanceof NearestVillage) || (data instanceof Metadata) ||
                 (data instanceof Occurrence) || (data instanceof Habitat) ||
                 (data instanceof AuthorOccurrence)) {                                                               
                 historyChange.setOperation(UPDATE);
@@ -1578,11 +1578,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     tableId = Metadata.ID;
                     historyChange.setRecordId(((Metadata)data).getId());                    
                 } else
-                if (data instanceof Village) {
-                    updated = Village.class;
-                    updatedId = ((Village)data).getId();
-                    tableId = Village.ID;
-                    historyChange.setRecordId(((Village)data).getId());                    
+                if (data instanceof NearestVillage) {
+                    updated = NearestVillage.class;
+                    updatedId = ((NearestVillage)data).getId();
+                    tableId = NearestVillage.ID;
+                    historyChange.setRecordId(((NearestVillage)data).getId());                    
                 }                                  
                 // Read the to-be-updated object
                 Session tempSess = this.sessionFactory.openSession(); 
@@ -1776,12 +1776,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     			 hist.setOldRecordId(((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((Phytochorion)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((Phytochorion)newRec.getValue((String)cols.get(i))).getName());
-                    		 } else if (((String)cols.get(i)).equals(Habitat.VILLAGE)) {
-                    			 logger.debug("VILLAGE: " + ((Village)newRec.getValue((String)cols.get(i))).getId());
-                    			 logger.debug("VILLAGE: " + ((Village)newRec.getValue((String)cols.get(i))).getName());
-                    			 hist.setOldRecordId(((Village)newRec.getValue((String)cols.get(i))).getId());
-                    			 hist.setOldValue(((Village)origRec.getValue((String)cols.get(i))).getName());
-                                 hist.setNewValue(((Village)newRec.getValue((String)cols.get(i))).getName());
+                    		 } else if (((String)cols.get(i)).equals(Habitat.NEARESTVILLAGE)) {
+                    			 logger.debug("VILLAGE: " + ((NearestVillage)newRec.getValue((String)cols.get(i))).getId());
+                    			 logger.debug("VILLAGE: " + ((NearestVillage)newRec.getValue((String)cols.get(i))).getName());
+                    			 hist.setOldRecordId(((NearestVillage)newRec.getValue((String)cols.get(i))).getId());
+                    			 hist.setOldValue(((NearestVillage)origRec.getValue((String)cols.get(i))).getName());
+                                 hist.setNewValue(((NearestVillage)newRec.getValue((String)cols.get(i))).getName());
                     		 } else {
                     			 String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
                            			    newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
@@ -1968,9 +1968,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             sess.save(hist);
                         }
                     }
-                } else if (data instanceof Village) {
-                    Village origRec = (Village)original[0];                    
-                    Village newRec = (Village)data;
+                } else if (data instanceof NearestVillage) {
+                    NearestVillage origRec = (NearestVillage)original[0];                    
+                    NearestVillage newRec = (NearestVillage)data;
                     ArrayList cols = (ArrayList)origRec.getColumns();
                     for (int i=0;i<cols.size();i++) {                        
                         Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        

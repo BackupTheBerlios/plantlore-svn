@@ -28,7 +28,7 @@
                 not-null="false"                
                 type="java.lang.String"/>   
       <many-to-one name="nearestVillage" 
-                   class="net.sf.plantlore.common.record.Village" 
+                   class="net.sf.plantlore.common.record.NearestVillage" 
                    column="CNEARESTVILLAGEID"
                    fetch="select"/>                   
       <property column="CCOUNTRY"

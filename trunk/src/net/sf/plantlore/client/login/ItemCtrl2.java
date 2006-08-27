@@ -12,7 +12,7 @@ public class ItemCtrl2 {
 	private Login model;
 	private ItemView2 view;
 	
-	public enum Mode { ADD, EDIT };
+	public enum Mode { ADD, EDIT }
 	
 	private Mode mode = Mode.ADD;
 	

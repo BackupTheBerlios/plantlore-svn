@@ -26,7 +26,7 @@ import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -162,7 +162,7 @@ public class HabitatTree extends Observable {
         DefaultMutableTreeNode node;
         for (Object record : records) {
             Object[] obj = (Object[])record;
-            String name = ((Village)obj[2]).getName() + " - " + obj[1] + " (quadrant " + obj[3] + ")";
+            String name = ((NearestVillage)obj[2]).getName() + " - " + obj[1] + " (quadrant " + obj[3] + ")";
             name = "("+getOccurrenceCount((Integer)obj[0])+") "+name;
             node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.HABITAT,name,(Integer)obj[0],-1));
             treeModel.insertNodeInto(node, phytNode,0);

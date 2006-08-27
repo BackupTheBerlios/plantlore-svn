@@ -32,7 +32,7 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -143,7 +143,7 @@ public class Search extends Observable {
 
     public void setVillage(Pair<String, Integer> village) {
         this.village = village;
-        logger.debug("Village set to "+village);
+        logger.debug("NearestVillage set to "+village);
     }
 
     public String getTaxon(int i) {
@@ -585,7 +585,7 @@ public class Search extends Observable {
     	 // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well!
         exportQuery.createAlias(Occurrence.PUBLICATION, Record.alias(Publication.class), PlantloreConstants.LEFT_OUTER_JOIN);
     	exportQuery.createAlias(habitatAlias+Habitat.TERRITORY, Record.alias(Territory.class));
-    	exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(Village.class));
+    	exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(NearestVillage.class));
     	exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
     	exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED);
     	for( Restriction restriction : restrictions ) {
@@ -657,7 +657,7 @@ public class Search extends Observable {
                             sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LONGITUDE);
                             break;
                         case HABITAT_NEAREST_VILLAGE_NAME:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+Village.NAME);
+                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+NearestVillage.NAME);
                             break;
                         case HABITAT_NOTE:
                             sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
@@ -716,7 +716,7 @@ public class Search extends Observable {
                 }
                 
                 if (isNotEmpty(village)) {
-                	arg = dlu.getObjectFor(village.getSecond(),Village.class);
+                	arg = dlu.getObjectFor(village.getSecond(),NearestVillage.class);
                     sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,arg,null);
                     restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.NEARESTVILLAGE, arg));
                 }

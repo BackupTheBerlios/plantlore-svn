@@ -106,8 +106,8 @@ public class ExtendedTree extends javax.swing.JTree {
 				new UserTreeNode(Habitat.class, Habitat.QUADRANT),
 				new UserTreeNode(Habitat.class, Habitat.DESCRIPTION),
 				new Object[] { // NEAREST VILLAGE
-					new UserTreeNode(Village.class, null),
-					new UserTreeNode(Village.class, Village.NAME, true)
+					new UserTreeNode(NearestVillage.class, null),
+					new UserTreeNode(NearestVillage.class, NearestVillage.NAME, true)
 				},
 				new UserTreeNode(Habitat.class, Habitat.COUNTRY),
 				new UserTreeNode(Habitat.class, Habitat.ALTITUDE),
@@ -212,8 +212,8 @@ public class ExtendedTree extends javax.swing.JTree {
 			new UserTreeNode(Phytochorion.class, Phytochorion.NAME, true),
 		},
 		new Object[] { // NEAREST VILLAGE
-			new UserTreeNode(Village.class, null),
-			new UserTreeNode(Village.class, Village.NAME, true)
+			new UserTreeNode(NearestVillage.class, null),
+			new UserTreeNode(NearestVillage.class, NearestVillage.NAME, true)
 		},
 		new Object[] { // HABITAT
 			new UserTreeNode(Habitat.class, null),

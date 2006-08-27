@@ -31,7 +31,7 @@ import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -64,7 +64,7 @@ public class DBLayerUtils {
 	private static Map<Class, String> parentColumn = new Hashtable<Class, String>();
 	
 	static {
-		parentTable.put(Village.class, Habitat.class);
+		parentTable.put(NearestVillage.class, Habitat.class);
 		parentTable.put(Phytochorion.class, Habitat.class);
 		parentTable.put(Territory.class, Habitat.class);
 		parentTable.put(Metadata.class, Occurrence.class);
@@ -74,7 +74,7 @@ public class DBLayerUtils {
 		// >>Occurrence<< MUST NOT BE LISTED HERE!
 		// It would cause problems with DELETE and INSERT...
 
-		parentColumn.put(Village.class, Habitat.NEARESTVILLAGE);
+		parentColumn.put(NearestVillage.class, Habitat.NEARESTVILLAGE);
 		parentColumn.put(Phytochorion.class, Habitat.PHYTOCHORION);
 		parentColumn.put(Territory.class, Habitat.TERRITORY);
 		parentColumn.put(Metadata.class, Occurrence.METADATA);
@@ -268,7 +268,7 @@ public class DBLayerUtils {
 			q = db.createQuery( parent );
 			q.addRestriction(RESTR_EQ, column, null, record, null);
 			if( aliveOnly && record instanceof Deletable )
-				q.addRestriction(RESTR_EQ, "DELETED", null, 0, null);
+				q.addRestriction(RESTR_EQ, Deletable.DELETED, null, 0, null);
 			int resultset = db.executeQuery(q); 
 			rows = db.getNumRows(resultset);
 		} finally {
@@ -304,7 +304,7 @@ public class DBLayerUtils {
 			q = db.createQuery(AuthorOccurrence.class);
 			q.addRestriction(RESTR_EQ, AuthorOccurrence.OCCURRENCE, null, occurrence, null);
 			if( aliveOnly )
-				q.addRestriction(RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
+				q.addRestriction(RESTR_EQ, Deletable.DELETED, null, 0, null);
 			int resultset = db.executeQuery(q),
 			rows = db.getNumRows(resultset);
 			if(rows > 0) {
@@ -330,7 +330,7 @@ public class DBLayerUtils {
 	 * There are occurrences <i>A</i> and <i>B</i>. The <i>B</i>
 	 * goes right after <i>A</i>.
 	 * The probability, that both occurrences will share the same
-	 * Phytochorion, Territory, Village, Publication, or Metadata,
+	 * Phytochorion, Territory, NearestVillage, Publication, or Metadata,
 	 * is quite high. 
 	 * <br/>
 	 * However, if the cache is not used for some time, its contents may
@@ -356,6 +356,8 @@ public class DBLayerUtils {
 		// Get the table.
 		Class table = record.getClass();
 		
+		logger.debug("Finding match for " + record.toFullString());
+		
 		// Look in the cache.
 		if(isCacheEnabled) {
 			Record cachedRecord = cache.get(table);
@@ -365,6 +367,8 @@ public class DBLayerUtils {
 				
 		// Create a query that will look for the record with the same properties.
 		SelectQuery query = db.createQuery( table );
+		
+		logger.debug("Table is " + table.getSimpleName());
 
 		try {
 			// Equal properties.
@@ -378,6 +382,9 @@ public class DBLayerUtils {
 				Record subrecord = (Record) record.getValue(key);
 				query.addRestriction(RESTR_EQ, key, null, subrecord, null);
 			}
+			
+			
+			
 			
 			// Is there such record?
 			int results = db.executeQuery( query );
@@ -906,8 +913,11 @@ public class DBLayerUtils {
 			throw new DBLayerException(L10n.getString("Error.IncompleteRecord"));
 		}
 		
+		logger.debug("Processing new occurrence data [" + occ.toFullString() + "].");
+		
 		// If the record is dead, then it is clearly meant to be deleted!
 		Intention intention =  occ.isDead() ? Intention.DELETE : Intention.UNKNOWN; 
+		logger.debug("The intention with the data is " + intention);
 			
 		boolean isInDB, isDead;
 		Occurrence occInDB;
@@ -927,12 +937,16 @@ public class DBLayerUtils {
 			isInDB = (rows != 0);
 			occInDB = isInDB ? (Occurrence)((Object[])db.more(resultId, 0, 0)[0])[0]  :  null;
 			isDead = isInDB ? occInDB.isDead() : false;
+			
+			logger.debug("Matching record found? " + isInDB +" Is dead? " + isDead);
+			
 		} finally {
 			db.closeQuery(q);	
 		}
 			
 		// Begin a new transaction.
 		db.beginTransaction();
+		logger.debug("Performing the reqested operation...");
 			
 		try {
 			// The `occ` IS in the database as `occInDB` already.  
@@ -967,7 +981,7 @@ public class DBLayerUtils {
 					occInDB = (Occurrence) insert( occ );
 				}
 			
-			
+			logger.debug("Occurrence processed. About to start processing author-occurrences...");
 			// Now, deal with Authors associated with this Occurrence.
 			int numberOfUndeadAuthors = 0; 
 			
@@ -980,6 +994,7 @@ public class DBLayerUtils {
 			// The intention was to ADD or UPDATE the existing Occurrence record.  
 			else {
 				AuthorOccurrence[] aosInDB = new AuthorOccurrence[0];
+				logger.debug("Loading all authors of the occurrence record from the database...");
 				if( isInDB ) 
 					aosInDB = findAllAuthors(occInDB, false);
 				// Compute the number of undead authors (authors, that are not marked as deleted). 
@@ -994,17 +1009,21 @@ public class DBLayerUtils {
 						continue;
 					}
 					
+					logger.debug("The AO seems ok. See [" + ao.toFullString() + "].");
+					
 					// Simplify the comparison (the Occurrence is known...)
 					ao.setOccurrence( null );
 					
 					// Check if that AuthorOccurrence is already in the database.
 					AuthorOccurrence aoInDB = null;
 					for( AuthorOccurrence alpha : aosInDB ) {
-						if( alpha.equalsUpTo( ao, AuthorOccurrence.DELETED ) ) {
+						if( alpha.equalsUpTo( ao, Deletable.DELETED ) ) {
 							aoInDB = alpha;
 							break;
 						}
 					}
+					
+					logger.debug("Is the AO in the database already? " + aoInDB != null);
 					
 					//	The Occurrence `occInDB` is in the database, that is for sure.
 					// The ao.Occurrence, however, is NOT from the database.
@@ -1012,6 +1031,8 @@ public class DBLayerUtils {
 					
 					// The intention with this AuthorOccurrence. 
 					intention = ao.isDead() ? Intention.DELETE : Intention.UNKNOWN;
+					
+					logger.debug("The intention with the AO is " + intention);
 					
 
 					// [A] AO is not in the database.
@@ -1041,6 +1062,8 @@ public class DBLayerUtils {
 								numberOfUndeadAuthors++;
 							}
 						}
+					
+					logger.debug("AO processed.");
 				}
 			
 				// Transaction is valid iff everything went fine and the number of undead authors is positive.
@@ -1049,6 +1072,7 @@ public class DBLayerUtils {
 					throw new DBLayerException(L10n.getString("Error.NoAuthorsLeft"));
 				}
 				
+				logger.debug("Processing of the occurrence data completed.");
 				db.commitTransaction();
 			}
 			

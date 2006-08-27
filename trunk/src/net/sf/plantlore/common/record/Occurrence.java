@@ -70,7 +70,7 @@ public class Occurrence extends Record implements Deletable {
     public static final String UPDATEDWHEN = "updatedWhen";    
     public static final String UPDATEDWHO = "updatedWho";    
     public static final String METADATA = "metadata";    
-    public static final String DELETED = "deleted";
+    //public static final String DELETED = "deleted";
     public static final String NOTE = "note";        
     
     private static Hashtable<String,Integer> columnSizes;

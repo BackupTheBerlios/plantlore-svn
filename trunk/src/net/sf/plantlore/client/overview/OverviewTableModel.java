@@ -23,7 +23,7 @@ import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.middleware.SelectQuery;

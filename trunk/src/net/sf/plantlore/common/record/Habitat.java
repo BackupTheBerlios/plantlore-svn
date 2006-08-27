@@ -27,7 +27,7 @@ public class Habitat extends Record implements Deletable {
     private Integer id;
     private Territory territory;
     private Phytochorion phytochorion;    
-    private Village nearestVillage;    
+    private NearestVillage nearestVillage;    
     private String quadrant;
     private String description;
     private String country;
@@ -50,13 +50,11 @@ public class Habitat extends Record implements Deletable {
     public static final String ALTITUDE = "altitude";
     public static final String LATITUDE = "latitude";    
     public static final String LONGITUDE = "longitude";    
-    public static final String DELETED = "deleted";    
+    //public static final String DELETED = "deleted";    
     public static final String CREATEDWHO = "createdWho"; 
     public static final String NOTE = "note";
     
-    public static final String VILLAGE = "village";
-    
-    
+        
     private static Hashtable<String, Integer> columnSizes;
     static {
         columnSizes = new Hashtable<String,Integer>();
@@ -73,11 +71,11 @@ public class Habitat extends Record implements Deletable {
     
     @Override
     public List<String> getForeignKeys() { 
-    	return asList( TERRITORY, PHYTOCHORION, /*NEAREST*/VILLAGE ); 
+    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
     }
     
     public List<String> getColumns() {
-    	return asList( TERRITORY, PHYTOCHORION, /*NEAREST*/VILLAGE, 
+    	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE, 
     			QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, NOTE, DELETED );
     }
     
@@ -110,7 +108,7 @@ public class Habitat extends Record implements Deletable {
 		}
 		else if(column.equalsIgnoreCase(TERRITORY)) setTerritory((Territory)value);
 		else if(column.equalsIgnoreCase(PHYTOCHORION)) setPhytochorion((Phytochorion)value);
-		else if(column.equalsIgnoreCase(NEARESTVILLAGE) || column.equals(VILLAGE)) setNearestVillage((Village)value);
+		else if(column.equalsIgnoreCase(NEARESTVILLAGE)) setNearestVillage((NearestVillage)value);
 		else if(column.equalsIgnoreCase(QUADRANT)) setQuadrant((String)value);
 		else if(column.equalsIgnoreCase(DESCRIPTION)) setDescription((String)value);
 		else if(column.equalsIgnoreCase(COUNTRY)) setCountry((String)value);
@@ -206,42 +204,22 @@ public class Habitat extends Record implements Deletable {
     }
     
     /**
-     *   Get associated Village record
-     *   @return associated Village record
+     *   Get associated NearestVillage record
+     *   @return associated NearestVillage record
      *   @see setNearestVillage
      */
-    public Village getNearestVillage() {
+    public NearestVillage getNearestVillage() {
         //obligatory
         return this.nearestVillage;
     }
     
     /**
-     *   Get associated Village record
-     *   @return associated Village record
-     *   @see setNearestVillage
-     */
-    public Village getVillage() {
-        //obligatory
-        return getNearestVillage();
-    }
-    
-    /**
-     *   Set associated Village record
-     *   @param nearestVillage associated Village record
+     *   Set associated NearestVillage record
+     *   @param nearestVillage associated NearestVillage record
      *   @see getNearestVillage
      */
-    public void setNearestVillage(Village nearestVillage) {
+    public void setNearestVillage(NearestVillage nearestVillage) {
         this.nearestVillage = nearestVillage;
-    }
-    
-    /**
-     *   Set associated Village record
-     *   @param nearestVillage associated Village record
-     *   @see getNearestVillage
-     */
-    public void setVillage(Village nearestVillage) {
-        //obligatory
-        setNearestVillage(nearestVillage);
     }
     
     

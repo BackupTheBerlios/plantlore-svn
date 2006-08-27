@@ -30,7 +30,7 @@ public class UnifiedTableParser implements TableParser {
 	static {
 		tables.put( "plants", Plant.class);
 		tables.put( "metadata", Metadata.class);
-		tables.put( "villages", Village.class);
+		tables.put( "villages", NearestVillage.class);
 		tables.put( "phytochoria", Phytochorion.class);
 		tables.put( "territories", Territory.class);
 	}

@@ -1,5 +1,5 @@
 /*
- * Village.java
+ * NearestVillage.java
  *
  * Created on 15. březen 2006, 0:17
  *
@@ -18,11 +18,11 @@ import java.util.List;
  * @author Tomas Kovarik
  * @author Lada Oberreiterova
  */
-public class Village extends Record {
+public class NearestVillage extends Record {
 	
 	private static final long serialVersionUID = 20060604034L;
 	
-    /** Parameters of the Village */    
+    /** Parameters of the NearestVillage */    
     private Integer id;   
     private String name;
 
@@ -46,8 +46,8 @@ public class Village extends Record {
 		else if(column.equalsIgnoreCase(NAME)) setName((String)value);
     }
     
-    /** Creates a new instance of Village */
-    public Village() {
+    /** Creates a new instance of NearestVillage */
+    public NearestVillage() {
         
     }
     

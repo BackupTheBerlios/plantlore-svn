@@ -27,7 +27,7 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -112,7 +112,7 @@ public class Detail extends Observable {
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);                    
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.QUADRANT);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+Village.NAME);
+        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+NearestVillage.NAME);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"metadata."+Metadata.DATASETTITLE);
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.CODE);                    
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);                    

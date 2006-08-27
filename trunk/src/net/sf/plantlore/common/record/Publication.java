@@ -45,7 +45,7 @@ public class Publication extends Record implements Deletable  {
     public static final String REFERENCECITATION = "referenceCitation";    
     public static final String REFERENCEDETAIL = "referenceDetail";    
     public static final String URL = "url";    
-    public static final String DELETED = "deleted";            
+    //public static final String DELETED = "deleted";            
     public static final String CREATEDWHO = "createdWho";    
     public static final String NOTE = "note";
     

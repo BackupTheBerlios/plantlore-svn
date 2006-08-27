@@ -80,7 +80,7 @@ public class PlantloreConstants {
     	classToTable.put(Plant.class, Table.PLANT);
     	classToTable.put(Publication.class, Table.PUBLICATION);
     	classToTable.put(Territory.class, Table.TERRITORY);
-    	classToTable.put(Village.class, Table.VILLAGE);
+    	classToTable.put(NearestVillage.class, Table.VILLAGE);
     }
     
     

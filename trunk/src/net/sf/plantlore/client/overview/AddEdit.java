@@ -35,7 +35,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.SelectQuery;
@@ -317,7 +317,7 @@ public class AddEdit extends Observable {
 
     public void setVillage(Pair<String, Integer> village) {
         this.village = village;
-        logger.debug("Village set to "+village);
+        logger.debug("NearestVillage set to "+village);
     }
 
     public String getTaxon(int i) {
@@ -743,7 +743,7 @@ public class AddEdit extends Observable {
      */
     private void prepareOccurrenceUpdate(boolean updateAllPlants) throws DBLayerException, RemoteException {
         Habitat h;
-        Village v;
+        NearestVillage v;
         Phytochorion p;
         Territory t;
         Metadata m;
@@ -757,7 +757,7 @@ public class AddEdit extends Observable {
             h = new Habitat();
         
         
-        v = (Village)dlu.getObjectFor(village.getSecond(),Village.class);
+        v = (NearestVillage)dlu.getObjectFor(village.getSecond(),NearestVillage.class);
         p = (Phytochorion)dlu.getObjectFor(phytCode.getSecond(),Phytochorion.class);
         t = (Territory)dlu.getObjectFor(territoryName.getSecond(),Territory.class);
 
@@ -1033,11 +1033,11 @@ public class AddEdit extends Observable {
                     newOccurrenceInserted = false;
                     
                 } else { //Add Mode
-                    Village v;
+                    NearestVillage v;
                     Phytochorion p;
                     Territory t;
                     Habitat h = new Habitat();
-                    v = (Village)dlu.getObjectFor(village.getSecond(),Village.class);
+                    v = (NearestVillage)dlu.getObjectFor(village.getSecond(),NearestVillage.class);
                     p = (Phytochorion)dlu.getObjectFor(phytCode.getSecond(),Phytochorion.class);
                     t = (Territory)dlu.getObjectFor(territoryName.getSecond(),Territory.class);                    
                     if (altitude != null) h.setAltitude(altitude);

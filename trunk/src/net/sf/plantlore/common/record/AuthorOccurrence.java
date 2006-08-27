@@ -38,7 +38,7 @@ public class AuthorOccurrence extends Record implements Deletable {
     public static final String OCCURRENCE = "occurrence";
     public static final String ROLE = "role";
     public static final String NOTE = "note";
-    public static final String DELETED = "deleted";
+    //public static final String DELETED = "deleted";
 
     private static Hashtable<String,Integer> columnSizes;
 

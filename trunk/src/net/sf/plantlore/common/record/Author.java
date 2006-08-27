@@ -47,7 +47,7 @@ public class Author extends Record implements Deletable {
     public static final String URL = "url";
     public static final String NOTE = "note";    
     public static final String CREATEDWHO = "createdWho";    
-    public static final String DELETED = "deleted";
+    //public static final String DELETED = "deleted";
     
     /** Creates a new instance of AuthorRecord */
     public Author() {

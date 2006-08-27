@@ -34,7 +34,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
-import net.sf.plantlore.common.record.Village;
+import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.middleware.DBLayer;
 import org.apache.log4j.Logger;
 
@@ -218,7 +218,7 @@ public class JasperDataSource implements JRDataSource {
                 value = occurrence.getValue(User.class,column);
                 break;
             case VILLAGE:
-                value = occurrence.getValue(Village.class,column);
+                value = occurrence.getValue(NearestVillage.class,column);
                 break;
             default:
                 logger.error("Table type "+table+" is not handled properly in JasperDataSource!");
@@ -255,7 +255,7 @@ public class JasperDataSource implements JRDataSource {
             case USER:
                 return new User().getColumns();
             case VILLAGE:
-                return new Village().getColumns();
+                return new NearestVillage().getColumns();
             default:
                 logger.error("Table type "+table+" is not handled properly in JasperDataSource!");
                 throw new JRException("Table type "+table+" is not handled properly in JasperDataSource!");

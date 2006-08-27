@@ -39,10 +39,14 @@ public class AuthCtrl {
 				@Override
 				public void exceptionHandler(Exception ex) {
 					getTask().stop();
+					
+//					if(ex instanceof DBLayerException)
+//						System.out.println(((DBLayerException)e).getErrorCode());
+					
 					JOptionPane.showMessageDialog( 
 							parent, 
 							ex.getMessage(), 
-							L10n.getString("Error.General"), 
+							L10n.getString("Error.ConnectionFailed"), 
 							JOptionPane.ERROR_MESSAGE );
 				}
 			};

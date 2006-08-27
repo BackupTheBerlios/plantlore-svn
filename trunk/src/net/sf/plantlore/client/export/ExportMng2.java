@@ -271,7 +271,7 @@ public class ExportMng2 {
 			else
 				template.addProjections( query, 
 					Occurrence.class, Plant.class, Metadata.class, Publication.class, 
-					Habitat.class, Territory.class, Village.class, Phytochorion.class );
+					Habitat.class, Territory.class, NearestVillage.class, Phytochorion.class );
 		}
 		
 		// Create a new file and writer (wrapper).
