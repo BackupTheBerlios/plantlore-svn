@@ -498,8 +498,7 @@ public class MetadataManager  extends Observable {
 	 * Set a new DBLayer.
 	 */
 	synchronized public void setDBLayer(DBLayer dblayer) {
-		closeQuery();
-		database = dblayer;
+		query = null;		
 	}
     
     /**

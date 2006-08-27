@@ -49,25 +49,7 @@ public class AddEditMetadataCtrl {
         
         // Add action listene
         view.closeButton.setAction(new DefaultCancelAction(view)); 
-        view.operationButton.addActionListener(new operationButtonListener());
-        // Add key listener
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.operationButton.addKeyListener(escapeKeyPressed);
-        view.technicalContactNameText.addKeyListener(escapeKeyPressed);
-        view.technicalContactEmailText.addKeyListener(escapeKeyPressed);
-        view.technicalContactAddressText.addKeyListener(escapeKeyPressed);
-        view.contentContactNameText.addKeyListener(escapeKeyPressed);
-        view.contentContactEmailText.addKeyListener(escapeKeyPressed);
-        view.contectContactAddressText.addKeyListener(escapeKeyPressed);
-        view.dataSetTitleText.addKeyListener(escapeKeyPressed);
-        view.dataSetDetailsText.addKeyListener(escapeKeyPressed);
-        view.sourceInstirutionIdText.addKeyListener(escapeKeyPressed);
-        view.sourceIdText.addKeyListener(escapeKeyPressed);
-        view.abbrevText.addKeyListener(escapeKeyPressed);
-        view.recordbasisText.addKeyListener(escapeKeyPressed);
-        view.noteTextArea.addKeyListener(escapeKeyPressed);
-        view.createDateChooser.addKeyListener(escapeKeyPressed);
-        view.helpButton.addKeyListener(escapeKeyPressed);
+        view.operationButton.addActionListener(new operationButtonListener());       
       }
    
    /**
@@ -125,6 +107,7 @@ public class AddEditMetadataCtrl {
                 //check wether all obligatory fields were filled 
                 if (view.checkNotNull()) {
                     //load data
+                    logger.debug("metadata createWhen: " + model.getMetadataRecord().getDateCreate());
                     model.getMetadataRecord().setTechnicalContactName(view.technicalContactNameText.getText());
                     model.getMetadataRecord().setTechnicalContactEmail(view.technicalContactEmailText.getText());
                     model.getMetadataRecord().setTechnicalContactAddress(view.technicalContactAddressText.getText());
@@ -137,7 +120,7 @@ public class AddEditMetadataCtrl {
                     model.getMetadataRecord().setSourceId(view.sourceIdText.getText());
                     model.getMetadataRecord().setOwnerOrganizationAbbrev(view.abbrevText.getText());
                     model.getMetadataRecord().setRecordBasis(view.recordbasisText.getText());
-                    model.getMetadataRecord().setBiotopeText(view.noteTextArea.getText());
+                    model.getMetadataRecord().setBiotopeText(view.noteTextArea.getText());                    
                     model.getMetadataRecord().setDateModified(new Date());
                     model.getMetadataRecord().setDeleted(0);                 
                     view.close(); 

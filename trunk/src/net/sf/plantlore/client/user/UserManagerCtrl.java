@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class UserManagerCtrl {
     
-	/** Instance of a logger */
+    /** Instance of a logger */
     private Logger logger;
     /** Model of UserManager MVC */
     private UserManager model;
@@ -71,44 +71,7 @@ public class UserManagerCtrl {
         view.sortAscendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
         view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
         view.showAllUserRadioBUtton.addFocusListener(new ShowUserDirectionRadioFocusListener());
-        view.showCurrentUserRadioButton.addFocusListener(new ShowUserDirectionRadioFocusListener());
-        
-        //Add key listeners
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.previousButton.addKeyListener(escapeKeyPressed);
-        view.nextButton.addKeyListener(escapeKeyPressed);
-        view.addButtons.addKeyListener(escapeKeyPressed);
-        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
-        view.helpButton.addKeyListener(escapeKeyPressed);
-        view.editButtons.addKeyListener(escapeKeyPressed);
-        view.deleteButton.addKeyListener(escapeKeyPressed);
-        view.detailsButton.addKeyListener(escapeKeyPressed);
-        view.searchButton.addKeyListener(escapeKeyPressed);
-        view.sortComboBox.addKeyListener(escapeKeyPressed);
-        view.tableUserList.addKeyListener(escapeKeyPressed);
-        view.sortAscendingRadioButton.addKeyListener(escapeKeyPressed);
-        view.sortDescendingRadioButton.addKeyListener(escapeKeyPressed);
-        view.addressSearchText.addKeyListener(escapeKeyPressed);           
-        view.emailSearchText.addKeyListener(escapeKeyPressed);
-        view.loginSearchText.addKeyListener(escapeKeyPressed);
-        view.wholeNameSearchText.addKeyListener(escapeKeyPressed);
-        view.showActiveUserPanel.addKeyListener(escapeKeyPressed);
-        view.showAllUserRadioBUtton.addKeyListener(escapeKeyPressed);
-        view.showCurrentUserRadioButton.addKeyListener(escapeKeyPressed);
-        view.addKeyListener(escapeKeyPressed);
-    /*    
-        //Search user and Load data
-        Task task = model.searchUser(true);        
-        
-        new DefaultProgressBar(task, view, true) {		   							 						
-        	@Override
-			public void afterStopping() {
-				//Process result and Update view dialog
-		        reloadData(1, model.getDisplayRows());		       
-           } 		   					
-		};		                 	                   
-        task.start();   
-        */                                    
+        view.showCurrentUserRadioButton.addFocusListener(new ShowUserDirectionRadioFocusListener());                              
     }  
     
     /**

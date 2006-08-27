@@ -52,23 +52,7 @@ public class AddEditUserCtrl {
         //Add action listene
         view.closeButton.setAction(new DefaultCancelAction(view)); 
         view.operationButton.addActionListener(new OperationButtonListener());
-        view.editGroupTextArea.addFocusListener(new UserAreaListener());
-        // Add key listener
-        view.helpButton.addKeyListener(escapeKeyPressed);
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.operationButton.addKeyListener(escapeKeyPressed);
-        view.editGroupTextArea.addKeyListener(escapeKeyPressed);
-        view.loginText.addKeyListener(escapeKeyPressed);
-        view.passwordtext.addKeyListener(escapeKeyPressed);
-        view.firstNameText.addKeyListener(escapeKeyPressed);
-        view.surnameText.addKeyListener(escapeKeyPressed);
-        view.emailText.addKeyListener(escapeKeyPressed);
-        view.addressText.addKeyListener(escapeKeyPressed);
-        view.noteText.addKeyListener(escapeKeyPressed);
-        view.addRightCheckBox.addKeyListener(escapeKeyPressed);
-        view.administratorCheckBox.addKeyListener(escapeKeyPressed);
-        view.editAllCheckBox.addKeyListener(escapeKeyPressed);
-        view.editGroupTextArea.addKeyListener(escapeKeyPressed);
+        view.editGroupTextArea.addFocusListener(new UserAreaListener());      
     }
     
  

@@ -25,7 +25,7 @@
                   <Component id="jPanel3" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="helpButton" min="-2" pref="80" max="-2" attributes="0"/>
-                      <EmptySpace pref="518" max="32767" attributes="0"/>
+                      <EmptySpace pref="568" max="32767" attributes="0"/>
                       <Component id="closeButton" min="-2" pref="80" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -80,7 +80,7 @@
                       <Component id="locationValueLabel" alignment="0" max="32767" attributes="1"/>
                       <Component id="authorValueLabel" alignment="0" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace pref="488" max="32767" attributes="0"/>
+                  <EmptySpace pref="538" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -178,7 +178,7 @@
                       <Component id="whenInsertValueLabel" min="-2" max="-2" attributes="0"/>
                       <Component id="whoInsertValueLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="502" max="32767" attributes="0"/>
+                  <EmptySpace pref="552" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -248,7 +248,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jScrollPane1" alignment="0" pref="642" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" pref="692" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="undoButton" min="-2" pref="90" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -270,7 +270,7 @@
                           <Component id="displayedLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="displayedValueLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="29" max="32767" attributes="0"/>
+                          <EmptySpace pref="79" max="32767" attributes="0"/>
                           <Component id="nextButton" min="-2" pref="80" max="-2" attributes="0"/>
                       </Group>
                   </Group>

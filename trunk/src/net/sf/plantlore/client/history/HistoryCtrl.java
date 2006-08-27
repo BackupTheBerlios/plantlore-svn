@@ -42,26 +42,7 @@ public class HistoryCtrl {
         logger = Logger.getLogger(this.getClass().getPackage().getName());        
         this.model = modelH;        
         this.view = viewH;
-        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
-             
-        //Add action listeners to buttons        
-        view.closeButton.setAction(new DefaultCancelAction(view));        
-        view.previousButton.addActionListener(new previousButtonListener());
-        view.nextButton.addActionListener(new nextButtonListener());
-        view.selectAllButton.addActionListener(new selectAllButtonListener());
-        view.unselectAllButton.addActionListener(new unselectAllButtonListener());
-        view.undoButton.addActionListener(new undoSelectedButtonListener());
-        view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener());
-        //Add key listeners
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.previousButton.addKeyListener(escapeKeyPressed);
-        view.nextButton.addKeyListener(escapeKeyPressed);
-        view.selectAllButton.addKeyListener(escapeKeyPressed);
-        view.unselectAllButton.addKeyListener(escapeKeyPressed);
-        view.undoButton.addKeyListener(escapeKeyPressed);
-        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
-        view.helpButton.addKeyListener(escapeKeyPressed);
-        view.getTable().addKeyListener(escapeKeyPressed);                                
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);        
     }
     
     /**

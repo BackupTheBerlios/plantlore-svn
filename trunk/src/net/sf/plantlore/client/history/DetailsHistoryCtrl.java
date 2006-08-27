@@ -35,11 +35,7 @@ public class DetailsHistoryCtrl {
         DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);
         // Add action listeners to buttons
         view.closeButton.setAction(new DefaultCancelAction(view));
-        view.helpButton.addActionListener(new helpButtonListener());
-        // Add key listeners
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.helpButton.addKeyListener(escapeKeyPressed);
-        view.detailsTextArea.addKeyListener(escapeKeyPressed);
+        view.helpButton.addActionListener(new helpButtonListener());        
     }
        
    /**

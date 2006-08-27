@@ -56,17 +56,7 @@ public class WholeHistoryCtrl {
         view.undoToDateButton.addActionListener(new undoToDateButtonListener());
         view.detailsButton.addActionListener(new detailsHistoryListener());
         view.toDisplayValueTextField.addActionListener(new rowSetDisplayChangeListener()); 
-        view.clearHistoryButton.addActionListener(new clearHistoryListener());
-        // Add key listeners
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.previousButton.addKeyListener(escapeKeyPressed);
-        view.nextButton.addKeyListener(escapeKeyPressed);
-        view.undoToDateButton.addKeyListener(escapeKeyPressed);
-        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
-        view.helpButton.addKeyListener(escapeKeyPressed);
-        view.tableHistoryList.addKeyListener(escapeKeyPressed);
-        view.clearHistoryButton.addKeyListener(escapeKeyPressed);
-        view.detailsButton.addKeyListener(escapeKeyPressed);
+        view.clearHistoryButton.addActionListener(new clearHistoryListener());       
     }
  
     /**

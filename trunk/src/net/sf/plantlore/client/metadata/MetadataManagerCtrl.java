@@ -70,27 +70,7 @@ public class MetadataManagerCtrl {
         view.searchButton.addActionListener(new searchUserListener());
         view.sortAscendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
         view.sortDescendingRadioButton.addFocusListener(new SortDirectionRadioFocusListener());
-        view.sortField.addFocusListener(new SortComboFocusListener());
-        
-        // Add key listeners
-        view.closeButton.addKeyListener(escapeKeyPressed);
-        view.previousButton.addKeyListener(escapeKeyPressed);
-        view.nextButton.addKeyListener(escapeKeyPressed);
-        view.addButtons.addKeyListener(escapeKeyPressed);
-        view.toDisplayValueTextField.addKeyListener(escapeKeyPressed);
-        view.helpButton.addKeyListener(escapeKeyPressed);
-        view.editButtons.addKeyListener(escapeKeyPressed);
-        view.deleteButton.addKeyListener(escapeKeyPressed);
-        view.detailsButton.addKeyListener(escapeKeyPressed);
-        view.searchButton.addKeyListener(escapeKeyPressed);
-        view.sortField.addKeyListener(escapeKeyPressed);
-        view.tableMetadataList.addKeyListener(escapeKeyPressed);
-        view.sortAscendingRadioButton.addKeyListener(escapeKeyPressed);
-        view.sortDescendingRadioButton.addKeyListener(escapeKeyPressed);
-        view.sourceInstitutionIdText.addKeyListener(escapeKeyPressed);           
-        view.sourceIdText.addKeyListener(escapeKeyPressed);
-        view.dataSetTitleText.addKeyListener(escapeKeyPressed);
-        view.addKeyListener(escapeKeyPressed);                   
+        view.sortField.addFocusListener(new SortComboFocusListener());                             
     }   
     
     /**

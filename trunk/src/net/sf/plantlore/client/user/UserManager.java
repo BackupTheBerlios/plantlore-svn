@@ -416,11 +416,13 @@ public class UserManager extends Observable {
     				database.executeUpdateInTransaction(userRecord.getRight());                                
                                 database.executeUpdateInTransaction(userRecord);                                 
                                 userList.set(idRecord, userRecord);                                  
-                                //Update list of names (logins) of users
-                                Pair<String, Integer> userTmp = users[userRecord.getId()];
-                                userTmp.setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
-                                logger.debug(userTmp.getFirst());
-                                users[userRecord.getId()] = userTmp;                                                               
+                                // Update list of names (logins) of users                                
+                                //logger.debug("Edit user - before update user list");
+                                //Pair<String, Integer> userTmp = users[userRecord.getId()];
+                                //userTmp.setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
+                                //logger.debug(userTmp.getFirst());
+                                //users[userRecord.getId()] = userTmp; 
+                                //logger.debug("Edit user - after update user list");
 		        }catch (RemoteException e) {
 		        	logger.error("Process update User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();		        	
@@ -433,7 +435,8 @@ public class UserManager extends Observable {
                                 DBLayerException dbex = new DBLayerException(ERROR_EDIT + e.getMessage());
                                 dbex.setStackTrace(e.getStackTrace());
                                 throw dbex; 		            
-		        } 	                        
+		        } 
+                        logger.debug("Edit user - before commit transaction");
 		        database.commitTransaction();                                                
 		        setInfoFinishedTask(true);
 		        return null;
@@ -568,8 +571,7 @@ public class UserManager extends Observable {
 	 * Set a new DBLayer.
 	 */
 	synchronized public void setDBLayer(DBLayer dblayer) {
-		closeQuery();
-		database = dblayer;
+		query = null;		
 	}
     
     /** 
