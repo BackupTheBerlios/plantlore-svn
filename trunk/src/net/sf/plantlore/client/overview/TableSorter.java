@@ -556,6 +556,10 @@ public class TableSorter extends AbstractTableModel {
         tableModel.setDatabase(db);
     }
     
+    public void reset() {
+        tableModel.reset();
+    }
+    
     public void setColumns(ArrayList<Column> columns) {
         tableModel.setColumns(columns);
         fireTableStructureChanged();

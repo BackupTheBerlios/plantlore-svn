@@ -361,16 +361,20 @@ public class OverviewTableModel extends AbstractTableModel {
     public void setDatabase(DBLayer database) {
         this.db = database;
         if (database == null) {//the user logged out
-            data = null;
-            resultsCount = 0;
-            oldSelectQuery = null; //otherwise after login we would try to close the query in setResultId() which would cause an exception
-            fireTableDataChanged();
-            logger.debug("OverviewTableModel: database set to null.");
+            reset();
         } else {
             logger.debug("OverviewTableModel: database set.");
         }
     }
 
+    public void reset() {
+        data = null;
+        resultsCount = 0;
+        oldSelectQuery = null; //otherwise after login we would try to close the query in setResultId() which would cause an exception
+        fireTableDataChanged();
+        logger.debug("OverviewTableModel: RESET.");        
+    }
+    
     public int getSelectionColumnIndex() {
         return selectionColumnIndex;
     }

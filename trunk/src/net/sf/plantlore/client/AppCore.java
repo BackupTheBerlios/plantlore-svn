@@ -140,7 +140,11 @@ public class AppCore extends Observable
         return this.database;
     }    
     
+    /** Reconnect actually...
+     *
+     */
     protected void setDatabase(DBLayer dblayer) throws RemoteException, DBLayerException {
+        tableSorter.reset();
     	this.database = dblayer;
         loadDialogData();
     }
