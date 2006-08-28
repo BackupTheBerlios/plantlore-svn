@@ -75,8 +75,9 @@ public class AddEditCtrl {
     private boolean inAddMode = true;
     private AddEdit model;
     private AddEditView view;
-    private final static int MAXIMUM_FRACTION_DIGITS = 5;
-    private final static int MAXIMUM_INTEGER_DIGITS = 4;
+    private TransformationChangeView transformationView;
+    private final static int MAXIMUM_FRACTION_DIGITS = 8;
+    private final static int MAXIMUM_INTEGER_DIGITS = 8;
     private final static Color COLOR_INVALID = Color.RED;
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
@@ -130,12 +131,12 @@ public class AddEditCtrl {
         //------- Buttons --------
         view.okButton.setAction(new OkButtonAction());
         view.cancelButton.setAction(new CancelButtonAction());
-        view.checklistButton.setAction(new ChecklistAction());
-        
+        view.checklistButton.setAction(new ChecklistAction());        
         view.clearLocationButton.setAction(new ClearLocationAction());
         view.clearOccurrenceButton.setAction(new ClearOccurrenceAction());
         view.calendarButton.setAction(new CalendarAction());
         view.settingsButton.setAction(new SettingsAction());
+        view.gpsChangeButton.setAction(new ChangeCoordinateSystemAction());
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
@@ -750,6 +751,21 @@ public class AddEditCtrl {
             settingsView.setVisible(true);
         }
     }//class SettingsAction
+    
+    class ChangeCoordinateSystemAction extends AbstractAction {
+        
+        public ChangeCoordinateSystemAction() {
+            putValue(NAME, L10n.getString("Common.GpsChange"));
+            transformationView = new TransformationChangeView(view, model, true);
+            new TransformationChangeCtrl(model, transformationView); 
+        }
+        public void actionPerformed(ActionEvent e) {                       
+            transformationView.setVisible(true);         
+            if (model.getIsCancle()) return;
+            model.setIsCancle(true);
+            view.loadComponetCoordinate();
+        }
+    }
 }
 
 

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.plantlore.client;
+package net.sf.plantlore.client.overview;
 
 import org.apache.log4j.Logger;
 
@@ -77,19 +77,6 @@ public class Transformation {
         
     }
     
-    
-     public static void main(String[] args) {
-            Transformation tr = new Transformation();
-            System.out.println("********************WGS84 --> S-JTSK**************************");
-            Double[] coordinate_SJTSK = tr.transform_WGS84_to_SJTSK(50.4576163694, 14.3986, 289.155);
-            System.out.println("******************** S-JTSK --> WGS84 **************************");
-            Double[] coordinate_WGS84_SJTSK = tr.transform_SJTSK_to_WGS84(coordinate_SJTSK[0], coordinate_SJTSK[1], coordinate_SJTSK[2]);
-            System.out.println("********************WGS84 --> S-42**************************");
-            Double[] coordinate_S42 = tr.transform_WGS84_to_S42(50.4576163694, 14.3986, 289.155);
-            System.out.println("******************** S-42 --> WGS84 **************************");                       
-            Double[] coordinate_WGS84_S42 = tr.transform_S42_to_WGS84(coordinate_S42[0], coordinate_S42[1], coordinate_S42[2]);            
-     }
-         
     //**********************************************************************************************//
     //**********************************  WGS-84  <---> S-JTSK ************************************//
     //*********************************************************************************************//
@@ -861,5 +848,23 @@ public class Transformation {
     
     return geodeticCoordinate;
   }
+  
+ 
+   
+     public static void main(String[] args) {
+            Transformation tr = new Transformation();
+            System.out.println("********************WGS84 --> S-JTSK**************************");
+            Double[] coordinate_SJTSK = tr.transform_WGS84_to_SJTSK(50.4576163694, 14.3986, 289.155);
+            System.out.println("******************** S-JTSK --> WGS84 **************************");
+            System.out.println("From: " + coordinate_SJTSK[0]);
+            System.out.println("From: " + coordinate_SJTSK[1]);
+            System.out.println("From: " + coordinate_SJTSK[2]);
+            Double[] coordinate_WGS84_SJTSK = tr.transform_SJTSK_to_WGS84(coordinate_SJTSK[0], coordinate_SJTSK[1], coordinate_SJTSK[2]);
+            System.out.println("********************WGS84 --> S-42**************************");
+            Double[] coordinate_S42 = tr.transform_WGS84_to_S42(50.4576163694, 14.3986, 289.155);
+            System.out.println("******************** S-42 --> WGS84 **************************");                       
+            Double[] coordinate_WGS84_S42 = tr.transform_S42_to_WGS84(coordinate_S42[0], coordinate_S42[1], coordinate_S42[2]);            
+     }
+         
   
 }

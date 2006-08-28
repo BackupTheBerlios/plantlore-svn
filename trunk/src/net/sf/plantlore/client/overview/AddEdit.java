@@ -47,16 +47,17 @@ import org.apache.log4j.Logger;
  * @author fraktalek
  */
 public class AddEdit extends Observable {
-    public static final int WGS84 = 1;
+    public static final int WGS84 = 0;
+    public static final int SJTSK = 1;
     public static final int S42 = 2;
-    public static final int SJTSK = 3;
     public static final String EMPTY_STRING = L10n.getString("Common.ComboboxNothingSelected");
-    public static final Pair<String,Integer> EMPTY_PAIR = new Pair<String,Integer>(EMPTY_STRING,-1);
-    
+    public static final Pair<String,Integer> EMPTY_PAIR = new Pair<String,Integer>(EMPTY_STRING,-1);            
+     
     private static Logger logger;
     private static DBLayer database;      
     
-    private int coordinateSystem;
+    private int coordinateSystem = 0;
+    private boolean isCancled = true;
     private Occurrence o; //original occurrence
     
     //list of authors user selects
@@ -131,7 +132,7 @@ public class AddEdit extends Observable {
     private Boolean editMode = false;
     private Boolean preloadAuthors = false;
     
-    private OccurrenceTableModel occurrenceTableModel;
+    private OccurrenceTableModel occurrenceTableModel;     
     
     /** Creates a new instance of AddEdit */
     public AddEdit(DBLayer database, Boolean editMode) {
@@ -628,7 +629,7 @@ public class AddEdit extends Observable {
     }
 
     public void setCoordinateSystem(int coordinateSystem) {
-        this.coordinateSystem = coordinateSystem;
+        this.coordinateSystem = coordinateSystem;       
         switch (coordinateSystem) {
             case WGS84:
                 logger.debug("CoordinateSystem set to WGS84");
@@ -1534,6 +1535,7 @@ public class AddEdit extends Observable {
         altitude = null;
         longitude = null;
         latitude = null;
+        setCoordinateSystem(AddEdit.WGS84);
 
         occurrenceTableModel.clear();
 
@@ -1567,6 +1569,58 @@ public class AddEdit extends Observable {
     
     public OccurrenceTableModel getOccurrenceTableModel() {
         return occurrenceTableModel;
+    }
+    
+    /**
+     * Transformation coordinate system
+     * @param newSystem 
+     */
+    public void transformationCoordinateSystem(int selectedSystem) {
+        Transformation tr = new Transformation();
+        Double[] newCoordinate = new Double[3];
+        Double[] newCoordinateTmp = new Double[3];
+        //Check null value and set 0.0 if value is null      
+        if (latitude == null) latitude = 0.0;
+        if (longitude == null) longitude = 0.0;
+        if (altitude == null) altitude = 0.0;
+        //WGS-84 --> S-JSTK
+        if (getCoordinateSystem() == AddEdit.WGS84 && selectedSystem == AddEdit.SJTSK) {
+            newCoordinate = tr.transform_WGS84_to_SJTSK(latitude, longitude, altitude);
+        }
+        //S-JSTK --> WGS-84
+        if (getCoordinateSystem() == AddEdit.SJTSK && selectedSystem == AddEdit.WGS84) {
+            newCoordinate = tr.transform_SJTSK_to_WGS84(latitude, longitude, altitude);
+        }
+        //WGS-84 --> S-42
+         if (getCoordinateSystem() == AddEdit.WGS84 && selectedSystem == AddEdit.S42) {
+            newCoordinate = tr.transform_WGS84_to_S42(latitude, longitude, altitude);
+         }
+        //S-42 --> WGA-84
+         if (getCoordinateSystem() == AddEdit.S42 && selectedSystem == AddEdit.WGS84) {
+            newCoordinate = tr.transform_S42_to_WGS84(latitude, longitude, altitude);
+         }
+        //S-JSTK --> S-42
+        if (getCoordinateSystem() == AddEdit.SJTSK && selectedSystem == AddEdit.S42) {
+            newCoordinateTmp = tr.transform_SJTSK_to_WGS84(latitude, longitude, altitude);
+            newCoordinate  = tr.transform_WGS84_to_S42(newCoordinateTmp[0], newCoordinateTmp[1], newCoordinateTmp[2]);
+        }
+        //S-42 --> S-JSTK
+        if (getCoordinateSystem() == AddEdit.S42 && selectedSystem == AddEdit.SJTSK) {
+            newCoordinateTmp = tr.transform_S42_to_WGS84(latitude, longitude, altitude);
+            newCoordinate  = tr.transform_WGS84_to_SJTSK(newCoordinateTmp[0], newCoordinateTmp[1], newCoordinateTmp[2]);
+        }
+        this.setCoordinateSystem(selectedSystem);
+        this.setLatitude(newCoordinate[0]);
+        this.setLongitude(newCoordinate[1]);
+        this.setAltitude(newCoordinate[2]);
+    }     
+    
+    public void setIsCancle(boolean isCancle) {
+        this.isCancled = isCancle;
+    }
+    
+    public boolean getIsCancle() {
+        return this.isCancled;
     }
 }
 

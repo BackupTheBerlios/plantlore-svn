@@ -858,20 +858,44 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             tableModel.reset();
     }
     
+    
+    public void loadComponetCoordinate() {
+         switch (model.getCoordinateSystem()) {
+            case AddEdit.WGS84:
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": WGS-84");
+                break;
+            case AddEdit.S42:
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": S-42");
+                break;
+            case AddEdit.SJTSK:
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": S-JTSK");
+                break;
+            default:
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": WGS-84");
+        }
+         
+         if (model.getAltitude() != null) altitudeTextField.setText(""+numberFormat.format(model.getAltitude()));
+            else altitudeTextField.setText("");
+        if (model.getLongitude() != null) longitudeTextField.setText(""+numberFormat.format(model.getLongitude()));
+            else longitudeTextField.setText("");
+        if (model.getLatitude() != null) latitudeTextField.setText(""+numberFormat.format(model.getLatitude()));
+            else latitudeTextField.setText("");
+    }
+    
     public void loadComponentData()
     {
         switch (model.getCoordinateSystem()) {
             case AddEdit.WGS84:
-                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+" WGS84");
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": WGS-84");
                 break;
             case AddEdit.S42:
-                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+" S42");
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": S-42");
                 break;
             case AddEdit.SJTSK:
-                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+" SJTSK");
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": S-JTSK");
                 break;
             default:
-                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+" WGS84");
+                coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": WGS-84");
         }
         
         resetAuthorModel();
@@ -987,6 +1011,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         okButton.setMnemonic(L10n.getMnemonic("Common.Ok"));
         cancelButton.setText(L10n.getString("Common.Cancel"));
         cancelButton.setMnemonic(L10n.getMnemonic("Common.Cancel"));
+        gpsChangeButton.setText(L10n.getString("Common.GpsChange"));
         
         Object[] arg = {REQUIRED_STRING};
         requiredInfoLabel.setText(L10n.getFormattedString("AddEdit.RequiredInfoLabel",arg));
