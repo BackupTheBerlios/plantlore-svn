@@ -322,7 +322,7 @@ public class AddEdit extends Observable {
     }
 
     public String getTaxon(int i) {
-        if (taxonList == null)
+        if (taxonList == null || taxonList.size() == 0)
             return "";
         
         return (String) taxonList.get(i);
@@ -649,6 +649,9 @@ public class AddEdit extends Observable {
      * @return -1 if not found
      */
     private Integer lookupPlant(String taxon) {
+        if (plants == null)
+            return -1;
+        
         logger.debug("Looking up id for #"+taxon+"#");
         for (int i=0; i < plants.length ; i++) {
             if (taxon.equals(plants[i].getFirst())) {
@@ -1407,7 +1410,7 @@ public class AddEdit extends Observable {
     }
 
     public void setPlants(Pair<String, Integer>[] plants) {
-        logger.debug(""+plants.length+" plants set.");
+        logger.debug(""+(plants == null ? 0 : plants.length)+" plants set.");
         this.plants = plants;
         setChanged(); notifyObservers("PLANTS_CHANGED");
     }
@@ -1417,7 +1420,7 @@ public class AddEdit extends Observable {
     }
 
     public void setAuthors(Pair<String, Integer>[] authors) {
-        logger.debug(""+authors.length+" authors set.");
+        logger.debug(""+(authors==null?0:authors.length)+" authors set.");
         this.authors = authors;
         setChanged(); notifyObservers("AUTHORS_CHANGED");
     }
@@ -1427,7 +1430,7 @@ public class AddEdit extends Observable {
     }
 
     public void setAuthorRoles(String[] authorRoles) {
-        logger.debug(""+authorRoles.length+" author roles set.");
+        logger.debug(""+(authorRoles==null? 0 : authorRoles.length)+" author roles set.");
         this.authorRoles = authorRoles;
         setChanged(); notifyObservers("AUTHORROLES_CHANGED");
     }
@@ -1437,7 +1440,7 @@ public class AddEdit extends Observable {
     }
 
     public void setVillages(Pair<String, Integer>[] villages) {
-        logger.debug(""+villages.length+" villages set.");
+        logger.debug(""+(villages == null? 0: villages.length)+" villages set.");
         this.villages = villages;
         setChanged(); notifyObservers("VILLAGES_CHANGED");
     }
@@ -1447,7 +1450,7 @@ public class AddEdit extends Observable {
     }
 
     public void setTerritories(Pair<String, Integer>[] territories) {
-        logger.debug(""+territories.length+" territories set.");
+        logger.debug(""+(territories==null ? 0 : territories.length)+" territories set.");
         this.territories = territories;
         setChanged(); notifyObservers("TERRITORIES_CHANGED");
     }
@@ -1457,7 +1460,7 @@ public class AddEdit extends Observable {
     }
 
     public void setPhytNames(Pair<String, Integer>[] phytNames) {
-        logger.debug(""+phytNames.length+" phytochorion names set.");
+        logger.debug(""+(phytNames == null ? 0 : phytNames.length)+" phytochorion names set.");
         this.phytNames = phytNames;
         setChanged(); notifyObservers("PHYTNAMES_CHANGED");
     }
@@ -1467,7 +1470,7 @@ public class AddEdit extends Observable {
     }
 
     public void setPhytCodes(Pair<String, Integer>[] phytCodes) {
-        logger.debug(""+phytCodes.length+" phytochorion codes set.");
+        logger.debug(""+(phytCodes == null ? 0 : phytCodes.length)+" phytochorion codes set.");
         this.phytCodes = phytCodes;
         setChanged(); notifyObservers("PHYTCODES_CHANGED");
     }
@@ -1477,7 +1480,7 @@ public class AddEdit extends Observable {
     }
 
     public void setCountries(String[] countries) {
-        logger.debug(""+countries.length+" countries set.");
+        logger.debug(""+(countries == null ? 0 : countries.length)+" countries set.");
         this.countries = countries;
         setChanged(); notifyObservers("COUNTRIES_CHANGED");
     }
@@ -1487,7 +1490,7 @@ public class AddEdit extends Observable {
     }
 
     public void setSources(String[] sources) {
-        logger.debug(""+sources.length+" sources set.");
+        logger.debug(""+(sources == null ? 0 : sources.length)+" sources set.");
         this.sources = sources;
         setChanged(); notifyObservers("SOURCES_CHANGED");
     }
@@ -1497,7 +1500,7 @@ public class AddEdit extends Observable {
     }
 
     public void setPublications(Pair<String, Integer>[] publications) {
-        logger.debug(""+publications.length+" publications set.");
+        logger.debug(""+(publications == null ? 0 : publications.length)+" publications set.");
         this.publications = publications;
         setChanged(); notifyObservers("PUBLICATIONS_CHANGED");
     }
@@ -1507,7 +1510,7 @@ public class AddEdit extends Observable {
     }
 
     public void setProjects(Pair<String, Integer>[] projects) {
-        logger.debug(""+projects.length+" projects set.");
+        logger.debug(""+(projects == null ? 0 : projects.length)+" projects set.");
         this.projects = projects;
         setChanged(); notifyObservers("PROJECTS_CHANGED");
     }

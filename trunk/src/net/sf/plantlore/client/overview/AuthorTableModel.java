@@ -135,15 +135,19 @@ public class AuthorTableModel extends AbstractTableModel {
     /** Has to be overriden so that our data (and table) get updated after editing.
      */
     public void setValueAt(Object o, int r, int c) {
+        if (!(o instanceof Pair) && !(o instanceof String))
+            return;//the combobox could contain only one empty string (new AutoComboBoxNG3())
+
         if (c == 2) //we don't want to lose our nice buttons with listeners, proper text, ...
             return;
         Object[] row = data.get(r);
         row[c] = o;
         if (c == 0) {
-            if (!(o instanceof Pair)) //the combobox could contain only one empty string (new AutoComboBoxNG3())
+            if (!(o instanceof Pair))
                 return;
             aemodel.setAuthor(r, (Pair<String, Integer>) o);
         }
+        
         if (c == 1)
             aemodel.setAuthorRole(r, (String) o);
         if (c == 3)

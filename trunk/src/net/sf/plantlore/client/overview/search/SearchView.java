@@ -65,6 +65,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel2.setPreferredSize(new Dimension(DIALOG_WIDTH,210));
         jPanel8.setPreferredSize(new Dimension(DIALOG_WIDTH,50));
         this.pack();        
+        setLocationRelativeTo(parent);
     }
     
     /** This method is called from within the constructor to

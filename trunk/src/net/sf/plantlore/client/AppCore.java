@@ -259,6 +259,7 @@ public class AppCore extends Observable
     }
     
     public int getResultsCount() {
+        //FIXME
         if (tableSorter != null) {        
         	try {
                 return database.getNumRows(this.getTableModel().getResultId());
@@ -382,6 +383,10 @@ public class AppCore extends Observable
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Plant.ID);
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            plants = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         plants = new Pair[resultsCount];
@@ -413,6 +418,10 @@ public class AppCore extends Observable
 
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            authors = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         authors = new Pair[resultsCount];
@@ -468,6 +477,10 @@ public class AppCore extends Observable
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, NearestVillage.ID);
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            villages = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         villages = new Pair[resultsCount];
@@ -495,6 +508,10 @@ public class AppCore extends Observable
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Territory.ID);
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            territories = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         territories = new Pair[resultsCount];
@@ -522,6 +539,11 @@ public class AppCore extends Observable
         sq.addProjection(PlantloreConstants.PROJ_PROPERTY, Phytochorion.ID);
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            phytNames = null;
+            phytCodes = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         phytNames = new Pair[resultsCount];
@@ -566,6 +588,10 @@ public class AppCore extends Observable
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT, Habitat.COUNTRY);
         resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            countries = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         
@@ -609,6 +635,10 @@ public class AppCore extends Observable
         sq.addProjection(PlantloreConstants.PROJ_DISTINCT,Occurrence.DATASOURCE);
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            sources = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         String tmp;
@@ -654,6 +684,10 @@ public class AppCore extends Observable
         
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            publications = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
 
@@ -689,6 +723,10 @@ public class AppCore extends Observable
         
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
+        if (resultsCount == 0) {
+            projects = null;
+            return null;
+        }
         records = database.more(resultid, 0, resultsCount-1);
         database.closeQuery(sq);
         projects = new Pair[resultsCount];

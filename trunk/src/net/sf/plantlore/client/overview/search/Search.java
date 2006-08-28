@@ -391,6 +391,9 @@ public class Search extends Observable {
      * @return -1 if not found
      */
     private Integer lookupPlant(String taxon) {
+        if (plants == null)
+            return -1;
+        
         logger.debug("Looking up id for #"+taxon+"#");
         for (int i=0; i < plants.length ; i++) {
             //System.out.print("Trying #"+plants[i]+"#");
@@ -1013,7 +1016,7 @@ public class Search extends Observable {
     public void setPlants(Pair<String, Integer>[] plants) {
         this.plants = plants;
         setChanged(); notifyObservers("PLANTS_CHANGED");
-        logger.debug(""+plants.length+" plants set.");
+        logger.debug(""+(plants == null ? 0 : plants.length)+" plants set.");
     }
 
     public Pair<String, Integer>[] getAuthors() {
@@ -1023,7 +1026,7 @@ public class Search extends Observable {
     public void setAuthors(Pair<String, Integer>[] authors) {
         this.authors = authors;
         setChanged(); notifyObservers("AUTHORS_CHANGED");
-        logger.debug(""+authors.length+" authors set.");
+        logger.debug(""+(authors == null ? 0 : authors.length)+" authors set.");
     }
 
     public String[] getAuthorRoles() {
@@ -1033,7 +1036,7 @@ public class Search extends Observable {
     public void setAuthorRoles(String[] authorRoles) {
         this.authorRoles = authorRoles;
         setChanged(); notifyObservers("AUTHORROLES_CHANGED");
-        logger.debug(""+authorRoles.length+" authorRoles set.");
+        logger.debug(""+(authorRoles == null ? 0 : authorRoles.length)+" authorRoles set.");
     }
 
     public Pair<String, Integer>[] getVillages() {
@@ -1043,7 +1046,7 @@ public class Search extends Observable {
     public void setVillages(Pair<String, Integer>[] villages) {
         this.villages = villages;
         setChanged(); notifyObservers("VILLAGES_CHANGED");
-        logger.debug(""+villages.length+" villages set.");
+        logger.debug(""+(villages == null ? 0 : villages.length)+" villages set.");
     }
 
     public Pair<String, Integer>[] getTerritories() {
@@ -1053,7 +1056,7 @@ public class Search extends Observable {
     public void setTerritories(Pair<String, Integer>[] territories) {
         this.territories = territories;
         setChanged(); notifyObservers("TERRITORIES_CHANGED");
-        logger.debug(""+territories.length+" territories set.");
+        logger.debug(""+(territories == null ? 0 : territories.length)+" territories set.");
     }
 
     public Pair<String, Integer>[] getPhytNames() {
@@ -1063,7 +1066,7 @@ public class Search extends Observable {
     public void setPhytNames(Pair<String, Integer>[] phytNames) {
         this.phytNames = phytNames;
         setChanged(); notifyObservers("PHYTNAMES_CHANGED");
-        logger.debug(""+phytNames.length+" phytNames set.");
+        logger.debug(""+(phytNames == null ? 0 : phytNames.length)+" phytNames set.");
     }
 
     public Pair<String, Integer>[] getPhytCodes() {
@@ -1073,7 +1076,7 @@ public class Search extends Observable {
     public void setPhytCodes(Pair<String, Integer>[] phytCodes) {
         this.phytCodes = phytCodes;
         setChanged(); notifyObservers("PHYTCODES_CHANGED");
-        logger.debug(""+phytCodes.length+" phytCodes set.");
+        logger.debug(""+(phytCodes == null ? 0 : phytCodes.length)+" phytCodes set.");
     }
 
     public String[] getCountries() {
@@ -1083,7 +1086,7 @@ public class Search extends Observable {
     public void setCountries(String[] countries) {
         this.countries = countries;
         setChanged(); notifyObservers("COUNTRIES_CHANGED");
-        logger.debug(""+countries.length+" countries set.");
+        logger.debug(""+(countries == null ? 0 : countries.length)+" countries set.");
     }
 
     public String[] getSources() {
@@ -1093,7 +1096,7 @@ public class Search extends Observable {
     public void setSources(String[] sources) {
         this.sources = sources;
         setChanged(); notifyObservers("SOURCES_CHANGED");        
-        logger.debug(""+sources.length+" sources set.");
+        logger.debug(""+(sources == null ? 0 : sources.length)+" sources set.");
     }
 
     public Pair<String, Integer>[] getPublications() {
@@ -1103,7 +1106,7 @@ public class Search extends Observable {
     public void setPublications(Pair<String, Integer>[] publications) {
         this.publications = publications;
         setChanged(); notifyObservers("PUBLICATIONS_CHANGED");
-        logger.debug(""+publications.length+" publications set.");
+        logger.debug(""+(publications == null ? 0 : publications.length)+" publications set.");
     }
 
     public Pair<String, Integer>[] getProjects() {
@@ -1113,7 +1116,7 @@ public class Search extends Observable {
     public void setProjects(Pair<String, Integer>[] projects) {
         this.projects = projects;
         setChanged(); notifyObservers("PROJECTS_CHANGED");
-        logger.debug(""+projects.length+" projects set.");
+        logger.debug(""+(projects == null? 0 :projects.length)+" projects set.");
     }
     
     public SelectQuery getNewSelectQuery() {

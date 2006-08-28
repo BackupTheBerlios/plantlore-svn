@@ -688,7 +688,12 @@ public class AppCoreCtrl {
 			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Edit"));
 		}
 
-		public void actionPerformed(ActionEvent actionEvent) {
+		public void actionPerformed(ActionEvent actionEvent) {                    
+                    if (model.getResultsCount() == 0) {
+                        JOptionPane.showMessageDialog(view,L10n.getString("Overview.NothingToEdit"),L10n.getString("Overview.NothingToEditTitle"),JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                        
 			Object[] row = model.getSelectedRow();
 
 			try {
@@ -1257,8 +1262,13 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("History od record: "+ model.getDatabase());	
+			logger.debug("Showing history of record: "+ model.getSelectedOccurrence());	
 			
+                        if (model.getResultsCount() == 0) {
+                            JOptionPane.showMessageDialog(view,L10n.getString("Overview.NoOccurrence"),L10n.getString("Overview.NoOccurrenceTitle"),JOptionPane.INFORMATION_MESSAGE);                            
+                            return;
+                        }
+                        
 			if (historyModel == null) {
 				historyModel = new History(model.getDatabase(), model.getSelectedOccurrence());								
 				historyView = new HistoryView(historyModel, view, true);
