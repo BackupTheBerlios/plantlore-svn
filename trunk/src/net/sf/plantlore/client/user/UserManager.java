@@ -141,6 +141,7 @@ public class UserManager extends Observable {
     public static final String INFORMATION_SEARCH = L10n.getString("Information.SearchUser");    
     public static final String INFORMATION_DELETE_TITLE = L10n.getString("Information.UserDeleteTitle");
     public static final String INFORMATION_DELETE = L10n.getString("Information.UserDelete");    
+    public static final String INFORMATION_DELETE_HIMSELF = L10n.getString("Information.UserDeleteHimself");    
     public static final String INFORMATION_EDIT_TITLE = L10n.getString("Information.UserCannotEditTitle");
     public static final String INFORMATION_EDIT = L10n.getString("Information.UserCannotEdit");    
    
@@ -320,8 +321,7 @@ public class UserManager extends Observable {
                 // Cast the results to the User objects
                 for (int i=0; i<countResult; i++ ) {                    							
                 	Object[] objHis = (Object[])objectUser[i];
-                    this.userList.add((User)objHis[0]);
-                    logger.debug("Proccess: "+ i + ": " + (User)objHis[0]);
+                    this.userList.add((User)objHis[0]);                    
                 }               
                 // Update current first displayed row                
                 logger.info("Results successfuly retrieved");                   
@@ -407,10 +407,12 @@ public class UserManager extends Observable {
 		        }		      
     			try {
     				boolean isAdmin = false;
+                                boolean changeRight = false;
     				if (userRecord.getRight().getAdministrator() == 1) isAdmin = true;
+                                if (userRecord.getRight().getAdministrator() != oldSetAdmin) changeRight = true;
     				//Edit database user
-                                if (!getPassword().equals("") || (userRecord.getRight().getAdministrator() != oldSetAdmin)) {                                    
-                                    database.alterUser(userRecord.getLogin(), getPassword(), isAdmin);                                    
+                                if (!getPassword().equals("") || changeRight) {                                    
+                                    database.alterUser(userRecord.getLogin(), getPassword(), isAdmin, changeRight);                                    
                                 }                                
     				//Edit information about user in database                                
     				database.executeUpdateInTransaction(userRecord.getRight());                                
@@ -560,6 +562,21 @@ public class UserManager extends Observable {
 		} catch(Exception e) {
 			// Never mind.
 		}
+    }
+    
+    /**
+     * Check if user can delete himself
+     * @return true if user can delete himself
+     */
+    public boolean deleteHimself() {
+        try {            
+            if ((database.getUser().getLogin()).equals(userRecord.getLogin())) {                
+                return true;
+            }
+        } catch (Exception e) {
+           // Never mind.           
+        }
+        return false;
     }
     
     //****************************//

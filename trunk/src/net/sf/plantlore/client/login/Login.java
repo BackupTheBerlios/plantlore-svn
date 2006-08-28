@@ -537,9 +537,9 @@ public class Login extends Observable {
 			wrappedDBLayer.createUser(name, password, isAdmin);
 		}
 
-		synchronized public void alterUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException {
+		synchronized public void alterUser(String name, String password, boolean isAdmin, boolean changeRight) throws DBLayerException, RemoteException {
 			verifyValidity();
-			wrappedDBLayer.alterUser(name, password, isAdmin);
+			wrappedDBLayer.alterUser(name, password, isAdmin, changeRight);
 			
 		}
 

@@ -312,11 +312,12 @@ public interface DBLayer extends Remote, Serializable {
      *  @param password New password for the user. Leave blank or null if not modified.
      *  @param isAdmin  Flag whether the user should or should not be an administrator (admin can 
      *                  create other users)
+     *  @parem changeRight Flag whether the right of user has been changed      
      *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the 
      *                           DB or the execution of ALTER USER statement failed
      *  @throws RemoteException In case connection to the server was lost
      */    
-    public void alterUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException;
+    public void alterUser(String name, String password, boolean isAdmin, boolean changeRight) throws DBLayerException, RemoteException;
     
     /**
      *  Method for deleting database user using DROP USER statement. This method can only 

@@ -373,12 +373,17 @@ public class UserManagerCtrl {
                //Set information about selected row
                int resultNumber = view.tableUserList.getSelectedRow() + model.getCurrentFirstRow()-1; 
                model.setUserRecord(resultNumber);
-               //Test if record was been deleted
+               //Test if record has been deleted
                if (model.getUserRecord().getDropWhen() != null) {
             	   view.showInfoMessage(UserManager.INFORMATION_DELETE_TITLE, UserManager.INFORMATION_DELETE);
             	   return;
                }
-        	   int okCancle = view.showQuestionMessage(UserManager.QUESTION_DELETE_TITLE, UserManager.QUESTION_DELETE);               
+               //Test if user delete himself 
+               if (model.deleteHimself()) {
+                   view.showInfoMessage(UserManager.INFORMATION_DELETE_TITLE, UserManager.INFORMATION_DELETE_HIMSELF);
+            	   return;
+               }
+               int okCancle = view.showQuestionMessage(UserManager.QUESTION_DELETE_TITLE, UserManager.QUESTION_DELETE);               
                if (okCancle == 0){
             	   //Button OK was press
             	   logger.debug("Button OK was press.");
@@ -388,9 +393,9 @@ public class UserManagerCtrl {
 	               new DefaultProgressBar(task, view, true) {		   								  		   									
 					   @Override
 	            	   public void afterStopping() {
-						   if (! model.isFinishedTask()) return;
-						   model.setInfoFinishedTask(false);
-	                       // load User
+                                   if (! model.isFinishedTask()) return;
+                                        model.setInfoFinishedTask(false);
+                                       // load User
 		   	               model.searchUser(false); 
 		   	               if (model.isError()) {
 		    	        	   displayError();

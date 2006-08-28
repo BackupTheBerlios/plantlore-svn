@@ -2032,13 +2032,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // TODO: This is PostgreSQL specific. Think of a way how to provide different statements for
         //       different databases
         String admin = "";
+        String role = "Plantlore_Role_User";
         if (isAdmin) {
             admin = " CREATEUSER";
+            role = "Plantlore_Role_Admin";
         }        
         try {
             Connection conn = txSession.connection();                    
             PreparedStatement pstmt = conn.prepareStatement("CREATE USER " +HibernateDBLayer.USER_PREFIX + name+ " WITH PASSWORD '" +password+ "' "+admin);            
             pstmt.execute();
+            PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " +HibernateDBLayer.USER_PREFIX + name);   
+            pstmtGrant.execute();
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
             DBLayerException ex = new DBLayerException("Exception.CreateUser");
@@ -2061,11 +2065,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @param password New password for the user. Leave blank or null if not modified.
      *  @param isAdmin  Flag whether the user should or should not be an administrator (admin can 
      *                  create other users)
+     *  @parem changeRight Flag whether the right of user has been changed 
      *  @throws DBLayerException In case we do not have sufficient rights, are not connected to the 
      *                           DB or the execution of ALTER USER statement failed
      *  @throws RemoteException In case connection to the server was lost
      */    
-    public void alterUser(String name, String password, boolean isAdmin) throws DBLayerException, RemoteException {
+    public void alterUser(String name, String password, boolean isAdmin, boolean changeRight ) throws DBLayerException, RemoteException {
         // Check whether we are connected to the database
         if (sessionFactory == null) {
             logger.error("SessionFactory not avilable. Not connected to the database.");
@@ -2086,18 +2091,35 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             Connection conn = txSession.connection();            
             // Now set CREATEUSER/NOCREATUSER flag
             String admin;
+            String role;
+            String roleOld;
             if (isAdmin) {
                 admin = "CREATEUSER";
+                role = "Plantlore_Role_Admin";
+                roleOld = "Plantlore_Role_User";
             } else {
                 admin = "NOCREATEUSER";
+                role = "Plantlore_Role_User";
+                roleOld = "Plantlore_Role_Admin";
             }            
             // In case password has changed, execute statement to change the password
+            // In case admin right has changed, execute statement to change the access permission
             if ((password != null) && (!password.equals(""))) {                                    
                 PreparedStatement pstmt = conn.prepareStatement("ALTER USER " +HibernateDBLayer.USER_PREFIX +name+ " WITH PASSWORD '" +password+ "' " +admin);                
                 pstmt.execute();
+                if (changeRight) {
+                    PreparedStatement pstmtRevoke = conn.prepareStatement("REVOKE "+roleOld+" FROM "+HibernateDBLayer.USER_PREFIX +name);                
+                    pstmtRevoke.execute();
+                    PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " +HibernateDBLayer.USER_PREFIX + name);   
+                    pstmtGrant.execute();
+                }
             } else {                
                 PreparedStatement pstmt = conn.prepareStatement("ALTER USER " +HibernateDBLayer.USER_PREFIX +name+ " " +admin);                
-                pstmt.execute();            
+                pstmt.execute();  
+                PreparedStatement pstmtRevoke = conn.prepareStatement("REVOKE "+roleOld+" FROM "+HibernateDBLayer.USER_PREFIX +name);                
+                pstmtRevoke.execute();
+                PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " +HibernateDBLayer.USER_PREFIX + name);   
+                pstmtGrant.execute();
             }            
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
