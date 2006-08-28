@@ -38,12 +38,16 @@ public class DefaultReconnectDialog {
 	
 	
 	public static void show(Component parent, Exception e) {
+		show(parent, e.getMessage());
+	}
+	
+	public static void show(Component parent, String problemDescription) {
 		
 		defaultReconnectAction.setParent(parent);
 		
 		int choice = JOptionPane.showOptionDialog(
 				parent, 
-				e.getMessage(), 
+				problemDescription, 
 				L10n.getString("Error.ConnectionLost"),
 				0,
 				JOptionPane.ERROR_MESSAGE,

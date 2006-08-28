@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
 
 
@@ -40,12 +41,14 @@ public class AuthCtrl {
 				public void exceptionHandler(Exception ex) {
 					getTask().stop();
 					
-//					if(ex instanceof DBLayerException)
-//						System.out.println(((DBLayerException)e).getErrorCode());
+					String problem = ex.getMessage();
+					
+					if(ex instanceof DBLayerException && ex.getCause() != null )
+						problem = ( (DBLayerException)ex ).getErrorInfo();
 					
 					JOptionPane.showMessageDialog( 
 							parent, 
-							ex.getMessage(), 
+							problem, 
 							L10n.getString("Error.ConnectionFailed"), 
 							JOptionPane.ERROR_MESSAGE );
 				}

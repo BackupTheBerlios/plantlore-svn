@@ -259,7 +259,7 @@ public class History extends Observable {
      	        	 
      	   //Check rights
      	   if(! hasRights(occurrence.getCreatedWho().getId())) {
-     		   DBLayerException dbex = new DBLayerException();
+     		   DBLayerException dbex = new DBLayerException("Bezparametricky konstruktor byl smazan!");
      		   dbex.setError(DBLayerException.ERROR_RIGHTS, ERROR_NO_RIGHTS);
         	   throw dbex; 		            
      	   }   

@@ -1,5 +1,7 @@
 package net.sf.plantlore.common.exception;
 
+import net.sf.plantlore.l10n.L10n;
+
 import org.hibernate.JDBCException;
 
 
@@ -55,30 +57,34 @@ public class DBLayerException extends PlantloreException {
         /** Out of memmory error occurred */
         public static final int ERROR_OUT_OF_MEMORY = 15;        
         /** Maximum number of connections achieved */
-        public static final int ERROR_MAX_CONNECTIONS = 15;                
+        public static final int ERROR_MAX_CONNECTIONS = 16;                
         /** Some other error */        
         public static final int ERROR_OTHER = 20;
         // ==============================================
         
         
            
-        /** Create new DBLayerException without an error message */
-        public DBLayerException() { super(); }
-        
         /** Create new DBLayerException with an error message */
         public DBLayerException(String message) { super(message); }
         
+        
+        public DBLayerException(String message, int error) {
+        	super(message);
+        	setError(error, null);
+        }
+        
+              
         // Better constructor to allow proper exception wrapping.
         public DBLayerException(String message, Throwable originalException) {
         	super(message, originalException);
         	if(originalException instanceof JDBCException)        	
-        		setError( translateSQLState( ((JDBCException)originalException).getSQLState()), originalException.getMessage() );
+        		setError( translateSQLState( ((JDBCException)originalException).getSQLState()), null );
         }
         
         // Better constructor to allow proper exception wrapping.
         public DBLayerException(String message, int error, Throwable originalException) {
         	super(message, originalException);
-        	setError( error, originalException.getMessage() );
+        	setError( error, null );
         }
         
         
@@ -93,7 +99,68 @@ public class DBLayerException extends PlantloreException {
          */
         public void setError(int errorCode, String errorInfo) {
             this.errorCode = errorCode;
-            this.errorInfo = errorInfo;
+            if(errorInfo != null)
+            	this.errorInfo = errorInfo;
+            else {
+            	switch(errorCode) {
+            	case ERROR_UNSPECIFIED:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Unspecified");
+            		break;
+            	case ERROR_LOAD_CONFIG:
+            		this.errorInfo = L10n.getString("DBLayer.Error.LoadConfig");
+            		break;
+            	case ERROR_CONNECT:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Connect");
+            		break;
+            	case ERROR_LOGIN:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Login");
+            		break;
+            	case ERROR_SAVE:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Save");
+            		break;
+            	case ERROR_DELETE:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Delete");
+            		break;
+            	case ERROR_UPDATE:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Update");
+            		break;
+            	case ERROR_SELECT:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Select");
+            		break;
+            	case ERROR_LOAD_DATA:
+            		this.errorInfo = L10n.getString("DBLayer.Error.LoadData");
+            		break;
+            	case ERROR_CLOSE:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Close");
+            		break;
+            	case ERROR_RIGHTS:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Rights");
+            		break;
+            	case ERROR_DB:
+            		this.errorInfo = L10n.getString("DBLayer.Error.DB");
+            		break;
+            	case ERROR_TRANSACTION:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Transaction");
+            		break;
+            	case ERROR_RESOURCES:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Resources");
+            		break;
+            	case ERROR_DISK_FULL:
+            		this.errorInfo = L10n.getString("DBLayer.Error.DiskFull");
+            		break;
+            	case ERROR_OUT_OF_MEMORY:
+            		this.errorInfo = L10n.getString("DBLayer.Error.OutOfMemory");
+            		break;
+            	case ERROR_MAX_CONNECTIONS:
+            		this.errorInfo = L10n.getString("DBLayer.Error.MaxConnections");
+            		break;
+            	case ERROR_OTHER:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Other");
+            		break;
+            	default:
+            		throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
+            	}
+            }
         }
         
         /**
@@ -119,7 +186,7 @@ public class DBLayerException extends PlantloreException {
          *  @param sqlstate String containing SQL State constant
          *  @return DBLayerException constant identifying a problem
          */
-        public static int translateSQLState(String sqlstate) {
+        public int translateSQLState(String sqlstate) {
             String errorClass = sqlstate.substring(0,2);
             String errorDetail = sqlstate.substring(2);
             // Connection exception - Connection does not exist, was interrupted or cannot be established

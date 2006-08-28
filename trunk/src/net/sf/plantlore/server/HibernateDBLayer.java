@@ -207,8 +207,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         catch (JDBCException e) {
             sessionFactory.close();
             sessionFactory = null;
-            logger.fatal("Selecting records from the database failed. Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Error.AuthenticationFailed"), e);
+            logger.fatal("Cannot connect to the database. Details: "+e.getMessage());
+            throw new DBLayerException(L10n.getString("Error.ConnectionFailed"), e);
         }
         finally {
         	if(sess != null) sess.close();
@@ -762,7 +762,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Session session = sessions.remove(query);
         if(session == null) {
         	logger.warn("Client wants to close a query this database layer did not create! " + query);
-        	throw new DBLayerException(L10n.getString("Error.ClosingFakeQuery"));
+        	//FIXME: throw new DBLayerException(L10n.getString("Error.ClosingFakeQuery"));
+        	return;
         }
         session.close();     
     	// Remove the query from the list of opened queries
@@ -2222,11 +2223,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     	
     	logger.debug("Rolling back a possibly unfinished transaction...");
     	// Some transactions may still run!
-    	try {
-    		rollbackTransaction();
-    	} catch(Exception e) {
-    		// Maintain silence.
-    	}
+    	if(txSession != null)
+    		try {
+    			rollbackTransaction();
+    		} catch(Exception e) {
+    			// Maintain silence.
+    		}
     	
         // Check whether we are connected to the database
     	logger.debug("Closing the session factory itself...");

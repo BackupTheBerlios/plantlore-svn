@@ -302,9 +302,6 @@ public class Login extends Observable {
 			} 
 			catch (Exception e) {
 				logger.error("The initialization of the DBLayer failed! " + e.getMessage());
-				
-				e.printStackTrace();
-                                
 				// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 				// Otherwise, the server's policy may not allow another connection from this client!
 				if(currentDBLayer != null)
