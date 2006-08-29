@@ -10,6 +10,7 @@ import javax.swing.JList;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.text.Position;
 
 
@@ -38,8 +39,8 @@ public class Assistant extends JScrollPane {
 	 * @param container	The container to which the assistant will be added. 
 	 */
 	public Assistant(JList l, Container container) {
-		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		setList(l); setVisible(false); setSize(200,100); setLocation(0, 0);
 		container.add(this, JLayeredPane.POPUP_LAYER);
 	}
@@ -57,8 +58,8 @@ public class Assistant extends JScrollPane {
 	}
         
         public Assistant(Container container) {
-		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		setVisible(false); setSize(200,100); setLocation(0, 0);
 		container.add(this, JLayeredPane.POPUP_LAYER);            
         }

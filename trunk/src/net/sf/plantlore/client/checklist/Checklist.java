@@ -45,13 +45,7 @@ public class Checklist extends JList {
 	 * Each object of the field is converted to a String (using the toString() method). 
 	 */
 	public Checklist(Object[] values) {
-		if( !(values instanceof String[]) ) 
-			for(int i = 0; i < values.length; i++) 
-				values[i] = values[i].toString();
-		// Insert the values to the list.
-		setListData( values );
-		// Remember the list.
-		original = (String[])values;
+		setListData(values);
 		// Specify the default looks.
 		setCellRenderer( new CheckCellRenderer() );
 		setSelectionModel( new ToggleSelectionModel() );
@@ -71,6 +65,17 @@ public class Checklist extends JList {
 		addKeyListener(new KeyHelper());	
 	}
 	
+	@Override
+	public void setListData(Object[] values) {
+		if( !(values instanceof String[]) ) 
+			for(int i = 0; i < values.length; i++) 
+				values[i] = values[i].toString();
+		// Insert the values to the list.
+		super.setListData( values );
+		// Remember the list.
+		original = (String[])values;
+	}
+	
 	/**
 	 * Reset the list of items.
 	 *
@@ -79,7 +84,7 @@ public class Checklist extends JList {
 		Object[] selected = getSelectedValues();
 		clearSelection();
 		
-		setListData( original );
+		super.setListData( original );
 		
 		for(Object r : selected)
 			setSelectedValue(r, false);

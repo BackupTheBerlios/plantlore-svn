@@ -80,6 +80,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	
 	
 	public final static String UPDATE_LIST_OF_PLANTS = "ListOfPlants";
+	public final static String ALLOWED_VALUES_CHANGED = "ListOfAllowedValuesChanged";
 	
 	/*======================================================================
 	 	Members
@@ -106,8 +107,8 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 	 	Keyboard behaviour
 	  ======================================================================*/
 	
-	private KeyEvent enterEmulator = new KeyEvent(this, KeyEvent.KEY_PRESSED, (long)0, 0, KeyEvent.VK_ENTER, (char)KeyEvent.VK_ENTER);
-	private KeyEvent escapeEmulator = new KeyEvent(this, KeyEvent.KEY_PRESSED, (long)0, 0, KeyEvent.VK_ESCAPE, (char)KeyEvent.VK_ESCAPE);
+	private KeyEvent enterEmulator = new KeyEvent(this, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_ENTER, (char)KeyEvent.VK_ENTER);
+	private KeyEvent escapeEmulator = new KeyEvent(this, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_ESCAPE, (char)KeyEvent.VK_ESCAPE);
 		
 	/** Keyboard unleashed - see the JavaDoc of the AutoTextArea class for detailed description. */
 	public void keyPressed(KeyEvent e) {
@@ -123,7 +124,7 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 		if (mode == Mode.FREE_ROAM) {
 			switch (key) {
 			case KeyEvent.VK_TAB: // transfer the focus to another component
-				if((e.getModifiers() & KeyEvent.SHIFT_DOWN_MASK) > 0) transferFocusBackward();
+				if((e.getModifiers() & InputEvent.SHIFT_DOWN_MASK) > 0) transferFocusBackward();
 				else transferFocus();				
 			case KeyEvent.VK_ESCAPE:
 				e.consume(); // no further processing of this event
@@ -353,7 +354,9 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
             this.choices = choices;
             this.values = new HashSet<Object>(choices.length);
             for(Object obj : choices)
-                    this.values.add(obj);            
+                    this.values.add(obj);
+            
+            firePropertyChange(ALLOWED_VALUES_CHANGED, null, null);
         }
         
 	/**

@@ -1,6 +1,8 @@
 package net.sf.plantlore.client.checklist;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -28,14 +30,22 @@ public class ChecklistCtrl {
 	 * @param view	Actions will be bound to this ChecklistView's buttons.
 	 * @param model	The AutoTextArea that will receive the selected plants.
 	 */
-	public ChecklistCtrl(ChecklistView view, AutoTextArea model) {
-		this.view = view;
-		this.model = model;
+	public ChecklistCtrl(ChecklistView checklistView, AutoTextArea autoTextArea) {
+		this.view = checklistView;
+		this.model = autoTextArea;
 		view.load.setAction(new LoadCreate(0));
 		view.save.setAction(new LoadCreate(1));
 		view.clear.setAction(new ClearSelection());
 		view.submit.setAction(new Submit());
 		view.restore.setAction(new Restore());
+		
+		model.addPropertyChangeListener(
+				AutoTextArea.ALLOWED_VALUES_CHANGED,
+				new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent arg0) {
+						view.checklist.setListData( model.getAllowedValues() );
+					}
+				});
 	}
 	
 	/**
