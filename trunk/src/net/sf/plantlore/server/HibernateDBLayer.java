@@ -136,6 +136,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         sessions = new Hashtable<SelectQuery, Session>(INITIAL_POOL_SIZE);
         
         this.undertaker = undertaker;
+        
+        logger.debug("Construction of the HibernateDBLayer successful.");
     }
     
     /**
@@ -145,7 +147,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public void setLanguage(String locale) 
     throws DBLayerException, RemoteException {
     	try {
+    		logger.debug("Setting language according to " + locale);
     		L10n.load(locale);
+    		logger.debug("Language set successfully.");
     	} catch(IOException e) {}
     }
     
@@ -191,28 +195,45 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Build session factory & create a new session.
         Session sess = null;
         // Authenticate user
+        logger.debug("DBLayer Initialization - about to authenticate the user.");
         try {
+        	logger.debug("DBLayer Initialization - building session factory.");
         	sessionFactory = cfg.buildSessionFactory();
+        	logger.debug("DBLayer Initialization - opening new session.");
             sess = sessionFactory.openSession();
         	
+            logger.debug("DBLayer Initialization - verifying existence of the user, part 1.");
             ScrollableResults sr = sess.createCriteria(User.class)
                 .add(Restrictions.eq(User.LOGIN, user))
                 .add(Restrictions.isNull(User.DROPWHEN))
                 .scroll();
             
+            logger.debug("DBLayer Initialization - verifying existence of the user, part 2.");
             sr.next();
-            if(sr.get() == null)
+            if(sr.get() == null) {
+            	logger.debug("DBLayer Initialization - things are not going well. sr.get() returned null!");
             	throw new DBLayerException(L10n.getString("Error.MissingUserAccount"), DBLayerException.ERROR_USERNAME);
+            }
             plantloreUser = (User)(sr.get())[0];
             rights = plantloreUser.getRight();
+            logger.debug("DBLayer Initialization - finished!");
         } 
         catch (JDBCException e) {
-            sessionFactory.close();
-            sessionFactory = null;
+        	if(sessionFactory != null)
+        		sessionFactory.close(); 
+        	sessionFactory = null;
             logger.fatal("Cannot connect to the database. Details: "+e.getMessage());
             throw new DBLayerException(L10n.getString("Error.ConnectionFailed"), e);
         }
+        catch(DBLayerException e) {
+        	if(sessionFactory != null)
+        		sessionFactory.close();
+        	sessionFactory = null;
+            logger.fatal("Cannot connect to the database. Details: "+e.getMessage());
+            throw e;
+        }
         finally {
+        	
         	if(sess != null) sess.close();
         }
         
