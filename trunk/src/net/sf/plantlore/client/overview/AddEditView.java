@@ -72,6 +72,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         assert model != null;
         
+        numberFormat.setMaximumFractionDigits(AddEditCtrl.MAXIMUM_FRACTION_DIGITS);
+        numberFormat.setMaximumIntegerDigits(AddEditCtrl.MAXIMUM_INTEGER_DIGITS);
         this.model = model;
         model.addObserver(this);
         this.inEditMode = edit;

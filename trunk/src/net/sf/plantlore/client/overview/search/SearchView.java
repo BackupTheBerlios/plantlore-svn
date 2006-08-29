@@ -77,6 +77,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     private void initComponents() {
         convertCoordinatesGroup = new javax.swing.ButtonGroup();
         timeButtonGroup = new javax.swing.ButtonGroup();
+        WGS84Button = new javax.swing.JRadioButton();
+        S42Button = new javax.swing.JRadioButton();
+        SJTSKButton = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         townLabel = new javax.swing.JLabel();
         //items = new Object[] {"Praha", "Brno", "Turnov", "Trebic"};
@@ -128,9 +131,6 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         altitudeLabel = new javax.swing.JLabel();
         latitudeLabel = new javax.swing.JLabel();
         longitudeLabel = new javax.swing.JLabel();
-        WGS84Button = new javax.swing.JRadioButton();
-        S42Button = new javax.swing.JRadioButton();
-        SJTSKButton = new javax.swing.JRadioButton();
         altitudeTextField = new javax.swing.JTextField();
         latitudeTextField = new javax.swing.JTextField();
         longitudeTextField = new javax.swing.JTextField();
@@ -141,6 +141,31 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
+
+        convertCoordinatesGroup.add(WGS84Button);
+        WGS84Button.setText("WGS84");
+        WGS84Button.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        WGS84Button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        WGS84Button.setNextFocusableComponent(S42Button);
+        WGS84Button.setActionCommand("WGS84");
+        WGS84Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                WGS84ButtonActionPerformed(evt);
+            }
+        });
+
+        convertCoordinatesGroup.add(S42Button);
+        S42Button.setText("S-42");
+        S42Button.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        S42Button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        S42Button.setNextFocusableComponent(SJTSKButton);
+        S42Button.setActionCommand("S42");
+        convertCoordinatesGroup.add(SJTSKButton);
+        SJTSKButton.setText("S-JTSK");
+        SJTSKButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        SJTSKButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        SJTSKButton.setNextFocusableComponent(sourceCombo);
+        SJTSKButton.setActionCommand("SJTSK");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -352,13 +377,13 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                             .add(phytNameLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(phytCountryCombo, 0, 173, Short.MAX_VALUE)
-                            .add(phytNameCombo, 0, 173, Short.MAX_VALUE)))
+                            .add(phytCountryCombo, 0, 177, Short.MAX_VALUE)
+                            .add(phytNameCombo, 0, 177, Short.MAX_VALUE)))
                     .add(jPanel5Layout.createSequentialGroup()
                         .add(19, 19, 19)
                         .add(territoryLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(territoryNameCombo, 0, 173, Short.MAX_VALUE)))
+                        .add(territoryNameCombo, 0, 177, Short.MAX_VALUE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, quadrantLabel)
@@ -471,7 +496,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane4)
+                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -488,32 +513,6 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
         longitudeLabel.setText("Longitude:");
 
-        convertCoordinatesGroup.add(WGS84Button);
-        WGS84Button.setText("WGS84");
-        WGS84Button.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        WGS84Button.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        WGS84Button.setNextFocusableComponent(S42Button);
-        WGS84Button.setActionCommand("WGS84");
-        WGS84Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                WGS84ButtonActionPerformed(evt);
-            }
-        });
-
-        convertCoordinatesGroup.add(S42Button);
-        S42Button.setText("S-42");
-        S42Button.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        S42Button.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        S42Button.setNextFocusableComponent(SJTSKButton);
-        S42Button.setActionCommand("S42");
-
-        convertCoordinatesGroup.add(SJTSKButton);
-        SJTSKButton.setText("S-JTSK");
-        SJTSKButton.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        SJTSKButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        SJTSKButton.setNextFocusableComponent(sourceCombo);
-        SJTSKButton.setActionCommand("SJTSK");
-
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -529,36 +528,24 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     .add(altitudeLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(latitudeTextField)
-                            .add(altitudeTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
-                        .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(S42Button)
-                    .add(WGS84Button)
-                    .add(SJTSKButton))
-                .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, altitudeTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .add(latitudeTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, longitudeTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                .add(12, 12, 12))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(WGS84Button)
                     .add(altitudeLabel)
                     .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(6, 6, 6)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(S42Button)
                     .add(latitudeLabel)
                     .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(SJTSKButton)
                     .add(longitudeLabel)
                     .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(48, Short.MAX_VALUE))
@@ -578,7 +565,7 @@ public class SearchView extends javax.swing.JDialog implements Observer {
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane5)
+                .add(jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(

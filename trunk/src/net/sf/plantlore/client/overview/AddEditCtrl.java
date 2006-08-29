@@ -76,8 +76,8 @@ public class AddEditCtrl {
     private AddEdit model;
     private AddEditView view;
     private TransformationChangeView transformationView;
-    private final static int MAXIMUM_FRACTION_DIGITS = 8;
-    private final static int MAXIMUM_INTEGER_DIGITS = 8;
+    public final static int MAXIMUM_FRACTION_DIGITS = 8;
+    public final static int MAXIMUM_INTEGER_DIGITS = 8;
     private final static Color COLOR_INVALID = Color.RED;
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
