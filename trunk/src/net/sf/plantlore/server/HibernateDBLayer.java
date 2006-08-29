@@ -201,6 +201,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 .scroll();
             
             sr.next();
+            if(sr.get() == null)
+            	throw new DBLayerException(L10n.getString("Error.MissingUserAccount"), DBLayerException.ERROR_USERNAME);
             plantloreUser = (User)(sr.get())[0];
             rights = plantloreUser.getRight();
         } 

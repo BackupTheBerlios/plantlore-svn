@@ -1,13 +1,7 @@
 package net.sf.plantlore.common;
 
-import java.rmi.RemoteException;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.l10n.L10n;
 
 /**
  * A simple and convenient
@@ -34,15 +28,7 @@ public class DefaultProgressBar extends ProgressBar {
 		
 		getTask().stop();
 		
-		if( ex instanceof RemoteException || ex instanceof DBLayerException )
-			DefaultReconnectDialog.show(parent, ex);
-		
-		else
-			JOptionPane.showMessageDialog( 
-					parent, 
-					ex.getMessage(), 
-					L10n.getString("Error.General"), 
-					JOptionPane.ERROR_MESSAGE );
+		DefaultExceptionHandler.handle(parent, ex);
 		
 	}
 	

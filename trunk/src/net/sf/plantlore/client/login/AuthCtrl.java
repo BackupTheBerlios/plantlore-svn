@@ -44,7 +44,7 @@ public class AuthCtrl {
 					String problem = ex.getMessage();
 					
 					if(ex instanceof DBLayerException && ex.getCause() != null )
-						problem = ( (DBLayerException)ex ).getErrorInfo();
+						problem = problem + ( (DBLayerException)ex ).getErrorInfo();
 					
 					JOptionPane.showMessageDialog( 
 							parent, 

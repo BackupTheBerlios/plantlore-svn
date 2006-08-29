@@ -32,6 +32,10 @@ public class DBLayerException extends PlantloreException {
         public static final int ERROR_CONNECT = 2;
         /** Login and/or password do not match any user record */
         public static final int ERROR_LOGIN = 3;
+        /** The username is not recognized - the Username doesn't exist. */
+        public static final int ERROR_USERNAME = 31;
+        /** The password is incorrect or contains illegal characters. */
+        public static final int ERROR_PASSWORD = 32;
         /** Saving data into the DB failed */
         public static final int ERROR_SAVE = 4;
         /** Deleteing data from the database failed */
@@ -115,6 +119,12 @@ public class DBLayerException extends PlantloreException {
             	case ERROR_LOGIN:
             		this.errorInfo = L10n.getString("DBLayer.Error.Login");
             		break;
+            	case ERROR_USERNAME:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Username");
+            		break;
+            	case ERROR_PASSWORD:
+            		this.errorInfo = L10n.getString("DBLayer.Error.Password");
+            		break;
             	case ERROR_SAVE:
             		this.errorInfo = L10n.getString("DBLayer.Error.Save");
             		break;
@@ -189,8 +199,19 @@ public class DBLayerException extends PlantloreException {
         public int translateSQLState(String sqlstate) {
             String errorClass = sqlstate.substring(0,2);
             String errorDetail = sqlstate.substring(2);
+            
+            System.out.println("---------------------------------------Translating sqlstate = " + sqlstate);
+            
             // Connection exception - Connection does not exist, was interrupted or cannot be established
             if (errorClass.equals("08")) {
+            	/* POINTLESS :(
+            	if("004".equals(errorDetail))
+            		return ERROR_USERNAME;
+            	if ("005".equals(errorDetail))
+            		return ERROR_PASSWORD;
+            	if("W21".equals(errorDetail) || "W48".equals(errorDetail))
+            		return ERROR_LOGIN;
+            	*/
                 return ERROR_CONNECT;
             }
             // Integrity constraint violation - NOT NULL, FOREIGN KEY, UNIQUE violation
