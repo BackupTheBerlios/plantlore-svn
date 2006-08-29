@@ -74,10 +74,11 @@ try:
     if wrapper_url is not None:
         tmpl['wrapper_url'] = wrapper_url
     
+    
     # generate the protocol
     QG = QueryGenerator(protocol)
     protocolXML = QG.getSearchProtocol(NS=schemaObj.NS, respNS=schemaObj.NS, start=start, limit=limit, count=False, filterObj=filterObj)
-    log.debug("QUERY PROTOCOL CREATED:\n%s"%(protocolXML))
+    log.debug("QUERY PROTOCOL CREATED:\n%s"%(protocolXML))    
     
     # query the wrapper
     QD = QueryDispatcher(protocolNS=protocol)

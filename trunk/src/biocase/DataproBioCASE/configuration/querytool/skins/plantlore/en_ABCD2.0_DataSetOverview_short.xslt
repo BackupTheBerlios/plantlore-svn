@@ -21,29 +21,6 @@
 	<xsl:param name="unitlink"/>
 		
 	<xsl:template name="DatasetOverview" match="/">
-		<h3 class="background">Dataset(s) summary:</h3>
-		<p>Total datasets: <xsl:value-of select="count(/n1:DataSets/n1:DataSet)"/> | Total units: <xsl:value-of select="count(/n1:DataSets/n1:DataSet/n1:Units/n1:Unit)"/> | Georeferenced Units: <xsl:value-of select="count(/n1:DataSets/n1:DataSet/n1:Units/n1:Unit/n1:Gathering/n1:SiteCoordinateSets/n1:SiteCoordinates/n1:CoordinatesLatLong/n1:LongitudeDecimal[text()])"/> |
-					<!-- General map -->
-		<xsl:if test="n1:DataSets/n1:DataSet/n1:Units/n1:Unit/n1:Gathering/n1:SiteCoordinateSets/n1:SiteCoordinates">
-			<a href="Javascript:document.GeneralMap.submit()">Create Map!</a>
-				<form action="http://linuxgurrl.agr.gc.ca/mapdata/itis/itisrosa.php" method="POST" target="_blank" name="GeneralMap">
-						<input type="hidden" name="xml">
-							<xsl:attribute name="value">%3C%3Fxml+version%3D%271.0%27+encoding%3D%27iso-8859-1%27%3F%3E%3Cresponse%3E%3Cheader%3E%3Cauthor%3E%3C%2Fauthor%3E%3Cboundingbox%3E-180%2C-90%2C180%2C90%2CWorld%3C%2Fboundingbox%3E%3Cdescription%3EThis+Generic+Point+Mapper+is+a+service+provided+by+the+Canadian+Biological+Information+Facility%3C%2Fdescription%3E%3Cifx%3E%3C%2Fifx%3E%3Clanguage%3Een%3C%2Flanguage%3E%3Cprojection%3Elatlong%3C%2Fprojection%3E%3Crecordcount%3E%3C%2Frecordcount%3E%3Ctimestamp%3E2004-11-30+11%3A10%3A58.043%3C%2Ftimestamp%3E%3Ctitle%3ESimple+access+to+ABCD+providers+-+Point+Location+Data%3C%2Ftitle%3E%3Curl%3Ehttp%3A%2F%2Fwww.cbif.gc.ca%2Fmc%2Findex_e.php%3C%2Furl%3E%3C%2Fheader%3E%3Crecords<xsl:for-each select="n1:DataSets/n1:DataSet/n1:Units/n1:Unit/n1:Gathering/n1:SiteCoordinateSets/n1:SiteCoordinates">%3E%3Crecord<xsl:for-each select="n1:CoordinatesLatLong"><xsl:for-each select="n1:LatitudeDecimal">%3E%3Clatitude%3E<xsl:apply-templates/>%3C%2Flatitude</xsl:for-each><xsl:for-each select="n1:LongitudeDecimal">%3E%3Clongitude%3E<xsl:apply-templates/>%3C%2Flongitude</xsl:for-each></xsl:for-each>%3E%3Crecordurl%3E%3C%2Frecordurl%3E%3C%2Frecord</xsl:for-each>%3E%3C%2Frecords%3E%3C%2Fresponse%3E</xsl:attribute>
-						</input>
-				</form>
-		</xsl:if>
-		<!-- Finish General Map -->
-		</p>
-		<ul>
-			<xsl:for-each select="n1:DataSets">
-				<xsl:for-each select="n1:DataSet">
-					<xsl:variable name="DataSetId" select="position()"/>
-					<xsl:for-each select="n1:Metadata/n1:Representation/n1:Title">
-						<li><a href="#{$DataSetId}"><xsl:value-of select="n1:Metadata/n1:Representation/n1:Title"/> (<xsl:value-of select="n1:SourceInstitutionCode"/>)</a></li>
-					</xsl:for-each>
-				</xsl:for-each>
-			</xsl:for-each>
-		</ul>
 		
 		 <xsl:for-each select="n1:DataSets">
 			 <xsl:for-each select="n1:DataSet/n1:Metadata">

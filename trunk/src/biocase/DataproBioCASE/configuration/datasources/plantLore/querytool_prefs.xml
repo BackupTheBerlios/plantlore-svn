@@ -7,7 +7,7 @@
 	<Schema ns="http://www.tdwg.org/schemas/abcd/1.2">
 		<Concepts>
 			<Concept path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/NameAuthorYearString'/>
-      <Concept path='DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
+      <Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
       <Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/DateText'/>										
 			<Concept path='/DataSets/DataSet/Units/Unit/UnitID'/>
 		</Concepts>

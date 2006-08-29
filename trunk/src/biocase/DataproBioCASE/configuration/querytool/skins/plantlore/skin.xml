@@ -9,12 +9,12 @@
 			<Concept cops='~' label='Higher_Taxon' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/HigherTaxa/HigherTaxon'/>
 			<Concept cops='~' label='Genus' path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/ScientificNameAtomized/Botanical/Genus'/>
 			<Concept cops='~' label='Stat' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/Country/CountryName'/>
-			<Concept cops='&lt;=&gt;' label='Datum nalezu (d.m.r)' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/ISODateTimeBegin'/>
-			<Concept cops='&lt;=&gt;' label='Zemepisna sirka' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LatitudeDecimal'/>
-			<Concept cops='&lt;=&gt;' label='Zemepisna delka' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LongitudeDecimal'/>
-			<Concept cops='~' label='Identifikacni cislo' path='/DataSets/DataSet/Units/Unit/UnitID'/>
-			<Concept cops='~' label='Nejblizsi obec' path='DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
-			<Concept cops='~' label='Rok nalezu' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/DateText'/>
+			<Concept cops='&lt;=&gt;' label='Datum_nalezu' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/ISODateTimeBegin'/>
+			<Concept cops='&lt;=&gt;' label='Zemepisna_sirka' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LatitudeDecimal'/>
+			<Concept cops='&lt;=&gt;' label='Zemepisna_delka' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LongitudeDecimal'/>
+			<Concept cops='~' label='Identifikacni_cislo' path='/DataSets/DataSet/Units/Unit/UnitID'/>
+			<Concept cops='~' label='Nejblizsi_obec' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
+			<Concept cops='~' label='Rok_nalezu' path='/DataSets/DataSet/Units/Unit/Gathering/GatheringDateTime/DateText'/>
 			
 			<Concept cops='&lt;=&gt;' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/DateSupplied'/>
 			<Concept cops='~' label='' path='/DataSets/DataSet/DatasetDerivations/DatasetDerivation/Description'/>
@@ -90,7 +90,7 @@
 			<Concept cops="~" label="Higher_Taxon" path="/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/HigherTaxa/HigherTaxon/HigherTaxonName" />
 			<Concept cops="~" label="Stat" path="/DataSets/DataSet/Units/Unit/Gathering/Country/Name"/>			
 			<Concept cops="~" label="Locality" path="/DataSets/DataSet/Units/Unit/Gathering/LocalityText"/>
-			<Concept cops="~" label="Identifikacni cislo" path="/DataSets/DataSet/Units/Unit/UnitID"/>
+			<Concept cops="~" label="Identifikacni_cislo" path="/DataSets/DataSet/Units/Unit/UnitID"/>
 			
 		</Concepts>
 		<Grouping concept="/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/FullScientificNameString"/>

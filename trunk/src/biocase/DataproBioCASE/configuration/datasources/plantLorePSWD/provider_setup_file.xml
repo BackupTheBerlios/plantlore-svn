@@ -1,7 +1,7 @@
 
 <Provider xmlns='http://www.biocase.org/schemas/providersetup/1.5' adminpassword='ACDC'>
   <Host>
-    <User>www</User>
+    <User>plantlore_www</User>
     <Password>plantlore</Password>
     <Datasource>plantloreOK</Datasource>
     <DB_IP>localhost</DB_IP>

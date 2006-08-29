@@ -76,6 +76,7 @@ try:
     # generate the protocol
     QG = QueryGenerator(protocol)
         
+      
     protocolXML = QG.getSearchProtocol(NS=schemaObj.NS, respNS=schemaObj.NS, count=False, filterObj=filterObj, destination=wrapper_url)
     log.info("QUERY PROTOCOL CREATED:\n%s"%(protocolXML))
     

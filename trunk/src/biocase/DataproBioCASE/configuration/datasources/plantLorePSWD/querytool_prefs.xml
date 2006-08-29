@@ -8,9 +8,9 @@
 		<Concepts>
 			<Concept path='/DataSets/DataSet/Units/Unit/Identifications/Identification/TaxonIdentified/NameAuthorYearString'/>
 			<Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/Country/CountryName'/>
-			<Concept path='DataSets/DataSet/Units/Unit/Gathering/GatheringSite/AreaDetail'/>
+			<Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/AreaDetail'/>
 			<Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NamedAreas/NamedArea/NamedAreaName'/>
-      <Concept path='DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
+      <Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/NearNamedPlaces/NamedPlaceRelation/NearNamedPlace'/>		
       <Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/LocalityText'/>				
       <Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LatitudeDecimal'/>
 			<Concept path='/DataSets/DataSet/Units/Unit/Gathering/GatheringSite/SiteCoordinateSets/SiteCoordinates/CoordinatesLatLong/LongitudeDecimal'/>			
@@ -21,7 +21,7 @@
 			<Concept path='/DataSets/DataSet/Units/Unit/Gathering/Project/ProjectTitle'/>
 		</Concepts>
 	</Schema>
-<!--	
+
 	<Schema ns="http://www.tdwg.org/schemas/abcd/2.06">
 		<Concepts>
 			<Concept path="/DataSets/DataSet/Units/Unit/Identifications/Identification/Result/TaxonIdentified/ScientificName/FullScientificNameString" />			
@@ -29,7 +29,7 @@
 			<Concept path="/DataSets/DataSet/Units/Unit/UnitID"/>
 		</Concepts>
 	</Schema>       		
--->	
+
 	<Schema ns="http://digir.net/schema/conceptual/darwin/2003/1.0">
 		<Concepts>
 			<Concept path="/recordset/record/ScientificName"/>						

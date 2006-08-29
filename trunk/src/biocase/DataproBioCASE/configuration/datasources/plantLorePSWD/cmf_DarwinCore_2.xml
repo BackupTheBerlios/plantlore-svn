@@ -104,16 +104,28 @@ You can map the controlled value items of the schema to the ones used in the dat
               <dbAttribute attribute='ctaxon' tablealias='plants' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='BasisOfRecord' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/BasisOfRecord'/>
+          <dataElement name='BasisOfRecord' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/BasisOfRecord'>
+            <mapping>
+              <dbAttribute attribute='crecordbasis' tablealias='metadata' type='text' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='Kingdom' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Kingdom'/>
           <dataElement name='Phylum' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Phylum'/>
           <dataElement name='Class' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Class'/>
           <dataElement name='Order' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Order'/>
           <dataElement name='Family' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Family'/>
-          <dataElement name='Genus' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Genus'/>
+          <dataElement name='Genus' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Genus'>
+            <mapping>
+              <dbAttribute attribute='cgenus' tablealias='plants' type='text' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='Species' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Species'/>
           <dataElement name='Subspecies' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Subspecies'/>
-          <dataElement name='ScientificNameAuthor' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/ScientificNameAuthor'/>
+          <dataElement name='ScientificNameAuthor' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/ScientificNameAuthor'>
+            <mapping>
+              <dbAttribute attribute='cscientificnameauthor' tablealias='plants' type='text' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='IdentifiedBy' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/IdentifiedBy'/>
           <dataElement name='YearIdentified' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='gYear' path='/recordset/record/YearIdentified'/>
           <dataElement name='MonthIdentified' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/MonthIdentified'/>
@@ -121,16 +133,32 @@ You can map the controlled value items of the schema to the ones used in the dat
           <dataElement name='TypeStatus' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/TypeStatus'/>
           <dataElement name='CollectorNumber' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/CollectorNumber'/>
           <dataElement name='FieldNumber' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/FieldNumber'/>
-          <dataElement name='Collector' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Collector'/>
+          <dataElement name='Collector' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Collector'>
+            <mapping>
+              <dbAttribute attribute='cwholename' tablealias='authorscollected' type='text' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='YearCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='gYear' path='/recordset/record/YearCollected'>
             <mapping>
               <dbAttribute attribute='cyearcollected' tablealias='occurrences' type='int' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='MonthCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/MonthCollected'/>
-          <dataElement name='DayCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/DayCollected'/>
+          <dataElement name='MonthCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/MonthCollected'>
+            <mapping>
+              <dbAttribute attribute='cmonthcollected' tablealias='occurrences' type='int' nosearch='0'/>
+            </mapping>
+          </dataElement>
+          <dataElement name='DayCollected' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='nonNegativeInteger' path='/recordset/record/DayCollected'>
+            <mapping>
+              <dbAttribute attribute='cdaycollected' tablealias='occurrences' type='int' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='JulianDay' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/JulianDay'/>
-          <dataElement name='TimeOfDay' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/TimeOfDay'/>
+          <dataElement name='TimeOfDay' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/TimeOfDay'>
+            <mapping>
+              <dbAttribute attribute='ctimecollected' tablealias='occurrences' type='date' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='ContinentOcean' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/ContinentOcean'/>
           <dataElement name='Country' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Country'>
             <mapping>
@@ -143,9 +171,21 @@ You can map the controlled value items of the schema to the ones used in the dat
               <dbAttribute attribute='cname' tablealias='village' type='text' nosearch='0'/>
             </mapping>
           </dataElement>
-          <dataElement name='Locality' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Locality'/>
-          <dataElement name='Longitude' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/Longitude'/>
-          <dataElement name='Latitude' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/Latitude'/>
+          <dataElement name='Locality' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Locality'>
+            <mapping>
+              <dbAttribute attribute='cdescription' tablealias='habitats' type='text' nosearch='0'/>
+            </mapping>
+          </dataElement>
+          <dataElement name='Longitude' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/Longitude'>
+            <mapping>
+              <dbAttribute attribute='clongitude' tablealias='habitats' type='int' nosearch='0'/>
+            </mapping>
+          </dataElement>
+          <dataElement name='Latitude' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/Latitude'>
+            <mapping>
+              <dbAttribute attribute='clatitude' tablealias='habitats' type='float' nosearch='0'/>
+            </mapping>
+          </dataElement>
           <dataElement name='CoordinatePrecision' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/CoordinatePrecision'/>
           <dataElement name='BoundingBox' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/BoundingBox'/>
           <dataElement name='MinimumElevation' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='decimal' path='/recordset/record/MinimumElevation'/>
@@ -158,7 +198,11 @@ You can map the controlled value items of the schema to the ones used in the dat
           <dataElement name='PreviousCatalogNumber' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/PreviousCatalogNumber'/>
           <dataElement name='RelationshipType' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/RelationshipType'/>
           <dataElement name='RelatedCatalogItem' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/RelatedCatalogItem'/>
-          <dataElement name='Notes' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Notes'/>
+          <dataElement name='Notes' min='0' max='-1' namespace='http://digir.net/schema/conceptual/darwin/2003/1.0' w3cType='string' path='/recordset/record/Notes'>
+            <mapping>
+              <dbAttribute attribute='cnote' tablealias='occurrences' type='text' nosearch='0'/>
+            </mapping>
+          </dataElement>
         </childElements>
       </dataElement>
     </childElements>
