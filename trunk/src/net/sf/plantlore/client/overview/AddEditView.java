@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -261,24 +262,24 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(gpsPanelLayout.createSequentialGroup()
                         .add(gpsSymbolLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(gpsSymbolTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(gpsSymbolTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                        .add(39, 39, 39)
                         .add(latitudeLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+                        .add(4, 4, 4))
                     .add(gpsPanelLayout.createSequentialGroup()
                         .add(gpsTableLabel)
                         .add(155, 155, 155)))
                 .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(gpsPanelLayout.createSequentialGroup()
-                        .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(longitudeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(altitudeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 77, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 80, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(gpsPanelLayout.createSequentialGroup()
                         .add(coordinateSystemLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -297,12 +298,12 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(gpsLoadButton)
                     .add(gpsSymbolLabel)
                     .add(gpsSymbolTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(latitudeLabel)
                     .add(latitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(longitudeLabel)
                     .add(longitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(altitudeLabel)
-                    .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(altitudeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(latitudeLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(gpsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(gpsShowButton)
@@ -365,7 +366,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                                         .add(placeDescriptionLabel)
                                         .add(434, 434, 434))
                                     .add(jPanel5Layout.createSequentialGroup()
-                                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                                     .add(locationNoteLabel)
@@ -557,10 +558,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel7Layout.createSequentialGroup()
                                 .add(checklistButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 232, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 340, Short.MAX_VALUE)
                                 .add(clearOccurrenceButton))
                             .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel7Layout.createSequentialGroup()
@@ -571,11 +572,11 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                             .add(herbariumLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(herbariumTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                            .add(publicationCombo, 0, 132, Short.MAX_VALUE)
-                            .add(projectCombo, 0, 132, Short.MAX_VALUE)
+                            .add(herbariumTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                            .add(publicationCombo, 0, 146, Short.MAX_VALUE)
+                            .add(projectCombo, 0, 146, Short.MAX_VALUE)
                             .add(jPanel7Layout.createSequentialGroup()
-                                .add(sourceCombo, 0, 132, Short.MAX_VALUE)
+                                .add(sourceCombo, 0, 146, Short.MAX_VALUE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                         .add(19, 19, 19))
                     .add(jPanel7Layout.createSequentialGroup()
@@ -679,7 +680,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .add(settingsButton)
                 .add(64, 64, 64)
                 .add(requiredInfoLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 350, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 436, Short.MAX_VALUE)
                 .add(okButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(cancelButton)
@@ -698,7 +699,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(cancelButton)
                     .add(okButton)
                     .add(requiredInfoLabel))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         buttonPanelLayout.linkSize(new java.awt.Component[] {cancelButton, helpButton, okButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -741,7 +742,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             extendedPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(extendedPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 906, Short.MAX_VALUE)
+                .add(jScrollPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
                 .addContainerGap())
         );
         extendedPanelLayout.setVerticalGroup(
@@ -1042,7 +1043,85 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         pd = (PlainDocument) occurrenceNoteArea.getDocument();
         pd.setDocumentFilter(new DocumentSizeFilter(Occurrence.getColumnSize(Occurrence.NOTE)));
     }
+    
+    /**
+     *  Check whether setting values of coordinate system are correctly.
+     *  @return true whether setting values of coordinate system are correctly.
+     */
+     public boolean checkValueCoordinate() {    
+         
+         double tmpLatitude;
+         double tmpLongitude;
+         double tmpAltitude;        
         
+        //check null value
+        if (model.getLatitude() == null && model.getLongitude() == null && model.getAltitude() == null) {
+             return true;
+        } else if (model.getLatitude() != null && model.getLongitude() != null && model.getAltitude() != null) {
+             tmpLatitude = model.getLatitude();
+             tmpLongitude = model.getLongitude();             
+             tmpAltitude = model.getAltitude();
+        } else {
+             //show information about filling value
+             JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.NullValue"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+             return false;
+        } 
+       
+        if (model.getCoordinateSystem() == AddEdit.WGS84) {
+            //Check setting value for WGS-84
+            if (tmpLatitude < AddEdit.WGS84_MIN_LATITUDE || tmpLatitude > AddEdit.WGS84_MAX_LATITUDE) {
+                //show iformation about latitude  
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.WGS84_latitude"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+            if (tmpLongitude < AddEdit.WGS84_MIN_LONGITUDE || tmpLongitude > AddEdit.WGS84_MAX_LONGITUDE) {
+                //show information about longitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.WGS84_longitude"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+            if (tmpAltitude < AddEdit.WGS84_MIN_ALTITUDE || tmpAltitude >  AddEdit.WGS84_MAX_ALTITUDE) {
+                //show information about altitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.WGS84_altitude"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+        } else if (model.getCoordinateSystem() == AddEdit.SJTSK) {
+            //Check setting value for S-JTSK
+            if (tmpLatitude < AddEdit.SJTSK_MIN_Y || tmpLatitude > AddEdit.SJTSK_MAX_Y) {
+                //show iformation about latitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.SJTSK_Y"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+            if (tmpLongitude < AddEdit.SJTSK_MIN_X || tmpLongitude > AddEdit.SJTSK_MAX_X) {
+                //show information about longitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.SJTSK_X"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+            if (tmpAltitude < AddEdit.SJTSK_MIN_Z || tmpAltitude >  AddEdit.SJTSK_MAX_Z) {
+                //show information about altitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.SJTSK_Z"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+        } else {
+            //Check setting value for S-42
+            if (tmpLatitude < AddEdit.S42_MIN_Y || tmpLatitude > AddEdit.S42_MAX_Y) {
+                //show iformation about latitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.S42_Y"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+            if (tmpLongitude < AddEdit.S42_MIN_X || tmpLongitude > AddEdit.S42_MAX_X) {
+                //show information about longitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.S42_X"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+            if (tmpAltitude < AddEdit.S42_MIN_Z || tmpAltitude >  AddEdit.S42_MAX_Z) {
+                //show information about altitude
+                JOptionPane.showMessageDialog(this, L10n.getString("Error.Transformation.S42_Z"), L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE); 
+                return false;
+            }
+        }
+        return true;
+    }
+    
     /**
      * @param args the command line arguments
      */

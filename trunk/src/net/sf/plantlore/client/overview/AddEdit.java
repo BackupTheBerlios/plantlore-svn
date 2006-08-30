@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
@@ -50,6 +51,28 @@ public class AddEdit extends Observable {
     public static final int WGS84 = 0;
     public static final int SJTSK = 1;
     public static final int S42 = 2;
+    //WGS-84 max and min value
+    public static final double WGS84_MAX_LATITUDE = 90;   //Y    //23°
+    public static final double WGS84_MIN_LATITUDE = -90;         //12°
+    public static final double WGS84_MAX_LONGITUDE = 180;  //X  //51°10’
+    public static final double WGS84_MIN_LONGITUDE = -180;       //47°30’
+    public static final double WGS84_MAX_ALTITUDE = 8848;  //Z
+    public static final double WGS84_MIN_ALTITUDE = -418;
+    //S-JTSK max and min value
+    public static final double SJTSK_MAX_Y = 10000000;     //-128000 + 1500000 = 1372000;   
+    public static final double SJTSK_MIN_Y = -10000000;   //-930000 + 1500000 = 570000;
+    public static final double SJTSK_MAX_X = 10000000;    //-900000 + 1500000 = 600000;  
+    public static final double SJTSK_MIN_X =-10000000;   //-1300000 + 1500000 = 20000;
+    public static final double SJTSK_MAX_Z = 100000;  
+    public static final double SJTSK_MIN_Z = -1000;
+    //S-42 max and min value
+    public static final double S42_MAX_Y = 10000000;   
+    public static final double S42_MIN_Y = -10000000;
+    public static final double S42_MAX_X = 10000000;  
+    public static final double S42_MIN_X = -10000000;
+    public static final double S42_MAX_Z = 10000;  
+    public static final double S42_MIN_Z = -1000;
+    
     public static final String EMPTY_STRING = L10n.getString("Common.ComboboxNothingSelected");
     public static final Pair<String,Integer> EMPTY_PAIR = new Pair<String,Integer>(EMPTY_STRING,-1);            
      
@@ -638,7 +661,7 @@ public class AddEdit extends Observable {
                 logger.debug("CoordinateSystem set to S42");
                 break;
             case SJTSK:
-                logger.debug("CoordinateSystem set to SJSTK");
+                logger.debug("CoordinateSystem set to SJTSK");
                 break;
         }
     }
@@ -1191,6 +1214,12 @@ public class AddEdit extends Observable {
                     return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.EmptyAuthor"));
             }
         }
+       
+       if (getCoordinateSystem() != AddEdit.WGS84) {
+           logger.debug("Transformation coordinate system to WGS84 (for saving into database).");
+            transformationCoordinateSystem(AddEdit.WGS84);            
+       }
+        
         if (taxonList == null || taxonList.size() < 1)
             return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.AtLeastOneTaxon"));
         
@@ -1583,40 +1612,58 @@ public class AddEdit extends Observable {
         Double[] newCoordinate = new Double[3];
         Double[] newCoordinateTmp = new Double[3];
         //Check null value and set 0.0 if value is null      
-        if (latitude == null) latitude = 0.0;
-        if (longitude == null) longitude = 0.0;
-        if (altitude == null) altitude = 0.0;
-        //WGS-84 --> S-JSTK
+        double tmpLatitude;
+        double tmpLongitude;
+        double tmpAltitude;
+        if (latitude == null) tmpLatitude = 0.0;
+        else tmpLatitude = latitude;
+        if (longitude == null) tmpLongitude = 0.0;
+        else tmpLongitude = longitude;
+        if (altitude == null) tmpAltitude = 0.0;
+        tmpAltitude = altitude;
+        
+        //WGS-84 --> S-JTSK
         if (getCoordinateSystem() == AddEdit.WGS84 && selectedSystem == AddEdit.SJTSK) {
-            newCoordinate = tr.transform_WGS84_to_SJTSK(latitude, longitude, altitude);
+            newCoordinate = tr.transform_WGS84_to_SJTSK(tmpLatitude, tmpLongitude, tmpAltitude);
         }
-        //S-JSTK --> WGS-84
+        //S-JTSK --> WGS-84
         if (getCoordinateSystem() == AddEdit.SJTSK && selectedSystem == AddEdit.WGS84) {
-            newCoordinate = tr.transform_SJTSK_to_WGS84(latitude, longitude, altitude);
+            newCoordinate = tr.transform_SJTSK_to_WGS84(tmpLatitude, tmpLongitude, tmpAltitude);
         }
         //WGS-84 --> S-42
          if (getCoordinateSystem() == AddEdit.WGS84 && selectedSystem == AddEdit.S42) {
-            newCoordinate = tr.transform_WGS84_to_S42(latitude, longitude, altitude);
+            newCoordinate = tr.transform_WGS84_to_S42(tmpLatitude, tmpLongitude, tmpAltitude);
          }
         //S-42 --> WGA-84
          if (getCoordinateSystem() == AddEdit.S42 && selectedSystem == AddEdit.WGS84) {
-            newCoordinate = tr.transform_S42_to_WGS84(latitude, longitude, altitude);
+            newCoordinate = tr.transform_S42_to_WGS84(tmpLatitude, tmpLongitude, tmpAltitude);
          }
-        //S-JSTK --> S-42
+        //S-JTSK --> S-42
         if (getCoordinateSystem() == AddEdit.SJTSK && selectedSystem == AddEdit.S42) {
-            newCoordinateTmp = tr.transform_SJTSK_to_WGS84(latitude, longitude, altitude);
+            newCoordinateTmp = tr.transform_SJTSK_to_WGS84(tmpLatitude, tmpLongitude, tmpAltitude);
             newCoordinate  = tr.transform_WGS84_to_S42(newCoordinateTmp[0], newCoordinateTmp[1], newCoordinateTmp[2]);
         }
-        //S-42 --> S-JSTK
+        //S-42 --> S-JTSK
         if (getCoordinateSystem() == AddEdit.S42 && selectedSystem == AddEdit.SJTSK) {
-            newCoordinateTmp = tr.transform_S42_to_WGS84(latitude, longitude, altitude);
+            newCoordinateTmp = tr.transform_S42_to_WGS84(tmpLatitude, tmpLongitude, tmpAltitude);
             newCoordinate  = tr.transform_WGS84_to_SJTSK(newCoordinateTmp[0], newCoordinateTmp[1], newCoordinateTmp[2]);
         }
-        this.setCoordinateSystem(selectedSystem);
+        this.setCoordinateSystem(selectedSystem);     
+        if (latitude == null) newCoordinate[0] = null;
+        if (longitude == null) newCoordinate[1] = null;
+        if (altitude == null) newCoordinate[2] = null;        
+    /*  if (latitude == 0) newCoordinate[0] = 0.0;
+        if (longitude == 0) newCoordinate[1] = 0.0;
+        if (altitude == 0) newCoordinate[2] = 0.0;
+     */ if (newCoordinate[0].isNaN()) this.setLatitude(null);
+        if (newCoordinate[1].isNaN()) this.setLongitude(null);
+        if (newCoordinate[2].isNaN()) this.setAltitude(null);
         this.setLatitude(newCoordinate[0]);
         this.setLongitude(newCoordinate[1]);
-        this.setAltitude(newCoordinate[2]);
+        this.setAltitude(newCoordinate[2]);       
     }     
+    
+   
     
     public void setIsCancle(boolean isCancle) {
         this.isCancled = isCancle;

@@ -169,7 +169,7 @@
                                                       <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" attributes="0">
-                                                      <Component id="jScrollPane2" pref="530" max="32767" attributes="1"/>
+                                                      <Component id="jScrollPane2" pref="541" max="32767" attributes="1"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -386,10 +386,10 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="gpsSymbolLabel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="gpsSymbolTextField" linkSize="18" pref="77" max="32767" attributes="1"/>
-                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="gpsSymbolTextField" linkSize="18" pref="80" max="32767" attributes="1"/>
+                                          <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                                           <Component id="latitudeLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="gpsTableLabel" min="-2" max="-2" attributes="0"/>
@@ -398,15 +398,15 @@
                                   </Group>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="latitudeTextField" linkSize="18" min="-2" pref="60" max="-2" attributes="1"/>
+                                          <Component id="latitudeTextField" linkSize="18" min="-2" pref="80" max="-2" attributes="1"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="longitudeLabel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="longitudeTextField" linkSize="18" min="-2" pref="60" max="-2" attributes="1"/>
+                                          <Component id="longitudeTextField" linkSize="18" min="-2" pref="80" max="-2" attributes="1"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="altitudeLabel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="altitudeTextField" linkSize="18" min="-2" pref="77" max="-2" attributes="1"/>
+                                          <Component id="altitudeTextField" linkSize="18" min="-2" pref="80" max="-2" attributes="1"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="1">
                                           <Component id="coordinateSystemLabel" min="-2" max="-2" attributes="0"/>
@@ -425,12 +425,12 @@
                                       <Component id="gpsLoadButton" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="gpsSymbolLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="gpsSymbolTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="latitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="latitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="longitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="longitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="altitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="altitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="latitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">

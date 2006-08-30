@@ -76,8 +76,8 @@ public class AddEditCtrl {
     private AddEdit model;
     private AddEditView view;
     private TransformationChangeView transformationView;
-    public final static int MAXIMUM_FRACTION_DIGITS = 8;
-    public final static int MAXIMUM_INTEGER_DIGITS = 8;
+    public final static int MAXIMUM_FRACTION_DIGITS = 3;
+    public final static int MAXIMUM_INTEGER_DIGITS = 9;
     private final static Color COLOR_INVALID = Color.RED;
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
@@ -759,13 +759,16 @@ public class AddEditCtrl {
             transformationView = new TransformationChangeView(view, model, true);
             new TransformationChangeCtrl(model, transformationView); 
         }
-        public void actionPerformed(ActionEvent e) {                       
-            transformationView.setVisible(true);         
-            if (model.getIsCancle()) return;
-            model.setIsCancle(true);
-            view.loadComponetCoordinate();
+        public void actionPerformed(ActionEvent e) {                        
+            
+            if (view.checkValueCoordinate()) {
+                transformationView.setVisible(true);         
+                if (model.getIsCancle()) return;
+                model.setIsCancle(true);
+                view.loadComponetCoordinate();
+            }
         }
-    }
+    }        
 }
 
 

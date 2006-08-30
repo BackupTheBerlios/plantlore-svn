@@ -12,18 +12,21 @@ package net.sf.plantlore.client.overview;
 import org.apache.log4j.Logger;
 
 /**
+ * Transformation between coordinate systems.
+ * From WGS-84 to S-42. From S-42 to WGS-84.
+ * From WGS-84 to S-JTSK. From S-JTSK to WGS-84.
  *
- * Zdroj: 
+ * Source: 
  * Converting between grid eastings and northings and ellipsoidal latititude and longitude. http://www.gps.gov.uk/guidec.asp.
  * Hrdina, Z.: Přepočet z S-JTSK do WGS-84. 2002. http://gpsweb.cz/JTSK-WGS.htm.
  * Hrdina, Z.: Transformace souřadnic ze systému WGS-84 do systému S-JTSK. Praha: ČVUT, 1997. http://www.geospeleos.com/Mapovani/WGS84toSJTSK/WGS_JTSK.pdf. 
  * Transformace souradnic WGS84<-->-JTSK<-->S42 http://astro.mff.cuni.cz/mira/sh/sh.php  
  *
  * @author Lada Oberreiterova
- * 
+ * @version 1.0
  * 
  * U WGS-84 se bude zadavat a zobrazovat geodeticke souradnice:
- *    latitude: 50.4576°
+ *        latitude: 50.4576°
  * 	  longitude: 14.3986°
  * 	  altitude: 289.15 m
  *
@@ -36,8 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class Transformation {
     
-    private Logger logger;    
-    
+    private Logger logger;        
     private Double latitude;
     private Double longitude;
     private Double altitude;
@@ -99,33 +101,33 @@ public class Transformation {
         //Transformace elipsoidu WGS84 na Besselův elipsoid.
         //WGS84 - transform latitude and longitude from degree to radiant format
         Double[] geodeticCoordinateRAD_WGS = degreeToRadiant(latitude, longitude);   
-        System.out.println("from " + latitude + " toRadian: " + geodeticCoordinateRAD_WGS[0]);
-        System.out.println("from " + longitude + " toRadian: " + geodeticCoordinateRAD_WGS[1] + "\n"); 
+        logger.debug("from " + latitude + " toRadian: " + geodeticCoordinateRAD_WGS[0]);
+        logger.debug("from " + longitude + " toRadian: " + geodeticCoordinateRAD_WGS[1] ); 
         //WGS84 - vypocet pravouhlych souradnic z geodetickych souradnic
         Double[] cartesianCoordinate_WGS = WGS84_BLH_xyz(geodeticCoordinateRAD_WGS[0], geodeticCoordinateRAD_WGS[1], altitude); 
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[0]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[1]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[2] + "\n");
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[0]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[1]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[2] );
         //transformace prostorových pravoúhlých souřadnic do systému S-JTSK
         Double[] cartesianCoordinate_SJTSK = transformation_WGS84_SJTSK_xyz_xyz(cartesianCoordinate_WGS[0], cartesianCoordinate_WGS[1], cartesianCoordinate_WGS[2]);
-        System.out.println("SJTSK - provouhle souradnice: " + cartesianCoordinate_SJTSK[0]);
-        System.out.println("SJTSK - provouhle souradnice: " + cartesianCoordinate_SJTSK[1]);
-        System.out.println("SJTSK - provouhle souradnice: " + cartesianCoordinate_SJTSK[2] + "\n");
+        logger.debug("SJTSK - provouhle souradnice: " + cartesianCoordinate_SJTSK[0]);
+        logger.debug("SJTSK - provouhle souradnice: " + cartesianCoordinate_SJTSK[1]);
+        logger.debug("SJTSK - provouhle souradnice: " + cartesianCoordinate_SJTSK[2] );
         //S-JTSK - vypocet geodetickych souradnic z pravouhlych souradnic
         Double[] geodeticCoordinateRAD_SJTSK = bessel_xyz_BLH(cartesianCoordinate_SJTSK[0], cartesianCoordinate_SJTSK[1], cartesianCoordinate_SJTSK[2]);      
-        System.out.println("SJTSK - geodeticke souradnice RAD: " + geodeticCoordinateRAD_SJTSK[0]);
-        System.out.println("SJTSK - geodeticke souradnice RAD: " + geodeticCoordinateRAD_SJTSK[1]);
-        System.out.println("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinateRAD_SJTSK[2] + "\n");        
+        logger.debug("SJTSK - geodeticke souradnice RAD: " + geodeticCoordinateRAD_SJTSK[0]);
+        logger.debug("SJTSK - geodeticke souradnice RAD: " + geodeticCoordinateRAD_SJTSK[1]);
+        logger.debug("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinateRAD_SJTSK[2] );        
         //S-JTSK - transform latitude and longitude from radiant to degree format
         Double[] latLong = radiantToDegree(geodeticCoordinateRAD_SJTSK[0], geodeticCoordinateRAD_SJTSK[1]);
-        System.out.println("SJTSK - geodeticke souradnice: " + latLong[0]);
-        System.out.println("SJTSK - geodeticke souradnice: " + latLong[1]);
-        System.out.println("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinateRAD_SJTSK[2] + "\n");        
+        logger.debug("SJTSK - geodeticke souradnice: " + latLong[0]);
+        logger.debug("SJTSK - geodeticke souradnice: " + latLong[1]);
+        logger.debug("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinateRAD_SJTSK[2] );        
          
         Double[] planarCoordinate = krovak_BLH_xy(latLong[0], latLong[1], geodeticCoordinateRAD_SJTSK[2]);       
-        System.out.println("SJTSK - planar souradnice (X): " + planarCoordinate[0]);
-        System.out.println("SJTSK - planar souradnice (Y): " + planarCoordinate[1]);
-        System.out.println("SJTSK (Z): " + planarCoordinate[2] + "\n");
+        logger.debug("SJTSK - planar souradnice (Y): " + planarCoordinate[0]);
+        logger.debug("SJTSK - planar souradnice (X): " + planarCoordinate[1]);
+        logger.debug("SJTSK (Z): " + planarCoordinate[2] );
         
         return planarCoordinate;
     }
@@ -134,24 +136,24 @@ public class Transformation {
                  
         //Prepocet z S-JTSK  ... uz dostanu hodnoty v radianech
         Double[] geodeticCoordinate = kovak_xy_BLH(x, y, z);
-        System.out.println("SJTSK - geodeticke souradnice: " + geodeticCoordinate[0]);
-        System.out.println("SJTSK - geodeticke souradnice: " + geodeticCoordinate[1]);
-        System.out.println("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinate[2] + "\n");                      
+        logger.debug("SJTSK - geodeticke souradnice: " + geodeticCoordinate[0]);
+        logger.debug("SJTSK - geodeticke souradnice: " + geodeticCoordinate[1]);
+        logger.debug("SJTSK - geodeticke souradnice altitude: " + geodeticCoordinate[2] );                      
         //Vypocet pravouhlych souradnic z geodetickych souradnic pro elipsoid Bessel
         Double[] cartesianCoordinate = bessel_BLH_xyz(geodeticCoordinate[0], geodeticCoordinate[1], geodeticCoordinate[2]);
-        System.out.println("SJTSK - provouhle souradnice: " + cartesianCoordinate[0]);
-        System.out.println("SJTSK - provouhle souradnice: " + cartesianCoordinate[1]);
-        System.out.println("SJTSK - provouhle souradnice: " + cartesianCoordinate[2] + "\n");
+        logger.debug("SJTSK - provouhle souradnice: " + cartesianCoordinate[0]);
+        logger.debug("SJTSK - provouhle souradnice: " + cartesianCoordinate[1]);
+        logger.debug("SJTSK - provouhle souradnice: " + cartesianCoordinate[2] );
         //Transformace pravouhlych souradnic z S-JTSK do WGS84
         Double[] cartesianCoordinate_WGS84 = transformation_SJTSK_WGS84_xyz_xyz(cartesianCoordinate[0], cartesianCoordinate[1], cartesianCoordinate[2]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[0]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[1]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[2] + "\n");
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[0]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[1]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[2] );
         //Vypocet geodetickych souradnic z pravouhlych souradnic pro elipsoid WGS84
         Double[] geodeticCoordinateRAD_WGS84 = WGS84_xyz_BLH(cartesianCoordinate_WGS84[0], cartesianCoordinate_WGS84[1], cartesianCoordinate_WGS84[2]);
-        System.out.println("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[0]);
-        System.out.println("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[1]);
-        System.out.println("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[2] + "\n");
+        logger.debug("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[0]);
+        logger.debug("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[1]);
+        logger.debug("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[2] );
         //Transformation latitude and longitude from radiant to degree 
         Double[] latLong = radiantToDegree(geodeticCoordinateRAD_WGS84[0], geodeticCoordinateRAD_WGS84[1]);
         Double[] geodeticCoordinate_WGS84 = new Double[3];
@@ -159,9 +161,9 @@ public class Transformation {
         geodeticCoordinate_WGS84[1] = latLong[1];
         geodeticCoordinate_WGS84[2] = geodeticCoordinateRAD_WGS84[2];
         
-        System.out.println("WGS84 latitude: "+ geodeticCoordinate_WGS84[0]);
-        System.out.println("WGS84 longitude: " + geodeticCoordinate_WGS84[1]);
-        System.out.println("WGS84 altitude: " + geodeticCoordinate_WGS84[2] + "\n");
+        logger.debug("WGS84 latitude: "+ geodeticCoordinate_WGS84[0]);
+        logger.debug("WGS84 longitude: " + geodeticCoordinate_WGS84[1]);
+        logger.debug("WGS84 altitude: " + geodeticCoordinate_WGS84[2] );
         
         return geodeticCoordinate_WGS84;
     }      
@@ -174,33 +176,33 @@ public class Transformation {
                 
         //WGS84 - transform latitude and longitude from degree to radiant format
         Double[] geodeticCoordinateRAD_WGS = degreeToRadiant(latitude, longitude);   
-        System.out.println("from " + latitude + " toRadian: " + geodeticCoordinateRAD_WGS[0]);
-        System.out.println("from " + longitude + " toRadian: " + geodeticCoordinateRAD_WGS[1] + "\n"); 
+        logger.debug("from " + latitude + " toRadian: " + geodeticCoordinateRAD_WGS[0]);
+        logger.debug("from " + longitude + " toRadian: " + geodeticCoordinateRAD_WGS[1] ); 
         //WGS84 - vypocet pravouhlych souradnic z geodetickych souradnic
         Double[] cartesianCoordinate_WGS = WGS84_BLH_xyz(geodeticCoordinateRAD_WGS[0], geodeticCoordinateRAD_WGS[1], altitude); 
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[0]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[1]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[2] + "\n");
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[0]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[1]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS[2] );
         //transformace prostorových pravoúhlých souřadnic do systému S-42
         Double[] cartesianCoordinate_S42 = this.transformation_WGS84_S42_xyz_xyz(cartesianCoordinate_WGS[0], cartesianCoordinate_WGS[1], cartesianCoordinate_WGS[2]);
-        System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate_S42[0]);
-        System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate_S42[1]);
-        System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate_S42[2] + "\n");
+        logger.debug("S42 - provouhle souradnice: " + cartesianCoordinate_S42[0]);
+        logger.debug("S42 - provouhle souradnice: " + cartesianCoordinate_S42[1]);
+        logger.debug("S42 - provouhle souradnice: " + cartesianCoordinate_S42[2] );
         //S-42 - vypocet geodetickych souradnic z pravouhlych souradnic
         Double[] geodeticCoordinateRAD_S42 = this.krajovskij_xyz_BLH(cartesianCoordinate_S42[0], cartesianCoordinate_S42[1], cartesianCoordinate_S42[2]);      
-        System.out.println("S42 - geodeticke souradnice RAD: " + geodeticCoordinateRAD_S42[0]);
-        System.out.println("S42 - geodeticke souradnice RAD: " + geodeticCoordinateRAD_S42[1]);
-        System.out.println("S42 - geodeticke souradnice altitude: " + geodeticCoordinateRAD_S42[2] + "\n");        
+        logger.debug("S42 - geodeticke souradnice RAD: " + geodeticCoordinateRAD_S42[0]);
+        logger.debug("S42 - geodeticke souradnice RAD: " + geodeticCoordinateRAD_S42[1]);
+        logger.debug("S42 - geodeticke souradnice altitude: " + geodeticCoordinateRAD_S42[2] );        
         //S-42 - transform latitude and longitude from radiant to degree format
         Double[] latLong = radiantToDegree(geodeticCoordinateRAD_S42[0], geodeticCoordinateRAD_S42[1]);
-        System.out.println("S42 - geodeticke souradnice: " + latLong[0]);
-        System.out.println("S42 - geodeticke souradnice: " + latLong[1]);
-        System.out.println("S42 - geodeticke souradnice altitude: " + geodeticCoordinateRAD_S42[2] + "\n");        
+        logger.debug("S42 - geodeticke souradnice: " + latLong[0]);
+        logger.debug("S42 - geodeticke souradnice: " + latLong[1]);
+        logger.debug("S42 - geodeticke souradnice altitude: " + geodeticCoordinateRAD_S42[2] );        
                  
         Double[] coordinate = transformatin_S42_BLH_xy(geodeticCoordinateRAD_S42[0], geodeticCoordinateRAD_S42[1]);               
-        System.out.println("S42 - planar souradnice (X): " + coordinate[0]);
-        System.out.println("S42 - planar souradnice (Y): " + coordinate[1]);
-        System.out.println("S42 (Z): " + geodeticCoordinateRAD_S42[2] + "\n");
+        logger.debug("S42 - planar souradnice (Y): " + coordinate[0]);
+        logger.debug("S42 - planar souradnice (X): " + coordinate[1]);
+        logger.debug("S42 (Z): " + geodeticCoordinateRAD_S42[2] );
         
         Double[] planarCoordinate = new Double[3];
         planarCoordinate[0] = coordinate[0];
@@ -215,27 +217,27 @@ public class Transformation {
          
          //Prepocet z S-42 do WGS-84 ... uz dostanu hodnoty v radianech
          //!!!!!FIXME - v teto funkci je chyba
-        //Double[] geodeticCoordinate = transformation_S42_xy_BLH(x, y, z);
-    	 Double[] geodeticCoordinate = S42_xy_BLH(x, y, z);
-        System.out.println("S42 - geodeticke souradnice: " + geodeticCoordinate[0]);
-        System.out.println("S42 - geodeticke souradnice: " + geodeticCoordinate[1]);
-        System.out.println("S42 - geodeticke souradnice altitude: " + geodeticCoordinate[2] + "\n");                      
+        //Double[] geodeticCoordinate = transformation_S42_xy_BLH(y, x, z);
+    	Double[] geodeticCoordinate = S42_xy_BLH(x, y, z);
+        logger.debug("S42 - geodeticke souradnice: " + geodeticCoordinate[0]);
+        logger.debug("S42 - geodeticke souradnice: " + geodeticCoordinate[1]);
+        logger.debug("S42 - geodeticke souradnice altitude: " + geodeticCoordinate[2] );                      
         //Vypocet pravouhlych souradnic z geodetickych souradnic pro elipsoid Bessel
         Double[] cartesianCoordinate = krajovskij_BLH_xyz(geodeticCoordinate[0], geodeticCoordinate[1], geodeticCoordinate[2]);
-        //Double[] cartesianCoordinate = krajovskij_BLH_xyz(0.8806574639397869, 0.25133270679766656, geodeticCoordinate[2]);
-        System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate[0]);
-        System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate[1]);
-        System.out.println("S42 - provouhle souradnice: " + cartesianCoordinate[2] + "\n");
+        //Double[] cartesianCoordinate = krajovskij_BLH_xyz(0.8541698036319776, 0.29045147854127384, geodeticCoordinate[2]);
+        logger.debug("S42 - provouhle souradnice: " + cartesianCoordinate[0]);
+        logger.debug("S42 - provouhle souradnice: " + cartesianCoordinate[1]);
+        logger.debug("S42 - provouhle souradnice: " + cartesianCoordinate[2] );
         //Transformace pravouhlych souradnic z S-42 do WGS84
         Double[] cartesianCoordinate_WGS84 = transformation_S42_WGS84_xyz_xyz(cartesianCoordinate[0], cartesianCoordinate[1], cartesianCoordinate[2]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[0]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[1]);
-        System.out.println("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[2] + "\n");
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[0]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[1]);
+        logger.debug("WGS84 - pravouhle souradnice: " + cartesianCoordinate_WGS84[2] );
         //Vypocet geodetickych souradnic z pravouhlych souradnic pro elipsoid WGS84
         Double[] geodeticCoordinateRAD_WGS84 = WGS84_xyz_BLH(cartesianCoordinate_WGS84[0], cartesianCoordinate_WGS84[1], cartesianCoordinate_WGS84[2]);
-        System.out.println("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[0]);
-        System.out.println("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[1]);
-        System.out.println("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[2] + "\n");
+        logger.debug("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[0]);
+        logger.debug("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[1]);
+        logger.debug("WGS84 - geodeticke souradnice: " + geodeticCoordinateRAD_WGS84[2] );
         //Transformation latitude and longitude from radiant to degree 
         Double[] latLong = radiantToDegree(geodeticCoordinateRAD_WGS84[0], geodeticCoordinateRAD_WGS84[1]);
         Double[] geodeticCoordinate_WGS84 = new Double[3];
@@ -243,9 +245,9 @@ public class Transformation {
         geodeticCoordinate_WGS84[1] = latLong[1];
         geodeticCoordinate_WGS84[2] = geodeticCoordinateRAD_WGS84[2];
         
-        System.out.println("WGS84 latitude: "+ geodeticCoordinate_WGS84[0]);
-        System.out.println("WGS84 longitude: " + geodeticCoordinate_WGS84[1]);
-        System.out.println("WGS84 altitude: " + geodeticCoordinate_WGS84[2] + "\n");
+        logger.debug("WGS84 latitude: "+ geodeticCoordinate_WGS84[0]);
+        logger.debug("WGS84 longitude: " + geodeticCoordinate_WGS84[1]);
+        logger.debug("WGS84 altitude: " + geodeticCoordinate_WGS84[2] );
         
         return geodeticCoordinate_WGS84;
      }
@@ -373,9 +375,9 @@ public class Transformation {
     	double B2 = y;
     	double C2 = 6378245;
     	double D2 = 0.0818133340169312;
-    	double E2 = 500000+Math.rint(A2/1000000)*1000000;
+    	double E2 = 500000+Math.floor(A2/1000000)*1000000;        
     	double F2 = 0;
-    	double G2 = 21+6*(Math.rint(A2/1000000)-4);
+    	double G2 = 21+6*(Math.floor(A2/1000000)-4);
     	double H2 = G2*Math.PI/180;
     	double I2 = 0;
     	double J2 = I2*Math.PI/180;
@@ -849,22 +851,22 @@ public class Transformation {
     return geodeticCoordinate;
   }
   
- 
+ /* Main function for testing
    
      public static void main(String[] args) {
             Transformation tr = new Transformation();
-            System.out.println("********************WGS84 --> S-JTSK**************************");
+            logger.debug("********************WGS84 --> S-JTSK**************************");
             Double[] coordinate_SJTSK = tr.transform_WGS84_to_SJTSK(50.4576163694, 14.3986, 289.155);
-            System.out.println("******************** S-JTSK --> WGS84 **************************");
-            System.out.println("From: " + coordinate_SJTSK[0]);
-            System.out.println("From: " + coordinate_SJTSK[1]);
-            System.out.println("From: " + coordinate_SJTSK[2]);
+            logger.debug("******************** S-JTSK --> WGS84 **************************");
+            logger.debug("From: " + coordinate_SJTSK[0]);
+            logger.debug("From: " + coordinate_SJTSK[1]);
+            logger.debug("From: " + coordinate_SJTSK[2]);
             Double[] coordinate_WGS84_SJTSK = tr.transform_SJTSK_to_WGS84(coordinate_SJTSK[0], coordinate_SJTSK[1], coordinate_SJTSK[2]);
-            System.out.println("********************WGS84 --> S-42**************************");
-            Double[] coordinate_S42 = tr.transform_WGS84_to_S42(50.4576163694, 14.3986, 289.155);
-            System.out.println("******************** S-42 --> WGS84 **************************");                       
+            logger.debug("********************WGS84 --> S-42**************************");
+            Double[] coordinate_S42 = tr.transform_WGS84_to_S42(48.94, 16.64, 260.01);
+            logger.debug("******************** S-42 --> WGS84 **************************");                       
             Double[] coordinate_WGS84_S42 = tr.transform_S42_to_WGS84(coordinate_S42[0], coordinate_S42[1], coordinate_S42[2]);            
      }
-         
+    */     
   
 }
