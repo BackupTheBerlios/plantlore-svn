@@ -42,7 +42,7 @@ public class AuthCtrl {
 					getTask().stop();
 					
 					String problem = ex.getMessage();
-					
+					//TODO: DEFAULTNI HANDLER!
 					if(ex instanceof DBLayerException && ex.getCause() != null )
 						problem = problem + ( (DBLayerException)ex ).getErrorInfo();
 					

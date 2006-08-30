@@ -38,7 +38,7 @@ public class ConnectionMonitor extends javax.swing.JFrame {
                         if (model.getDatabase() != null) {
                             try {
                                 total = model.getDatabase().getConnectionCount();
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 // Don't care
                             }
                         }

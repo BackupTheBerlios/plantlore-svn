@@ -6,6 +6,11 @@
 
 package net.sf.plantlore.client.createdb;
 
+import java.awt.Dialog;
+import java.util.Observable;
+import java.util.Observer;
+
+import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.l10n.L10n;
 
@@ -13,11 +18,18 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  yaa
  */
-public class CreateDBAuthView extends javax.swing.JPanel {
+public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
+	
     
     /** Creates new form CreateDBAuthView */
-    public CreateDBAuthView() {
+    public CreateDBAuthView(Dialog parent, CreateDB model) {
+    	super(parent, true);
+    	
+    	model.addObserver(this);
         initComponents();
+        
+        setLocationRelativeTo(null); // center of the screen
+        getRootPane().setDefaultButton(create);
     }
     
     /** This method is called from within the constructor to
@@ -85,8 +97,22 @@ public class CreateDBAuthView extends javax.swing.JPanel {
     protected javax.swing.JButton create;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPasswordField password;
-    private javax.swing.JComboBox user;
+    protected javax.swing.JPasswordField password;
+    protected javax.swing.JComboBox user;
     // End of variables declaration//GEN-END:variables
+    
+    
+ 
+    
+	public void update(Observable source, final Object parameter) {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+    		public void run() {
+    			if(parameter instanceof DBInfo) {
+    				setVisible(false);
+    				password.setText("");
+    			}
+    		}
+		});
+	}
     
 }
