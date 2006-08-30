@@ -28,7 +28,6 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * connections effectively</li>
  * </ol>
  * 
- * TODO:  maxConnectionsPerIP & maxConnectionsTotal by se asi měly načítat z nějakého config souboru.
  * 
  * @author Erik Kratochvíl
  * @since 2006-03-13
@@ -39,7 +38,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	
 	private static final long serialVersionUID = 2006060433002698L;
 	
-	private Logger logger  = Logger.getLogger(this.getClass().getPackage().getName());;
+	private Logger logger  = Logger.getLogger(RMIRemoteDBLayerFactory.class.getPackage().getName());
 	
 	private ServerSettings  settings;
 	private Undertaker undertaker;

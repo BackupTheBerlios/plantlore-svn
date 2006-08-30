@@ -10,6 +10,7 @@ package net.sf.plantlore.middleware;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.exception.DBLayerException;
@@ -33,7 +34,7 @@ public interface DBLayer extends Remote, Serializable {
      *          (Right object, index 1)
      *  @throws DBLayerException when the database connection cannot be initialized
      */
-    public Object[] initialize(String dbID, String user, String password) throws DBLayerException, RemoteException;
+    public User initialize(String dbID, String user, String password) throws DBLayerException, RemoteException;
 
     /**
      * The database layer performs several kinds of operations each of which may

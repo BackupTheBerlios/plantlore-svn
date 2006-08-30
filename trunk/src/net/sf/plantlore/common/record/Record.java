@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import net.sf.plantlore.client.occurrenceimport.parsers.XMLOccurrenceParser;
-
-import org.apache.log4j.Logger;
-
 
 /**
  * The common ancestor of all records. 
@@ -25,7 +21,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class Record implements Serializable {
 	
-	private Logger logger = Logger.getLogger(XMLOccurrenceParser.class.getPackage().getName());
+	
 	
 	
 	private static final long serialVersionUID = 20060604000L;
@@ -224,7 +220,7 @@ public abstract class Record implements Serializable {
 		try {
 			setValue(column, value);
 		} catch(Exception e) {
-			logger.error("Unable to set "+getClass().getSimpleName()+"."+column+" = "+value+"! " + e.getMessage() );
+			// Whatever
 		}
 	}
 	

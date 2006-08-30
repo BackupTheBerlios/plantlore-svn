@@ -34,6 +34,7 @@ import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.record.Phytochorion;
 import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
+import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
@@ -168,7 +169,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *          ERROR_SELECT: Unable to read contents of TUSER table
      *          ERROR_LOGIN: Authentication failed (wrong password, username or account disabled)
      */
-    public Object[] initialize(String dbID, String user, String password) 
+    public User initialize(String dbID, String user, String password) 
     throws DBLayerException, RemoteException {
         Configuration cfg;
         currentlyConnectedUser = user;
@@ -209,18 +210,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 .scroll();
             
             logger.debug("DBLayer Initialization - verifying existence of the user, part 2.");
-            sr.next();
-            if(sr.get() == null) {
+
+            if( ! sr.next() ) {
             	logger.debug("DBLayer Initialization - things are not going well. sr.get() returned null!");
             	throw new DBLayerException(L10n.getString("Error.MissingUserAccount"), DBLayerException.ERROR_USERNAME);
             }
-            plantloreUser = (User)(sr.get())[0];
+            
+            Object[] userinfo = sr.get();
+            plantloreUser = (User)userinfo[0];
             rights = plantloreUser.getRight();
             logger.debug("DBLayer Initialization - finished!");
         } 
         catch (JDBCException e) {
         	if(sessionFactory != null)
-        		sessionFactory.close(); 
+        		sessionFactory.close();
         	sessionFactory = null;
             logger.fatal("Cannot connect to the database. Details: "+e.getMessage());
             throw new DBLayerException(L10n.getString("Error.ConnectionFailed"), e);
@@ -233,12 +236,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             throw e;
         }
         finally {
-        	
         	if(sess != null) sess.close();
         }
         
+        logger.debug("User and rights ~ " + plantloreUser.toFullString() + " and " + rights.toFullString());
+        
         // Return User and Right object with users details
-        return new Object[] { plantloreUser, rights };
+        return plantloreUser;
     }
     
     

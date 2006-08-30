@@ -294,11 +294,11 @@ public class Login extends Observable {
 				setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
 				logger.debug("Initializing that DBLayer (" + dbinfo.databaseType + ", " + name + ", " + password + "...");
 				
-				Object[] init = currentDBLayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
+				User init = currentDBLayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
 				if(isCanceled())
-					throw new Exception(L10n.getString("Common.Canceled"));
-				plantloreUser = (User)init[0];
-				accessRights = (Right)init[1];
+					throw new DBLayerException(L10n.getString("Common.Canceled"));
+				plantloreUser = init;
+				accessRights = init.getRight();
 			} 
 			catch (Exception e) {
 				logger.error("The initialization of the DBLayer failed! " + e.getMessage());
@@ -398,7 +398,7 @@ public class Login extends Observable {
 			this.wrappedDBLayer = db;
 		}
 
-		synchronized public Object[] initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
+		synchronized public User initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
 			verifyValidity();
 			return wrappedDBLayer.initialize(dbID, user, password);
 		}
