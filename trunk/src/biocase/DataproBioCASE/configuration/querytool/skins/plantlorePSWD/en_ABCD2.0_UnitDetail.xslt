@@ -38,7 +38,7 @@
 				  <tr>
 				     <td>
 				        Podrobnější data o nálezu najdete v poskytnutém XML.<br/>
-							  Další možností je vyhledávat podle standartu ABCD 1.20.
+							  Další možností je vyhledávat podle standardu ABCD 1.20.
              </td>
 				  </tr>
 				</table>  

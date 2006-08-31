@@ -17,7 +17,7 @@ exclude-result-prefixes="xsl xs fn xdt dwc">
 								</span>
 							</h1>
 							Podrobnější data o nálezu najdete v poskytnutém XML.<br/>
-							Další možností je vyhledávat podle standartu ABCD 1.20.
+							Další možností je vyhledávat podle standardu ABCD 1.20.
 							<!-- *********************************NOTES ************************************** 	-->
 							<p/>
 						</div>

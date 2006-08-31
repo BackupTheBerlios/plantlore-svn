@@ -84,14 +84,12 @@
 								</td>
 								<td>
 									 <xsl:value-of select="n1:Identifications/n1:Identification/n1:Result/n1:TaxonIdentified/n1:ScientificName/n1:FullScientificNameString"/>
-								</td>								
-								<xsl:if test="../../n1:Units/n1:Unit/n1:Gathering/n1:NearNamedPlaces/n1:NamedPlaceRelation/n1:NearNamedPlace">
+								</td>																
 									<td>
 										<xsl:if test="n1:Gathering/n1:NearNamedPlaces/n1:NamedPlaceRelation/n1:NearNamedPlace">
 											<xsl:value-of select="n1:Gathering/n1:NearNamedPlaces/n1:NamedPlaceRelation/n1:NearNamedPlace"/>
 										</xsl:if>
-									</td>
-								</xsl:if>
+									</td>								
 								<xsl:if test="../../n1:Units/n1:Unit/n1:Gathering/n1:LocalityText">
 									<td>
 										<xsl:if test="n1:Gathering/n1:LocalityText">
