@@ -89,6 +89,7 @@ import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
+import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Occurrence;
@@ -98,6 +99,9 @@ import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
+import net.sf.plantlore.client.createdb.CreateDB;
+import net.sf.plantlore.client.createdb.CreateDBCtrl;
+import net.sf.plantlore.client.createdb.CreateDBView;
 import net.sf.plantlore.client.export.ExportMng2;
 import net.sf.plantlore.client.export.ExportMngCtrl2;
 import net.sf.plantlore.client.history.HistoryCtrl;
@@ -221,6 +225,11 @@ public class AppCoreCtrl {
 	TableImportMng tableImportModel;
 
 	TableImportMngCtrl tableImportCtrl;
+	
+	// Create new database
+	CreateDB newDBModel;
+	CreateDBView newDBView;
+	CreateDBCtrl newDBCtrl;
 
 	// Detail
 	Detail detailModel;
@@ -295,6 +304,8 @@ public class AppCoreCtrl {
 	AbstractAction logoutAction = new LogoutAction();
 
 	ReconnectAction reconnectAction = new ReconnectAction();
+	
+	AbstractAction createNewDatabaseAction = new CreateNewDatabaseAction();
 	
 	ActionListener silentFinalAction = new ExitListener();
         OverviewResizeListener overviewResizeListener = new OverviewResizeListener();
@@ -1497,11 +1508,26 @@ public class AppCoreCtrl {
 				loginModel = new Login(
 						new RMIDBLayerFactory( model.getMainConfig().getCodebase() ), 
 						model.getMainConfig());
-				loginModel.addObserver(new DatabaseChange());
+				loginModel.addObserver(new DatabaseChange()); // Callback ~ redistribution of DBLayer.
 				loginView = new LoginView(view, loginModel);
 				loginCtrl = new LoginCtrl(loginModel, loginView);
 			}
 			loginCtrl.setVisible(true);
+		}
+	}
+	
+	
+	class CreateNewDatabaseAction extends StandardAction {
+		public CreateNewDatabaseAction() {
+			super("Overview.MenuFileCreateDB");
+		}
+		public void actionPerformed(ActionEvent arg0) {
+			if( newDBModel == null ) {
+				newDBModel = new CreateDB(model.getMainConfig());
+				newDBView = new CreateDBView(view, newDBModel);
+				newDBCtrl = new CreateDBCtrl(newDBModel, newDBView);
+			}
+	    	view.setVisible(true);
 		}
 	}
 
