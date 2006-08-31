@@ -29,6 +29,6 @@
       <mapping resource="net/sf/plantlore/config/hibernate/Territories.hbm.xml"/>
       <mapping resource="net/sf/plantlore/config/hibernate/User.hbm.xml"/>
       <mapping resource="net/sf/plantlore/config/hibernate/Villages.hbm.xml"/>  
-      <mapping resource="net/sf/plantlore/config/hibernate/LastDataVersion.hbm.xml"/> 
+      <mapping resource="net/sf/plantlore/config/hibernate/UnitIdDatabase.hbm.xml"/> 
    </session-factory>
 </hibernate-configuration>

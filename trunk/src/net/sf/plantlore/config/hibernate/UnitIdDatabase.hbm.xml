@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+   <class name="net.sf.plantlore.common.record.UnitIdDatabase" table="TUNITIDDATABASE" lazy="false">
+      <id column="CID" name="id" type="java.lang.Integer">
+         <generator class="increment"/>
+      </id>
+
+      <property column="CUNITIDDB"
+                name="unitIdDb"
+                length="30"
+                not-null="true"                
+                type="java.lang.String"/>                  
+   </class>
+</hibernate-mapping>
