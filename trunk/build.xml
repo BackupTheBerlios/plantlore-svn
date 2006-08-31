@@ -6,7 +6,11 @@
 	<property name="dist.dir" location="${base.dir}/dist"/>
 	<property name="TALK" value="no" />
 	<property name="DEBUG" value="true" />
-	
+
+        <!-- Allows us to use the IzPack Ant task -->
+        <taskdef name="izpack" classpath="${base.dir}/installer/standalone-compiler.jar"
+         classname="com.izforge.izpack.ant.IzPackTask"/>
+         
 	<!-- the base classpath used for compilation -->
 	<path id="classpath.base">		
 		<fileset dir="${base.dir}/lib">
@@ -136,6 +140,14 @@
                 </copy>
                 <copy file="${base.dir}/resources/java.policy" todir="${dist.dir}"/>    
 	</target>
+        
+        <target name="installer" depends="build" description="Creates the IzPack installer.">
+            <izpack input="${base.dir}/installer/install.xml"
+                    output="${dist.dir}/plantlore-install.jar"
+                    installerType="standard"
+                    basedir="${base.dir}"
+            />
+        </target>
 </project>
 
 
