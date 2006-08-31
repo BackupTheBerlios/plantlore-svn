@@ -1,0 +1,141 @@
+<project name="Plantlore" default="all" basedir=".">
+	<target name="all" depends="clean, compile" />
+	
+	<property name="base.dir" location="." />
+	<property name="build.dir" location="${base.dir}/build"/>
+	<property name="dist.dir" location="${base.dir}/dist"/>
+	<property name="TALK" value="no" />
+	<property name="DEBUG" value="true" />
+	
+	<!-- the base classpath used for compilation -->
+	<path id="classpath.base">		
+		<fileset dir="${base.dir}/lib">
+			<include name="*.jar" />
+		</fileset>
+		
+		<fileset dir="${base.dir}/lib/jasper">
+			<include name="*.jar" />
+		</fileset>		
+	</path>
+        
+	<!-- classpath used for rmic compilation -->
+	<path id="classpath.server.rmic">
+		<pathelement location="${base.dir}/lib/hibernate3.jar"/>
+		<pathelement location="${base.dir}/lib/log4j-1.2.13.jar"/>
+		<pathelement location="${build.dir}"/>
+	</path>
+			
+	<!-- prepare the enviroment -->
+	<target name="init">
+		<!-- initialize the DSTAMP, TSTAMP and TODAY properties -->
+		<tstamp/>
+		
+		<!-- create the build directory used by compilation -->
+		<mkdir dir="${build.dir}"/>
+                
+                <!-- inform the user about used JAVA_HOME - it can cause problems if set wrong -->
+                <echo>Using JAVA_HOME=${java.home}</echo>
+                
+	</target>
+	
+	<!-- compile sources -->
+	<target name="compile" depends="init" description="Compiles the Plantlore client and the server. Including the necessary RMI compile.">
+		<!-- fork="true" may be required on Windows according to Ant documentation -->
+		<javac srcdir="${base.dir}/src"
+		       destdir="${build.dir}"
+		       source="1.5"
+		       verbose="${TALK}"
+		       fork="true" 
+		       debug="${DEBUG}"
+		       >
+			<classpath refid="classpath.base"/>
+			<compilerarg line="-Xlint:unchecked -Xlint:deprecation"/>
+		</javac>
+		
+		<rmic classname="net.sf.plantlore.server.HibernateDBLayer" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
+		<rmic classname="net.sf.plantlore.server.SelectQueryImplementation" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
+		<rmic classname="net.sf.plantlore.server.SubQueryImplementation" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
+		<rmic classname="net.sf.plantlore.server.RMIServerControl" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
+		<rmic classname="net.sf.plantlore.server.RMIServer" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
+	</target>
+	
+	<!-- clean the build directory -->
+	<target name="clean" description="Removes the build and dist directories.">
+		<delete verbose="${TALK}" dir="${build.dir}"/>
+		<delete verbose="${TALK}" dir="${dist.dir}"/>
+	</target>
+	
+	<!-- run Plantlore client -->
+	<target name="run-client" depends="build" description="Runs the Plantlore client. Compiles first if necessary.">
+		<java jar="${dist.dir}/plantlore-client.jar"
+                      fork="true"
+                      dir="${dist.dir}">
+                        <jvmarg value="-Djava.rmi.server.codebase=file://${dist.dir}/"/>
+		</java>
+	</target>
+	
+	<!-- run Plantlore server -->
+	<target name="run-server" depends="build" description="Runs the Plantlore server. Compiles first if necessary.">
+		<java jar="${dist.dir}/plantlore-server.jar"
+                      fork="true"
+                      dir="${dist.dir}">
+                        <jvmarg value="-Djava.security.policy=${dist.dir}/java.policy"/>
+                        <jvmarg value="-Djava.rmi.server.codebase=file://${dist.dir}/"/>
+		</java>
+	</target>
+	
+	<!-- makes a new build -->
+	<target name="build" depends="compile" description="Creates a new build. Builds both Plantlore client and server.">
+		<mkdir dir="${dist.dir}"/>
+                
+                <!-- Convert project class path to string property -->
+                <pathconvert property="mf.classpath" pathsep=" ">
+                    <path refid="classpath.base" />
+                    <chainedmapper>
+                        <flattenmapper />
+                        <globmapper from="*" to="lib/*"/>
+                    </chainedmapper>
+                </pathconvert>
+                
+		<jar destfile="${dist.dir}/plantlore-client.jar">
+			<fileset dir="${build.dir}"/>
+                        <fileset dir="${base.dir}/src" includes="hibernate.cfg.xml,net/sf/plantlore/config/**"/>
+                        <fileset dir="${base.dir}/src" includes="net/sf/plantlore/help/**"/>
+                        <fileset dir="${base.dir}/src" includes="net/sf/plantlore/l10n/**" excludes="**/*.java"/>
+                        <fileset dir="${base.dir}/src" includes="net/sf/plantlore/client/resources/**" excludes="**/*.java"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="net.sf.plantlore.client.Plantlore"/>
+				<attribute name="Class-Path" value="${mf.classpath}"/>
+			</manifest>
+		</jar>
+		<jar destfile="${dist.dir}/plantlore-server.jar">
+			<fileset dir="${build.dir}" includes="net/sf/plantlore/server/**"/>
+			<fileset dir="${build.dir}" includes="net/sf/plantlore/common/**"/>
+			<fileset dir="${build.dir}" includes="net/sf/plantlore/l10n/**"/>
+			<fileset dir="${build.dir}" includes="net/sf/plantlore/middleware/**"/>
+			<fileset dir="${build.dir}" includes="net/sf/plantlore/client/resources/**"/>
+                        <fileset dir="${base.dir}/src" includes="hibernate.cfg.xml,net/sf/plantlore/config/**"/>
+                        <fileset dir="${base.dir}/src" includes="net/sf/plantlore/help/**"/>
+                        <fileset dir="${base.dir}/src" includes="net/sf/plantlore/l10n/**" excludes="**/*.java"/>
+                        <fileset dir="${base.dir}/src" includes="net/sf/plantlore/client/resources/**" excludes="**/*.java"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="net.sf.plantlore.server.Plantlore"/>
+				<attribute name="Class-Path" value="${mf.classpath}"/>
+			</manifest>
+		</jar>
+                
+                <!-- copy the directory with libraries used by plantlore to the dist dir -->
+                <copy todir="${dist.dir}">
+                    <fileset dir="${base.dir}" includes="lib/*.jar"/>
+                </copy>
+                <copy todir="${dist.dir}">
+                    <fileset dir="${base.dir}" includes="lib/jasper/*.jar"/>
+                    <globmapper from="lib/jasper/*" to="lib/*"/>
+                </copy>
+                <copy file="${base.dir}/resources/java.policy" todir="${dist.dir}"/>    
+	</target>
+</project>
+
+

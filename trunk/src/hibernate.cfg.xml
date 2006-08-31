@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+   <session-factory>
+
+      <!-- Database connection settings -->
+      <property name="show_sql">true</property>
+      <property name="hibernate.dialect">
+         org.hibernate.dialect.PostgreSQLDialect
+      </property>
+      <property name="hibernate.connection.driver_class">
+         org.postgresql.Driver 
+      </property>
+      <!-- Mapping files -->
+      <mapping resource="net/sf/plantlore/config/hibernate/AuthorsOccurrences.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Authors.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Habitats.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/History.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/HistoryChange.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/HistoryColumn.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Metadata.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Occurrences.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Phytochoria.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Plants.hbm.xml"/>      
+      <mapping resource="net/sf/plantlore/config/hibernate/Publications.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Right.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Territories.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/User.hbm.xml"/>
+      <mapping resource="net/sf/plantlore/config/hibernate/Villages.hbm.xml"/>  
+      <mapping resource="net/sf/plantlore/config/hibernate/LastDataVersion.hbm.xml"/> 
+   </session-factory>
+</hibernate-configuration>

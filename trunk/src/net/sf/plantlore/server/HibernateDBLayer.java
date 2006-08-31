@@ -74,8 +74,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	
     /** Instance of a logger */
     private Logger logger;
-    /** Configuration file for Hibernate */
-    private File configFile;
     /** Pool of select queries */        
     private Hashtable<Integer, ScrollableResults> results;
     /** Maximum result ID used */
@@ -174,11 +172,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Configuration cfg;
         currentlyConnectedUser = user;
         
-        // File containing Hibernate configuration
-        configFile = new File("hibernate.cfg.xml");        
         // Load Hibernate configuration
         try {
-            cfg = new Configuration().configure(configFile);
+            cfg = new Configuration().configure(); //load the configuration from application's resource called hibernate.cfg.xml
         } catch (HibernateException e) {
             logger.fatal("Cannot load Hibernate configuration. Details: "+e.getMessage());
             throw new DBLayerException(L10n.getString("Error.InvalidConfiguration"), DBLayerException.ERROR_LOAD_CONFIG, e);
