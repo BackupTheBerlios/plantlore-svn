@@ -1,7 +1,7 @@
 /*
  * CreateDBAuthView.java
  *
- * Created on 29. srpen 2006, 15:49
+ * Created on 31. srpen 2006, 9:03
  */
 
 package net.sf.plantlore.client.createdb;
@@ -11,7 +11,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import net.sf.plantlore.client.login.DBInfo;
-import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -19,7 +18,6 @@ import net.sf.plantlore.l10n.L10n;
  * @author  yaa
  */
 public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
-	
     
     /** Creates new form CreateDBAuthView */
     public CreateDBAuthView(Dialog parent, CreateDB model) {
@@ -31,6 +29,7 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
         setLocationRelativeTo(null); // center of the screen
         getRootPane().setDefaultButton(create);
     }
+
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -40,22 +39,19 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jLabel1 = new javax.swing.JLabel();
-        user = new AutoComboBox();
-        ((AutoComboBox)user).setStrict(false);
         jLabel2 = new javax.swing.JLabel();
         password = new javax.swing.JPasswordField();
         create = new javax.swing.JButton();
+        user = new javax.swing.JTextField();
 
         jLabel1.setText(L10n.getString("Login.UserName"));
-
-        user.setEditable(true);
 
         jLabel2.setText(L10n.getString("Login.Password"));
 
         create.setText(L10n.getString("CreateDB.Create"));
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
-        this.setLayout(layout);
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -67,8 +63,8 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
                             .add(jLabel2))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(user, 0, 223, Short.MAX_VALUE)
-                            .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)))
+                            .add(user, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                            .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, create))
                 .addContainerGap())
         );
@@ -90,21 +86,21 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
 
         layout.linkSize(new java.awt.Component[] {password, user}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
+        pack();
     }// </editor-fold>//GEN-END:initComponents
     
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton create;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     protected javax.swing.JPasswordField password;
-    protected javax.swing.JComboBox user;
+    protected javax.swing.JTextField user;
     // End of variables declaration//GEN-END:variables
     
     
- 
-    
-	public void update(Observable source, final Object parameter) {
+    public void update(Observable source, final Object parameter) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
     		public void run() {
     			if(parameter instanceof DBInfo) {
@@ -114,5 +110,6 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
     		}
 		});
 	}
+
     
 }

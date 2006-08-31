@@ -22,7 +22,7 @@ public class CreateDBCtrl {
 		this.view = dbCreateView;
 		
 		authView = new CreateDBAuthView( view, model );
-		/*authCtrl = new CreateDBAuthCtrl( model, authView )*/
+		/*authCtrl =*/ new CreateDBAuthCtrl( model, authView );
 		
 		view.next.setAction( new StandardAction("Login.Next") {
 			public void actionPerformed(ActionEvent arg0) {

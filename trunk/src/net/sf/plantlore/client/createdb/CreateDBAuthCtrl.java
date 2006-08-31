@@ -18,7 +18,7 @@ public class CreateDBAuthCtrl {
 
 		view.create.setAction(new StandardAction("CreateDB.Create") {
 			public void actionPerformed(ActionEvent arg0) {
-				String user = ((javax.swing.JTextField)view.user.getEditor().getEditorComponent()).getText();
+				String user = view.user.getText();
 
 				Task creation = model.createCreationTask(user, new String(view.password.getPassword()));
 				new DefaultProgressBar(creation, view, true);

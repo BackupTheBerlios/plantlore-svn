@@ -40,6 +40,9 @@ public class CreateDB extends Observable {
 		ArrayList<DBInfo> dbinfos = config.getDBinfos();
 		dbinfos.add( info );
 		config.setDBInfos( dbinfos, info );
+		try {
+			config.save();
+		} catch(java.io.IOException e) { /* Oh my.. */ }
 		
 		setChanged();
 		notifyObservers( info );
@@ -108,6 +111,7 @@ public class CreateDB extends Observable {
 			
 			// Everything went fine.
 			addDBInfoPermanently( dbinfo );
+			logger.info("The creation of a new database was successful.");
 			
 			fireStopped(null);
 			return null;
