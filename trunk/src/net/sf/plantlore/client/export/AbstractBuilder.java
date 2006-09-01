@@ -7,7 +7,7 @@ import net.sf.plantlore.common.record.Record;
 
 /**
  * A default implementation of the Builder interface.
- * It is strongly recommended to subclass the AbstractBuilder
+ * If it seems convenient you may subclass the AbstractBuilder
  * and implement the <code>output()</code> method
  * instead of implementing the whole Builder interface
  * yourself.
@@ -27,28 +27,28 @@ public abstract class AbstractBuilder implements Builder {
 	
 	
 	/**
-	 * Create a new DefaultBuilder.
+	 * Create a new Abstract Builder.
 	 * 
-	 * @param template The template describing which columns are selected.
+	 * @param projections The template describing which columns are selected.
 	 */
-	public AbstractBuilder(Projection template) {
-		setTemplate(template);
+	public AbstractBuilder(Projection projections) {
+		setProjections(projections);
 	}
 	
 	/**
 	 * Set another template.
 	 * The builder stores a clone of the template.
 	 *  
-	 * @param template The new template. <b>Mustn't be <i>null</i></b>.
+	 * @param projections The new template. <b>Mustn't be <i>null</i></b>.
 	 */
-	public void setTemplate(Projection template) {
-		this.template = (template == null) ? null : template.clone();
+	public void setProjections(Projection projections) {
+		this.template = (projections == null) ? null : projections.clone();
 	}
 	
 	/**
 	 * @return A clone of the template this Builder currently uses.
 	 */
-	public Projection getTemplate() {
+	public Projection getProjections() {
 		return (template == null) ? null : template.clone();
 	}
 	

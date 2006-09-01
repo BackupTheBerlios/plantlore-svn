@@ -17,8 +17,11 @@ import javax.swing.JProgressBar;
 
 /**
  *
- * @author Tomas Kovarik
+ * The use of ProgressDialog is not recommended anymore. Use the Task and ProgressBar instead!
+ * It should be removed from repository for good.
+ * 
  */
+@Deprecated
 public class ProgressDialog {
     
     private JDialog progress;

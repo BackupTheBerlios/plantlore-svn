@@ -13,20 +13,30 @@ import net.sf.plantlore.client.export.Projection;
 import net.sf.plantlore.common.record.*;
 
 /**
- * An improved version of the previous XMLBuilder. 
- * This XMLBuilder is capable of creating files of virtually any size.
- * The builder uses the Dom4j to create just one Occurrence element
- * at a time; that element is written down when another Occurrence
- * record arrives to be processed. 
+ * This XMLBuilder creates a XML tree from the supplied records.
+ * The builder uses the Dom4j to create just one element at a time; 
+ * that element is written down when another record arrives to be processed. 
  * <br/>
  * This way, the creation of an element is handled by the Dom4j 
  * (all those necessary conversions 
  * of <code>&gt;</code> to <code>&amp;gt;</code> etc.)
+ * but it does not share the Dom4j's greatest weakness: its hunger for memory,
+ * because the whole document is not kept in memory.
  * <br/>
+ * A sample output:
+ * <br/>
+ * <pre>
+ *   &lt;plant&gt;
+ *      &lt;taxon&gt;Gagea pratensis (Pers.) Dumort.&lt;/taxon&gt;
+ *      &lt;czechname&gt;ostružiník měkký&lt;/czechname&gt;
+ *   &lt;/plant&gt; 
+ * </pre>
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-07-21
- *
+ * @version 2.0
+ * 
+ * @see net.sf.plantlore.client.export.Builder
  */
 public class XMLBuilder2 implements Builder {
 	

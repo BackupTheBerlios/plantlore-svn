@@ -59,7 +59,7 @@ public class ExportMngCtrl2 {
 			putValue(NAME, L10n.getString("Export.Title"));
 		}
 		public void actionPerformed(ActionEvent arg0) {
-			Projection t = viewB.tsm.getTemplate();
+			Projection t = viewB.tsm.getProjections();
 			viewB.setVisible(false);
 			model.setTemplate( t ); // Set the new template.
 			viewB.tsm.clearSelection();

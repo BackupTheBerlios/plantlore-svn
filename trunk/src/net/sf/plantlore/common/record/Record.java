@@ -136,11 +136,23 @@ public abstract class Record implements Serializable {
 		return null;
 	}
 	
-	
+	/**
+	 * Return the subrecord of this record of the specified type.
+	 * 
+	 * @param name	The simple name of the class of the subrecord.
+	 * 	@return	The subrecord of the specified type if it exists or null otherwise.
+	 */
 	public Record findSubrecord(String name) {
 		return findSubrecord(this, name);
 	}
 	
+	/**
+	 * Return the subrecord of the base record of the specified type.
+	 * 
+	 * @param base	The base record.
+	 * @param name	The simple name of the class of the subrecord.
+	 * @return	The subrecord of the specified type if it exists or null otherwise.
+	 */
 	public static Record findSubrecord(Record base, String name) {
 		if( base.getClass().getSimpleName().equalsIgnoreCase(name) )
 			return base;
@@ -164,7 +176,7 @@ public abstract class Record implements Serializable {
 	
 	
 	/**
-	 * @return	The record with all subrecords (accessible via foreign keys) created.
+	 * @return	The record with all its subrecords (accessible via foreign keys) properly allocated.
 	 */
 	public Record createTorso() {
 		StringBuilder className;
@@ -182,7 +194,9 @@ public abstract class Record implements Serializable {
 	}
 	
 	/**
-	 * Set a <code>value</code> of the <code>column</code> of the <code>subrecord</code>.
+	 * Set a <code>value</code> of the <code>column</code> 
+	 * of a subrecord from the given <code>table</code>.
+	 * 
 	 * @param table	The type of the subrecord.
 	 * @param column	The name of the column.
 	 * @param value	The value to be set to that column.
@@ -193,7 +207,14 @@ public abstract class Record implements Serializable {
 			subrecord.setValue(column, value);
 	}
 	
-	
+	/**
+	 * Set a <code>value</code> of the <code>column</code> 
+	 * of a subrecord from the given <code>table</code>.
+	 * 
+	 * @param table	The simple name of the table of the subrecord.
+	 * @param column	The name of the column.
+	 * @param value	The value to be set to that column.
+	 */
 	public void setValue(String table, String column, Object value) {
 		Record subrecord = findSubrecord(table);
 		if(subrecord != null) 
@@ -220,7 +241,7 @@ public abstract class Record implements Serializable {
 		try {
 			setValue(column, value);
 		} catch(Exception e) {
-			// Whatever
+			// Consume the exception.
 		}
 	}
 	
@@ -284,7 +305,11 @@ public abstract class Record implements Serializable {
 	 */
 	public List<String> getForeignKeys() { return new ArrayList<String>(0); }
 	
-	
+	/**
+	 * 
+	 * @param key	The name of the foreign key in question.
+	 * @return	True if the key is a name of a column that happens to be a foreign key.
+	 */
 	public boolean isForeignKey(String key) {
 		for(String fk : getForeignKeys())
 			if( key.equalsIgnoreCase(fk) )
@@ -297,7 +322,11 @@ public abstract class Record implements Serializable {
 	 */
 	public List<String> getColumns() { return new ArrayList<String>(0); }
 	
-	
+	/**
+	 * 
+	 * @param property		The name of the property in question.
+	 * @return	True if the property is a name of a column that is not a foreign key.
+	 */
 	public boolean isColumn(String property) {
 		for(String column : getColumns())
 			if( property.equalsIgnoreCase(column) )
@@ -333,7 +362,6 @@ public abstract class Record implements Serializable {
 	public boolean areAllNNSet() {
 		for( String column : getNN() ) { 
 			Object value = getValue(column);
-			//System.out.println(" # "+this.getClass().getSimpleName()+"."+column+" = ["+value+"].");
 			if( value == null ) {
 				System.out.println(getClass().getSimpleName()+"."+column+" = 0");
 				return false;
@@ -419,7 +447,12 @@ public abstract class Record implements Serializable {
 		return null;
 	}
 	
-	
+	/**
+	 * Array to List convertor.
+	 * 
+	 * @param values	A (classical) array o values.
+	 * @return	A List of the same values.
+	 */
 	protected List<String> asList(String...values) {
 		return new ArrayList<String>(Arrays.asList(values));
 	}
@@ -438,14 +471,17 @@ public abstract class Record implements Serializable {
 
 	/**
 	 * Convert the record into a string. 
-	 * The list of values spans across subrecords as well.
-	 * For debug purposes mostly.
 	 */
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName();
 	}
 	
+	/**
+	 * Convert the record into a long string. 
+	 * The list of values spans across subrecords as well.
+	 * For debug purposes only.
+	 */
 	public String toFullString() {
 		
 		StringBuilder sigma = new StringBuilder();
@@ -457,8 +493,6 @@ public abstract class Record implements Serializable {
 			if(subrecord != null)	sigma.append( subrecord.toString() );
 		}
 		return sigma.toString();
-		
-		//return this.getClass().getSimpleName();
 	}
 	                
 }

@@ -7,21 +7,26 @@ import javax.swing.tree.TreePath;
 import net.sf.plantlore.client.export.Projection;
 
 /**
- * A TreeSelectionModel modified to update a Projection. 
+ * A TreeSelectionModel modified to update a list of projections. 
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @since 29.4.2006
+ * @since 2006-04-29
  * @see net.sf.plantlore.client.export.component.ExtendedTree
  * @see net.sf.plantlore.client.export.component.UserTreeNode
  */
-public class TemplateSelectionModel extends DefaultTreeSelectionModel {
+public class ProjectionSelectionModel extends DefaultTreeSelectionModel {
 	
-	private Projection template;
+	private Projection projections;
 	
 	
-	
-	public TemplateSelectionModel(Projection template) {
-		this.template = template;
+	/**
+	 * Create a new ProjectionSelectionModel and use the supplied projections
+	 * to store the selected columns.
+	 * 
+	 * @param projections
+	 */
+	public ProjectionSelectionModel(Projection projections) {
+		this.projections = projections;
 	}
 	
 	/**
@@ -38,7 +43,7 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 	}
 	
 	/**
-	 * Update the Projection appropriately.
+	 * Update the list of projections appropriately.
 	 */
 	@Override 
 	public void removeSelectionPaths(TreePath[] paths) {
@@ -47,14 +52,14 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 			Object node = path.getLastPathComponent();
 			if(node instanceof DefaultMutableTreeNode) {
 				UserTreeNode x  = (UserTreeNode) ((DefaultMutableTreeNode)node).getUserObject();
-				template.unset(x.table, x.column);  
+				projections.unset(x.table, x.column);  
 			}
 		}
 		super.removeSelectionPaths( paths );
 	}
 	
 	/**
-	 * Update the Projection appropriately.
+	 * Update the list of projections appropriately.
 	 */
 	@Override 
 	public void addSelectionPaths(TreePath[] paths) {
@@ -63,7 +68,7 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 			if(node instanceof DefaultMutableTreeNode) {
 				UserTreeNode x  = (UserTreeNode) ((DefaultMutableTreeNode)node).getUserObject();
 				// Select table.column records (not the table only). 
-				if(x.column != null) template.set(x.table, x.column);
+				if(x.column != null) projections.set(x.table, x.column);
 			}
 		}
 		super.addSelectionPaths( paths );
@@ -72,15 +77,15 @@ public class TemplateSelectionModel extends DefaultTreeSelectionModel {
 	@Override
 	public void clearSelection() {
 		super.clearSelection();
-		template.unsetEverything();
+		projections.unsetEverything();
 	}
 			
 	/**
 	 * 
-	 * @return A copy of the inner template that stores the list of selected columns.
+	 * @return The list of projections (the list of selected columns).
 	 */
-	public Projection getTemplate() {
-		return template;
+	public Projection getProjections() {
+		return projections;
 	}
 	
 }

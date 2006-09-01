@@ -1,6 +1,5 @@
 package net.sf.plantlore.common;
 
-import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -8,12 +7,9 @@ import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.BorderFactory;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.plaf.metal.MetalComboBoxEditor;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -89,12 +85,10 @@ public class AutoComboBoxNG3 extends JComboBox {
 		JTextField e = (JTextField)(editor.getEditorComponent());
 		AutoDocument a = new AutoDocument(); // change the model ~~> AutoDocument 
 		e.setDocument(a); e.addKeyListener(a); e.addFocusListener(a);
-                //setBorder(BorderFactory.createLineBorder(Color.BLUE));
-                //updateUI();
 	}
 	
 	/**
-	 * Create the AutoComboBox with given array of values
+	 * Create a new AutoComboBox filled with given values.
 	 * 
 	 * @param values	<b>Sorted</b> list of available values (items).
 	 * @param strict	True if the AutoComboBox should not accept values (items)
@@ -114,11 +108,20 @@ public class AutoComboBoxNG3 extends JComboBox {
 			super.setPopupVisible(visibility);
 	}
 	
-	
+	/**
+	 * Create an empty AutoComboBox.
+	 * 
+	 */
 	public AutoComboBoxNG3() {
 		this(new String[] { "" });		
 	} 
 	
+	/**
+	 * Create a new AutoComboBox filled with given values.
+	 * 
+	 * @param strict	True if the AutoComboBox should not accept values (items)
+	 *        that are not in the list of available values.
+	 */
 	public AutoComboBoxNG3(boolean strict) {
 		this(new String[] { "" });
                 this.strict = strict;
@@ -287,10 +290,18 @@ public class AutoComboBoxNG3 extends JComboBox {
 		public void focusGained(FocusEvent arg0) {}
 	}
     
+	/**
+	 * 
+	 * @return The maximum number of character the user can type in the "benevolent" mode.
+	 */
 	public int getCapacity() {
 		return capacity;
 	}
 
+	/**
+	 * 
+	 * @param capacity	The maximum number of character the user can type in the "benevolent" mode.
+	 */
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}

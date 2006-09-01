@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
- * A unique number generator.
+ * A unique identifier generator.
  *
  * Based on http://www.javapractices.com/Topic56.cjp
  * 
@@ -15,7 +15,12 @@ import java.security.SecureRandom;
  */
 public class UniqueIDGenerator {
 	
-	
+	/**
+	 * Encode the digest to some human readable format.
+	 * 
+	 * @param input	The digest from SHA1 or MD5
+	 * @return
+	 */
 	static private String encode( byte[] input){
 	    StringBuffer result = new StringBuffer();
 	    char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };

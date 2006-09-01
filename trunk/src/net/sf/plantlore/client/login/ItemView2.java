@@ -1,9 +1,3 @@
-/*
- * ItemView2.java
- *
- * Created on 25. červenec 2006, 16:25
- */
-
 package net.sf.plantlore.client.login;
 
 import java.awt.Dialog;
@@ -13,14 +7,17 @@ import java.util.Observer;
 import net.sf.plantlore.l10n.L10n;
 
 /**
+ * ItemView displays the dialog where the User can alter values
+ * that are required for connection making. The values are pre-filled
+ * according to the currently selected record.
  *
- * @author  yaa
+ * @author  Erik Kratochvíl
+ * @see Login#getSelected()
  */
 public class ItemView2 extends javax.swing.JDialog implements Observer {
     
 	private Login model;
 	
-    /** Creates new form ItemView2 */
     public ItemView2(Dialog parent, Login model) {
     	super(parent, true);
     	
@@ -234,7 +231,8 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
     
     
     /**
-     * Fill all fields with information obtained from the currently selected record.
+     * Fill all fields of the dialog
+     * with information obtained from the currently selected record.
      */
     public void update(Observable arg0, Object arg1) {
 		java.awt.EventQueue.invokeLater(new Runnable() {

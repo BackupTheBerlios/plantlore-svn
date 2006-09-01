@@ -1,9 +1,3 @@
-/*
- * CreateDBAuthView.java
- *
- * Created on 31. srpen 2006, 9:03
- */
-
 package net.sf.plantlore.client.createdb;
 
 import java.awt.Dialog;
@@ -14,12 +8,14 @@ import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- *
- * @author  yaa
+ * The view allows the User to specify the Authentication information
+ * - the User name (or the Account name) and the Password of that account.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
  */
 public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
     
-    /** Creates new form CreateDBAuthView */
+    
     public CreateDBAuthView(Dialog parent, CreateDB model) {
     	super(parent, true);
     	
@@ -103,10 +99,8 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
     public void update(Observable source, final Object parameter) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
     		public void run() {
-    			if(parameter instanceof DBInfo) {
+    			if(parameter instanceof DBInfo)
     				setVisible(false);
-    				password.setText("");
-    			}
     		}
 		});
 	}

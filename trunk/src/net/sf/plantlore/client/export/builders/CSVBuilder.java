@@ -13,7 +13,16 @@ import net.sf.plantlore.client.export.Projection;
 /**
  * CSV Builder.
  * 
- * The first line is the list of names of exported columns.
+ * The builder produces a comma separated values file format.
+ * The first line is the list of names of exported columns;
+ * the rest of the file contains values of those columns.
+ * <br/>
+ * A sample output:
+ * <br/>
+ * <pre>
+ * Author.WholeName, Author.Email, Plant.Taxon, Plant.CzechName 
+ * Erik Kratochvíl, discontinuum@gmail.com, Gagea pratensis (Pers.) Dumort., ostružiník měkký
+ * <pre>
  *  
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
@@ -44,10 +53,7 @@ public class CSVBuilder implements Builder {
 	
 	/**
 	 * Create a new CSV Builder. 
-	 * The output is written in the format of comma separated values:<br/>
-	 * <pre>
-	 * Erik Kratochvíl, discontinuum@gmail.com, Gagea pratensis (Pers.) Dumort., ostružiník měkký
-	 * <pre>
+
 	 * 
 	 * @param output	The writer where the output will be sent.
 	 * @param tmp	The template that describes the selected columns and tables.

@@ -10,7 +10,14 @@ import javax.swing.event.ListSelectionListener;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.l10n.L10n;
 
-
+/**
+ * The mapping of buttons in the view to actions.
+ * The User can move to the Authorization dialog,
+ * or to the Add/Edit Item dialog, or Delete one item 
+ * from the list.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ */
 public class LoginCtrl {
 	
 	private Login model;
@@ -21,7 +28,12 @@ public class LoginCtrl {
 	private AuthView authView;
 	
 	
-	
+	/**
+	 * Create a new Login Controller. Requires the Model and the View.
+	 * 
+	 * @param login The model.
+	 * @param loginview	The view.
+	 */
 	public LoginCtrl(Login login, LoginView loginview) {
 		this.view = loginview; this.model = login;
 		
@@ -43,13 +55,21 @@ public class LoginCtrl {
 		view.choice.setSelectedIndex(0);
 	}
 	
-	
+	/**
+	 * Set either this dialog or the Authorization dialog visible.
+	 * The authorization dialog will be opened instead of this one 
+	 * if the selection is non-empty and the View.Remember checkbox is selected.
+	 *  
+	 * @param visible	True if the View should become visible.
+	 */
 	public void setVisible(boolean visible) {
 		JDialog dialog = view.remember.isSelected() && !view.choice.isSelectionEmpty() ? authView : view;
 		dialog.setVisible(visible);
 	}
 	
-	
+	/**
+	 *	Set the currently selected record in the Model accordingly. 
+	 */
 	class ChoiceChanged implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
 			int index = view.choice.getSelectedIndex();
@@ -58,6 +78,9 @@ public class LoginCtrl {
 		}	
 	}
 	
+	/**
+	 * Open the `Add New Record` dialog. 
+	 */
 	class AddRecordAction extends AbstractAction {
 		public AddRecordAction() {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Login.AddRecordTT"));
@@ -69,6 +92,9 @@ public class LoginCtrl {
 		}
 	}
 	
+	/**
+	 *	Remove the selected record.
+	 */
 	class  RemoveRecordAction extends AbstractAction {
 		public RemoveRecordAction() {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Login.RemoveRecordTT"));
@@ -79,6 +105,9 @@ public class LoginCtrl {
 		}
 	}
 	
+	/**
+	 * Open the `Edit the Selected Record` dialog.
+	 */
 	class EditRecordAction extends AbstractAction {
 		public EditRecordAction() {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Login.EditRecordTT"));
@@ -92,6 +121,9 @@ public class LoginCtrl {
 		}
 	}
 	
+	/**
+	 * Proceed to the Authorization - open the `Authentication` dialog.
+	 */
 	class NextAction extends AbstractAction {
 		public NextAction() {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Login.NextTT"));

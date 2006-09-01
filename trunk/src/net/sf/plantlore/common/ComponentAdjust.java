@@ -15,9 +15,12 @@ import javax.swing.JComponent;
 /** The purpose of ComponentAdjust is to ease manual creation of swing dialogs.
  * You can add your components to an instance of this class and then adjust their
  * width by calling setMaxWidth() method.
+ * 
+ * This class is no longer in use by any other class. It shall be removed from the repository.
  *
  * @author Jakub
  */
+@Deprecated
 public class ComponentAdjust
 {
     ArrayList<JComponent> list;

@@ -10,7 +10,8 @@ import net.sf.plantlore.client.export.Projection;
  * Convenient if you wish to see the results immediately
  * on the default output.
  * <br/>
- * The output has the following form:<br/>
+ * A sample output:
+ * <br/>
  * <pre>
  * &lt;157&gt;
  *   Author.WholeName = Erik Kratochvíl
@@ -27,27 +28,47 @@ public class TrainingBuilder extends AbstractBuilder {
 	
 	private int i = 0;
 	
-	public TrainingBuilder(Projection template) {
-		super(template);
+	/**
+	 * Create a new Training Builder. 
+	 * 
+	 * @param projections	The list of columns that shall be sent to the output.
+	 */
+	public TrainingBuilder(Projection projections) {
+		super(projections);
 	}
  
+	/**
+	 * Create a header of the output.
+	 */
 	public void header() throws IOException {
 		System.out.println("Training Builder engaged.");		
 	}
   
+	/**
+	 * Create a footer of the output.
+	 */
 	public void footer() throws IOException {
 		System.out.println("Training Builder disengaged.");
 	}
  
+	/**
+	 * Start processing another record.
+	 */
 	public void startRecord() throws IOException {
 		System.out.println(" <" + i + ">");
 	}
 
+	/**
+	 * Finish processing of the record.
+	 */
 	public void finishRecord() throws IOException {
 		System.out.println(" </" + i + ">");
 		i++;
 	}
 	
+	/**
+	 * Send a part of the record to the output.
+	 */
 	protected void output(Class table, String column, Object value) throws IOException {
 		System.out.println("   " + table.getSimpleName() + "." + column + " = " + value);
 	}

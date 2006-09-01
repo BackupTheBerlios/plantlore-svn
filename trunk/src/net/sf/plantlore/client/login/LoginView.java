@@ -14,14 +14,19 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
 /**
+ * The view presents the User with the list of databases the User created or
+ * accessed. The User should choose one of them and proceed to Authorization
+ * or He can modify (add/edit/delete) the list of databases.
  *
- * @author  yaa
+ * @author  Erik Kratochvíl
+ * 
+ * @see LoginCtrl
  */
 public class LoginView extends javax.swing.JDialog implements Observer {
 	
 	private Login model;
     
-    /** Creates new form LoginView */
+    
     public LoginView(Frame parent, Login model) {
     	super(parent, true);
     	
@@ -112,7 +117,8 @@ public class LoginView extends javax.swing.JDialog implements Observer {
  
     
     /**
-     * Update the list of records (in case there were some changes).
+     * Update the list of records (in case there were some changes)
+     * or hide if no longer necessary.
      */
     public void update(final Observable source, final Object parameter) {
     	java.awt.EventQueue.invokeLater(new Runnable() {

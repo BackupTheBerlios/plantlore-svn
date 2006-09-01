@@ -25,15 +25,13 @@ import javax.swing.text.PlainDocument;
  * guide this time.</li>
  * </ul>
  * <br/>
- * Heavily refined from the source code created by Stephane Crasnier. 
- * <br/>
  * The use of the benevolent behaviour is discouraged as it contradicts the sole purpose 
  * of this component. If you want to allow the User 
  * to leave this field blank, use a special
  * record "------" or "not specified" instead.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @version 1.1 jlist doesn't get updated when the user types
+ * @version 1.1
  * @since The beginning of time.
  */
 public class AutoComboBox extends JComboBox {
@@ -45,7 +43,7 @@ public class AutoComboBox extends JComboBox {
 	
 
 	/**
-	 * Create the AutoComboBox with given array of choices.
+	 * Create a new AutoComboBox starting with the given array of choices.
 	 * 
 	 * @param choices	<b>Sorted</b> list of available choices (items).
 	 */
@@ -58,11 +56,18 @@ public class AutoComboBox extends JComboBox {
 		editor.setDocument(a); editor.addKeyListener(a); editor.addFocusListener(a);
 	}
 	
-	
+	/**
+	 * Create an empty AutoComboBox.
+	 */
 	public AutoComboBox() {
 		this(new String[] { null });		
 	} 
 	
+	/**
+	 * An extension of JList.addItem(). This method allows you to add several items at once.
+	 * 
+	 * @param items	The list of items to be inserted (added) into the list.
+	 */
 	public void addItems(Object[] items) {
 		for(Object item : items)
 			if(item != null) 

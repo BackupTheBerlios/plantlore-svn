@@ -1,9 +1,3 @@
-/*
- * AuthView.java
- *
- * Created on 9. duben 2006, 18:04
- */
-
 package net.sf.plantlore.client.login;
 
 import java.awt.Cursor;
@@ -16,12 +10,17 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
 /**
- *
- * @author  yaa
+ * The view allows the User to specify the Authentication information
+ * - the User name (or the Account name) and the Password of that account.
+ * 
+ * The list of User names is reloaded accoring to the currently selected record
+ * in the LoginView.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
  */
 public class AuthView extends javax.swing.JDialog implements Observer {
 	
-    /** Creates new form AuthView */
+    
     public AuthView(Dialog parent, Login model) {
     	super(parent, true);
     	
@@ -115,6 +114,7 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     
     /**
      * Reload the list of usernames according to the currently selected record.
+     * Hide the dialog if it is no longer necessary.
      */
     public void update(Observable source, final Object arg) {
     	java.awt.EventQueue.invokeLater(new Runnable() {
@@ -127,21 +127,9 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     				password.setText("");
     				setTitle(L10n.getString("Login.ConnectingTo") + " " + selected.toString());
     			}
-    			// Exception! We must display the exception to the user.
-//    			else if(arg instanceof Exception) {
-//    				next.setEnabled(true);
-//    				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-//    				JOptionPane.showMessageDialog(
-//    						null, 
-//    						((Exception)arg).getMessage(), 
-//    						L10n.getString("Error.LoginFailed"), 
-//    						JOptionPane.ERROR_MESSAGE);
-//    			}
     			// The database layer has been created, we are no longer neccessary
-    			else if(arg instanceof DBLayer) {
+    			else if(arg instanceof DBLayer) 
     				setVisible(false);
-    				password.setText(""); // Erase the password from the field.
-    			}
     		}
     	});
 	}

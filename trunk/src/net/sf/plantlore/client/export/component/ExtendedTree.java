@@ -15,37 +15,38 @@ import net.sf.plantlore.common.record.*;
 
 /**
  * The extension of a JTree that allows the User to see the database model
- * in a compact form. The tree expects the database hierarchy when it's created.
+ * in a compact form. The tree expects a database hierarchy - that hierarchy will
+ * be traversed to build the tree.
+ * <br/>
  * Two default hierarchies are already present - the <code>DefaultHierarchy</code>
  * which is loaded when no other hierarchy is specified and displays the database
- * model in the hierarchy, 
+ * model in the natural hierarchy (i.e. following the database model), 
  * and the <code>SimpleHierarchy</code> which is a simplified version with
  * all tables as sub-root nodes.
  * Both hierarchies are hard-wired and must be updated if the database
  * model changes!
  * <br/>
- * The selected nodes are visualized to the User in another colour.
+ * The selected (marked) nodes are visualized to the User in another colour.
  * Collapsing a node <b>will cause</b> deselection of all of its selected
  * sub-nodes. This is a feature that will prevent the User from selecting
  * a group of columns and forgeting about them. 
  * <br/>
- * The XTree uses instances of XNode class - that is, the label of the
- * node is derived from the XNode.toString(). Should you have a desire
- * to implement the L10N, modify that method appropriatelly.
+ * The ExtendedTree uses instances of UserTreeNode class - that is, the label of the
+ * node is derived from the UserTreeNode.toString(). 
  * <br/>
- * The XTree cannot produce a Projection - in order to create and update 
+ * The ExtendedTree cannot produce a list of projections - in order to create and update 
  * the Projection "automatically" create your own TreeSelectionModel
  * that is capable of such an action. 
  * <pre>
- * XTree tree = new XTree( );
+ * ExtendedTree tree = new ExtendedTree( );
  * tree.setSelectionModel( new YSelectionModel() );
  * </pre>
  * where
  * <pre>
- * class TemplateSelectionModel extends DefaultTreeSelectionModel {
- * 		private Projection template;
+ * class ProjectionSelectionModel extends DefaultTreeSelectionModel {
+ * 		private Projection projection;
  * 
- *		// Use this to achieve compatibility with the default XTree selection model.
+ *		// Use this to achieve compatibility with the default ExtendedTree selection model.
  *		@Override 
  *		public void setSelectionPath(TreePath path) {
  *			if( isPathSelected(path) )
@@ -56,10 +57,10 @@ import net.sf.plantlore.common.record.*;
  *		@Override 
  *		public void removeSelectionPaths(TreePath[] paths) {
  *			for(TreePath path : paths) {
- *				XNode x  = (XNode) 
+ *				UserTreeNode x  = (UserTreeNode) 
  *					((DefaultMutableTreeNode)path.getLastPathComponent())
  *					.getUserObject();
- *				template.unset(x.table, x.column);    // update the Projection 
+ *				projection.unset(x.table, x.column);    // update the list of projections 
  *			} 
  *			super.removeSelectionPaths( paths ); 
  *		}
@@ -74,7 +75,7 @@ import net.sf.plantlore.common.record.*;
  * @since 2006-04-29
  * @version 1.0
  * @see net.sf.plantlore.client.export.Projection
- * @see net.sf.plantlore.client.export.ExportMng.XSelectionModel
+ * @see net.sf.plantlore.client.export.ExportMng.ProjectionSelectionModel
  */
 public class ExtendedTree extends javax.swing.JTree {
 	
@@ -284,7 +285,7 @@ public class ExtendedTree extends javax.swing.JTree {
 	};
 	
 	/**
-	 * Create a new XTree with the Default Hierarchy Model.
+	 * Create a new ExtendedTree with the Default Hierarchy Model.
 	 */
 	public ExtendedTree( ) {
 		this( DefaultHierarchy );
@@ -292,7 +293,8 @@ public class ExtendedTree extends javax.swing.JTree {
 	
 		
 	/**
-	 * Create a new XTree with a specified Hierarchy Model.
+	 * Create a new ExtendedTree using the specified Hierarchy Model.
+	 * 
 	 * @param hierarchy The hierarchy to be processed.
 	 */
 	public ExtendedTree( Object[] hierarchy ) {
@@ -371,7 +373,7 @@ public class ExtendedTree extends javax.swing.JTree {
 	
 	
 	/**
-	 * SPecialized Cell Renderer that shows no icons and
+	 * Specialized Cell Renderer that shows no icons and
 	 * displayes mandatory columns with a different coulour.
 	 * 
 	 * @author Erik Kratochvíl (discontinuum@gmail.com)

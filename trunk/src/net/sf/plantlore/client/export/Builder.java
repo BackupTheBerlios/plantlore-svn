@@ -6,7 +6,7 @@ import net.sf.plantlore.common.record.*;
 
 /**
  * Interface for building the output. 
- * The builder is responsible for "building" the output when given 
+ * The builder is responsible for "building" the output when it is given 
  * a record. The Director calls only these few methods - everything
  * else is "particular-implementation specific".
  * 

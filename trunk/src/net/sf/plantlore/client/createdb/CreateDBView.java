@@ -1,9 +1,3 @@
-/*
- * CreateDBView.java
- *
- * Created on 29. srpen 2006, 15:21
- */
-
 package net.sf.plantlore.client.createdb;
 
 import java.awt.Frame;
@@ -14,13 +8,15 @@ import net.sf.plantlore.client.login.DBInfo;
 import net.sf.plantlore.l10n.L10n;
 
 /**
+ * The view presents the User with several fields
+ * so that the User can supply information about the database
+ * that shall be created.
  *
- * @author  yaa
+ * @author  Erik Kratochvíl
  */
 public class CreateDBView extends javax.swing.JDialog implements Observer {
 	
 	    
-    /** Creates new form CreateDBView */
     public CreateDBView(Frame parent, CreateDB model) {
     	super(parent, true);
     	
@@ -182,6 +178,9 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
     // End of variables declaration//GEN-END:variables
     
     
+    /**
+     * Hide the dialog if the DBInfo has been added successfully.
+     */
 	public void update(Observable source, final Object parameter) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
     		public void run() {

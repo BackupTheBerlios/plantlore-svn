@@ -143,7 +143,7 @@ public class ChecklistCtrl {
 	}
 	
 	/**
-	 * Restore the checklist to its original state (right after creation).
+	 * Restore the checklist to its original state (right after the creation).
 	 */
 	class Restore extends AbstractAction {
 		public Restore() {

@@ -11,6 +11,8 @@ import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
 
+import spin.Spin;
+
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
@@ -21,15 +23,20 @@ import net.sf.plantlore.middleware.SelectQuery;
  * Login is responsible for the following tasks:
  * <ul>
  * <li><b>management of the list of databases</b> - 
- * 			adding, editing, removing records from the list, and the persistent storage of that list,</li>
- * <li><b>creating and initializing a new dblayer</b> - only one at a time is active,</li>
- * <li><b>destroying the current dblayer (logout)</b> - so as to make another connection possible</li>
+ * 			adding, editing, removing records from the list, 
+ * 			and the invocation of methods ensuring the persistent storage of that list,</li>
+ * <li><b>creation and initialization of a new dblayer</b> -
+ * 			 only one at a time is active,</li>
+ * <li><b>proper destruction of the current dblayer (logout)</b> - 
+ * 			so as to make another connection possible</li>
+ * <li><b>repeated connection (reconnect)</b> - 
+ * 			to connect to the database again if the previous connection fails</li>
  * </ul>
  * 
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @author Jakub Kotowski
- * @version 1.0
+ * @author Jakub Kotowski (storage and retrieval of the list of databases)
+ * @version 2.0
  */
 public class Login extends Observable {
 	
@@ -65,6 +72,7 @@ public class Login extends Observable {
 	 * new DBLayers.
 	 *  
 	 * @param factory The factory that will be used to create a new DBLayer. 
+	 * @param mainConfig The configuration tool that is capable of storing the list of databases.
 	 */
 	public Login(DBLayerFactory factory, MainConfig mainConfig) {
 		this.factory = factory;
@@ -75,7 +83,7 @@ public class Login extends Observable {
 	
 	
 	/**
-	 * Load saved information about the database connections.
+	 * Retrieve saved information about the database connections.
 	 */
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
@@ -93,7 +101,7 @@ public class Login extends Observable {
 	}
 	
 	/**
-	 * Save the list of database connections for further usage.
+	 * Store the list of database connections for further usage.
 	 */
 	protected void save() {
 		logger.debug("Saving the list of databases.");
@@ -108,10 +116,10 @@ public class Login extends Observable {
 	
 
 	/**
-	 * Create a new record, add it to the list of connections and save that information for
-	 * the future use.
+	 * Create a new record, add it to the list of connections, and save that information for
+	 * future use.
 	 * 
-	
+	 * @see DBInfo
 	 */
 	synchronized public void createRecord(
 			String alias, 
@@ -145,12 +153,10 @@ public class Login extends Observable {
 	}
 	
 	/**
-	 * Update the selected record.
+	 * Update the selected record, and save that information for
+	 * future use.
 	 * 
-	 * @param alias	Alias of the database.
-	 * @param host	Hostname of the computer where the server dwells.
-	 * @param port	Port where the server listens.
-	 * @param db		Identifier of the database to which the User wants to connect.
+	 * @see DBInfo
 	 */
 	synchronized public void updateSelectedRecord(
 			String alias, 
@@ -173,14 +179,14 @@ public class Login extends Observable {
 		
 		save();
 		logger.debug("The selected record has been updated " + selected);
-		this.setChanged(); this.notifyObservers(UPDATE_LIST);
+		this.setChanged(); 
+		this.notifyObservers(UPDATE_LIST);
 	}
 	
 	/**
-	 * @return the list of all records.
+	 * @return The list of all records the User has created.
 	 */
 	synchronized public DBInfo[] getRecords() {
-		// Seeing is believing: http://java.sun.com/j2se/1.5.0/docs/api/java/util/Collection.html#toArray(T[])
 		return dbinfos.toArray(new DBInfo[0]);
 	}
 	
@@ -190,7 +196,7 @@ public class Login extends Observable {
 	 * Set the selected record.
 	 * 
 	 * @param index	The index of the selected record. Zero means first. 
-	 * Negative means nothing gets selected (deselect).
+	 * Negative means nothing gets selected (a.k.a. deselect).
 	 */
 	synchronized public void setSelected(int index) {
 		if(index == lastIndex) 
@@ -222,24 +228,24 @@ public class Login extends Observable {
 	 * update their database layers.
 	 */
 	private void announceConnection() {
-		logger.debug("New database layer created for " + proxyLayer);
+		logger.debug("New database layer created " + proxyLayer);
 		setChanged(); 
 		notifyObservers(proxyLayer);
-		logger.debug("Observers notified.");
+		logger.debug("Observer notification finished.");
 	}
 	
 
 	
 	/**
-	 * Create a task that will try to forge the connection to the selected database. 
-	 * First, a new database layer is created,
-	 * and second, that database layer is initialized.
+	 * Create a task that will build the connection to the selected database. 
 	 * <br/>
-	 * <b>Warning:</b>If there is a previously created DBLayer, 
+	 * <b>Warning:</b>If there is another (previously created) DBLayer, 
 	 * it will be destroyed using the <code>logout()</code> method. 
 	 * 	  
 	 * @param name The account name (used to access the database).  
 	 * @param password The password to the account.
+	 * 
+	 * @see #logout()
 	 */
 	synchronized public Task createConnectionTask(String name, String password) {
 		if(selected == null) {
@@ -259,13 +265,29 @@ public class Login extends Observable {
 	}
 	
 	
-	
+	/**
+	 * The task that performs the database layer "creation" 
+	 * (using the supplied DatabaseLayerFactory - so in fact it is the Factory that creates
+	 * that DBLayer)
+	 * and it's initialization. Yet it is not the database layer that is returned - 
+	 * it is a special wrapper that performs further access checks and makes the renewal
+	 * of the database layer a little bit easier. 
+	 * 
+	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @since 2006-08-30
+	 */
 	private class ConnectionTask extends Task {
 		
 		private DBInfo dbinfo;
 		private transient String name, password;
 		
-		
+		/**
+		 * Create a new connection task.
+		 * 
+		 * @param dbinfo	A holder object storing all neccessary information for the connection.
+		 * @param name		The account name (used to access the database).
+		 * @param password	The password to the account.
+		 */
 		public ConnectionTask(DBInfo dbinfo, String name, String password) {
 			this.dbinfo = dbinfo;
 			this.name = name;
@@ -280,7 +302,7 @@ public class Login extends Observable {
 				if(isCanceled())
 					throw new Exception(L10n.getString("Common.Canceled"));
 				
-				// Create a new database layer.
+				// Create a new database layer ~ ask the DBLayerFactory to create it for us..
 				logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + dbinfo.host + ":" + dbinfo.port);
 				setStatusMessage( L10n.getString("Login.Connecting") );
 				currentDBLayer = factory.create( dbinfo );
@@ -292,13 +314,15 @@ public class Login extends Observable {
 				
 				// Initialize the database layer.
 				setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
-				logger.debug("Initializing that DBLayer (" + dbinfo.databaseType + ", " + name + ", " + password + "...");
+				logger.debug("Initializing that DBLayer.");
 				
 				User init = currentDBLayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
 				if(isCanceled())
 					throw new DBLayerException(L10n.getString("Common.Canceled"));
 				plantloreUser = init;
 				accessRights = init.getRight();
+				
+				logger.debug("Initialization successful.");
 			} 
 			catch (Exception e) {
 				logger.error("The initialization of the DBLayer failed! " + e.getMessage());
@@ -308,7 +332,8 @@ public class Login extends Observable {
 					try {
 						factory.destroy(currentDBLayer);
 					} catch(Exception re) {
-						// Nothing we can do; the server is probably in trouble, or the network connection failed. 
+						// There's nothing we can do; 
+						// the server is probably in trouble, or the network connection failed. 
 					}
 				// Re-throw the exception so that the view is updated as well.
 				throw e;
@@ -322,7 +347,7 @@ public class Login extends Observable {
 			fireStopped(null);
 			
 			// Everything went fine - 
-			// there is a new DBLayer which is to be announced to the observers of Login.
+			// there is a new DBLayer and the observers of Login must know about it.
 			announceConnection();
 			
 			return null;
@@ -333,8 +358,9 @@ public class Login extends Observable {
 	
 	
 	/**
-	 * Disconnect from the current database. 
-	 * The database connection is lost, any operation in progress will cause an exception.
+	 * Disconnect the User from the current database. 
+	 * The database connection will cease to exist - 
+	 * everyone using the database layer will get an exception from now on. 
 	 */
 	public void logout() {
 		if(currentDBLayer != null) 
@@ -347,20 +373,25 @@ public class Login extends Observable {
 				logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
 			} catch(RemoteException e) {
 				logger.warn("Unable to disconnect from the server. " + e.getMessage());
-				/*setChanged();
-				notifyObservers(e);*/ // Not this time, this is supposed to be silent.
+				// Not this time, this is supposed to be silent.
 			}
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @return The last connection task, ie. the last task that was used to create a connection
+	 * to the database. Restarting that task will lead to the database layer renewal, 
+	 * however, this may lead to problems as old queries and resultset identifiers will
+	 * not be valid with the new database layer!
+	 */
 	synchronized public Task getLastConnectionTask() {
 		return lastConnectionTask;
 	}
 	
 		
 	/**
-	 * @return The last DBLayer that has been created.  
+	 * @return The new DBLayer that has been created.  
 	 */	
 	synchronized public DBLayer getDBLayer() { 
 		return proxyLayer; 
@@ -383,7 +414,20 @@ public class Login extends Observable {
 	
 	
 	
-	
+	/**
+	 * The DBLayerProxy constitutes a simple wrapper of the received database layer.
+	 * It performs some additional access checks.
+	 * <br/>
+	 * The advantage of the wrapper is that its wrapped database layer can be easily
+	 * switched without clients noting anything. 
+	 * However, in some cases clients using the wrapper must be notified 
+	 * in order to restart their queries and refresh their resultsets.
+	 * 
+	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @since 2006-08-30
+	 * 
+	 * @see DBLayer
+	 */
 	private class DBLayerProxy implements DBLayer {
 		
 		private DBLayer wrappedDBLayer;
@@ -394,8 +438,11 @@ public class Login extends Observable {
 		}
 		
 				
-		synchronized public void wrap(DBLayer db) {
-			this.wrappedDBLayer = db;
+		synchronized void wrap(DBLayer db) {
+			if(db == null)
+				this.wrappedDBLayer = db;
+			else
+				this.wrappedDBLayer = (DBLayer) Spin.off( db );
 		}
 
 		synchronized public User initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
@@ -547,12 +594,12 @@ public class Login extends Observable {
 		}
 
 		synchronized public int getConnectionCount() throws RemoteException {
-			verifyValidity();
-			return wrappedDBLayer.getConnectionCount();
+			//verifyValidity();
+			return 0; //wrappedDBLayer.getConnectionCount();
 		}
 
 		synchronized public void shutdown() throws RemoteException {
-			throw new Error("YOU SHOULD NEVER CALL DBLayer.shutdown() YOU IDIOT!");
+			throw new Error("It is forbidden to call this method. The proper way to destroy a database layer is the logout() method!");
 		}
 		
 		@Override

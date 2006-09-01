@@ -12,9 +12,28 @@ import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
 /**
+ * CreateDB is a CreationTask factory. 
+ * Its sole purpose is to gather information required for the
+ * creation of that task and create a new record in the list
+ * of databases the User accessed (see Login).
+ * <br/>
+ * The CreationTask is a long running operation that 
+ * <ol>
+ * <li>
+ * Connects to the database engine and creates a new database.
+ * The creation of the database includes the creation of all tables,
+ * the default administrator (if it is not already created) and filling those
+ * tables with values that are necessary for proper work with Plantlore. 
+ * </li>
+ * <li>
+ * Optionally fills all (so called) immutable tables with records 
+ * that apply to the Czech Republic. 
+ * Those are tables are: villages, plants, territories, and phytochoria.
+ * </li>
+ * </ol>
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @since 29.8.2006
+ * @since 2006-08-29
  *
  */
 public class CreateDB extends Observable {
@@ -25,41 +44,70 @@ public class CreateDB extends Observable {
 	private DBInfo info;
 	private boolean leaveEmpty = false;
 		
-	
+	/**
+	 * Create a new CreateDB.
+	 * 
+	 * @param config	The configuration that manages the list of databases the User accessed.
+	 */
 	public CreateDB(MainConfig config) {
 		this.config = config;
 	}
 	
-	
+	/**
+	 * Set information about the datbase that shall come to existence.
+	 *  
+	 * @param alias	The name that will be presented to the User.
+	 * @param engine	The type of the database (the database engine).
+	 * @param port	The port where the database engine listens.
+	 * @param identifier	The name of the database that will be created.
+	 * @param leaveEmpty		True if the immutable tables shall remain empty. 
+	 */
 	public void setDBInfo(String alias, String engine, int port, String identifier, boolean leaveEmpty) {
 		info = new DBInfo(alias, null, 0, engine, port, identifier, "", new String[Login.MAX_NAMES]);
 		this.leaveEmpty = leaveEmpty; 
 	}
 	
+	/**
+	 * Add the database info to the list of databases permanently.
+	 * 
+	 * @param info	The info to be added.
+	 */
 	protected void addDBInfoPermanently(DBInfo info) {
 		ArrayList<DBInfo> dbinfos = config.getDBinfos();
 		dbinfos.add( info );
 		config.setDBInfos( dbinfos, info );
 		try {
 			config.save();
-		} catch(java.io.IOException e) { /* Oh my.. */ }
+		} catch(java.io.IOException e) { /* Never mind. */ }
 		
 		setChanged();
 		notifyObservers( info );
 	}
 	
-	
+	/**
+	 * Create a new Creation Task that is capable of creating the new database.
+	 *  
+	 * @param username	The name of the account that allows us to connect to the database
+	 * engine and perform all actions necessary (create DB, create roles and users, ...) - and Administrator
+	 * typically.
+	 * @param password	The password protecting that account.
+	 * 
+	 * @return	The Creation task.
+	 */
 	public synchronized Task createCreationTask(String username, String password) {
+		// Set the first user name to the Administrator of the database.
+		info.getUsers()[0] = username;
 		return new CreationTask(info, username, password, leaveEmpty);
 	}
 	
 	
 	
 	/**
-	 * Creation of the database.
+	 * The Creation of the database.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
-	 * @since 29.8.2006
+	 * @author Erik Kratochvíl (The skeleton of the task.)
+	 * @author Tomáš Kovařík (at least I hope so)
+	 * @since 2006-08-29
 	 *
 	 */
 	private class CreationTask extends Task {
@@ -68,6 +116,14 @@ public class CreateDB extends Observable {
 		private transient String name, password;
 		private boolean leaveEmpty;
 		
+		/**
+		 * Create a new Creation Task.
+		 * 
+		 * @param dbinfo	The holder object containing information about the new database.
+		 * @param name		The account name that shall be used to connect to the database.
+		 * @param password	The password protecting that account.
+		 * @param leaveEmpty		Leave the immutable tables empty (do not fill them).
+		 */
 		public CreationTask(DBInfo dbinfo, String name, String password, boolean leaveEmpty) {
 			this.dbinfo = dbinfo;
 			this.name = name;

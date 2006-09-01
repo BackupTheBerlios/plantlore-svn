@@ -1,14 +1,11 @@
-/*
- * MemoryMonitor.java
- *
- * Created on 1. srpen 2006, 11:18
- */
-
 package net.sf.plantlore.common.debug;
 
 /**
+ * A simple memory monitor that displays the memory in use.
+ * It is not intended to be a part of the final release. 
+ * Its use is limited to the debugging purposes.
  *
- * @author  yaa
+ * @author  Erik Kratochvíl
  */
 public class MemoryMonitor extends javax.swing.JFrame {
     

@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.rmi.RemoteException;
 
 import net.sf.plantlore.client.export.builders.*;
 import net.sf.plantlore.client.export.component.FileFormat;
@@ -20,41 +19,22 @@ import net.sf.plantlore.common.record.*;
 import org.apache.log4j.Logger;
 
 /**
- * The Export Manager. This class controls the whole process of export -
- * starting with creation of all necessary participants
- * and ending with the final cleanup. 
- * <br/>
- * There are several entities involved in the export:
- * <ul>
- * <li><b>DBLayer</b> the database layer that will carry out the requests.
- * 					Mustn't be null!</li>
- * <li><b>Director</b> iterates over the <i>result set</i> 
- * 					and <i>selected records</i> passes to the <i>builder</i>,</li>
- * <li><b>Builder</b> writes the records to the <i>output</i>.</li>
- * <li><b>Selection</b> stores the list of all selected records 
- * 					(<i>restriction</i> in the database terminology).</li>
- * <li><b>SelectQuery</b> identifies the result set as well (in fact the resultId is derived from it).</li>
- * <li><b>Projection</b> stores the list of all selected columns that should be 
- * 					exported (<i>projection</i> in the database terminology).</li>
- * <li><b>File</b> stores the name of file as the user has suggested it.</li>
- * <li><b>XFilter</b> suggests the final name of the <i>file</i>
- * 					and is used to determine which <i>builder</i> will be used
- * 					to produce the output.</li>
- * </ul>
+ * 
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29 
  * @version 2.0
- * @see net.sf.plantlore.client.export.Builder
  */
 public class ExportMng2 {
 	
-	
+	/**
+	 * The encoding that should be used for all files.
+	 */
 	public static final String ENCODING = "UTF-8";
 	
 	
 	/**
-	 * List of all filters the Export Manager is capable to handle.
+	 * List of all file formats the Export Manager is capable to handle.
 	 */
 	protected FileFormat[] filters = new FileFormat[] {
 			new FileFormat(L10n.getString("Format.PlantloreNative"), false, false, ".xml", ".pln"),
@@ -168,11 +148,6 @@ public class ExportMng2 {
 	 * Set a new DBLayer.
 	 */
 	synchronized public void setDBLayer(DBLayer dblayer) {
-		if(query != null) try {
-			db.closeQuery(query);
-		} catch(Exception e) {
-			// Never mind.
-		}
 		db = dblayer;
 	}
 	
@@ -198,35 +173,18 @@ public class ExportMng2 {
 			this.selection = selection.clone();
 	}
 	
-	/**
-	 * Set the active filter. The type of the filter will be used 
-	 * to determine the appropriate extension of the file
-	 * and to create a correct Builder (for the format this
-	 * filter represents). 
-	 */
 	synchronized public void setActiveFileFilter(FileFormat filter) {
 		this.filter = filter; 
 	}
 	
-	/**
-	 * Set the selected file. Into this file the builder will 
-	 * spit its output. 
-	 */
 	synchronized public void setSelectedFile(String filename) { 
 		this.filename = filename; 
 	}
 	
-	
-	/**
-	 * Set a particular select query. The manager will execute this select query
-	 * and update the <code>resultId</code> if Projections are not used.
-	 * On the other hand, if Projections are used, it is the <code>setTemplate()</code>
-	 * that executes the query after it adds desired projections.
-	 */
 	synchronized public void setSelectQuery(SelectQuery query) { 
 		// Close the previous query!
 		if(this.query != null) try {
-			db.closeQuery(this.query);  // This must go here because of the RMI!
+			db.closeQuery(this.query);
 		} catch (Exception e) {
 			// Never mind.
 		}
@@ -236,13 +194,7 @@ public class ExportMng2 {
 	
 	
 	
-	
-	/**
-	 * Start the export procedure. The export will run in its own thread.
-	 * 
-	 * @throws ExportException	If information provided is not complete.
-	 * @throws IOException	If anything with the file goes wrong (insufficient disk space, insufficient permissions).
-	 */
+
 	synchronized public ExportTask2 createExportTask() 
 	throws ExportException, IOException, DBLayerException {
 		// Check if all necessary components are valid.
@@ -302,7 +254,6 @@ public class ExportMng2 {
 		}
 
 		
-		// Start a new task.
 		ExportTask2 t = new ExportTask2(db, query, writer, builder, selection);
 		t.ignoreDead( filter.ignoreDead() );
 		
@@ -321,7 +272,7 @@ public class ExportMng2 {
 	
 		
 	/**
-	 * @return The list of filters describing formats this Export Manager can handle.
+	 * @return The list of file formats this Export Manager can handle.
 	 */
 	public FileFormat[] getFileFormats() {
 		return filters.clone();

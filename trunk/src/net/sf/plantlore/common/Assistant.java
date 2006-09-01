@@ -25,6 +25,7 @@ import javax.swing.text.Position;
  *
  *    
  * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @version 1.0
  */
 public class Assistant extends JScrollPane {
 

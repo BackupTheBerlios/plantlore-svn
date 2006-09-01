@@ -7,8 +7,12 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * An implementation of a FileFilter.
- * The XFilter stores a list of extensions
- * that are related to a particular format.
+ * The FileFormat stores a list of extensions that are related to a particular format and
+ * some switches that further describe the format - such as whether the format accepts
+ * records that were marked as deleted (ignoreDead) or whether the whole record is to
+ * be exported or the User can pick only some columns (columnSelection).
+ * 
+ * 
  * <br/>
  * For example: 
  * <code>Comma Separated Values (*.txt, *.csv)</code>
@@ -26,22 +30,24 @@ public class FileFormat extends FileFilter {
 	private boolean ignoreDead = true;
 	
 	/**
-	 * Create a new XFilter.
+	 * Create a new FileFormat.
 	 * 
-	 * @param description The description of the filter.
+	 * @param description The description of the filter - some textual string that may be presented to the User.
 	 * @param extensions	The list of extensions that are related to this filter.
 	 */
 	public FileFormat(String description, String... extensions) {
 		this.description = description;
-		this.extensions = new ArrayList<String>( extensions.length );
-		for(String ext : extensions) this.extensions.add(ext);
+		this.extensions = new ArrayList<String>(extensions.length);
+		for (String ext : extensions)
+			this.extensions.add(ext);
 	}
 	
 	/**
-	 * Create a new XFilter.
+	 * Create a new FileFormat.
 	 * 
-	 * @param description	The description of the filter.
-	 * @param columnSelectionEnabled	The format allows further modifications.
+	 * @param description	The description of the filter - some textual string that may be presented to the User.
+	 * @param columnSelectionEnabled	The user can select which columns will be exported.
+	 * @param ignoreDead		The format should contain only those records that were not marked as deleted.
 	 * @param extensions	The list of extensions that are related to this filter.
 	 */
 	public FileFormat(String description, boolean columnSelectionEnabled, boolean ignoreDead, String... extensions) {
@@ -58,7 +64,7 @@ public class FileFormat extends FileFilter {
 	}
 	
 	/**
-	 *	@return True if dead records should be omited.
+	 *	@return True if dead records should be omitted.
 	 */
 	public boolean ignoreDead() {
 		return ignoreDead;

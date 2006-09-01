@@ -7,9 +7,12 @@ import net.sf.plantlore.common.record.Record;
 
 /**
  * A list of selected records. The selection allows
- * selection of new records, removal of selected records (deselection),
+ * the selection of new records, removal of selected records (deselection),
  * selection of all records, deselection of all records,
  * and inversion of the current selection.
+ * <br/>
+ * The Selection is used to store the list of records the User marked to be exported
+ * or printed.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-23
@@ -46,7 +49,7 @@ public class Selection {
 		
 	/**
 	 * Remove a selected record from the selection (deselect).
-	 * @param id Of the record that is deselected.
+	 * @param id Identifier of the record that is deselected.
 	 */
 	public Selection remove(Integer id) {
 		if( !inverted ) selected.remove(id);
@@ -80,13 +83,13 @@ public class Selection {
 
 	/**
 	 * @param id	The primary key of the record.
-	 * @return true if a record with this primary key is selected.
+	 * @return True if the record with this primary key is selected.
 	 */
 	public boolean contains(Integer id) { return selected.contains(id) ^ inverted; }
 	
 	/**
 	 * @param r	The record.
-	 * @return true if the record is selected.
+	 * @return True if the record is selected.
 	 */
 	public boolean contains(Record r) { return selected.contains(r.getId()) ^ inverted; }
 	
@@ -99,7 +102,7 @@ public class Selection {
 	}
 	
 	/**
-	 * @return true if nothing is selected;
+	 * @return True if nothing is selected;
 	 */
 	public boolean isEmpty() {
 		return selected.isEmpty() ^ inverted;
@@ -109,13 +112,21 @@ public class Selection {
 	public Selection clone() {
 		return new Selection( this );
 	}
-        
-        public Collection<Integer> values() {
-            return selected;
-        }
-        
-        public void clear() {
-            selected.clear();
-            inverted = false;
-        }
+	
+	/**
+	 * 
+	 * @return	A collection of identifiers of all selected records.
+	 */
+	public Collection<Integer> values() {
+		return selected;
+	}
+	
+	/**
+	 * An alias for Selection.none().
+	 *
+	 * @see #none()
+	 */
+	public Selection clear() {
+		return none();
+	}
 }

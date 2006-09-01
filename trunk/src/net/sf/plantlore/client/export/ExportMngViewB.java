@@ -8,7 +8,7 @@ package net.sf.plantlore.client.export;
 
 import java.awt.Frame;
 
-import net.sf.plantlore.client.export.component.TemplateSelectionModel;
+import net.sf.plantlore.client.export.component.ProjectionSelectionModel;
 import net.sf.plantlore.client.export.component.ExtendedTree;
 import net.sf.plantlore.l10n.L10n;
 
@@ -18,13 +18,13 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class ExportMngViewB extends javax.swing.JDialog {
 	
-	protected TemplateSelectionModel tsm;
+	protected ProjectionSelectionModel tsm;
     
     /** Creates new form ExportMngView */
     public ExportMngViewB(Frame parent) {
     	super(parent, true);
     	
-    	tsm = new TemplateSelectionModel( new Projection() );
+    	tsm = new ProjectionSelectionModel( new Projection() );
     	
         initComponents();
         getRootPane().setDefaultButton(next);

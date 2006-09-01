@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
  * These utilities are used by several programs, such as
  * SpringBox and SpringCompactGrid.
  */
+@Deprecated
 public class SpringUtilities {
     private static final Logger logger = Logger.getLogger(SpringUtilities.class.getPackage().getName());
     

@@ -28,32 +28,58 @@ public class DefaultCancelAction extends AbstractAction {
 	protected JFrame frame;
 	
 	
+	/**
+	 * Create a new Cancel action that hides the given frame.
+	 * 
+	 * @param frame	The frame to be hidden.
+	 * @param name		The caption of the button.
+	 * @param tooltip	The tooltip displayed over the button.
+	 */
 	public DefaultCancelAction(JFrame frame, String name, String tooltip) {
 		putValue(SHORT_DESCRIPTION, tooltip);
 		putValue(NAME, name);
 		this.frame = frame;
 	}
 	
+	/**
+	 * Create a new Cancel action that hides the given dialog.
+	 * 
+	 * @param dialog	The dialog to be hidden.
+	 * @param name		The caption of the button.
+	 * @param tooltip	The tooltip displayed over the button.
+	 */
 	public DefaultCancelAction(JDialog dialog, String name, String tooltip) {
 		putValue(SHORT_DESCRIPTION, tooltip);
 		putValue(NAME, name);
 		this.dialog = dialog;
 	}
 	
-	
+	/**
+	 * Create a new Cancel action that hides the given frame.
+	 * The caption of the button is set to a default value.
+	 * 
+	 * @param frame	The frame to be hidden.
+	 */
 	public DefaultCancelAction(JFrame frame) {
 		putValue(NAME, L10n.getString("Common.Cancel"));
 		this.frame = frame;
 	}
 	
-	
+	/**
+	 * Create a new Cancel action that hides the given dialog.
+	 * The caption of the button is set to a default value.
+	 * 
+	 * @param dialog	The dialog to be hidden.
+	 */
 	public DefaultCancelAction(JDialog dialog) {
 		putValue(NAME, L10n.getString("Common.Cancel"));
 		this.dialog = dialog;
 	}
 
 	
-	
+	/**
+	 * Hide the frame (or dialog).
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if(frame != null)
 			frame.setVisible(false);

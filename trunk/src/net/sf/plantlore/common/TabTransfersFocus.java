@@ -39,7 +39,7 @@ public class TabTransfersFocus extends KeyAdapter {
 	}
 	
 	/**
-	 * Neutralize the behaivour.
+	 * Neutralize the effect this class has on the component.
 	 */
 	public void neutralize() {
 		a.removeKeyListener(this);

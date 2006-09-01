@@ -24,6 +24,7 @@ import net.sf.plantlore.client.resources.Resource;
 
 /**
  * The Checklist ("Škrták" in Czech). 
+ * 
  * The Checklist displays plants and allows the User to select some of them
  * easily. The User can use either a mouse or a keyboard to (de)select records.
  * The Checklist supports searching (immediately as User types).

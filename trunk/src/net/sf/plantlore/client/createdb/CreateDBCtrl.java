@@ -8,7 +8,14 @@ import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.l10n.L10n;
 
 
-
+/**
+ * The mapping of the button in the view to action
+ * that opens the second part of the dialog - the Authentication.
+ * 
+ * Also the field validity check is performed.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ */
 public class CreateDBCtrl {
 	
 	private CreateDBView view;

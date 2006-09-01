@@ -3,16 +3,17 @@ package net.sf.plantlore.client.export.component;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- * A representation of a node in an XTree.
+ * A representation of a node in an ExtendedTree.
  * Every node corresponds to a <code>column</code> of a <code>table</code>.
- *  
+ * This is meant merely as a holder object - the hierarchy is represented elsewhere
+ * and in a different way.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-29
  * @see net.sf.plantlore.client.export.component.ExtendedTree
  */
 public class UserTreeNode {
-	/** The table whose columns this node represents. */
+	/** The table whose column this node represents. */
 	public Class table;
 	/** The column of the table this node represents. */
 	public String column;
@@ -20,15 +21,17 @@ public class UserTreeNode {
 	public boolean nn;
 	
 	/**
-	 * Create a new XNode. The node represents 
-	 * a (possibly mandatory) column of a table.
+	 * Create a new UserTreeNode. 
+	 * The node represents one (possibly mandatory) column of a table.
 	 */
 	public UserTreeNode(Class table, String column, boolean notNullProperty) {
-		this.table = table; nn = notNullProperty; this.column = column;
+		this.table = table; 
+		this.nn = notNullProperty; 
+		this.column = column;
 	}
 	
 	/**
-	 * Create a new XNode. The node represents a column of a table.
+	 * Create a new UserTreeNode. The node represents a column of a table.
 	 */
 	public UserTreeNode(Class table, String column) {
 		this(table, column, false);
@@ -36,7 +39,6 @@ public class UserTreeNode {
 	
 	/**
 	 * Get the name of the column.
-	 * TODO: L10n may be useful here!
 	 */
 	@Override
 	public String toString() {

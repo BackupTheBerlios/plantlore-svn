@@ -9,7 +9,7 @@ import net.sf.plantlore.l10n.L10n;
 
 /**
  * The dialog displaying the checklist and several buttons 
- * the allow the checklist to be saved or loaded. 
+ * that allow the checklist to be saved, or loaded, or restored. 
  *
  * @author  Erik Kratochvíl
  */

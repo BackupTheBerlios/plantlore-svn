@@ -11,7 +11,7 @@ import javax.swing.text.*;
 /**
  * AutoTextArea is an extension of the default <code>JTextArea</code>. It operates in two modes:
  * <dl>
- * <dt>FREE_ROAM</dt>
+ * <dt>FREE ROAM</dt>
  * <dd>This mode allows the User to move freely through entries with minor limitations.
  * 	<ul>
  * 		<li><code>Up</code>, <code>Down</code>,<code>Left</code>, 
@@ -334,31 +334,54 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 			this.values.add(obj);
 	}
 	
-        public AutoTextArea(Container container) {
-                this(new String[] {""}, container);
-        }
-        
-        public AutoTextArea(JDialog dialog) {
-            this(new String[] {""}, dialog.getLayeredPane());
-        }
-        
-        public AutoTextArea(JFrame frame) {
-            this(new String[] {""}, frame.getLayeredPane());
-        }
-        
-        public void setChoices(Object[] choices) {
-            if (choices == null)
-                choices = new String[] {""};
-            assistant.setChoices(choices);
-            assistant.getList().addMouseListener(this);
-            this.choices = choices;
-            this.values = new HashSet<Object>(choices.length);
-            for(Object obj : choices)
-                    this.values.add(obj);
-            
-            firePropertyChange(ALLOWED_VALUES_CHANGED, null, null);
-        }
-        
+	/**
+	 * Create the AutoTextArea with a Visual Assistant that helps with choosing items from the
+	 * list of available (allowed) strings. The initial list is empty.
+	 * 
+	 * @param container	The container which the AutoTextArea is added to.  
+	 */
+	public AutoTextArea(Container container) {
+		this(new String[] {""}, container);
+	}
+	
+	/**
+	 * Create the AutoTextArea with a Visual Assistant that helps with choosing items from the
+	 * list of available (allowed) strings. The initial list is empty.
+	 * 
+	 * @param dialog	The parent dialog which the AutoTextArea is added to.  
+	 */
+	public AutoTextArea(JDialog dialog) {
+		this(new String[] {""}, dialog.getLayeredPane());
+	}
+	
+	/**
+	 * Create the AutoTextArea with a Visual Assistant that helps with choosing items from the
+	 * list of available (allowed) strings. The initial list is empty.
+	 * 
+	 * @param frame	The parent frame which the AutoTextArea is added to.  
+	 */
+	public AutoTextArea(JFrame frame) {
+		this(new String[] {""}, frame.getLayeredPane());
+	}
+	
+	/**
+	 * Replace the old list of choices with the new one.
+	 * 
+	 * @param choices	The list of new available values that will replace the old one.
+	 */
+	public void setChoices(Object[] choices) {
+		if (choices == null)
+			choices = new String[] {""};
+		assistant.setChoices(choices);
+		assistant.getList().addMouseListener(this);
+		this.choices = choices;
+		this.values = new HashSet<Object>(choices.length);
+		for(Object obj : choices)
+			this.values.add(obj);
+		
+		firePropertyChange(ALLOWED_VALUES_CHANGED, null, null);
+	}
+	
 	/**
 	 * The list of choices, or "allowed values" - for fast searching.
 	 */
@@ -426,52 +449,6 @@ public class AutoTextArea extends JTextArea implements KeyListener, FocusListene
 		else
 			return s;
 	}
-
-	
-//	public static void main(String[] args) throws InterruptedException {
-//		String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
-//        try { UIManager.setLookAndFeel(lookAndFeel); }
-//        catch (Exception e) { JFrame.setDefaultLookAndFeelDecorated(true); }
-//        
-//        String[]
-//        	ch = {"Anubis", "Apophis", "Ayiana", "Baal", "Baldur", "Camulus", "Cronus", "Daniel Jackson",
-//					"Elizabeth Weir", "Freir", "George Hammond", "Hallowed are the Ori", "Heimdall", "Hermiod",
-//					"Chaya Sar", "Imhotep", "Jack O'Neill", "John Sheppard", "Jonas Quinn", "Khalek", "Klorel",
-//					"Loki", "Martoufe", "Master Bra'tac", "Nerus", "Oma Desala", "Penegal", "Qetesh",
-//					"Ra", "Radek Zelenka", "Replicarter", "Rodney McKay", "Ronon Dex",
-//					"Samantha Carter", "Sokar", "Ševron", 
-//					"Teyla Emmagan", "The Eight", "The Fifth", "The First", "The Fourth",
-//					"The Second", "The Seventh", "The Sixth", "The Third", "Thor", "Ty'alc", "Vala Mal Doran", "Yu"};
-//        
-//		JFrame f = new JFrame();
-//		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		AutoTextArea a = new AutoTextArea(ch, f); 
-//		a.setPreferredSize(new Dimension(400, 300));
-//		a.setFont(new Font("Verdana", 0, 12));
-//		a.setCapacity(5);
-//		JScrollPane sp = new JScrollPane(a);
-//		sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//		
-//		
-//		JPanel ugly = new JPanel(new BorderLayout());
-//		ugly.add(new JButton("foooooooo"), BorderLayout.WEST);
-//		ugly.add(new JButton("sue"), BorderLayout.NORTH);
-//		ugly.add(/*a*/sp, BorderLayout.CENTER);
-//		
-//				
-//		JButton b = new JButton("Done");
-//		f.getContentPane().add(new JLabel("be ugly and give some space"), BorderLayout.WEST);
-//		f.getContentPane().add(new JLabel("be ugly and give more space"), BorderLayout.NORTH);
-//		f.getContentPane().add(ugly/*a*/, BorderLayout.CENTER);
-//		f.getContentPane().add(b, BorderLayout.SOUTH);
-//		f.pack();
-//		f.setVisible(true);
-//		
-//		Thread.sleep(10000);
-//		a.addLines(new String[]{"Martoufe", "The Fourth",  "Baldur", "Chaya Sar", "Ygzotot"});
-//		
-//	}
-
 
 	
 	/*======================================================================

@@ -187,7 +187,7 @@ private Logger logger = Logger.getLogger(getClass().getPackage().getName());
 			ao.setOccurrence( null ); // cut off the way back to the occurrence
 			if(ao.isDead() && ignoreDead) continue;
 			
-			logger.debug("New author-occurence record: " + ao);
+			logger.debug("New author-occurence record: " + ao.toFullString());
 			
 			build.part( ao );
 		}
@@ -199,7 +199,18 @@ private Logger logger = Logger.getLogger(getClass().getPackage().getName());
 	
 	
 	/**
-	 * Reconstruct the record from the given values. 
+	 * Reconstruct the record from the given values, if projections were used.
+	 * <br/>
+	 * An example: Let us suppose that we created projection for 
+	 * <code>Occurrence.ID</code> and <code>Plant.TAXON<code> and
+	 * <code>NearestVillage.NAME</code>. Database layer returns
+	 * [3292, "Rubus sp.", "České Budějovice"]. The `description` is the key to
+	 * those values, as it says:
+	 * <code>Occurrence.ID = 3292</code>,
+	 * <code>Plant.TAXON = Rubus sp.</code> and
+	 * <code>NearestVillage = České Budějovice</code>.
+	 * <br/>
+	 * Without the description we would not know what value belongs to which column.
 	 * 
 	 * @param values	Values of columns (in the same order as in the Description).
 	 * @return	The reconstructed record.

@@ -7,17 +7,36 @@ import javax.swing.JOptionPane;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.l10n.L10n;
 
+/**
+ * The mapping of buttons in the view to actions.
+ * In the ADD mode a new record is created,
+ * in the EDIT mode the selected record is altered.
+ * 
+ * Also the field validity check is performed.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ */
 public class ItemCtrl2 {
 	
 	private Login model;
 	private ItemView2 view;
 	
+	/**
+	 * The Controller distinguishes two modes.
+	 * In the ADD mode all fields are blank and the record is created and added to the list.
+	 * In the EDIT mode all fields are pre-filled with values of the selected record
+	 * and then the record is altered. 
+	 */
 	public enum Mode { ADD, EDIT }
 	
 	private Mode mode = Mode.ADD;
 	
 	
-	// Switch between the ADD/EDIT behaviour
+	/**
+	 * Switch between the two modes.
+	 * 
+	 * @param m	The mode that should be used from now on.
+	 */
 	public void setMode(Mode m) {
 		this.mode = m;
 		switch(m) {
@@ -46,7 +65,12 @@ public class ItemCtrl2 {
 		}
 	}
 	
-	
+	/**
+	 * Create a new Item Controller. Requires the Model and the View.
+	 * 
+	 * @param login The model.
+	 * @param itemview	The view.
+	 */
 	public ItemCtrl2(Login login, ItemView2 itemview) {
 		this.model = login; this.view = itemview;
 		view.next.setAction(new NextAction());
@@ -58,10 +82,10 @@ public class ItemCtrl2 {
 	}
 	
 	
-	
-
-	
-	
+	/**
+	 * Gather the data from the dialog, perform validity checks,
+	 * and add/edit the record. 
+	 */
 	class NextAction extends AbstractAction {
 		
 		public NextAction() {
@@ -94,7 +118,7 @@ public class ItemCtrl2 {
     						view, 
     						L10n.getString("Error.MissingSeveralCompulsoryFields"), 
     						L10n.getString("Error.MissingCompulsoryFieldTitle"), 
-    						JOptionPane.ERROR_MESSAGE);
+    						JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 					
@@ -147,7 +171,7 @@ public class ItemCtrl2 {
     						view, 
     						L10n.getString("Error.MissingSeveralCompulsoryFields"), 
     						L10n.getString("Error.MissingCompulsoryFieldTitle"), 
-    						JOptionPane.ERROR_MESSAGE);
+    						JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				

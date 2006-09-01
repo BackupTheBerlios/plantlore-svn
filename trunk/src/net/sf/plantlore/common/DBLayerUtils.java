@@ -45,12 +45,12 @@ import org.apache.log4j.Logger;
  * Class offering convenience methods for DBLayer.
  * 
  * Every class requiring high-level work with the database 
- * should use these methods so as to unite the behaviour through the application. 
+ * should use these methods so as to unite the behaviour throughout the application. 
  *
  * 
  *
- * @author reimei
- * @author kaimu
+ * @author Jakub Kotowski
+ * @author Erik Kratochvíl
  */
 public class DBLayerUtils {
     private DBLayer db;
@@ -84,13 +84,19 @@ public class DBLayerUtils {
 	}
     
     
-    /** Creates a new instance of TempClass */
+    /**
+     * Create a new Utils using the supplied Database layer.
+     *   
+     * @param db		The database layer that should be used to perform all the operations.
+     */
     public DBLayerUtils(DBLayer db) {
         this(db, null, true);
     }
     
     /**
-     * @param db
+     * Create a new Utils using the supplied Database layer.
+     * 
+     * @param db		The database layer that should be used to perform all the operations.
      * @param isCacheEnabled	Gives you the possibility to switch off the cache 
      * (which is enabled by default), because it is highly likely it will not contain up-to-date data.
      */
@@ -101,7 +107,13 @@ public class DBLayerUtils {
     }
     
     
-    
+    /**
+     * Processing of some records require the User's assistance. It this way
+     * you can set the User's true intention with the problematic record.
+     * 
+     * @param intention	The true intention with the record as the User decided.
+     * @see #expectDecision()
+     */
     public void setIntention(Intention intention) {
     	this.intention = intention;
     	this.notify();
@@ -109,9 +121,14 @@ public class DBLayerUtils {
     
     
     /**
-     * There are some cases in which DBLayer utils needs assistance.
+     * There are some cases in which DBLayer utils needs assistance of the User.
+     * This method gives you the time needed to contact and inform the User
+     * and then pass His decision using the setIntention() method.
+     * <br/>
+     * The execution of the operation that required the assistance 
+     * will be suspended until the setIntention() method is called.
      *
-     * You must call setIntention(Intention.SOMETHING);
+     * @see #setIntention(Intention) 
      */
     private Intention expectDecision() {
     	if(decisionCallback == null)
@@ -163,7 +180,7 @@ public class DBLayerUtils {
         AuthorOccurrence[] authorResults = null;
         SelectQuery sq = db.createQuery(AuthorOccurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.OCCURRENCE,null,o,null);
-        sq.addRestriction(PlantloreConstants.RESTR_EQ,AuthorOccurrence.DELETED,null,0,null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Deletable.DELETED,null,0,null);
         int resultid = db.executeQuery(sq);
         int resultCount = db.getNumRows(resultid);
         authorResults = new AuthorOccurrence[resultCount];
@@ -187,7 +204,7 @@ public class DBLayerUtils {
     public void deleteHabitat(Habitat h) throws DBLayerException, RemoteException {
         SelectQuery sq = db.createQuery(Occurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
-        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DELETED, null, 0, null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Deletable.DELETED, null, 0, null);
         int resultid = db.executeQuery(sq);
         int resultCount = db.getNumRows(resultid);
         if (resultCount == 0) {
@@ -208,7 +225,7 @@ public class DBLayerUtils {
     public void deleteHabitatInTransaction(Habitat h) throws DBLayerException, RemoteException {
         SelectQuery sq = db.createQuery(Occurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
-        sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.DELETED, null, 0, null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ,Deletable.DELETED, null, 0, null);
         int resultid = db.executeQuery(sq);
         int resultCount = db.getNumRows(resultid);
         if (resultCount == 0) {
@@ -234,7 +251,7 @@ public class DBLayerUtils {
     
     
 	/**
-	 * Find out how many records share the supplied <code>record</code>.
+	 * Find out how many records (alive or not) share the supplied <code>record</code>.
 	 *  
 	 * @param record	The record in question.
 	 * @return	The number of records that share the supplied <code>record</code>. 
@@ -248,7 +265,7 @@ public class DBLayerUtils {
 	 * Find out how many records share the supplied <code>record</code>.
 	 * 	 * 
 	 * @param record	The record in question.
-	 * @param aliveOnly	Ommit records marked as deleted.
+	 * @param aliveOnly	True if it should ommit records marked as deleted.
 	 * @return	The number of records that share the supplied <code>record</code>. 
 	 */
 	public int sharedBy(Record record, boolean aliveOnly) 
@@ -383,9 +400,6 @@ public class DBLayerUtils {
 				query.addRestriction(RESTR_EQ, key, null, subrecord, null);
 			}
 			
-			
-			
-			
 			// Is there such record?
 			int results = db.executeQuery( query );
 			int rows = db.getNumRows( results );
@@ -396,7 +410,7 @@ public class DBLayerUtils {
 			
 			record = null;
 			if( rows != 0 ) 
-				record = (Record)((Object[])(db.more(results, 0, 0)[0]))[0]; // Well, THIS is ugly!
+				record = (Record)((Object[])(db.more(results, 0, 0)[0]))[0]; 
 		} finally {
 			db.closeQuery( query );
 		}
@@ -499,7 +513,12 @@ public class DBLayerUtils {
 		
 	}
 	
-	
+	/**
+	 * Insert a record that belongs to an immutable table into the database.
+	 * 
+	 * @param record	The record to be inserted.
+	 * @return	The inserted record.
+	 */
 	public Record insertImmutableRecord(Record record)
 	throws RemoteException, DBLayerException {
 		if( !Record.IMMUTABLE.contains(record) )
@@ -652,7 +671,13 @@ public class DBLayerUtils {
 		return current;
 	}
 	
-	
+	/**
+	 * Replace a record that belongs to an immutable table by another record.
+	 * 
+	 * @param current	The record to be replaced.
+	 * @param replacement	The replacement of the current record.
+	 * @return	The replacement.
+	 */
 	public Record updateImmutableRecord(Record current, Record replacement) 
 	throws RemoteException, DBLayerException {
 		if( !Record.IMMUTABLE.contains(current) ||
@@ -798,7 +823,9 @@ public class DBLayerUtils {
 	/**
 	 * It is impossible to delete a record of the type (I), if there is at least one
 	 * record refering to it (undeleted as well as deleted).
-    */
+	 * 
+	 * @param The record that is to be deleted. 
+	 */
 	public void deleteImmutableRecord(Record record)
 	throws RemoteException, DBLayerException {
 		if( !Record.IMMUTABLE.contains(record) )
@@ -819,7 +846,7 @@ public class DBLayerUtils {
 	 * a simple table will be created from supplied record(s).
 	 * 
 	 * @param records
-	 * @return
+	 * @return A table model containing all records.
 	 */
 	public TableModel createTableFor(Record... records) {
 		return new RecordTable(records);
@@ -896,9 +923,7 @@ public class DBLayerUtils {
 	
 	
 	/**
-	 * NOT TESTED!
-	 * 
-	 * High-level record processor. 
+	 * High-level occurrence data processor. 
 	 * Incorporates all rules that bind the record processing. 
 	 * 
 	 * @param occ	The basic occurrence record.

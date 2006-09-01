@@ -15,7 +15,8 @@ import org.apache.log4j.Logger;
 import net.sf.plantlore.l10n.L10n;
 
 
-/** ProgressBar dialog that works as an observer of a given Task.
+/** 
+ * ProgressBar dialog works as an observer of a given Task.
  *
  * The dialog sets itself visible after it receives a STARTING Message, disposes
  * itself after getting a STOPPED Message and in the time between it updates it's
@@ -24,29 +25,43 @@ import net.sf.plantlore.l10n.L10n;
  * If constructed with an indeterminate Task works in indeterminate mode until it
  * receives a LENGHT_CHANGED message from the Task. Then it switches to determinate mode.
  *
- * Exceptions trhown by the task are processed by the abstract exceptionHandler() method.
+ * Exceptions thrown by the task are processed by the abstract exceptionHandler() method.
+ * 
+ * This extended version introduces the possibility to cancel the performed task.
+ * <b>It is up to the creator of the Task to monitor the Task.isCancelled() and react properly!</b>
  *
  * @author  Erik Kratochvíl
  */
 public abstract class ProgressBarEx extends ProgressBar {
     
-    /** Creates a new progress bar, initially invisible. It becomes visible after it receives
+    /** 
+     * Create a new progress bar, initially invisible. It becomes visible after it receives
      * a STARTING Message from the Task.
      *
-     * @param task the task to be monitored
-     * @param parent the parent frame of this dialog
-     * @modal whether to open in modal mode
-     *
+     * @param task The task to be monitored.
+     * @param parent The parent frame of this dialog.
+     * @modal Whether to open in modal mode.
      */
     public ProgressBarEx(Task task, java.awt.Frame parent, boolean modal) {
         super(task, parent, modal);
         
     }
     
+    /** 
+     * Create a new progress bar, initially invisible. It becomes visible after it receives
+     * a STARTING Message from the Task.
+     *
+     * @param task The task to be monitored.
+     * @param parent The parent dialog of this dialog.
+     * @modal Whether to open in modal mode.
+     */
     public ProgressBarEx(Task task, javax.swing.JDialog parent, boolean modal) {
         super(task, parent, modal);
     }    
  
+    /**
+     * Slightly different initialization - the Cancel button must be provided with an Action!
+     */
     @Override
     protected void initialize() {
     	logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -134,6 +149,9 @@ public abstract class ProgressBarEx extends ProgressBar {
     }// </editor-fold>//GEN-END:initComponents
     
 
+    /**
+     * Cancel the current task. 
+     */
     private class CancelTaskAction extends AbstractAction {
     	public CancelTaskAction() {
     		putValue(NAME, L10n.getString("Common.Cancel"));

@@ -1,17 +1,21 @@
 package net.sf.plantlore.client.login;
 
 /**
- * Store information about one DB.
+ * Store information about one database connection.
+ * 
  * <ul>
- * <li><b>alias</b> ~ the name that will be presented to the user (such as <i>"Home Database"</i>)</li>
- * <li><b>host</b> ~ the host name of the server where the database is located</li>
- * <li><b>port</b> ~ the port number where the server listens</li>
- * <li><b>db</b> ~ the database identificator</li>
- * <li><b>user</b> ~ last five user names that have been used for authentication</li>
+ * <li><b>alias</b> The name that will be presented to the User (such as <i>"Home Database"</i>)</li>
+ * <li><b>host</b> The host name or ip address where the Server is located.</li>
+ * <li><b>port</b> The port where the Server listens.</li>
+ * <li><b>databaseType</b> The type of the database engine (postgresql, oraclesql, etc.)</li>
+ * <li><b>databasePort</b> The port where the database engine listens.</li>
+ * <li><b>databaseIdentifier</b> The database identifier (usually a name of the database).</li>
+ * <li><b>databaseParameter</b> Some additional parameter for the JDBC connection string.</li>
+ * <li><b>user</b> The list of last user names that have been used during Authentication.</li>
  * </ul>
  * 
  * @author Erik Kratochvíl
- * @version 1.0 final
+ * @version 4.0
  */
 public class DBInfo {
 	protected String alias;
@@ -24,10 +28,9 @@ public class DBInfo {
 	protected String[] users;
 	
 	/**
-	 * Pick a user. The selected name will be moved to the start of the list.
-	 * The selected user will be at the top of the list next time.
+	 * Move the selected name to the top of the list.
 	 * 
-	 * @param name	The chosen user.
+	 * @param name		The chosen user.
 	 */
 	public void promoteUser(String name) {
 		int id = users.length - 1;
@@ -45,12 +48,26 @@ public class DBInfo {
 		return alias;
 	}
 	
-	
+	/**
+	 * Create a shallow copy of this DBInfo.
+	 */
 	public DBInfo clone() {
 		return new DBInfo(
 				alias, host, port, databaseType, databasePort, databaseIdentifier, databaseParameter, users );
 	}
 
+	/**
+	 * Create a new DBInfo.
+	 * 
+	 * @param alias	The name that will be presented to the User (such as <i>"Home Database"</i>)
+	 * @param host	The host name or ip address where the Server is located.
+	 * @param port	The port where the Server listens.
+	 * @param databaseType	The type of the database engine (postgresql, oraclesql, etc.)
+	 * @param databasePort	The port where the database engine listens.
+	 * @param databaseIdentifier	The database identifier (usually a name of the database).
+	 * @param databaseParameter	Some additional parameter for the JDBC connection string.
+	 * @param users	 The list of last user names that have been used during Authentication.
+	 */
 	public DBInfo(String alias, String host, int port, String databaseType, int databasePort, String databaseIdentifier, String databaseParameter, String[] users) {
 		this.alias = alias;
 		this.host = host;
@@ -62,35 +79,66 @@ public class DBInfo {
 		this.users = users;
 	}
 
-	
+	/**
+	 * 
+	 * @return	The name that will be presented to the User (such as <i>"Home Database"</i>).
+	 */
 	public String getAlias() {
 		return alias;
 	}
 
+	/**
+	 * 
+	 * @return	The database identifier (usually a name of the database).
+	 */
 	public String getDatabaseIdentifier() {
 		return databaseIdentifier;
 	}
 
+	/**
+	 * 
+	 * @return	Some additional parameter for the JDBC connection string.
+	 */
 	public String getDatabaseParameter() {
 		return databaseParameter;
 	}
 
+	/**
+	 * 
+	 * @return	The port where the database engine listens.
+	 */
 	public int getDatabasePort() {
 		return databasePort;
 	}
 
+	/**
+	 * 
+	 * @return	The type of the database engine (postgresql, oraclesql, etc.)
+	 */
 	public String getDatabaseType() {
 		return databaseType;
 	}
 
+	/**
+	 * 
+	 * @return	The host name or ip address where the Server is located.
+	 */
 	public String getHost() {
 		return host;
 	}
 
+	/**
+	 * 
+	 * @return	The port where the Server listens.
+	 */
 	public int getPort() {
 		return port;
 	}
 
+	/**
+	 * 
+	 * @return	The list of last user names that have been used during Authentication.
+	 */
 	public String[] getUsers() {
 		return users;
 	}
