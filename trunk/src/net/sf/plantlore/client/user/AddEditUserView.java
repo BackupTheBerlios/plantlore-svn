@@ -260,19 +260,29 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
 
         createWhenuser.setText(L10n.getString("UserManager.CreateWhen")+ ": ");
 
+        loginText.setNextFocusableComponent(passwordtext);
         loginText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginTextActionPerformed(evt);
             }
         });
 
+        firstNameText.setNextFocusableComponent(surnameText);
+
+        emailText.setNextFocusableComponent(addressText);
+
+        addressText.setNextFocusableComponent(noteText);
+
         noteLabel.setText(L10n.getString("UserManager.Note")+ ": ");
 
         noteText.setColumns(20);
         noteText.setRows(5);
+        noteText.setNextFocusableComponent(administratorCheckBox);
         jScrollPane1.setViewportView(noteText);
 
         dropWhenLabel.setText(L10n.getString("UserManager.DropWhen")+ ": ");
+
+        passwordtext.setNextFocusableComponent(firstNameText);
 
         passwordLabel.setText(L10n.getString("UserManager.Password")+ ": (*) ");
 
@@ -284,20 +294,24 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         administratorCheckBox.setText(L10n.getString("UserManager.Right.Administrator"));
         administratorCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         administratorCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        administratorCheckBox.setNextFocusableComponent(editAllCheckBox);
 
         editAllCheckBox.setText(L10n.getString("UserManager.Right.EditAll"));
         editAllCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         editAllCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        editAllCheckBox.setNextFocusableComponent(addRightCheckBox);
 
         addRightCheckBox.setText(L10n.getString("UserManager.Right.Add"));
         addRightCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         addRightCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        addRightCheckBox.setNextFocusableComponent(editGroupTextArea);
 
         editGroupLabel.setText(L10n.getString("UserManager.Right.EditGroup"));
         editGroupLabel.setAutoscrolls(true);
 
         editGroupTextArea.setColumns(20);
         editGroupTextArea.setRows(5);
+        editGroupTextArea.setNextFocusableComponent(operationButton);
         jScrollPane3.setViewportView(editGroupTextArea);
 
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
@@ -329,6 +343,8 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
                 .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        surnameText.setNextFocusableComponent(emailText);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -420,10 +436,13 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         );
 
         operationButton.setText("");
+        operationButton.setNextFocusableComponent(closeButton);
 
         closeButton.setText(L10n.getString("UserManager.ButtonClose"));
+        closeButton.setNextFocusableComponent(helpButton);
 
         helpButton.setText(L10n.getString("UserManager.ButtonHelp"));
+        helpButton.setNextFocusableComponent(loginText);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

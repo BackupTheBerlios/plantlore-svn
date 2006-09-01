@@ -1726,10 +1726,10 @@ public class AppCoreCtrl {
 					tableImportModel.setDBLayer( dblayer );
 				logger.debug(" # record history ");
 				if (historyModel != null ) 
-					historyModel.setDBLayer( dblayer );
+					historyModel.restartQuery(History.HISTORY_RECORD);
 				logger.debug(" # complete history ");
 				if (wholeHistoryModel != null ) 
-					wholeHistoryModel.setDBLayer( dblayer );
+					wholeHistoryModel.restartQuery(History.HISTORY_WHOLE);
 				logger.debug(" # user manager ");
 				if (userManagerModel != null )
 					userManagerModel.setDBLayer( dblayer );

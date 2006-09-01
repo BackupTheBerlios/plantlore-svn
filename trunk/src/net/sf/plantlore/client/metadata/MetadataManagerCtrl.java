@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
+    
 package net.sf.plantlore.client.metadata;
 
 import java.awt.event.ActionEvent;
@@ -20,6 +20,7 @@ import net.sf.plantlore.client.history.HistoryTableModel;
 import net.sf.plantlore.client.user.AddEditUserView;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Task;
@@ -102,25 +103,13 @@ public class MetadataManagerCtrl {
            } else {
         	   view.previousButton.setEnabled(false);
            }
-    	} catch (RemoteException e) {
-    		DefaultReconnectDialog.show(view, e);
-    	} catch (DBLayerException e) {
-    		view.showErrorMessage(e.getMessage());
-    	}    	           
-    }
-    
-    /**
-     * Display error message.
-     */
-    public void displayError() {
-    	if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
- 		   DefaultReconnectDialog.show(view, model.getRemoteEx());
- 	   } else {
- 		   view.showErrorMessage(model.getError());
- 	   }
-    	//TODO nastavit ci nenastvit null
- 	   model.setError(null); 
-    }
+    	}catch (Exception ex) {                      
+           ex.printStackTrace();
+           DefaultExceptionHandler.handle(view, ex);         
+           return;
+        } 
+       
+    }       
      
    /**
     *  ActionListener class controlling the <b>PREV</b> button on the form.
@@ -131,7 +120,9 @@ public class MetadataManagerCtrl {
        {
     	   // Check whether an error flag is set
            if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Get previous page of results
@@ -164,7 +155,9 @@ public class MetadataManagerCtrl {
        {
     	   //Check whether an error flag is set 
            if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Get next page of result
@@ -193,7 +186,9 @@ public class MetadataManagerCtrl {
        public void actionPerformed(ActionEvent actionEvent) {
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Save old value 
@@ -233,7 +228,9 @@ public class MetadataManagerCtrl {
        {
     	   //Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            //set information abut selected operation ADD
@@ -252,14 +249,15 @@ public class MetadataManagerCtrl {
            Task task = model.addMetedataRecord();
            
            new DefaultProgressBar(task, view, true) {		   							 
-   			@Override
-   			public void afterStopping() {
-   				   if (! model.isFinishedTask()) return;
-				   model.setInfoFinishedTask(false);
-    			   //load metadata
+                @Override
+                public void afterStopping() {
+                   if (! model.isFinishedTask()) return;
+                   model.setInfoFinishedTask(false);
+                   //load metadata
     	           model.searchMetadata(false);
     	           if (model.isError()) {
-    	        	   displayError();
+    	        	   DefaultExceptionHandler.handle(view, model.getException());
+                           model.setError(null);
     	        	   return;
     	           }    	           
     	           reloadData(1, model.getDisplayRows());    	                   
@@ -277,7 +275,9 @@ public class MetadataManagerCtrl {
        {
     	   //  Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            if (view.tableMetadataList.getSelectedRow() < 0) {
@@ -305,12 +305,12 @@ public class MetadataManagerCtrl {
                
                new DefaultProgressBar(task, view, true) {
             	   @Override
-          			public void afterStopping() {
-            		   if (! model.isFinishedTask()) return;
-					   model.setInfoFinishedTask(false);
-          			   //load metadata          				
-                        if (model.isError()) return;
-                        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
+                public void afterStopping() {
+                     if (! model.isFinishedTask()) return;
+                     model.setInfoFinishedTask(false);
+                   //load metadata          				
+                    if (model.isError()) return;
+                    view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
                      } 		   					
           		};          		                 	                   
                 task.start();                                       
@@ -326,7 +326,9 @@ public class MetadataManagerCtrl {
        {
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	  Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            if (view.tableMetadataList.getSelectedRow() < 0) {    
@@ -360,7 +362,9 @@ public class MetadataManagerCtrl {
        {
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            if (view.tableMetadataList.getSelectedRow() < 0) {    
@@ -373,7 +377,8 @@ public class MetadataManagerCtrl {
                //Test if record can be deleted               
                if (!model.checkDelete(resultNumber)) {
             	   if (model.isError()) {
-	            	   displayError();
+	            	   DefaultExceptionHandler.handle(view, model.getException());
+                           model.setError(null);
 	            	   return;
             	   }
                    view.showErrorMessage(MetadataManager.ERROR_TITLE, MetadataManager.ERROR_CHECK_DELETE);
@@ -386,14 +391,16 @@ public class MetadataManagerCtrl {
 		               Task task = model.deleteMetadataRecord();
 		               
 		             new DefaultProgressBar(task, view, true) {		   								  		   				
-						@Override						
-                        public void afterStopping() {
-							if (! model.isFinishedTask()) return;
-							model.setInfoFinishedTask(false);
-                           // load metadata
+                                    @Override						
+                                     public void afterStopping() {
+                                        if (! model.isFinishedTask()) return;
+                                        model.setInfoFinishedTask(false);
+                                        // load metadata
 		   	               model.searchMetadata(false);  
 		   	               if (model.isError()) {
-		   	            	   displayError();
+		   	            	   DefaultExceptionHandler.handle(view, model.getException());
+                                            model.setError(null);
+                                            model.setException(null);
 		   	            	   return;
 		   	               }
 		   	               reloadData(1, model.getDisplayRows());		   	              		   	               
@@ -416,7 +423,9 @@ public class MetadataManagerCtrl {
        {
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(MetadataManager.ERROR_TITLE, model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            model.setSourceInstitutionId(view.sourceInstitutionIdText.getText());           
@@ -434,16 +443,16 @@ public class MetadataManagerCtrl {
            new DefaultProgressBar(task, view, true) {		   								  			
 			   @Override 
         	   public void afterStopping() {
-				   if (! model.isFinishedTask()) return;
-				   model.setInfoFinishedTask(false);
-					if (model.getDisplayRows() <= 0) {
-		               model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
-		           }
-		           //No record in result - show message to user
-		           if (model.getResultRows() < 1) {
-		               view.showInfoMessage(MetadataManager.INFORMATION_RESULT_TITLE,MetadataManager.INFORMATION_RESULT);
-		           }
-		           reloadData(1, model.getDisplayRows());		           		           
+                       if (! model.isFinishedTask()) return;
+                       model.setInfoFinishedTask(false);
+                       if (model.getDisplayRows() <= 0) {
+                       model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
+                       }
+                       //No record in result - show message to user
+                       if (model.getResultRows() < 1) {
+                           view.showInfoMessage(MetadataManager.INFORMATION_RESULT_TITLE,MetadataManager.INFORMATION_RESULT);
+                       }
+                       reloadData(1, model.getDisplayRows());		           		           
                } 		   					
 			};			                  	                   
             task.start();                                                                  

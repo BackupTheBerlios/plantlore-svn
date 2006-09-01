@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Task;
@@ -62,7 +63,7 @@ public class HistoryCtrl {
      */
     public void reloadData(int fromRow, int countRow) {
     	try {
-    		model.processResult(fromRow, countRow);        
+    	    model.processResult(fromRow, countRow);        
             view.getTable().setModel(new HistoryTableModel(model));             
             int from = model.getCurrentFirstRow();
             int to = from + view.getTable().getRowCount() - 1;
@@ -83,12 +84,12 @@ public class HistoryCtrl {
            } else {
         	   view.previousButton.setEnabled(false);
            }
-    	} catch (RemoteException e) {
-    		DefaultReconnectDialog.show(view, e);
-    	} catch (DBLayerException e) {
-    		view.showErrorMessage(e.getMessage());
-    	}
-    	           
+    	}catch (Exception ex) {
+           logger.error("Reload data failed. Details:" + ex.getMessage());           
+           ex.printStackTrace();
+           DefaultExceptionHandler.handle(view, ex);           
+           return;
+        }     	           
     }
     
    /**
@@ -100,7 +101,9 @@ public class HistoryCtrl {
        {    	  
     	   // Check whether an error flag is set
            if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Get previous page of results
@@ -132,7 +135,9 @@ public class HistoryCtrl {
        {
     	   // Check whether an error flag is set 
            if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	  Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Get next page of result
@@ -164,7 +169,9 @@ public class HistoryCtrl {
        {   
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	  Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }    	   
     	   model.setSelectAll(true);    	  	   
@@ -182,7 +189,9 @@ public class HistoryCtrl {
        {   
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
     	   model.setUnselectedAll(true); 
@@ -199,7 +208,9 @@ public class HistoryCtrl {
        {   
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }    	   
     	   // process selected record
@@ -212,33 +223,31 @@ public class HistoryCtrl {
             	   logger.debug("Button OK was press.");
             	   Task task = model.commitUpdate(model.getResultRows(), true);  
             	   
-            	   new DefaultProgressBar(task, view, true) {		   									
-							@Override
-		   					public void afterStopping() {
-								try {
-								   if (! model.isFinishedTask()) return;
-								   model.setInfoFinishedTask(false);	
-			   					   model.searchEditHistory(model.getData());
-			   					   reloadData(1,model.getDisplayRows());			   	            	          
-			   	                   view.setCountResutl(model.getResultRows());
-								} catch (RemoteException e) {
-									DefaultReconnectDialog.show(view, e);
-						    	} catch (DBLayerException e) {
-						    		view.showErrorMessage(e.getMessage());
-						    	}
-		   	               } 		   					
-		   				};		   					                   	                   
-	                    task.start();     	                   
+            	   new DefaultProgressBar(task, view, true) {                       
+                        @Override
+                        public void afterStopping() {
+                                try {
+                                   if (! model.isFinishedTask()) return;
+                                   model.setInfoFinishedTask(false);	
+                                   model.searchEditHistory(model.getData());
+                                   reloadData(1,model.getDisplayRows());			   	            	          
+                                   view.setCountResutl(model.getResultRows());
+                                }catch (Exception ex) {                                   
+                                   ex.printStackTrace();
+                                   DefaultExceptionHandler.handle(view, ex);                                   
+                                   return;
+                                } 
+                        } 		   					
+                  };		   					                   	                   
+	          task.start();     	                   
                } else {            	  
             	   logger.debug("Button Cancle was press."); 
                }  
-           } else {
-        	   if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
-        		   DefaultReconnectDialog.show(view, model.getRemoteEx());
-        	   } else {
-        		   view.showErrorMessage(model.getError());
-        	   }
-        	   model.setError(null);        	           	  
+           } else {                
+        	Exception ex = model.getException();  
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);                                   
+        	model.setError(null);        	           	  
            }
        }
    }
@@ -251,7 +260,9 @@ public class HistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent) {
     	   // Check whether an error flag is set
     	   if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Save old value 

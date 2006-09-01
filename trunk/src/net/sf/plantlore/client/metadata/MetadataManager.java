@@ -39,8 +39,8 @@ public class MetadataManager  extends Observable {
     private SelectQuery query = null;
     /** Exception with details about an error */
     private String error = null;
-    /** Remote exception (network communication failed)*/
-    private RemoteException remoteEx;
+    /** Exception */
+    private Exception exception;
     /** True if MyTask finished successful*/
     private boolean  finishedTask = false;
     /** Constant with default number of rows to display */
@@ -53,6 +53,8 @@ public class MetadataManager  extends Observable {
     private String displayRow;           
     /** Result of the search query */
     private int resultId = 0;
+    /** Number of results for the current SelectQuery */
+    private int resultRows = 0;
     /** List of data (results of a search query) displayed in the table */
     private ArrayList<Metadata> metadataList = new ArrayList<Metadata>();         
     /** Message containing information about changes in metadata*/
@@ -133,40 +135,30 @@ public class MetadataManager  extends Observable {
        
     	if (createTask) {
 	    	final Task task = new Task() {    		    		
-	    		public Object task() throws DBLayerException, RemoteException {
+	    		public Object task() throws Exception {
 	  		       int resultIdent;
 	    			try {
 	  		    	    resultIdent = search();
 	  		    	    setResultId(resultIdent);
-		    	   }catch (RemoteException e) {	            
-			            logger.error("Searching metada failed. Remote exception caught in Metadata. Details: "+e.getMessage());			        	
-		                RemoteException remex = new RemoteException(ERROR_SEARCH + e.getMessage());
-		                remex.setStackTrace(e.getStackTrace());
-		                throw remex; 		           
-			        } catch (DBLayerException e) {
-			        	logger.error("Searching metada failed. DBLayer exception caught in Metadata. Details: "+e.getMessage());       	                                                   			        
-		                DBLayerException dbex = new DBLayerException(ERROR_SEARCH + e.getMessage());
-		                dbex.setStackTrace(e.getStackTrace());
-		                throw dbex; 		           
-			        }			
-			        setInfoFinishedTask(true);
-                    return null;			        
-				}
+		    	   }catch (Exception e) {	            
+			        logger.error("Searching metada failed. Exception caught in Metadata. Details: "+e.getMessage());			        			               
+		                throw e; 		           
+                            }			
+                            setInfoFinishedTask(true);
+                            return null;			        
+                            }
 		    };
 		    return task;
     	} else {
     		try {
-    			int resultIdent = search();
-    			setResultId(resultIdent);
-			} catch (DBLayerException e) {
-				logger.error("Searching metada failed. Remote exception caught in Metadata. Details: "+e.getMessage());
-				setError(ERROR_SEARCH);				               
-			} catch (RemoteException e) {
-				logger.error("Searching metada failed. DBLayer exception caught in Metadata. Details: "+e.getMessage());				
-				 setError(ERROR_REMOTE_EXCEPTION);	
-				 setRemoteEx(e);
-			}
-			return null;
+                    int resultIdent = search();
+                    setResultId(resultIdent);
+                    } catch (Exception e) {
+                          logger.error("Searching metada failed. Exception caught in Metadata. Details: "+e.getMessage());
+                           setError(ERROR_SEARCH);
+                           setException(e);
+                    }
+                    return null;
     	}
   }
     
@@ -249,10 +241,17 @@ public class MetadataManager  extends Observable {
      * @param from number of the first row to show in table. 
      * @param count number of rows to retrieve 
      */
-    public void processResult(int from, int count) throws RemoteException, DBLayerException{
+    public void processResult(int from, int count) throws Exception{
         
     	if (this.resultId != 0) {    		
-            int currentRow = getResultRows();
+             int currentRow = getResultCount();
+            setResultRows(currentRow);
+            if (isError()) {
+                Exception ex = getException();
+                setError(null);
+                setException(null);
+                throw ex;
+            }
             logger.debug("Rows in the result: "+currentRow);
             logger.debug("Max available rows: "+(from+count-1));            
            
@@ -269,20 +268,13 @@ public class MetadataManager  extends Observable {
                 Object[] objectMetadata;
              	try {
              		objectMetadata = database.more(this.resultId, 0, to-1);  
-             	} catch(RemoteException e) {
-             		logger.error("Remote exception caught in MetadataManager (processResult). Details: "+e.getMessage());        			
-        			RemoteException remex = new RemoteException(e.getMessage());
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		                                    	                                                                                      
-                } catch (DBLayerException e) {                  
-                    logger.error("Processing search results failed: " + e.getMessage());   
-                    DBLayerException dbex = new DBLayerException(ERROR_PROCESS + e.getMessage());
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 
+             	}  catch (Exception e) {                  
+                    logger.error("Processing search results failed: " + e.getMessage());                       
+                    throw e; 
                 }  
                 if (objectMetadata == null) {
-                	logger.error("tMetadata doesn`t contain required data");
-                	DBLayerException dbex = new DBLayerException(ERROR_PROCESS + "tMetadata doesn`t contain required data");                   
+                    logger.error("tMetadata doesn`t contain required data");
+                    DBLayerException dbex = new DBLayerException(ERROR_PROCESS + "tMetadata doesn`t contain required data");                   
                     throw dbex; 
                 }
                 int countResult = objectMetadata.length;  
@@ -290,7 +282,7 @@ public class MetadataManager  extends Observable {
                 this.metadataList = new ArrayList<Metadata>();
                 // Cast the results to the Metadata objects
                 for (int i=0; i<countResult; i++ ) {                    							
-                	Object[] objHis = (Object[])objectMetadata[i];
+                    Object[] objHis = (Object[])objectMetadata[i];
                     this.metadataList.add((Metadata)objHis[0]);
                     logger.debug("Proccess: "+ i + ": " + (Metadata)objHis[0]);
                 }               
@@ -324,15 +316,11 @@ public class MetadataManager  extends Observable {
                 return false;
             }
             database.closeQuery(sq);
-        } catch (RemoteException e) {
-            logger.error("Remote exception caught in Metadata. Details: "+e.getMessage());
-            setError(ERROR_REMOTE_EXCEPTION);  
-            setRemoteEx(e);
-            return false;
-        } catch (DBLayerException e) {
+        } catch (Exception e) {
             logger.error("Loading metadata failed. Cannot determine whether metadata can be deleted");
-            setError(ERROR_DELETE);
-            return false;
+            setError(ERROR_DELETE);  
+            setException(e);
+            return false;       
         }        
         return true;
     }
@@ -358,16 +346,12 @@ public class MetadataManager  extends Observable {
                 return false;
             }
             database.closeQuery(sq);
-    	} catch (RemoteException e) {
-            logger.error("Remote exception caught in Metadata. Details: "+e.getMessage());
-            setError(ERROR_REMOTE_EXCEPTION);
-            setRemoteEx(e);
-            return false;
-        } catch (DBLayerException e) {
+    	} catch (Exception e) {
             logger.error("Check unique datasetTitle failed. Cannot determine whether some name of project equals new datasetTitle.");
             setError(ERROR_DATASETTITLE);
+            setException(e);
             return false;
-        }        
+        }    
     	return true;
     }
     
@@ -380,21 +364,13 @@ public class MetadataManager  extends Observable {
     public Task addMetedataRecord () {
     	    	
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {
+    		public Object task() throws Exception {
     			try {
 		            database.executeInsert(metadataRecord);		            		            
-		        }catch (RemoteException e) {
+		        }catch (Exception e) {
 		        	logger.error("Process add metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();
-                    RemoteException remex = new RemoteException(ERROR_ADD + e.getMessage());
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           		       	    
-		        } catch (DBLayerException e) {
-		        	logger.error("Process add metadata failed. DBLayer exception caught in MetadataManager. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-                    DBLayerException dbex = new DBLayerException(ERROR_ADD + e.getMessage());
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 		            
+		        	database.rollbackTransaction();                    
+                                throw e; 		            
 		        } 		       
 		        //Tell AppCore observerber
 		        setChanged(); 
@@ -415,22 +391,14 @@ public class MetadataManager  extends Observable {
     public Task editMetadataRecord() {       
         
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {
+    		public Object task() throws Exception {
     			try {
 		        	database.executeUpdate(metadataRecord);
 		        	metadataList.set(idRecord, metadataRecord);
-		        }catch (RemoteException e) {
+		        }catch (Exception e) {
 		        	logger.error("Process update metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();
-                    RemoteException remex = new RemoteException(ERROR_EDIT + e.getMessage());
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           		       	    
-		        } catch (DBLayerException e) {
-		        	logger.error("Process update metadata failed. DBLayer exception caught in MetadataManager. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-                    DBLayerException dbex = new DBLayerException(ERROR_EDIT + e.getMessage());
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 		            
+		        	database.rollbackTransaction();                   
+                                throw e; 		            
 		        } 		        
 		        //Tell AppCore observerber
 		        setChanged(); 
@@ -451,22 +419,13 @@ public class MetadataManager  extends Observable {
     public Task deleteMetadataRecord() {
     	
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {
+    		public Object task() throws Exception {
     			try {
 		        	metadataRecord.setDeleted(1);
 		            database.executeUpdate(metadataRecord);		            
-		        }catch (RemoteException e) {
-		        	logger.error("Process delete metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();
-                    RemoteException remex = new RemoteException(ERROR_DELETE + e.getMessage());
-                    remex.setStackTrace(e.getStackTrace());
-                    throw remex; 		           		       	    
-		        } catch (DBLayerException e) {
-		        	logger.error("Process delete metadata failed. DBLayer exception caught in MetadataManager. Details: "+e.getMessage());       	                                                   
-		        	database.rollbackTransaction();
-                    DBLayerException dbex = new DBLayerException(ERROR_DELETE + e.getMessage());
-                    dbex.setStackTrace(e.getStackTrace());
-                    throw dbex; 		            
+		        }catch (Exception e) {
+		        	logger.error("Process delete metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());		        	
+                                throw e; 		            
 		        } 			        
 		        //Tell AppCore observerber
 		        setChanged(); 
@@ -530,19 +489,19 @@ public class MetadataManager  extends Observable {
     }    
     
     /**
-     *  Set an remote exception (network communication failed)
-     *  @param ex  RemoteException (network communication failed)
+     *  Set an exception 
+     *  @param ex  Exception 
      */
-    public void setRemoteEx(RemoteException ex) {
-        this.remoteEx = ex;
+    public void setException(Exception ex) {
+        this.exception = ex;
     }
     
     /**
-     *  Get remote exception (network communication failed)
-     *  @return remote exception (network communication failed)
+     *  Get exception 
+     *  @return exception 
      */
-    public RemoteException getRemoteEx() {
-        return this.remoteEx;
+    public Exception getException() {
+        return this.exception;
     }  
     
     /** 
@@ -594,17 +553,35 @@ public class MetadataManager  extends Observable {
         return this.resultId;
     }
     
+    
+     /**
+     * Get the number of results for the current SelectQuery. 
+     * @return number of results for the current SelectQuery
+     */
+    public int getResultRows() {
+       return this.resultRows;
+    }
+    
+    /**
+     * Set the number of results for the current SelectQuery.     
+     */
+    public void setResultRows(int resultCount) {
+        this.resultRows = resultCount;
+    }
+    
+  
     /**
      * Get the number of results for the current SelectQuery
      * @return number of results for the current SelectQuery
      */
-    public int getResultRows() {
+    public int getResultCount() {
         int resultCount = 0;
         if (resultId != 0) try {
                 resultCount = database.getNumRows(resultId);        	
-        } catch(RemoteException e) {
-        	logger.error("Get number of results failed.Remote exception caught in MetadataManager. Details: "+e.getMessage());  
+        } catch(Exception e) {
+        	logger.error("Get number of results failed. Exception caught in MetadataManager. Details: "+e.getMessage());  
         	setError(ERROR_NUMBER_ROWS);
+                setException(e);
         }
         return resultCount;
     }

@@ -123,8 +123,7 @@ public class HistoryTableModel extends AbstractTableModel
             Date when = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWhen();
     	    editHistoryData[ii][1] = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,L10n.getCurrentLocale()).format(when); 
     	    editHistoryData[ii][2] = ((HistoryRecord)editHistoryDataList.get(i)).getHistoryChange().getWho().getWholeName();    	   
-    	    editHistoryData[ii][3] = item;
-    	    logger.debug("XXXXXXXXXX: "+ item);
+    	    editHistoryData[ii][3] = item;    	    
     	    editHistoryData[ii][4] = ((HistoryRecord)editHistoryDataList.get(i)).getOldValue();
     	    editHistoryData[ii][5] = ((HistoryRecord)editHistoryDataList.get(i)).getNewValue();
     	    ii++;

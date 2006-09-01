@@ -15,6 +15,7 @@ import java.rmi.RemoteException;
 
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Task;
@@ -87,11 +88,12 @@ public class WholeHistoryCtrl {
            } else {
         	   view.nextButton.setEnabled(false);
            }
-    	} catch (RemoteException e) {
-    		DefaultReconnectDialog.show(view, e);
-    	} catch (DBLayerException e) {
-    		view.showErrorMessage(e.getMessage());
-    	}    	        	         
+    	 } catch (Exception ex) {
+               logger.error("Reload data failed.");               
+               ex.printStackTrace();
+               DefaultExceptionHandler.handle(view, ex);               
+               return;
+        }         	         
     }
     
    /**
@@ -103,7 +105,9 @@ public class WholeHistoryCtrl {
        {    	  
     	   // Check whether an error flag is set
            if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	  Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Get previous page of results
@@ -135,7 +139,9 @@ public class WholeHistoryCtrl {
        {
     	   // Check whether an error flag is set 
            if (model.isError()) {
-        	   view.showErrorMessage(model.getError());
+        	  Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Get next page of result
@@ -164,7 +170,9 @@ public class WholeHistoryCtrl {
        public void actionPerformed(ActionEvent actionEvent) {
     	   // Check whether an error flag is set
     	   if (model.isError() && view.tableHistoryList.getRowCount() > 0) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            // Save old value 
@@ -205,7 +213,9 @@ public class WholeHistoryCtrl {
        {
     	   // Check whether an error flag is set
     	   if (model.isError() && view.tableHistoryList.getRowCount() > 0) {
-        	   view.showErrorMessage(model.getError());
+        	  Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }
            if (view.tableHistoryList.getSelectedRow() < 0) {    
@@ -226,34 +236,32 @@ public class WholeHistoryCtrl {
 	                   Task task = model.commitUpdate(toResult, false);
 	                   
 	                   new DefaultProgressBar(task, view, true) {		   										
-						    @Override
-		   					public void afterStopping() {
-		   						logger.debug("Load Data");	   
-		   						try {
-		   						   if (! model.isFinishedTask()) return;
-		   						   model.setInfoFinishedTask(false);	
-		   						   model.searchWholeHistoryData();
-		   						   reloadData(1,model.getDisplayRows());
-		   						   view.setCountResult(model.getResultRows());
-		   						} catch (RemoteException e) {
-									DefaultReconnectDialog.show(view, e);
-						    	} catch (DBLayerException e) {
-						    		view.showErrorMessage(e.getMessage());
-						    	}
-		   					}
-		   				};		   					                   	                  
+                                @Override
+                                    public void afterStopping() {
+                                        logger.debug("Load Data");	   
+                                        try {
+                                           if (! model.isFinishedTask()) return;
+                                           model.setInfoFinishedTask(false);	
+                                           model.searchWholeHistoryData();
+                                           reloadData(1,model.getDisplayRows());
+                                           view.setCountResult(model.getResultRows());
+                                        } catch (Exception ex) {                                                                   
+                                           ex.printStackTrace();
+                                           DefaultExceptionHandler.handle(view, ex);                                                                   
+                                           return;
+                                        } 
+                                    }
+                            };		   					                   	                  
 	                    task.start();
 	                   
 	               } else {	                       	                     
 	                       logger.debug("Button Cancle was press.");
 	               } 
                 } else {
-                	if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
-             		   DefaultReconnectDialog.show(view, model.getRemoteEx());
-             	   } else {
-             		   view.showErrorMessage(model.getError());
-             	   }
-             	   model.setError(null); 
+                    Exception ex = model.getException();  
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);                                   
+                    model.setError(null);                        
                 }
             }
          }
@@ -268,7 +276,9 @@ public class WholeHistoryCtrl {
        {
     	   // Check whether an error flag is set
     	   if (model.isError() && view.tableHistoryList.getRowCount() > 0) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }        
            if (view.tableHistoryList.getSelectedRow() < 0) {
@@ -283,13 +293,12 @@ public class WholeHistoryCtrl {
                detailsView.setDetailsMessage(detailsMessage);
                detailsView.setVisible(true);               
            } 
-           if (model.getError() != null) {
-	           if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
-	    		   DefaultReconnectDialog.show(view, model.getRemoteEx());
-	    	   } else {
-	    		   view.showErrorMessage(model.getError());
-	    	   }
-	    	   model.setError(null); 
+           if (!model.isError()) {
+	           Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
+        	   model.setError(null); 
+                   model.setException(null);
            }
        }
     }
@@ -303,7 +312,9 @@ public class WholeHistoryCtrl {
        {
     	   // Check whether an error flag is set
     	   if (model.isError() && view.tableHistoryList.getRowCount() > 0) {
-        	   view.showErrorMessage(model.getError());
+        	   Exception ex = model.getException();
+                   ex.printStackTrace();
+                   DefaultExceptionHandler.handle(view, ex);  
         	   return;
            }     
     	   if (view.tableHistoryList.getRowCount() == 0) {
@@ -312,27 +323,26 @@ public class WholeHistoryCtrl {
     	   }
            int okCancle = view.messageUndo("clearHistory");
            if (okCancle == 0){
-                   //Button OK was press
-                   logger.debug("Button OK was press.");  
-                   // delete records whit contition cdelete > 0
-                   Task task = model.clearDatabase();
-                   
-                   new DefaultProgressBar(task, view, true) {
-                	        @Override
-			   				public void afterStopping() {
-		   						//load data
-                	        	try {
-                	        		model.searchWholeHistoryData();
-                	        		reloadData(1,model.getDisplayRows());
-                	        		view.totalResultValueLabel.setText("0");
-                	        	} catch (RemoteException e) {
-									DefaultReconnectDialog.show(view, e);
-						    	} catch (DBLayerException e) {
-						    		view.showErrorMessage(e.getMessage());
-						    	}		   	               
-		   					}
-		   				};		   					                   	                   
-	                    task.start();	                                                         
+           //Button OK was press
+           logger.debug("Button OK was press.");  
+           // delete records whit contition cdelete > 0
+           Task task = model.clearDatabase();
+
+           new DefaultProgressBar(task, view, true) {
+                @Override
+                public void afterStopping() {
+                //load data
+                try {
+                        model.searchWholeHistoryData();
+                        reloadData(1,model.getDisplayRows());
+                        view.totalResultValueLabel.setText("0");
+                        } catch (Exception ex) {                                                                                    
+                            ex.printStackTrace();
+                            DefaultExceptionHandler.handle(view, ex);                                                                                  		   	               
+                        }
+                }
+           };		   					                   	                   
+           task.start();	                                                         
            }
        }
     }

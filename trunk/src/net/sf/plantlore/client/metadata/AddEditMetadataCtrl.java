@@ -16,6 +16,7 @@ import java.util.Date;
 import net.sf.plantlore.client.history.History;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.record.Metadata;
 import org.apache.log4j.Logger;
@@ -67,15 +68,13 @@ public class AddEditMetadataCtrl {
                 if (view.checkNotNull()) {
                         //Check if new name of project (dataSetTitle) already exist
                 	if (!model.uniqueDatasetTitle(view.dataSetTitleText.getText())){       
-                		if (model.isError()) {
-                			if (model.getError().equals(History.ERROR_REMOTE_EXCEPTION)) {
-                		 		   DefaultReconnectDialog.show(view, model.getRemoteEx());
-                		 	   } else {
-                		 		   view.showErrorMessage(model.getError());
-                		 	   }
-                			   //TODO nastavit zde null
-                		 	   model.setError(null); 
-                		 	   return;
+                		if (model.isError()) {                			
+                                        Exception ex = model.getException();
+                                        ex.printStackTrace();
+                                        DefaultExceptionHandler.handle(view, ex);
+                                        model.setError(null);
+                                        model.setException(null);                		 	  
+                		 	return;
                 		}
                 		view.showErrorMessage(MetadataManager.ERROR_TITLE, MetadataManager.ERROR_DATASETTITLE);
                 		return;
