@@ -1426,7 +1426,7 @@ public class AppCoreCtrl {
 				try {
 					int resultNumber = model.getSelectedResultNumber();
                                         if (resultNumber > model.getResultsCount()) {
-                                            logger.equals("Trying to show detail for a record number of which is bigger than results count. Have we been disconnected?");
+                                            logger.error("Trying to show detail for a record number of which is bigger than results count. Have we been disconnected?");
                                             JOptionPane.showMessageDialog(view,"The connection has been probably lost.");
                                             return;
                                         }
