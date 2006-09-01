@@ -288,9 +288,10 @@ public class AppCore extends Observable
     }
     
     public void selectAndShow(int resultNumber) throws DBLayerException, RemoteException {
-        System.out.println("selectAndShow resultNumber = "+resultNumber);
+        logger.debug("selectAndShow resultNumber = "+resultNumber);
         if (resultNumber < 0 || resultNumber > getResultsCount()) {
-            throw new IllegalArgumentException("Result number "+resultNumber+" doesn't exist.");
+            logger.error("Row #"+resultNumber+" doesn't exist. Have we been disconnected?");
+            return;
         }
         if (resultNumber >= getRecordsPerPage()*getCurrentPage()) { //resultNumber is greater than the last resultNumber on current page
             nextPage();
@@ -325,8 +326,10 @@ public class AppCore extends Observable
     }
     
     public Integer getOccurrence(int i) throws DBLayerException, RemoteException {
-        if (i < 0 || i > getResultsCount())
-            throw new IllegalArgumentException(""+i);
+        if (i < 0 || i > getResultsCount()) {
+            logger.error("Occurrence #"+i+" doesn't exist. Have we been disconnected?");                    
+            return null;
+        }
         
         return tableSorter.getOccurrence(i);
     }
