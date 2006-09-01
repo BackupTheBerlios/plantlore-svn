@@ -1,5 +1,5 @@
 <project name="Plantlore" default="all" basedir=".">
-	<target name="all" depends="clean, compile" />
+	<target name="all" depends="clean, javadoc, compile" />
 	
 	<property name="base.dir" location="." />
 	<property name="build.dir" location="${base.dir}/build"/>
@@ -141,6 +141,22 @@
                     basedir="${base.dir}"
             />
         </target>
+        
+        <target name="javadoc" depends="init" description="Compile JavaDoc documentation for the project">
+            <javadoc packagenames="net.sf.plantlore.*"
+                     sourcepath="${base.dir}/src"
+                     destdir="${dist.dir}/javadoc"
+                     private="true"
+                     verbose="true"
+                     encoding="utf8"
+                     author="true"
+                     version="true"
+                     windowtitle="Plantlore API documentation">
+                <doctitle><![CDATA[<h1>Plantlore API</h1>]]></doctitle>
+                <link href="http://plantlore.berlios.de"/>                
+                <bottom><![CDATA[<i>Project homepage: http://plantlore.berlios.de</i>]]></bottom>
+            </javadoc>
+        </target>        
 </project>
 
 
