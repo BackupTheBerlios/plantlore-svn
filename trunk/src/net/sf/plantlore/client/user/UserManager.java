@@ -346,7 +346,7 @@ public class UserManager extends Observable {
     				//Insert information about user into tRight, tUser
     				int rightId = database.executeInsert(right);
                                 right.setId(rightId);
-                                database.executeInsert(userRecord);		                                
+                                database.executeInsertInTransaction(userRecord);		                                
                                 //Add new name (login) of user to user list    	            
                                 int count = users.length;
                                 Pair<String, Integer>[] usersNew = new Pair[count+1];
@@ -444,7 +444,7 @@ public class UserManager extends Observable {
     				//Drop database user
     				database.dropUser(userRecord.getLogin());
     				//Set information abou dropping user into database
-    				 database.executeUpdate(userRecord);		            
+    				 database.executeUpdateInTransaction(userRecord);		            
 		        }catch (Exception e) {
 		        	logger.error("Process delete User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();                    

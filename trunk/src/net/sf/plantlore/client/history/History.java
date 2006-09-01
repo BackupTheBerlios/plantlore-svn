@@ -1496,10 +1496,8 @@ public class History extends Observable {
 			                         key = (Enum)editTypeHash.get(type); 
 			                         if(!editType.contains(key))
 			                             editType.add(key);
-			                }                                  
-			                 // TODO tady to spadne otevru dialog History, zavru, vypnu DB, dialog, zapnu DB, znosu pripojim
-			                 // k databazi, zedituji nalez a na danou polozku zavolam UNDO
-			                database.executeUpdateHistory(editObjectList.get(i));
+			                }                                  			                
+			                database.executeUpdateInTransactionHistory(editObjectList.get(i));
 			    		}
 			    	//Delete selected data from history tables 
 			    	deleteHistory();
