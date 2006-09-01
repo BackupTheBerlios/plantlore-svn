@@ -4,5 +4,5 @@ jcalendar-1.3.1.jar	Library used for calendar and date components (JCalendar, JM
 looks-2.0.2.jar		JGoodies look & feel
 dom4j-1.6.jar		Dom4j library for work with XML
 swing-layout-1.0.jar	Library used by dialogs created in Netbeans Matisse editor
-
+spin.jar		A special library that supports a creation of a non-freezing Swing GUI. See http://spin.sourceforge.net/ for more details.
 
