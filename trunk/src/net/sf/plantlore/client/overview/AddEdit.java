@@ -3,8 +3,6 @@
  *
  * Created on 20. duben 2006, 14:26
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 
 package net.sf.plantlore.client.overview;
@@ -43,7 +41,14 @@ import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
-/**
+/** Model of the AddEdit dialog.
+ *
+ * Handles all the inner logic of the two dialogs. Gathers data from user, loads
+ * data from the database for given occurrence id, stores the data into the 
+ * database, creates new occurrences, updates them, deletes them if necessary.
+ *
+ * The {@link storeRecord()} method should use the DBLayerUtils more so that
+ * it would work exactly the same as import does.
  *
  * @author fraktalek
  */
@@ -219,7 +224,7 @@ public class AddEdit extends Observable {
         altitude = o.getHabitat().getAltitude();
         longitude = o.getHabitat().getLongitude();
         latitude = o.getHabitat().getLatitude();
-//--
+
         habitatNoteOld = o.getHabitat().getNote();
         territoryNameOld = new Pair(o.getHabitat().getTerritory().getName(),o.getHabitat().getTerritory().getId());
         phytNameOld = new Pair(o.getHabitat().getPhytochorion().getName(), o.getHabitat().getPhytochorion().getId());
@@ -229,7 +234,7 @@ public class AddEdit extends Observable {
         altitudeOld = o.getHabitat().getAltitude();
         longitudeOld = o.getHabitat().getLongitude();
         latitudeOld = o.getHabitat().getLatitude();
-//--        
+
         source = o.getDataSource();
         if (o.getPublication() != null)
             publication = new Pair(o.getPublication().getReferenceCitation(), o.getPublication().getId());
@@ -283,7 +288,11 @@ public class AddEdit extends Observable {
     }//setHabitat
 
     /** Convenience method for {@link hasHabitatChanged()}.
+     * @param o1 object to compare
+     * @param o2 object to compare
      *
+     * @return true if o1.equals(o2) or both objects are null
+     * @return false otherwise
      */
     private boolean equal(Object o1, Object o2) {
         if (o1 == null && o2 != null)
@@ -295,6 +304,10 @@ public class AddEdit extends Observable {
      *
      * We need to keep track of changes to habitat for the case that it is shared by two and more occurrences. 
      * In that case we have to ask user whether he wants to divide this habitat or change it for all occurrences.
+     *
+     * Compares values preserved in *Old habitat variables with the actual habitat variables.
+     *
+     * @return true if all every habitat variable is {@link equal()} to it's counterpart.
      */
     public boolean hasHabitatChanged() {
     return !( 
@@ -312,38 +325,44 @@ public class AddEdit extends Observable {
             );
     }
     
+    /** Author getter. */
     public Pair<String, Integer> getAuthor(int i) {
         return ((Pair<Pair<String,Integer>,String>)authorList.get(i)).getFirst();
     }
     
+    /** Author role getter. */
     public String getAuthorRole(int i) {
         return ((Pair<Pair<String,Integer>,String>)authorList.get(i)).getSecond();
     }
     
+    /** Determines the number of author that the model holds.
+     * @return the number of authors
+     */
     public int getAuthorCount() {
-        return authorList.size();
+        return authorList == null ? 0 : authorList.size();
     }
     
+    /** Adds an author to the list of authors held by the model.
+     *
+     * @param author the author to be added
+     */
     public void addAuthor(Pair<Pair<String, Integer>,String> author) {
         authorList.add(author);
         logger.debug("Added author "+author.getFirst()+" as "+author.getSecond());
     }
     
-    /*public Pair<Pair<String, Integer>,String> removeAuthor(int i) {
-        Pair<Pair<String, Integer>,String> author = authorList.remove(i);
-        logger.debug("Removed author "+author.getFirst()+" "+author.getSecond());
-        return author;
-    }*/
-
+    /** Village getter. */
     public Pair<String, Integer> getVillage() {
         return village;
     }
 
+    /** Village setter. */
     public void setVillage(Pair<String, Integer> village) {
         this.village = village;
         logger.debug("NearestVillage set to "+village);
     }
 
+    /** Taxon getter. */
     public String getTaxon(int i) {
         if (taxonList == null || taxonList.size() == 0)
             return "";
@@ -351,21 +370,28 @@ public class AddEdit extends Observable {
         return (String) taxonList.get(i);
     }
 
+    /** Habitat description getter. */
     public String getHabitatDescription() {
         return habitatDescription;
     }
 
+    /** Habitat description setter. */
     public void setHabitatDescription(String habitatDescription) {
         this.habitatDescription = habitatDescription;
         logger.debug("HabitatDescription set to "+habitatDescription);
     }
 
+    /** Year getter. 
+     * In case the year hasn't been set yet or was set to null this method
+     * determines the current year and returns it.
+     */
     public Integer getYear() {
         if (year == null)
             year = Calendar.getInstance().get(Calendar.YEAR);
         return year;
     }
 
+    /** Year setter. */
     public void setYear(Integer year) {
         this.year = year;
         logger.debug("Year set to "+ year);
@@ -373,37 +399,47 @@ public class AddEdit extends Observable {
         notifyObservers("YEAR_CHANGED");
     }
 
+    /** Habitat note getter. */
     public String getHabitatNote() {
         return habitatNote;
     }
 
+    /** Habitat note setter. */
     public void setHabitatNote(String habitatNote) {
         this.habitatNote = habitatNote;
         logger.debug("HabitatNote set to "+ habitatNote);
     }
 
+    /** Occurrence note getter. */
     public String getOccurrenceNote() {
         return occurrenceNote;
     }
 
+    /** Occurrence note setter. */
     public void setOccurrenceNote(String occurrenceNote) {
         this.occurrenceNote = occurrenceNote;
         logger.debug("OccurrenceNote set to "+occurrenceNote);
     }
 
+    /** Territory name getter. */
     public Pair<String, Integer> getTerritoryName() {
         return territoryName;
     }
 
+    /** Territory name setter. */
     public void setTerritoryName(Pair<String, Integer> territoryName) {
         this.territoryName = territoryName;
         logger.debug("TerritoryName set to "+territoryName);
     }
 
+    /** Phytochorion name getter. */
     public Pair<String, Integer> getPhytName() {
         return phytName;
     }
 
+    /** Phytochorion name setter. 
+     * Also updates the phytochorion code and notifies observers about that change.
+     */
     public void setPhytName(Pair<String, Integer> phytName) {
         if (phytName == null)
             return;
@@ -429,11 +465,15 @@ public class AddEdit extends Observable {
         setChanged();
         notifyObservers(new Pair<String,Integer>("updateCode",-1));
     }
-
+    
+    /** Phytochorion code getter. */
     public Pair<String, Integer> getPhytCode() {
         return phytCode;
     }
 
+    /** Phytochorion code setter. 
+     * Also updates the phytochorion name and notifies observers about that change.
+     */
     public void setPhytCode(Pair<String, Integer> phytCode) {
         if (phytCode == null)
             return;
@@ -462,10 +502,12 @@ public class AddEdit extends Observable {
         notifyObservers(new Pair<String,Integer>("updateName",-1));
     }
 
+    /** Phytochorion country getter. */
     public String getPhytCountry() {
         return phytCountry;
     }
 
+    /** Phytochorion country setter. */
     public void setPhytCountry(String phytCountry) {
         if (phytCountry != null && !phytCountry.equals(EMPTY_STRING)) {
             this.phytCountry = phytCountry;
@@ -476,25 +518,31 @@ public class AddEdit extends Observable {
         }
     }
 
+    /** Quadrant getter. */
     public String getQuadrant() {
         return quadrant;
     }
 
+    /** Quadrant getter. */
     public void setQuadrant(String quadrant) {
         this.quadrant = quadrant;
         logger.debug("Quadrant set to "+ quadrant);
     }
 
+    /** Altitude getter. */
     public Double getAltitude() {
         return altitude;
     }
 
+    /** Altitude setter. */
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
         logger.debug("Altitude set to "+altitude);
         altitudeValid = true;
     }
 
+    /** Sets whether the value returned by {@link getAltitude()} should be considered valid.
+     */
     public void setAltitudeValid(boolean valid) {
         altitudeValid = valid;
         if (valid)
@@ -502,17 +550,21 @@ public class AddEdit extends Observable {
         else
             logger.debug("Altitude set INVALID");
     }
-    
+
+    /** Longitude getter. */
     public Double getLongitude() {
         return longitude;
     }
 
+    /** Longitude setter. */
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
         logger.debug("Longitude set to "+longitude);
         longitudeValid = true;
     }
 
+    /** Sets whether the value returned by {@link getLongitude()} should be considered valid.
+     */
     public void setLongitudeValid(boolean valid) {
         longitudeValid = valid;
         if (valid)
@@ -521,16 +573,20 @@ public class AddEdit extends Observable {
             logger.debug("Longitude set INVALID");
     }
     
+    /** Latitude getter. */
     public Double getLatitude() {
         return latitude;
     }
 
+    /** Latitude setter. */
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
         logger.debug("Latitude set to "+latitude);
         latitudeValid = true;
     }
 
+    /** Sets whether the value returned by {@link getLatitude()} should be considered valid.
+     */
     public void setLatitudeValid(boolean valid) {
         latitudeValid = valid;
         if (valid)
@@ -539,10 +595,14 @@ public class AddEdit extends Observable {
             logger.debug("Latitude set INVALID");
     }
     
+    /** Source getter. */
     public String getSource() {
         return source;
     }
 
+    /** Source setter. 
+     * If the parameter source euqals to {@link EMPTY_STRING} then it sets the source to null.
+     */
     public void setSource(String source) {
         if (source != null && !source.equals(EMPTY_STRING)) {
             this.source = source;
@@ -553,10 +613,14 @@ public class AddEdit extends Observable {
         }
     }
 
+    /** Publication getter. */
     public Pair<String, Integer> getPublication() {
         return publication;
     }
 
+    /** Publication setter.
+     * If the parameter source euqals to {@link EMPTY_STRING} then it sets the publication to null.
+     */
     public void setPublication(Pair<String, Integer> publication) {
         if (publication != null && !publication.equals(EMPTY_PAIR)) {
             this.publication = publication;
@@ -567,19 +631,25 @@ public class AddEdit extends Observable {
         }
     }
 
+    /** Herbarium getter. */
     public String getHerbarium() {
         return herbarium;
     }
 
+    /** Herbarium setter. */
     public void setHerbarium(String herbarium) {
         this.herbarium = herbarium;
         logger.debug("Herbarium set to "+herbarium);
     }
 
+    /** Month getter. */
     public Integer getMonth() {
         return month;
     }
 
+    /** Month setter. 
+     * Notifies observers that the day chooser should be updated.
+     */
     public void setMonth(Integer month) {
         this.month = month;
         logger.debug("Month set to "+month);
@@ -587,6 +657,7 @@ public class AddEdit extends Observable {
         notifyObservers("updateDayChooser");
     }
 
+    /** Day getter. */
     public Integer getDay() {
         return day;
     }
@@ -600,6 +671,9 @@ public class AddEdit extends Observable {
         setDayValid(true);
     }
     
+    /** Sets whether the value returned by {@link getDay()} method should be considered valid.
+     *
+     */
     public void setDayValid(boolean valid) {
         if (valid)
             logger.debug("Day set VALID.");
@@ -608,6 +682,7 @@ public class AddEdit extends Observable {
         dayValid = valid;
     }
 
+    /** Time getter. */
     public Date getTime() {
         return time;
     }
@@ -621,6 +696,9 @@ public class AddEdit extends Observable {
         setTimeValid(true);
     }
     
+    /** Sets whether the value returned by {@link getTime()} method should be considered valid.
+     *
+     */
     public void setTimeValid(boolean valid) {
         if (valid)
             logger.debug("Time set VALID.");
@@ -628,29 +706,38 @@ public class AddEdit extends Observable {
             logger.debug("Time set INVALID.");                    
         timeValid = valid;
     }
-    
+
+    /** DBLayer getter. */
     public DBLayer getDatabase() {
         return database;
     }
 
+    /** Sets new database layer.
+     * Now it actually only notifies  about a reconnect thanks to the change
+     *that the DBLayer is now only a proxy to the actual DBLayer.
+     */
     public void setDatabase(DBLayer database) {
         this.database = database;
         occurrenceTableModel.setDBLayer(database);
     }
 
+    /** Project getter.     */
     public Pair<String, Integer> getProject() {
         return project;
     }
 
+    /** Project setter. */
     public void setProject(Pair<String, Integer> project) {
         logger.debug("Project set to "+project);
         this.project = project;
     }
 
+    /** Coordinate system getter. */
     public int getCoordinateSystem() {
         return coordinateSystem;
     }
 
+    /** Coordinate system setter. */
     public void setCoordinateSystem(int coordinateSystem) {
         this.coordinateSystem = coordinateSystem;       
         switch (coordinateSystem) {
@@ -686,9 +773,10 @@ public class AddEdit extends Observable {
     
     /** Pre-processes data gathered from the user.
      *
-     * @paran author one of the authors of this occurrence to be processed
+     * @param author one of the authors of this occurrence to be processed
      * @param newRecord if true then new record is to be created - e.g. we are in Add mode, otherwise the record is updated
      * @param updateAllPlants if true then the shared habitat is updated, if false then a new habitat is created and asociated with our AuthorOccurrence object o. Has only sense if newRecord is true.
+     *
      * @return AuthorOccurrence the object that will be created or updated
      * @return true the object has to be updated
      * @return false the object has to be created
@@ -754,19 +842,14 @@ public class AddEdit extends Observable {
         occ.setDataSource(source);        
         
         occ.setDeleted(0);
-        
-        //FIXME #### 2BE REMOVED
-        occ.setUnitIdDb("docasna unitIdDb");
-        occ.setUnitValue("docasna unit value");
-        //####        
-        
+                
         return occ;
     }//prepareNewOccurrence
 
-    /** prepares the original occurrence record for the original taxon for update 
-     * modifies the AddEdit's occurrence o. Can insert a new habitat into the database if updateAllPlants is false.
-     * updates the existing habitat if updateAllPlants is true
+    /** Prepares the original occurrence record for the original taxon for update.
+     * Modifies the AddEdit's occurrence o. Can insert a new habitat into the database if updateAllPlants is false.
      *
+     * @param updateAllPlants updates the existing habitat if true, otherwise creates a new habitat.
      */
     private void prepareOccurrenceUpdate(boolean updateAllPlants) throws DBLayerException, RemoteException {
         Habitat h;
@@ -896,7 +979,13 @@ public class AddEdit extends Observable {
                 
         return occTmp;
     }
-        
+    
+    /** Determines whether the original taxon from the occurrence that the user began to edit
+     * survived the editation - e.g. whether it has or hasn't been removed.
+     *
+     * @return true if the taxon survived
+     * @return false if it was removed by the user
+     */
     private boolean originalTaxonSurvived() {
         for (int t = 0; t < taxonList.size(); t++) {
             if (taxonOriginal.equals(taxonList.get(t))) {
@@ -906,6 +995,13 @@ public class AddEdit extends Observable {
         return false;
     }
     
+    /** The big method handling the process of saving changes the user made to the occurrence.
+     *
+     * Works in two modes - add and edit mode. Determines the mode according to the inner variable editMode
+     * the value of which is passed to this object during it's construction.
+     *
+     * @param updateAllPlants says whether to create a new habitat if the user made a change to a habitat that is used also by other occurrences.
+     */
     public void storeRecord(boolean updateAllPlants) throws DBLayerException, RemoteException {
         boolean newOccurrenceInserted = false;
         DBLayerUtils dlu = new DBLayerUtils(database);
@@ -948,7 +1044,7 @@ public class AddEdit extends Observable {
                         originalAuthors.clear();//user
                     }//original taxon didn't survive
                     
-                    /* originalni taxon prezil, ale byl ubran autor
+                    /* original taxon survived but an author was removed
                      *
                      */
                     
@@ -999,7 +1095,7 @@ public class AddEdit extends Observable {
                      */
                     
                     //K++ A?
-                    //pro kazdou novou kytku vytvorit Occurrence a k nemu pro kazdeho autora vytvorit AuthorOccurrence
+                    //create a new Occurrence for each new flower and also create new AuthorOccurrences
                     for (int j = 0; j < taxonList.size(); j++) {
                         if (taxonOriginal.equals(taxonList.get(j)))
                             continue; //skip the original taxon, it's been already taken care of 
@@ -1032,8 +1128,8 @@ public class AddEdit extends Observable {
                     
                     
                     //A++ K-orig
-                    //pro puvodni kytku updatnout puvodni occurrence (uz jsme udelali) a author occurrence (neni potreba) 
-                    //a pro nove autory pro ni vytvorit author occurrence
+                    //for the original taxon update the original taxon (that has already been done) and the author occurrence ( not needed)
+                    //and for new authors create a new author occurrence 
                     if (originalTaxonSurvived)
                         for (int k = 0; k < authorList.size(); k++) {
                             Pair<Pair<String,Integer>,String> pTmp = authorList.get(k);
@@ -1082,7 +1178,7 @@ public class AddEdit extends Observable {
                     boolean ok = database.beginTransaction();
                     if (!ok) {
                         logger.debug("AppCore.deleteSelected(): Can't create transaction. Another is probably already running.");
-                        throw new DBLayerException("Can't create transaction. Another already running.");
+                        throw new DBLayerException(L10n.getString("Error.TransactionRaceConditions"),DBLayerException.ERROR_TRANSACTION);
                     }
                     
                     logger.info("Creating a shared habitat");
@@ -1122,9 +1218,7 @@ public class AddEdit extends Observable {
                 }//add mode
         } catch (DBLayerException ex) {
             database.rollbackTransaction();
-            DBLayerException dbex = new DBLayerException("Add/Edit was rolled back. Some database problem occurred during processing: "+ex);
-            dbex.setStackTrace(ex.getStackTrace());
-            throw dbex;
+            throw ex;
         }        
         
         checkAndPropagateChanges();
@@ -1157,7 +1251,7 @@ public class AddEdit extends Observable {
             i++;
             
         if (i > 0) { //there's been some change we must report
-            System.out.println("REPORTING CHANGE!");
+            logger.debug("REPORTING CHANGE!");
             PlantloreConstants.Table[] changedTables = new PlantloreConstants.Table[i];
             if (isCountryNew) {
                 i--;
@@ -1299,12 +1393,20 @@ public class AddEdit extends Observable {
         return new Pair<Boolean,String>(true,"");
     }
     
+    /** Loads all occurrences that share the currently edited habitat.
+     *
+     * Loads the occurrences into the habitatSharingOccurrences variable.
+     */
     private void loadHabitatSharingOccurrences() throws DBLayerException, RemoteException {
         Habitat h = o.getHabitat();
         SelectQuery sq = database.createQuery(Occurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
         int resultid = database.executeQuery(sq);
         int resultCount = database.getNumRows(resultid);
+        if (resultCount <= 0) {
+            logger.error("AddEdit: some problem occurred a habitat seems not to have any occurrence, although it's perhaps being edited..!");
+            return;
+        }
         habitatSharingOccurrences = new Occurrence[resultCount];
 
         Object[] results = database.more(resultid, 0, resultCount-1);
@@ -1318,7 +1420,8 @@ public class AddEdit extends Observable {
         database.closeQuery(sq);
     }
     
-    /** returns all occurrences sharing the habitat - that means including the current working occurrence
+    /** Returns all occurrences sharing the habitat - that means including the current working occurrence.
+     * Loads the occurences using the {@link loadHabitatSharingOccurrences()} method.
      */
     public  Occurrence[] getHabitatSharingOccurrences() throws DBLayerException, RemoteException {
         //sdili je? mozna s kym
@@ -1370,11 +1473,15 @@ public class AddEdit extends Observable {
         return authorResults;
     }
     
+    /** Clears the authorList and resultRevision variables. */
     public void clearAuthors() {
         authorList = new ArrayList<Pair<Pair<String,Integer>,String>>();
         resultRevision = new ArrayList<String>();        
     }
     
+    /** Adds a new space for an author. Adds a new Pair into the authorList variable and a null to the resultRevision. 
+     * Notifies observers.
+     */
     public void addAuthorRow() {
         authorList.add(new Pair<Pair<String,Integer>,String>(new Pair<String,Integer>("",0),""));
         resultRevision.add(null);
@@ -1383,7 +1490,14 @@ public class AddEdit extends Observable {
         notifyObservers(new Pair<String,Integer>("addAuthorRow",-1));
     }
     
+    /** Removes the asked author row.
+     * Does nothing if the index is out of bounds.
+     */
     public void removeAuthorRow(int i) {
+        if (i < 0 || i > authorList.size()) {
+            logger.error("AddEdit.removeAuthorRow(): "+i+" is out of bounds of the authorList array! Doing nothing. ");
+            return;
+        }
         authorList.remove(i);
         resultRevision.remove(i);
         logger.info("AddEdit: Removing author row #"+i);
@@ -1391,6 +1505,9 @@ public class AddEdit extends Observable {
         notifyObservers(new Pair<String,Integer>("removeAuthorRow",i));        
     }
     
+    /** Auhtor setter.
+     *
+     */
     public void setAuthor(int i, Pair<String,Integer> author) {
         if (i >= authorList.size()) {
             logger.error("AddEdit: trying to add an author to a non-existent row!");
@@ -1400,6 +1517,7 @@ public class AddEdit extends Observable {
         logger.debug("Author name in row "+i+" set to "+author);
     }
     
+    /** Author role setter. */
     public void setAuthorRole(int i, String role) {
         if (i >= authorList.size()) {
             logger.error("AddEdit: trying to add an author to a non-existent row!");
@@ -1409,6 +1527,7 @@ public class AddEdit extends Observable {
         logger.debug("Author role in row "+i+" set to "+role);
     }
     
+    /** Author occurrence note setter. */
     public void setResultRevision(int i, String revision) {
         if (revision != null) {
             resultRevision.set(i, revision);
@@ -1416,10 +1535,14 @@ public class AddEdit extends Observable {
         }
     }
     
+    /** Author occurrence note getter. */
     public String getResultRevision(int i) {
         return resultRevision.get(i);
     }
 
+    /** Taxons setter. Used by the dialog form to offer options to the user. 
+     * Removes duplicates if some contained in the list.
+     */
     public void setTaxons(ArrayList taxonList) {
         //remove duplicities
         for (int i=0 ; i < taxonList.size() ; i++) {
@@ -1434,125 +1557,151 @@ public class AddEdit extends Observable {
         }
     }
 
+    /** Plants getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getPlants() {
         return plants;
     }
 
+    /** Plants setter. Notifies observers. */
     public void setPlants(Pair<String, Integer>[] plants) {
         logger.debug(""+(plants == null ? 0 : plants.length)+" plants set.");
         this.plants = plants;
         setChanged(); notifyObservers("PLANTS_CHANGED");
     }
 
+    /** Authors getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getAuthors() {
         return authors;
     }
 
+    /** Authors setter. Notifies observers. */
     public void setAuthors(Pair<String, Integer>[] authors) {
         logger.debug(""+(authors==null?0:authors.length)+" authors set.");
         this.authors = authors;
         setChanged(); notifyObservers("AUTHORS_CHANGED");
     }
 
+    /** Author roles getter. Used by the dialog form to offer options to the user. */
     public String[] getAuthorRoles() {
         return authorRoles;
     }
 
+    /** Author roles setter. */
     public void setAuthorRoles(String[] authorRoles) {
         logger.debug(""+(authorRoles==null? 0 : authorRoles.length)+" author roles set.");
         this.authorRoles = authorRoles;
         setChanged(); notifyObservers("AUTHORROLES_CHANGED");
     }
 
+    /** Villages setter. */
     public Pair<String, Integer>[] getVillages() {
         return villages;
     }
 
+    /** Villages getter. Used by the dialog form to offer options to the user. */
     public void setVillages(Pair<String, Integer>[] villages) {
         logger.debug(""+(villages == null? 0: villages.length)+" villages set.");
         this.villages = villages;
         setChanged(); notifyObservers("VILLAGES_CHANGED");
     }
 
+    /** Territories getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getTerritories() {
         return territories;
     }
 
+    /** Territories setter. Used by the dialog form to offer options to the user. */
     public void setTerritories(Pair<String, Integer>[] territories) {
         logger.debug(""+(territories==null ? 0 : territories.length)+" territories set.");
         this.territories = territories;
         setChanged(); notifyObservers("TERRITORIES_CHANGED");
     }
 
+    /** Phytochorion names getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getPhytNames() {
         return phytNames;
     }
 
+    /** Phytochorion names setter. Used by the dialog form to offer options to the user. */
     public void setPhytNames(Pair<String, Integer>[] phytNames) {
         logger.debug(""+(phytNames == null ? 0 : phytNames.length)+" phytochorion names set.");
         this.phytNames = phytNames;
         setChanged(); notifyObservers("PHYTNAMES_CHANGED");
     }
 
+    /** Phytochorion codes getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getPhytCodes() {
         return phytCodes;
     }
 
+    /** Phytochorion codes setter. Used by the dialog form to offer options to the user. */
     public void setPhytCodes(Pair<String, Integer>[] phytCodes) {
         logger.debug(""+(phytCodes == null ? 0 : phytCodes.length)+" phytochorion codes set.");
         this.phytCodes = phytCodes;
         setChanged(); notifyObservers("PHYTCODES_CHANGED");
     }
 
+    /** Countries getter. Used by the dialog form to offer options to the user. */
     public String[] getCountries() {
         return countries;
     }
 
+    /** Countries setter. Used by the dialog form to offer options to the user. */
     public void setCountries(String[] countries) {
         logger.debug(""+(countries == null ? 0 : countries.length)+" countries set.");
         this.countries = countries;
         setChanged(); notifyObservers("COUNTRIES_CHANGED");
     }
 
+    /** Sources getter. Used by the dialog form to offer options to the user. */
     public String[] getSources() {
         return sources;
     }
 
+    /** Sources setter. Used by the dialog form to offer options to the user. */
     public void setSources(String[] sources) {
         logger.debug(""+(sources == null ? 0 : sources.length)+" sources set.");
         this.sources = sources;
         setChanged(); notifyObservers("SOURCES_CHANGED");
     }
 
+    /** Publications getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getPublications() {
         return publications;
     }
 
+    /** Publications setter. Used by the dialog form to offer options to the user. */
     public void setPublications(Pair<String, Integer>[] publications) {
         logger.debug(""+(publications == null ? 0 : publications.length)+" publications set.");
         this.publications = publications;
         setChanged(); notifyObservers("PUBLICATIONS_CHANGED");
     }
 
+    /** Projects getter. Used by the dialog form to offer options to the user. */
     public Pair<String, Integer>[] getProjects() {
         return projects;
     }
 
+    /** Projects setter. Used by the dialog form to offer options to the user. */
     public void setProjects(Pair<String, Integer>[] projects) {
         logger.debug(""+(projects == null ? 0 : projects.length)+" projects set.");
         this.projects = projects;
         setChanged(); notifyObservers("PROJECTS_CHANGED");
     }
 
-    //for add mode
-    //we need to clear, create default values for all values that can be null
-    //the not null values are forced by calling checkData before store()
+    /** Clears all variables storing values of the actual record currently held by the model.
+     * we need to clear, create default values for all values that can be null
+     * the not null values are forced by calling checkData before store()
+     */
     public void clear() {
         logger.debug("Clearing add model");
         clearLocation();
         clearOccurrence();
     }
     
+    /** Clears the variables holding information about the location of the occurrence.
+     * Notifies observers. Sets coordinate system to {@link WGS84}.
+     */
     public void clearLocation() {
         logger.debug("Clearing Location part of add model");
         
@@ -1575,6 +1724,9 @@ public class AddEdit extends Observable {
         notifyObservers("CLEAR_LOCATION");        
     }
  
+    /** Clears the variables holding information about the occurrence of the occurrence.
+     * Notifies observers. Sets the date to today's date.
+     */
     public void clearOccurrence() {
         logger.debug("Clearing Occurrence part of add model");
         
@@ -1595,10 +1747,7 @@ public class AddEdit extends Observable {
         notifyObservers("CLEAR_OCCURRENCE");
     }
 
-    public void setPreloadAuthorsEnabled(boolean preloadAuthors) {
-        this.preloadAuthors = preloadAuthors;
-    }
-    
+    /** Returns the model of this dialog's occurrence table model. */
     public OccurrenceTableModel getOccurrenceTableModel() {
         return occurrenceTableModel;
     }

@@ -703,13 +703,6 @@ public class AddEditCtrl {
         }
     }
     
-    class PreloadCheckBox implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            JCheckBox cb = (JCheckBox) e.getSource();
-            model.setPreloadAuthorsEnabled(cb.isSelected());
-        }        
-    }
-    
     /**
      *
      */

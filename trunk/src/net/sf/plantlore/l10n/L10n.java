@@ -151,10 +151,17 @@ public class L10n
         }
     }
     
+    /** Returns current locale.
+     * @return current locale.
+     */
     public static Locale getCurrentLocale() {
         return (Locale) currentLocale.clone();
     }
     
+    /** Returns string representing current locale.
+     *
+     * @return String denoting the current locale.
+     */
     public static String getLanguageLocale() {
     	return languageLocale;
     }
