@@ -16,10 +16,6 @@
 		<fileset dir="${base.dir}/lib">
 			<include name="*.jar" />
 		</fileset>
-		
-		<fileset dir="${base.dir}/lib/jasper">
-			<include name="*.jar" />
-		</fileset>		
 	</path>
         
 	<!-- classpath used for rmic compilation -->
@@ -51,6 +47,7 @@
 		       verbose="${TALK}"
 		       fork="true" 
 		       debug="${DEBUG}"
+                       encoding="utf8"
 		       >
 			<classpath refid="classpath.base"/>
 			<compilerarg line="-Xlint:unchecked -Xlint:deprecation"/>
@@ -133,10 +130,6 @@
                 <!-- copy the directory with libraries used by plantlore to the dist dir -->
                 <copy todir="${dist.dir}">
                     <fileset dir="${base.dir}" includes="lib/*.jar"/>
-                </copy>
-                <copy todir="${dist.dir}">
-                    <fileset dir="${base.dir}" includes="lib/jasper/*.jar"/>
-                    <globmapper from="lib/jasper/*" to="lib/*"/>
                 </copy>
                 <copy file="${base.dir}/resources/java.policy" todir="${dist.dir}"/>    
 	</target>
