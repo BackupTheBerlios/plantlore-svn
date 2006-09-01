@@ -595,7 +595,9 @@ public class Login extends Observable {
 
 		synchronized public int getConnectionCount() throws RemoteException {
 			//verifyValidity();
-			return 0; //wrappedDBLayer.getConnectionCount();
+			if( wrappedDBLayer != null )
+				return wrappedDBLayer.getConnectionCount();
+			return -1;
 		}
 
 		synchronized public void shutdown() throws RemoteException {
