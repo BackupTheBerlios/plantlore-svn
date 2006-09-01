@@ -1,6 +1,5 @@
 package net.sf.plantlore.common;
 
-import java.awt.Component;
 import java.rmi.*;
 import java.rmi.server.ExportException;
 
@@ -21,9 +20,6 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class DefaultExceptionHandler {
 	
-	private static DefaultExceptionHandler D = new DefaultExceptionHandler();
-
-
 	private DefaultExceptionHandler() {}
 
 
@@ -156,9 +152,6 @@ public class DefaultExceptionHandler {
 					problemDescription, 
 					title, 
 					JOptionPane.ERROR_MESSAGE );
-		
-		System.out.println("~~DefaultExceptionHandler~~");
-		System.out.println(problemDescription);
 		
 	}
 	

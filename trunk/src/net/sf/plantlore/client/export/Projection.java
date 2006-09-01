@@ -205,7 +205,10 @@ public class Projection {
 	private void addProjections(SelectQuery q, Class table, boolean omitAlias) {
 		try {
 			Record r = (Record)table.newInstance();
-			for(String property : r.getProperties())
+			List<String> properties = r.getProperties();
+			properties.add(Occurrence.ID);
+
+			for(String property : properties)
 				if( isSet(table, property) ) {
 					q.addProjection(PROJ_PROPERTY, (omitAlias ? property : Record.alias(table)+"."+property));
 					plan.add(new Pair<Class, String>(table, property));

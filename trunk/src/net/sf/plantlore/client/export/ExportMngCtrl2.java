@@ -2,28 +2,37 @@ package net.sf.plantlore.client.export;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import net.sf.plantlore.client.AppCoreView;
 import net.sf.plantlore.client.export.component.FileFormat;
 import net.sf.plantlore.common.DefaultProgressBarEx;
+import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.l10n.L10n;
 
+/**
+ * The mapping of the button in the view to action
+ * that opens the second part of the dialog - the Column Selection -
+ * or Creates and starts the Export task.
+ * 
+ * Also the field validity check is performed.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ */
 public class ExportMngCtrl2 {
 	
 	
 	private ExportMng2 model;
-	private AppCoreView parentView;
+	private JFrame parentView;
 	private JFileChooser choice;
 	
 	private ExportMngViewB viewB;
 	
 
 	
-	public ExportMngCtrl2(ExportMng2 model, AppCoreView view) {
+	public ExportMngCtrl2(ExportMng2 model, JFrame view) {
 		this.model = model; 
 		this.parentView = view;
 		
@@ -35,40 +44,57 @@ public class ExportMngCtrl2 {
 			choice.addChoosableFileFilter(filter);
 	}
 	
-	
+	/**
+	 * Let the User choose the name and format of the file and
+	 * then either proceed to the column selection, or create and start the new Export task.
+	 * 
+	 * @param visible	True if the dialog should be opened.
+	 */
 	public void setVisible(boolean visible) {
 		if(visible) {
 			// The dialog must have a parent so that it is displayed correctly after ALT+TAB is pressed.
 			int result = choice.showDialog(parentView, L10n.getString("Export.Title"));
 			if( result == JFileChooser.APPROVE_OPTION ) {
 				model.setSelectedFile( choice.getSelectedFile().getAbsolutePath() );
-				FileFormat filter = (FileFormat) choice.getFileFilter();
-				model.setActiveFileFilter( filter );
+				FileFormat format = (FileFormat) choice.getFileFilter();
+				model.setFileFormat( format );
 				
-				if( filter.isColumnSelectionEnabled() )
+				if( format.isColumnSelectionEnabled() ) {
+					// Reset the the tree to the initial state.
+					((net.sf.plantlore.client.export.component.ExtendedTree)(viewB.tree)).collapseAll();
 					viewB.setVisible(true);
+				}
 				else 
 					performExport();
 			}
 		}
 	}
 	
-	
-	private class NextAction extends AbstractAction {
+	/**
+	 * Proceed to the column selection dialog or createa and start the Export task, 
+	 * if the format doesn't support column selection. 
+	 *
+	 */
+	private class NextAction extends StandardAction {
 		public NextAction() {
-			putValue(NAME, L10n.getString("Export.Title"));
+			super("Export.Title");
 		}
 		public void actionPerformed(ActionEvent arg0) {
+			// Get the list of projections.
 			Projection t = viewB.tsm.getProjections();
 			viewB.setVisible(false);
-			model.setTemplate( t ); // Set the new template.
+			// Supply the list of projections to the ExportManager (Export task factory).
+			model.setProjections( t );
+			model.useProjections(true);
 			viewB.tsm.clearSelection();
 			
 			performExport();
 		}
 	}
 
-	
+	/**
+	 * Create the Export task and start it.
+	 */
 	private void performExport() {
 		try {
 			ExportTask2 export = model.createExportTask();

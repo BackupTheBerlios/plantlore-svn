@@ -96,7 +96,7 @@ public class XMLBuilder2 implements Builder {
      */
     public void footer() 
     throws IOException {
-    	outputWriter.write("</occurrences>\n");
+    	outputWriter.write("\n\n</occurrences>\n");
         xmlWriter.close();
     }
     

@@ -13,8 +13,9 @@ import net.sf.plantlore.client.export.component.ExtendedTree;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- *
- * @author  yaa
+ * Allows the User to select columns (i.e. properties of the records) that should be exported.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
  */
 public class ExportMngViewB extends javax.swing.JDialog {
 	

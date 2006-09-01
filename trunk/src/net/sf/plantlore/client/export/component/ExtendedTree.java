@@ -313,7 +313,7 @@ public class ExtendedTree extends javax.swing.JTree {
 	
 	
 	/**
-	 * Collapse all nodes.
+	 * Collapse all nodes (i.e. restore the tree to its initial state).
 	 *
 	 */
 	public void collapseAll() {

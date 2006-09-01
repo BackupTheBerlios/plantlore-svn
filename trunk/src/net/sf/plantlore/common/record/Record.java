@@ -490,7 +490,7 @@ public abstract class Record implements Serializable {
 			append(property).append(" = ").append(this.getValue(property)).append("; ");
 		for(String key : getForeignKeys()) {
 			Record subrecord = (Record)getValue(key); 
-			if(subrecord != null)	sigma.append( subrecord.toString() );
+			if(subrecord != null)	sigma.append( subrecord.toFullString() );
 		}
 		return sigma.toString();
 	}
