@@ -3,6 +3,7 @@ package net.sf.plantlore.client.publications;
 
 import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -12,10 +13,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
-import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
+import org.apache.log4j.Logger;
 
 /**
  * Main dialog of the PublicationManager used for searching publications and displaying the 
@@ -28,12 +33,15 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
     /** Model of the PublicationManager MVC */
     private PublicationManager model;
     /** Names of fields available for sorting the results */
-    private String[] sortFields = {L10n.getString("collectionNameTitle"), L10n.getString("publicationYearTitle"), L10n.getString("journalNameTitle"), L10n.getString("journalAuthorTitle"), L10n.getString("referenceCitationTitle"), L10n.getString("referenceDetailTitle")};        
+    private String[] sortFields = {L10n.getString("Publications.Sortby.CollectionNameTitle"), L10n.getString("Publications.Sortby.PublicationYearTitle"), L10n.getString("Publications.Sortby.JournalNameTitle"), L10n.getString("Publications.Sortby.JournalAuthorTitle"), L10n.getString("Publications.Sortby.ReferenceCitationTitle"), L10n.getString("Publications.Sortby.ReferenceDetailTitle")};        
     /** Names of the columns in the search results */
-    private String[] columnNames = new String [] {L10n.getString("collectionNameTitle"), L10n.getString("publicationYearTitle"), L10n.getString("journalNameTitle"), L10n.getString("journalAuthorTitle"), L10n.getString("referenceCitationTitle"), L10n.getString("referenceDetailTitle"), L10n.getString("publicationUrlTitle")};    
+    private String[] columnNames = new String [] {L10n.getString("Publications.ColumnTitle.CollectionNameTitle"), L10n.getString("Publications.ColumnTitle.PublicationYearTitle"), L10n.getString("Publications.ColumnTitle.JournalNameTitle"), L10n.getString("Publications.ColumnTitle.JournalAuthorTitle"), L10n.getString("Publications.ColumnTitle.ReferenceCitationTitle"), L10n.getString("Publications.ColumnTitle.ReferenceDetailTitle"), L10n.getString("Publications.ColumnTitle.PublicationUrlTitle")};    
     /** Contents of the table with the query result */
     private String[][] tableData;
-    
+    /** Instance of a Logger */
+    private Logger logger;
+    /** Variable used for setting maximu input size of text fields */
+    PlainDocument pd;
     /**
      * Creates new form PublicationManagerView 
      * 
@@ -43,6 +51,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
      */
     public PublicationManagerView(PublicationManager model, JFrame parent, boolean modal) {        
         super(parent, modal);
+        logger = Logger.getLogger(this.getClass().getPackage().getName());                        
         this.model = model;
         this.model.addObserver(this);
         initComponents();
@@ -97,8 +106,8 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         sortButtonGroup.add(descRadio);
         sortButtonGroup.setSelected(ascRadio.getModel(), true);
 
-        setTitle(L10n.getString("publicationManager"));
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("publicationList")));
+        setTitle(L10n.getString("Publications.Title"));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Publications.List.Label")));
         listTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -112,25 +121,26 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         ));
         jScrollPane3.setViewportView(listTable);
 
-        previousBtn.setText(L10n.getString("prevButton"));
+        previousBtn.setText(L10n.getString("Publications.Previous.Button"));
 
-        nextBtn.setText(L10n.getString("nextButton"));
+        nextBtn.setText(L10n.getString("Publications.Next.Button"));
 
-        deleteBtn.setText(L10n.getString("deletePublicationBtn"));
+        deleteBtn.setText(L10n.getString("Publications.Delete.Button"));
 
-        editBtn.setText(L10n.getString("editPublicationBtn"));
+        editBtn.setText(L10n.getString("Publications.Edit.Button"));
 
-        addBtn.setText(L10n.getString("addPublicationBtn"));
+        addBtn.setText(L10n.getString("Publications.Add.Button"));
 
-        totalResultLabel2.setText(L10n.getString("totalResult"));
+        totalResultLabel2.setText(L10n.getString("Publications.TotalResults.Label"));
 
-        totalRowsLabel.setText(((Integer)model.getResultRows()).toString());
+        totalRowsLabel.setText(((Integer)model.getResultRows()).toString()
+        );
 
-        toDisplayedLabel2.setText(L10n.getString("displayRows"));
+        toDisplayedLabel2.setText(L10n.getString("Publications.RowsToDisplay.Label"));
 
-        displayedLabel2.setText(L10n.getString("displayed"));
+        displayedLabel2.setText(L10n.getString("Publications.DisplayedRows.Label"));
 
-        displayedLabel.setText(L10n.getString("displayed"));
+        displayedLabel.setText(L10n.getString("Publications.DisplayedRows.Label"));
 
         rowsField.setValue(model.getDisplayRows());
 
@@ -190,22 +200,22 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                 .addContainerGap())
         );
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("searchPublicationsLbl")));
-        jLabel11.setText(L10n.getString("collectionNameLbl"));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Publications.Search.Label")));
+        jLabel11.setText(L10n.getString("Publications.Search.CollectionName.Label"));
 
-        jLabel12.setText(L10n.getString("journalNameLbl"));
+        jLabel12.setText(L10n.getString("Publications.Search.JournalName.Label"));
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("sortingLbl")));
-        descRadio.setText(L10n.getString("descending"));
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Publications.Ordering.Label")));
+        descRadio.setText(L10n.getString("Common.Descending"));
         descRadio.setActionCommand(L10n.getString("descending"));
         descRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         descRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        ascRadio.setText(L10n.getString("ascending"));
+        ascRadio.setText(L10n.getString("Common.Ascending"));
         ascRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         ascRadio.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        jLabel13.setText(L10n.getString("sortByLbl"));
+        jLabel13.setText(L10n.getString("Publications.OrderBy.Label"));
 
         sortCombo.setModel(new DefaultComboBoxModel(sortFields));
 
@@ -214,19 +224,20 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
                 .add(jLabel13)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(9, 9, 9)
                 .add(jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(descRadio)
                     .add(ascRadio)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, sortCombo, 0, 151, Short.MAX_VALUE)))
+                    .add(sortCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel9Layout.createSequentialGroup()
                 .add(jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel13)
-                    .add(sortCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(sortCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel13))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(ascRadio)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -234,19 +245,23 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel14.setText(L10n.getString("referenceCitationLbl"));
+        jLabel14.setText(L10n.getString("Publications.Search.ReferenceCitation.Label"));
 
-        jLabel15.setText(L10n.getString("referenceDetailLbl"));
+        jLabel15.setText(L10n.getString("Publications.Search.ReferenceDetail.Label"));
 
-        searchBtn.setText(L10n.getString("searchPublicationsBtn"));
+        searchBtn.setText(L10n.getString("Publications.Search.Button"));
 
         collectionNameField.setValue("");
+        collectionNameField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.COLLECTIONNAME)));
 
         journalNameField.setValue("");
+        journalNameField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.JOURNALNAME)));
 
         referenceCitationField.setValue("");
+        referenceCitationField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.REFERENCECITATION)));
 
         referenceDetailField.setValue("");
+        referenceDetailField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.REFERENCEDETAIL)));
 
         org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -261,16 +276,16 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
                             .add(jLabel12))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(journalNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                            .add(collectionNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
+                            .add(journalNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .add(collectionNameField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel14)
                             .add(jLabel15))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(referenceDetailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                            .add(referenceCitationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)))
+                            .add(referenceDetailField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                            .add(referenceCitationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)))
                     .add(searchBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 149, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -301,7 +316,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
 
         closeBtn.setText(L10n.getString("Common.Close"));
 
-        helpBtn.setText(L10n.getString("Help"));
+        helpBtn.setText(L10n.getString("Common.Help"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -332,8 +347,8 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
-        
-    /**
+      
+/**
      *  Check whether the given field is empty or not. This is used for validating user input when 
      *  searching publications.
      *
@@ -371,33 +386,22 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
     public JDialog getDialog() {
         return this;
     }
-    
-    /**
-     *  Display error message saying that no search field has been filled in.
-     */
-    public void showSearchErrorMessage() {
-        JOptionPane.showMessageDialog(this, "Please fill in at least one search field", "Missing search data", JOptionPane.ERROR_MESSAGE);       
-    }
-    
+       
     /**
      *  Display generic error message.
      *  @param message Message we want to display
      */
     public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);               
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Error.GenericMessageTitle"), JOptionPane.ERROR_MESSAGE);               
     }
-    
+
     /**
      *  Method used for updating the view (called when the model has changed and notifyObservers() was called)
+     *  @param obs Instance of an Observable which changed
+     *  @param obj Object used as a parameter of the update
      */
-    public void update(Observable obs, Object obj) {       
-        // Check whether we have some kind of error to display
-        if (model.isError()) {
-            showErrorMessage(model.getError());            
-            return;
-        } else {
-            displayResults(model.getData());
-        }
+    public void update(Observable obs, Object obj) {
+        displayResults(model.getData());
     }
 
     /**
@@ -407,7 +411,6 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
      */
     public void displayResults(ArrayList results) {
         this.tableData = new String[results.size()][];
-        System.out.println("Displaying data. Data length: "+this.tableData.length);        
         for (int i=0;i<results.size();i++) {            
             this.tableData[i] = new String[7];
             this.tableData[i][0] = ((Publication)results.get(i)).getCollectionName();
@@ -612,6 +615,14 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
         }
     }
     
+    /** 
+     *  Add WindowListener to the main window
+     *  @param wa WindowAdapter object acting as window listener
+     */
+    public void addPublicationWindowListener(WindowAdapter wa) {
+        this.addWindowListener(wa);
+    }    
+    
     /**
      *  Add PropertyChangeListener to collection name field.
      *  @param pcl PropertyChangeListener for the collection name field
@@ -654,7 +665,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
 
     /**
      *  Add FocusListener to sort combo.
-     *  @param pcl FocusListener for the sort combo
+     *  @param fl FocusListener for the sort combo
      */    
     void sortAddFocusListener(FocusListener fl) {
         sortCombo.addFocusListener(fl);
@@ -662,7 +673,7 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
     
     /**
      *  Add FocusListener to ascending and descending radiobuttons.
-     *  @param pcl FocusListener for the ascending and descending radiobuttons
+     *  @param fl FocusListener for the ascending and descending radiobuttons
      */
     void sortDirectionAddFocusListener(FocusListener fl) {
         ascRadio.addFocusListener(fl);
@@ -675,8 +686,8 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
      */
     public boolean confirmDelete() {
         // JOptionPane results: 0 = Yes, 1 = No
-        int res = JOptionPane.showConfirmDialog(this, "Do you really want to delete selected publication?", 
-                                                "Delete publication", JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, L10n.getString("Publications.ConfirmDelete"), 
+                                                L10n.getString("Publications.ConfirmDelete.Title"), JOptionPane.YES_NO_OPTION);
         if (res == 0) {
             return true;
         }
@@ -695,18 +706,30 @@ public class PublicationManagerView extends javax.swing.JDialog implements Obser
      *  Display dialog with the message saying that no row in the table with publications is selected
      */
     public void selectRowMsg() {
-        JOptionPane.showMessageDialog(this, "Please select at least one publication from the list",
-                                      "Select publication", JOptionPane.WARNING_MESSAGE);        
-    }
-
-    /**
-     *  Display dialoge with message saying that the result of the search is empty
-     */
-    public void showSearchInfoMessage() {
-        JOptionPane.showMessageDialog(this, "No publications with the given attributes were found. Please modify search criteria.",
-                                      "No search results", JOptionPane.INFORMATION_MESSAGE);                
+        JOptionPane.showMessageDialog(this, L10n.getString("Publications.SelectPublication"),
+                                      L10n.getString("Publications.SelectPublication.Title"), JOptionPane.WARNING_MESSAGE);        
     }
     
+    class FieldLengthLimit extends PlainDocument {
+        private int limit;
+        // optional uppercase conversion
+        private boolean toUppercase = false;
+        
+        FieldLengthLimit(int limit) {
+            super();
+            this.limit = limit;
+        }
+        
+        @Override
+        public void insertString(int offset, String  str, AttributeSet attr) throws BadLocationException {
+            if (str == null) return;
+            if ((getLength() + str.length()) <= limit) {
+                super.insertString(offset, str, attr);
+            } else {
+                super.insertString(offset, str.substring(0, limit), attr);
+            }
+        }
+    }    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton addBtn;

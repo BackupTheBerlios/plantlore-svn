@@ -5,12 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
-import javax.swing.JOptionPane;
 import net.sf.plantlore.common.*;
-import javax.swing.Timer;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  * Controller for the main PublicationManager dialog (part of the PublicationManager MVC).
  * 
  * @author Tomas Kovarik
- * @version 1.0, June 4, 2006
+ * @version 1.0
  */
 public class PublicationManagerCtrl {
     /** Instance of a logger */
@@ -41,6 +41,7 @@ public class PublicationManagerCtrl {
         this.model = publModel;
         this.view = publView;
         // Add action listeners to buttons
+        view.addPublicationWindowListener(new PublicationWindowListener());        
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.addBtnAddActionListener(new AddPublicationButtonListener());
         view.searchBtnAddActionlistener(new SearchPublicationButtonListener());
@@ -59,35 +60,54 @@ public class PublicationManagerCtrl {
         view.sortDirectionAddFocusListener(new SortDirectionRadioFocusListener());
         // Display all publication when Publication manager is opened using the Task
         Task task = model.searchPublication(true);
-        ProgressBar progressBar = new ProgressBar(task, view, true) {
-            public void exceptionHandler(Exception ex) {
-                if (ex instanceof DBLayerException) {
-                    DBLayerException e = (DBLayerException)ex;
-                    JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(e+": "+e.getErrorInfo());
-                    getTask().stop();
-                    return;
-                }
-                if (ex instanceof RemoteException) {
-                    RemoteException e = (RemoteException)ex;
-                    JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(e);
-                    getTask().stop();
-                    return;
-                }
-                JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                logger.error(ex);                            
-            }              
+        DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
             // After Task is finished, display the results
+            @Override
             public void afterStopped(Object value) {
                 model.setCurrentFirstRow(1);
-                model.processResults(1, model.getDisplayRows());
+                try {
+                    model.processResults(1, model.getDisplayRows());
+                } catch (RemoteException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                } catch (DBLayerException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                }
             }
         };
-        progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+        dpb.setTitle(L10n.getString("Publications.ProgressBar.Search"));
         task.start();
     }
     
+    
+    /**
+     *  Window listener for the main Publication manager window. When window is closed, we have to close
+     *  all open database connections
+     */
+    class PublicationWindowListener extends WindowAdapter {
+        public void windowClosed(WindowEvent e) {
+            // Close database connection
+            try {
+                model.closeActiveQuery();
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
+            }
+        }
+    }
+
     /**
      * ActionListener class controlling the <b>close</b> button on the form.
      */
@@ -103,15 +123,22 @@ public class PublicationManagerCtrl {
      */    
     class AddPublicationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // Check whether we have rights for this operation
-            if (!model.hasRights(model.ADD)) {
-                view.showErrorMessage("You don't have sufficient rights for this operation");
+            try {
+                // Check whether we have rights for this operation
+                if (!model.hasRights(PublicationManager.ADD)) {
+                    view.showErrorMessage(L10n.getString("Publications.Add.InsufficientRights"));
+                    return;
+                }            
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while checking user's rights. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
                 return;
-            }            
+            }
             // Display dialog for adding / editing publications. This dialog shares model with
             // the rest of the PublicationManager.
             AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), true);
-            AddPublicationCtrl addPublCtrl = new AddPublicationCtrl(model, addPublView);            
+            new AddPublicationCtrl(model, addPublView);            
             // We are going to add publication, no editing
             model.setEditPublication(null);
             // addPublView.setSize(400,450);        
@@ -131,13 +158,20 @@ public class PublicationManagerCtrl {
                 view.selectRowMsg();
                 return;
             }          
-            // Check whether we have rights for this operation
-            if (!model.hasRights(model.EDIT)) {
-                view.showErrorMessage("You don't have sufficient rights for this operation");
+            try {
+                // Check whether we have rights for this operation
+                if (!model.hasRights(PublicationManager.EDIT)) {
+                    view.showErrorMessage(L10n.getString("Publications.Edit.InsufficientRights"));
+                    return;
+                }                        
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while checking user's rights. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
                 return;
-            }                        
+            }
             AddPublicationView addPublView = new AddPublicationView(model, view.getFrame(), false);
-            AddPublicationCtrl addPublCtrl = new AddPublicationCtrl(model, addPublView);            
+            new AddPublicationCtrl(model, addPublView);            
             // Save publication we are going to edit
             model.setEditPublication(model.getSelectedPublication(index));            
             model.setPublicationIndex(index);
@@ -160,17 +194,35 @@ public class PublicationManagerCtrl {
                 view.selectRowMsg();
                 return;
             }        
-            // Check whether we have rights for this operation
-            if (!model.hasRights(model.DELETE)) {
-                view.showErrorMessage("You don't have sufficient rights for this operation");
-                return;
-            }           
-            // Check whether it is OK to delete the publication (it cannot be used in an occurrence)
-            if (model.checkDelete(index) == false) {
-                view.showErrorMessage("This publication cannot be deleted because it is used in an occurence");
-                return;
+            try {
+                // Check whether we have rights for this operation
+                if (!model.hasRights(PublicationManager.DELETE)) {
+                    view.showErrorMessage(L10n.getString("Publications.Delete.InsufficientRights"));
+                    return;
+                }           
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while checking user's rights. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                
             }
-            System.out.println("********* CHECK DELETE OK");
+            try {
+                // Check whether it is OK to delete the publication (it cannot be used in an occurrence)                
+                if (model.checkDelete(index) == false) {
+                    view.showErrorMessage(L10n.getString("Publications.Delete.UsedInOccurrence"));
+                    return;
+                }
+            } catch (RemoteException e1) {
+                logger.error("RemoteException caught while loading occurrences. Cannot determine whether publication can be deleted. Details: "+e1.getMessage());
+                e1.printStackTrace();
+                DefaultExceptionHandler.handle(view, e1);
+                return;
+            } catch (DBLayerException e2) {
+                logger.error("DBLayerException caught while loading occurrences. Cannot determine whether publication can be deleted. Details: "+e2.getMessage());
+                e2.printStackTrace();
+                DefaultExceptionHandler.handle(view, e2);
+                return;
+            }        
             // Confirm deletion
             if (!view.confirmDelete()) {
                 return;
@@ -179,33 +231,28 @@ public class PublicationManagerCtrl {
             model.setPublicationIndex(index);
             // Delete is executed in a separate thread using Task
             Task task = model.deletePublication();
-            ProgressBar progressBar = new ProgressBar(task, view, true) {
-                public void exceptionHandler(Exception ex) {
-                    if (ex instanceof DBLayerException) {
-                        DBLayerException e = (DBLayerException)ex;
-                        JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                        logger.error(e+": "+e.getErrorInfo());
-                        getTask().stop();
-                        return;
-                    }
-                    if (ex instanceof RemoteException) {
-                        RemoteException e = (RemoteException)ex;
-                        JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                        logger.error(e);
-                        getTask().stop();
-                        return;
-                    }
-                    JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(ex);                            
-                }              
+            DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
                 // Refresh the list of publications after a delete
-                public void afterStopped(Object value) {
+                @Override
+                public void afterStopped(Object value) {                    
                     model.searchPublication(false);
-                    model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    try {
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    } catch (RemoteException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    } catch (DBLayerException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    }
                     model.reloadCache();
                 }
             };
-            progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+            dpb.setTitle(L10n.getString("Publications.ProgressBar.Delete"));
             task.start();
         }
     }    
@@ -217,31 +264,27 @@ public class PublicationManagerCtrl {
         public void actionPerformed(ActionEvent e) {
             // Run DB search. The operation is executed in a separate thread
             Task task = model.searchPublication(true);
-            ProgressBar progressBar = new ProgressBar(task, view, true) {
-                public void exceptionHandler(Exception ex) {
-                    if (ex instanceof DBLayerException) {
-                        DBLayerException e = (DBLayerException)ex;
-                        JOptionPane.showMessageDialog(view,L10n.getString("Error.DBLayerException")+"\n"+e.getErrorInfo(),L10n.getString("Error.DBLayerExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                        logger.error(e+": "+e.getErrorInfo());
-                        getTask().stop();
-                        return;
-                    }
-                    if (ex instanceof RemoteException) {
-                        RemoteException e = (RemoteException)ex;
-                        JOptionPane.showMessageDialog(view,L10n.getString("Error.RemoteException")+"\n"+e.getMessage(),L10n.getString("Error.RemoteExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                        logger.error(e);
-                        getTask().stop();
-                        return;
-                    }
-                    JOptionPane.showMessageDialog(view,L10n.getString("Delete.Message.UnknownException")+"\n"+ex.getMessage(),L10n.getString("Delete.Message.UnkownExceptionTitle"),JOptionPane.WARNING_MESSAGE);
-                    logger.error(ex);                            
-                }              
+
+            DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
                 // Display the results of a search
+                @Override
                 public void afterStopped(Object value) {
-                    model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    try {
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    } catch (RemoteException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    } catch (DBLayerException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    }                        
                 }
             };
-            progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
+            dpb.setTitle(L10n.getString("Publications.ProgressBar.Search"));
             task.start();
         }
     }        
@@ -254,7 +297,19 @@ public class PublicationManagerCtrl {
             // Call processResults only if we don't see the first page (should not happen, button should be disabled)
             if (model.getCurrentFirstRow() > 1) {
                 int firstRow = Math.max(model.getCurrentFirstRow()-view.getDisplayRows(), 1);
-                model.processResults(firstRow, view.getDisplayRows());                
+                try {
+                    model.processResults(firstRow, view.getDisplayRows());                
+                } catch (RemoteException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                } catch (DBLayerException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                }
             }
         }
     }
@@ -265,8 +320,20 @@ public class PublicationManagerCtrl {
     class NextButtonListener implements ActionListener {    
         public void actionPerformed(ActionEvent e) {
             // Call processResults only if we don't see the last page (should not happen, button should be disabled)
-            if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResultRows()) {
-                model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());
+            try {            
+                if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResultRows()) {
+                    model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());
+                }
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
             }
         }
     }    
@@ -355,8 +422,20 @@ public class PublicationManagerCtrl {
             // Set new value in the model
             model.setDisplayRows(view.getDisplayRows());
             // If neccessary reload search results
-            if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
-                model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
+            try {            
+                if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
+                    model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
+                }
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
             }
         }        
     }            

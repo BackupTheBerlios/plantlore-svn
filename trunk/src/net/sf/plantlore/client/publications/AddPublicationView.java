@@ -8,20 +8,28 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
+import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.l10n.L10n;
 
 /**
- * Dialog used for adding / editing publications.
- *
+ * Dialog for adding / editing publications.
+ * 
  * @author  Tomas Kovarik
- * @version 1.0, June 4, 2006
+ * @version 1.0
  */
 public class AddPublicationView extends javax.swing.JDialog implements Observer {
     /** Model of the Publication manager MVC */
     private PublicationManager model;    
-
+    /** Variable used for setting maximu input size of text fields */
+    private PlainDocument pd;
+    
     /**
      * Creates new form AddPublicationView 
      * 
@@ -70,30 +78,34 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         referenceDetailField = new javax.swing.JFormattedTextField();
         journalAuthorField = new javax.swing.JFormattedTextField();
 
-        setTitle(L10n.getString("addPublicationTitle"));
-        jLabel1.setText(L10n.getString("addPublicationCollectionNameLbl"));
+        setTitle(L10n.getString("Publications.Add.Title"));
+        jLabel1.setText(L10n.getString("Publications.Add.CollectionName.Label")+" *");
 
-        jLabel2.setText(L10n.getString("addPublicationCollectionYearPublicationLbl"));
+        jLabel2.setText(L10n.getString("Publications.Add.CollectionYearPublication.Label")+" *");
 
-        jLabel3.setText(L10n.getString("addPublicationJournalNameLbl"));
+        jLabel3.setText(L10n.getString("Publications.Add.JournalName.Label")+" *");
 
-        jLabel5.setText(L10n.getString("addPublicationJournalAuthorNameLbl"));
+        jLabel5.setText(L10n.getString("Publications.Add.JournalAuthorName.Label")+" *");
 
-        jLabel7.setText(L10n.getString("addPublicationReferenceDetailLbl"));
+        jLabel7.setText(L10n.getString("Publications.Add.ReferenceDetail.Label"));
 
-        jLabel8.setText(L10n.getString("addPublicationNoteLbl"));
+        jLabel8.setText(L10n.getString("Publications.Add.Note.Label"));
 
-        jLabel9.setText(L10n.getString("requiredFieldLbl"));
+        jLabel9.setText("* "+L10n.getString("Publications.Add.RequiredField.Label"));
 
         collectionNameField.setValue("");
+        collectionNameField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.COLLECTIONNAME)));
 
         publicationYearField.setValue(0);
         publicationYearField.setValue(null);
 
         journalNameField.setValue("");
+        journalNameField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.JOURNALNAME)));
 
         urlField.setValue("");
+        urlField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.URL)));
 
+        noteArea.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.NOTE)));
         noteArea.setColumns(20);
         noteArea.setRows(5);
         TransferFocus.patch(noteArea);
@@ -105,14 +117,16 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
         closeBtn.setText(L10n.getString("Common.Close"));
         closeBtn.setMinimumSize(new java.awt.Dimension(150, 23));
 
-        saveBtn.setText(L10n.getString("Publication.Add.SaveButton"));
+        saveBtn.setText(L10n.getString("Publications.Add.SaveButton.Label"));
         saveBtn.setMinimumSize(new java.awt.Dimension(150, 23));
 
-        jLabel10.setText(L10n.getString("addPublicationUrlLbl"));
+        jLabel10.setText(L10n.getString("Publications.Add.Url.Label"));
 
         referenceDetailField.setValue("");
+        referenceDetailField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.REFERENCEDETAIL)));
 
         journalAuthorField.setValue("");
+        journalAuthorField.setDocument(new FieldLengthLimit(Publication.getColumnSize(Publication.JOURNALAUTHORNAME)));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -209,7 +223,7 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     public boolean checkCompulsory() {
         if (((Integer)publicationYearField.getValue() == null) && (((String)collectionNameField.getValue()).length() == 0) &&
             (((String)journalNameField.getValue()).length() == 0) && (((String)journalAuthorField.getValue()).length() == 0)) {
-            JOptionPane.showMessageDialog(this, "At least one of the following fields must be filled in: Journal author, Year of publication, Journal name, Collection name", "Missing compulsory field", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, L10n.getString("Publications.CompulsoryFieldsMessage"), L10n.getString("Publications.CompulsoryFieldsMessage.Title"), JOptionPane.ERROR_MESSAGE);
             collectionNameField.requestFocus();
             return false;
         }
@@ -240,14 +254,19 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
      *  @param arg  argument sent with notification
      */
     public void update(Observable o, Object arg) {
-        // Load form fields with data from the model
-        this.collectionNameField.setValue(model.getCollectionName());
-        this.publicationYearField.setValue(model.getPublicationYear());
-        this.journalNameField.setValue(model.getJournalName());
-        this.journalAuthorField.setValue(model.getJournalAuthor());
-        this.referenceDetailField.setValue(model.getReferenceDetail());
-        this.urlField.setValue(model.getUrl());
-        this.noteArea.setText(model.getNote());
+        if (arg instanceof Exception) {
+            // Exception occurred during execution
+            DefaultExceptionHandler.handle(this, (Exception)arg);            
+        } else {
+            // Load form fields with data from the model
+            this.collectionNameField.setValue(model.getCollectionName());
+            this.publicationYearField.setValue(model.getPublicationYear());
+            this.journalNameField.setValue(model.getJournalName());
+            this.journalAuthorField.setValue(model.getJournalAuthor());
+            this.referenceDetailField.setValue(model.getReferenceDetail());
+            this.urlField.setValue(model.getUrl());
+            this.noteArea.setText(model.getNote());
+        }
     }
     
     /**
@@ -324,7 +343,7 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     
     /**
      *  Add FocusListener for the <b>note</b> field
-     *  @param pcl FocusListener for the <b>note</b> field
+     *  @param fl FocusListener for the <b>note</b> field
      */
     void noteAddFocusListener(FocusListener fl) {
         noteArea.addFocusListener(fl);
@@ -392,6 +411,27 @@ public class AddPublicationView extends javax.swing.JDialog implements Observer 
     public String getNote() {
         return noteArea.getText();        
     }        
+
+    class FieldLengthLimit extends PlainDocument {
+        private int limit;
+        // optional uppercase conversion
+        private boolean toUppercase = false;
+        
+        FieldLengthLimit(int limit) {
+            super();
+            this.limit = limit;
+        }
+        
+        @Override
+        public void insertString(int offset, String  str, AttributeSet attr) throws BadLocationException {
+            if (str == null) return;
+            if ((getLength() + str.length()) <= limit) {
+                super.insertString(offset, str, attr);
+            } else {
+                super.insertString(offset, str.substring(0, limit), attr);
+            }
+        }
+    }    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeBtn;

@@ -22,20 +22,14 @@ import org.apache.log4j.Logger;
  * Publication manager model. Contains bussines logic and data fields of the PublicationManager.
  * Implements operations including add publication, edit publication, delete publication, search
  * publications.
- *
+ * 
  * @author Tomas Kovarik
- * @version 1.0, June 4, 2006
- *
- * TODO:    Proper exception handling
- *          Clean API (get rid of unused or unnecessary methods)
- *          Improve thread management
+ * @version 1.0
  */
 public class PublicationManager extends Observable {
     /* VARIOUS VARIABLES */
     /** Instance of a logger */
     private Logger logger;
-    /** Exception with details about an error */
-    private String error = null;
     /** Instance of a database management object */
     private DBLayer database;
     /** Flag telling whether a long running operation has already finished */
@@ -45,7 +39,7 @@ public class PublicationManager extends Observable {
     /** Actual number of rows to display */
     private int displayRows = DEFAULT_DISPLAY_ROWS;
     /** Data (results of a search query) displayed in the table */
-    private ArrayList data;
+    private ArrayList<Publication> data;
     /** Index of the first record shown in the table */
     private int currentFirstRow;
     /** Index of currently selected publication in the table */
@@ -56,8 +50,10 @@ public class PublicationManager extends Observable {
     private int sortDirection = 0;
     /** Publication we want to edit */
     private Publication editPublication;
-    /** Enum used for notifying AppCore to reload cahced publications */
+    /** Enum used for notifying AppCore to reload cached publications */
     private PlantloreConstants.Table[] editTypeArray = new PlantloreConstants.Table[]{PlantloreConstants.Table.PUBLICATION};
+    /** Instance of currently active SelectQuery. We have to keep it so that we can close it when neccessary */
+    private SelectQuery activeSelectQuery = null;
     
     /* PUBLICATION PROPERTIES */
     /** Name of the collection */
@@ -95,13 +91,7 @@ public class PublicationManager extends Observable {
     public static final int SORT_JOURNAL_AUTHOR = 4;
     public static final int SORT_REFERENCE_CITATION = 5;
     public static final int SORT_REFERENCE_DETAIL = 6;
-    /** Constants with error descriptions */
-    public static final String ERROR_SEARCH = L10n.getString("publicationSearchFailed");
-    public static final String ERROR_SAVE = L10n.getString("publicationSaveFailed");
-    public static final String ERROR_UPDATE = L10n.getString("publicationUpdateFailed");
-    public static final String ERROR_DELETE = L10n.getString("publicationDeleteFailed");
-    public static final String ERROR_PROCESS = L10n.getString("publicationProcessResultsFailed");
-
+    /** Constants for operations */
     public static final int ADD = 1;
     public static final int EDIT = 2;
     public static final int DELETE = 3;
@@ -127,6 +117,7 @@ public class PublicationManager extends Observable {
         final Task task = new Task() {
             public Object task() throws Exception {
                 boolean first = true;
+                setStatusMessage(L10n.getString("Publications.ProgressBar.Save"));
                 // Construct Reference citation
                 StringBuffer refCitation = new StringBuffer();
                 if ((journalAuthor != null) && (!journalAuthor.equals(""))) {
@@ -188,6 +179,7 @@ public class PublicationManager extends Observable {
         // Create new Task
         final Task task = new Task() {
             public Object task() throws Exception {
+                setStatusMessage(L10n.getString("Publications.ProgressBar.Delete"));                
                 Publication pub = (Publication)data.get(getPublicationIndex());
                 // Set deleted flag of the publication
                 pub.setDeleted(1);
@@ -214,6 +206,7 @@ public class PublicationManager extends Observable {
         final Task task = new Task() {
             public Object task() throws Exception {
                 boolean first = true;
+                setStatusMessage(L10n.getString("Publications.ProgressBar.Save"));
                 // Construct Refernce citation
                 StringBuffer refCitation = new StringBuffer();
                 if ((journalAuthor != null) && (!journalAuthor.equals(""))) {
@@ -269,12 +262,14 @@ public class PublicationManager extends Observable {
      *
      *  @param createTask tells whether to execute search in a separate thread
      *  @return instance of the Task with the long running operation (searching data)
+     *  @see #search()
      */
     public Task searchPublication(boolean createTask) {
         // Use the Task class to execute the search in a new thread
         if (createTask) {
             final Task task = new Task() {
                 public Object task() throws Exception {
+                    setStatusMessage(L10n.getString("Publications.ProgressBar.Search"));                    
                     // Search the data
                     int resultId = search();
                     setResult(resultId);
@@ -286,14 +281,18 @@ public class PublicationManager extends Observable {
             };
             return task;
         } else {
-            // Do not use Task
+            // Do not use Task. Catch exceptions but do not display error.
             try {
                 int resultId = search();
                 setResult(resultId);
             } catch (DBLayerException ex1) {
-                // ???
+                logger.error("DBLayerException caught while searching the database. Details: "+ex1.getMessage());
+                ex1.printStackTrace();
+                return null;
             } catch (RemoteException ex2) {
-                // ???
+                logger.error("RemoteException caught while searching the database. Details: "+ex2.getMessage());
+                ex2.printStackTrace();
+                return null;
             }
             logger.info("Publications successfuly retrieved from the database");
             return null;
@@ -301,11 +300,12 @@ public class PublicationManager extends Observable {
     }
     
     /**
-     *  Method to construct and execute the search query.
+     *  Method to construct and execute the search query. This method is called from searchPublication method.
      *
      *  @return id identifying the search result
      *  @throws DBLayerException in case search failed
      *  @throws RemoteException in case network communication failed
+     *  @see #searchPublication(boolean)
      */
     private Integer search() throws DBLayerException, RemoteException {
         SelectQuery query;
@@ -347,55 +347,66 @@ public class PublicationManager extends Observable {
         int resultId = 0;
         // Execute query
         resultId = database.executeQuery(query);
+        // If there is a previous active query, close it first
+        if (this.activeSelectQuery != null) {
+            database.closeQuery(this.activeSelectQuery);
+        }
+        // Save the query as the active search query        
+        this.activeSelectQuery = query;
         return resultId;
     }
       
+    /**
+     *  Notify observers  about the change in the list of publications (used to reload cached publications)
+     */
     public void reloadCache() {
         // Notify observers about the change in the list of publications. Used to reload cached publications
         setChanged();
         notifyObservers(editTypeArray);        
     }
     
-    public boolean hasRights(int operation) {
+    /**
+     *  Check whether the user has appropriate rights for the given operation.
+     *
+     *  @param  operation operation that is executed (for operation codes see constants)
+     *  @return true if the user has the right to execute the operation, false otherwise
+     *  @throws RemoteException in case we could not get user's access privileges
+     */
+    public boolean hasRights(int operation) throws RemoteException {
         String[] group;
         SelectQuery sq;
         int result;
         Object[] resData;
         ArrayList groupList;
         User groupUser;
-        try {
-            // Administrator can add, edit and delete any record
-            if (database.getUserRights().getAdministrator() == 1) {
+        // Administrator can add, edit and delete any record
+        if (database.getUserRights().getAdministrator() == 1) {
+            return true;
+        }
+        if (operation == ADD) {
+            if (database.getUserRights().getAdd() == 1) {
                 return true;
-            }
-            if (operation == ADD) {
-                if (database.getUserRights().getAdd() == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else { // EDIT AND DELETE - the same rights apply
-                // Check whether the user can edit all the records
-                if (database.getUserRights().getEditAll() == 1) {
-                    return true;
-                }
-                // Check whether the user can edit the record through some other user
-                group = database.getUserRights().getEditGroup().split(",");
-                // We will need Publication that will be edited
-                Publication selectedPubl = (Publication)data.get(this.getPublicationIndex());
-                // Check whether someone in the group is an owner of the publication
-                for (int i=0;i<group.length;i++) {
-                    if (selectedPubl.getCreatedWho().getId().toString().equals(group[i])) {
-                        return true;
-                    }
-                }
-                // No rights to edit the record
+            } else {
                 return false;
             }
-        } catch (RemoteException e) {
-            logger.error("Remote exception caught");
+        } else { // EDIT AND DELETE - the same rights apply
+            // Check whether the user can edit all the records
+            if (database.getUserRights().getEditAll() == 1) {
+                return true;
+            }
+            // Check whether the user can edit the record through some other user
+            group = database.getUserRights().getEditGroup().split(",");
+            // We will need Publication that will be edited
+            Publication selectedPubl = (Publication)data.get(this.getPublicationIndex());
+            // Check whether someone in the group is an owner of the publication
+            for (int i=0;i<group.length;i++) {
+                if (selectedPubl.getCreatedWho().getId().toString().equals(group[i])) {
+                    return true;
+                }
+            }
+            // No rights to edit the record
+            return false;
         }
-        return false;
     }
     
     /**
@@ -417,30 +428,25 @@ public class PublicationManager extends Observable {
      *
      *  @param index index of the selected publication in the list of publications
      *  @return true if publication can be deleted, false otherwise
+     *  @throws RemoteException in case we were not able to get to-be-deleted publication because of network error
+     *  @throws DBLayerException in case we were not able to get to-be-deleted publication because database query failed 
      */
-    public boolean checkDelete(int index) {
+    public boolean checkDelete(int index) throws RemoteException, DBLayerException {
         SelectQuery sq;
         int resId;
         
         // Get the selected publication
         Publication publ = (Publication)data.get(index);
         // Find out whether we can delete this publication
-        try {
-            sq = database.createQuery(Occurrence.class);
-            sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.PUBLICATION, null, publ, null);
-            sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.DELETED, null, 0, null);
-            resId = database.executeQuery(sq);
-            if (database.getNumRows(resId)>0) {
-                database.closeQuery(sq);
-                return false;
-            }
+        sq = database.createQuery(Occurrence.class);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.PUBLICATION, null, publ, null);
+        sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.DELETED, null, 0, null);
+        resId = database.executeQuery(sq);
+        if (database.getNumRows(resId)>0) {
             database.closeQuery(sq);
-        } catch (RemoteException e1) {
-            System.out.println("Handle the Remote exception");
-        } catch (DBLayerException e2) {
-            logger.error("Loading occurrences failed. Cannot determine whether publication can be deleted");
-            setError(this.ERROR_DELETE);
-        }        
+            return false;
+        }
+        database.closeQuery(sq);
         return true;
     }
     
@@ -452,50 +458,36 @@ public class PublicationManager extends Observable {
      *
      * @param from  index of the first row to retrieve.
      * @param count number of rows to retrieve
+     * @throws RemoteException in case of a network error
+     * @throws DBLayerException in case of a database error 
      */
-    public void processResults(int from, int count) {
+    public void processResults(int from, int count) throws RemoteException, DBLayerException {
         if (this.resultId != 0) {
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
             int to = Math.min(getResultRows(), from+count-1);
             if (to == 0) {
-                this.data = new ArrayList();
+                this.data = new ArrayList<Publication>();
             } else {
-                try {
-                    // Retrieve selected row interval
-                    Object[] objArray;
-                    try {
-                        // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
-                        // from-1 and to-1 just temporary
-                        objArray = database.more(resultId, from-1, to-1);
-                    } catch(RemoteException e) {
-                        System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                        return;
-                    }
-                    logger.debug("Results retrieved. Count: "+objArray.length);
-                    // Create storage for the results
-                    this.data = new ArrayList(objArray.length);
-                    // Cast the results to the AuthorRecord objects
-                    for (int i=0;i<objArray.length;i++) {
-                        Object[] objAuth = (Object[])objArray[i];
-                        this.data.add((Publication)objAuth[0]);
-                    }
-                } catch (DBLayerException e) {
-                    // Log and set error in case of an exception
-                    logger.error("Processing search results failed: "+e.toString());
-                    setError(this.ERROR_PROCESS);
+                // Retrieve selected row interval
+                Object[] objArray;
+                // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
+                // from-1 and to-1 just temporary
+                objArray = database.more(resultId, from-1, to-1);
+                logger.debug("Results retrieved. Count: "+objArray.length);
+                // Create storage for the results
+                this.data = new ArrayList<Publication>(objArray.length);
+                // Cast the results to the AuthorRecord objects
+                for (int i=0;i<objArray.length;i++) {
+                    Object[] objAuth = (Object[])objArray[i];
+                    this.data.add((Publication)objAuth[0]);
                 }
-                // Update current first displayed row (only if data retrieval was successful).
-                if (!this.isError()) {
-                    logger.info("Results successfuly retrieved");
-                    // Update current first displayed row
-                    setCurrentFirstRow(from);
-                }
+                logger.info("Results successfuly retrieved");
+                // Update current first displayed row
+                setCurrentFirstRow(from);
             }
             // Tell observers to update
             setChanged();
             notifyObservers();
-            // Clean error flag (if it was set)
-            this.error = null;
         }
     }
     
@@ -548,44 +540,32 @@ public class PublicationManager extends Observable {
      *
      *  @return number of results for the current SelectQuery
      */
-    public int getResultRows() {
+    public int getResultRows(){
         int result = 0;
-        if (resultId != 0) try {
-            result = database.getNumRows(resultId);
-        } catch(RemoteException e) {
-            System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+        if (resultId != 0) {
+            try {
+                result = database.getNumRows(resultId);
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while retrieving number of rows in the result. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                return 0;
+            }
         }
         return result;
     }
     
     /**
-     *  Set an error flag.
-     *  @param msg  message explaining the error which occured
+     *  Close active SelectQuery (if there is one)
+     *
+     *  @throws DBLayerException    In case database operation failed
+     *  @throws RemoteException     In case network operation failed
      */
-    public void setError(String msg) {
-        this.error = msg;
-    }
-    
-    /**
-     *  Checks whether an error flag is set.
-     *  return true if an error occured and error message is available, false otherwise
-     */
-    public boolean isError() {
-        if (this.error != null) {
-            return true;
-        } else {
-            return false;
+    public void closeActiveQuery() throws DBLayerException, RemoteException {
+        if (this.activeSelectQuery != null) {
+            database.closeQuery(this.activeSelectQuery);
+            this.activeSelectQuery = null;
         }
     }
-    
-    /**
-     *  Get error message for the error that occured
-     *  @return message explaining the error which occured
-     */
-    public String getError() {
-        return this.error;
-    }
-    
     /**
      *  Get data returned by the last search query. Returns only currently displayed data.
      *  @return data returned by the last search query
@@ -679,7 +659,7 @@ public class PublicationManager extends Observable {
     
     /**
      *  Get publication we are editing in the add/edit publication dialog
-     *  @param editPublication   Publication we are editing
+     *  @return Publication we are editing
      */
     public Publication getEditPublication() {
         return this.editPublication;

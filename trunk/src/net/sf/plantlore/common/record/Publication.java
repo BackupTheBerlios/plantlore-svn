@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -48,6 +49,18 @@ public class Publication extends Record implements Deletable  {
     //public static final String DELETED = "deleted";            
     public static final String CREATEDWHO = "createdWho";    
     public static final String NOTE = "note";
+    
+    private static Hashtable<String, Integer> columnSizes;
+    static {
+        columnSizes = new Hashtable<String,Integer>();
+        columnSizes.put(COLLECTIONNAME,255);
+        columnSizes.put(JOURNALNAME,255);
+        columnSizes.put(JOURNALAUTHORNAME,255);
+        columnSizes.put(REFERENCECITATION,4096);
+        columnSizes.put(REFERENCEDETAIL,100);
+        columnSizes.put(URL,100);
+        columnSizes.put(NOTE,4096);
+    }
     
     //public enum Column {ID, COLLECTIONNAME, COLLECTIONYEARPUBLICATION, JOURNALNAME, JOURNALAUTHORNAME, REFERENCECITATION, REFERENCEDETAIL,
     //URL, DELETED, CREATEDWHO, NOTE};    
@@ -104,6 +117,15 @@ public class Publication extends Record implements Deletable  {
     	Integer c = getDeleted();
     	if( c == null ) return false;
     	return c != 0;
+    }
+    
+    /**
+     *  Return size of the column in the database
+     *  @param columnConst constant identifying column
+     *  @return size of the given column
+     */
+    public static int getColumnSize(String columnConst) {
+        return columnSizes.get(columnConst);
     }
     
     /**
