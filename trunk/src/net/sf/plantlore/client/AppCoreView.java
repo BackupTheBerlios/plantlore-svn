@@ -15,6 +15,7 @@ import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import net.sf.plantlore.client.overview.*;
@@ -422,42 +423,46 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         });
     }
 
-    public void update(Observable observable, Object object) {
-        if (object != null && object instanceof String) {
-            String arg = (String) object;
-            if (arg.equals("PAGE_CHANGED")||arg.equals("RECORDS_PER_PAGE")) {
-                recordsCount.setText(""+model.getResultsCount());
-                pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
-                //FIXME: change selection only if really required
-                overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
-                return;
-            }
-            if (arg.equals("NEW_QUERY")) {
-                //setPreferredColumnSizes();
-                overview.setEnabled(true);
-                overview.setVisible(true);
-                recordsCount.setText(""+model.getResultsCount());
-                pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount()); 
-                overview.getSelectionModel().setSelectionInterval(0,0);
-                return;
-            }
-            if (arg.equals("LOADING_NEW_DATA")) {
-                //TableSorter and OverviewTable model threw exceptions while loading data
-                //because they were trying to display data in possibly inconsistent state
-                //I hope that I've fixed it at least in OverviewTableModel where data are now
-                //loaded into a new variable and then put in place of the working data at one point
-                //
-                //However now I noticed a NullPointerException from TableSorter, which is not my work
-                //and I don't want to study it now, so we'll try to ensure that overview doesn't ask
-                //for any data during the loading:
-                overview.setVisible(false);
-                overview.setEnabled(false);
-            }
-            if (arg.equals("SELECTION_CHANGED")) {
-                overview.getSelectionModel().setSelectionInterval(model.getSelectedRowNumber(),model.getSelectedRowNumber());
-            }
-        }        
-    }
+    public void update(final Observable observable, final Object object) {
+        SwingUtilities.invokeLater( new Runnable() {
+            public void run() {
+                if (object != null && object instanceof String) {
+                    String arg = (String) object;
+                    if (arg.equals("PAGE_CHANGED")||arg.equals("RECORDS_PER_PAGE")) {
+                        recordsCount.setText(""+model.getResultsCount());
+                        pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
+                        //FIXME: change selection only if really required
+                        overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
+                        return;
+                    }
+                    if (arg.equals("NEW_QUERY")) {
+                        //setPreferredColumnSizes();
+                        overview.setEnabled(true);
+                        overview.setVisible(true);
+                        recordsCount.setText(""+model.getResultsCount());
+                        pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount()); 
+                        overview.getSelectionModel().setSelectionInterval(0,0);
+                        return;
+                    }
+                    if (arg.equals("LOADING_NEW_DATA")) {
+                        //TableSorter and OverviewTable model threw exceptions while loading data
+                        //because they were trying to display data in possibly inconsistent state
+                        //I hope that I've fixed it at least in OverviewTableModel where data are now
+                        //loaded into a new variable and then put in place of the working data at one point
+                        //
+                        //However now I noticed a NullPointerException from TableSorter, which is not my work
+                        //and I don't want to study it now, so we'll try to ensure that overview doesn't ask
+                        //for any data during the loading:
+                        overview.setVisible(false);
+                        overview.setEnabled(false);
+                    }
+                    if (arg.equals("SELECTION_CHANGED")) {
+                        overview.getSelectionModel().setSelectionInterval(model.getSelectedRowNumber(),model.getSelectedRowNumber());
+                    }
+                }//if instanceof String        
+            }//run()
+        });//invokeLater()
+    }//update()
 
     private void setPreferredColumnSizes() {
         OverviewTableModel otm = model.getTableModel();

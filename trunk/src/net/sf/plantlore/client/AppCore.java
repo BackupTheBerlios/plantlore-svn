@@ -892,7 +892,7 @@ public class AppCore extends Observable
                         setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
                     }
                 } catch (DBLayerException ex) {
-                    database.rollbackTransaction();
+                    database.rollbackTransaction();//FIXME:
                     DBLayerException dbex = new DBLayerException("Delete rolled back. Some database problem occurred: "+ex);
                     dbex.setStackTrace(ex.getStackTrace());
                     throw dbex;
@@ -929,7 +929,7 @@ public class AppCore extends Observable
             int resId = database.executeQuery(sq);
             int resCount = database.getNumRows(resId);
             assert resCount == 1;
-            if (resCount == 0)
+            if (resCount == 0) //FIXME
                 throw new DBLayerException("The record is no longer in the database.");
             Object[] obj = database.more(resId, 0, 0);
             Object[] res = (Object[])obj[0];

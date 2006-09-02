@@ -32,9 +32,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -80,10 +78,8 @@ import net.sf.plantlore.client.tableimport.TableImportMngCtrl;
 import net.sf.plantlore.client.user.UserManager;
 import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
-import net.sf.plantlore.common.DefaultProgressBarEx;
-import net.sf.plantlore.common.DefaultReconnectDialog;
-import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
@@ -92,10 +88,7 @@ import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.common.Task;
-import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.common.exception.DBLayerException;
-import net.sf.plantlore.common.exception.ExportException;
-import net.sf.plantlore.common.exception.ImportException;
 import net.sf.plantlore.client.authors.AuthorManager;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl;
 import net.sf.plantlore.client.authors.AuthorManagerView;
@@ -687,6 +680,11 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Action for handling edit commands.
+         *
+         * Determines the selected occurrence in overview and then invokes edit dialog
+         * on that occurrence.
+         */
 	class EditAction extends AbstractAction {
 		public EditAction() {
 			if (showButtonText)
@@ -696,7 +694,6 @@ public class AppCoreCtrl {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.EditTT"));
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,
 					ActionEvent.CTRL_MASK));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Edit"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {                    
@@ -705,36 +702,44 @@ public class AppCoreCtrl {
                         return;
                     }
                         
-			Object[] row = model.getSelectedRow();
+                    final Object[] row = model.getSelectedRow();
 
-			try {
-				if (!model.isEditAllowed(model.getSelectedOccurrence())) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("AddEdit.InsufficientEditRights"), L10n
-							.getString("AddEdit.InsufficientRightsTitle"),
-							JOptionPane.INFORMATION_MESSAGE);
-					return;
-				}
-				editModel.setRecord((Integer) row[row.length - 1]);
-			} catch (DBLayerException ex) {
-				JOptionPane.showMessageDialog(view, L10n
-						.getString("Error.DBLayerException")
-						+ "\n" + ex.getErrorInfo(), L10n
-						.getString("Error.DBLayerExceptionTitle"),
-						JOptionPane.WARNING_MESSAGE);
-				logger.error(ex + ": " + ex.getErrorInfo());
-			} catch (RemoteException ex) {
-				JOptionPane.showMessageDialog(view, L10n
-						.getString("Error.RemoteException")
-						+ "\n" + ex.getMessage(), L10n
-						.getString("Error.RemoteExceptionTitle"),
-						JOptionPane.WARNING_MESSAGE);
-				logger.error(ex);
-			}
-			editView.loadComponentData();
-			editView.setVisible(true);
-		}
-	}
+                    try {
+                        if (!model.isEditAllowed(model.getSelectedOccurrence())) {
+                                JOptionPane.showMessageDialog(view, L10n
+                                                .getString("AddEdit.InsufficientEditRights"), L10n
+                                                .getString("AddEdit.InsufficientRightsTitle"),
+                                                JOptionPane.INFORMATION_MESSAGE);
+                                return;
+                        }
+                    } catch(RemoteException ex) {
+                        DefaultExceptionHandler.handle(view,ex);  
+                        return;
+                    } catch (DBLayerException ex) {
+                        DefaultExceptionHandler.handle(view,ex);                            
+                        return;
+                    }
+
+                    Task t = new Task() {
+                        public Object task() throws DBLayerException, RemoteException {
+                            setStatusMessage(L10n.getString("Overview.LoadingOccurrenceRecord"));
+                            return editModel.loadRecord((Integer) row[row.length - 1]);
+                        }
+                    };
+
+                    new DefaultProgressBar(t, view, true) {
+                        public void afterStopping() {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    editView.loadComponentData();
+                                    editView.setVisible(true);    
+                                }
+                            });
+                        }
+                    };
+                    t.start();
+		}//actionPerformed()
+	}//EditAction
 
 	class DeleteAction extends AbstractAction {
 		public DeleteAction() {
@@ -745,109 +750,71 @@ public class AppCoreCtrl {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.DeleteTT"));
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					KeyEvent.VK_DELETE, 0));
-
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Delete"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			Selection selection = model.getTableModel().getSelection();
 			Object[] arg = { selection.values().size() };
 
+                        //Nothing checked in the overview -> tell user to check something first
 			if (arg[0].equals(0)) {
-				JOptionPane.showMessageDialog(view, L10n
-						.getString("Message.CheckAnOccurrence"), L10n
-						.getString("Message.CheckAnOccurrenceTitle"),
-						JOptionPane.INFORMATION_MESSAGE);
-				return;
+                            JOptionPane.showMessageDialog(view, 
+                                    L10n.getString("Message.CheckAnOccurrence"), 
+                                    L10n.getString("Message.CheckAnOccurrenceTitle"),
+                                    JOptionPane.INFORMATION_MESSAGE);
+                            return;
 			}
 
 			try {
-				for (Integer occId : selection.values())
-					if (!model.isEditAllowed(occId)) {
-						JOptionPane.showMessageDialog(view, L10n
-								.getString("Delete.InsufficientRights"), L10n
-								.getString("Delete.InsufficientRightsTitle"),
-								JOptionPane.INFORMATION_MESSAGE);
-						return;
-					}
+                            for (Integer occId : selection.values())
+                                    if (!model.isEditAllowed(occId)) {
+                                            JOptionPane.showMessageDialog(view, 
+                                                    L10n.getString("Delete.InsufficientRights"), 
+                                                    L10n.getString("Delete.InsufficientRightsTitle"),
+                                                    JOptionPane.INFORMATION_MESSAGE);
+                                            return;
+                                    }
 			} catch (RemoteException ex) {
-				logger.error("Remote problem: " + ex);
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(view, "RemoteException: " + ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			} catch (DBLayerException ex) {
-				logger.error("Database problem: " + ex);
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(view, "DBLayerException: " + ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			}
 
-			int choice = JOptionPane.showConfirmDialog(view, L10n
-					.getFormattedString("Message.DeleteRecords", arg), L10n
-					.getString("Message.DeleteRecordsTitle"),
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                        int choice = JOptionPane.showConfirmDialog(view, L10n
+                                .getFormattedString("Message.DeleteRecords", arg), L10n
+                                .getString("Message.DeleteRecordsTitle"),
+                                JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                        
+                        switch (choice) {
+                            case JOptionPane.CANCEL_OPTION:
+                                return;
+                            case JOptionPane.OK_OPTION:
+                                logger.info("Deleting " + arg[0] + " records.");
+                                
+                                Task task = model.deleteSelected();
+                                
+                                ProgressBar progressBar = new DefaultProgressBar(task, view, true) {                                    
+                                    public void afterStopped(Object value) {
+                                        refreshOverview(false); // false -> do not create task,
+                                        // refresh the overview directly
+                                        // in this thread
+                                    }
+                                };                                
+                                task.start();
+                                break;
+                        }// switch
+		}//actionPerformed
+	}//DeleteAction
 
-			switch (choice) {
-			case JOptionPane.CANCEL_OPTION:
-				return;
-			case JOptionPane.OK_OPTION:
-				logger.info("Deleting " + arg[0] + " records.");
-
-				Task task = model.deleteSelected();
-
-				ProgressBar progressBar = new ProgressBar(task, view, true) {
-					public void exceptionHandler(Exception ex) {
-						if (ex instanceof DBLayerException) {
-							DBLayerException e = (DBLayerException) ex;
-							JOptionPane.showMessageDialog(view, L10n
-									.getString("Error.DBLayerException")
-									+ "\n" + e.getErrorInfo(), L10n
-									.getString("Error.DBLayerExceptionTitle"),
-									JOptionPane.WARNING_MESSAGE);
-							logger.error(e + ": " + e.getErrorInfo());
-							getTask().stop();
-							return;
-						}
-						if (ex instanceof RemoteException) {
-							RemoteException e = (RemoteException) ex;
-							JOptionPane.showMessageDialog(view, L10n
-									.getString("Error.RemoteException")
-									+ "\n" + e.getMessage(), L10n
-									.getString("Error.RemoteExceptionTitle"),
-									JOptionPane.WARNING_MESSAGE);
-							logger.error(e);
-							getTask().stop();
-							return;
-						}
-						JOptionPane
-								.showMessageDialog(
-										view,
-										L10n
-												.getString("Delete.Message.UnknownException")
-												+ "\n" + ex.getMessage(),
-										L10n
-												.getString("Delete.Message.UnkownExceptionTitle"),
-										JOptionPane.WARNING_MESSAGE);
-						logger.error(ex);
-					}
-
-					public void afterStopped(Object value) {
-						refreshOverview(false); // false -> do not create task,
-						// refresh the overview directly
-						// in this thread
-					}
-				};
-				progressBar.setTitle(L10n.getString("Delete.ProgressTitle"));
-
-				task.start();
-				break;
-			}// switch
-		}
-	}
-
+        /** Overview select all action.
+         * Selects all occurrences on current page.
+         */
 	class SelectAllAction extends AbstractAction {
 		public SelectAllAction() {
 			putValue(NAME, L10n.getString("Overview.SelectAll"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SelectAllTT"));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.SelectAll"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
@@ -856,11 +823,13 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Overview select none action.
+         * Unselects all occurrences on current page.
+         */
 	class SelectNoneAction extends AbstractAction {
 		public SelectNoneAction() {
 			putValue(NAME, L10n.getString("Overview.SelectNone"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SelectNoneTT"));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.SelectNone"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
@@ -869,13 +838,14 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Overview invert selected action.
+         * Inverts the selection of occurrences on current page.
+         */
 	class InvertSelectedAction extends AbstractAction {
 		public InvertSelectedAction() {
 			putValue(NAME, L10n.getString("Overview.InvertSelected"));
 			putValue(SHORT_DESCRIPTION, L10n
 					.getString("Overview.InvertSelectedTT"));
-			// putValue(MNEMONIC_KEY,
-			// L10n.getMnemonic("Overview.InvertSelected"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
@@ -884,82 +854,81 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Handles the overview's Search action.
+         */
 	class SearchAction extends AbstractAction {
 		public SearchAction() {
 			if (showButtonText)
 				putValue(NAME, L10n.getString("Overview.Search"));
-			putValue(SMALL_ICON, Resource
-					.createIcon("/toolbarButtonGraphics/general/Search24.gif"));
+			putValue(SMALL_ICON, Resource.createIcon("/toolbarButtonGraphics/general/Search24.gif"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SearchTT"));
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
-					ActionEvent.CTRL_MASK));
-
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Search"));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			searchModel.clear();
-			searchView.setVisible(true);
-		}
-	}
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                searchView.setVisible(true);
+                            }
+                        });
+		}//actionPerformed
+	}//SearchAction
 
+        /** Handles the invoking of habitat tree from overview.
+         *
+         */
 	class HabitatTreeAction extends AbstractAction {
 		public HabitatTreeAction() {
 			if (showButtonText)
 				putValue(NAME, L10n.getString("Overview.HabitatTree"));
 			putValue(SMALL_ICON, Resource.createIcon("/toolbarButtonGraphics/development/Application24.gif"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.HabitatTreeTT"));
-			//putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
-			//		ActionEvent.CTRL_MASK));
-
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Search"));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_T,ActionEvent.CTRL_MASK));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
                         habitatTreeModel.setDBLayer(model.getDatabase());
                         try {
                             habitatTreeModel.loadData();
-                            habitatTreeView.setVisible(true);
-                        } catch (Exception ex) {
-                            if (ex instanceof DBLayerException || ex instanceof RemoteException) {
-                                DefaultReconnectDialog.show(view,ex);
-                            } else {
-                                logger.error("Exception: "+ex);
-                                ex.printStackTrace(); //FIXME
-                            }
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
+                        } catch (DBLayerException ex) {
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
                         }
-		}
-	}
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                habitatTreeView.setVisible(true);
+                            }
+                        });
+		}//actionPerformed
+	}// HabitatTreeAction
 
+        /** Bridge that informs overview about a new query.
+         *
+         */
 	class SearchBridge implements Observer {
 		public void update(Observable o, Object arg) {
-			if (arg != null && arg instanceof Integer) {
-				logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
-				try {
-					model.setResultId(searchModel.getNewResultId(), searchModel
-							.getNewSelectQuery());
-				} catch (RemoteException ex) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("Error.RemoteException")
-							+ "\n" + ex.getMessage(), L10n
-							.getString("Error.RemoteExceptionTitle"),
-							JOptionPane.WARNING_MESSAGE);
-					logger.error(ex);
-				} catch (DBLayerException ex) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("Error.DBLayerException")
-							+ "\n" + ex.getErrorInfo(), L10n
-							.getString("Error.DBLayerExceptionTitle"),
-							JOptionPane.WARNING_MESSAGE);
-					logger.error(ex + ": " + ex.getErrorInfo());
-				}
-				// model.setExportQuery(searchModel.getExportQuery(), false,
-				// Occurrence.class);
-			}
-		}
-
-	}
+                    if (arg != null && arg instanceof Integer) {
+                        logger.debug("Fetching new result id from Search model. Storing it to AppCore model.");
+                        try {
+                            model.setResultId(searchModel.getNewResultId(), searchModel.getNewSelectQuery());
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
+                        } catch (DBLayerException ex) {
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
+                        }
+                    }
+		}//update()
+	}//SearchBridge
         
+        /** Bridge from HabitatTree to overview, search and add.
+         *
+         */
         class HabitatTreeBridge implements Observer {
             public void update(Observable o, Object arg) {
                 if (arg != null && arg instanceof Pair) {                    
@@ -979,60 +948,60 @@ public class AppCoreCtrl {
                     if (message.equals("ADD")) {
 			try {
 				if (model.getDatabase().getUserRights().getAdd() != 1) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("AddEdit.InsufficientAddRights"), L10n
-							.getString("AddEdit.InsufficientRightsTitle"),
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(view, 
+                                                L10n.getString("AddEdit.InsufficientAddRights"), 
+                                                L10n.getString("AddEdit.InsufficientRightsTitle"),
+                                                JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
 			} catch (RemoteException ex) {
-                            DefaultReconnectDialog.show(view,ex);
-                            logger.error(ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			}
 			addModel.clear();
                         try {
                             addModel.setHabitat(nodeInfo.getId());
                         } catch (RemoteException ex) {
-                            DefaultReconnectDialog.show(view,ex);
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
                         } catch (DBLayerException ex) {
-                            DefaultReconnectDialog.show(view,ex);
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
                         }
-                        addView.loadComponentData();
-			addView.setVisible(true);         
-//                        habitatTreeView.setVisible(false);
+                        SwingUtilities.invokeLater( new Runnable() {
+                            public void run() {
+                                addView.loadComponentData();
+                                addView.setVisible(true);   
+                            }
+                        });//invokeLater
                     }//if ADD
                 }//if
             }//update
         }//class HabitatTreeBridge
 
+        /** Handles the overview scheda action.
+         *
+         */
 	class SchedaAction extends AbstractAction {
 		public SchedaAction() {
 			putValue(NAME, L10n.getString("Overview.Scheda"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.SchedaTT"));
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X,
-					ActionEvent.CTRL_MASK));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Scheda"));
-			putValue(
-					SMALL_ICON,
-					Resource
-							.createIcon("/toolbarButtonGraphics/general/ComposeMail24.gif"));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X,	ActionEvent.CTRL_MASK));
+			putValue(SMALL_ICON,Resource.createIcon("/toolbarButtonGraphics/general/ComposeMail24.gif"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			try {
 				if (model.getTableModel().getSelection().values().size() < 1) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("Message.CheckAnOccurrence"), L10n
-							.getString("Message.CheckAnOccurrenceTitle"),
+					JOptionPane.showMessageDialog(view, 
+                                                L10n.getString("Message.CheckAnOccurrence"), 
+                                                L10n.getString("Message.CheckAnOccurrenceTitle"),
 							JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
 
 				final JasperReport schedaReport;
-				InputStream schedaIs = this
-						.getClass()
-						.getClassLoader()
-						.getResourceAsStream(
+				InputStream schedaIs = this.getClass().getClassLoader().getResourceAsStream(
 								"net/sf/plantlore/client/resources/SchedaA6.jasper");
 
 				try {
@@ -1092,21 +1061,15 @@ public class AppCoreCtrl {
 
 				ProgressBar pb = new ProgressBar(task, view, true) {
 					public void exceptionHandler(final Exception ex) {
-						logger
-								.error("Error while filling jasper report in SchedaAction: "
-										+ ex);
+						logger.error("Error while filling jasper report in SchedaAction: "+ ex);
 						ex.printStackTrace();
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								JOptionPane
-										.showMessageDialog(
-												view.getParent(),
-												L10n
-														.getString("Print.Message.BrokenReport")
+								JOptionPane.showMessageDialog(view.getParent(),
+											L10n.getString("Print.Message.BrokenReport")
 														+ "\n"
 														+ ex.getMessage(),
-												L10n
-														.getString("Print.Message.BrokenReport"),
+											L10n.getString("Print.Message.BrokenReport"),
 												JOptionPane.WARNING_MESSAGE);
 							}
 						});
@@ -1122,10 +1085,8 @@ public class AppCoreCtrl {
 						});
 					}
 				};
-				pb.setTitle(L10n.getString("Scheda.ProgressTitle"));
-
 				task.start();
-			} catch (Exception ex) { // Unreachable CATCH block
+			} catch (Exception ex) { 
 				logger.error("Broken report: " + ex);
 				JOptionPane.showMessageDialog(view, L10n
 						.getString("Print.Message.BrokenReport")
@@ -1137,46 +1098,49 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Handles the previous page overview action */
 	class PreviousPageAction extends AbstractAction {
 		public PreviousPageAction() {
 			putValue(NAME, L10n.getString("Overview.PrevPage"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.PrevPageTT"));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.PrevPage"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			try {
 				model.prevPage();
 			} catch (RemoteException ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(view, "RemoteException: " + ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			} catch (DBLayerException ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(view, "DBLayerException: " + ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			}
 		}
 	}
 
+        /** Handles the next page overview action */        
 	class NextPageAction extends AbstractAction {
 		public NextPageAction() {
 			putValue(NAME, L10n.getString("Overview.NextPage"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.NextPageTT"));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.NextPage"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			try {
 				model.nextPage();
 			} catch (RemoteException ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(view, "RemoteException: " + ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			} catch (DBLayerException ex) {
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(view, "DBLayerException: " + ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			}
 		}
 	}
 
+        /** Window closing listener.
+         * Saves preferences on that event.
+         */
 	class AppWindowListener extends WindowAdapter {
 		public void windowClosing(WindowEvent e) {
 			try {
@@ -1185,40 +1149,42 @@ public class AppCoreCtrl {
 				
 				model.savePreferences();
 			} catch (IOException ex) {
-				JOptionPane.showMessageDialog(view,
-						"Problem while saving configuration: "
+				JOptionPane.showMessageDialog(view,L10n.getString("Overview.ProblemSavingPreferences")+": "
 								+ ex.getMessage());
 			}
 		}
 	}
 
+        /** Handles author manager action invoked from overview. */
 	class DataAuthorsAction extends AbstractAction {
 		public DataAuthorsAction() {
 			putValue(NAME, L10n.getString("Overview.MenuDataAuthors"));
-			putValue(SHORT_DESCRIPTION, L10n
-					.getString("Overview.MenuDataAuthorsTT"));
+			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataAuthorsTT"));
 			putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataAuthors"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			AuthorManager authModel = new AuthorManager(model.getDatabase());
-			AuthorManagerView authView = new AuthorManagerView(authModel, view,
+			final AuthorManagerView authView = new AuthorManagerView(authModel, view,
 					true);
 			AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel,
 					authView);
 			authModel.addObserver(managerBridge);
-			authView.setVisible(true);
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                authView.setVisible(true);
+                            }
+                        });
 		}
 
 	}
 
+        /** Handles publication manager action invoked from overview. */
 	class DataPublicationsAction extends AbstractAction {
 		public DataPublicationsAction() {
 			putValue(NAME, L10n.getString("Overview.MenuDataPublications"));
-			putValue(SHORT_DESCRIPTION, L10n
-					.getString("Overview.MenuDataPublicationsTT"));
-			putValue(MNEMONIC_KEY, L10n
-					.getMnemonic("Overview.MenuDataPublications"));
+			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataPublicationsTT"));
+			putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataPublications"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
@@ -1229,17 +1195,22 @@ public class AppCoreCtrl {
 			publicationManagerCtrl = new PublicationManagerCtrl(
 					publicationManagerModel, publicationManagerView);
 			publicationManagerModel.addObserver(managerBridge);
-			publicationManagerView.setVisible(true);
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                publicationManagerView.setVisible(true);
+                            }
+                        });
 		}
 	}
 
+        /** Handles user manager action invoked from overview. */        
 	class DataUserAction extends AbstractAction {
 		public DataUserAction() {
 			putValue(NAME, L10n.getString("userManager"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			System.out.println("UserManager");
+			logger.info("Starting UserManager");
 
 			if (userManagerModel == null) {
 				userManagerModel = new UserManager(model.getDatabase());
@@ -1253,13 +1224,18 @@ public class AppCoreCtrl {
 					if (! userManagerModel.isFinishedTask()) return;
 					userManagerModel.setInfoFinishedTask(false);
 					userManagerCtrl.reloadData(1, UserManager.DEFAULT_DISPLAY_ROWS);
-					userManagerView.setVisible(true);						
+                                        SwingUtilities.invokeLater(new Runnable() {
+                                            public void run() {
+                                                userManagerView.setVisible(true);	
+                                            }
+                                        });
 	 	    	}
 			};			
 			task.start();					
 		}
 	}
-
+        
+        /** Handles history action invoked from overview. */
 	class DataHistoryAction extends AbstractAction {
 		public DataHistoryAction() {
 			if (showButtonText)
@@ -1267,9 +1243,6 @@ public class AppCoreCtrl {
 			putValue(SMALL_ICON, Resource
 					.createIcon("/toolbarButtonGraphics/general/History24.gif"));
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.HistoryTT"));
-			// putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
-			// ActionEvent.CTRL_MASK));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.History"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1292,24 +1265,29 @@ public class AppCoreCtrl {
 	 	    	public void afterStopping() {
 					if (! historyModel.isFinishedTask()) return;
 					historyModel.setInfoFinishedTask(false);
-					historyView.setVisible(true);						
+                                        SwingUtilities.invokeLater(new Runnable() {
+                                            public void run() {
+                                                historyView.setVisible(true);		
+                                            }
+                                        });
 	 	    	}				
 			};			
 			task.start();							
 		}
 	}
 
+        /** Handles the whole history action invoked from overview. */
 	class DataWholeHistoryAction extends AbstractAction {
 		public DataWholeHistoryAction() {
 			putValue(NAME, L10n.getString("wholeHistory"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			System.out.println("Whole history");
+			logger.info("Starting Whole history");
 
 			if (wholeHistoryModel == null) {
 				wholeHistoryModel = new History(model.getDatabase());				
-			    wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,true);
+                                wholeHistoryView = new WholeHistoryView(wholeHistoryModel, view,true);
 				wholeHistoryCtrl = new WholeHistoryCtrl(wholeHistoryModel, wholeHistoryView);
 				wholeHistoryModel.addObserver(managerBridge);
 			}
@@ -1319,13 +1297,18 @@ public class AppCoreCtrl {
 	 	    	public void afterStopping() {	
 					if (! wholeHistoryModel.isFinishedTask()) return;
 					wholeHistoryModel.setInfoFinishedTask(false);
-					wholeHistoryView.setVisible(true);
+                                        SwingUtilities.invokeLater( new Runnable() {
+                                            public void run() {
+                                                wholeHistoryView.setVisible(true);
+                                            }
+                                        });
 	 	    	}
 			};			
 			task.start();							
 		}
 	}
 	
+        /** Handles metadata manager action invoked from overview. */
 	class DataMetadataAction extends AbstractAction {
 		public DataMetadataAction() {
 			putValue(NAME, L10n.getString("metadataManager"));
@@ -1349,13 +1332,18 @@ public class AppCoreCtrl {
 					if (! metadataManagerModel.isFinishedTask()) return;
 					metadataManagerModel.setInfoFinishedTask(false);
 					metadataManagerCtrl.reloadData(1, MetadataManager.DEFAULT_DISPLAY_ROWS);
-					metadataManagerView.setVisible(true);
+                                        SwingUtilities.invokeLater(new Runnable() {
+                                            public void run() {
+                                                metadataManagerView.setVisible(true);
+                                            }
+                                        });
 	 	    	}
 			};			
 			task.start();						
 		}
 	}
 
+        /** Handles changes of the page size invoked from overview. */
 	class RecordsPerPagePropertyChangeListener implements
 			PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent e) {
@@ -1366,8 +1354,8 @@ public class AppCoreCtrl {
 					JOptionPane.showMessageDialog(view, L10n
 							.getString("Overview.Warning.MaxRecordsPerPage")
 							+ " " + MAX_RECORDS_PER_PAGE);
-					Object obj = e.getOldValue();
-					if (obj != null)
+					Object obj = e.getOldValue();                                        
+					if (obj != null) 
 						tf.setValue(obj);
 					else
 						// either multiple properties changed or there was no
@@ -1390,19 +1378,18 @@ public class AppCoreCtrl {
 					try {
 						model.setRecordsPerPage(i);
 					} catch (RemoteException ex) {
-						JOptionPane.showMessageDialog(view, "RemoteException: "
-								+ ex);
-						ex.printStackTrace();
+                                            DefaultExceptionHandler.handle(view, ex);
+                                            return;
 					} catch (DBLayerException ex) {
-						JOptionPane.showMessageDialog(view,
-								"DBLayerException: " + ex);
-						ex.printStackTrace();
+                                            DefaultExceptionHandler.handle(view, ex);
+                                            return;
 					}
 				}
 			}
 		}
 	}
 
+        /** Keeps track of selected row in overview. */
 	class OverviewSelectionListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
 			// Ignore extra messages.
@@ -1420,6 +1407,7 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Handles double clicks in overview to invoke the Detail. */
 	class OverviewMouseListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() >= 2)
@@ -1427,22 +1415,24 @@ public class AppCoreCtrl {
 					int resultNumber = model.getSelectedResultNumber();
                                         if (resultNumber > model.getResultsCount()) {
                                             logger.error("Trying to show detail for a record number of which is bigger than results count. Have we been disconnected?");
-                                            JOptionPane.showMessageDialog(view,"The connection has been probably lost.");
+                                            JOptionPane.showMessageDialog(view,L10n.getString("Error.LostConnection"));
                                             return;
                                         }
                                         
 					if (resultNumber != model.getResultsCount())
 						model.selectAndShow(resultNumber);
 					detailModel.load(model.getSelectedResultNumber());
-					detailView.setVisible(true);
-				} catch (RemoteException ex) {//FIXME
-					JOptionPane.showMessageDialog(view, "RemoteException: "
-							+ ex);
-					ex.printStackTrace();
+                                        SwingUtilities.invokeLater( new Runnable() {
+                                            public void run() {
+                                                detailView.setVisible(true);
+                                            }
+                                        });
+				} catch (RemoteException ex) {
+                                    DefaultExceptionHandler.handle(view,ex);
+                                    return;
 				} catch (DBLayerException ex) {
-					JOptionPane.showMessageDialog(view, "DBLayerException: "
-							+ ex);
-					ex.printStackTrace();
+                                    DefaultExceptionHandler.handle(view,ex);
+                                    return;
 				}
 		}
 
@@ -1460,6 +1450,7 @@ public class AppCoreCtrl {
 
 	}
 
+        /** Listnes to the enter key pressed in overview and invokes Detail. */
 	class OverviewKeyListener implements KeyListener {
 		public void keyTyped(KeyEvent e) {
 			if (e.getKeyText(e.getKeyChar()).equals("Space"))
@@ -1483,15 +1474,17 @@ public class AppCoreCtrl {
 					// we need to
 					// correct that
 					detailModel.load(model.getSelectedResultNumber());
-					detailView.setVisible(true);
+                                        SwingUtilities.invokeLater( new Runnable() {
+                                            public void run() {
+                                                detailView.setVisible(true);
+                                            }
+                                        });
 				} catch (RemoteException ex) {
-					JOptionPane.showMessageDialog(view, "RemoteException: "
-							+ ex);
-					ex.printStackTrace();
+                                    DefaultExceptionHandler.handle(view,ex);
+                                    return;
 				} catch (DBLayerException ex) {
-					JOptionPane.showMessageDialog(view, "DBLayerException: "
-							+ ex);
-					ex.printStackTrace();
+                                    DefaultExceptionHandler.handle(view,ex);
+                                    return;
 				}
 			}
 		}
@@ -1505,6 +1498,7 @@ public class AppCoreCtrl {
 
 	}
 
+        /** Handles the login action. */
 	class LoginAction extends AbstractAction {
 		public LoginAction() {
 			putValue(NAME, L10n.getString("Overview.MenuFileLogin"));
@@ -1539,7 +1533,7 @@ public class AppCoreCtrl {
 				newDBView = new CreateDBView(view, newDBModel);
 				newDBCtrl = new CreateDBCtrl(newDBModel, newDBView);
 			}
-	    	view.setVisible(true);
+                        view.setVisible(true);
 		}
 	}
 
@@ -1568,13 +1562,17 @@ public class AppCoreCtrl {
 			 * etc.)
 			 */
 
-			setDatabaseDependentCommandsEnabled(false);
+                        SwingUtilities.invokeLater( new Runnable() {
+                            public void run() {
+                                setDatabaseDependentCommandsEnabled(false);
+                            }
+                        });
 		}
 
 	}
 
 	
-	
+	/** Handles the reconnect action invoked from overview. */
 	public class ReconnectAction extends AbstractAction {
 
 		private Component parent = view;
@@ -1613,8 +1611,10 @@ public class AppCoreCtrl {
 	}
 	
 
-	// Update all information about the database layer and inform everyone who
-	// has to be informed
+	/** Bridge from login / reconnect(?) to the rest of the application.
+         * Updates all information about the database layer and informs everyone who
+	 * has to be informed.
+         */
 	class DatabaseChange implements Observer {
 		/**
 		 * Fetches combobox items from AppCore and stores them to dialog models.
@@ -1661,56 +1661,52 @@ public class AppCoreCtrl {
 			searchModel.setTerritories(model.getTerritories());
 		}
 
-		public void update(Observable targer, Object parameter) {
-			if (parameter != null && parameter instanceof DBLayer) {
-				loginAction.setEnabled(false);
-				view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		public void update(final Observable targer, final Object parameter) {
+                    SwingUtilities.invokeLater( new Runnable() {
+                        public void run() {
+                            if (parameter != null && parameter instanceof DBLayer) {
+                                    loginAction.setEnabled(false);
+                                    view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-				logger.debug("Database layer retrieval.");
-				DBLayer dblayer = loginModel.getDBLayer();
+                                    logger.debug("Database layer retrieval.");
+                                    DBLayer dblayer = loginModel.getDBLayer();
 
-				// FIXME: neni potreba zresetovat stav treba loginModelu, pokdu
-				// neco takhle selze? pripadne stav jinyho objektu?
-				try {
-					model.setDatabase(dblayer);
-				} catch (RemoteException ex) {
-                                    logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
-                                    ex.printStackTrace();
-                                    DefaultReconnectDialog.show(view,ex);
-                                    return;
-				} catch (DBLayerException ex) {
-                                    logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
-                                    ex.printStackTrace();
-                                    DefaultReconnectDialog.show(view,ex);
-                                    return;
-				}
-				// distribute database to dialogs
-				addModel.setDatabase(dblayer);
-				editModel.setDatabase(dblayer);
-				searchModel.setDatabase(dblayer);
-				detailModel.setDatabase(dblayer);
+                                    // FIXME: neni potreba zresetovat stav treba loginModelu, pokdu
+                                    // neco takhle selze? pripadne stav jinyho objektu?
+                                    try {
+                                            model.setDatabase(dblayer);
+                                    } catch (RemoteException ex) {
+                                        logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
+                                        ex.printStackTrace();
+                                        DefaultReconnectDialog.show(view,ex);
+                                        return;
+                                    } catch (DBLayerException ex) {
+                                        logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
+                                        ex.printStackTrace();
+                                        DefaultReconnectDialog.show(view,ex);
+                                        return;
+                                    }
+                                    // distribute database to dialogs
+                                    addModel.setDatabase(dblayer);
+                                    editModel.setDatabase(dblayer);
+                                    searchModel.setDatabase(dblayer);
+                                    detailModel.setDatabase(dblayer);
 
-				model.setAccessRights(loginModel.getAccessRights());
-				model.login();
+                                    model.setAccessRights(loginModel.getAccessRights());
+                                    model.login();
 
-				view.getSBM().display(L10n.getString("Message.FillingDialogs"));
-				fillDialogModels();
+                                    view.getSBM().display(L10n.getString("Message.FillingDialogs"));
+                                    fillDialogModels();
 
-				view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
-				searchModel.clear();
-				searchModel.constructQuery();
-				view.getSBM().displayDefaultText();
+                                    view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
+                                    searchModel.clear();
+                                    searchModel.constructQuery();
 
-				view.initOverview();
-				view.setCursor(Cursor.getDefaultCursor());
-				setDatabaseDependentCommandsEnabled(true);
-				
-                                
-                                //this can't be done earlier. must be done after the query is created
-                                //otherwise this listener would give the overview table model commands to load data
-                                //for a query that doesn't exist yet
-                                view.overviewScrollPane.addComponentListener(overviewResizeListener);
+                                    view.getSBM().displayDefaultText();
 
+                                    view.initOverview();
+                                    view.setCursor(Cursor.getDefaultCursor());
+                                    setDatabaseDependentCommandsEnabled(true);
 				/*-------------------------------------------------------------------
 				 *  This may no longer be necessary:
 				 *------------------------------------------------------------------*/
@@ -1741,6 +1737,46 @@ public class AppCoreCtrl {
 	}
 
 
+                                    //this can't be done earlier. must be done after the query is created
+                                    //otherwise this listener would give the overview table model commands to load data
+                                    //for a query that doesn't exist yet
+                                    view.overviewScrollPane.addComponentListener(overviewResizeListener);
+
+                                    /*-------------------------------------------------------------------
+                                     *  This may no longer be necessary:
+                                     *------------------------------------------------------------------*/
+                    logger.debug("Distributing the new database layer to:");
+                    logger.debug(" # export ");
+                                    if( exportModel != null )
+                                            exportModel.setDBLayer( dblayer );
+                                    logger.debug(" # occurrence data import ");
+                                    if( importModel != null )
+                                            importModel.setDBLayer( dblayer );
+                                    logger.debug(" # table data import ");
+                                    if( tableImportModel != null )
+                                            tableImportModel.setDBLayer( dblayer );
+                                    logger.debug(" # record history ");
+                                    if (historyModel != null ) 
+                                            historyModel.setDBLayer( dblayer );
+                                    logger.debug(" # complete history ");
+                                    if (wholeHistoryModel != null ) 
+                                            wholeHistoryModel.setDBLayer( dblayer );
+                                    logger.debug(" # user manager ");
+                                    if (userManagerModel != null )
+                                            userManagerModel.setDBLayer( dblayer );
+                                    logger.debug(" # metadata manager ");
+                                    if (metadataManagerModel != null )
+                                            metadataManagerModel.setDBLayer( dblayer );							
+                            }//if
+                        }//run()
+                    });//invokeLater
+		}//update()
+	}//DatabaseChange
+
+
+        /** Helper class to refresh overview or to create a task that refreshes overview.
+         *
+         */
 	private Task refreshOverview(boolean createTask) {
 		if (createTask) {
 			Task task = new Task() {
@@ -1760,6 +1796,7 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Handles the refresh action invoked from overview. */
 	class RefreshAction extends AbstractAction {
 		public RefreshAction() {
 			if (showButtonText)
@@ -1769,21 +1806,19 @@ public class AppCoreCtrl {
 			putValue(SHORT_DESCRIPTION, L10n.getString("Overview.RefreshTT"));
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,
 					ActionEvent.CTRL_MASK));
-			// putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.Refresh"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			// e can be null !!! - we call actionPerformed(null) in DeleteAction
 			Task task = refreshOverview(true);
 			ProgressBar progressBar = new DefaultProgressBar(task, view, true);
-			progressBar.setTitle(L10n.getString("Overview.Refresh.ProgressTitle"));
 
 			task.start();
 		}
 
 	}
 
-	/**
+	/** Bridge between mostly managers and the rest of the application. 
 	 * Propagates changes made in managers to the rest of the application.
 	 * 
 	 */
@@ -1873,24 +1908,20 @@ public class AppCoreCtrl {
 						}// switch table
 					}// for
 				} catch (DBLayerException ex) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("Error.DBLayerException")
-							+ "\n" + ex.getErrorInfo(), L10n
-							.getString("Error.DBLayerExceptionTitle"),
-							JOptionPane.WARNING_MESSAGE);
-					logger.error(ex + ": " + ex.getErrorInfo());
+                                    DefaultExceptionHandler.handle(view,ex);
+                                    return;
 				} catch (RemoteException ex) {
-					JOptionPane.showMessageDialog(view, L10n
-							.getString("Error.RemoteException")
-							+ "\n" + ex.getMessage(), L10n
-							.getString("Error.RemoteExceptionTitle"),
-							JOptionPane.WARNING_MESSAGE);
-					logger.error(ex);
+                                    DefaultExceptionHandler.handle(view,ex);
+                                    return;
 				}
 			}// if arg instanceof Table[]
 		}// update()
 	}// class ManagerBridge
 
+        /** Handles resizing of Plantlore's main window.
+         *
+         * Computes and changes the page size if needed.
+         */
 	class OverviewResizeListener implements ComponentListener {
 		private final static int sub = 20; // height of the header row perhaps
 
@@ -1906,12 +1937,12 @@ public class AppCoreCtrl {
 			try {
 				model.setRecordsPerPage(newRecordsCount);
 				view.recordsPerPage.setValue(newRecordsCount);
-			} catch (RemoteException ex) {
-				JOptionPane.showMessageDialog(view, "RemoteException: " + ex);
-				ex.printStackTrace();
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
 			} catch (DBLayerException ex) {
-				JOptionPane.showMessageDialog(view, "DBLayerException: " + ex);
-				ex.printStackTrace();
+                            DefaultExceptionHandler.handle(view,ex);
+                            return;
 			}
 		}
 

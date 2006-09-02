@@ -205,11 +205,22 @@ public class Search extends Observable {
     public void setPhytName(Pair<String, Integer> phytName) {
         if (phytName == null)
             return;
+        
         if (skipUpdate) {
             skipUpdate = false;
             logger.debug("Skipping setPhytName");
             return;
         }
+
+        if (phytName.equals(EMPTY_PAIR)) {
+            this.phytCode = EMPTY_PAIR;
+            this.phytName = EMPTY_PAIR;
+            skipUpdate = true;
+            setChanged();
+            notifyObservers(new Pair<String,Integer>("updateCode",-1));
+            return;
+        }
+            
         this.phytName = phytName;
         if (phytCodes != null)
             for (int i=0; i < phytCodes.length; i++) {
@@ -234,12 +245,22 @@ public class Search extends Observable {
     public void setPhytCode(Pair<String, Integer> phytCode) {
         if (phytCode == null)
             return;
-        
+            
         if (skipUpdate) {
             skipUpdate = false;
             logger.debug("Skipping setPhytCode");
             return;
         }
+
+        if (phytCode.equals(EMPTY_PAIR)) {
+            this.phytName = EMPTY_PAIR;
+            this.phytCode = EMPTY_PAIR;
+            skipUpdate = true;
+            setChanged();
+            notifyObservers(new Pair<String,Integer>("updateName",-1));
+            return;
+        }
+            
         this.phytCode = phytCode;
         if (phytNames != null)
             for (int i=0; i < phytNames.length; i++) {

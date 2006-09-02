@@ -15,29 +15,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -46,24 +36,20 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableColumn;
 import javax.swing.text.BadLocationException;
 import com.toedter.calendar.JCalendar;
-import net.sf.plantlore.client.*;
+import org.apache.log4j.Logger;
 
 import net.sf.plantlore.client.checklist.ChecklistCtrl;
 import net.sf.plantlore.client.checklist.ChecklistView;
-import net.sf.plantlore.common.AutoComboBox;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
-import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
-import org.apache.log4j.Logger;
 
 /**
  *

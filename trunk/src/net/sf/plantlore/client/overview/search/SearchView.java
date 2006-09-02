@@ -13,6 +13,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableColumn;
@@ -841,164 +842,175 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         });
     }
 
-    public void update(Observable o, Object arg) {
-        if (arg != null && arg instanceof Pair) {
-            String s = ((Pair<String,Integer>)arg).getFirst();
-            int row = ((Pair<String,Integer>)arg).getSecond(); 
-            if (s.equals("updateCode"))
-                phytCodeCombo.setSelectedItem(model.getPhytCode());
-            if (s.equals("updateName"))
-                phytNameCombo.setSelectedItem(model.getPhytName());
-            if (s.equals("addAuthorRow")) {
-                tableModel.addRow();
-                /*
-                DefaultCellEditor dce = (DefaultCellEditor) authorTable.getCellEditor(0,0);
-                Object o = dce.getCellEditorValue();
-                 */            
-            }             
-            if (s.equals("removeAuthorRow")) {
-                tableModel.removeRow(row);
-                //unfortunately have to set up the editors and renderers again because of the
-                //fireTableStructureChanged() in the tableModel.removeRow() ... :-/
-                //initAuthorTable();            
-            }            
-        }//instanceof Pair
+    /** Observer update method.
+     *
+     * Updates the dialog as messages from the observable model come.
+     */
+    public void update(final Observable o, final Object arg) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
         
-        if (arg != null && arg instanceof String) {
-            String s = (String) arg;
-            
-            if (s.equals("CLEAR")) {
-                clearComponentData();
-                return;
-            }
-            
-            if (s.equals("PLANTS_CHANGED")) {
-                logger.debug("Updating plant area");
-                if (model.getPlants() == null) {
-                    ((AutoTextArea)taxonTextArea).setChoices(new String[] {""});
-                    return;
-                }
-                Pair<String, Integer>[] plants = model.getPlants();
-                String[] choices = new String[plants.length];
-                for (int i = 0; i < plants.length; i++) 
-                    choices[i] = plants[i].getFirst();
-                
-                ((AutoTextArea)taxonTextArea).setChoices(choices);
-                return;
-            }
-            
-            if (s.equals("AUTHORS_CHANGED")) {
-                logger.debug("Updating authors combo");
-                JComboBox cb;
-                
-                if (model.getAuthors() == null) 
-                    cb = new AutoComboBoxNG3();
-                else
-                    cb = new AutoComboBoxNG3(model.getAuthors());
-                    
-                TableColumn tc1 = authorTable.getColumnModel().getColumn(0);
+                if (arg != null && arg instanceof Pair) {
+                    String s = ((Pair<String,Integer>)arg).getFirst();
+                    int row = ((Pair<String,Integer>)arg).getSecond(); 
+                    if (s.equals("updateCode"))
+                        phytCodeCombo.setSelectedItem(model.getPhytCode());
+                    if (s.equals("updateName"))
+                        phytNameCombo.setSelectedItem(model.getPhytName());
+                    if (s.equals("addAuthorRow")) {
+                        tableModel.addRow();
+                        /*
+                        DefaultCellEditor dce = (DefaultCellEditor) authorTable.getCellEditor(0,0);
+                        Object o = dce.getCellEditorValue();
+                         */            
+                    }             
+                    if (s.equals("removeAuthorRow")) {
+                        tableModel.removeRow(row);
+                        //unfortunately have to set up the editors and renderers again because of the
+                        //fireTableStructureChanged() in the tableModel.removeRow() ... :-/
+                        //initAuthorTable();            
+                    }            
+                }//instanceof Pair
 
-                
-                tc1.setCellEditor(new DefaultCellEditor(cb));  
-                return;
-            }
+                if (arg != null && arg instanceof String) {
+                    String s = (String) arg;
 
-            if (s.equals("AUTHORROLES_CHANGED")) {
-                logger.debug("Updating authorroles combobox");
-                JComboBox cb;
-                
-                if (model.getAuthorRoles() == null)
-                    cb = new AutoComboBoxNG3();
-                else
-                    cb = new AutoComboBoxNG3(model.getAuthorRoles());
+                    if (s.equals("CLEAR")) {
+                        clearComponentData();
+                        return;
+                    }
 
-                TableColumn tc2 = authorTable.getColumnModel().getColumn(1);
-                
-                tc2.setCellEditor(new DefaultCellEditor(cb));                
-                return;
-            }
-            
-            if (s.equals("VILLAGES_CHANGED")) {
-                logger.debug("Updating villages combobox");
-                if (model.getVillages() == null)
-                    townComboBox.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    townComboBox.setModel(new DefaultComboBoxModel(model.getVillages()));
-                townComboBox.insertItemAt(model.EMPTY_PAIR,0);
-                return;
-            }
-            
-            if (s.equals("TERRITORIES_CHANGED")) {
-                logger.debug("Updating territories combobox");
-                if (model.getTerritories() == null)
-                    territoryNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    territoryNameCombo.setModel(new DefaultComboBoxModel(model.getTerritories()));
-                territoryNameCombo.insertItemAt(model.EMPTY_PAIR,0);
-                return;
-            }
+                    if (s.equals("PLANTS_CHANGED")) {
+                        logger.debug("Updating plant area");
+                        if (model.getPlants() == null) {
+                            ((AutoTextArea)taxonTextArea).setChoices(new String[] {""});
+                            return;
+                        }
+                        Pair<String, Integer>[] plants = model.getPlants();
+                        String[] choices = new String[plants.length];
+                        for (int i = 0; i < plants.length; i++) 
+                            choices[i] = plants[i].getFirst();
 
-            if (s.equals("PHYTNAMES_CHANGED")) {
-                logger.debug("Updating phytnames combobox");
-                if (model.getPhytNames() == null)
-                    phytNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    phytNameCombo.setModel(new DefaultComboBoxModel(model.getPhytNames()));
-                phytNameCombo.insertItemAt(model.EMPTY_PAIR,0);
-                return;
-            }
+                        ((AutoTextArea)taxonTextArea).setChoices(choices);
+                        return;
+                    }
 
-            if (s.equals("PHYTCODES_CHANGED")) {
-                logger.debug("Updating phytcodes combobox");
-                if (model.getPhytCodes() == null)
-                    phytCodeCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    phytCodeCombo.setModel(new DefaultComboBoxModel(model.getPhytCodes()));
-                phytCodeCombo.insertItemAt(model.EMPTY_PAIR,0);
-                return;
-            }
+                    if (s.equals("AUTHORS_CHANGED")) {
+                        logger.debug("Updating authors combo");
+                        JComboBox cb;
 
-            if (s.equals("COUNTRIES_CHANGED")) {
-                logger.debug("Updating countries combobox");
-                if (model.getCountries() == null)
-                    phytCountryCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    phytCountryCombo.setModel(new DefaultComboBoxModel(model.getCountries()));
-                phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);
-                return;
-            }
-            
-            if (s.equals("SOURCES_CHANGED")) {
-                logger.debug("Updating sources combobox");
-                if (model.getSources() == null)
-                    sourceCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    sourceCombo.setModel(new DefaultComboBoxModel(model.getSources()));
-                sourceCombo.insertItemAt(model.EMPTY_STRING,0);
-                return;
-            }
-            
-            if (s.equals("PUBLICATIONS_CHANGED")) {
-                logger.debug("Updating publications combobox");
-                if (model.getPublications() == null)
-                    publicationCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    publicationCombo.setModel(new DefaultComboBoxModel(model.getPublications()));
-                publicationCombo.insertItemAt(model.EMPTY_PAIR,0);
-                return;
-            }
+                        if (model.getAuthors() == null) 
+                            cb = new AutoComboBoxNG3();
+                        else
+                            cb = new AutoComboBoxNG3(model.getAuthors());
 
-            if (s.equals("PROJECTS_CHANGED")) {
-                logger.debug("Updating projects combobox");
-                if (model.getProjects() == null)
-                    projectCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
-                else
-                    projectCombo.setModel(new DefaultComboBoxModel(model.getProjects()));
-                projectCombo.insertItemAt(model.EMPTY_PAIR,0);
-                return;
-            }                       
-        }//instanceof String
-    }
+                        TableColumn tc1 = authorTable.getColumnModel().getColumn(0);
+
+
+                        tc1.setCellEditor(new DefaultCellEditor(cb));  
+                        return;
+                    }
+
+                    if (s.equals("AUTHORROLES_CHANGED")) {
+                        logger.debug("Updating authorroles combobox");
+                        JComboBox cb;
+
+                        if (model.getAuthorRoles() == null)
+                            cb = new AutoComboBoxNG3();
+                        else
+                            cb = new AutoComboBoxNG3(model.getAuthorRoles());
+
+                        TableColumn tc2 = authorTable.getColumnModel().getColumn(1);
+
+                        tc2.setCellEditor(new DefaultCellEditor(cb));                
+                        return;
+                    }
+
+                    if (s.equals("VILLAGES_CHANGED")) {
+                        logger.debug("Updating villages combobox");
+                        if (model.getVillages() == null)
+                            townComboBox.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            townComboBox.setModel(new DefaultComboBoxModel(model.getVillages()));
+                        townComboBox.insertItemAt(model.EMPTY_PAIR,0);
+                        return;
+                    }
+
+                    if (s.equals("TERRITORIES_CHANGED")) {
+                        logger.debug("Updating territories combobox");
+                        if (model.getTerritories() == null)
+                            territoryNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            territoryNameCombo.setModel(new DefaultComboBoxModel(model.getTerritories()));
+                        territoryNameCombo.insertItemAt(model.EMPTY_PAIR,0);
+                        return;
+                    }
+
+                    if (s.equals("PHYTNAMES_CHANGED")) {
+                        logger.debug("Updating phytnames combobox");
+                        if (model.getPhytNames() == null)
+                            phytNameCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            phytNameCombo.setModel(new DefaultComboBoxModel(model.getPhytNames()));
+                        phytNameCombo.insertItemAt(model.EMPTY_PAIR,0);
+                        return;
+                    }
+
+                    if (s.equals("PHYTCODES_CHANGED")) {
+                        logger.debug("Updating phytcodes combobox");
+                        if (model.getPhytCodes() == null)
+                            phytCodeCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            phytCodeCombo.setModel(new DefaultComboBoxModel(model.getPhytCodes()));
+                        phytCodeCombo.insertItemAt(model.EMPTY_PAIR,0);
+                        return;
+                    }
+
+                    if (s.equals("COUNTRIES_CHANGED")) {
+                        logger.debug("Updating countries combobox");
+                        if (model.getCountries() == null)
+                            phytCountryCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            phytCountryCombo.setModel(new DefaultComboBoxModel(model.getCountries()));
+                        phytCountryCombo.insertItemAt(model.EMPTY_STRING,0);
+                        return;
+                    }
+
+                    if (s.equals("SOURCES_CHANGED")) {
+                        logger.debug("Updating sources combobox");
+                        if (model.getSources() == null)
+                            sourceCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            sourceCombo.setModel(new DefaultComboBoxModel(model.getSources()));
+                        sourceCombo.insertItemAt(model.EMPTY_STRING,0);
+                        return;
+                    }
+
+                    if (s.equals("PUBLICATIONS_CHANGED")) {
+                        logger.debug("Updating publications combobox");
+                        if (model.getPublications() == null)
+                            publicationCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            publicationCombo.setModel(new DefaultComboBoxModel(model.getPublications()));
+                        publicationCombo.insertItemAt(model.EMPTY_PAIR,0);
+                        return;
+                    }
+
+                    if (s.equals("PROJECTS_CHANGED")) {
+                        logger.debug("Updating projects combobox");
+                        if (model.getProjects() == null)
+                            projectCombo.setModel(new DefaultComboBoxModel(new String[] {""}));
+                        else
+                            projectCombo.setModel(new DefaultComboBoxModel(model.getProjects()));
+                        projectCombo.insertItemAt(model.EMPTY_PAIR,0);
+                        return;
+                    }                       
+                }//instanceof String
+            }//run()
+        }//runnable
+        );//invokeLater
+        
+    }//update()
         
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

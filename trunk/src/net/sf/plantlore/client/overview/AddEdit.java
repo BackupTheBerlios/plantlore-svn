@@ -180,7 +180,7 @@ public class AddEdit extends Observable {
      * @return >=0 if everything was OK
      * @return -1 if the Occurrence table overflew
      */
-    public int setRecord(Integer occurrenceId) throws DBLayerException, RemoteException {
+    public int loadRecord(Integer occurrenceId) throws DBLayerException, RemoteException {
         logger.debug("Loading AddEdit data for occurrence id "+occurrenceId);
         
         clearOccurrence();
