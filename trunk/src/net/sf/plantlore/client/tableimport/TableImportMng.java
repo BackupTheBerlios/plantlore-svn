@@ -19,10 +19,22 @@ import net.sf.plantlore.middleware.DBLayer;
 import static net.sf.plantlore.client.export.ExportMng2.ENCODING;
 
 /**
- * ImportTask factory.
+ * The Table Import manager serves as a Table Import Task factory. 
+ * The Table Import Manager gathers all information needed for the creation of a new Table Import Task.
+ * <br/>
+ * In order to create a new Table Import task these information must be supplied:
+ * <ul>   
+ * <li>dblayer	The database layer mediating the access to the database.</li>
+ * <li>filename	The name of the file where the records are stored.</li>
+ * </ul>
+ * <br/>
+ * The Table Import manager requires an Observer as well - 
+ * this Observer is notified if the immutable table is modified during the Import
+ * so that the Application can reload the up-to-date content of
+ * that modified table.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @since 2006-05-08
+ * @since 2006-05-08 
  * @version 1.0
  */
 public class TableImportMng {
@@ -31,17 +43,32 @@ public class TableImportMng {
 	private DBLayer db; 
 	private Observer tableChangeObserver;
 	
+	/**
+	 * Create a new Occurrence Import Manager. 
+	 * 
+	 * @param db		The database layer mediating the access to the database.
+	 * @param tableChangeObserver	The observer that will be notified after the Table Import task
+	 * ends so that the content of the modified table is reloaded and redistributed
+	 * to other parts of the application.
+	 */
 	public TableImportMng(DBLayer db, Observer tableChangeObserver) {
 		this.db = db;
 		this.tableChangeObserver = tableChangeObserver;
 	}
 	
+	/**
+	 * 
+	 * @param dblayer	Set a new database layer.
+	 */
 	public void setDBLayer(DBLayer dblayer) {
 		this.db = dblayer;
 	}
 	
 	/**
-	 * Start the import procedure. The import will run in its own thread.
+	 * Construct a new Table Import task.
+	 * 
+	 * @param filename	The name of the file where the records are stored.
+	 * @return	The task that will perform the import.
 	 */
 	synchronized public Task createTableImportTask(String filename) 
 	throws ImportException, IOException, RemoteException {

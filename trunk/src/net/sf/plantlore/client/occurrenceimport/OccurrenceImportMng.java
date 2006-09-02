@@ -20,23 +20,58 @@ import net.sf.plantlore.middleware.DBLayer;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
+/**
+ * The Occurrence Import manager serves as an Occurrence Import Task factory. 
+ * The Occurrence Import Manager gathers all information
+ * needed for the creation of a new Occurrence Import Task.
+ * <br/>
+ * In order to create a new Occurrence Import task these information must be supplied:
+ * <ul>   
+ * <li>dblayer	The database layer mediating the access to the database.</li>
+ * <li>filename	The name of the file where the records are stored.</li>
+ * </ul>
+ * <br/>
+ * The Occurrence Import manager requires an Observer as well - 
+ * this Observer is notified if some table was modified during the Import
+ * so that the Application can reload the up-to-date content of
+ * those modified tables.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-06-29 
+ * @version 1.0
+ */
 public class OccurrenceImportMng {
 	
 	private Logger logger = Logger.getLogger(OccurrenceImportMng.class.getPackage().getName());
 	private DBLayer db; 
 	private Observer tableChangeObserver;
 	
+	/**
+	 * Create a new Occurrence Import Manager. 
+	 * 
+	 * @param db		The database layer mediating the access to the database.
+	 * @param tableChangeObserver	The observer that will be notified after the Occurrence Import task
+	 * ends so that the content of the modified tables is reloaded from the database and distributed
+	 * to other parts of the application.
+	 */
 	public OccurrenceImportMng(DBLayer db, Observer tableChangeObserver) {
 		this.db = db;
 		this.tableChangeObserver = tableChangeObserver;
 	}
 	
+	/**
+	 * 
+	 * @param dblayer	Set a new database layer.
+	 */
 	public void setDBLayer(DBLayer dblayer) {
 		this.db = dblayer;
 	}
 	
 	/**
+	 * Construct a new Occurrence Import task.
 	 * 
+	 * @param filename	The name of the file where the Occurrences are stored.
+	 * @return	The task that will perform the import.
 	 */
 	synchronized public Task createOccurrenceImportTask(String filename) 
 	throws ImportException, IOException, RemoteException, SAXException {
@@ -63,6 +98,7 @@ public class OccurrenceImportMng {
 		}
 		
 		logger.debug("Preparing new OccurrenceImport task.");
+		// Only one kind of parser is available - the XML parser.
 		OccurrenceParser parser = new XMLOccurrenceParser(reader);
 		Task occurrenceImportTask = new OccurrenceImportTask(db, parser);
 		occurrenceImportTask.addObserver( tableChangeObserver );

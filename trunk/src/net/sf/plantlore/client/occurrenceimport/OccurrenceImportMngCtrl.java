@@ -10,6 +10,13 @@ import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
+/**
+ * Allow the User to specify the name of the file where the Occurrence records
+ * are stored. Then create an Occurrence Import task and start it.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-08-14
+ */
 public class OccurrenceImportMngCtrl {
 	
 	private OccurrenceImportMng model;
@@ -24,6 +31,12 @@ public class OccurrenceImportMngCtrl {
 		choice.addChoosableFileFilter( new FileFormat(L10n.getString("Format.XML"), true, true, ".xml") ); 
 	}
 	
+	/**
+	 * Display the dialog where the User can choose the file name,
+	 * create the Occurrence Import task and start it.
+	 * 
+	 * @param visible	True if the GUI should become visible.
+	 */
 	public void setVisible(boolean visible) {
 		if(visible) {
 			int result = choice.showDialog(view, L10n.getString("Import.Title"));

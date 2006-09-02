@@ -14,6 +14,54 @@ import net.sf.plantlore.common.exception.ParserException;
 import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
 
+/**
+ * The Unified Table Parser is capable of parsing
+ * a file in the XML file format. It can detect the type of records stored in the file
+ * and the operation that should be performed with that record.
+ * <br/> 
+ * Typicall format of the file looks like this:
+ * <br/>
+ * <pre>
+ * &lt;villages&gt;  // The Root element is used to determine the immutable table.
+ *  &lt;add&gt;
+ *   &lt;nearestvillage&gt;
+ *     &lt;name&gt;Třebíč&lt;/name&gt;
+ *   &lt;/nearestvillage&gt;
+ *  &lt;/add&gt;
+ *  
+ *  &lt;delete&gt;
+ *   &lt;nearestvillage&gt;
+ *     &lt;name&gt;Železný Brod&lt;/name&gt;
+ *   &lt;/nearestvillage&gt;  
+ *  &lt;delete&gt;
+ *  
+ *  &lt;update&gt; // Records in this branch must go in pairs &lt;original, replacement&gt;
+ *   &lt;nearestvillage&gt;
+ *     &lt;name&gt;Kšice&lt;/name&gt;
+ *   &lt;/nearestvillage&gt;  
+ *   &lt;nearestvillage&gt;
+ *     &lt;name&gt;Košice&lt;/name&gt;
+ *   &lt;/nearestvillage&gt;
+ *  &lt;update&gt;
+ * &lt;/villages&gt;
+ * </pre>
+ * <br/>
+ * The same goes for plants, metadata, phytochoria, and territories - you just have to
+ * change the root element and the content of those three branches.
+ * <br/>
+ * The Unified Table Parser uses DOM to process the input. 
+ * It may require a huge amount of memory, however the purpose of the Table Import
+ * is to allow the User to make some minor changes to the (otherwise) immutable tables.
+ * It is not expected that the number of villages (nearest bigger seats), known plants,
+ * phytochoria, or territories will grow or change extremely fast. 
+ * The Table Import is meant for occasional changes and updates of a few records.
+ *  
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-08-10
+ * @version 1.0
+ *
+ */
 public class UnifiedTableParser implements TableParser {
 	
 	private Document document;
@@ -27,6 +75,9 @@ public class UnifiedTableParser implements TableParser {
 	
 	private static Map<String, Class> tables = new Hashtable<String, Class>(10);
 	
+	/**
+	 * The key to the immutable tables.
+	 */
 	static {
 		tables.put( "plants", Plant.class);
 		tables.put( "metadata", Metadata.class);
@@ -35,12 +86,18 @@ public class UnifiedTableParser implements TableParser {
 		tables.put( "territories", Territory.class);
 	}
 	
-	
+	/**
+	 * Create a new Unified Table Parser that will read from the supplied Reader.
+	 * 
+	 * @param reader	The input containing the  records.
+	 */
 	public UnifiedTableParser(Reader reader) {
 		this.reader = reader;
 	}
 	
-	
+	/**
+	 * Initialize the reader and detect the immutable table into which the records in the file belong.
+	 */
 	public Class initialize() throws ParserException {
 		try {
         	SAXReader saxReader = new SAXReader();
@@ -70,13 +127,18 @@ public class UnifiedTableParser implements TableParser {
         return rootTable;
 	}
 	
-
+	/**
+	 * @return True if there are more records in the file.
+	 */
 	public boolean hasNext() {
 		if(recIterator == null)
 			return false;
 		return recIterator.hasNext();
 	}
 
+	/**
+	 * @return Another record from the file.
+	 */
 	public DataHolder getNext() 
 	throws ParserException {
 		if(recIterator == null)
@@ -109,12 +171,19 @@ public class UnifiedTableParser implements TableParser {
 		return data;
 	}
 
-	
+	/**
+	 * @return The number of records in the file.
+	 */
 	public int getNumberOfRecords() {
 		return numberOfRecords;
 	}
 	
-	
+	/**
+	 * Reconstruct the record from the XML element.
+	 * 
+	 * @param part	The record to be recontructed.
+	 * @param node	The node storing the information about the record.
+	 */
     private void reconstruct(Record part, Node node) {
     	if(part == null || node == null)
     		return;

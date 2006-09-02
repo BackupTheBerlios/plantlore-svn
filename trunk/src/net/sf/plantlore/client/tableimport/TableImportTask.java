@@ -17,7 +17,25 @@ import net.sf.plantlore.middleware.DBLayer;
 
 
 /**
- * DefaultDirector
+ * The Table Import task acts as the Director from the Builder design pattern.
+ * It repeatedly asks for records and processes them accordingly.
+ * <br/>
+ * <ul>
+ * <li>Records that are meant to be inserted are inserted only if they are not in the database already.</li>
+ * <li>Records that are meant to be deleted are removed only if there is no other record in the database
+ * that would refer to it, so that the reference integrity is kept.</li>
+ * <li>Records that are meant to be updated may be treated in three different ways:
+ * 		<ol>
+ * 		<li>if the record to be updated is not in the database, then the replacement is inserted;</li>
+ * 		<li>if the record to be updated is in the database but the replacement is not, the record
+ * 		in the database is updated accordingly; </li>
+ * 		<li>if both the record to be updated and the replacement are in the database, 
+ * 		the (original) record is deleted.</li>
+ * 		</ol>
+ * </li>
+ * </ul>
+ * <br/>
+ * The Table Import is potentially a dangerous operation which is why only the Administrator can perform it.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-05-31
@@ -36,13 +54,12 @@ public class TableImportTask extends Task {
 //			Arrays.asList(Metadata.class, Plant.class, NearestVillage.class, Phytochorion.class, Territory.class));
 	
 	/**
+	 * Create a new Table Import task.
 	 * 
 	 * @param db	The database where the data will be imported.
 	 * @param TableParser	The TableParser that is responsible for parsing the file.
-	 * @throws ImportException	If some parameters are null.
 	 */
-	public TableImportTask(DBLayer db, TableParser parser) 
-	throws ImportException {
+	public TableImportTask(DBLayer db, TableParser parser) {
 		this.db = db;
 		this.parser = parser;
 		
@@ -77,7 +94,7 @@ public class TableImportTask extends Task {
 			try {
 				count++;
 				setPosition( count );
-				setStatusMessage(count + " " + L10n.getString("Import.RecordsImported"));
+				setStatusMessage(L10n.getFormattedString("Import.RecordsImported", count));
 				data = parser.getNext();
 			} catch( ParserException pe ) {
 				logger.warn("The record is corrupted. " + pe);
@@ -94,9 +111,9 @@ public class TableImportTask extends Task {
 				setStatusMessage(L10n.getFormattedString("Import.IncompleteRecord", count));					
 			}
 			
-			logger.debug(data.action+" "+data.record + 
+			logger.debug(data.action+" "+data.record.toFullString() + 
 					((data.action == Action.UPDATE) ? 
-							" ==> " + data.replacement :
+							" ==> " + data.replacement.toFullString() :
 					""));
 			
 			
@@ -118,11 +135,14 @@ public class TableImportTask extends Task {
 					break;
 				case UPDATE:
 					Record replacementInDB = dbutils.findMatchInDB( data.replacement ); 
-					if( replacementInDB == null )
+					if( replacementInDB == null ) {
 						if( !isRecordInDB )
 							insert( data.replacement );
 						else
 							update( recordInDB, data.replacement );
+					} 
+					else if( isRecordInDB )
+						delete( recordInDB );
 					updated ++;
 					break;
 				}
@@ -158,6 +178,7 @@ public class TableImportTask extends Task {
 	
 	
 	/**
+	 * Insert the record into the database.
 	 */
 	protected void insert(Record record) 
 	throws RemoteException, DBLayerException {
@@ -166,6 +187,7 @@ public class TableImportTask extends Task {
 	}
 	
 	/**
+	 * Update the record in the database.
 	 */
 	protected void update(Record current, Record replacement) 
 	throws RemoteException, DBLayerException {
@@ -177,6 +199,7 @@ public class TableImportTask extends Task {
 	}
 		
 	/**
+	 * Remove the record from the database if possible.
 	 */
 	protected void delete(Record record) 
 	throws RemoteException, DBLayerException, ImportException {

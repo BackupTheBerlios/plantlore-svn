@@ -218,7 +218,7 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
                         break;
                     case STOPPING:
                         setVisible(false);
-                        dispose();                    
+                        dispose(); // FIXME: Should not this method be invoked from the EDT?                    
                         parent.setCursor(Cursor.getDefaultCursor());
                         logger.debug( "ProgressBar:Stopping " + task );
                         afterStopping();

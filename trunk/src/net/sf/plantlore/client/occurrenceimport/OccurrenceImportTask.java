@@ -16,6 +16,16 @@ import net.sf.plantlore.common.record.*;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
+/**
+ * The Occurrence Import task instructs the Parser to start parsing the file
+ * and every time a record is reconstructed, it is processed here (via a callback).
+ * <br/>
+ * The task can be cancelled.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-08-14
+ * @version 1.0
+ */
 public class OccurrenceImportTask extends Task implements RecordProcessor {
 	
 	private Logger logger = Logger.getLogger(OccurrenceImportTask.class.getPackage().getName());
@@ -26,6 +36,10 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 	
 	private DBLayerException canceledByUser = new DBLayerException(L10n.getString("Import.CanceledByUser"));
 	
+	/**
+	 * The list of tables that can be modified during the import
+	 * (therefore the application must reload the content of those tables). 
+	 */
 	private static Table[] TABLES_TO_UPDATE = new Table[] { 
 		Table.AUTHOR, 
 		Table.AUTHOROCCURRENCE, 
@@ -41,7 +55,12 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 			DBLayerException.ERROR_UPDATE,
 			DBLayerException.ERROR_RIGHTS));
 	
-	
+	/**
+	 * Create a new Occurrence Import task. 
+	 * 
+	 * @param db		The database layer mediating the access to the database.
+	 * @param parser	The parser that is capable of reconstructing the records stored in some file.
+	 */
 	public OccurrenceImportTask(DBLayer db, OccurrenceParser parser) {
 		this.parser = parser;
 		parser.setRecordProcessor( this );
@@ -75,7 +94,14 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 		// Empty implementation. Just to make sure no one will try to resurrect this operation.
 	}
 
-	
+	/**
+	 * Store the record supplied by the parser into the database. 
+	 * All author-occurrences should share the same occurrence.
+	 * <br/>
+	 * Some erros may be ignored (such as insufficient access rights)
+	 * i.e. the whole import procedure will not fail, just the problematic 
+	 * record will be rejected. 
+	 */
 	public void processRecord(AuthorOccurrence... aos) 
 	throws DBLayerException, RemoteException {
 		if( isCanceled() ) 

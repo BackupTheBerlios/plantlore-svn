@@ -21,7 +21,22 @@ import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.l10n.L10n;
 
 
-
+/**
+ * The XML Occurrence Parser is capable of reading the selected file in the PlantloreNative
+ * file format, that is based on the XML, and reconstructing records stored in that format.
+ * The reconstructed record is handed over to the Record Processor.
+ * <br/>
+ * The XML Occurrence Parser uses SAX to parse the input. It is fast and requires next to
+ * no memory (which is why DOM is not suitable in this case). The Parser can handle
+ * files of virtually any size.
+ * <br/>
+ * The input must be a valid PlantloreNative format - if it is not, the input is considered corrupted
+ * and the parsing is terminated.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-08-14
+ *	@version 1.0
+ */
 public class XMLOccurrenceParser extends DefaultHandler implements OccurrenceParser {
 	
 	private Logger logger = Logger.getLogger(XMLOccurrenceParser.class.getPackage().getName());
@@ -40,7 +55,12 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 	
 	private static AuthorOccurrence[] AUTHOR_OCCURRENCE_ARRAY = new AuthorOccurrence[0];
 	
-	
+	/**
+	 * Create a new XML Occurrence Parser.
+	 * 
+	 * @param reader	The reader that allows us to read the input. 
+	 * It will be closed when the end of the input is reached. 
+	 */
 	public XMLOccurrenceParser(Reader reader) 
 	throws SAXException {
 		xmlReader = XMLReaderFactory.createXMLReader();
@@ -50,11 +70,18 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 		this.reader = reader;
 	}
 	
+	/**
+	 * Set another record processor.
+	 * 
+	 * @param processor	The record processor which will be used to process the reconstructed record.
+	 */
 	public void setRecordProcessor(RecordProcessor processor) {
 		this.processor = processor;
 	}
 
-	
+	/**
+	 * Start parsing the input.
+	 */
 	public void startParsing() 
 	throws Exception {
 		try {
@@ -67,7 +94,14 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 		}
 	}
 	
-	
+	/**
+	 * If the condition is satisfied
+	 * throw an exception that will signal that the file format is corrupted.
+	 * 
+	 * 
+	 * @param condition	If the condition is false, throw the exception.
+	 * @throws SAXException	The exception signalling a corrupted file format.
+	 */
 	private void signalCorruptedFileIf(boolean condition) throws SAXException {
 		if( condition ) {
 			logger.error("Format of the file is corrupted! Parsing will be terminated.");
@@ -76,7 +110,10 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 	}
 	
 	
-
+	/**
+	 * Process the opening tag. Make some format validity checks 
+	 * and throw an exception if the validity constraints are violated.
+	 */
 	@Override
 	public void startElement(String uri, String name, String qname, Attributes attr) 
 	throws SAXException {
@@ -110,10 +147,17 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 			else if( current.isColumn(name) ) 
 				textCache.delete(0, textCache.capacity());
 			else
-				signalCorruptedFileIf( true );
+				signalCorruptedFileIf( true ); // an unknown tag
 		}
 	}
 	
+	/**
+	 * Process the closing tag. Make some format validity checks 
+	 * and throw an exception, if the validity constraints are violated.
+	 * <br/>
+	 * When the whole Occurrence record is reconstructed, pass it to the
+	 * Record Processor.
+	 */
 	@Override
 	public void endElement(String uri, String name, String qname) 
 	throws SAXException {
@@ -146,10 +190,17 @@ public class XMLOccurrenceParser extends DefaultHandler implements OccurrencePar
 			current.setValueSafe(name, textCache.toString());
 	}
 	
+	/**
+	 * Gather the data stored in between the opening and closing tag.
+	 * Limit the maximum length of the text to 4096 characters.
+	 */
 	@Override
 	public void characters(char[] ch, int start, int length) {
-		for(int i = start; i < start + length; i++)
+		for(int i = start; i < start + length; i++) {
+			if( textCache.length() >= textCache.capacity() )
+				break;
 			textCache.append( ch[i] );
+		}
 	}
 	
 
