@@ -12,8 +12,11 @@ import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.text.PlainDocument;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
+import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.l10n.L10n;
 
 /** Creates new form UserManagerView
@@ -33,13 +36,28 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
     public UserManagerView(UserManager model, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         this.model = model;
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
         initComponents();        
         // getRootPane().setDefaultButton(closeButton);
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.USER_MANAGER, this.helpButton);                
+        PlantloreHelp.addButtonHelp(PlantloreHelp.USER_MANAGER, this.helpButton); 
+        setSizeRestrictions();
+        setLocationRelativeTo(null);
     }
+    
+     private void setSizeRestrictions() {
+        PlainDocument pd = (PlainDocument) loginSearchText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.LOGIN)));
+
+        pd = (PlainDocument) wholeNameSearchText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.WHOLENAME)));
+        
+        pd = (PlainDocument) emailSearchText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.EMAIL)));
+
+        pd = (PlainDocument) addressSearchText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.ADDRESS)));
+     }
     
     /**
      * Reload the view dialog or display some kind of error.

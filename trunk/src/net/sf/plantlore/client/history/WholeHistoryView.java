@@ -37,14 +37,14 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         super(parent, modal);
         this.model = model;
         // Register observer
-        model.addObserver(this);
-        setLocationRelativeTo(null);
+        model.addObserver(this);        
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         initComponents();        
         getRootPane().setDefaultButton(closeButton);            
         // Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_DATA, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);                
+        PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);    
+        setLocationRelativeTo(null);
     }
     
      /**

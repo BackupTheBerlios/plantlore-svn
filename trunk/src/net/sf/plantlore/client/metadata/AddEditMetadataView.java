@@ -14,6 +14,8 @@ import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.text.PlainDocument;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.common.record.Metadata;
@@ -40,13 +42,54 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         super(parent, modal);
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
         initComponents();        
         //getRootPane().setDefaultButton(closeButton); 
         PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_ADD, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_ADD, this.helpButton);   
-        TransferFocus.patch(noteTextArea);
+        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_ADD, this.helpButton);           
+        setSizeRestrictions();
+        setLocationRelativeTo(null);
     }
+    
+    private void setSizeRestrictions() {
+        PlainDocument pd = (PlainDocument) this.sourceInstirutionIdText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.SOURCEINSTITUTIONID)));
+
+        pd = (PlainDocument) this.sourceIdText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.SOURCEID)));
+        
+        pd = (PlainDocument) this.technicalContactNameText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.TECHNICALCONTACTNAME)));
+
+        pd = (PlainDocument) this.technicalContactEmailText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.TECHNICALCONTACTEMAIL)));
+        
+        pd = (PlainDocument) this.technicalContactAddressText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.TECHNICALCONTACTADDRESS)));
+        
+        pd = (PlainDocument) this.contentContactNameText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.CONTENTCONTACTNAME)));
+        
+        pd = (PlainDocument) this.contentContactEmailText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.CONTENTCONTACTEMAIL)));
+        
+        pd = (PlainDocument) this.contectContactAddressText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.CONTENTCONTACTADDRESS)));
+        
+        pd = (PlainDocument) this.dataSetTitleText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.DATASETTITLE)));
+        
+        pd = (PlainDocument) this.dataSetDetailsText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.DATASETDETAILS)));
+        
+        pd = (PlainDocument) this.abbrevText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.OWNERORGANIZATIONABBREV)));
+        
+        pd = (PlainDocument) this.recordbasisText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.RECORDBASIS)));
+        
+        pd = (PlainDocument) this.biotopeTextText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.BIOTOPETEXT)));                
+     }
     
      public void update(Observable observable, Object object)
     {
@@ -73,7 +116,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
          dateCreateText.setText("");
          dateModifiedText.setText("");
          recordbasisText.setText("");
-         noteTextArea.setText("");  
+         biotopeTextText.setText("");  
          createDateChooser.setDate(new Date());
      }
      
@@ -108,7 +151,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
        dateCreateText.setEditable(false);
        dateModifiedText.setEditable(false);
        recordbasisText.setEditable(false);
-       noteTextArea.setEditable(false);   
+       biotopeTextText.setEditable(false);   
        dateModifiedEmptyLable.setVisible(false);
        createDateChooser.setVisible(false);
      }
@@ -134,7 +177,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
            createDateChooser.setDate(new Date());           
            dateModifiedText.setValue(metadata.getDateModified());
            recordbasisText.setText(metadata.getRecordBasis());
-           noteTextArea.setText(metadata.getBiotopeText());            
+           biotopeTextText.setText(metadata.getBiotopeText());            
         }
      
      /**
@@ -225,10 +268,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         sourceIdText = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         recordbasisLabel = new javax.swing.JLabel();
-        notetextLabel = new javax.swing.JLabel();
+        biotopeTextLabel = new javax.swing.JLabel();
         recordbasisText = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        noteTextArea = new javax.swing.JTextArea();
+        biotopeTextText = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         dateCreateLabel = new javax.swing.JLabel();
         dateModifiedLabel = new javax.swing.JLabel();
@@ -262,9 +304,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                     .add(technicalContactNameLabel))
                 .add(23, 23, 23)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(technicalContactAddressText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                    .add(technicalContactNameText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                    .add(technicalContactEmailText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
+                    .add(technicalContactAddressText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                    .add(technicalContactNameText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                    .add(technicalContactEmailText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -304,9 +346,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                     .add(contectContactAddressLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(contentContactNameText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                    .add(contentContactEmailText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                    .add(contectContactAddressText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
+                    .add(contentContactNameText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .add(contentContactEmailText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .add(contectContactAddressText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
                 .add(47, 47, 47))
         );
         jPanel3Layout.setVerticalGroup(
@@ -344,8 +386,8 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                             .add(sourceInstitutionIdLabel))
                         .add(21, 21, 21)
                         .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(abbrevText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                            .add(sourceInstirutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
+                            .add(abbrevText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                            .add(sourceInstirutionIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
                         .add(335, 335, 335))
                     .add(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
@@ -392,9 +434,9 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                     .add(sourceIdLabel))
                 .add(24, 24, 24)
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                    .add(dataSetDetailsText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
-                    .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
+                    .add(sourceIdText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .add(dataSetDetailsText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .add(dataSetTitleText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
                 .add(21, 21, 21))
         );
         jPanel6Layout.setVerticalGroup(
@@ -412,17 +454,13 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .add(jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(sourceIdLabel)
                     .add(sourceIdText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         recordbasisLabel.setText(L10n.getString("MetadataManager.Recordbasis")+ ": ");
 
-        notetextLabel.setText(L10n.getString("MetadataManager.Note")+ ": ");
-
-        noteTextArea.setColumns(20);
-        noteTextArea.setRows(5);
-        jScrollPane1.setViewportView(noteTextArea);
+        biotopeTextLabel.setText(L10n.getString("MetadataManager.biotopeText")+ ": ");
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -432,12 +470,12 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .addContainerGap()
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(recordbasisLabel)
-                    .add(notetextLabel))
+                    .add(biotopeTextLabel))
                 .add(14, 14, 14)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(recordbasisText)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
-                .addContainerGap())
+                    .add(biotopeTextText)
+                    .add(recordbasisText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
+                .add(27, 27, 27))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -447,10 +485,10 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                     .add(recordbasisLabel)
                     .add(recordbasisText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(notetextLabel)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 66, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(biotopeTextLabel)
+                    .add(biotopeTextText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -509,7 +547,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                         .add(12, 12, 12)
                         .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
+                        .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
                     .add(jPanel5Layout.createSequentialGroup()
                         .addContainerGap()
                         .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -519,11 +557,10 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel5Layout.createSequentialGroup()
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
@@ -541,8 +578,8 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(19, 19, 19))
+                .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(52, 52, 52))
         );
 
         closeButton.setText(L10n.getString("MetadataManager.ButtonClose"));
@@ -555,13 +592,13 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(helpButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 331, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 360, Short.MAX_VALUE)
                         .add(operationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(closeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 100, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -571,12 +608,12 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                .add(12, 12, 12)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(helpButton)
                     .add(closeButton)
-                    .add(operationButton))
+                    .add(operationButton)
+                    .add(helpButton))
                 .addContainerGap())
         );
         pack();
@@ -596,6 +633,8 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel abbrevLabel;
     protected javax.swing.JTextField abbrevText;
+    private javax.swing.JLabel biotopeTextLabel;
+    protected javax.swing.JTextField biotopeTextText;
     protected javax.swing.JButton closeButton;
     private javax.swing.JLabel contectContactAddressLabel;
     protected javax.swing.JTextField contectContactAddressText;
@@ -622,9 +661,6 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JScrollPane jScrollPane1;
-    protected javax.swing.JTextArea noteTextArea;
-    private javax.swing.JLabel notetextLabel;
     protected javax.swing.JButton operationButton;
     private javax.swing.JLabel recordbasisLabel;
     protected javax.swing.JTextField recordbasisText;

@@ -30,13 +30,13 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
      */
     public DetailsHistoryView(javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
         initComponents(); 
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_DATA, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);        
         this.detailsTextArea.setEditable(false);
+        setLocationRelativeTo(null);
     }
         
     public void update(Observable observable, Object object) {

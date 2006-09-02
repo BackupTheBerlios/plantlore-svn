@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -116,6 +117,29 @@ public class Metadata extends Record {
 		}
 		else if(column.equalsIgnoreCase(DATECREATE)) setDateCreate((java.util.Date)value);
 		else if(column.equalsIgnoreCase(DATEMODIFIED)) setDateModified((java.util.Date)value);
+    }
+    
+    private static Hashtable<String, Integer> columnSizes;
+    static {
+        columnSizes = new Hashtable<String,Integer>();
+        columnSizes.put(TECHNICALCONTACTNAME,50);
+        columnSizes.put(TECHNICALCONTACTEMAIL,100);
+        columnSizes.put(TECHNICALCONTACTADDRESS,255);
+        columnSizes.put(CONTENTCONTACTNAME,50);
+        columnSizes.put(CONTENTCONTACTEMAIL,100);
+        columnSizes.put(CONTENTCONTACTADDRESS,255);
+        columnSizes.put(DATASETTITLE,50);        
+        columnSizes.put(DATASETDETAILS, 255);        
+        columnSizes.put(SOURCEINSTITUTIONID, 50);        
+        columnSizes.put(SOURCEID, 50);        
+        columnSizes.put(OWNERORGANIZATIONABBREV, 50);        
+        columnSizes.put(RECORDBASIS, 15);        
+        columnSizes.put(BIOTOPETEXT, 4095);               
+    }
+    
+    
+     public static int getColumnSize(String columnConst) {
+        return columnSizes.get(columnConst);
     }
     
     /**

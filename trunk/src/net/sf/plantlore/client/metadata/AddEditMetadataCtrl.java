@@ -95,7 +95,7 @@ public class AddEditMetadataCtrl {
                     metadata.setDateCreate(view.createDateChooser.getDate());                                        
                     metadata.setDateModified(new Date());                                               
                     metadata.setRecordBasis(view.recordbasisText.getText());
-                    metadata.setBiotopeText(view.noteTextArea.getText());
+                    metadata.setBiotopeText(view.biotopeTextText.getText());
                     metadata.setDeleted(0);                   
                     //Save new Metadata into model
                     model.setNewMetadataRecord(metadata);
@@ -119,7 +119,7 @@ public class AddEditMetadataCtrl {
                     model.getMetadataRecord().setSourceId(view.sourceIdText.getText());
                     model.getMetadataRecord().setOwnerOrganizationAbbrev(view.abbrevText.getText());
                     model.getMetadataRecord().setRecordBasis(view.recordbasisText.getText());
-                    model.getMetadataRecord().setBiotopeText(view.noteTextArea.getText());                    
+                    model.getMetadataRecord().setBiotopeText(view.biotopeTextText.getText());                    
                     model.getMetadataRecord().setDateModified(new Date());
                     model.getMetadataRecord().setDeleted(0);                 
                     view.close(); 

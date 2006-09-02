@@ -7,6 +7,8 @@
 
 package net.sf.plantlore.common.record;
 
+import java.util.Hashtable;
+
 /**
  *  Data holder object containing information about a user
  *
@@ -33,7 +35,7 @@ public class User extends Record {
 
     /** Constants with column mapping (used for building select queries) */
     public static final String ID = "id";
-    public static final String LOGIN = "login";        
+    public static final String LOGIN = "login";            
     public static final String FIRSTNAME = "firstName";    
     public static final String SURNAME = "surname";    
     public static final String WHOLENAME = "wholeName";    
@@ -42,7 +44,9 @@ public class User extends Record {
     public static final String CREATEWHEN = "createWhen";    
     public static final String DROPWHEN = "dropWhen";    
     public static final String RIGHT = "right";    
-    public static final String NOTE = "note";    
+    public static final String NOTE = "note";   
+    
+    public static final String PSWD = "pswd";      
 
     //public enum Column {ID, LOGIN, FIRSTNAME, SURNAME, WHOLENAME, EMAIL, ADDRESS, CREATEWHEN, DROPWHEN, RIGHT, NOTE};
         
@@ -59,6 +63,24 @@ public class User extends Record {
     		login.equalsIgnoreCase("superuser") ||
     		login.equalsIgnoreCase("poweruser") ||
     		login.equalsIgnoreCase("IDDQD");
+    }
+    
+     private static Hashtable<String, Integer> columnSizes;
+    static {
+        columnSizes = new Hashtable<String,Integer>();
+        columnSizes.put(LOGIN,20);
+        columnSizes.put(PSWD,30);
+        columnSizes.put(FIRSTNAME,20);
+        columnSizes.put(SURNAME,30);
+        columnSizes.put(WHOLENAME,55);
+        columnSizes.put(EMAIL,50);
+        columnSizes.put(ADDRESS,255);
+        columnSizes.put(NOTE,4096);        
+    }
+    
+    
+     public static int getColumnSize(String columnConst) {
+        return columnSizes.get(columnConst);
     }
     
     /**

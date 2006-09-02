@@ -12,8 +12,11 @@ import java.util.Observer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.text.PlainDocument;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.TransferFocus;
+import net.sf.plantlore.common.record.Metadata;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -38,13 +41,25 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         super(parent, modal);
         this.model = model;
         model.addObserver(this);
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
         initComponents();
         //getRootPane().setDefaultButton(closeButton);
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_MANAGER, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton);                  
+        PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton);    
+        setSizeRestrictions();
+        setLocationRelativeTo(null);
+    }
+    
+    private void setSizeRestrictions() {
+        PlainDocument pd = (PlainDocument) dataSetTitleText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.DATASETTITLE)));
+
+        pd = (PlainDocument) this.sourceInstitutionIdText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.SOURCEINSTITUTIONID)));
+        
+        pd = (PlainDocument) this.sourceIdText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(Metadata.getColumnSize(Metadata.SOURCEID)));
     }
     
     /**

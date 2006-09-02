@@ -39,14 +39,14 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         super(parent, modal);
         this.model = model;
         // Register observer
-        model.addObserver(this);
-        setLocationRelativeTo(null);
+        model.addObserver(this);        
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
         initComponents();
         getRootPane().setDefaultButton(closeButton);        
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.OCCURRENCE_HISTORY, this.getRootPane());
-        PlantloreHelp.addButtonHelp(PlantloreHelp.OCCURRENCE_HISTORY, this.helpButton);                
+        PlantloreHelp.addButtonHelp(PlantloreHelp.OCCURRENCE_HISTORY, this.helpButton);  
+        setLocationRelativeTo(null);
     }
     
     /**

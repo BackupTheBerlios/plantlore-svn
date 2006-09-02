@@ -12,7 +12,9 @@ import java.util.Observer;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.text.PlainDocument;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.TransferFocus;
 import net.sf.plantlore.common.PlantloreHelp;
@@ -41,15 +43,40 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
     public AddEditUserView(UserManager model, javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         this.model = model;
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
         initComponents(); 
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_ADD, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.USER_ADD, this.helpButton);        
         TransferFocus.patch(noteText);
-        TransferFocus.patch(editGroupTextArea);                
+        TransferFocus.patch(editGroupTextArea);   
+        setSizeRestrictions();
+        setLocationRelativeTo(null);
     }
     
+    
+     private void setSizeRestrictions() {
+        PlainDocument pd = (PlainDocument) loginText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.LOGIN)));
+
+        pd = (PlainDocument) passwordtext.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.PSWD)));
+        
+        pd = (PlainDocument) firstNameText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.FIRSTNAME)));
+
+        pd = (PlainDocument) surnameText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.SURNAME)));
+        
+        pd = (PlainDocument) emailText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.EMAIL)));
+        
+        pd = (PlainDocument) addressText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.ADDRESS)));
+        
+        pd = (PlainDocument) noteText.getDocument();
+        pd.setDocumentFilter(new DocumentSizeFilter(User.getColumnSize(User.NOTE)));                   
+    }
+     
      public void update(Observable observable, Object object)
     {
     }
