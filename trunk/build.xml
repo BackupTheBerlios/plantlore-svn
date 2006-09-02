@@ -84,6 +84,15 @@
                         <jvmarg value="-Djava.rmi.server.codebase=file://${dist.dir}/"/>
 		</java>
 	</target>
+        
+       <target name="run-selected-file" depends="build" description="Run Single File">
+          <fail unless="classname">Must set property 'classname'</fail>
+          <java classname="${classname}">
+              <classpath>
+                  <pathelement location="${dist.dir}/plantlore-client.jar"/>
+              </classpath>
+          </java>
+       </target>        
 	
 	<!-- makes a new build -->
 	<target name="build" depends="compile" description="Creates a new build. Builds both Plantlore client and server.">
