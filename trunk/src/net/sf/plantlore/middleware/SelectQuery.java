@@ -15,7 +15,7 @@ import net.sf.plantlore.common.PlantloreConstants;
  *
  * FIXME Tie metody by asi mali hadzat DBLayerException a prekladat vyhadzovane HibernateExceptions
  *
- * @author Erik Kratochvíl (discontinuum@gmail.com), Tomáš Kovařík (kovo@matfyz.cz)
+ * @author Tomáš Kovařík (kovo@matfyz.cz)
  * @since 2006-03-26
  */
 public interface SelectQuery extends Serializable, Remote {

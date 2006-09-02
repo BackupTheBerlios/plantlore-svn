@@ -6,32 +6,37 @@ import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collection;
 import java.util.Hashtable;
-import net.sf.plantlore.common.exception.DBLayerException;
 
 import org.apache.log4j.Logger;
 
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
 /**
- * RMIRemoteDBLayerFactory is responsible for creating and exporting instances of DBLayer.
- * Remote references to these objects are returned to the caller. All methods are synchronized. 
+ * RMIRemoteDBLayerFactory is responsible for management of Database Layers
+ * on the remote machine. It can create and destroy them, it stores the list of
+ * all created Database Layers (i.e. list of connected clients) and can disconnect the
+ * selected client.
  * <br/>
- * The proper way to disconnect all remote clients from the server has these steps:
+ * It is a remote object so clients can connect to this factory and ask it to create 
+ * a Database Layer for them.
+ * <br/>
+ * To stop the RMIRemoteDBLayerFactory properly, one must do the following steps:
  * <ol>
- * <li>removing the RemoteDBLayerFactory from the rmiregistry, so that no more clients can obtain a reference
+ * <li>Remove the RemoteDBLayerFactory from the rmiregistry, so that no more clients can obtain a reference
  * of the factory and ask it for creating a new dblayer</li>
- * <li>unexporting the RemoteDBLayerFactory, so that it cannot accept remote calls, so that all clients that
+ * <li>Unexport the RemoteDBLayerFactory, so that it cannot accept remote calls, so that all clients that
  * have a remote reference of this factory cannot ask it for another dblayer</li>
- * <li>"kicking" all currently connected users by unexporting their dblayer remote objects, which will terminate their
- * connections effectively</li>
+ * <li>"Kick" all currently connected users by unexporting their dblayer remote objects, 
+ * which will terminate their connections for good.</li>
  * </ol>
  * 
  * 
  * @author Erik Kratochvíl
  * @since 2006-03-13
- * @version 1.0  final
+ * @version 1.0
  */
 public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	implements RemoteDBLayerFactory {
@@ -50,9 +55,11 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	
 	/** 
 	 * Create a new RMIDBLayerFactory.
-	 * @throws RemoteException If the RMI encounters an error.
+	 * 
+	 * @param settings The settings of the server. 
 	 */
-	public RMIRemoteDBLayerFactory(ServerSettings settings) throws RemoteException {
+	public RMIRemoteDBLayerFactory(ServerSettings settings) 
+	throws RemoteException {
 		this.settings = settings;
 		clients = new Hashtable<DBLayer, ConnectionInfo>( settings.getConnectionsTotal() );
 		undertaker = new RMIUndertaker();
@@ -62,9 +69,10 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	/** 
 	 * Return information about connected clients.
 	 * 
-	 *  @return Collection holding information about currently connected clients.
+	 *  @return The list of currently connected clients.
 	 */
-	protected synchronized ConnectionInfo[] getClients() {
+	protected synchronized ConnectionInfo[] getClients() 
+	throws RemoteException {
 		Collection<ConnectionInfo> currentlyConnectedClients = clients.values();
 		if(currentlyConnectedClients != null) 
 			return currentlyConnectedClients.toArray(new ConnectionInfo[0]);
@@ -84,21 +92,21 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		
 		int c = 0;
 		for(ConnectionInfo info : clients.values())
-			if(info.getClientHost().equalsIgnoreCase(host)) 
+			if(info.getDescription().equalsIgnoreCase(host)) 
 				c++; // HA! C++ in Java! Strange!
 		return (c < settings.getConnectionsPerIP());
 	}
 	
 	/**
 	 * Create a new remote object, export it so that the object can accept remote calls, and return the
-	 * stub of this object. The creation of new connection must adhere to the connection policy.
+	 * stub of this object. The creation of new connection must abide by the connection policy.
 	 * 
 	 * @return Remote reference (stub) of the remote DBLayer object or 
 	 * <b>null</b> if the server doesn't approve of creating the DBLayer
 	 * (too many connections from this IP or too many clients connected). 
-	 * @throws RemoteException If the RMI encounters an error.
 	 */
-	public synchronized DBLayer create() throws RemoteException, DBLayerException {
+	public synchronized DBLayer create()
+	throws RemoteException {
 		// Apply the connection policy ~ see AllowConnection(host)
 		String clientHost = "unknown";
 		try { clientHost = RemoteServer.getClientHost(); } 
@@ -108,22 +116,21 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		// Connection policy
 		if( !allowConnection(clientHost) ) {
 			logger.warn("Too many connections from " + clientHost + " (or the server is full)!");
-			throw new DBLayerException("There are either too many connections or the server is already full!");
+			throw new RemoteException(L10n.getString("Error.TooManyConnections"));
 		}
 		
 		// Create a new DBLayer, export it, and keep the stub. Also set the Undertaker of this object.
 		logger.debug("Creating a new HibernateDBLayer ...");
 		DBLayer database = new HibernateDBLayer( undertaker, settings.getDatabaseSettings() );
-		logger.debug("[Success] DBLayer created.");
 		
 		
 		DBLayer stub = null;
 		try {
 			logger.debug("Exporting the database layer...");
 			stub = (DBLayer) UnicastRemoteObject.exportObject(database);
-			logger.debug("[Success] DBLayer exported.");
+			logger.debug("DBLayer exported.");
 		} catch(RemoteException e) {
-			logger.error("[Failure] Unable to export the DBLayer. Is the `codebase` set properly? Are stubs generated properly? " + e.getMessage());
+			logger.error("Unable to export the DBLayer. Is the `codebase` set properly? Are stubs generated properly? " + e.getMessage());
 			throw e;
 		}
 		
@@ -142,10 +149,11 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * Make sure the DBLayer performs some cleanup.  
 	 * 
 	 * @param db	The DBLayer object (not stub!) that should be disconnected.
-	 * @throws RemoteException If the RMI encounters an error.
 	 */	
-	void disconnect(DBLayer db)  throws RemoteException {
-		assert(db != null);
+	void disconnect(DBLayer db)  
+	throws RemoteException {
+		if(db == null)
+			return;
 		
 		// Let the database layer perform some cleanup.
 		db.shutdown();
@@ -161,9 +169,9 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * (and remove it from the list of connected clients).
 	 * 
 	 * @param stub The remote reference to the remote object that is to be destroyed.
-	 * @throws RemoteException If the RMI encounters an error.
 	 */	
-	public synchronized void destroy(DBLayer stub) throws RemoteException {
+	public synchronized void destroy(DBLayer stub) 
+	throws RemoteException {
 		if(stub == null) return;
 		ConnectionInfo info = clients.remove(stub);
 		if(info != null) 
@@ -186,7 +194,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	
 	/** 
 	 * Take care of DBLayer whose client has "crashed".
-	 * Ensure this database layer is properly disconnected.
+	 * Ensure this database layer is properly destroyed.
 	 * 
 	 * @see destroy 
 	 */

@@ -16,11 +16,10 @@ import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.exception.DBLayerException;
 
 /**
- * Interface for database access.
+ * The interface for a database layer wrapper.
  * 
- * TODO: Zdokumentovat metody interface!
- *
- * @author Tomáš Kovařík, Erik Kratochvíl
+ * @author Tomáš Kovařík
+ * @author Erik Kratochvíl
  */
 public interface DBLayer extends Remote, Serializable {
 	
@@ -356,11 +355,9 @@ public interface DBLayer extends Remote, Serializable {
     /**
      * This method is intended for final cleanup. <b>Do not call this method
      * yourself! The proper way for you to get rid of a DBLayer is to call
-     * DBLayer.destroy() method!</b> <br/> Terminate all processes running in
-     * this DBLayer, disconnect from the database and destroy all objects
-     * created by this DBLayer. <br/> <b>After this the DBLayer will not be
-     * capable of carrying out its duties.</b> <br/> This method is supposed to
-     * be used by the DBLayerFactory exclusively.
+     * DBLayerFactory.destroy() method!</b> <br/> Terminates all processes running in
+     * this DBLayer, disconnects from the database and destroys all objects
+     * created by this DBLayer. <br/> 
      */
     public void shutdown() throws RemoteException;
            

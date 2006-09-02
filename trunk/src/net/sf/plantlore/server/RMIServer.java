@@ -15,22 +15,24 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 import net.sf.plantlore.server.tools.*;
 
 /**
+ *
+ *  The RMIServer starts and terminates the server, 
+ *  that is: it creates and exports/unexports the RemoteDBLayerFactory.  
  *  
- * <br/>
- *  The server is terminated
- *  <=> 
- *  All remote objects that have been exported are unexported.
- *  
- * @see RemoteDBLayerFactory, RMIDBLayerFactory
  * @author Erik Kratochvíl
  * @since 2006-03-11
  * @version 1.0
+ * 
+ * @see net.sf.plantlore.middleware.RemoteDBLayerFactory
  */
 public class RMIServer extends UnicastRemoteObject implements Server {
 	
 	private static final long serialVersionUID = 2006060433819775L;
 	
-	/** The default port where the rmiregistry listens. To that rmiregistry the RemoteDBLayerFactory will be bound to. */
+	/** 
+	 * The default port where the rmiregistry listens. 
+	 * To that rmiregistry the RemoteDBLayerFactory will be bound. 
+	 */
 	public static final int DEFAULT_PORT = Registry.REGISTRY_PORT;
 	
 	
@@ -43,7 +45,12 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 
 
 	
-	/** Create a new instance of RMIServer running on the specified port. */
+	/** 
+	 * Create a new instance of the server based on the supplied settings.
+	 * 
+	 * @param settings		The settings of the server.
+	 * @param password	The password protecting the access to the server.
+	 */
 	public RMIServer(ServerSettings settings, String password) 
 	throws RemoteException, AlreadyBoundException {
 		logger = Logger.getLogger(this.getClass().getPackage().getName());
@@ -54,11 +61,20 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 		RMI.bind(settings.getPort(), guard, Guard.ID);
 	}
 	
-	/** Get the information about the connected clients. */
-	public synchronized ConnectionInfo[] getClients() {
+	/** 
+	 * Get the list of currently connected clients. 
+	 */
+	public synchronized ConnectionInfo[] getClients() 
+	throws RemoteException {
 		if(remoteFactory == null) 
 			return null;
-		return remoteFactory.getClients(); 
+		try {
+			return remoteFactory.getClients();
+		}
+		catch(RemoteException e) {
+			logger.error("Unable to obtain the list of connected clients. " + e.getMessage());
+			throw e;
+		}
 	}
 
 	/**
@@ -66,22 +82,24 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	 * 
 	 * @param client The client to be kicked.
 	 */
-	public synchronized void disconnect(ConnectionInfo client) {
+	public synchronized void disconnect(ConnectionInfo client) 
+	throws RemoteException {
 		try { 
-			remoteFactory.destroy(client.getStub()); 
+			remoteFactory.destroy( client.getStub() );  
 		} catch(RemoteException e) { 
 			logger.error("Unable to disconnect the client. " + e.getMessage());
-			e.printStackTrace();
+			throw e;
 		}
 	}
 	
 	/** 
 	 * Bind a new RemoteDBLayerFactory to the rmiregistry on the specified <code>port</code>. 
-	 * If the rmiregistry is not currently running on that port, it will be created. 
+	 * If the rmiregistry is not currently running on that port, it will be started. 
 	 * 
 	 * @throws AlreadyBoundException If another RemoteDBLayerFactory is already bound to the rmiregistry. 
 	 */
-	public synchronized void start() throws AlreadyBoundException {
+	public synchronized void start() 
+	throws AlreadyBoundException, RemoteException {
 		try {
 			
 			int timeout = Math.min(Math.max(1, settings.getTimeout()), 30) * 60000;
@@ -89,32 +107,32 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 
 			// Locate (or start) the rmiregistry on the specified port
 			Registry registry;
-			try {	registry = LocateRegistry.createRegistry(settings.getPort()); }
-			catch(Exception e) { registry = LocateRegistry.getRegistry(settings.getPort()); }
+			try {	
+				registry = LocateRegistry.createRegistry(settings.getPort()); 
+			}
+			catch(Exception e) { 
+				registry = LocateRegistry.getRegistry(settings.getPort()); 
+			}
 			// Create a new factory or reuse an existing one.
-			if(remoteFactory == null) remoteFactory = new RMIRemoteDBLayerFactory( settings );
+			if(remoteFactory == null) 
+				remoteFactory = new RMIRemoteDBLayerFactory( settings );
 			// Bind the factory to the rmiregistry. 
 			registry.bind(RemoteDBLayerFactory.ID, remoteFactory);
 
-			
-			// Nemel by server exportnout i sebe??
-
-			
 			logger.info("The RemoteDBLayerFactory has been bound to the rmiregistry.");
 		}
 		catch(RemoteException e) { 
 			logger.error("Unable to start the server. " + e.getMessage());
-			e.printStackTrace();
+			throw e;
 		}
 	}
 	
 	/** 
 	 * Unbind the RemoteDBLayerFactory from the rmiregistry on the specified <code>port</code>. 
-	 * The rmiregistry on the specified port is <b>not</b> stopped, because some other programs may be still
-	 * using it!<br/>
-	 * This will terminate the server completely.
+	 * This will terminate the server completely (all clients will be disconnected immediately).
 	 */
-	public synchronized void stop() {
+	public synchronized void stop() 
+	throws RemoteException {
 		if(remoteFactory == null) return;
 		try {
 			// 1. Unbind the RemoteDBLayerFactory from the rmiregistry 
@@ -143,18 +161,7 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 		}
 		catch(Exception e) { 
 			logger.error("Unable to stop the server. " + e.getMessage());
-			e.printStackTrace();
 		}
 	}
-
-	
-	
-	
-	
-	/** Static initialization. */
-	static {
-		//RMI.addToCodebase( System.getProperty("user.dir") + "/" );
-	}
-	
 
 }

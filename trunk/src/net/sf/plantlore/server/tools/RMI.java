@@ -13,7 +13,7 @@ public class RMI {
 	public static final String PROPERTY_CODEBASE = "java.rmi.server.codebase";
 	public static final String PROPERTY_LEASEVALUE = "java.rmi.dgc.leaseValue";
 	
-	
+
 	public static void bind(Remote object, String name) 
 	throws RemoteException, AccessException, AlreadyBoundException {
 		

@@ -9,19 +9,19 @@ import net.sf.plantlore.common.exception.DBLayerException;
  * Interface for obtaining remote references of the DBLayer objects running on some remote server.
  * 
  * @author Erik Kratochvíl
- * @version 1.0 final
+ * @version 1.0
  * @since	2006-03-13	
  */
 public interface RemoteDBLayerFactory extends Remote {
 	
-	/** The name the Remote Factory will be bound to. */
+	/** The name the Remote Factory will use in the RMIRegistry. */
 	static final String ID = "PlantloreRemoteDBLayerFactoryID";
 	
 	/** 
 	 * Create a new DBLayer on the server and return a remote reference of that object. 
 	 * The object is "private" = unique for every client.
 	 * 
-	 * The number of connections from one host is limited as well as the total number of
+	 * The number of connections from one host may be limited as well as the total number of
 	 * all clients connected to the server.
 	 * 
 	 * @see RMIRemoteDBLayerFactory

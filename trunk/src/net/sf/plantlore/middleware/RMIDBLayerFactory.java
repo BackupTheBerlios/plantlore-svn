@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import net.sf.plantlore.server.ConnectionInfo;
 import net.sf.plantlore.server.DatabaseSettings;
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.common.Utils;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.server.tools.RMI;
@@ -19,11 +20,10 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
 
 /**
- * The RMIDBLayerFactory can create and destroy DBLayers - either local or remote. 
+ * The RMIDBLayerFactory can create and destroy Database Layers (DBLayers in short) 
+ * - either local or remote. 
  * The client should ask the factory to create the DBLayer and the factory will shield him from
  * all the details how the DBLayer is created or where those objects really live.
- * <br/>
- * RMIDBLayer factory lives in the client's JVM.   
  * <br/>
  * The RMIDBLayerFactory keeps track of all database layers it has created and where they
  * actually live.
@@ -35,50 +35,65 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * <br/>
  * The DBLayer factory is responsible for creating and destroying DBLayers.
  * It has no responsibility for initialization of those DBLayers.
+ * <br/>
+ * The RMIDBLayerFactory is a singleton.
  * 
  *  
  * @author Erik Kratochvíl
  * @since 2006-03-11
- * @version 1.0 final
+ * @version 1.0
   */
 public class RMIDBLayerFactory implements DBLayerFactory {
 	
-	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName()); 
+	private static Logger logger = Logger.getLogger(RMIDBLayerFactory.class.getPackage().getName()); 
+	
+	private static RMIDBLayerFactory databaseLayerFactory;
 	
 	
 	/** Keep information about connections to databases. */
 	private Hashtable<DBLayer, ConnectionInfo> client = new Hashtable<DBLayer, ConnectionInfo>(4);
 	
 	
-	/** Create a new instance of DBLayerFactory. */
-	public RMIDBLayerFactory(String codebase) {
-		if(codebase == null)
-			logger.warn("The codebase may not have been set! This may cause serious problems when trying to connect to a remote database! It is imperative you make sure the codebase is set properly!!");
-		net.sf.plantlore.server.tools.RMI.addToCodebase( codebase );
+	/** 
+	 * Create a new instance of DBLayerFactory.
+	 * The RMIDBLayerFactory is a singleton and can be obtained via getDBLayerFactory() only. 
+	 */
+	private RMIDBLayerFactory() {}
+	
+	/**
+	 * Construct a new Database Layer factory. 
+	 * 
+	 * @return	The new Database Layer factory.
+	 */
+	public static DBLayerFactory getDBLayerFactory() {
+		if(databaseLayerFactory == null) {
+			String codebase = Utils.getCodeBasePath();
+			if(codebase == null)
+				logger.warn("The codebase may not have been set! This may cause serious problems when trying to connect to a remote database! It is imperative you make sure the codebase is set properly!!");
+			else
+				net.sf.plantlore.server.tools.RMI.addToCodebase( codebase );
+			
+			databaseLayerFactory = new RMIDBLayerFactory();
+		}
+		return databaseLayerFactory;
 	}
 	
 	
 	/**
 	 * Create a new DBLayer.
 	 * <br/>
-	 * This method is meant for connections to remote databases. 
-	 * The DBLayerFactory asks the server's RemoteDBLayerFactory to
-	 * create a new DBLayer object there. The RemoteDBLayerFactory
-	 * returns a stub of that object, which is what the caller will obtain.
+	 * The Database Layer may be either local or remote, 
+	 * but the caller should spot no difference. 
 	 * 
-	 * @param host	Hostname of the computer where server runs.
-	 * @param port	Port where the server listens.
-	 * 
-	 * @return A stub of the remote object that lives on the server and mediates the connection
-	 * with the remote database.
+	 * @param settings	The information that are necessary for the Database Layer creation.
+	 * @return The newly constructed Database Layer.
 	 */
 	public synchronized DBLayer create(DBInfo settings) 
 	throws RemoteException, NotBoundException, DBLayerException {
-		// Some exceptional cases are handled specially.
 		String host = settings.getHost();
 		
 		// ~~~ LOCAL CONNECTION ~~~
-		if(host == null || host.equals("") /*|| host.equalsIgnoreCase("localhost")*/) {
+		if( host == null || host.equals("") ) {
 			
 			DatabaseSettings dbSettings = new DatabaseSettings(
 					settings.getDatabaseType(),
@@ -132,7 +147,7 @@ public class RMIDBLayerFactory implements DBLayerFactory {
 	}
 
 	/**
-	 * Destroy a DBLayer instance. This is necessary for remote DBLayers, 
+	 * Destroy a Database Layer. This is necessary especially with remote DBLayers, 
 	 * because the server keeps track of all connected clients
 	 * and has a certain limit of how many clients can be connected simultaneously.
 	 * Therefore we should tell the server we want to disconnect from it so as not to

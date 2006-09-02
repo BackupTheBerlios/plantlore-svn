@@ -1520,7 +1520,7 @@ public class AppCoreCtrl {
 			// needed.
 			if (loginModel == null) {
 				loginModel = new Login(
-						new RMIDBLayerFactory( model.getMainConfig().getCodebase() ), 
+						RMIDBLayerFactory.getDBLayerFactory(), 
 						model.getMainConfig());
 				loginModel.addObserver(new DatabaseChange()); // Callback ~ redistribution of DBLayer.
 				loginView = new LoginView(view, loginModel);

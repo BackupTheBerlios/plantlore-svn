@@ -19,12 +19,15 @@ import net.sf.plantlore.middleware.DBLayer;
 /**
  * The Occurrence Import task instructs the Parser to start parsing the file
  * and every time a record is reconstructed, it is processed here (via a callback).
+ * The record is processed using the <code>DBLayerUtils.processRecord()</code>.
  * <br/>
  * The task can be cancelled.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-08-14
  * @version 1.0
+ * 
+ *  @see net.sf.plantlore.common.DBLayerUtils#processRecord(Occurrence, AuthorOccurrence[])
  */
 public class OccurrenceImportTask extends Task implements RecordProcessor {
 	
@@ -101,6 +104,10 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 	 * Some erros may be ignored (such as insufficient access rights)
 	 * i.e. the whole import procedure will not fail, just the problematic 
 	 * record will be rejected. 
+	 * <br/>
+	 * The record is processed using the <code>DBLayerUtils.processRecord()</code>.
+	 * 
+	 * @see net.sf.plantlore.common.DBLayerUtils#processRecord(Occurrence, AuthorOccurrence[])
 	 */
 	public void processRecord(AuthorOccurrence... aos) 
 	throws DBLayerException, RemoteException {

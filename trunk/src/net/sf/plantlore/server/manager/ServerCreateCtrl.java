@@ -2,9 +2,11 @@ package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.DatabaseSettings;
 import net.sf.plantlore.server.RMIServer;
 import net.sf.plantlore.server.ServerSettings;
@@ -61,7 +63,13 @@ public class ServerCreateCtrl {
 					
 					// Create and run a new server.
 					Task createServer = model.createNewServerTask( serverPassword );
-					new DefaultProgressBar(createServer, view, true);
+					new DefaultProgressBar(createServer, view, true) {
+						@Override
+						public void exceptionHandler(Exception ex) {
+							getTask().stop();
+							DefaultExceptionHandler.handle(parent, ex, L10n.getString("Error.CannotStartServer"), true);
+						}
+					};
 					createServer.start();
 					
 					break;
@@ -79,7 +87,13 @@ public class ServerCreateCtrl {
 					
 					Task connectToServer = model.createConnectToRunningServerTask(
 							view.remoteHost.getText(), port, password );
-					new DefaultProgressBar(connectToServer, view, true);
+					new DefaultProgressBar(connectToServer, view, true) {
+						@Override
+						public void exceptionHandler(Exception ex) {
+							getTask().stop();
+							DefaultExceptionHandler.handle(parent, ex, L10n.getString("Error.CannotConnectToTheServer"), true);
+						}
+					};
 					connectToServer.start();
 					
 					break;

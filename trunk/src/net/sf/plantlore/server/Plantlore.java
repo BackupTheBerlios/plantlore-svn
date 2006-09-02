@@ -17,17 +17,21 @@ import net.sf.plantlore.server.manager.*;
 
 
 /**
- * Temporary solution.
+ * The entry point when starting the Server. 
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
- * @since 30.3.2006
- * @version beta not tested
+ * @since 2006-03-30
+ * @version 1.0
  */
 public class Plantlore {
 	
 	private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
 	
-	
+	/**
+	 * Configure the basic components the Server will use, 
+	 * create the GUI and display it.
+	 *
+	 */
 	public void run() {
 		// Load log4j settings
 		try {
@@ -54,11 +58,7 @@ public class Plantlore {
 	}
 	
 
-	/**
-	 * 
-	 * @param args Controlling the server from the command line:
-	 * 		start|stop|who|kick=id [host] [port]
-	 */
+	
 	public static void main(String[] args) {
 		
 		// Set beautiful system look & feel.

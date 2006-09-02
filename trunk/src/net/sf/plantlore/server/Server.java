@@ -6,19 +6,18 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * Server management.
+ * An interface for the server management.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-03-29
- * @version 1.0 final
+ * @version 1.0
  */
 public interface Server extends Remote, Serializable {
 	
 	/**
-	 * Return a collection of currently connected clients.
+	 * Return a list of currently connected clients.
 	 * 
 	 * @return Currently connected clients.
-	 * @throws RemoteException	if the RMI encounters an error (network/server).
 	 */
 	ConnectionInfo[]	getClients() throws RemoteException;
 	
@@ -26,22 +25,18 @@ public interface Server extends Remote, Serializable {
 	 * "Kick" the specified client. The client is disconnected immediately.
 	 * 
 	 * @param client The client to be kicked from the server.
-	 * @throws RemoteException if the RMI encounters an error (network/server).
 	 */
 	void disconnect(ConnectionInfo client) throws RemoteException;
 	
 	/**
-	 * Run the server on the specified port.
+	 * Start the server.
 	 * 
-	 * @throws RemoteException if the RMI encounters an error (network/server).
-	 * @throws AlreadyBoundException if another server is already running on the specified port.
 	 */
 	void start() throws RemoteException, AlreadyBoundException;
 	
 	/**
 	 * Terminate the server. 
 	 * 
-	 * @throws RemoteException if the RMI encounters an error (network/server).
 	 */
 	void stop() throws RemoteException;
 	

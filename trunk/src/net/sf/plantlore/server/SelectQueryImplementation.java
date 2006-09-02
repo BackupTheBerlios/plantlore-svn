@@ -41,7 +41,7 @@ import org.hibernate.sql.JoinFragment;
  *  
  *  TODO: Nezapominat generovat stub! (rmic net.sf.plantlore.server.SelectQueryImplementation)
  *
- * @author Tomáš Kovařík, Erik Kratochvíl
+ * @author Tomáš Kovařík
  */
 public class SelectQueryImplementation implements SelectQuery {
 	
