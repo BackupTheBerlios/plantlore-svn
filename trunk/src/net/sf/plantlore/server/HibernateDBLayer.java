@@ -1000,6 +1000,21 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException {
     	lowLevelOperation(DELETE, data, true, false);
     }    
+
+    /**
+     *  Execute DB delete using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and DOES NOT save history
+     *
+     *  @param data holder object with the record we want to delete
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the delete
+     *  @throws RemoteException in case network connection failed
+     */    
+    public void executeDeleteInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+        lowLevelOperation(DELETE, data, false, false);
+    }
     
     private void checkRights(Object data, int type) throws DBLayerException {
         DBLayerException ex;

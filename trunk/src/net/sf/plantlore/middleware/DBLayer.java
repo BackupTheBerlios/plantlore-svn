@@ -292,6 +292,19 @@ public interface DBLayer extends Remote, Serializable {
     public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException;
 
     /**
+     *  Execute DB delete using a long running transaction. For this method to work, it is neccessary
+     *  to begin long running transaction using beginTransaction() method of this class.
+     *
+     *  This method checks whether the user has appropriate priviliges and DOES NOT save history
+     *
+     *  @param data holder object with the record we want to delete
+     *  @throws DBLayerException in case we are not connected to the database or an error occurred
+     *                           while executing the delete
+     *  @throws RemoteException in case network connection failed
+     */    
+    public void executeDeleteInTransactionHistory(Object data) throws DBLayerException, RemoteException;    
+    
+    /**
      *  Method for creating new database user using CREATE USER statement. This method can only be called
      *  as a part of long running transaction (such as executeInsertInTransaction() method).
      *
