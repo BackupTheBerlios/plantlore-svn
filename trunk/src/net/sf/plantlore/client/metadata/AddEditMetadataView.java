@@ -40,6 +40,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
         super(parent, modal);
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
         initComponents();        
         //getRootPane().setDefaultButton(closeButton); 
         PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_ADD, this.getRootPane());

@@ -39,6 +39,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         this.model = model;
         model.addObserver(this);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
         initComponents();
         //getRootPane().setDefaultButton(closeButton);
         //Init Help

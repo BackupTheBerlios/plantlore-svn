@@ -34,6 +34,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         super(parent, modal);
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
         initComponents();        
         // getRootPane().setDefaultButton(closeButton);
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_MANAGER, this.getRootPane());

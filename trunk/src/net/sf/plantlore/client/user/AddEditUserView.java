@@ -42,6 +42,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         super(parent, modal);
         this.model = model;
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
         initComponents(); 
         PlantloreHelp.addKeyHelp(PlantloreHelp.USER_ADD, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.USER_ADD, this.helpButton);        

@@ -40,6 +40,7 @@ public class HistoryView extends javax.swing.JDialog implements Observer{
         this.model = model;
         // Register observer
         model.addObserver(this);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
         initComponents();
         getRootPane().setDefaultButton(closeButton);        

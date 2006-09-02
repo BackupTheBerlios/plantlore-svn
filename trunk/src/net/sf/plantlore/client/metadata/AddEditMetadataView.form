@@ -23,7 +23,7 @@
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="helpButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace pref="331" max="32767" attributes="0"/>
+                      <EmptySpace pref="360" max="32767" attributes="0"/>
                       <Component id="operationButton" min="-2" pref="100" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="closeButton" min="-2" pref="100" max="-2" attributes="0"/>
@@ -109,8 +109,8 @@
                               </Group>
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="abbrevText" pref="136" max="32767" attributes="2"/>
-                                  <Component id="sourceInstirutionIdText" alignment="0" pref="136" max="32767" attributes="2"/>
+                                  <Component id="abbrevText" pref="165" max="32767" attributes="2"/>
+                                  <Component id="sourceInstirutionIdText" alignment="0" pref="165" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace min="-2" pref="335" max="-2" attributes="0"/>
                           </Group>
@@ -172,9 +172,9 @@
                           </Group>
                           <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="technicalContactAddressText" alignment="0" pref="136" max="32767" attributes="2"/>
-                              <Component id="technicalContactNameText" alignment="0" pref="136" max="32767" attributes="2"/>
-                              <Component id="technicalContactEmailText" alignment="0" pref="136" max="32767" attributes="2"/>
+                              <Component id="technicalContactAddressText" alignment="0" pref="151" max="32767" attributes="2"/>
+                              <Component id="technicalContactNameText" alignment="0" pref="151" max="32767" attributes="2"/>
+                              <Component id="technicalContactEmailText" alignment="0" pref="151" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -265,9 +265,9 @@
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="contentContactNameText" alignment="0" pref="165" max="32767" attributes="2"/>
-                              <Component id="contentContactEmailText" alignment="0" pref="165" max="32767" attributes="2"/>
-                              <Component id="contectContactAddressText" alignment="0" pref="165" max="32767" attributes="2"/>
+                              <Component id="contentContactNameText" alignment="0" pref="179" max="32767" attributes="2"/>
+                              <Component id="contentContactEmailText" alignment="0" pref="179" max="32767" attributes="2"/>
+                              <Component id="contectContactAddressText" alignment="0" pref="179" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                       </Group>
@@ -381,7 +381,7 @@
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Component id="jPanel6" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jPanel7" pref="277" max="32767" attributes="0"/>
+                              <Component id="jPanel7" pref="292" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
@@ -428,9 +428,9 @@
                           </Group>
                           <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="sourceIdText" pref="165" max="32767" attributes="2"/>
-                              <Component id="dataSetDetailsText" alignment="0" pref="165" max="32767" attributes="2"/>
-                              <Component id="dataSetTitleText" alignment="0" pref="165" max="32767" attributes="2"/>
+                              <Component id="sourceIdText" pref="179" max="32767" attributes="2"/>
+                              <Component id="dataSetDetailsText" alignment="0" pref="179" max="32767" attributes="2"/>
+                              <Component id="dataSetTitleText" alignment="0" pref="179" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       </Group>
