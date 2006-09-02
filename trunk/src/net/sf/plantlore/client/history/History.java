@@ -416,6 +416,8 @@ public class History extends Observable {
         initPublicationHash();
         initAuthorHash();      
         initMetadataHash();
+        //Init editObjecList
+        editObjectList.clear();
         	    	
     	//read record from younger to older until selected row        
     	for( int i=0; i < toResult; i++) {    
@@ -451,7 +453,8 @@ public class History extends Observable {
         	
     	//number of result
     	int countResult = getResultRows();    	   
-    	
+    	editObjectList.clear();
+        
     	//take record from younger to older
     	for( int i=0; i < countResult; i++) {
     		if (isError())return;
@@ -1510,6 +1513,7 @@ public class History extends Observable {
 		    	//Create array of editing object and call notifyObservers
 		        informMethod(editType);
 		        setInfoFinishedTask(true);
+                        
 		        return null;
     		}
 	    };
@@ -1555,7 +1559,7 @@ public class History extends Observable {
     		historyChange = historyRecord.getHistoryChange(); 
     		
 	    	try {
-                        database.executeDeleteHistory(historyRecord);
+                        database.executeDeleteInTransactionHistory(historyRecord);
                         logger.debug("Deleting historyRecord successfully. Number of result: "+i);
                 } catch (Exception e) {								
                         logger.error("Process UNDO failed. Deleting historyRecord failed. Exception caught in History. Details: "+e.getMessage());	        	                
@@ -1564,7 +1568,7 @@ public class History extends Observable {
                 try {
                         int countResult = getRelationshipHistoryChange(historyChange.getId());				
                         if (countResult == 0) {	
-                                database.executeDeleteHistory(historyChange);
+                                database.executeDeleteInTransactionHistory(historyChange);
                                 logger.debug("Deleting historyChange successfully.");
                         } else {
                                 logger.debug("Exist other record in the table tHistory, whitch has the same value of attribute cChangeId.");
