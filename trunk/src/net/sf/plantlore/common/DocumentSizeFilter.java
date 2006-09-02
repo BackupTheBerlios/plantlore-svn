@@ -13,9 +13,18 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+
+/** Document filter that limits lenght of the text user can type, paste or maybe drag
+ * into TextComponents.
+ *
+ */
 public class DocumentSizeFilter extends DocumentFilter {
     int maxCharacters;
 
+    /** Constructs the DocumentSizeFilter.
+     *
+     * @param maxChars the text size limit to necessitate.
+     */
     public DocumentSizeFilter(int maxChars) {
         maxCharacters = maxChars;
     }
