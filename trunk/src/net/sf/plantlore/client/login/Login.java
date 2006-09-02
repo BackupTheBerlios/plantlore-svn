@@ -480,6 +480,11 @@ public class Login extends Observable {
 			wrappedDBLayer.executeDeleteHistory(data);
 		}
 
+                synchronized public void executeDeleteInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+			verifyValidity();   
+			wrappedDBLayer.executeDeleteInTransactionHistory(data);
+		}
+                
 		synchronized public void executeUpdateHistory(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
 			wrappedDBLayer.executeUpdateHistory(data);
