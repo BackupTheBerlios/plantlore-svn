@@ -76,7 +76,10 @@ public class Utils {
         if (url.getProtocol().equals("jar")) {
             //remove path to the package and the trailing "!/"
             dir = dir.substring(0,dir.indexOf(Utils.class.getPackage().getName().replaceAll("\\.","/"))-2);
-            dir = dir.substring(dir.indexOf("file:")+5);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
+            if (System.getProperty("os.name").equals("windows"))//on windows there's one more slash after file:
+                dir = dir.substring(dir.indexOf("file:")+6);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
+            else
+                dir = dir.substring(dir.indexOf("file:")+5);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
         } else {
             //remove the path to the package and a trailing slash        
             dir = dir.substring(0,dir.indexOf(Utils.class.getPackage().getName().replaceAll("\\.","/")));            
