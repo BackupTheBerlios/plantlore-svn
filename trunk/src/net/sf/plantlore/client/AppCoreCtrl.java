@@ -1265,11 +1265,7 @@ public class AppCoreCtrl {
 	 	    	public void afterStopping() {
 					if (! historyModel.isFinishedTask()) return;
 					historyModel.setInfoFinishedTask(false);
-                                        SwingUtilities.invokeLater(new Runnable() {
-                                            public void run() {
-                                                historyView.setVisible(true);		
-                                            }
-                                        });
+                                            historyView.setVisible(true);		
 	 	    	}				
 			};			
 			task.start();							
@@ -1297,11 +1293,7 @@ public class AppCoreCtrl {
 	 	    	public void afterStopping() {	
 					if (! wholeHistoryModel.isFinishedTask()) return;
 					wholeHistoryModel.setInfoFinishedTask(false);
-                                        SwingUtilities.invokeLater( new Runnable() {
-                                            public void run() {
-                                                wholeHistoryView.setVisible(true);
-                                            }
-                                        });
+                                        wholeHistoryView.setVisible(true);
 	 	    	}
 			};			
 			task.start();							
@@ -1707,35 +1699,6 @@ public class AppCoreCtrl {
                                     view.initOverview();
                                     view.setCursor(Cursor.getDefaultCursor());
                                     setDatabaseDependentCommandsEnabled(true);
-				/*-------------------------------------------------------------------
-				 *  This may no longer be necessary:
-				 *------------------------------------------------------------------*/
-                logger.debug("Distributing the new database layer to:");
-                logger.debug(" # export ");
-				if( exportModel != null )
-					exportModel.setDBLayer( dblayer );
-				logger.debug(" # occurrence data import ");
-				if( importModel != null )
-					importModel.setDBLayer( dblayer );
-				logger.debug(" # table data import ");
-				if( tableImportModel != null )
-					tableImportModel.setDBLayer( dblayer );
-				logger.debug(" # record history ");
-				if (historyModel != null ) 
-					historyModel.restartQuery(History.HISTORY_RECORD);
-				logger.debug(" # complete history ");
-				if (wholeHistoryModel != null ) 
-					wholeHistoryModel.restartQuery(History.HISTORY_WHOLE);
-				logger.debug(" # user manager ");
-				if (userManagerModel != null )
-					userManagerModel.setDBLayer( dblayer );
-				logger.debug(" # metadata manager ");
-				if (metadataManagerModel != null )
-					metadataManagerModel.setDBLayer( dblayer );							
-			}
-		}
-	}
-
 
                                     //this can't be done earlier. must be done after the query is created
                                     //otherwise this listener would give the overview table model commands to load data
@@ -1757,10 +1720,10 @@ public class AppCoreCtrl {
                                             tableImportModel.setDBLayer( dblayer );
                                     logger.debug(" # record history ");
                                     if (historyModel != null ) 
-                                            historyModel.setDBLayer( dblayer );
+                                        historyModel.restartQuery(History.HISTORY_RECORD);
                                     logger.debug(" # complete history ");
                                     if (wholeHistoryModel != null ) 
-                                            wholeHistoryModel.setDBLayer( dblayer );
+                                         wholeHistoryModel.restartQuery(History.HISTORY_WHOLE);
                                     logger.debug(" # user manager ");
                                     if (userManagerModel != null )
                                             userManagerModel.setDBLayer( dblayer );
