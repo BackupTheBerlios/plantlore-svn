@@ -83,6 +83,7 @@ import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.StandardAction;
@@ -325,7 +326,8 @@ public class AppCoreCtrl {
 		view.addDataHistoryAction(dataHistoryAction);
 		view.addDataWholeHistoryAction(dataWholeHistoryAction);
 		view.addDataUserAction(dataUserAction);
-
+                view.dataCreateDatabase.setAction(createNewDatabaseAction);
+                        
                 view.habitatTreeButton.setAction(habitatTreeAction);
                 
 		view.setSearchAction(searchAction);
@@ -410,6 +412,7 @@ public class AppCoreCtrl {
 		dataHistoryAction.setEnabled(enabled);
 		dataWholeHistoryAction.setEnabled(enabled);
 		dataUserAction.setEnabled(enabled);
+                createNewDatabaseAction.setEnabled(enabled);
 
 		historyAction.setEnabled(enabled);
 		schedaAction.setEnabled(enabled);
@@ -467,7 +470,7 @@ public class AppCoreCtrl {
 		}
 	}
 
-	/**
+	/** Bridge from settings to the rest of the application.
 	 * Assumes that user doesn't work with the Search dialog at time of the
 	 * update.
 	 * 
@@ -496,6 +499,9 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Handles the print action invoked from overview.
+         *
+         */
 	class PrintAction extends AbstractAction {
 		public PrintAction() {
 			putValue(NAME, L10n.getString("Print"));
@@ -511,11 +517,13 @@ public class AppCoreCtrl {
 			}
 			Selection sel = model.getTableModel().getSelection();
 			if (sel.values().size() < 1) {
-				JOptionPane.showMessageDialog(view,
-						"Please check at least one record.");
+                            JOptionPane.showMessageDialog(view, 
+                                    L10n.getString("Message.CheckAnOccurrence"), 
+                                    L10n.getString("Message.CheckAnOccurrenceTitle"),
+                                    JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			printModel.setSource(model.getDatabase(), sel);
+			printModel.setSource(model.getDatabase(), sel);                        
 			printView.setVisible(true);
 		}
 	}
@@ -530,9 +538,8 @@ public class AppCoreCtrl {
 			try {
 				model.savePreferences();
 			} catch (IOException ex) {
-                            //FIXME - aspon lokalizovat
 				JOptionPane.showMessageDialog(view,
-						"Problem while saving configuration: "
+						L10n.getString("Overview.ProblemSavingPreferences")+":"
 								+ ex.getMessage());
 			}
 
@@ -548,27 +555,36 @@ public class AppCoreCtrl {
 		}
 	}
 
+        /** Handles help contents action.
+         *
+         */
 	class HelpContentsAction extends AbstractAction {
 		public HelpContentsAction() {
-			putValue(NAME, L10n.getString("helpContents"));
-			putValue(SHORT_DESCRIPTION, "Help contents");
-			putValue(MNEMONIC_KEY, L10n.getMnemonic("helpContents"));
+			putValue(NAME, L10n.getString("Overview.MenuHelp.Contents"));
+			putValue(SHORT_DESCRIPTION, "Overview.MenuHelp.ContentsTT");
+			putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuHelp.Contents"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			System.out.println("Help contents selected");
+			logger.info("Invoking Help contents.");
 		}
 	}
 
+        /** Handles help about action.
+         *
+         */
 	class HelpAboutAction extends AbstractAction {
+            AboutView aboutView = new AboutView(view,true);
+            
 		public HelpAboutAction() {
-			putValue(NAME, L10n.getString("helpAbout"));
-			putValue(SHORT_DESCRIPTION, "Help about tooltip");
-			putValue(MNEMONIC_KEY, L10n.getMnemonic("helpAbout"));
+			putValue(NAME, L10n.getString("Overview.MenuHelp.About"));
+			putValue(SHORT_DESCRIPTION, "Overview.MenuHelp.AboutTT");
+			putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuHelp.About"));
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			System.out.println("Help about selected");
+                    logger.info("Displaying help about dialog.");
+                    aboutView.setVisible(true);
 		}
 	}
 
@@ -1654,86 +1670,78 @@ public class AppCoreCtrl {
 		}
 
 		public void update(final Observable targer, final Object parameter) {
-                    SwingUtilities.invokeLater( new Runnable() {
-                        public void run() {
-                            if (parameter != null && parameter instanceof DBLayer) {
-                                    loginAction.setEnabled(false);
-                                    view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        if (parameter != null && parameter instanceof DBLayer) {
+                                loginAction.setEnabled(false);
+                                view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                                    logger.debug("Database layer retrieval.");
-                                    DBLayer dblayer = loginModel.getDBLayer();
+                                logger.debug("Database layer retrieval.");
+                                DBLayer dblayer = loginModel.getDBLayer();
 
-                                    // FIXME: neni potreba zresetovat stav treba loginModelu, pokdu
-                                    // neco takhle selze? pripadne stav jinyho objektu?
-                                    try {
-                                            model.setDatabase(dblayer);
-                                    } catch (RemoteException ex) {
-                                        logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
-                                        ex.printStackTrace();
-                                        DefaultReconnectDialog.show(view,ex);
-                                        return;
-                                    } catch (DBLayerException ex) {
-                                        logger.error("Caught an error in AppCoreCtrl update(): "+ex.getMessage());
-                                        ex.printStackTrace();
-                                        DefaultReconnectDialog.show(view,ex);
-                                        return;
-                                    }
-                                    // distribute database to dialogs
-                                    addModel.setDatabase(dblayer);
-                                    editModel.setDatabase(dblayer);
-                                    searchModel.setDatabase(dblayer);
-                                    detailModel.setDatabase(dblayer);
+                                // FIXME: neni potreba zresetovat stav treba loginModelu, pokdu
+                                // neco takhle selze? pripadne stav jinyho objektu?
+                                try {
+                                        model.setDatabase(dblayer);
+                                } catch (RemoteException ex) {
+                                    DefaultExceptionHandler.handle(view, ex);
+                                    return;
+                                } catch (DBLayerException ex) {
+                                    DefaultExceptionHandler.handle(view, ex);
+                                    return;
+                                }
+                                // distribute database to dialogs
+                                addModel.setDatabase(dblayer);
+                                editModel.setDatabase(dblayer);
+                                searchModel.setDatabase(dblayer);
+                                detailModel.setDatabase(dblayer);
 
-                                    model.setAccessRights(loginModel.getAccessRights());
-                                    model.login();
+                                model.setAccessRights(loginModel.getAccessRights());
+                                model.login();
 
-                                    view.getSBM().display(L10n.getString("Message.FillingDialogs"));
-                                    fillDialogModels();
+                                view.getSBM().display(L10n.getString("Message.FillingDialogs"));
+                                fillDialogModels();
 
-                                    view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
-                                    searchModel.clear();
-                                    searchModel.constructQuery();
+                                view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
+                                searchModel.clear();
+                                searchModel.constructQuery();
 
-                                    view.getSBM().displayDefaultText();
+                                view.getSBM().displayDefaultText();
 
-                                    view.initOverview();
-                                    view.setCursor(Cursor.getDefaultCursor());
-                                    setDatabaseDependentCommandsEnabled(true);
+                                view.initOverview();
+                                view.setCursor(Cursor.getDefaultCursor());
+                                setDatabaseDependentCommandsEnabled(true);
 
-                                    //this can't be done earlier. must be done after the query is created
-                                    //otherwise this listener would give the overview table model commands to load data
-                                    //for a query that doesn't exist yet
-                                    view.overviewScrollPane.addComponentListener(overviewResizeListener);
+                                //this can't be done earlier. must be done after the query is created
+                                //otherwise this listener would give the overview table model commands to load data
+                                //for a query that doesn't exist yet
+                                view.overviewScrollPane.addComponentListener(overviewResizeListener);
 
-                                    /*-------------------------------------------------------------------
-                                     *  This may no longer be necessary:
-                                     *------------------------------------------------------------------*/
-                    logger.debug("Distributing the new database layer to:");
-                    logger.debug(" # export ");
-                                    if( exportModel != null )
-                                            exportModel.setDBLayer( dblayer );
-                                    logger.debug(" # occurrence data import ");
-                                    if( importModel != null )
-                                            importModel.setDBLayer( dblayer );
-                                    logger.debug(" # table data import ");
-                                    if( tableImportModel != null )
-                                            tableImportModel.setDBLayer( dblayer );
-                                    logger.debug(" # record history ");
-                                    if (historyModel != null ) 
-                                        historyModel.restartQuery(History.HISTORY_RECORD);
-                                    logger.debug(" # complete history ");
-                                    if (wholeHistoryModel != null ) 
-                                         wholeHistoryModel.restartQuery(History.HISTORY_WHOLE);
-                                    logger.debug(" # user manager ");
-                                    if (userManagerModel != null )
-                                            userManagerModel.setDBLayer( dblayer );
-                                    logger.debug(" # metadata manager ");
-                                    if (metadataManagerModel != null )
-                                            metadataManagerModel.setDBLayer( dblayer );							
-                            }//if
-                        }//run()
-                    });//invokeLater
-		}//update()
+                                /*-------------------------------------------------------------------
+                                 *  This may no longer be necessary:
+                                 *------------------------------------------------------------------*/
+                logger.debug("Distributing the new database layer to:");
+                logger.debug(" # export ");
+                                if( exportModel != null )
+                                        exportModel.setDBLayer( dblayer );
+                                logger.debug(" # occurrence data import ");
+                                if( importModel != null )
+                                        importModel.setDBLayer( dblayer );
+                                logger.debug(" # table data import ");
+                                if( tableImportModel != null )
+                                        tableImportModel.setDBLayer( dblayer );
+                                logger.debug(" # record history ");
+                                if (historyModel != null ) 
+                                    historyModel.restartQuery(History.HISTORY_RECORD);
+                                logger.debug(" # complete history ");
+                                if (wholeHistoryModel != null ) 
+                                     wholeHistoryModel.restartQuery(History.HISTORY_WHOLE);
+                                logger.debug(" # user manager ");
+                                if (userManagerModel != null )
+                                        userManagerModel.setDBLayer( dblayer );
+                                logger.debug(" # metadata manager ");
+                                if (metadataManagerModel != null )
+                                        metadataManagerModel.setDBLayer( dblayer );							
+                        }//if
+                    }//run()
 	}//DatabaseChange
 
 

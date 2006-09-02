@@ -33,6 +33,7 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         initComponents();
         
         new DefaultEscapeKeyPressed(this);
+        setLocationRelativeTo(parent);
     }
     
     /** This method is called from within the constructor to

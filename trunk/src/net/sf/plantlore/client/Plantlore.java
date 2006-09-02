@@ -46,7 +46,8 @@ public class Plantlore {
     Logger logger;
     private static SplashScreen splashScreen;   
     private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
-    private static final String PLANTLORE="plantlore";
+    public static final String PLANTLORE="plantlore";
+    public static final String VERSION="1.0";
     private static final String MAIN_CONFIG_NAME=PLANTLORE+".xml";
     
     /**

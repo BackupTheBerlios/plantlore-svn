@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import net.sf.plantlore.client.overview.*;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
@@ -49,6 +50,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         fileExit.setToolTipText(L10n.getString("Overview.MenuFileExitTT"));
         fileExit.setMnemonic(L10n.getMnemonic("Overview.MenuFileExit"));
         
+        PlantloreHelp.addButtonHelp(PlantloreHelp.PLANTLORE_OVERVIEW,helpContents);
+
         setLocationRelativeTo(null);
         model.addObserver(this); 
         model.addObserver(sbm);
@@ -108,6 +111,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         dataMetadata = new javax.swing.JMenuItem();
         dataUser = new javax.swing.JMenuItem();
         dataWholeHistory = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JSeparator();
+        dataCreateDatabase = new javax.swing.JMenuItem();
         occurrencesMenu = new javax.swing.JMenu();
         occurrencesAdd = new javax.swing.JMenuItem();
         occurrencesEdit = new javax.swing.JMenuItem();
@@ -239,7 +244,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         );
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -330,6 +335,11 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
 
         dataWholeHistory.setText("Item");
         dataMenu.add(dataWholeHistory);
+
+        dataMenu.add(jSeparator5);
+
+        dataCreateDatabase.setText("Item");
+        dataMenu.add(dataCreateDatabase);
 
         jMenuBar1.add(dataMenu);
 
@@ -710,6 +720,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton addButton;
     protected javax.swing.JMenuItem dataAuthors;
+    protected javax.swing.JMenuItem dataCreateDatabase;
     private javax.swing.JMenuItem dataExport;
     private javax.swing.JMenuItem dataImport;
     protected javax.swing.JMenuItem dataImportTable;
@@ -741,6 +752,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     protected javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
     private javax.swing.JToolBar mainToolBar;
     private javax.swing.JButton nextPage;
     private javax.swing.JMenuItem occurrencesAdd;
