@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.UniqueIDGenerator;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
@@ -37,6 +38,7 @@ import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
+import net.sf.plantlore.common.record.UnitIdDatabase;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
@@ -94,7 +96,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private User plantloreUser;
     /** Rights of the authenticated user */
     private Right rights;    
-
+    /** Unique identifier of the database we are connected to */
+    private String databaseID;
+    
     private Session txSession;
     private Transaction longTx;            
             
@@ -215,6 +219,14 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             Object[] userinfo = sr.get();
             plantloreUser = (User)userinfo[0];
             rights = plantloreUser.getRight();
+            // Load unique database identifier
+            sr = sess.createCriteria(UnitIdDatabase.class).scroll();            
+            if( ! sr.next() ) {
+            	logger.debug("DBLayer Initialization - things are not going well. sr.get() returned null!");
+            	throw new DBLayerException(L10n.getString("Error.ConnectionFailed"), DBLayerException.ERROR_CONNECT);
+            }
+            Object[] unitiddatabase = sr.get();
+            this.databaseID = ((UnitIdDatabase)unitiddatabase[0]).getUnitIdDb();
             logger.debug("DBLayer Initialization - finished!");
         } 
         catch (JDBCException e) {
@@ -253,15 +265,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
     }
     
-    protected void completeRecord(Object record) {
+    protected void completeRecord(Object record) throws DBLayerException {
     	java.util.Date now = new Date();
         if(record instanceof Occurrence) {
             Occurrence occ = (Occurrence)record;
             occ.setCreatedWhen(now);
             occ.setCreatedWho(this.plantloreUser);
-            /*
-             * TODO: UNIQUE ID MUST BE SET AS WELL
-             */
+            // Set UniqueID for the record and database
+            occ.setUnitIdDb(this.databaseID);
+            occ.setUnitValue("TODO");
         } else if(record instanceof Habitat) {
             ((Habitat)record).setCreatedWho(this.plantloreUser);
         } else if(record instanceof Publication) {
@@ -306,8 +318,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // If we should not use our own transaction, we must use the stored one.
         Session session = useOwnTransaction ? sessionFactory.openSession() : this.txSession;
         int recordId = -1;
-        try {
-            
+        try {            
             // Begin transaction, if it is required. If not, the `tx` stays null.
             if(useOwnTransaction) tx = session.beginTransaction();
             
@@ -360,10 +371,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
             throw new DBLayerException(L10n.getString("Error.DatabaseOperationFailed"), exceptionType, e);
         } finally {
-        	// We must close only our own sessions!
+            // We must close only our own sessions!
             if(useOwnTransaction) session.close();
         }
-        
         return recordId;
     }
     
@@ -1469,6 +1479,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 sq.addRestriction(PlantloreConstants.RESTR_IS_NULL, HistoryColumn.COLUMNNAME, null, null, null);
                 result = this.executeQuery(sq);
                 objCol = next(result);                
+                this.closeQuery(sq);
             } catch (RemoteException e) {
                 logger.error("Remote exception caught in DBLayer. This should never happen. Details: "+e.getMessage());
             }
