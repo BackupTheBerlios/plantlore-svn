@@ -1079,26 +1079,18 @@ public class AppCoreCtrl {
 					public void exceptionHandler(final Exception ex) {
 						logger.error("Error while filling jasper report in SchedaAction: "+ ex);
 						ex.printStackTrace();
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
 								JOptionPane.showMessageDialog(view.getParent(),
 											L10n.getString("Print.Message.BrokenReport")
 														+ "\n"
 														+ ex.getMessage(),
 											L10n.getString("Print.Message.BrokenReport"),
 												JOptionPane.WARNING_MESSAGE);
-							}
-						});
 						getTask().stop();
 					}
 
 					public void afterStopped(final Object value) {
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								new SchedaView(view, true, (JasperPrint) value)
-										.setVisible(true);
-							}
-						});
+                                                new SchedaView(view, true, (JasperPrint) value)
+                                                                .setVisible(true);
 					}
 				};
 				task.start();

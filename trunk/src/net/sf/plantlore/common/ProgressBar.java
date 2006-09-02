@@ -166,70 +166,76 @@ public abstract class ProgressBar extends javax.swing.JDialog implements Observe
      *
      * Invokes exceptionHanlder on received exceptions.
      */
-    public void update(Observable o, Object arg) {
+    public void update(final Observable o, final Object arg) {
         final ProgressBar pb = this;
-        if (arg instanceof Pair) {
-            Pair p = (Pair)arg;
-            Object first = p.getFirst();
-            if (first instanceof Task.Message) {
-                Task.Message msg = (Task.Message)first;
-                Object value = p.getSecond();
-                logger.debug("Received message: "+msg);
-                switch (msg) {
-                    case STARTING:
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                setLocationRelativeTo(parent);
-                                setVisible(true);
-                                logger.debug("Progress bar visible");
-                            }
-                        });
-                        break;
-                    case POSITION_CHANGED:
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                progressBar.setValue(task.getPosition());
-                            }
-                        });
-                        break;
-                    case MESSAGE_CHANGED:
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                String text = task.getStatusMessage();
-                                statusField.setText(text);
-                                progressBar.setString(text);
-                                int curWidth = statusField.getWidth();
-                                if (text.length() > (curWidth/charSizeApprox)) {
-                                    int newWidth = new Double(text.length()*charSizeApprox).intValue();
-                                    pb.setSize(pb.getWidth()+(newWidth-curWidth),pb.getHeight());
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                
+                if (arg instanceof Pair) {
+                    Pair p = (Pair)arg;
+                    Object first = p.getFirst();
+                    if (first instanceof Task.Message) {
+                        Task.Message msg = (Task.Message)first;
+                        Object value = p.getSecond();
+                        logger.debug("Received message: "+msg);
+                        switch (msg) {
+                            case STARTING:
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        setLocationRelativeTo(parent);
+                                        setVisible(true);
+                                        logger.debug("Progress bar visible");
+                                    }
+                                });
+                                break;
+                            case POSITION_CHANGED:
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        progressBar.setValue(task.getPosition());
+                                    }
+                                });
+                                break;
+                            case MESSAGE_CHANGED:
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        String text = task.getStatusMessage();
+                                        statusField.setText(text);
+                                        progressBar.setString(text);
+                                        int curWidth = statusField.getWidth();
+                                        if (text.length() > (curWidth/charSizeApprox)) {
+                                            int newWidth = new Double(text.length()*charSizeApprox).intValue();
+                                            pb.setSize(pb.getWidth()+(newWidth-curWidth),pb.getHeight());
+                                        }
+                                    }
+                                });
+                                break;
+                            case LENGTH_CHANGED:
+                                if (progressBar.isIndeterminate()) {
+                                    progressBar.setIndeterminate(false);
                                 }
-                            }
-                        });
-                        break;
-                    case LENGTH_CHANGED:
-                        if (progressBar.isIndeterminate()) {
-                            progressBar.setIndeterminate(false);
-                        }
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                progressBar.setMaximum(task.getLength());
-                            }
-                        });
-                        break;
-                    case STOPPING:
-                        setVisible(false);
-                        dispose(); // FIXME: Should not this method be invoked from the EDT?                    
-                        parent.setCursor(Cursor.getDefaultCursor());
-                        logger.debug( "ProgressBar:Stopping " + task );
-                        afterStopping();
-                        break;
-                    case STOPPED:
-                    	logger.debug( "ProgressBar:Stopped " + task );
-                        afterStopped(value);
-                        break;                    
-                }//switch
-            }//instanceof Message
-        }//instanceof Pair
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        progressBar.setMaximum(task.getLength());
+                                    }
+                                });
+                                break;
+                            case STOPPING:
+                                setVisible(false);
+                                dispose(); // FIXME: Should not this method be invoked from the EDT?                    
+                                parent.setCursor(Cursor.getDefaultCursor());
+                                logger.debug( "ProgressBar:Stopping " + task );
+                                afterStopping();
+                                break;
+                            case STOPPED:
+                                logger.debug( "ProgressBar:Stopped " + task );
+                                afterStopped(value);
+                                break;                    
+                        }//switch
+                    }//instanceof Message
+
+                }//instanceof Pair
+            }//run()
+        });//invokeLater
         
         if (arg instanceof Exception) {
             exceptionHandler((Exception)arg);
