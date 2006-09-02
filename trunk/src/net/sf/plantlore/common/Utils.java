@@ -65,25 +65,34 @@ public class Utils {
         //"jar:file:/home/fraktalek/cvs/plantlore/dist/plantlore-client.jar!/net/sf/plantlore/common/Utils.class"
         
         try {            
-            dir = URLDecoder.decode(url.getPath(),"UTF-8");
+            dir = URLDecoder.decode(url.getPath(),URL_ENCODING);
         } catch (UnsupportedEncodingException ex) {
             logger.error("Utils.java: the URLDecoder complains about unsupported URL encoding: \""+URL_ENCODING+"\"");
             return null;
         }
 
         //clear off the file name
-        dir = dir.substring(0,dir.lastIndexOf("/"));
-        if (url.getProtocol().equals("jar")) {
-            //remove path to the package and the trailing "!/"
-            dir = dir.substring(0,dir.indexOf(Utils.class.getPackage().getName().replaceAll("\\.","/"))-2);
-            if (System.getProperty("os.name").equals("windows"))//on windows there's one more slash after file:
-                dir = dir.substring(dir.indexOf("file:")+6);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
-            else
-                dir = dir.substring(dir.indexOf("file:")+5);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
-        } else {
-            //remove the path to the package and a trailing slash        
-            dir = dir.substring(0,dir.indexOf(Utils.class.getPackage().getName().replaceAll("\\.","/")));            
-        }
+        
+        // The following code should not be necessary as the dir = url.getPath(), 
+        // ie. from the "jar:file:/home/fraktalek/cvs/plantlore/dist/plantlore-client.jar!/net/sf/plantlore/common/Utils.class"
+        // just the "/home/fraktalek/cvs/plantlore/dist/plantlore-client.jar!/net/sf/plantlore/common/Utils.class"
+        // will remain.
+        
+//        //dir = dir.substring(0,dir.lastIndexOf("/"));
+//        if (url.getProtocol().equals("jar")) {
+//            //remove path to the package and the trailing "!/"
+//            dir = dir.substring(0, dir.indexOf(Utils.class.getName().replaceAll("\\.","/"))-2);
+//            if (System.getProperty("os.name").toLowerCase().startsWith("win")) //on windows there's one more slash after file:
+//                dir = dir.substring(dir.indexOf("file:")+6);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"
+//            else
+//                dir = dir.substring(dir.indexOf("file:")+5);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
+//        } else {
+            // Just remove the path to the package
+        	if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+        		dir = dir.substring(1, dir.indexOf(Utils.class.getName().replaceAll("\\.", "/")));
+        	else
+        		dir = dir.substring(0, dir.indexOf(Utils.class.getName().replaceAll("\\.","/")));            
+//        }
         
         return dir;
     }
