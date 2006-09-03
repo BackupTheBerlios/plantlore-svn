@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
 
+import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.l10n.L10n;
 
@@ -30,6 +31,8 @@ public class CreateDBCtrl {
 		
 		authView = new CreateDBAuthView( view, model );
 		/*authCtrl =*/ new CreateDBAuthCtrl( model, authView );
+		
+		view.cancel.setAction( new DefaultCancelAction(view) );
 		
 		view.next.setAction( new StandardAction("Login.Next") {
 			public void actionPerformed(ActionEvent arg0) {

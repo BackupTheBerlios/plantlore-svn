@@ -64,11 +64,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" alignment="1" pref="343" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="remember" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="74" max="32767" attributes="0"/>
-                      <Component id="discard" min="-2" max="-2" attributes="0"/>
+                      <Component id="help" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="126" max="32767" attributes="0"/>
+                      <Component id="discard" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="next" min="-2" max="-2" attributes="0"/>
+                      <Component id="next" linkSize="1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -83,8 +83,8 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="next" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="remember" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="discard" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="help" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -126,28 +126,20 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JCheckBox" name="remember">
+    <Component class="javax.swing.JButton" name="discard">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.SelectAutomatically" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
-        </Property>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-            <EmptyBorder bottom="0" left="0" right="0" top="0"/>
-          </Border>
-        </Property>
-        <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-          <Insets value="[0, 0, 0, 0]"/>
+          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Cancel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JButton" name="discard">
+    <Component class="javax.swing.JButton" name="help">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Cancel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Help" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>

@@ -175,7 +175,6 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	 */
 	public boolean ping() 
 	throws RemoteException {
-		logger.debug("Pinged!");
 		return !isDead;
 	}
 

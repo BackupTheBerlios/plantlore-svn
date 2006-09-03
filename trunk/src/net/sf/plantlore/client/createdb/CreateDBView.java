@@ -5,6 +5,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DocumentSizeFilter;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -25,6 +28,16 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
     	
         setLocationRelativeTo(null); // center of the screen
         getRootPane().setDefaultButton(next);
+        /*
+        PlantloreHelp.addKeyHelp(PlantloreHelp.CREATE_DB, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.CREATE_DB, this.help);
+        */
+        new DefaultEscapeKeyPressed( this );
+        
+        DocumentSizeFilter.patch(databaseAlias, 50);
+        DocumentSizeFilter.patch(databaseEngine, 30);
+        DocumentSizeFilter.patch(databaseIdentifier, 30);
+        DocumentSizeFilter.patch(databasePort, 5);
     }
     
     /** This method is called from within the constructor to
@@ -46,6 +59,8 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
         jLabel5 = new javax.swing.JLabel();
         databaseAlias = new javax.swing.JTextField();
         next = new javax.swing.JButton();
+        cancel = new javax.swing.JButton();
+        help = new javax.swing.JButton();
 
         setTitle(L10n.getString("CreateDB.Title"));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("CreateDB.DatabaseSettings")));
@@ -97,6 +112,8 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
 
         jLabel5.setText(L10n.getString("Login.Alias"));
 
+        databaseAlias.setToolTipText(L10n.getString("Login.AliasTT"));
+
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -134,6 +151,10 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
 
         next.setText(L10n.getString("Login.Next"));
 
+        cancel.setText(L10n.getString("Common.Cancel"));
+
+        help.setText(L10n.getString("Common.Help"));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -143,9 +164,17 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(next))
+                    .add(layout.createSequentialGroup()
+                        .add(help)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 128, Short.MAX_VALUE)
+                        .add(cancel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(next)))
                 .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {cancel, next}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -154,7 +183,10 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(next)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(next)
+                    .add(cancel)
+                    .add(help))
                 .addContainerGap())
         );
         pack();
@@ -163,10 +195,12 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton cancel;
     protected javax.swing.JTextField databaseAlias;
     protected javax.swing.JComboBox databaseEngine;
     protected javax.swing.JTextField databaseIdentifier;
     protected javax.swing.JTextField databasePort;
+    protected javax.swing.JButton help;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

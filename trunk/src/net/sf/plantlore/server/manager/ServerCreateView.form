@@ -24,13 +24,15 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="choicePane" alignment="0" pref="356" max="32767" attributes="1"/>
+                  <Component id="choicePane" alignment="0" pref="408" max="32767" attributes="1"/>
                   <Group type="102" alignment="1" attributes="1">
                       <Component id="help" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="220" max="32767" attributes="0"/>
-                      <Component id="next" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="191" max="32767" attributes="0"/>
+                      <Component id="cancel" linkSize="3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="next" linkSize="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="plantloreLogo" alignment="0" pref="356" max="32767" attributes="2"/>
+                  <Component id="plantloreLogo" alignment="0" pref="408" max="32767" attributes="2"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -47,6 +49,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="next" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="help" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cancel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -70,7 +73,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="356" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="408" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -110,7 +113,7 @@
         <Container class="javax.swing.JPanel" name="jPanel3">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Create new Server">
+              <JTabbedPaneConstraints tabName="Create a new Server">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Server.CreateNewServer" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                 </Property>
@@ -121,7 +124,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel1" alignment="0" pref="351" max="32767" attributes="1"/>
+                  <Component id="jPanel1" alignment="0" pref="403" max="32767" attributes="1"/>
                   <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
@@ -239,13 +242,13 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="databaseType" pref="182" max="32767" attributes="0"/>
+                                  <Component id="databaseType" pref="234" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="databasePort" min="-2" pref="51" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="databaseParameter" pref="261" max="32767" attributes="0"/>
+                              <Component id="databaseParameter" pref="313" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -339,7 +342,7 @@
         <Container class="javax.swing.JPanel" name="jPanel4">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Connect to a Running Server">
+              <JTabbedPaneConstraints tabName="Connect to a running Server">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Server.ConnectToRunningServer" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                 </Property>
@@ -367,7 +370,7 @@
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder title="Remote server">
+                    <TitledBorder title="Remote host settings">
                       <ResourceString PropertyName="titleX" bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Server.ConnectToSettings" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                     </TitledBorder>
                   </Border>
@@ -390,8 +393,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="remoteHost" alignment="0" pref="187" max="32767" attributes="2"/>
-                              <Component id="remoteServerPassword" alignment="0" pref="187" max="32767" attributes="2"/>
+                              <Component id="remoteHost" alignment="0" pref="239" max="32767" attributes="2"/>
+                              <Component id="remoteServerPassword" alignment="0" pref="239" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
@@ -432,6 +435,9 @@
                 <Component class="javax.swing.JTextField" name="remoteHost">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="localhost"/>
+                    <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Server.HostTT" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -445,6 +451,11 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JPasswordField" name="remoteServerPassword">
+                  <Properties>
+                    <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Server.PasswordTT" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+                    </Property>
+                  </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                   </AuxValues>
@@ -474,5 +485,15 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="cancel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Cancel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
   </SubComponents>
 </Form>

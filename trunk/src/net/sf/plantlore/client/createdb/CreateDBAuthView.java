@@ -5,6 +5,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import net.sf.plantlore.client.login.DBInfo;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -24,6 +26,13 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
         
         setLocationRelativeTo(null); // center of the screen
         getRootPane().setDefaultButton(create);
+        /*
+        PlantloreHelp.addKeyHelp(PlantloreHelp.CREATE_DB, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.CREATE_DB, this.help);
+        */
+        new DefaultEscapeKeyPressed( this );
+        
+        DocumentSizeFilter.patch(password, 20);
     }
 
     
@@ -39,12 +48,19 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
         password = new javax.swing.JPasswordField();
         create = new javax.swing.JButton();
         user = new javax.swing.JTextField();
+        cancel = new javax.swing.JButton();
 
         jLabel1.setText(L10n.getString("Login.UserName"));
 
         jLabel2.setText(L10n.getString("Login.Password"));
 
+        password.setToolTipText(L10n.getString("Login.PasswordTT"));
+
         create.setText(L10n.getString("CreateDB.Create"));
+
+        user.setToolTipText(L10n.getString("Login.UserNameTT"));
+
+        cancel.setText(L10n.getString("Common.Cancel"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -61,9 +77,15 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(user, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
                             .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, create))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(cancel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(create)))
                 .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {cancel, create}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -76,7 +98,9 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
                     .add(jLabel2)
                     .add(password, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(create)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(create)
+                    .add(cancel))
                 .addContainerGap())
         );
 
@@ -88,6 +112,7 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton cancel;
     protected javax.swing.JButton create;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

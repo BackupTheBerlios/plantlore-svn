@@ -83,10 +83,10 @@ public class TableImportTask extends Task {
 	public Object task() throws Exception {
 		logger.info("Table Import begins...");
 		
-		setStatusMessage("Import.Initializing");
+		setStatusMessage(L10n.getString("Import.Initializing"));
 		Class table = parser.initialize();
 		
-		setStatusMessage("Import.Initialized");
+		setStatusMessage(L10n.getString("Import.Initialized"));
 		setLength( parser.getNumberOfRecords() );
 				
 		while( !isCanceled() && parser.hasNext() ) {
@@ -151,7 +151,7 @@ public class TableImportTask extends Task {
 				setStatusMessage( ie.getMessage() );
 			} catch(DBLayerException de) {
 				logger.error("Delete/update/insert failed! " + de.getMessage());
-				setStatusMessage( L10n.getFormattedString("Error.UnableToProcess", count) + " " + 
+				setStatusMessage( L10n.getFormattedString("Import.UnableToProcess", count) + " " + 
 						((de.getMessage() == null) ? L10n.getString("Import.UnknownReason") : de.getMessage()) );
 			}
 		}

@@ -23,7 +23,7 @@
                   <Component id="jTabbedPane1" alignment="1" pref="380" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="help" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="175" max="32767" attributes="0"/>
+                      <EmptySpace pref="171" max="32767" attributes="0"/>
                       <Component id="discard" linkSize="3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="next" linkSize="3" min="-2" max="-2" attributes="0"/>
@@ -60,7 +60,7 @@
         <Container class="javax.swing.JPanel" name="jPanel1">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Direct connection (local)">
+              <JTabbedPaneConstraints tabName="Local connection">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.LocalDatabase" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                 </Property>
@@ -82,11 +82,11 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="databaseParameter" alignment="0" pref="270" max="32767" attributes="0"/>
-                          <Component id="databasePort" alignment="0" pref="270" max="32767" attributes="0"/>
-                          <Component id="databaseIdentifier" alignment="0" pref="270" max="32767" attributes="0"/>
-                          <Component id="databaseEngine" alignment="0" pref="270" max="32767" attributes="0"/>
-                          <Component id="aliasLocal" alignment="0" pref="270" max="32767" attributes="0"/>
+                          <Component id="databaseParameter" alignment="0" pref="301" max="32767" attributes="0"/>
+                          <Component id="databasePort" alignment="0" pref="301" max="32767" attributes="0"/>
+                          <Component id="databaseIdentifier" alignment="0" pref="301" max="32767" attributes="0"/>
+                          <Component id="databaseEngine" alignment="0" pref="301" max="32767" attributes="0"/>
+                          <Component id="aliasLocal" alignment="0" pref="301" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -227,7 +227,7 @@
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Remote connection">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.RemoteDabatase" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.RemoteDatabase" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
                 </Property>
               </JTabbedPaneConstraints>
             </Constraint>
@@ -346,6 +346,11 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="remoteDatabaseIdentifier">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.DatabaseIdentifierTT" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
@@ -367,7 +372,7 @@
     <Component class="javax.swing.JButton" name="discard">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Login.Discard" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="Common.Cancel" replaceFormat="L10n.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>

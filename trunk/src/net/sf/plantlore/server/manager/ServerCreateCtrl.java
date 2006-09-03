@@ -26,7 +26,14 @@ public class ServerCreateCtrl {
 		mngView = new ServerMngView(model);
 		new ServerMngCtrl(model, mngView);
 		
-		view.next.setAction( new StandardAction("Server.Create") {
+        view.cancel.setAction( new StandardAction("Common.Cancel") {
+			public void actionPerformed(ActionEvent arg0) {
+				view.setVisible(false);
+				System.exit(0);
+			}
+        });
+		
+		view.next.setAction( new StandardAction("Server.Continue") {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				switch( view.choicePane.getSelectedIndex() ) {

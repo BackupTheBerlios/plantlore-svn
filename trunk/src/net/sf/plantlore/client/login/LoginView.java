@@ -10,6 +10,8 @@ import java.awt.Frame;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
@@ -35,9 +37,14 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         initComponents();
         setLocationRelativeTo(null); // center of the screen
         getRootPane().setDefaultButton(next);
+        
+        PlantloreHelp.addKeyHelp(PlantloreHelp.LOGIN, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.LOGIN, this.help);
+        
+        new DefaultEscapeKeyPressed( this );
+        
         // See what's new.
         update(null, Login.UPDATE_LIST);
-        remember.setVisible(false);
     }
     
     /** This method is called from within the constructor to
@@ -54,8 +61,8 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         next = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         choice = new javax.swing.JList();
-        remember = new javax.swing.JCheckBox();
         discard = new javax.swing.JButton();
+        help = new javax.swing.JButton();
 
         popup.setName("popup");
         add.setText(L10n.getString("Login.AddRecord"));
@@ -77,11 +84,9 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         choice.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(choice);
 
-        remember.setText(L10n.getString("Login.SelectAutomatically"));
-        remember.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        remember.setMargin(new java.awt.Insets(0, 0, 0, 0));
-
         discard.setText(L10n.getString("Common.Cancel"));
+
+        help.setText(L10n.getString("Common.Help"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,13 +97,16 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(remember)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 74, Short.MAX_VALUE)
+                        .add(help)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 126, Short.MAX_VALUE)
                         .add(discard)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(next)))
                 .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {discard, next}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -107,8 +115,8 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(next)
-                    .add(remember)
-                    .add(discard))
+                    .add(discard)
+                    .add(help))
                 .addContainerGap())
         );
         pack();
@@ -151,10 +159,10 @@ public class LoginView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JList choice;
     protected javax.swing.JButton discard;
     protected javax.swing.JMenuItem edit;
+    protected javax.swing.JButton help;
     private javax.swing.JScrollPane jScrollPane1;
     protected javax.swing.JButton next;
     private javax.swing.JPopupMenu popup;
-    protected javax.swing.JCheckBox remember;
     protected javax.swing.JMenuItem remove;
     // End of variables declaration//GEN-END:variables
     

@@ -108,7 +108,7 @@ public class UnifiedTableParser implements TableParser {
             	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
             rootTable = tables.get( root.getName().toLowerCase() );
             if(rootTable == null)
-            	throw new ParserException("Error.UnsupportedTable");
+            	throw new ParserException(L10n.getFormattedString("Error.UnsupportedTable", rootTable.getSimpleName()));
             
             List nodes = root.selectNodes("//"+rootTable.getSimpleName().toLowerCase());
             if( nodes != null) {
@@ -164,9 +164,12 @@ public class UnifiedTableParser implements TableParser {
 				data.replacement = (Record)rootTable.newInstance();
 				reconstruct( data.replacement, node );
 			}
-		} catch(Exception e) {
-			throw new ParserException(L10n.getString("Import.PartialyCorruptedRecord"));
+		} catch(IllegalAccessException e) {
+			throw new ParserException(L10n.getString("Error.Internal"));
+		}  catch(InstantiationException e) {
+			throw new ParserException(L10n.getString("Error.Internal"));
 		}
+		
 		
 		return data;
 	}

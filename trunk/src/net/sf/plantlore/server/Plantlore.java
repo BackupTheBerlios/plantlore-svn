@@ -12,6 +12,8 @@ import org.apache.log4j.PropertyConfigurator;
 
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 
+import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.exception.PlantloreException;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.manager.*;
 
@@ -44,6 +46,14 @@ public class Plantlore {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+		
+		 // Initialize Help
+        try {
+            PlantloreHelp.initialize();
+        } catch (PlantloreException e) {
+            // TODO: Display error message
+        }
+
 
         java.awt.EventQueue.invokeLater(new Runnable(){
         	public void run() {

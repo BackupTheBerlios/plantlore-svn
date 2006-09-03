@@ -414,7 +414,7 @@ public class AppCoreCtrl {
 		dataHistoryAction.setEnabled(enabled);
 		dataWholeHistoryAction.setEnabled(enabled);
 		dataUserAction.setEnabled(enabled);
-                createNewDatabaseAction.setEnabled(enabled);
+                createNewDatabaseAction.setEnabled(!enabled);
 
 		historyAction.setEnabled(enabled);
 		schedaAction.setEnabled(enabled);
@@ -1535,7 +1535,7 @@ public class AppCoreCtrl {
 				newDBView = new CreateDBView(view, newDBModel);
 				newDBCtrl = new CreateDBCtrl(newDBModel, newDBView);
 			}
-                        view.setVisible(true);
+			newDBView.setVisible(true);
 		}
 	}
 

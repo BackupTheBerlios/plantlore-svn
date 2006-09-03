@@ -9,6 +9,7 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ConnectionInfo;
 
@@ -30,7 +31,11 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     	model.addObserver(this);
     	
         initComponents();
-        //getRootPane().setDefaultButton(hide);
+        getRootPane().setDefaultButton(hide);
+        
+        PlantloreHelp.addKeyHelp(PlantloreHelp.SERVER, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.SERVER, this.help);
+        
         setLocationRelativeTo(null); // center of the screen
     }
     

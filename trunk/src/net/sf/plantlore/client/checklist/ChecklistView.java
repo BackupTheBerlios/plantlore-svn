@@ -5,6 +5,8 @@ import java.awt.Dialog;
 import javax.swing.JFileChooser;
 
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -28,6 +30,11 @@ public class ChecklistView extends javax.swing.JDialog {
         initComponents();
         choice = new JFileChooser();
         setLocationRelativeTo(null);
+        
+        PlantloreHelp.addKeyHelp(PlantloreHelp.ADD_CHECKLIST, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.ADD_CHECKLIST, this.help);
+        
+        new DefaultEscapeKeyPressed( this );
     }
     
     /** This method is called from within the constructor to
@@ -45,6 +52,8 @@ public class ChecklistView extends javax.swing.JDialog {
         scrollpane = new javax.swing.JScrollPane();
         checklist = new Checklist( model.getAllowedValues() );
         submit = new javax.swing.JButton();
+        cancel = new javax.swing.JButton();
+        help = new javax.swing.JButton();
 
         setTitle(L10n.getString("Checklist.Title"));
         setModal(true);
@@ -64,13 +73,21 @@ public class ChecklistView extends javax.swing.JDialog {
 
         submit.setText(L10n.getString("Checklist.Submit"));
 
+        cancel.setText(L10n.getString("Common.Cancel"));
+
+        help.setText(L10n.getString("Common.Help"));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(325, Short.MAX_VALUE)
+                .addContainerGap()
+                .add(help)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 171, Short.MAX_VALUE)
+                .add(cancel)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(submit)
                 .addContainerGap())
             .add(layout.createSequentialGroup()
@@ -78,6 +95,9 @@ public class ChecklistView extends javax.swing.JDialog {
                 .add(scrollpane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        layout.linkSize(new java.awt.Component[] {cancel, submit}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
@@ -85,7 +105,10 @@ public class ChecklistView extends javax.swing.JDialog {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(scrollpane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(submit)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(submit)
+                    .add(cancel)
+                    .add(help))
                 .addContainerGap())
         );
         pack();
@@ -94,8 +117,10 @@ public class ChecklistView extends javax.swing.JDialog {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected javax.swing.JButton cancel;
     protected javax.swing.JList checklist;
     protected javax.swing.JButton clear;
+    protected javax.swing.JButton help;
     private javax.swing.JToolBar jToolBar1;
     protected javax.swing.JButton load;
     protected javax.swing.JButton restore;

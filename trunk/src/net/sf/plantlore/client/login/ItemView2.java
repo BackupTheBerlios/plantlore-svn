@@ -4,6 +4,9 @@ import java.awt.Dialog;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DocumentSizeFilter;
+import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -26,6 +29,21 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
 		initComponents();
 		getRootPane().setDefaultButton(next);
 		setLocationRelativeTo(null);
+		
+		PlantloreHelp.addKeyHelp(PlantloreHelp.LOGIN, this.getRootPane());
+        PlantloreHelp.addButtonHelp(PlantloreHelp.LOGIN, this.help);
+        
+        new DefaultEscapeKeyPressed( this );
+		
+		DocumentSizeFilter.patch(aliasLocal, 50);
+		DocumentSizeFilter.patch(aliasRemote, 50);
+		DocumentSizeFilter.patch(databaseEngine, 30);
+		DocumentSizeFilter.patch(databaseIdentifier, 30);
+		DocumentSizeFilter.patch(databaseParameter, 60);
+		DocumentSizeFilter.patch(databasePort, 5);
+		DocumentSizeFilter.patch(host, 50);
+		DocumentSizeFilter.patch(port, 5);
+		DocumentSizeFilter.patch(remoteDatabaseIdentifier, 30);
     }
     
     /** This method is called from within the constructor to
@@ -97,11 +115,11 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                     .add(jLabel2))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(databaseParameter, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .add(databaseEngine, 0, 270, Short.MAX_VALUE)
-                    .add(aliasLocal, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
+                    .add(databaseParameter, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                    .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                    .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                    .add(databaseEngine, 0, 301, Short.MAX_VALUE)
+                    .add(aliasLocal, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -145,6 +163,8 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
 
         jLabel11.setText(L10n.getString("Login.DatabaseIdentifier"));
 
+        remoteDatabaseIdentifier.setToolTipText(L10n.getString("Login.DatabaseIdentifierTT"));
+
         org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -187,11 +207,11 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                     .add(remoteDatabaseIdentifier, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(39, Short.MAX_VALUE))
         );
-        jTabbedPane1.addTab(L10n.getString("Login.RemoteDabatase"), jPanel2);
+        jTabbedPane1.addTab(L10n.getString("Login.RemoteDatabase"), jPanel2);
 
         next.setText(L10n.getString("Login.Change"));
 
-        discard.setText(L10n.getString("Login.Discard"));
+        discard.setText(L10n.getString("Common.Cancel"));
 
         help.setText(L10n.getString("Common.Help"));
 
@@ -205,7 +225,7 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(help)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 175, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 171, Short.MAX_VALUE)
                         .add(discard)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(next)))

@@ -63,7 +63,7 @@ public class LoginCtrl {
 	 * @param visible	True if the View should become visible.
 	 */
 	public void setVisible(boolean visible) {
-		JDialog dialog = view.remember.isSelected() && !view.choice.isSelectionEmpty() ? authView : view;
+		JDialog dialog = /*view.remember.isSelected() && !view.choice.isSelectionEmpty() ? authView : */view;
 		dialog.setVisible(visible);
 	}
 	

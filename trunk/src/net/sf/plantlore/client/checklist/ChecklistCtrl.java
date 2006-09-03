@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -38,6 +39,7 @@ public class ChecklistCtrl {
 		view.clear.setAction(new ClearSelection());
 		view.submit.setAction(new Submit());
 		view.restore.setAction(new Restore());
+		view.cancel.setAction( new DefaultCancelAction(view) );
 		
 		model.addPropertyChangeListener(
 				AutoTextArea.ALLOWED_VALUES_CHANGED,

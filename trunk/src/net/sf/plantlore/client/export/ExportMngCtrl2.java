@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import net.sf.plantlore.client.export.component.FileFormat;
+import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.l10n.L10n;
@@ -38,6 +39,7 @@ public class ExportMngCtrl2 {
 		
 		viewB = new ExportMngViewB(view);
 		viewB.next.setAction( new NextAction() );
+		viewB.cancel.setAction( new DefaultCancelAction(view) );
 		choice = new JFileChooser();
 		choice.setAcceptAllFileFilterUsed(false);
 		for( FileFilter filter: model.getFileFormats() )

@@ -6,6 +6,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import net.sf.plantlore.common.AutoComboBox;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 
@@ -28,6 +30,10 @@ public class AuthView extends javax.swing.JDialog implements Observer {
         initComponents();
         getRootPane().setDefaultButton(next);
         setLocationRelativeTo(null); // center of the screen
+        
+        new DefaultEscapeKeyPressed( this );
+        
+        DocumentSizeFilter.patch(password, 20);
     }
     
     /** This method is called from within the constructor to

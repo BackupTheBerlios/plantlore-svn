@@ -2,6 +2,7 @@ package net.sf.plantlore.client.createdb;
 
 import java.awt.event.ActionEvent;
 
+import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
@@ -21,6 +22,8 @@ public class CreateDBAuthCtrl {
 	public CreateDBAuthCtrl(CreateDB createModel, CreateDBAuthView authView) {
 		this.model = createModel; 
 		this.view = authView;
+		
+		view.cancel.setAction( new DefaultCancelAction(view) );
 
 		view.create.setAction(new StandardAction("CreateDB.Create") {
 			public void actionPerformed(ActionEvent arg0) {
