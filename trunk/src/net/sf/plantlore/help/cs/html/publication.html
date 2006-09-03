@@ -1,10 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content-Language" content="cs-CZ" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Spr�va publikac�</title>
-</head>
-<body>
-<h1>Spr�va publikac�</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Správa publikací</title>
+  </head>
+  <body>
+  <h1>Správa publikací</h1>
+Správa publikací umožňuje uživateli přidávat, upravovat a vyhledávat publikace, ve kterých byly nálezy 
+publikované. Dialogové okno se správou publikací je možné otevřít pomocí menu Data|Správa publikací.
+<p>
+Dialog pro správu publikací se skládá ze dvou základních částí:
+<ul>
+<li><b>Seznam publikací</b> - publikace, které jsou výsledkem posledního hledání</li>
+<li><b>Vyhledávání publikací</b> - zde můžete zadat kritéria pro vyhledávání publikací</li>
+</ul>
+
+<h2>Seznam publikací</h2>
+Po úspěšném vyhledání jsou výsledky zobrazeny v této části formuláře. Výsledky jsou zobrazeny po stránkách, 
+proto nejsou bezprostředně po vyhledání zobrazené všechny publikace. Pro přecházení mezi jednotlivými 
+stránkami výsledků použijte tlačítek Předchozí a Následující které najdete pod tabulkou se seznamem 
+publikací. V případě, že chcete zobrazit více záznamů na jedné stránce, zadejte počet zobrazovaných záznamů 
+do pole pod tabulkou se seznamem publikací a stiskněte klávesu enter. Vedle tohoto pole se taktéž nachází 
+informace celkovém počtu nalezných záznamů a rozsah který je právě zobrazen.
+<p>
+Tato část formuláře obsahuje taky tlačítka pro přidávání, úpravu a mazání publikací. Tlačitka Přidej 
+publikaci a Uprav publikaci otevřou dialogové okno pro přidávání/úpravu publikací (viz níže). Tlačítko 
+Odeber publikaci smaže (po potvrzení uživatelem) vybranou publikaci. Pro úpravu nebo smazání publikace 
+musí být daná publikace vybraná v tabulce se seznamem publikací (v opačném případě systém uživatele 
+upozorní že není vybraná žádná publikace). Úpravy a mazání publikací podléhá systému oprávnění v Plantlore. 
+Pro podrobnější informace o systému oprávnění navštivte sekci Práva.
+
+<h2>Vyhledávání publikací</h2>
+Dialog pro správu publikací umožňuje vyhledávání podle 4 parametrů: Jméno kolekce, název článku, citace a 
+podrobné informace. Výsledky můžou být uspořádané podle jména kolekce, roku publikace, jména článku, autora 
+článku, citace a podrobných informací vzestupně nebo sestupně. Řetězec pro vyhledávání nemusí přesně 
+odpovídat položce v databázi, nalezeny budou všechny záznamy, u kterých je zadaná položka podřetězcem 
+odpovídajíci položky v databázi. Po zadaní parametrů pro hledání se vyhledávaní spouští tlačítkem Vyhledej 
+publikace.
+<p>
+Vyhledávání nerozlišuje malá a velká písmena.
+<p>
+Po otevření dialogového okna pro správu publikací se zobrazí všechny dostupné publikace. Pro pozdější 
+zobrazení všech publikací stiskněte tlačítko Vyhledej publikace bez vyplnění vyhledávacích parametrů.
+
+<h1>Přidávání a editace publikací</h1>
+Dialogové okno pro přidávaní nebo editaci publikací se otevírá z hlavního okna správy publikací tlačítkem 
+Přidej publikaci resp. Uprav publikaci. Toto okno obsahuje následující položky:
+<ul>
+<li><b>Jméno kolekce</b> - Jméno kolekce do které daná publikace patří.</li>
+<li><b>Rok publikace</b> - Rok, ve kterém došlo k publikaci nálezu.</li>
+<li><b>Název článku</b> - Název článku, ve kterém byl nález publikován.</li>
+<li><b>Jméno autora článku</b> - Autor článku ve kterém byl nález publikován.</li>
+<li><b>Detail</b> - Detail odkazu na článek.</li>
+<li><b>Poznámka</b> - Jakákoli další informace o publikaci.</li>
+</ul>
+Pokud přidáváte novou publikaci, vyplňte jednotlivé položky a stiskněte tlačítko Ulož publikaci. Alespoň 
+jedna z následujících položek musí být vyplňena: Autor článku, rok publikace, jméno článku, jméno kolekce.
+<p>
+V případě, že upravujete už existující publikaci, vyplní se parametry vybrané publikace do formuláře a 
+můžete je upravit. Pomocí tlačítka Ulož publikaci  se změny uloží do databáze. Tak jako u přidávání 
+publikací, alespoň jedna z těchto položek musí být vyplněná: Autor článku, rok publikace, jméno článku, 
+jméno kolekce
+  </body>
 </html>

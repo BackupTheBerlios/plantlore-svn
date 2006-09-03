@@ -14,7 +14,7 @@
     <mapID target="overview.addoccurrence.extended" url="html/addoccurrence.html#extended"/>
     <mapID target="overview.addoccurrence.checklist" url="html/addoccurrence.html#checklist"/>
     <mapID target="overview.search" url="html/search.html"/>
-    <mapID target="overview.history" url="html/occurr_history.html#historyRecord"/>
+    <mapID target="overview.history" url="html/history.html#historyRecord"/>
     <mapID target="author" url="html/author.html"/>
     <mapID target="author.add" url="html/author.html#add"/>
     <mapID target="publication" url="html/publication.html"/>
@@ -28,7 +28,7 @@
     <mapID target="user.rights" url="html/user.html#rights"/>
     <mapID target="import" url="html/import.html"/>
     <mapID target="export" url="html/export.html"/>
-    <mapID target="id328078" url="html/cheat.html"/>
+    <mapID target="createdb" url="html/createdb.html"/>
     <mapID target="server" url="html/server.html"/>
     <mapID target="server.connection" url="html/server.html#connection"/>
     <mapID target="server.manager" url="html/server.html#manager"/>

@@ -39,6 +39,7 @@
     </tocitem>
     <tocitem target="import" text="Import"/>
     <tocitem target="export" text="Export"/>
+    <tocitem target="createdb" text="New database"/>    
     <tocitem target="server" text="Server">
         <tocitem target="server.connection" text="Create server, Connect to server, Running server"/>
         <tocitem target="server.manager" text="Server manager"/>        

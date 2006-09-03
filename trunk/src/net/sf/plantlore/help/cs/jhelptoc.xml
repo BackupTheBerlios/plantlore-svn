@@ -39,6 +39,7 @@
     </tocitem>
     <tocitem target="import" text="Import dat"/>
     <tocitem target="export" text="Export dat"/>
+    <tocitem target="createdb" text="Nová databáze"/>    
     <tocitem target="server" text="Server">
         <tocitem target="server.connection" text="Vytvořeni a připojení se k serveru"/>
         <tocitem target="server.manager" text="Správa serveru"/>        
