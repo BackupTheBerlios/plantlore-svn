@@ -404,7 +404,7 @@ public class DBLayerUtils {
 			int results = db.executeQuery( query );
 			int rows = db.getNumRows( results );
 			if( rows > 1 ) {
-				logger.warn("There are " + rows + " completely identical records in the " + table.getSimpleName() + " table!");
+				logger.warn("There are " + rows + " completely identical records in the " + table.getSimpleName() + " table: " + record.toFullString());
 				throw new DBLayerException(L10n.getString("Error.AmbiguousRecord"));
 			}
 			

@@ -117,7 +117,12 @@ public class TableImportTask extends Task {
 					""));
 			
 			
-			Record recordInDB = dbutils.findMatchInDB( data.record );
+			Record recordInDB = null;
+			try {
+				dbutils.findMatchInDB( data.record );
+			} catch(DBLayerException e) {
+				continue;
+			}
 			boolean isRecordInDB = recordInDB != null;
 			
 			// Take action.
@@ -148,11 +153,11 @@ public class TableImportTask extends Task {
 				}
 			} catch(ImportException ie) {
 				logger.error("The import of the record No. " + count + " was unsuccessful! " + ie.getMessage());
-				setStatusMessage( ie.getMessage() );
+				//setStatusMessage( ie.getMessage() );
 			} catch(DBLayerException de) {
 				logger.error("Delete/update/insert failed! " + de.getMessage());
-				setStatusMessage( L10n.getFormattedString("Import.UnableToProcess", count) + " " + 
-						((de.getMessage() == null) ? L10n.getString("Import.UnknownReason") : de.getMessage()) );
+				//setStatusMessage( L10n.getFormattedString("Import.UnableToProcess", count) + " " + 
+				//		((de.getMessage() == null) ? L10n.getString("Import.UnknownReason") : de.getMessage()) );
 			}
 		}
 		
