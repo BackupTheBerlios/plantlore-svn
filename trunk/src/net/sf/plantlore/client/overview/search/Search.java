@@ -117,7 +117,7 @@ public class Search extends Observable {
         this.database = database;
         this.editMode = editMode;
         logger = Logger.getLogger(this.getClass().getPackage().getName());         
-        clear();
+        clearAndNotify();
     }
  
 
@@ -925,6 +925,11 @@ public class Search extends Observable {
         return sq;
     }
     
+    public void clearAndNotify() {
+        clear();
+        setChanged(); notifyObservers("CLEAR");
+    }
+    
     public void clear() {
         clearAuthors();
     
@@ -950,9 +955,8 @@ public class Search extends Observable {
         month  = null;
         fromDate = null;
         toDate = null;
-        setChanged(); notifyObservers("CLEAR");
     }
-    
+
     public void clearAuthors() {
         authorList = new ArrayList<Pair<Pair<String,Integer>,String>>();
         resultRevision = new ArrayList<String>();        

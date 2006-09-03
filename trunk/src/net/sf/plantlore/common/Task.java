@@ -269,6 +269,10 @@ public abstract class Task extends Observable {
     	setChanged();
         notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
     }
+    
+    public String toString() {
+        return "Task("+this.hashCode()+")";
+    }
 }
 
 

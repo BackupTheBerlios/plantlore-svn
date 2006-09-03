@@ -80,7 +80,9 @@ import net.sf.plantlore.client.user.UserManagerCtrl;
 import net.sf.plantlore.client.user.UserManagerView;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.DefaultProgressBarEx;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.PlantloreHelp;
@@ -488,7 +490,7 @@ public class AppCoreCtrl {
 					model.getMainConfig().setColumns(columns);
 
 					searchModel.setColumns(columns);
-					searchModel.clear();
+					searchModel.clearAndNotify();
 					searchModel.constructQuery();
 				}
 				if (s.equals("DYNAMIC_PAGE_LOADING")) {
@@ -882,7 +884,7 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			searchModel.clear();
+			searchModel.clearAndNotify();
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
                                 searchView.setVisible(true);
@@ -955,7 +957,7 @@ public class AppCoreCtrl {
                     if (message.equals("SEARCH")) {
                         switch (nodeInfo.getType()) {
                             case HABITAT:
-                                searchModel.clear();
+                                searchModel.clearAndNotify();
                                 searchModel.setHabitatId(nodeInfo.getId());
                                 searchModel.constructQuery();
                         }//switch
@@ -1693,7 +1695,7 @@ public class AppCoreCtrl {
                                 fillDialogModels();
 
                                 view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
-                                searchModel.clear();
+                                searchModel.clearAndNotify();
                                 searchModel.constructQuery();
 
                                 view.getSBM().displayDefaultText();
@@ -1744,11 +1746,12 @@ public class AppCoreCtrl {
 		if (createTask) {
 			Task task = new Task() {
 				public Object task() throws DBLayerException, RemoteException {
+                                    //refreshAction.setEnabled(false);
 					searchModel.clear();
 					searchModel.constructQuery();
 					fireStopped(null);
 					return null;
-				}
+				}                                
 			};
 
 			return task;
@@ -1761,6 +1764,8 @@ public class AppCoreCtrl {
 
         /** Handles the refresh action invoked from overview. */
 	class RefreshAction extends AbstractAction {
+            Task task = refreshOverview(true);
+            
 		public RefreshAction() {
 			if (showButtonText)
 				putValue(NAME, L10n.getString("Overview.Refresh"));
@@ -1772,11 +1777,20 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+                    /*if (task != null && task.isRunning()) {
+                        System.out.println("Refresh is already running. Returning...");
+                        return;
+                    }*/
+                        
 			// e can be null !!! - we call actionPerformed(null) in DeleteAction
-			Task task = refreshOverview(true);
-			ProgressBar progressBar = new DefaultProgressBar(task, view, true);
+			//task = refreshOverview(true);
+			/*ProgressBar progressBar = new DefaultProgressBarEx(task, view, true) {
+                            public void afterStopping() {
+                                refreshAction.setEnabled(true);
+                            }
+                        };*/
 
-			task.start();
+			System.out.println("Dispatcher: "+Dispatcher.getDispatcher().dispatch(task, view, true));
 		}
 
 	}
