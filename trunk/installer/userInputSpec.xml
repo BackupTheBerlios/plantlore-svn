@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<userInput>
+    <panel order="0">
+        <createForPack name="PostgreSQL" />
+        <field type="title" align="center"
+               txt="PostgreSQL Installation Details" bold="true" size="2"
+               id="title.PostgreSQL"/>
+
+        <field type="text" variable="serviceaccount">
+            <description align="left" 
+                         txt="PostgreSQL database system has to run under unpriviliged user account. Please specify the name and password of this user. Make sure that the name of the user is unique in your system"
+                         id="serviceaccount.description"/>
+            <spec txt="Username: " id="serviceaccount.text" size="15"/>
+        </field>               
+        
+        <field type="text" variable="servicepassword">
+            <spec txt="Password: " id="servicepassword.text" size="15"/>
+        </field>               
+                   
+        <field type="text" variable="superuser">
+            <description align="left" 
+                         txt="In order to login to the PostgreSQL database system, you need to create a superuser account. Using this account you will login to Plantlore for the first time. After that, you can manage this account from within Plantlore client. Please enter username and password for the superuser"
+                         id="superuser.description"/>
+            <spec txt="Username: " id="superuser.text" size="15"/>
+        </field>               
+
+        <field type="text" variable="superpassword">
+            <spec txt="Password: " id="superpassword.text" size="15"/>
+        </field>               
+
+        <field type="text" variable="listeningport">
+            <spec txt="Port number: " id="portnumber.text" size="5" set="5432"/>
+        </field>               
+<!--        
+        <field type="rule" variable="listeningport">
+            <spec txt="Port number:" layout="N:5:5"
+                  set="5432" resultFormat="plainString" id="portnumber.text" />
+            <validator class="com.izforge.izpack.util.NotEmptyValidator" 
+                       txt="Invalid port number!" id="portnumber.error" />                                             
+        </field>
+--> 
+            
+        <field type="check" variable="postgreshortcuts">
+            <description align="left" 
+                         txt="Specify whether the installation program should create Start menu shortcuts for PostgreSQL database"
+                         id="postgreshortcuts.description"/>
+            <spec txt="Create shortcuts" id="postgreshortcuts.create" true="0" false="1" set="false" />
+        </field>        
+
+        <field type="search" variable="postgrehome">
+            <description align="left" 
+                         txt="Please specify a place where PostgreSQL database will be installed. Make sure that the location is on NTFS partition. For more details see installation instructions distributed with this install package."
+                         id="postgrehome.description"/>
+            <spec txt="PostgreSQL directory: " type="directory" result="directory" id="postgrehome.text" />
+        </field>        
+
+    </panel>
+</userInput>

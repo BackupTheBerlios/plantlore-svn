@@ -1,0 +1,3 @@
+msiexec /i "$INSTALL_PATH\postgresql-8.1-int.msi" /qr INTERNALLAUNCH=1 ADDLOCAL=server,psql SERVICEDOMAIN="%COMPUTERNAME%" SERVICEACCOUNT="$serviceaccount" SERVICEPASSWORD="$servicepassword" CREATESERVICEUSER=1 LISTENPORT="$listeningport" SUPERUSER="$superuser" SUPERPASSWORD="$superpassword" BASEDIR="$postgrehome" NOSHORTCUTS=$postgreshortcuts /log install.log
+
+del "$INSTALL_PATH\postgresql-8.1-int.msi"

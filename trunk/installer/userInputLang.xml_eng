@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<langpack>
+    <str id="title.PostgreSQL" txt="PostgreSQL Installation Details"/>
+    <str id="serviceaccount.description" txt="PostgreSQL database system has to run under unpriviliged user account. Please specify the name and password of this user. Make sure that the name of the user is unique in your system"/>
+    <str id="serviceaccount.text" txt="Username: "/>
+    <str id="servicepassword.text" txt="Password: "/>
+
+    <str id="superuser.description" txt="In order to login to the PostgreSQL database system, you need to create a superuser account. Using this account you will login to Plantlore for the first time. After that, you can manage this account from within Plantlore client. Please enter username and password for the superuser"/>
+    <str id="superuser.text" txt="Username: "/>
+    <str id="superpassword.text" txt="Password: "/>
+
+    <str id="portnumber.text" txt="Port number: "/>
+
+    <str id="postgreshortcuts.description" txt="Specify whether the installation program should create Start menu shortcuts for PostgreSQL database"/>
+    <str id="postgreshortcuts.create" txt="Create shortcuts"/>
+
+    <str id="postgrehome.description" txt="Please specify a place where PostgreSQL database will be installed. Make sure that the location is on NTFS partition. For more details see installation instructions distributed with this install package."/>
+    <str id="postgrehome.text" txt="PostgreSQL directory: "/>
+
+</langpack>

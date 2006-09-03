@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<langpack>
+    <str id="title.PostgreSQL" txt="Detaily instalace PostgreSQL"/>
+    <str id="serviceaccount.description" txt="Databázový systém PostgreSQL musí bìžet v operaèním systému pod uživatelským úètem s omezenými právy. Zadejte jméno a heslo pro tohoto uživatele a instalátor ho pro Vás vytvoøí. Ujistìte se, že zadané jméno uživatele je v systému unikátní"/>
+    <str id="serviceaccount.text" txt="Jméno: "/>
+    <str id="servicepassword.text" txt="Heslo: "/>
+
+    <str id="superuser.description" txt="Pro používání systému PostgreSQL musíte vytvoøit prvního databázového uživatele pomocí kterého se po prvé pøihlásíte do Plantlore. Potom bude možné pomocí klienta Plantlore spravovat další databázové uživatele."/>
+    <str id="superuser.text" txt="Jméno: "/>
+    <str id="superpassword.text" txt="Heslo: "/>
+
+    <str id="portnumber.text" txt="Èíslo portu: "/>
+
+    <str id="postgreshortcuts.description" txt="Vyberte jestli mají být vytvoøeny odkazy na systém PostgreSQL v Start menu"/>
+    <str id="postgreshortcuts.create" txt="Vytvoøit odkazy"/>
+
+    <str id="postgrehome.description" txt="Czech:Prosím vyberte adresáø do kterého bude systém PostgreSQL nainstalován. Tento adresáø musí být na diskovém oddílu formátu NTFS. Podrobné informace najdete v instalaèní pøíruèce pøiložené k tomuto instalátoru."/>
+    <str id="postgrehome.text" txt="PostgreSQL adresáø: "/>
+</langpack>
