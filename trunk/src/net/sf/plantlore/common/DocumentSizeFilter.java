@@ -9,9 +9,13 @@
 
 package net.sf.plantlore.common;
 
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 
 
 /** Document filter that limits lenght of the text user can type, paste or maybe drag
@@ -67,6 +71,17 @@ public class DocumentSizeFilter extends DocumentFilter {
             fb.replace(offs, length, str.substring(0,spaceLeft), a);
         }
     }//replace
+    
+    
+    public static void patch(JTextField textField, int size) {
+    	 PlainDocument pd = (PlainDocument) textField.getDocument();
+         pd.setDocumentFilter( new DocumentSizeFilter(size) );
+    }
+    
+    public static void patch(JComboBox comboBox, int size) {
+    	patch( (JTextField)comboBox.getEditor().getEditorComponent(), size );
+    }
+    
 
 }//DocumentSizeFilter
 
