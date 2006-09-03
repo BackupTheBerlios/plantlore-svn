@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import net.sf.plantlore.client.AppCore;
 import net.sf.plantlore.client.AppCoreCtrl;
 import net.sf.plantlore.client.AppCoreView;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.GlobalExceptionHandler;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.debug.ConnectionMonitor;
@@ -149,6 +150,7 @@ public class Plantlore {
             model = new AppCore(mainConfig);
             view = new AppCoreView(model);
             ctrl = new AppCoreCtrl(model, view);
+            Dispatcher.initialize(view.progressBar);
             //view.init();
             view.setVisible(true);
             EventQueue.invokeLater( new SplashScreenCloser() );

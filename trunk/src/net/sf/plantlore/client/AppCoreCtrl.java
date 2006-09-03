@@ -9,6 +9,7 @@ package net.sf.plantlore.client;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -86,6 +87,7 @@ import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.ProgressBar;
 import net.sf.plantlore.common.Selection;
 import net.sf.plantlore.common.StandardAction;
@@ -885,11 +887,7 @@ public class AppCoreCtrl {
 
 		public void actionPerformed(ActionEvent actionEvent) {
 			searchModel.clearAndNotify();
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                searchView.setVisible(true);
-                            }
-                        });
+                        searchView.setVisible(true);
 		}//actionPerformed
 	}//SearchAction
 
@@ -916,11 +914,7 @@ public class AppCoreCtrl {
                             DefaultExceptionHandler.handle(view,ex);
                             return;
                         }
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                habitatTreeView.setVisible(true);
-                            }
-                        });
+                        habitatTreeView.setVisible(true);
 		}//actionPerformed
 	}// HabitatTreeAction
 
@@ -986,12 +980,8 @@ public class AppCoreCtrl {
                             DefaultExceptionHandler.handle(view,ex);
                             return;
                         }
-                        SwingUtilities.invokeLater( new Runnable() {
-                            public void run() {
-                                addView.loadComponentData();
-                                addView.setVisible(true);   
-                            }
-                        });//invokeLater
+                        addView.loadComponentData();
+                        addView.setVisible(true);   
                     }//if ADD
                 }//if
             }//update
@@ -1180,11 +1170,7 @@ public class AppCoreCtrl {
 			AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel,
 					authView);
 			authModel.addObserver(managerBridge);
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                authView.setVisible(true);
-                            }
-                        });
+                        authView.setVisible(true);
 		}
 
 	}
@@ -1205,11 +1191,7 @@ public class AppCoreCtrl {
 			publicationManagerCtrl = new PublicationManagerCtrl(
 					publicationManagerModel, publicationManagerView);
 			publicationManagerModel.addObserver(managerBridge);
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                publicationManagerView.setVisible(true);
-                            }
-                        });
+                        publicationManagerView.setVisible(true);
 		}
 	}
 
@@ -1228,20 +1210,25 @@ public class AppCoreCtrl {
 				userManagerCtrl = new UserManagerCtrl(userManagerModel,userManagerView);
 			}
 			Task task = userManagerModel.searchUser(true);
-			new DefaultProgressBar(task, view, true) {
+                        task.setPostTaskAction(new PostTaskAction() {
+                            public void afterStopped(Object value) {
+                                if (! userManagerModel.isFinishedTask()) return;
+                                userManagerModel.setInfoFinishedTask(false);
+                                userManagerCtrl.reloadData(1, UserManager.DEFAULT_DISPLAY_ROWS);
+                                userManagerView.setVisible(true);	
+                            }                            
+                        });
+                        Dispatcher.getDispatcher().dispatch(task, view, false);
+/**			new DefaultProgressBar(task, view, true) {
 				@Override
 	 	    	public void afterStopping() {
 					if (! userManagerModel.isFinishedTask()) return;
 					userManagerModel.setInfoFinishedTask(false);
 					userManagerCtrl.reloadData(1, UserManager.DEFAULT_DISPLAY_ROWS);
-                                        SwingUtilities.invokeLater(new Runnable() {
-                                            public void run() {
-                                                userManagerView.setVisible(true);	
-                                            }
-                                        });
+                                        userManagerView.setVisible(true);	
 	 	    	}
 			};			
-			task.start();					
+			task.start();					 */
 		}
 	}
         
@@ -1334,11 +1321,7 @@ public class AppCoreCtrl {
 					if (! metadataManagerModel.isFinishedTask()) return;
 					metadataManagerModel.setInfoFinishedTask(false);
 					metadataManagerCtrl.reloadData(1, MetadataManager.DEFAULT_DISPLAY_ROWS);
-                                        SwingUtilities.invokeLater(new Runnable() {
-                                            public void run() {
-                                                metadataManagerView.setVisible(true);
-                                            }
-                                        });
+                                        metadataManagerView.setVisible(true);
 	 	    	}
 			};			
 			task.start();						
@@ -1424,11 +1407,7 @@ public class AppCoreCtrl {
 					if (resultNumber != model.getResultsCount())
 						model.selectAndShow(resultNumber);
 					detailModel.load(model.getSelectedResultNumber());
-                                        SwingUtilities.invokeLater( new Runnable() {
-                                            public void run() {
-                                                detailView.setVisible(true);
-                                            }
-                                        });
+                                        detailView.setVisible(true);
 				} catch (RemoteException ex) {
                                     DefaultExceptionHandler.handle(view,ex);
                                     return;
@@ -1476,11 +1455,7 @@ public class AppCoreCtrl {
 					// we need to
 					// correct that
 					detailModel.load(model.getSelectedResultNumber());
-                                        SwingUtilities.invokeLater( new Runnable() {
-                                            public void run() {
-                                                detailView.setVisible(true);
-                                            }
-                                        });
+                                        detailView.setVisible(true);
 				} catch (RemoteException ex) {
                                     DefaultExceptionHandler.handle(view,ex);
                                     return;
@@ -1564,11 +1539,7 @@ public class AppCoreCtrl {
 			 * etc.)
 			 */
 
-                        SwingUtilities.invokeLater( new Runnable() {
-                            public void run() {
-                                setDatabaseDependentCommandsEnabled(false);
-                            }
-                        });
+                        setDatabaseDependentCommandsEnabled(false);
 		}
 
 	}
@@ -1747,13 +1718,13 @@ public class AppCoreCtrl {
 			Task task = new Task() {
 				public Object task() throws DBLayerException, RemoteException {
                                     //refreshAction.setEnabled(false);
+                                    setStatusMessage("Loading overview data...");
 					searchModel.clear();
 					searchModel.constructQuery();
 					fireStopped(null);
-					return null;
-				}                                
+					return "Ahoj, uz koncim";
+				}
 			};
-
 			return task;
 		} else {
 			searchModel.clear();
@@ -1764,6 +1735,7 @@ public class AppCoreCtrl {
 
         /** Handles the refresh action invoked from overview. */
 	class RefreshAction extends AbstractAction {
+            String prom = "Promenna z refresh action.";
             Task task = refreshOverview(true);
             
 		public RefreshAction() {

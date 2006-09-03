@@ -13,6 +13,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
@@ -26,6 +27,7 @@ public class Dispatcher {
     private DefaultProgressBarNew dpb;
     private Task task;
     private static Dispatcher dispatcher = new Dispatcher();
+    private static ProgressBarManager pbm;
     
     private Dispatcher() {
     }
@@ -38,7 +40,11 @@ public class Dispatcher {
         
         taskRunning = true;
         this.task = task;
-        dpb = new DefaultProgressBarNew(task, parent, true);
+        //dpb = new DefaultProgressBarNew(task, parent, true);
+
+        pbm.initialize();
+        pbm.setParent(parent);
+        pbm.setTask(task);
         
         task.start();
         
@@ -51,12 +57,26 @@ public class Dispatcher {
      */
     public synchronized void finished() {
         taskRunning = false;
-        task.deleteObservers();
+        pbm.removeTask();
+        pbm.setParent((JDialog)null);
+/*        do{
+        	try{ Thread.sleep(50); } catch(Exception e) {}
+        } while( dpb.isShowing() ); */
         logger.debug("Dispatcher: "+task+" finished, free to dispatch another.");
     }    
     
     public static Dispatcher getDispatcher() {
+        if (pbm == null) //FIXME: think of a better kind of exception
+            throw new IllegalArgumentException("You have to call Dispatcher.initialize() first!");
+        
         return dispatcher;
+    }
+    
+    public static void initialize(JProgressBar pb) {
+        if (pb == null) {
+            throw new IllegalArgumentException("Dispatcher can't be initialized with null progress bar!");
+        }
+        pbm = new ProgressBarManager(pb);
     }
 }
 

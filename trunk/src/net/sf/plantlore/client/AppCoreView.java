@@ -55,6 +55,8 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         setLocationRelativeTo(null);
         model.addObserver(this); 
         model.addObserver(sbm);
+        progressBar.setVisible(false);
+        progressBar.setBorderPainted(false);
     }
     
     /** This method is called from within the constructor to
@@ -74,6 +76,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         habitatTreeButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
         pageToolBar = new javax.swing.JToolBar();
         selectAll = new javax.swing.JButton();
         selectNone = new javax.swing.JButton();
@@ -155,17 +158,23 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         statusLabel.setText(L10n.getString("Overview.StatusReady"));
 
+        progressBar.setForeground(new java.awt.Color(51, 255, 51));
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(statusLabel)
-                .addContainerGap(582, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 268, Short.MAX_VALUE)
+                .add(progressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 314, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusLabel)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(statusLabel)
+                .addContainerGap())
+            .add(progressBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
         );
 
         pageToolBar.setFloatable(false);
@@ -244,7 +253,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         );
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .add(overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -392,11 +401,11 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(mainToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, overviewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(pageToolBar, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
+            .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -404,12 +413,12 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 .add(mainToolBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(overviewPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(14, 14, 14)
                 .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(pageToolBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 34, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -770,6 +779,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel pageStatusLabel;
     private javax.swing.JToolBar pageToolBar;
     private javax.swing.JButton prevPage;
+    protected javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel recordsCount;
     private javax.swing.JLabel recordsCountLabel;
     protected javax.swing.JFormattedTextField recordsPerPage;

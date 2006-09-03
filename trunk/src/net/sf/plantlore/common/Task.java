@@ -28,6 +28,7 @@ public abstract class Task extends Observable {
     private boolean canceled = false;
     private String statusMessage = "";
     private boolean determinate;
+    private PostTaskAction action;
     
     /** Creates new Task in determinate mode.
      */
@@ -41,6 +42,10 @@ public abstract class Task extends Observable {
      */
     public Task() {
         determinate = false;
+    }
+    
+    public void setPostTaskAction(PostTaskAction action) {
+        this.action = action;
     }
     
     /** Returns length of this task.
@@ -185,6 +190,9 @@ public abstract class Task extends Observable {
                     value = task();
                     setChanged();
                     notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
+                    if (action != null) {
+                        action.afterStopped(value);
+                    }
                 } catch (Exception ex) {
                     //FIXME:
                     ex.printStackTrace();
@@ -198,7 +206,9 @@ public abstract class Task extends Observable {
         worker.start();
     }
 
-    /** Continues processing of the task.
+    /** DON'T USE! NOT WELL TESTED!! + doesn't support afterStopping(), etc. 
+     * 
+     * Continues processing of the task.
      *
      * This method is supposed to be called after the task was interrupted by an exception.
      * Call to this method is almost the same as to start() but Observers are notified that
@@ -206,6 +216,7 @@ public abstract class Task extends Observable {
      * 
      *
      */
+    @Deprecated
     public void proceed() {
         worker = new SwingWorker() {
             public Object construct() {
@@ -253,7 +264,6 @@ public abstract class Task extends Observable {
         notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));
     }
     
-    
     /**
      * Forcibly stops (cancels) the task.
      * <br/>
@@ -273,6 +283,7 @@ public abstract class Task extends Observable {
     public String toString() {
         return "Task("+this.hashCode()+")";
     }
+    
 }
 
 
