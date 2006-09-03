@@ -98,6 +98,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private Right rights;    
     /** Unique identifier of the database we are connected to */
     private String databaseID;
+     /** Plantlore prefix of user name */
+    private String userPrefix = "plantlore_";
     
     private Session txSession;
     private Transaction longTx;            
@@ -108,10 +110,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     private static final int DELETE = 3;
     
     private DatabaseSettings settings;
-    private String currentlyConnectedUser = "";
-    
-    /** Plantlore prefix of user name */
-    private static final String USER_PREFIX = "plantlore_";
+    private String currentlyConnectedUser = "";         
         
     public HibernateDBLayer(DatabaseSettings settings) {
     	this(null, settings);
@@ -128,6 +127,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         logger.debug("Constructing a new HibernateDBLayer.");
         
         this.settings = settings;
+           
         
         // Initialize pool of result sets, initial capacity = INITIAL POOL SIZE
         results = new Hashtable<Integer, ScrollableResults>(INITIAL_POOL_SIZE); 
@@ -174,7 +174,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public User initialize(String dbID, String user, String password) 
     throws DBLayerException, RemoteException {
         Configuration cfg;
-        currentlyConnectedUser = user;
+        currentlyConnectedUser = user;        
+        userPrefix = dbID.toLowerCase() + "_";
         
         // Load Hibernate configuration
         try {
@@ -190,13 +191,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         	cfg.setProperty("hibernate.connection.url", settings.getConnectionStringPrefix() + dbID 
         			+ "?" + settings.getConnectionStringSuffix());
         // Set username and password to access database
-        cfg.setProperty("hibernate.connection.username", HibernateDBLayer.USER_PREFIX + user);
+        cfg.setProperty("hibernate.connection.username", this.userPrefix + user);
         cfg.setProperty("hibernate.connection.password", password);
         
         // Build session factory & create a new session.
         Session sess = null;
         // Authenticate user
-        logger.debug("DBLayer Initialization - about to authenticate the user.");
+        logger.debug("DBLayer Initialization - about to authenticate the user. user" + this.userPrefix + user);
         try {
         	logger.debug("DBLayer Initialization - building session factory.");
         	sessionFactory = cfg.buildSessionFactory();
@@ -226,7 +227,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             	throw new DBLayerException(L10n.getString("Error.ConnectionFailed"), DBLayerException.ERROR_CONNECT);
             }
             Object[] unitiddatabase = sr.get();
-            this.databaseID = ((UnitIdDatabase)unitiddatabase[0]).getUnitIdDb();
+            this.databaseID = ((UnitIdDatabase)unitiddatabase[0]).getUnitIdDb();            
             logger.debug("DBLayer Initialization - finished!");
         } 
         catch (JDBCException e) {
@@ -273,7 +274,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             occ.setCreatedWho(this.plantloreUser);
             // Set UniqueID for the record and database
             occ.setUnitIdDb(this.databaseID);
-            occ.setUnitValue("TODO");
+            //TODO zjiskat unikatni identifikator zaznamu !!!
+            occ.setUnitValue(1);
         } else if(record instanceof Habitat) {
             ((Habitat)record).setCreatedWho(this.plantloreUser);
         } else if(record instanceof Publication) {
@@ -2089,9 +2091,9 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }        
         try {
             Connection conn = txSession.connection();                    
-            PreparedStatement pstmt = conn.prepareStatement("CREATE USER " +HibernateDBLayer.USER_PREFIX + name+ " WITH PASSWORD '" +password+ "' "+admin);            
+            PreparedStatement pstmt = conn.prepareStatement("CREATE USER " + this.userPrefix + name+ " WITH PASSWORD '" +password+ "' "+admin);            
             pstmt.execute();
-            PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " +HibernateDBLayer.USER_PREFIX + name);   
+            PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " + this.userPrefix + name);   
             pstmtGrant.execute();
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());
@@ -2155,20 +2157,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             // In case password has changed, execute statement to change the password
             // In case admin right has changed, execute statement to change the access permission
             if ((password != null) && (!password.equals(""))) {                                    
-                PreparedStatement pstmt = conn.prepareStatement("ALTER USER " +HibernateDBLayer.USER_PREFIX +name+ " WITH PASSWORD '" +password+ "' " +admin);                
+                PreparedStatement pstmt = conn.prepareStatement("ALTER USER " + this.userPrefix +name+ " WITH PASSWORD '" +password+ "' " +admin);                
                 pstmt.execute();
                 if (changeRight) {
-                    PreparedStatement pstmtRevoke = conn.prepareStatement("REVOKE "+roleOld+" FROM "+HibernateDBLayer.USER_PREFIX +name);                
+                    PreparedStatement pstmtRevoke = conn.prepareStatement("REVOKE "+roleOld+" FROM "+ this.userPrefix +name);                
                     pstmtRevoke.execute();
-                    PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " +HibernateDBLayer.USER_PREFIX + name);   
+                    PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " + this.userPrefix + name);   
                     pstmtGrant.execute();
                 }
             } else {                
-                PreparedStatement pstmt = conn.prepareStatement("ALTER USER " +HibernateDBLayer.USER_PREFIX +name+ " " +admin);                
+                PreparedStatement pstmt = conn.prepareStatement("ALTER USER " + this.userPrefix +name+ " " +admin);                
                 pstmt.execute();  
-                PreparedStatement pstmtRevoke = conn.prepareStatement("REVOKE "+roleOld+" FROM "+HibernateDBLayer.USER_PREFIX +name);                
+                PreparedStatement pstmtRevoke = conn.prepareStatement("REVOKE "+roleOld+" FROM "+ this.userPrefix +name);                
                 pstmtRevoke.execute();
-                PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " +HibernateDBLayer.USER_PREFIX + name);   
+                PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " + this.userPrefix + name);   
                 pstmtGrant.execute();
             }            
         } catch (HibernateException e) {
@@ -2212,7 +2214,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         try {
             Connection conn = txSession.connection();        
-            PreparedStatement pstmt = conn.prepareStatement("DROP USER " +HibernateDBLayer.USER_PREFIX + name);            
+            PreparedStatement pstmt = conn.prepareStatement("DROP USER " + this.userPrefix + name);            
             pstmt.execute();
         } catch (HibernateException e) {
             logger.warn("Unable to retrieve JDBC connection from the Hibernate session. Details: "+e.getMessage());

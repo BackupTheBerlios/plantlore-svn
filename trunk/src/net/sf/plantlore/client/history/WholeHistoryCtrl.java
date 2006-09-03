@@ -293,7 +293,7 @@ public class WholeHistoryCtrl {
                detailsView.setDetailsMessage(detailsMessage);
                detailsView.setVisible(true);               
            } 
-           if (!model.isError()) {
+           if (model.isError()) {
 	           Exception ex = model.getException();
                    ex.printStackTrace();
                    DefaultExceptionHandler.handle(view, ex);  

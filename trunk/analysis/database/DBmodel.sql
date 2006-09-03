@@ -125,8 +125,8 @@ PRIMARY KEY (CID));
 /* Table: TOCCURRENCES*/
 CREATE TABLE TOCCURRENCES (
     CID                INTEGER NOT NULL,
-    CUNITIDDB          VARCHAR(30) NOT NULL,
-    CUNITVALUE         VARCHAR(30) NOT NULL,
+    CUNITIDDB          VARCHAR(40) NOT NULL,
+    CUNITVALUE         INTEGER NOT NULL,
     CHABITATID         INTEGER NOT NULL,
     CPLANTID           INTEGER NOT NULL,
     CYEARCOLLECTED     SMALLINT DEFAULT 0 NOT NULL,
@@ -337,19 +337,19 @@ AS SELECT * FROM tpublications WHERE cdelete = 0;
 CREATE OR REPLACE VIEW vauthorscollected
 AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
 FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
-WHERE ao.crole = 'collected' AND ao.cdelete = 0
+WHERE ao.crole = 'collected' AND ao.cdelete = 0;
 
 /* View: VAUTHORSREVISED */
 CREATE OR REPLACE VIEW vauthorsrevised
 AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
 FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
-WHERE ao.crole = 'revised' AND ao.cdelete = 0
+WHERE ao.crole = 'revised' AND ao.cdelete = 0;
 
 /* View: VAUTHORSIDENTIFIED */
 CREATE OR REPLACE VIEW vauthorsidentified
 AS SELECT ao.cid, ao.coccurrenceid, ao.cnote, a.cwholename, a.corganization, a.ctelephonenumber, a.crole, a.cemail, a.caddress, a.curl
 FROM  tauthors a JOIN tauthorsoccurrences ao on a.cid = ao.cauthorid
-WHERE ao.crole = 'identified' AND ao.cdelete = 0
+WHERE ao.crole = 'identified' AND ao.cdelete = 0;
 
 
 INSERT INTO thistorycolumn (cid, ctablename, ccolumnname) VALUES (1, 'AUTHOROCCURRENCE', NULL);

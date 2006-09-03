@@ -192,7 +192,8 @@ public class UserManager extends Observable {
                     } catch (Exception e) {
                             logger.error("Searching user failed. Exception caught in User. Details: "+e.getMessage());
                             setError(ERROR_SEARCH);
-                            setException(e);               
+                            setException(e);       
+                            return null;
                     }
                     return null;
     	}
@@ -272,15 +273,16 @@ public class UserManager extends Observable {
      */
     public void processResult(int from, int count) throws Exception {
         
-        if (this.resultId != 0) {
-            int currentRow = getResultCount();
-            setResultRows(currentRow);
-            if (isError()) {
-                Exception ex = getException();
-                setError(null);
-                setException(null);
+         int currentRow = 0;
+    	if (this.resultId != 0) {  
+            try { 
+               currentRow = database.getNumRows(resultId);
+               setResultRows(currentRow);
+            } catch (Exception ex){
+                logger.error("Get number of results failed. Exception caught in UserManager. Details: "+ex.getMessage());  
                 throw ex;
             }
+                        
             logger.debug("Rows in the result: "+currentRow);
             logger.debug("Max available rows: "+(from+count-1));
            
@@ -720,23 +722,7 @@ public class UserManager extends Observable {
      */
     public void setResultRows(int resultCount) {
         this.resultRows = resultCount;
-    }
-    
-    /**
-     * Get the number of results for the current SelectQuery
-     * @return number of results for the current SelectQuery
-     */
-    public int getResultCount() {
-        int resultCount = 0;
-        if (resultId != 0) try {
-                resultCount = database.getNumRows(resultId);        	
-        } catch(RemoteException e) {
-                logger.error("Get number of results failed.Remote exception caught in UserManager. Details: "+e.getMessage());  
-            	setError(ERROR_REMOTE_EXCEPTION);
-                setException(e);
-        }
-        return resultCount;
-    }
+    }   
 
     /**
 	  * Get results of a search query for dislpaying in userManager dialog

@@ -73,6 +73,8 @@ public class History extends Observable {
     private String displayRow;              
     /** Result of the search query */
     private int resultId = 0;
+    /** Number of results for the current SelectQuery */
+    private int resultRows = 0;
     /** List of data (results of a search query) displayed in the view dialog */
     private ArrayList<HistoryRecord> historyDataList = new ArrayList<HistoryRecord>();     
     /** List of editing object */
@@ -262,7 +264,7 @@ public class History extends Observable {
         	   throw dbex; 		            
      	   }   
      	   if (isError()) {    
-          Exception ex = getException(); 		  
+                  Exception ex = getException(); 		  
      		  setError(null);
      		  setException(null);
      		  throw ex;
@@ -356,8 +358,15 @@ public class History extends Observable {
      */
     public void processResult(int from, int count) throws Exception{
         
-        if (this.resultId != 0) {
-            int currentRow = getResultRows();
+         int currentRow = 0;
+    	 if (this.resultId != 0) {  
+            try { 
+               currentRow = database.getNumRows(resultId);
+               setResultRows(currentRow);
+            } catch (Exception ex){
+                logger.error("Get number of results failed. Exception caught in History. Details: "+ex.getMessage());  
+                throw ex;
+            }
             logger.debug("Rows in the result: "+currentRow);
             logger.debug("Max available rows: "+(from+count-1));            
            
@@ -1428,13 +1437,15 @@ public class History extends Observable {
         } catch(Exception ex) {
         	logger.error("Search authors failed. DBLayer exception caught in History. Details: "+ex.getMessage());       	                                                   
                 setError(ERROR_SEARCH_AUTHOR);
-                setException(ex);       	    
+                setException(ex);  
+                return null;
         }  
           
         if (objects == null) {
         	logger.error("tAuthors doesn't contain required data");  
- 		    setError(ERROR_SEARCH_AUTHOR);
-                    setException(new DBLayerException(ERROR_SEARCH_AUTHOR));
+                setError(ERROR_SEARCH_AUTHOR);
+                setException(new DBLayerException(ERROR_SEARCH_AUTHOR));
+                return null;
         }
         
        return objects;
@@ -1448,6 +1459,7 @@ public class History extends Observable {
     public String getAllNameOfAuthors(Object[] objects) {
         if (objects == null || isError()) {
         	setError(null);
+                setException(null);
         	return "";	
         }            
         String allAuthor = "";
@@ -2226,19 +2238,20 @@ public class History extends Observable {
         return this.resultId;
     }
     
-    /**
-     * Get the number of results for the current SelectQuery
+     /**
+     * Get the number of results for the current SelectQuery. 
      * @return number of results for the current SelectQuery
      */
     public int getResultRows() {
-        int resultCount = 0;
-        if (resultId != 0) try {
-             resultCount = database.getNumRows(resultId);        	
-        } catch(RemoteException e) {
-        	logger.error("Get number of results failed.Remote exception caught in History. Details: "+e.getMessage());  
-        	setError(ERROR_NUMBER_ROWS);
-        }
-        return resultCount;
+       return this.resultRows;
+    }
+    
+    /**
+     * Set the number of results for the current SelectQuery. 
+     * @param resultCount number of results for the current SelectQuery
+     */
+    public void setResultRows(int resultCount) {
+        this.resultRows = resultCount;
     }
         
      /**

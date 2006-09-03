@@ -10,15 +10,14 @@
       </id>
       <version name="version" column="CVERSION"/>
       <property column="CUNITIDDB"
-                length="30"
+                length="40"
                 name="unitIdDb"
                 not-null="true"
                 type="java.lang.String"/>
-      <property column="CUNITVALUE"
-                length="30"
+      <property column="CUNITVALUE"                
                 name="unitValue"
                 not-null="true"
-                type="java.lang.String"/>
+                type="java.lang.Integer"/>
       <many-to-one name="habitat" 
                    class="net.sf.plantlore.common.record.Habitat" 
                    column="CHABITATID"

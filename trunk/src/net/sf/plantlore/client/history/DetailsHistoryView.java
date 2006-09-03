@@ -31,7 +31,7 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
     public DetailsHistoryView(javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);        
-        initComponents(); 
+        initComponents();                
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_DATA, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);        
@@ -49,14 +49,7 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
     public void setDetailsMessage(String detailsMessage) {
         this.detailsTextArea.setText(detailsMessage);
     }
-    
-    /**
-     * Close this dialog.    
-     */
-    public void close() {
-        dispose();
-    }
-    
+       
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

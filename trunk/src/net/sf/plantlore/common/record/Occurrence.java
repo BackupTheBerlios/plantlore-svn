@@ -31,7 +31,7 @@ public class Occurrence extends Record implements Deletable {
     /** Parameters of the occurrence. For detailed explanation see data model documentation. */
     private Integer id;
     private String unitIdDb;
-    private String unitValue;
+    private Integer unitValue;
     private Habitat habitat;
     private Plant plant;
     private Integer yearCollected;
@@ -130,7 +130,7 @@ public class Occurrence extends Record implements Deletable {
 				setId((Integer)value);
 		}
 		else if(column.equalsIgnoreCase(UNITIDDB)) setUnitIdDb((String)value);
-		else if(column.equalsIgnoreCase(UNITVALUE)) setUnitValue((String)value);
+		else if(column.equalsIgnoreCase(UNITVALUE)) setUnitValue((Integer)value);
 		else if(column.equalsIgnoreCase(HABITAT)) setHabitat((Habitat)value);
 		else if(column.equalsIgnoreCase(PLANT)) setPlant((Plant)value);
 		else if(column.equalsIgnoreCase(YEARCOLLECTED)) {
@@ -234,7 +234,7 @@ public class Occurrence extends Record implements Deletable {
      *   @return unique record value
      *   @see setUnitValue
      */
-    public String getUnitValue() {
+    public Integer getUnitValue() {
         //obligatory
         return this.unitValue;
     }
@@ -244,7 +244,7 @@ public class Occurrence extends Record implements Deletable {
      *   @param unitValue unique record value
      *   @see getUnitValue
      */
-    public void setUnitValue(String unitValue) {
+    public void setUnitValue(Integer unitValue) {
         this.unitValue = unitValue;
     }
 

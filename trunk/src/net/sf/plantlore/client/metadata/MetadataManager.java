@@ -157,6 +157,7 @@ public class MetadataManager  extends Observable {
                           logger.error("Searching metada failed. Exception caught in Metadata. Details: "+e.getMessage());
                            setError(ERROR_SEARCH);
                            setException(e);
+                           return null;
                     }
                     return null;
     	}
@@ -243,16 +244,16 @@ public class MetadataManager  extends Observable {
      */
     public void processResult(int from, int count) throws Exception{
         
-    	if (this.resultId != 0) {    		
-             int currentRow = getResultCount();
-            setResultRows(currentRow);
-            if (isError()) {
-                Exception ex = getException();
-                setError(null);
-                setException(null);
+        int currentRow = 0;
+    	if (this.resultId != 0) {  
+            try { 
+               currentRow = database.getNumRows(resultId);
+               setResultRows(currentRow);
+            } catch (Exception ex){
+                logger.debug("Catch Exception in History. GetNumRows called in function processResult failed. Details: "+ex.getMessage());
                 throw ex;
             }
-            logger.debug("Rows in the result: "+currentRow);
+            logger.debug("Rows in the result: "+ currentRow);
             logger.debug("Max available rows: "+(from+count-1));            
            
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
@@ -563,28 +564,13 @@ public class MetadataManager  extends Observable {
     }
     
     /**
-     * Set the number of results for the current SelectQuery.     
+     * Set the number of results for the current SelectQuery. 
+     * @param resultCount number of results for the current SelectQuery
      */
     public void setResultRows(int resultCount) {
         this.resultRows = resultCount;
     }
     
-  
-    /**
-     * Get the number of results for the current SelectQuery
-     * @return number of results for the current SelectQuery
-     */
-    public int getResultCount() {
-        int resultCount = 0;
-        if (resultId != 0) try {
-                resultCount = database.getNumRows(resultId);        	
-        } catch(Exception e) {
-        	logger.error("Get number of results failed. Exception caught in MetadataManager. Details: "+e.getMessage());  
-        	setError(ERROR_NUMBER_ROWS);
-                setException(e);
-        }
-        return resultCount;
-    }
 
     /**
 	  * Get results of a search query for dislpaying in metadata dialog
