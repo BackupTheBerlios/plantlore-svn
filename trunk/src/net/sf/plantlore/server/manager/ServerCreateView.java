@@ -346,6 +346,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
 			java.awt.EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					setVisible(false);
+					dispose();
 				}
 			});
 		}

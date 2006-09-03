@@ -2,11 +2,9 @@ package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
-import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
-import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.DatabaseSettings;
 import net.sf.plantlore.server.RMIServer;
 import net.sf.plantlore.server.ServerSettings;
@@ -32,7 +30,7 @@ public class ServerCreateCtrl {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				switch( view.choicePane.getSelectedIndex() ) {
-				/* CREATE A NEW SERVER */
+				/* CREATE A NEW SERVER AND CONNECT TO IT */
 				case 0:
 					// Take the stored information.
 					ServerSettings settings = model.getSettings(false);
@@ -71,15 +69,8 @@ public class ServerCreateCtrl {
 					
 					// Create and run a new server.
 					Task createServer = model.createNewServerTask( serverPassword );
-					new DefaultProgressBar(createServer, view, true) {
-						@Override
-						public void exceptionHandler(Exception ex) {
-							getTask().stop();
-							DefaultExceptionHandler.handle(parent, ex, L10n.getString("Error.CannotStartServer"), true);
-						}
-					};
+					new DefaultProgressBar(createServer, view, true, true);
 					createServer.start();
-					
 					break;
 				
 					
@@ -95,13 +86,7 @@ public class ServerCreateCtrl {
 					
 					Task connectToServer = model.createConnectToRunningServerTask(
 							view.remoteHost.getText(), port, password );
-					new DefaultProgressBar(connectToServer, view, true) {
-						@Override
-						public void exceptionHandler(Exception ex) {
-							getTask().stop();
-							DefaultExceptionHandler.handle(parent, ex, L10n.getString("Error.CannotConnectToTheServer"), true);
-						}
-					};
+					new DefaultProgressBar(connectToServer, view, true, true);
 					connectToServer.start();
 					
 					break;

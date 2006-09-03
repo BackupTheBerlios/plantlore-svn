@@ -42,8 +42,9 @@ public interface Server extends Remote, Serializable {
 	
 	/**
 	 *	Test whether the server is alive.
-	 * 
+	 *
+	 * @return True if the server is alive. 
 	 */
-	void ping() throws RemoteException;
+	boolean ping() throws RemoteException;
 	
 }

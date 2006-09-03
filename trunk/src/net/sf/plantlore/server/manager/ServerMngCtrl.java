@@ -47,7 +47,7 @@ public class ServerMngCtrl {
 				model.deleteObserver( view );
 				view.setVisible(false);
 				view.dispose();
-				if( !model.didWeCreateTheServer() || !model.isServerAlive() ) {
+				if( !model.isAlive() ) {
 					System.exit(0);
 				}
 			}

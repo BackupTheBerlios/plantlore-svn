@@ -44,6 +44,7 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	
 	private Logger logger;
 
+	private boolean isDead = true;
 
 	
 	/** 
@@ -120,6 +121,8 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 			// Bind the factory to the rmiregistry. 
 			registry.bind(RemoteDBLayerFactory.ID, remoteFactory);
 
+			isDead = false;
+			
 			logger.info("The RemoteDBLayerFactory has been bound to the rmiregistry.");
 		}
 		catch(RemoteException e) { 
@@ -148,17 +151,19 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 			// 3. Disconnect all users from the server.
 			remoteFactory.disconnectAll();
 			logger.info("All clients were disconnected.");
-
-			// 4. Disconnect this object from the RMI ->
-			UnicastRemoteObject.unexportObject(this, true);
-			logger.info("The RMIServer now stops accepting remote calls.");
 			
-			// 5. Disconnect the control guard and unexport it
+			// 4. Disconnect the control guard and unexport it
 			RMI.unbind(settings.getPort(), Guard.ID);
 			RMI.unexport(guard);
 			logger.debug("The ServerProxy is now unavailable.");
+
+			// 5. Disconnect this object from the RMI ->
+			RMI.unexport(this);
+			logger.info("The RMIServer now stops accepting remote calls.");
 			
 			logger.info("The Server terminates. Bye.");
+			
+			isDead = true;
 		}
 		catch(Exception e) { 
 			logger.error("Unable to stop the server. " + e.getMessage());
@@ -168,9 +173,10 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 	/**
 	 * Test, whether the Server is still alive.
 	 */
-	public void ping() 
+	public boolean ping() 
 	throws RemoteException {
 		logger.debug("Pinged!");
+		return !isDead;
 	}
 
 }

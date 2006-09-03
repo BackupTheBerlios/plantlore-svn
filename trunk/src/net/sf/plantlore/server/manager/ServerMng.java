@@ -353,26 +353,16 @@ public class ServerMng extends Observable {
 	
 	/**
 	 * 
-	 * @return	True if this model indeed created the server (i.e. it did not just connect to it). 
+	 * @return	True if the server is alive. 
 	 */
-	public boolean didWeCreateTheServer() {
-		return didWeCreateTheServer;
-	}
-	
-	/**
-	 * 
-	 * @return	True if the server is alive.
-	 */
-	public boolean isServerAlive() {
-		boolean alive = true;
-		try {
-			server.ping();
-		} 
-		catch(Exception e) {
-			alive = false;
+	public boolean isAlive() {
+		try{
+			return didWeCreateTheServer && server.ping();
 		}
-		return alive;
+		catch(Exception e) {
+			return false;
+		}
 	}
 	
-	
+
 }
