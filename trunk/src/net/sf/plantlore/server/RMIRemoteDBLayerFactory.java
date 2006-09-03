@@ -15,7 +15,7 @@ import net.sf.plantlore.server.HibernateDBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
 
 /**
- * RMIRemoteDBLayerFactory is responsible for management of Database Layers
+ * RMIRemoteDBLayerFactory is responsible for the management of Database Layers
  * on the remote machine. It can create and destroy them, it stores the list of
  * all created Database Layers (i.e. list of connected clients) and can disconnect the
  * selected client.
@@ -128,7 +128,6 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 		try {
 			logger.debug("Exporting the database layer...");
 			stub = (DBLayer) UnicastRemoteObject.exportObject(database);
-			logger.debug("DBLayer exported.");
 		} catch(RemoteException e) {
 			logger.error("Unable to export the DBLayer. Is the `codebase` set properly? Are stubs generated properly? " + e.getMessage());
 			throw e;
@@ -150,7 +149,7 @@ public class RMIRemoteDBLayerFactory extends UnicastRemoteObject
 	 * 
 	 * @param db	The DBLayer object (not stub!) that should be disconnected.
 	 */	
-	void disconnect(DBLayer db)  
+	protected void disconnect(DBLayer db)  
 	throws RemoteException {
 		if(db == null)
 			return;

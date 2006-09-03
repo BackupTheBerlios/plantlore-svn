@@ -11,6 +11,14 @@ import net.sf.plantlore.server.DatabaseSettings;
 import net.sf.plantlore.server.RMIServer;
 import net.sf.plantlore.server.ServerSettings;
 
+/**
+ * Gather the information from the dialog and
+ * perform the requested action - either conect to an already running
+ * Plantlore Server or create a new Plantlore Server.
+ * 
+ * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @since 2006-05-30
+  */
 public class ServerCreateCtrl {
 
 	private ServerMngView mngView;

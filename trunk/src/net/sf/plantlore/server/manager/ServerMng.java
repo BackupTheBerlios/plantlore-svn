@@ -23,34 +23,46 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
 import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.Utils;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.*;
 import net.sf.plantlore.server.tools.RMI;
 
 /**
- * The server manager can
- * either create a new server or connect to an existing server.
+ * The server manager can create the following tasks:
+ * <ul>
+ * <li>the Create a New Server task,</li>
+ * <li>the Connect to an Existing Server task,</li>
+ * <li>and the Terminate the Server task.</li>
+ * </ol>
  * <br/>
  * After the Server Administrator is logged in, he can control the server:
  * <ul>
- * <li>see the connected clients,</li>
+ * <li>see the list of connected clients,</li>
  * <li>kick some of the connected clients,</li>
  * <li>terminate the server.</li>
  * </ul>
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-04-21
- * @version 1.0 final
+ * @version 1.0
  */
 public class ServerMng extends Observable {
 	
-	public static final Object UPDATE_LIST = new Object();
-	public static final Object CONNECTED = new Object();
+	/**
+	 * The message that is sent in case the list of connected clients
+	 * shall be refreshed.
+	 */
+	public static final Object UPDATE_LIST = "UpdateTheListOfConnectedUsers";
+	
+	/**
+	 * The message that is sent in case the connection to the server
+	 * (or the server's creation) was successful.
+	 */
+	public static final Object CONNECTED = "TheConnectionToTheServerIsAvailable";
 	
 	private static final String SERVER_CONFIG_NAME = "plantlore.server.xml";
 	private static final String PLANTLORE = "plantlore";
-	
-	private String codebase;
 	
 	/** The server control interface. */
 	private Server server;
@@ -58,6 +70,8 @@ public class ServerMng extends Observable {
 	
 	/** List of connected clients. */
 	private ConnectionInfo[] clients;
+	
+	private boolean didWeCreateTheServer = false;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
 	private String settingsFileName; {
@@ -73,14 +87,20 @@ public class ServerMng extends Observable {
 		settingsFileName = plantloreConfDir + File.separator + SERVER_CONFIG_NAME;
 	}
 	
-	
+	/**
+	 * Create a new Server Manager.
+	 */
 	public ServerMng() {
 		getSettings(true);
-		if(codebase != null && codebase.length() > 0)
-			RMI.addToCodebase( codebase );
+		RMI.addToCodebase( Utils.getCodeBasePath() );
 	}
 	
-	
+	/**
+	 * Obtain the settings of the server.
+	 * 
+	 * @param refresh	True if the settings shoud be reloaded from the configuration file.
+	 * @return	The settings of the server.
+	 */
 	public ServerSettings getSettings(boolean refresh) {
 		if( !refresh )
 			return settings;
@@ -114,9 +134,6 @@ public class ServerMng extends Observable {
             settings = new ServerSettings(port, 3, connections, perip, 
             		new DatabaseSettings(databaseType, databasePort, databaseParameter));
             
-            // Load the codebase
-            Node path = document.selectSingleNode("/config/codebase");
-            codebase = path.getText();
             
 		} catch(Exception e) {
 			logger.error("Unable to load settings. " + e.getMessage());
@@ -125,7 +142,11 @@ public class ServerMng extends Observable {
 	}
 	
 	
-	
+	/**
+	 * Store the settings of the server into the file.
+	 * 
+	 * @param settings	The server's settings that shall be stored to the configuration file.
+	 */
 	public void setSettings(ServerSettings settings) {
 		this.settings = settings;
 		
@@ -141,8 +162,6 @@ public class ServerMng extends Observable {
 		db.addElement("port").setText( "" + settings.getDatabaseSettings().getPort() );
 		db.addElement("parameter").setText(settings.getDatabaseSettings().getConnectionStringSuffix());
 		
-		// Store the current codebase
-		config.addElement("codebase").setText(codebase);
 
 		try {
 			Writer outputWriter = new BufferedWriter(
@@ -163,9 +182,11 @@ public class ServerMng extends Observable {
 		
 	
 	/**
-	 * Try to create and start a new server on the specified <code>port</code>.
+	 * Create a new task, that will
+	 * try to create and start a new server on the specified <code>port</code>.
 	 * The server will be protected with a <code>password</code> so that 
-	 * anyone who will try to connect to the server will have use that password.
+	 * anyone who will try to connect to the server (to administrate it) 
+	 * will have to use that password.
 	 * <br/>
 	 * It is <b>not</b> possible to create a server on a remote machine
 	 * (because of security reasons).
@@ -187,6 +208,8 @@ public class ServerMng extends Observable {
 				logger.info("Server up and running (port " + settings.getPort() + ").");
 				setStatusMessage(L10n.getString("Server.Info.ServerUpAndRunning"));
 				
+				didWeCreateTheServer = true;
+				
 				announce(CONNECTED);
 				
 				fireStopped(null);
@@ -196,7 +219,8 @@ public class ServerMng extends Observable {
 	}
 
 	/**
-	 * Connect to an existing server on the selected <code>host</code>
+	 * Create a new task, that will
+	 * connect to an existing server on the selected <code>host</code>
 	 * listening on the selected <code>port</code> using the <code>password</code>.
 	 * 
 	 * @param host The hostname of the computer where the server is running.
@@ -222,7 +246,11 @@ public class ServerMng extends Observable {
 		};
 	}
 	
-	
+	/**
+	 * The notification of observers. 
+	 * 
+	 * @param event	The event that must be announced to the observers.
+	 */
 	private void announce(Object event) {
 		setChanged();
 		notifyObservers(event);
@@ -230,9 +258,10 @@ public class ServerMng extends Observable {
 	
 
 	/**
-	 * Get the list of connected clients.
-	 * @return The updated list of connected clients so that you can see whom you can kick, 
-	 * 	or null if we are not connected to some server.   
+	 * Crate a task, that will
+	 * update the list of currently connected clients; you should use
+	 * <code>getConnectedUsers()</code> to obtain the updated list.
+	 * 
 	 */
 	public Task createUpdateConnectedUsersTask() {
 		return new Task() {
@@ -256,7 +285,7 @@ public class ServerMng extends Observable {
 	}
 	
 	/**
-	 * Get the list of connected clients.
+	 * Obtain the list of connected clients.
 	 * 
 	 * @return The (possibly outdated) list of connected clients so that you can see whom you can kick, 
 	 * 	or null if we are not connected to some server.   
@@ -266,9 +295,10 @@ public class ServerMng extends Observable {
 	}
 	
 	/**
-	 * Disconnect the selected client from the server.
+	 * Create a task, that will
+	 * disconnect the selected client from the server.
 	 * 
-	 * @param client The client to be kicked out of the server.
+	 * @param client The client to be kicked from the server.
 	 */
 	public Task createKickTask(final ConnectionInfo client) {
 		return new Task() {
@@ -295,8 +325,10 @@ public class ServerMng extends Observable {
 	}
 	
 	/**
-	 * Terminate the server.
-	 * <b>Warning:</b> This will also kick all users as well.
+	 * Create a new task, that will
+	 * terminate the server and this application.
+	 * <br/>
+	 * <b>Warning:</b> This will immediately kick all connected clients.
 	 */
 	public Task createTerminateServerTask()  {
 		return new Task() {
@@ -317,6 +349,29 @@ public class ServerMng extends Observable {
 				return null;
 			}
 		};
+	}
+	
+	/**
+	 * 
+	 * @return	True if this model indeed created the server (i.e. it did not just connect to it). 
+	 */
+	public boolean didWeCreateTheServer() {
+		return didWeCreateTheServer;
+	}
+	
+	/**
+	 * 
+	 * @return	True if the server is alive.
+	 */
+	public boolean isServerAlive() {
+		boolean alive = true;
+		try {
+			server.ping();
+		} 
+		catch(Exception e) {
+			alive = false;
+		}
+		return alive;
 	}
 	
 	

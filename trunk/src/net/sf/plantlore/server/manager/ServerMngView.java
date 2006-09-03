@@ -13,7 +13,9 @@ import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ConnectionInfo;
 
 /**
- * Server control dialog.
+ * The GUI for the Plantlore Server management.
+ * The User can see the list of currently connected clients,
+ * refresh it, kick some clients and terminate the Server.
  *
  * @author  Erik Kratochvíl
  */
@@ -118,7 +120,8 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
 
 
     /**
-     * Reload the list of the connected clients.
+     * Reload the list of the connected clients and
+     * show the dialog when the connection or the creation was successful.
      */
 	public void update(Observable source, final Object parameter) {
 		if(parameter == ServerMng.UPDATE_LIST){

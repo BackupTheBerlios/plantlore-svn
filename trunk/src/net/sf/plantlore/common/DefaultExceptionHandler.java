@@ -128,9 +128,17 @@ public class DefaultExceptionHandler {
 			// Could be thrown while unmarshalling the parameters or results of a remote method call.
 			else if( e instanceof UnmarshalException )
 				problemDescription = L10n.getString("Error.Server.UnmarshallingFailed");
-
-			
 		}
+		
+		/*
+		 *	OTHER EXCEPTIONS CONNECTED WITH THE RMI 
+		 * (those exceptions that are not subclasses of the RemoteException) 
+		 */
+		else if( e instanceof AlreadyBoundException )
+			problemDescription = L10n.getString("Error.Server.AlreadyBound");
+		
+		else if( e instanceof NotBoundException )
+			problemDescription = L10n.getString("Error.Server.NotBound");
 		
 		/*
 		 * DBLAYER EXCEPTION HANDLER

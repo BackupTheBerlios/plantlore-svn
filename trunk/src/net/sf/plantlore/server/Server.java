@@ -10,7 +10,6 @@ import java.rmi.RemoteException;
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-03-29
- * @version 1.0
  */
 public interface Server extends Remote, Serializable {
 	
@@ -39,5 +38,12 @@ public interface Server extends Remote, Serializable {
 	 * 
 	 */
 	void stop() throws RemoteException;
+	
+	
+	/**
+	 *	Test whether the server is alive.
+	 * 
+	 */
+	void ping() throws RemoteException;
 	
 }

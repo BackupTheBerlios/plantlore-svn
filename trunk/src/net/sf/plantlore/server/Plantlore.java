@@ -17,7 +17,7 @@ import net.sf.plantlore.server.manager.*;
 
 
 /**
- * The entry point when starting the Server. 
+ * The entry point when starting the Plantlore Server. 
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-03-30

@@ -3,6 +3,8 @@ package net.sf.plantlore.common;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import net.sf.plantlore.l10n.L10n;
+
 /**
  * A simple and convenient
  * implementation of the abstract ProgressBar with the default exception handler.
@@ -13,6 +15,8 @@ import javax.swing.JFrame;
  *
  */
 public class DefaultProgressBar extends ProgressBar {
+	
+	private boolean doNotOfferReconnect = false;
 	
 	/**
 	 * Create a new Default ProgressBar that will monitor the state 
@@ -33,9 +37,39 @@ public class DefaultProgressBar extends ProgressBar {
 	 * @param task	The task this ProgressBar should monitor.
 	 * @param parent	The parent window in order to maintain the Swing window hierarchy.
 	 * @param modal	True if the ProgressBar should be modal.
+	 * @param doNotOfferReconnect True if the Default Exception Handler should not offer
+	 * the Reconnect under any circumstances (convenient for the Server or Login).
+	 */
+	public DefaultProgressBar(Task task, JFrame parent, boolean modal, boolean doNotOfferReconnet) {
+		super(task, parent, modal);
+		this.doNotOfferReconnect = doNotOfferReconnet;
+	}
+	
+	/**
+	 * Create a new Default ProgressBar that will monitor the state 
+	 * of the supplied task.
+	 * 
+	 * @param task	The task this ProgressBar should monitor.
+	 * @param parent	The parent window in order to maintain the Swing window hierarchy.
+	 * @param modal	True if the ProgressBar should be modal.
 	 */
 	public DefaultProgressBar(Task task, JDialog parent, boolean modal) {
 		super(task, parent, modal);
+	}
+	
+	/**
+	 * Create a new Default ProgressBar that will monitor the state 
+	 * of the supplied task.
+	 * 
+	 * @param task	The task this ProgressBar should monitor.
+	 * @param parent	The parent window in order to maintain the Swing window hierarchy.
+	 * @param modal	True if the ProgressBar should be modal.
+	 * @param doNotOfferReconnect True if the Default Exception Handler should not offer
+	 * the Reconnect under any circumstances (convenient for the Server or Login).
+	 */
+	public DefaultProgressBar(Task task, JDialog parent, boolean modal, boolean doNotOfferReconnet) {
+		super(task, parent, modal);
+		this.doNotOfferReconnect = doNotOfferReconnet;
 	}
 	
 	/**
@@ -46,7 +80,7 @@ public class DefaultProgressBar extends ProgressBar {
 	@Override
 	public void exceptionHandler(Exception ex) {
 		getTask().stop();
-		DefaultExceptionHandler.handle(parent, ex);
+		DefaultExceptionHandler.handle(parent, ex, L10n.getString("Error.General"), doNotOfferReconnect);
 	}
 	
 }

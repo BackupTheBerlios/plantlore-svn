@@ -9,7 +9,7 @@ import net.sf.plantlore.l10n.L10n;
  * The Server Control guards the access to the Server 
  * and prevents unauthorized Users from shutting it down.
  * In order to manage the Server (terminate the Server, view
- * the list of connected clients, disconnecting the clients)
+ * the list of connected clients, disconnecting the clients, etc.)
  * the User must pass the authorization procedure and
  * supply valid authorization key (password).
  * 

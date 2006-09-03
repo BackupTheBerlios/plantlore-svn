@@ -19,8 +19,8 @@ public class ServerSettings {
 	/**
 	 * Create new Server Settings.
 	 * 
-	 * @param port	The port number where the listens.
-	 * @param timeout	The ammount of time after which the crashed client's database layer
+	 * @param port	The port number where the server listens.
+	 * @param timeout	The ammount of time in minutes after which the crashed client's database layer
 	 * is automatically destroyed. 
 	 * @param connectionsTotal	The maximum number of clients connected to the server simultaneously.
 	 * @param connectionsPerIP	The maximum number of clients connected to the server 
@@ -62,7 +62,7 @@ public class ServerSettings {
 	
 	/**
 	 * 
-	 * @return		The port number where the listens.
+	 * @return		The port number where the server listens.
 	 */
 	public int getPort() {
 		return port;
@@ -70,7 +70,7 @@ public class ServerSettings {
 	
 	/**
 	 * 
-	 * @return	The ammount of time after which the crashed client's database layer
+	 * @return	The ammount of time in minutes after which the crashed client's database layer
 	 * is automatically destroyed. 
 	 */
 	public int getTimeout() {

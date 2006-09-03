@@ -5,6 +5,7 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.RemoteObject;
 import java.rmi.server.UnicastRemoteObject;
 
 
@@ -57,7 +58,7 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 		this.settings = settings;
 		
 		// Control object that will return the server after the client passed a valid certif. information
-		guard = new RMIServerControl(this, password);
+		guard = new RMIServerControl( (Server) RemoteObject.toStub(this), password);
 		RMI.bind(settings.getPort(), guard, Guard.ID);
 	}
 	
@@ -162,6 +163,14 @@ public class RMIServer extends UnicastRemoteObject implements Server {
 		catch(Exception e) { 
 			logger.error("Unable to stop the server. " + e.getMessage());
 		}
+	}
+	
+	/**
+	 * Test, whether the Server is still alive.
+	 */
+	public void ping() 
+	throws RemoteException {
+		logger.debug("Pinged!");
 	}
 
 }
