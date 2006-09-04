@@ -495,7 +495,15 @@ public class AppCoreCtrl {
 
 					searchModel.setColumns(columns);
 					searchModel.clearAndNotify();
-					searchModel.constructQuery();
+                                        try {
+                                            searchModel.constructQuery();
+                                        } catch (RemoteException ex) {
+                                            DefaultExceptionHandler.handle(view, ex);
+                                            return;
+                                        } catch (DBLayerException ex) {
+                                            DefaultExceptionHandler.handle(view, ex);
+                                            return;
+                                        }
 				}
 				if (s.equals("DYNAMIC_PAGE_LOADING")) {
 					model.dynamicPageLoading = prefs.getBoolean(
@@ -977,7 +985,16 @@ public class AppCoreCtrl {
                             case HABITAT:
                                 searchModel.clearAndNotify();
                                 searchModel.setHabitatId(nodeInfo.getId());
-                                searchModel.constructQuery();
+
+                                try {
+                                    searchModel.constructQuery();
+                                } catch (RemoteException ex) {
+                                    DefaultExceptionHandler.handle(view, ex);
+                                    return;
+                                } catch (DBLayerException ex) {
+                                    DefaultExceptionHandler.handle(view, ex);
+                                    return;
+                                }
                         }//switch
                     }//if search
                     
@@ -1720,14 +1737,23 @@ public class AppCoreCtrl {
 
                                 view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
                                 searchModel.clearAndNotify();
-                                searchModel.constructQuery();
+                                
+                                try {
+                                    searchModel.constructQuery();
+                                } catch (RemoteException ex) {
+                                    DefaultExceptionHandler.handle(view, ex);
+                                    return;
+                                } catch (DBLayerException ex) {
+                                    DefaultExceptionHandler.handle(view, ex);
+                                    return;
+                                }
 
                                 view.getSBM().displayDefaultText();
 
                                 view.initOverview();
                                 view.setCursor(Cursor.getDefaultCursor());
                                 setDatabaseDependentCommandsEnabled(true);
-
+                                logger.debug("======= rows: "+model.getResultsCount());
                                 //this can't be done earlier. must be done after the query is created
                                 //otherwise this listener would give the overview table model commands to load data
                                 //for a query that doesn't exist yet
@@ -1771,7 +1797,7 @@ public class AppCoreCtrl {
 			Task task = new Task() {
 				public Object task() throws DBLayerException, RemoteException {
                                     //refreshAction.setEnabled(false);
-                                    setStatusMessage("Loading overview data...");
+                                    setStatusMessage(L10n.getString("Overview.Message.LoadingOccurrences"));
 					searchModel.clear();
 					searchModel.constructQuery();
 					fireStopped(null);
@@ -1781,14 +1807,21 @@ public class AppCoreCtrl {
 			return task;
 		} else {
 			searchModel.clear();
-			searchModel.constructQuery();
+                        try {
+                            searchModel.constructQuery();
+                        } catch (DBLayerException ex) {
+                            DefaultExceptionHandler.handle(view, ex);
+                            return null;
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view, ex);
+                            return null;
+                        }
 			return null;
 		}
 	}
 
         /** Handles the refresh action invoked from overview. */
 	class RefreshAction extends AbstractAction {
-            String prom = "Promenna z refresh action.";
             Task task = refreshOverview(true);
             
 		public RefreshAction() {
@@ -1815,7 +1848,7 @@ public class AppCoreCtrl {
                             }
                         };*/
 
-			System.out.println("Dispatcher: "+Dispatcher.getDispatcher().dispatch(task, view, true));
+			Dispatcher.getDispatcher().dispatch(task, view, true);
 		}
 
 	}

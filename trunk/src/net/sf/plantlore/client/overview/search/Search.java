@@ -628,7 +628,7 @@ public class Search extends Observable {
     
     
     
-    public SelectQuery constructQuery() {
+    public SelectQuery constructQuery() throws DBLayerException, RemoteException {
         DBLayerUtils dlu = new DBLayerUtils(database);
         SelectQuery sq = null;
         // ExportQuery restriction storage requires these variables.
@@ -636,292 +636,285 @@ public class Search extends Observable {
         Object arg;
         String habitatAlias = Record.alias(Habitat.class) +".";
         
-            //FIXME:
-            try {
-                // Create subquery first
-                SelectQuery subQuery = database.createSubQuery(AuthorOccurrence.class, "ao");
-                // In the subquery select authors for the given occurrence (occurrence comes from the main query)
-                subQuery.addRestriction(PlantloreConstants.RESTR_EQ_PROPERTY, "ao."+AuthorOccurrence.OCCURRENCE, "occ."+Occurrence.ID, null, null);
-                subQuery.addRestriction(PlantloreConstants.RESTR_EQ, "ao."+AuthorOccurrence.DELETED, null, 0, null);
-                subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY, AuthorOccurrence.AUTHOR);
-                // create the main query
-                sq = database.createQuery(AuthorOccurrence.class);
-                sq.createAlias(AuthorOccurrence.AUTHOR,"author");
-                sq.createAlias(AuthorOccurrence.OCCURRENCE,"occ");                
-                sq.createAlias("occ."+Occurrence.HABITAT,"habitat");
-                sq.createAlias("occ."+Occurrence.PLANT,"plant");
-                // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well
-                sq.createAlias("occ."+Occurrence.PUBLICATION,"publication", PlantloreConstants.LEFT_OUTER_JOIN);
-                sq.createAlias("occ."+Occurrence.METADATA,"metadata");
-                sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
-                sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
-                sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
-                // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
-                sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);    
-                sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
-                sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
-                sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
-                for (Column column : columns) {
-                    switch (column.type) {
-                        case AUTHOR:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
-                            break;
-                        case HABITAT_ALTITUDE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.ALTITUDE);
-                            break;
-                        case HABITAT_COUNTRY:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.COUNTRY);
-                            break;
-                        case HABITAT_DESCRIPTION:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);                    
-                            break;
-                        case HABITAT_LATITUDE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LATITUDE);
-                            break;
-                        case HABITAT_LONGITUDE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LONGITUDE);
-                            break;
-                        case HABITAT_NEAREST_VILLAGE_NAME:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+NearestVillage.NAME);
-                            break;
-                        case HABITAT_NOTE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
-                            break;
-                        case HABITAT_QUADRANT:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.QUADRANT);
-                            break;
-                        case METADATA_DATASETTITLE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"metadata."+Metadata.DATASETTITLE);
-                            break;
-                        case NUMBER:
-                            break;
-                        case OCCURRENCE_DATASOURCE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.DATASOURCE);
-                            break;
-                        case OCCURRENCE_DAYCOLLECTED:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.DAYCOLLECTED);
-                            break;
-                        case OCCURRENCE_HERBARIUM:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.HERBARIUM);
-                            break;
-                        case OCCURRENCE_ID:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.ID);                            
-                            break;
-                        case OCCURRENCE_MONTHCOLLECTED:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.MONTHCOLLECTED);
-                            break;
-                        case OCCURRENCE_NOTE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.NOTE);
-                            break;
-                        case OCCURRENCE_TIMECOLLECTED:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.TIMECOLLECTED);
-                            break;
-                        case OCCURRENCE_YEARCOLLECTED:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.YEARCOLLECTED);
-                            break;
-                        case PHYTOCHORION_CODE:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.CODE);                    
-                            break;
-                        case PHYTOCHORION_NAME:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);                    
-                            break;
-                        case PLANT_TAXON:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
-                            break;
-                        case PUBLICATION_COLLECTIONNAME:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"publication."+Publication.REFERENCECITATION);
-                            break;
-                        case SELECTION:
-                            break;
-                        case TERRITORY_NAME:
-                            sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
-                            break;
-                        default:                                                
-                    }
+            // Create subquery first
+            SelectQuery subQuery = database.createSubQuery(AuthorOccurrence.class, "ao");
+            // In the subquery select authors for the given occurrence (occurrence comes from the main query)
+            subQuery.addRestriction(PlantloreConstants.RESTR_EQ_PROPERTY, "ao."+AuthorOccurrence.OCCURRENCE, "occ."+Occurrence.ID, null, null);
+            subQuery.addRestriction(PlantloreConstants.RESTR_EQ, "ao."+AuthorOccurrence.DELETED, null, 0, null);
+            subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY, AuthorOccurrence.AUTHOR);
+            // create the main query
+            sq = database.createQuery(AuthorOccurrence.class);
+            sq.createAlias(AuthorOccurrence.AUTHOR,"author");
+            sq.createAlias(AuthorOccurrence.OCCURRENCE,"occ");                
+            sq.createAlias("occ."+Occurrence.HABITAT,"habitat");
+            sq.createAlias("occ."+Occurrence.PLANT,"plant");
+            // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well
+            sq.createAlias("occ."+Occurrence.PUBLICATION,"publication", PlantloreConstants.LEFT_OUTER_JOIN);
+            sq.createAlias("occ."+Occurrence.METADATA,"metadata");
+            sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
+            sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
+            sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
+            // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
+            sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);    
+            sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
+            sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
+            sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
+            for (Column column : columns) {
+                switch (column.type) {
+                    case AUTHOR:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"author."+Author.WHOLENAME);
+                        break;
+                    case HABITAT_ALTITUDE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.ALTITUDE);
+                        break;
+                    case HABITAT_COUNTRY:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.COUNTRY);
+                        break;
+                    case HABITAT_DESCRIPTION:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);                    
+                        break;
+                    case HABITAT_LATITUDE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LATITUDE);
+                        break;
+                    case HABITAT_LONGITUDE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LONGITUDE);
+                        break;
+                    case HABITAT_NEAREST_VILLAGE_NAME:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+NearestVillage.NAME);
+                        break;
+                    case HABITAT_NOTE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
+                        break;
+                    case HABITAT_QUADRANT:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.QUADRANT);
+                        break;
+                    case METADATA_DATASETTITLE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"metadata."+Metadata.DATASETTITLE);
+                        break;
+                    case NUMBER:
+                        break;
+                    case OCCURRENCE_DATASOURCE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.DATASOURCE);
+                        break;
+                    case OCCURRENCE_DAYCOLLECTED:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.DAYCOLLECTED);
+                        break;
+                    case OCCURRENCE_HERBARIUM:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.HERBARIUM);
+                        break;
+                    case OCCURRENCE_ID:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.ID);                            
+                        break;
+                    case OCCURRENCE_MONTHCOLLECTED:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.MONTHCOLLECTED);
+                        break;
+                    case OCCURRENCE_NOTE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.NOTE);
+                        break;
+                    case OCCURRENCE_TIMECOLLECTED:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.TIMECOLLECTED);
+                        break;
+                    case OCCURRENCE_YEARCOLLECTED:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"occ."+Occurrence.YEARCOLLECTED);
+                        break;
+                    case PHYTOCHORION_CODE:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.CODE);                    
+                        break;
+                    case PHYTOCHORION_NAME:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);                    
+                        break;
+                    case PLANT_TAXON:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
+                        break;
+                    case PUBLICATION_COLLECTIONNAME:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"publication."+Publication.REFERENCECITATION);
+                        break;
+                    case SELECTION:
+                        break;
+                    case TERRITORY_NAME:
+                        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
+                        break;
+                    default:                                                
                 }
-                
-                if (isNotEmpty(village)) {
-                	arg = dlu.getObjectFor(village.getSecond(),NearestVillage.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,arg,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.NEARESTVILLAGE, arg));
-                }
-                
-                int notEmpty = 0;
+            }
+
+            if (isNotEmpty(village)) {
+                    arg = dlu.getObjectFor(village.getSecond(),NearestVillage.class);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.NEARESTVILLAGE,null,arg,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.NEARESTVILLAGE, arg));
+            }
+
+            int notEmpty = 0;
+            for (int i = 0; i < authorList.size(); i++) {
+                Pair<Pair<String,Integer>,String> authorPair = authorList.get(i);
+                if (isNotEmpty(authorPair.getFirst()))
+                    notEmpty++;
+                if (isNotEmpty(authorPair.getSecond()))
+                    notEmpty++;
+            }
+
+            if (notEmpty > 0) {
+                Object[] args = new Object[notEmpty*4];
+                int conditionNumber = 0;
                 for (int i = 0; i < authorList.size(); i++) {
                     Pair<Pair<String,Integer>,String> authorPair = authorList.get(i);
-                    if (isNotEmpty(authorPair.getFirst()))
-                        notEmpty++;
-                    if (isNotEmpty(authorPair.getSecond()))
-                        notEmpty++;
-                }
-                
-                if (notEmpty > 0) {
-                    Object[] args = new Object[notEmpty*4];
-                    int conditionNumber = 0;
-                    for (int i = 0; i < authorList.size(); i++) {
-                        Pair<Pair<String,Integer>,String> authorPair = authorList.get(i);
-                        if (isNotEmpty(authorPair.getFirst())) {
-                            args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
-                            args[4*conditionNumber+1] = AuthorOccurrence.AUTHOR;
-                            args[4*conditionNumber+2] = null;
-                            args[4*conditionNumber+3] = dlu.getObjectFor(authorPair.getFirst().getSecond(),Author.class);
-                            conditionNumber++;
-                        }
-                        if (isNotEmpty(authorPair.getSecond())) {
-                            args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
-                            args[4*conditionNumber+1] = AuthorOccurrence.ROLE;
-                            args[4*conditionNumber+2] = null;
-                            args[4*conditionNumber+3] = authorPair.getSecond();
-                            conditionNumber++;
-                        }
+                    if (isNotEmpty(authorPair.getFirst())) {
+                        args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
+                        args[4*conditionNumber+1] = AuthorOccurrence.AUTHOR;
+                        args[4*conditionNumber+2] = null;
+                        args[4*conditionNumber+3] = dlu.getObjectFor(authorPair.getFirst().getSecond(),Author.class);
+                        conditionNumber++;
                     }
-                    sq.addOrRestriction(args);
-                    //ExportQuery is over the Occurrence table!   exportQuery.addOrRestriction(args); 
-                }
-
-                notEmpty = 0;
-                if (taxonList != null)
-                    for (int i = 0; i < taxonList.size(); i++) {
-                        if (isNotEmpty(taxonList.get(i)))
-                            notEmpty++;
+                    if (isNotEmpty(authorPair.getSecond())) {
+                        args[4*conditionNumber] = PlantloreConstants.RESTR_EQ;
+                        args[4*conditionNumber+1] = AuthorOccurrence.ROLE;
+                        args[4*conditionNumber+2] = null;
+                        args[4*conditionNumber+3] = authorPair.getSecond();
+                        conditionNumber++;
                     }
-                
-                if (notEmpty > 0) {
-                    Object[] args = new Object[notEmpty*4], exportQueryArgs = new Object[notEmpty*4];
-                    for (int i = 0; i < taxonList.size(); i++) {
-                        String taxon = taxonList.get(i);
-                        if (isNotEmpty(taxon)) {
-                            args[4*i] = exportQueryArgs[4*i] = PlantloreConstants.RESTR_EQ;
-                            args[4*i+1] = "occ."+Occurrence.PLANT; exportQueryArgs[4*i+1] = Occurrence.PLANT; 
-                            args[4*i+2] = exportQueryArgs[4*i+2] = null;
-                            args[4*i+3] = exportQueryArgs[4*i+3] = dlu.getObjectFor(lookupPlant(taxon),Plant.class);
-                        }
-                    }
-                    sq.addOrRestriction(args);
-                    restrictions.add(new Restriction(-1, null, exportQueryArgs));
                 }
-                if (isNotEmpty(localityDescription)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
-                    restrictions.add(new Restriction(RESTR_ILIKE, habitatAlias+Habitat.DESCRIPTION, "%"+localityDescription+"%"));
-                }
-                
-                if (isNotEmpty(occurrenceNote)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
-                    restrictions.add(new Restriction(RESTR_ILIKE, Occurrence.NOTE, "%"+occurrenceNote+"%"));
-                }
-                
-                if (isNotEmpty(habitatId)) {
-                    arg = dlu.getObjectFor(habitatId,Habitat.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HABITAT,null,arg,null);
-                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.HABITAT, arg));                    
-                }
-                
-                if (isNotEmpty(habitatNote)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
-                    restrictions.add(new Restriction(RESTR_ILIKE, habitatAlias+Habitat.NOTE, "%"+habitatNote+"%"));
-                }
-                
-                if (isNotEmpty(territoryName)) {
-                	arg = dlu.getObjectFor(territoryName.getSecond(),Territory.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null, arg, null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.TERRITORY, arg));
-                }
-                
-                if (isNotEmpty(phytName)) {
-                	arg = dlu.getObjectFor(phytName.getSecond(),Phytochorion.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,arg,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.PHYTOCHORION, arg));
-                }
-                
-                if (isNotEmpty(phytCountry)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.COUNTRY,null,phytCountry,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.COUNTRY, phytCountry));
-                }
-                
-                if (isNotEmpty(quadrant)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.QUADRANT,null,quadrant,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.QUADRANT, quadrant));
-                }
-                
-                if (isNotEmpty(altitude)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.ALTITUDE,null,altitude,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.ALTITUDE, altitude));
-                }
-                
-                if (isNotEmpty(longitude)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LONGITUDE,null,longitude,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.LONGITUDE, longitude));
-                }
-
-                if (isNotEmpty(latitude)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LATITUDE,null,latitude,null);
-                    restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.LATITUDE, latitude));
-                }
-
-                if (isNotEmpty(source)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.DATASOURCE,null,source,null);
-                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.DATASOURCE, source));
-                }
-                
-                if (isNotEmpty(publication)) {
-                    //FIXME: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
-                	arg = dlu.getObjectFor(publication.getSecond(),Publication.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,arg,null);
-                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.PUBLICATION, arg));
-                }
-                
-                if (isNotEmpty(herbarium)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HERBARIUM,null,herbarium,null);
-                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.HERBARIUM, herbarium));
-                }
-                
-                if (isNotEmpty(project)) {
-                	arg = dlu.getObjectFor(project.getSecond(),Metadata.class);
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,arg,null);
-                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.METADATA, arg));
-                }
-                
-                if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
-                    Calendar from = Calendar.getInstance(), to = Calendar.getInstance();
-                    from.setTime(fromDate); to.setTime(toDate);
-                    
-                    //set the begining of the day
-                    from.set(Calendar.HOUR_OF_DAY,0);
-                    from.set(Calendar.MINUTE, 0);
-                    from.set(Calendar.SECOND, 0);
-                    from.set(Calendar.MILLISECOND, 0);
-
-                    //set the end of the day
-                    to.set(Calendar.HOUR_OF_DAY,23);
-                    to.set(Calendar.MINUTE, 59);
-                    to.set(Calendar.SECOND, 59);
-                    to.set(Calendar.MILLISECOND, 999);
-                    
-                    ArrayList a = new ArrayList();
-                    a.add(from.getTime());
-                    a.add(to.getTime());
-                    System.out.println("Searching between "+from.getTime()+" and "+to.getTime());
-                    sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
-                    
-                    restrictions.add(new Restriction(RESTR_BETWEEN, Occurrence.ISODATETIMEBEGIN, a));
-                }
-                
-                if (timeChoice == MONTH && isNotEmpty(month)) {
-                    sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
-                    restrictions.add(new Restriction(RESTR_EQ, Occurrence.MONTHCOLLECTED, month));
-                }
-                int resultId = database.executeQuery(sq);
-                this.newResultId = resultId;
-                this.newSelectQuery = sq;
-                logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
-                //let the SearchBridge in AppCoreCtrl know that new result is there
-                setChanged(); 
-                notifyObservers(resultId);
-            } catch (RemoteException ex) {                
-                ex.printStackTrace();
-            } catch (DBLayerException ex) {
-                ex.printStackTrace();
+                sq.addOrRestriction(args);
+                //ExportQuery is over the Occurrence table!   exportQuery.addOrRestriction(args); 
             }
+
+            notEmpty = 0;
+            if (taxonList != null)
+                for (int i = 0; i < taxonList.size(); i++) {
+                    if (isNotEmpty(taxonList.get(i)))
+                        notEmpty++;
+                }
+
+            if (notEmpty > 0) {
+                Object[] args = new Object[notEmpty*4], exportQueryArgs = new Object[notEmpty*4];
+                for (int i = 0; i < taxonList.size(); i++) {
+                    String taxon = taxonList.get(i);
+                    if (isNotEmpty(taxon)) {
+                        args[4*i] = exportQueryArgs[4*i] = PlantloreConstants.RESTR_EQ;
+                        args[4*i+1] = "occ."+Occurrence.PLANT; exportQueryArgs[4*i+1] = Occurrence.PLANT; 
+                        args[4*i+2] = exportQueryArgs[4*i+2] = null;
+                        args[4*i+3] = exportQueryArgs[4*i+3] = dlu.getObjectFor(lookupPlant(taxon),Plant.class);
+                    }
+                }
+                sq.addOrRestriction(args);
+                restrictions.add(new Restriction(-1, null, exportQueryArgs));
+            }
+            if (isNotEmpty(localityDescription)) {
+                sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"habitat."+Habitat.DESCRIPTION,null,"%"+localityDescription+"%",null);
+                restrictions.add(new Restriction(RESTR_ILIKE, habitatAlias+Habitat.DESCRIPTION, "%"+localityDescription+"%"));
+            }
+
+            if (isNotEmpty(occurrenceNote)) {
+                sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"occ."+Occurrence.NOTE,null,"%"+occurrenceNote+"%",null);
+                restrictions.add(new Restriction(RESTR_ILIKE, Occurrence.NOTE, "%"+occurrenceNote+"%"));
+            }
+
+            if (isNotEmpty(habitatId)) {
+                arg = dlu.getObjectFor(habitatId,Habitat.class);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HABITAT,null,arg,null);
+                restrictions.add(new Restriction(RESTR_EQ, Occurrence.HABITAT, arg));                    
+            }
+
+            if (isNotEmpty(habitatNote)) {
+                sq.addRestriction(PlantloreConstants.RESTR_ILIKE,"habitat."+Habitat.NOTE,null,"%"+habitatNote+"%",null);
+                restrictions.add(new Restriction(RESTR_ILIKE, habitatAlias+Habitat.NOTE, "%"+habitatNote+"%"));
+            }
+
+            if (isNotEmpty(territoryName)) {
+                    arg = dlu.getObjectFor(territoryName.getSecond(),Territory.class);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.TERRITORY,null, arg, null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.TERRITORY, arg));
+            }
+
+            if (isNotEmpty(phytName)) {
+                    arg = dlu.getObjectFor(phytName.getSecond(),Phytochorion.class);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.PHYTOCHORION,null,arg,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.PHYTOCHORION, arg));
+            }
+
+            if (isNotEmpty(phytCountry)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.COUNTRY,null,phytCountry,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.COUNTRY, phytCountry));
+            }
+
+            if (isNotEmpty(quadrant)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.QUADRANT,null,quadrant,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.QUADRANT, quadrant));
+            }
+
+            if (isNotEmpty(altitude)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.ALTITUDE,null,altitude,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.ALTITUDE, altitude));
+            }
+
+            if (isNotEmpty(longitude)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LONGITUDE,null,longitude,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.LONGITUDE, longitude));
+            }
+
+            if (isNotEmpty(latitude)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"habitat."+Habitat.LATITUDE,null,latitude,null);
+                restrictions.add(new Restriction(RESTR_EQ, habitatAlias+Habitat.LATITUDE, latitude));
+            }
+
+            if (isNotEmpty(source)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.DATASOURCE,null,source,null);
+                restrictions.add(new Restriction(RESTR_EQ, Occurrence.DATASOURCE, source));
+            }
+
+            if (isNotEmpty(publication)) {
+                //FIXME: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
+                    arg = dlu.getObjectFor(publication.getSecond(),Publication.class);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,arg,null);
+                restrictions.add(new Restriction(RESTR_EQ, Occurrence.PUBLICATION, arg));
+            }
+
+            if (isNotEmpty(herbarium)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.HERBARIUM,null,herbarium,null);
+                restrictions.add(new Restriction(RESTR_EQ, Occurrence.HERBARIUM, herbarium));
+            }
+
+            if (isNotEmpty(project)) {
+                    arg = dlu.getObjectFor(project.getSecond(),Metadata.class);
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.METADATA,null,arg,null);
+                restrictions.add(new Restriction(RESTR_EQ, Occurrence.METADATA, arg));
+            }
+
+            if (timeChoice == INTERVAL && isNotEmpty(fromDate)) {
+                Calendar from = Calendar.getInstance(), to = Calendar.getInstance();
+                from.setTime(fromDate); to.setTime(toDate);
+
+                //set the begining of the day
+                from.set(Calendar.HOUR_OF_DAY,0);
+                from.set(Calendar.MINUTE, 0);
+                from.set(Calendar.SECOND, 0);
+                from.set(Calendar.MILLISECOND, 0);
+
+                //set the end of the day
+                to.set(Calendar.HOUR_OF_DAY,23);
+                to.set(Calendar.MINUTE, 59);
+                to.set(Calendar.SECOND, 59);
+                to.set(Calendar.MILLISECOND, 999);
+
+                ArrayList a = new ArrayList();
+                a.add(from.getTime());
+                a.add(to.getTime());
+                System.out.println("Searching between "+from.getTime()+" and "+to.getTime());
+                sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
+
+                restrictions.add(new Restriction(RESTR_BETWEEN, Occurrence.ISODATETIMEBEGIN, a));
+            }
+
+            if (timeChoice == MONTH && isNotEmpty(month)) {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
+                restrictions.add(new Restriction(RESTR_EQ, Occurrence.MONTHCOLLECTED, month));
+            }
+            int resultId = database.executeQuery(sq);
+            this.newResultId = resultId;
+            this.newSelectQuery = sq;
+            logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
+            //let the SearchBridge in AppCoreCtrl know that new result is there
+            setChanged(); 
+            notifyObservers(resultId);
         return sq;
     }
     

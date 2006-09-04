@@ -40,9 +40,11 @@ import javax.swing.text.BadLocationException;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.common.AutoTextArea;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
@@ -472,8 +474,16 @@ public class SearchCtrl {
                 JOptionPane.showMessageDialog(view,check.getSecond());
                 return;
             }
-            
-            model.constructQuery();
+            try {
+                
+                model.constructQuery();
+            } catch (DBLayerException ex) {
+                DefaultExceptionHandler.handle(view, ex);
+                return;
+            } catch (RemoteException ex) {
+                DefaultExceptionHandler.handle(view, ex);
+                return;
+            }
             view.setVisible(false);
         }
     }//OkButtonListener
