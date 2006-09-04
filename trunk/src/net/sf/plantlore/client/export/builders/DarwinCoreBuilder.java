@@ -109,9 +109,9 @@ public class DarwinCoreBuilder implements Builder {
         recordElement.addElement("dateLastModified").setText(occurrence.getMetadata().getDateModified().toString());
         
         recordElement.addElement("genus").setText(occurrence.getPlant().getGenusNN());
-        recordElement.addElement("identifiedBy").setText(occurrence.getPlant().getScientificNameAuthor());
+        recordElement.addElement("identifiedBy").setText(occurrence.getPlant().getScientificNameAuthorNN());
         recordElement.addElement("scientificName").setText(occurrence.getPlant().getTaxon());
-        recordElement.addElement("specificNameAuthorYear").setText(occurrence.getPlant().getScientificNameAuthor());
+        recordElement.addElement("specificNameAuthorYear").setText(occurrence.getPlant().getScientificNameAuthorNN());
         
         recordElement.addElement("catalogNumber").setText(occurrence.getId().toString());
         recordElement.addElement("dayCollected").setText(occurrence.getDayCollectedNN().toString());

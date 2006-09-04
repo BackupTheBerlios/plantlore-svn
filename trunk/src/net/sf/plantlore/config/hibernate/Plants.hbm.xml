@@ -32,7 +32,7 @@
       <property column="CSCIENTIFICNAMEAUTHOR"
                 length="150"
                 name="scientificNameAuthor"
-                not-null="true"
+                not-null="false"
                 type="java.lang.String"/>                
       <property column="CCZECHNAME"
                 length="30"

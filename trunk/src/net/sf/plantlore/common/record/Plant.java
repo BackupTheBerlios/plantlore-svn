@@ -199,11 +199,21 @@ public class Plant extends Record {
 
     /**
      *   Get scientific name of the author
+     *   @return scientific name of the author, returns "" instead of null
+     *   @see setScientificNameAuthor
+     */
+    public String getScientificNameAuthorNN() {
+        if (this.scientificNameAuthor == null)
+            return "";
+        return this.scientificNameAuthor;
+    }
+    
+     /**
+     *   Get scientific name of the author
      *   @return scientific name of the author
      *   @see setScientificNameAuthor
      */
-    public String getScientificNameAuthor() {
-        //obligatory
+    public String getScientificNameAuthor() {        
         return this.scientificNameAuthor;
     }
     
