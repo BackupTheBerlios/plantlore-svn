@@ -34,7 +34,26 @@ public class Dispatcher {
  
     public synchronized boolean dispatch(Task task, JFrame parent, boolean stoppable) {
         if (taskRunning) {
-            System.out.println("Dispatcher: task already RUNNING, RETURNING.");
+            logger.debug("Dispatcher: task already RUNNING, RETURNING.");
+            return false;
+        }
+        
+        taskRunning = true;
+        this.task = task;
+        //dpb = new DefaultProgressBarNew(task, parent, true);
+
+        pbm.initialize();
+        pbm.setParent(parent);
+        pbm.setTask(task);
+        
+        task.start();
+        
+        return true;
+    }
+
+    public synchronized boolean dispatch(Task task, JDialog parent, boolean stoppable) {
+        if (taskRunning) {
+            logger.debug("Dispatcher: task already RUNNING, RETURNING.");
             return false;
         }
         

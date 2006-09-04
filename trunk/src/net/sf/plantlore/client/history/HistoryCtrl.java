@@ -10,6 +10,8 @@ import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 
@@ -222,7 +224,23 @@ public class HistoryCtrl {
             	   //Button OK was press
             	   logger.debug("Button OK was press.");
             	   Task task = model.commitUpdate(model.getResultRows(), true);  
-            	   
+            	   task.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                                try {
+                                   if (! model.isFinishedTask()) return;
+                                   model.setInfoFinishedTask(false);	
+                                   model.searchEditHistory(model.getData());
+                                   reloadData(1,model.getDisplayRows());			   	            	          
+                                   view.setCountResutl(model.getResultRows());
+                                }catch (Exception ex) {                                   
+                                   ex.printStackTrace();
+                                   DefaultExceptionHandler.handle(view, ex);                                   
+                                   return;
+                                } 
+                        }                       
+                   });
+                   Dispatcher.getDispatcher().dispatch(task, view, false);
+                   /*
             	   new DefaultProgressBar(task, view, true) {                       
                         @Override
                         public void afterStopping() {
@@ -239,7 +257,7 @@ public class HistoryCtrl {
                                 } 
                         } 		   					
                   };		   					                   	                   
-	          task.start();     	                   
+	          task.start();     	    */               
                } else {            	  
             	   logger.debug("Button Cancle was press."); 
                }  

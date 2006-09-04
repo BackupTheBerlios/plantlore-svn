@@ -60,6 +60,26 @@ public class PublicationManagerCtrl {
         view.sortDirectionAddFocusListener(new SortDirectionRadioFocusListener());
         // Display all publication when Publication manager is opened using the Task
         Task task = model.searchPublication(true);
+        task.setPostTaskAction(new PostTaskAction() {
+            public void afterStopped(Object value) {
+                model.setCurrentFirstRow(1);
+                try {
+                    model.processResults(1, model.getDisplayRows());
+                } catch (RemoteException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                } catch (DBLayerException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                }
+            }            
+        });
+        Dispatcher.getDispatcher().dispatch(task, view, false);
+        /*
         DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
             // After Task is finished, display the results
             @Override
@@ -81,7 +101,7 @@ public class PublicationManagerCtrl {
             }
         };
         dpb.setTitle(L10n.getString("Publications.ProgressBar.Search"));
-        task.start();
+        task.start(); */
     }
     
     
@@ -231,6 +251,27 @@ public class PublicationManagerCtrl {
             model.setPublicationIndex(index);
             // Delete is executed in a separate thread using Task
             Task task = model.deletePublication();
+            task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) {                    
+                    model.searchPublication(false);
+                    try {
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    } catch (RemoteException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    } catch (DBLayerException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    }
+                    model.reloadCache();
+                }                
+            });
+            Dispatcher.getDispatcher().dispatch(task, view, false);
+            /*
             DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
                 // Refresh the list of publications after a delete
                 @Override
@@ -253,7 +294,7 @@ public class PublicationManagerCtrl {
                 }
             };
             dpb.setTitle(L10n.getString("Publications.ProgressBar.Delete"));
-            task.start();
+            task.start(); */
         }
     }    
 
@@ -264,7 +305,25 @@ public class PublicationManagerCtrl {
         public void actionPerformed(ActionEvent e) {
             // Run DB search. The operation is executed in a separate thread
             Task task = model.searchPublication(true);
-
+            task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) {
+                    try {
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    } catch (RemoteException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    } catch (DBLayerException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    }                        
+                }                
+            });
+            Dispatcher.getDispatcher().dispatch(task, view, false);
+            /*
             DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
                 // Display the results of a search
                 @Override
@@ -285,7 +344,7 @@ public class PublicationManagerCtrl {
                 }
             };
             dpb.setTitle(L10n.getString("Publications.ProgressBar.Search"));
-            task.start();
+            task.start(); */
         }
     }        
     

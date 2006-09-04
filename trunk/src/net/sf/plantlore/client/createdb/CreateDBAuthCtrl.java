@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
 
@@ -30,8 +31,10 @@ public class CreateDBAuthCtrl {
 				String user = view.user.getText();
 
 				Task creation = model.createCreationTask(user, new String(view.password.getPassword()));
+                                Dispatcher.getDispatcher().dispatch(creation, view, false);
+                                /*
 				new DefaultProgressBar(creation, view, true);
-				creation.start();
+				creation.start(); */
 				
 				view.password.setText("");
 			}

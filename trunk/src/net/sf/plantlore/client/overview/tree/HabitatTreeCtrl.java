@@ -25,6 +25,8 @@ import javax.swing.tree.TreePath;
 import net.sf.plantlore.client.resources.Resource;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
@@ -79,10 +81,18 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
                 Task task = new Task() {
                     @Override
                     public Object task() throws DBLayerException, RemoteException {
+                        setStatusMessage(L10n.getString("Overview.Tree.LoadingHabitats"));
                         model.addHabitats(node,nodeInfo.getId());
                         return null;
                     }
                 };
+                task.setPostTaskAction(new PostTaskAction() {
+                    public void afterStopped(Object value) {
+                        model.getTreeModel().nodeStructureChanged(node);                        
+                    }                    
+                });
+                Dispatcher.getDispatcher().dispatch(task, view, false);
+                /*
                 DefaultProgressBar dpb = new DefaultProgressBar(task,view,true) {
                     @Override
                     public void afterStopping() {
@@ -90,7 +100,7 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
                     }
                 };
                 
-                task.start();
+                task.start(); */
         }
     }
 

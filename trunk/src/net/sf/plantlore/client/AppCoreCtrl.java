@@ -745,8 +745,20 @@ public class AppCoreCtrl {
                             setStatusMessage(L10n.getString("Overview.LoadingOccurrenceRecord"));
                             return editModel.loadRecord((Integer) row[row.length - 1]);
                         }
-                    };
-
+                    };                    
+                    t.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    editView.loadComponentData();
+                                    editView.setVisible(true);    
+                                }
+                            });
+                        }                        
+                    });
+                    Dispatcher.getDispatcher().dispatch(t, view, false);
+                    
+                    /*
                     new DefaultProgressBar(t, view, true) {
                         public void afterStopping() {
                             SwingUtilities.invokeLater(new Runnable() {
@@ -757,7 +769,7 @@ public class AppCoreCtrl {
                             });
                         }
                     };
-                    t.start();
+                    t.start(); */
 		}//actionPerformed()
 	}//EditAction
 
@@ -814,7 +826,16 @@ public class AppCoreCtrl {
                                 logger.info("Deleting " + arg[0] + " records.");
                                 
                                 Task task = model.deleteSelected();
+                                task.setPostTaskAction(new PostTaskAction() {
+                                    public void afterStopped(Object value) {
+                                        refreshOverview(false); // false -> do not create task,
+                                        // refresh the overview directly
+                                        // in this thread
+                                    }                                    
+                                });
+                                Dispatcher.getDispatcher().dispatch(task, view, false);
                                 
+                                /*
                                 ProgressBar progressBar = new DefaultProgressBar(task, view, true) {                                    
                                     public void afterStopped(Object value) {
                                         refreshOverview(false); // false -> do not create task,
@@ -822,7 +843,7 @@ public class AppCoreCtrl {
                                         // in this thread
                                     }
                                 };                                
-                                task.start();
+                                task.start(); */
                                 break;
                         }// switch
 		}//actionPerformed
@@ -1257,6 +1278,15 @@ public class AppCoreCtrl {
 				historyModel.addObserver(managerBridge);
 			}
 			Task task = historyModel.initialize(model.getSelectedOccurrence());
+                        task.setPostTaskAction(new PostTaskAction() {
+                            public void afterStopped(Object value) {
+                                            if (! historyModel.isFinishedTask()) return;
+                                            historyModel.setInfoFinishedTask(false);
+                                                historyView.setVisible(true);		
+                            }                            
+                        });
+                        Dispatcher.getDispatcher().dispatch(task, view, false);
+                        /*
 			new DefaultProgressBar(task, view, true) {
 				@Override
 	 	    	public void afterStopping() {
@@ -1265,7 +1295,7 @@ public class AppCoreCtrl {
                                             historyView.setVisible(true);		
 	 	    	}				
 			};			
-			task.start();							
+			task.start();	*/						
 		}
 	}
 
@@ -1285,6 +1315,15 @@ public class AppCoreCtrl {
 				wholeHistoryModel.addObserver(managerBridge);
 			}
 			Task task = wholeHistoryModel.initializeWH();
+                        task.setPostTaskAction(new PostTaskAction() {
+                            public void afterStopped(Object value) {	
+                                            if (! wholeHistoryModel.isFinishedTask()) return;
+                                            wholeHistoryModel.setInfoFinishedTask(false);
+                                            wholeHistoryView.setVisible(true);
+                            }
+                        });
+                        Dispatcher.getDispatcher().dispatch(task, view, false);
+                        /*
 			new DefaultProgressBar(task, view, true) {
 				@Override
 	 	    	public void afterStopping() {	
@@ -1293,7 +1332,7 @@ public class AppCoreCtrl {
                                         wholeHistoryView.setVisible(true);
 	 	    	}
 			};			
-			task.start();							
+			task.start();							 */
 		}
 	}
 	
@@ -1315,6 +1354,16 @@ public class AppCoreCtrl {
 				metadataManagerModel.addObserver(managerBridge);								
 			}
 			Task task = metadataManagerModel.searchMetadata(true);
+                        task.setPostTaskAction(new PostTaskAction() {
+                            public void afterStopped(Object value) {	
+                                            if (! metadataManagerModel.isFinishedTask()) return;
+                                            metadataManagerModel.setInfoFinishedTask(false);
+                                            metadataManagerCtrl.reloadData(1, MetadataManager.DEFAULT_DISPLAY_ROWS);
+                                            metadataManagerView.setVisible(true);
+                            }
+                        });
+                        Dispatcher.getDispatcher().dispatch(task, view, false);
+                        /*
 			new DefaultProgressBar(task, view, true) {
 				@Override
 	 	    	public void afterStopping() {	
@@ -1325,6 +1374,7 @@ public class AppCoreCtrl {
 	 	    	}
 			};			
 			task.start();						
+                         **/
 		}
 	}
 

@@ -23,6 +23,8 @@ import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 
@@ -247,7 +249,23 @@ public class MetadataManagerCtrl {
            model.setUsedClose(true);        	
            //save new record Metadata into database
            Task task = model.addMetedataRecord();
+           task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) {
+                   if (! model.isFinishedTask()) return;
+                   model.setInfoFinishedTask(false);
+                   //load metadata
+    	           model.searchMetadata(false);
+    	           if (model.isError()) {
+    	        	   DefaultExceptionHandler.handle(view, model.getException());
+                           model.setError(null);
+    	        	   return;
+    	           }    	           
+    	           reloadData(1, model.getDisplayRows());    	                   
+               } 		   		               
+           });
+           Dispatcher.getDispatcher().dispatch(task, view, false);
            
+           /*
            new DefaultProgressBar(task, view, true) {		   							 
                 @Override
                 public void afterStopping() {
@@ -263,7 +281,7 @@ public class MetadataManagerCtrl {
     	           reloadData(1, model.getDisplayRows());    	                   
                } 		   		
    		};   		               	                   
-        task.start();                                       
+        task.start();                                       */
        }
     }
     
@@ -302,8 +320,18 @@ public class MetadataManagerCtrl {
                if (model.usedClose()) return;
                //Update metadata               
                Task task = model.editMetadataRecord();
+               task.setPostTaskAction(new PostTaskAction() {
+                    public void afterStopped(Object value) {
+                         if (! model.isFinishedTask()) return;
+                         model.setInfoFinishedTask(false);
+                       //load metadata          				
+                        if (model.isError()) return;
+                        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
+                     } 		   					                   
+               });
+               Dispatcher.getDispatcher().dispatch(task, view, false);
                
-               new DefaultProgressBar(task, view, true) {
+    /*           new DefaultProgressBar(task, view, true) {
             	   @Override
                 public void afterStopping() {
                      if (! model.isFinishedTask()) return;
@@ -313,7 +341,7 @@ public class MetadataManagerCtrl {
                     view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
                      } 		   					
           		};          		                 	                   
-                task.start();                                       
+                task.start();                                       */
               }
        }
     }
@@ -389,8 +417,24 @@ public class MetadataManagerCtrl {
                 	   logger.debug("Button OK was press.");
 		               //delete selected record
 		               Task task = model.deleteMetadataRecord();
-		               
-		             new DefaultProgressBar(task, view, true) {		   								  		   				
+		               task.setPostTaskAction(new PostTaskAction() {
+                                     public void afterStopped(Object value) {
+                                            if (! model.isFinishedTask()) return;
+                                            model.setInfoFinishedTask(false);
+                                            // load metadata
+                                           model.searchMetadata(false);  
+                                           if (model.isError()) {
+                                               DefaultExceptionHandler.handle(view, model.getException());
+                                                model.setError(null);
+                                                model.setException(null);
+                                               return;
+                                           }
+                                           reloadData(1, model.getDisplayRows());		   	              		   	               
+        		                }//afterStopped 		   					                                   
+                               });
+                               Dispatcher.getDispatcher().dispatch(task, view, false);
+                               
+		             /*new DefaultProgressBar(task, view, true) {		   								  		   				
                                     @Override						
                                      public void afterStopping() {
                                         if (! model.isFinishedTask()) return;
@@ -406,7 +450,7 @@ public class MetadataManagerCtrl {
 		   	               reloadData(1, model.getDisplayRows());		   	              		   	               
 		                } 		   					
 		   			};		   			                   	                   
-		            task.start();                                                                  
+		            task.start(); */                                                                 
 		          }else {
 		        	  logger.debug("Button Cancle was press.");
 		          }
@@ -439,7 +483,22 @@ public class MetadataManagerCtrl {
            }          
            //Load metadata with specific conditions
            Task task = model.searchMetadata(true);   
-           
+           task.setPostTaskAction(new PostTaskAction() {
+        	   public void afterStopped(Object value) {
+                       if (! model.isFinishedTask()) return;
+                       model.setInfoFinishedTask(false);
+                       if (model.getDisplayRows() <= 0) {
+                       model.setDisplayRows(MetadataManager.DEFAULT_DISPLAY_ROWS);
+                       }
+                       //No record in result - show message to user
+                       if (model.getResultRows() < 1) {
+                           view.showInfoMessage(MetadataManager.INFORMATION_RESULT_TITLE,MetadataManager.INFORMATION_RESULT);
+                       }
+                       reloadData(1, model.getDisplayRows());		           		           
+               } 		   					               
+           });
+           Dispatcher.getDispatcher().dispatch(task, view, false);
+           /*
            new DefaultProgressBar(task, view, true) {		   								  			
 			   @Override 
         	   public void afterStopping() {
@@ -455,7 +514,7 @@ public class MetadataManagerCtrl {
                        reloadData(1, model.getDisplayRows());		           		           
                } 		   					
 			};			                  	                   
-            task.start();                                                                  
+            task.start();    */                                                              
        }
     }
     

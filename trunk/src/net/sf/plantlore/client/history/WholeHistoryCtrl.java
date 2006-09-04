@@ -18,6 +18,8 @@ import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 
@@ -234,7 +236,24 @@ public class WholeHistoryCtrl {
 	                   //Button OK was press
 	                   logger.debug("Button OK was press.");    
 	                   Task task = model.commitUpdate(toResult, false);
-	                   
+	                   task.setPostTaskAction(new PostTaskAction() {
+                                    public void afterStopped(Object value) {
+                                        logger.debug("Load Data");	   
+                                        try {
+                                           if (! model.isFinishedTask()) return;
+                                           model.setInfoFinishedTask(false);	
+                                           model.searchWholeHistoryData();
+                                           reloadData(1,model.getDisplayRows());
+                                           view.setCountResult(model.getResultRows());
+                                        } catch (Exception ex) {                                                                   
+                                           ex.printStackTrace();
+                                           DefaultExceptionHandler.handle(view, ex);                                                                   
+                                           return;
+                                        } 
+                                    }                               
+                           });
+                           Dispatcher.getDispatcher().dispatch(task, view, false);
+                           /*
 	                   new DefaultProgressBar(task, view, true) {		   										
                                 @Override
                                     public void afterStopping() {
@@ -252,7 +271,7 @@ public class WholeHistoryCtrl {
                                         } 
                                     }
                             };		   					                   	                  
-	                    task.start();
+	                    task.start(); */
 	                   
 	               } else {	                       	                     
 	                       logger.debug("Button Cancle was press.");
@@ -327,7 +346,21 @@ public class WholeHistoryCtrl {
            logger.debug("Button OK was press.");  
            // delete records whit contition cdelete > 0
            Task task = model.clearDatabase();
-
+           task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) {
+                //load data
+                try {
+                        model.searchWholeHistoryData();
+                        reloadData(1,model.getDisplayRows());
+                        view.totalResultValueLabel.setText("0");
+                        } catch (Exception ex) {                                                                                    
+                            ex.printStackTrace();
+                            DefaultExceptionHandler.handle(view, ex);                                                                                  		   	               
+                        }
+                }               
+           });
+           Dispatcher.getDispatcher().dispatch(task, view, false);
+           /*
            new DefaultProgressBar(task, view, true) {
                 @Override
                 public void afterStopping() {
@@ -342,7 +375,7 @@ public class WholeHistoryCtrl {
                         }
                 }
            };		   					                   	                   
-           task.start();	                                                         
+           task.start();	      */                                                   
            }
        }
     }

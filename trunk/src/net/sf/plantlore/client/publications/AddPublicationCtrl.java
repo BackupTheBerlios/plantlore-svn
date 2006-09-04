@@ -10,6 +10,8 @@ import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
@@ -73,7 +75,28 @@ public class AddPublicationCtrl {
             if (view.checkCompulsory()) {
                 if (model.getEditPublication() == null) {                    
                     // Save new publication
-                    Task task = model.savePublication();                
+                    Task task = model.savePublication();     
+                    task.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                            model.searchPublication(false);
+                            try {
+                                model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                            } catch (RemoteException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            } catch (DBLayerException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            }
+                            model.reloadCache();
+                        }                        
+                    });
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
+                    /*
                     DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
                         @Override
                         public void afterStopped(Object value) {
@@ -93,13 +116,33 @@ public class AddPublicationCtrl {
                             }
                             model.reloadCache();
                         }
-                    };
-                    dpb.setTitle(L10n.getString("Publications.ProgressBar.Save"));
-                    task.start();
+                    };*/
+                    //dpb.setTitle(L10n.getString("Publications.ProgressBar.Save"));
+                    //task.start();
                 } else {                    
                     // Edit existing publication
                     Task task = model.editPublication();
-                    DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
+                    task.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                            model.searchPublication(false);
+                            try {
+                                model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                            } catch (RemoteException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            } catch (DBLayerException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            }
+                            model.reloadCache();                            
+                        }                        
+                    });
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
+/*                    DefaultProgressBar dpb = new DefaultProgressBar(task, view, true) {
                         @Override
                         public void afterStopped(Object value) {
                             model.searchPublication(false);
@@ -120,7 +163,7 @@ public class AddPublicationCtrl {
                         }
                     };
                     dpb.setTitle(L10n.getString("Publications.ProgressBar.Save"));
-                    task.start();                    
+                    task.start();                    */
                 }
                 // Close the add dialog when save finished
                 view.close();
