@@ -1,6 +1,5 @@
 package net.sf.plantlore.common.record;
 
-import java.util.Date;
 
 /**
  *  Data holder object representing TUNITIDDATABASE table in the DB. This object is used as a data

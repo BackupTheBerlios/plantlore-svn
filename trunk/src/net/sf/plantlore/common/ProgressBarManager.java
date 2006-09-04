@@ -57,7 +57,8 @@ public class ProgressBarManager implements Observer {
     }
     
     public synchronized void removeTask() {
-        task.deleteObserver(this);
+    	if( task != null )
+    		task.deleteObserver(this);
         task = null;
     }
     
