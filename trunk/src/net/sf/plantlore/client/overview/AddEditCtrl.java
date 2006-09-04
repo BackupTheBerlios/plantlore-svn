@@ -32,12 +32,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import com.toedter.calendar.JCalendar;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
+import net.sf.plantlore.common.Task;
 import org.apache.log4j.Logger;
 
 import net.sf.plantlore.client.checklist.ChecklistCtrl;
@@ -621,25 +625,61 @@ public class AddEditCtrl {
                                 options,
                                 options[0]);
                         switch (choice) {
-                            case 0:
-                                model.storeRecord(true);
-                                view.setVisible(false);
+                            case 0:                                
+                                Task task = model.storeRecord(true);
+                                task.setPostTaskAction(new PostTaskAction() {
+                                    public void afterStopped(Object value) {
+                                        SwingUtilities.invokeLater(new Runnable() {
+                                            public void run() {
+                                                view.setVisible(false);
+                                            }
+                                        });
+                                    }
+                                });
+                                Dispatcher.getDispatcher().dispatch(task, view, false);
                                 break;
                             case 1:
-                                model.storeRecord(false);
-                                view.setVisible(false);
+                                task = model.storeRecord(false);
+                                task.setPostTaskAction(new PostTaskAction() {
+                                    public void afterStopped(Object value) {
+                                        SwingUtilities.invokeLater(new Runnable() {
+                                            public void run() {
+                                                view.setVisible(false);
+                                            }
+                                        });
+                                    }
+                                });
+                                Dispatcher.getDispatcher().dispatch(task, view, false);
                                 break;
                             case 2:
                             default:                        
                                 //we'll do nothing and leave the AddEdit dialog visible
                         }
                     } else {
-                            model.storeRecord(true);
-                            view.setVisible(false);                    
+                            Task task = model.storeRecord(true);
+                            task.setPostTaskAction(new PostTaskAction() {
+                                public void afterStopped(Object value) {
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        public void run() {
+                                            view.setVisible(false);
+                                        }
+                                    });
+                                }
+                            });
+                            Dispatcher.getDispatcher().dispatch(task, view, false);
                     }
                 } else {//inAddMode
-                    model.storeRecord(true);
-                    JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.AddConfirmation"),L10n.getString("AddEdit.AddConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    Task task = model.storeRecord(true);
+                    task.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.AddConfirmation"),L10n.getString("AddEdit.AddConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
+                                }
+                            });
+                        }
+                    });
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
                     //view.setVisible(false);
                 }
             } catch (RemoteException ex) {
