@@ -719,47 +719,42 @@ public class History extends Observable {
                //Set old value to attribute Year          		
                 occ.setYearCollected(Integer.parseInt(oldValue));
                 logger.debug("Set selected value for update of attribute Year.");
-                //Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	                		
-                isoDateTime.setTime(occ.getTimeCollected());
-                isoDateTime.set(Integer.parseInt(oldValue),occ.getMonthCollected(),occ.getDayCollected());
-                occ.setIsoDateTimeBegin(isoDateTime.getTime());	                	              	            	
+                //Update attribute isoDateTimeBegin (Year + Mont + Day + Time)	
+                setIsoDateTimeBegin(occ,Integer.parseInt(oldValue),occ.getMonthCollected(),occ.getDayCollected(), occ.getTimeCollected());                
                 break;
         case 3: //Month 
                 // Set old value to attribute Month 
                 occ.setMonthCollected(Integer.parseInt(oldValue));
                 logger.debug("Set selected value for update of attribute Month.");
                 // Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
-                isoDateTime.setTime(occ.getTimeCollected());
-                isoDateTime.set(occ.getYearCollected(), Integer.parseInt(oldValue), occ.getDayCollected());
-                occ.setIsoDateTimeBegin(isoDateTime.getTime());              		
+                setIsoDateTimeBegin(occ,occ.getYearCollected(), Integer.parseInt(oldValue),occ.getDayCollected(), occ.getTimeCollected());                             		
             break;
         case 4: //Day	                	
                 // Set old value to attribute Day            		
                 occ.setDayCollected(Integer.parseInt(oldValue));
                 logger.debug("Set selected value for update of attribute Day.");
-                // Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
-                isoDateTime.setTime(occ.getTimeCollected());
-                isoDateTime.set(occ.getYearCollected(), occ.getMonthCollected(), Integer.parseInt(oldValue));
-                occ.setIsoDateTimeBegin(isoDateTime.getTime());
+                // Update attribute isoDateTimeBegin (Year + Mont + Day + Time)
+                setIsoDateTimeBegin(occ,occ.getYearCollected(), occ.getMonthCollected(), Integer.parseInt(oldValue), occ.getTimeCollected());                             		               
                 break;
         case 5: //Time 	                		                	
                 // Set old value to attribute Time   
-                Date time = new Date();
-                SimpleDateFormat df = new SimpleDateFormat( "HH:mm:ss.S" );
-                try {
-                        time = df.parse( oldValue );
-                } catch (ParseException e) {
-                        logger.error("Parse time failed. "+ e);
-                        setError(ERROR_PARSE_DATE);
-                        setException(e);
-                        return;
+                Date time = null;
+                if (oldValue != null) {                    
+                    time = new Date();
+                    SimpleDateFormat df = new SimpleDateFormat( "HH:mm:ss.S" );
+                    try {
+                            time = df.parse( oldValue );
+                    } catch (ParseException e) {
+                            logger.error("Parse time failed. "+ e);
+                            setError(ERROR_PARSE_DATE);
+                            setException(e);
+                            return;
+                    }
                 }
                 occ.setTimeCollected(time);
                 logger.debug("Set selected value for update of attribute Time.");
                 // Update attribute isoDateTimeBegin (Year + Mont + Day + Time)		                	
-                isoDateTime.setTime(time);
-                isoDateTime.set(occ.getYearCollected(), occ.getMonthCollected(), occ.getDayCollected());
-                occ.setIsoDateTimeBegin(isoDateTime.getTime());
+                setIsoDateTimeBegin(occ,occ.getYearCollected(), occ.getMonthCollected(),  occ.getDayCollected(), time);                             		                               
             break;
         case 6: //Source	                	
                 // Set old value to attribute Source 
@@ -826,6 +821,37 @@ public class History extends Observable {
             logger.debug("ObjectList - add occurrences");
             editObjectList.add(occ);
         }
+    }
+    
+    /**
+     *  Set date and time of collected occurrence
+     *  @param occ occurrence
+     *  @param year year of collected
+     *  @param month month of collected
+     *  @param day day of collected
+     *  @param time time of collected
+     */
+    public void setIsoDateTimeBegin(Occurrence occ, Integer year, Integer month, Integer day, Date time) {
+         //cIsoDateTimeBegin construction
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        if (month != null && day != null) { 
+            c.set(Calendar.MONTH, month);
+            c.set(Calendar.DAY_OF_MONTH,day);
+        } else { 
+            c.set(Calendar.MONTH, 0);
+            c.set(Calendar.DAY_OF_MONTH,1);            
+        }
+        Calendar temp = Calendar.getInstance();
+        if (time != null) {
+            temp.setTime(time);
+            c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
+            c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+        } else {
+            c.set(Calendar.HOUR_OF_DAY,0);
+            c.set(Calendar.MINUTE,1); 
+        }
+        occ.setIsoDateTimeBegin(c.getTime());
     }
         
     /**
