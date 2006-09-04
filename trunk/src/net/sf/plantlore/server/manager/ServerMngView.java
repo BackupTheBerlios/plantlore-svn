@@ -150,7 +150,6 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
 					setVisible(true);
 				}
 			});
-			
 			Dispatcher.initialize( progress );
 		}
 	}

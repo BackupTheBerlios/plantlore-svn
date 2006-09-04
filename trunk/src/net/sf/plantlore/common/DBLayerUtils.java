@@ -385,7 +385,7 @@ public class DBLayerUtils {
 		// Create a query that will look for the record with the same properties.
 		SelectQuery query = db.createQuery( table );
 		
-		logger.debug("Table is " + table.getSimpleName());
+		//logger.debug("Table is " + table.getSimpleName());
 
 		try {
 			// Equal properties.

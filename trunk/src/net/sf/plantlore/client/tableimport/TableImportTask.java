@@ -63,7 +63,7 @@ public class TableImportTask extends Task {
 		this.db = db;
 		this.parser = parser;
 		
-		dbutils = new DBLayerUtils( db );
+		dbutils = new DBLayerUtils( db, null, false );
 	}
 	
 	
@@ -119,11 +119,12 @@ public class TableImportTask extends Task {
 			
 			Record recordInDB = null;
 			try {
-				dbutils.findMatchInDB( data.record );
+				recordInDB = dbutils.findMatchInDB( data.record );
 			} catch(DBLayerException e) {
 				continue;
 			}
 			boolean isRecordInDB = recordInDB != null;
+			logger.debug("Is the record in the database? " + isRecordInDB);
 			
 			// Take action.
 			try {

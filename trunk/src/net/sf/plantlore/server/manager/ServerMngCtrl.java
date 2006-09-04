@@ -17,7 +17,7 @@ public class ServerMngCtrl {
 	
 	
 	public ServerMngCtrl(final ServerMng model, final ServerMngView view) {
-		
+
 		view.kick.setAction(new StandardAction("Server.KickUser") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createKickTask( (ConnectionInfo)view.users.getSelectedValue() );

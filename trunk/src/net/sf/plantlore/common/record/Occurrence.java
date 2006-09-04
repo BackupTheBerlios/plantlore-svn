@@ -130,7 +130,12 @@ public class Occurrence extends Record implements Deletable {
 				setId((Integer)value);
 		}
 		else if(column.equalsIgnoreCase(UNITIDDB)) setUnitIdDb((String)value);
-		else if(column.equalsIgnoreCase(UNITVALUE)) setUnitValue((Integer)value);
+		else if(column.equalsIgnoreCase(UNITVALUE)) {
+			if (value != null && value instanceof String)
+				setUnitValue(Integer.parseInt((String) value));
+			else
+				setUnitValue((Integer)value);
+		}
 		else if(column.equalsIgnoreCase(HABITAT)) setHabitat((Habitat)value);
 		else if(column.equalsIgnoreCase(PLANT)) setPlant((Plant)value);
 		else if(column.equalsIgnoreCase(YEARCOLLECTED)) {
