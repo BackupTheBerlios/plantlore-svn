@@ -14,6 +14,7 @@ import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.client.overview.Column;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -31,6 +32,8 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         initComponents();
         setLabels();
         loadValues();
+        setLocationRelativeTo(parent);
+        new DefaultEscapeKeyPressed(this);
     }
     
     public void loadValues() {
@@ -114,6 +117,9 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         languagesButtonGroup = new javax.swing.ButtonGroup();
+        generalPanel = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        dynamicPageCheckBox = new javax.swing.JCheckBox();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -138,12 +144,50 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         headerOneLabel = new javax.swing.JLabel();
         headerTwoLabel = new javax.swing.JLabel();
         headerTwoField = new javax.swing.JTextField();
-        generalPanel = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
-        dynamicPageCheckBox = new javax.swing.JCheckBox();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
+
+        generalPanel.setEnabled(false);
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Settings.General.OverviewPanel")));
+        dynamicPageCheckBox.setText("jCheckBox1");
+        dynamicPageCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        dynamicPageCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        dynamicPageCheckBox.setActionCommand("DYNAMIC_PAGE_LOADING");
+
+        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(dynamicPageCheckBox)
+                .addContainerGap(481, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(dynamicPageCheckBox)
+                .addContainerGap(73, Short.MAX_VALUE))
+        );
+
+        org.jdesktop.layout.GroupLayout generalPanelLayout = new org.jdesktop.layout.GroupLayout(generalPanel);
+        generalPanel.setLayout(generalPanelLayout);
+        generalPanelLayout.setHorizontalGroup(
+            generalPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(generalPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        generalPanelLayout.setVerticalGroup(
+            generalPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(generalPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(160, Short.MAX_VALUE))
+        );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Settings.LanguagePanel")));
         languagesButtonGroup.add(englishRadioButton);
@@ -364,47 +408,6 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .addContainerGap(159, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab(L10n.getString("Settings.SchedaTab"), jPanel5);
-
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Settings.General.OverviewPanel")));
-        dynamicPageCheckBox.setText("jCheckBox1");
-        dynamicPageCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        dynamicPageCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        dynamicPageCheckBox.setActionCommand("DYNAMIC_PAGE_LOADING");
-
-        org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(dynamicPageCheckBox)
-                .addContainerGap(481, Short.MAX_VALUE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(dynamicPageCheckBox)
-                .addContainerGap(73, Short.MAX_VALUE))
-        );
-
-        org.jdesktop.layout.GroupLayout generalPanelLayout = new org.jdesktop.layout.GroupLayout(generalPanel);
-        generalPanel.setLayout(generalPanelLayout);
-        generalPanelLayout.setHorizontalGroup(
-            generalPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(generalPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        generalPanelLayout.setVerticalGroup(
-            generalPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(generalPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(160, Short.MAX_VALUE))
-        );
-        jTabbedPane1.addTab(L10n.getString("Settings.GeneralTab"), generalPanel);
 
         cancelButton.setText("Cancel");
         cancelButton.setActionCommand("CANCEL");
