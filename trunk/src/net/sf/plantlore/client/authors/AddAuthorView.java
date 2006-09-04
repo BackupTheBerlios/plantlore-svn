@@ -1,8 +1,3 @@
-/*
- * AddAuthorView.java
- *
- * Created on 30. duben 2006, 17:46
- */
 
 package net.sf.plantlore.client.authors;
 
@@ -24,7 +19,7 @@ import javax.swing.text.PlainDocument;
  * Dialog used for adding / editing authors.
  *
  * @author  Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
+ * @version 1.0
  */
 public class AddAuthorView extends javax.swing.JDialog implements Observer {
     /** Model of the Author manager MVC */

@@ -1,8 +1,3 @@
-/*
- * AuthorManagerView.java
- *
- * Created on 30. duben 2006, 14:58
- */
 
 package net.sf.plantlore.client.authors;
 
@@ -384,20 +379,14 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      *  @param message Message we want to display
      */
     public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, L10n.getString("Common.ErrorMessageTitle"), JOptionPane.ERROR_MESSAGE);               
+        JOptionPane.showMessageDialog(this, message, L10n.getString("Error.GenericMessageTitle"), JOptionPane.ERROR_MESSAGE);               
     }
     
     /**
      *  Method used for updating the view (called when the model has changed and notifyObservers() was called)
      */
     public void update(Observable obs, Object obj) {       
-        // Check whether we have some kind of error to display
-        if (model.isError()) {
-            showErrorMessage(model.getError());            
-            return;
-        } else {
-            displayResults(model.getData());
-        }
+        displayResults(model.getData());
     }
 
     /**
@@ -509,7 +498,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      *  Close this dialog.
      */    
     public void close() {
-        this.hide();
+        this.dispose();
     }
 
     /**

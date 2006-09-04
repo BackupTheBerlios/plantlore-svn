@@ -1,9 +1,3 @@
-/*
- * AddAuthorCtrl.java
- *
- * Created on 21. leden 2006, 0:58
- *
- */
 
 package net.sf.plantlore.client.authors;
 
@@ -13,17 +7,23 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
+import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.PlantloreHelp;
 import javax.swing.Timer;
 import net.sf.plantlore.client.authors.AuthorManagerCtrl.RoleFieldPropertyChangeListener;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.ProgressDialog;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
 /**
  * Controller for the Add/Edit author dialog in the AuthorManager MVC.
  *
  * @author Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
+ * @version 1.0
  */
 public class AddAuthorCtrl {
     /** Model of the Author manager MVC */
@@ -58,22 +58,6 @@ public class AddAuthorCtrl {
         view.emailAddPropertyChangeListener(new EmailFieldPropertyChangeListener());
         view.urlAddPropertyChangeListener(new UrlFieldPropertyChangeListener());
         view.noteAddFocusListener(new NoteAreaFocusListener());                
-        // Create a timer to check for the end of long running task
-        timer = new Timer(100, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (model.isOperationDone() == true) {
-                    timer.stop();
-                    // Close progress bar dialog
-                    progress.close();
-                    view.setDialogEnabled(true);                    
-                    if (model.processErrors() == false) {    
-                        if (model.isResultAvailable()) {   
-                            model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());                        
-                        }
-                    }
-                }
-            }
-        });        
     }
     
     /**
@@ -92,22 +76,56 @@ public class AddAuthorCtrl {
      * This metod is used for saving new author as well as updating the existing one.
      */    
     class SaveAuthorButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {            
+        public void actionPerformed(ActionEvent e) {                        
             // Check whether all the required fields are present
             if (view.checkNonEmpty("name")) {
-                if (model.getEditAuthor() == null) {
+                if (model.getEditAuthor() == null) {                    
                     // Save new author
-                    model.saveAuthor();                
-                } else {
+                    Task task = model.saveAuthor();     
+                    task.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                            model.searchAuthor(false);
+                            try {
+                                model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                            } catch (RemoteException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            } catch (DBLayerException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            }
+                            model.reloadCache();
+                        }                        
+                    });
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
+                } else {                    
                     // Edit existing author
-                    model.editAuthor();
+                    Task task = model.editAuthor();
+                    task.setPostTaskAction(new PostTaskAction() {
+                        public void afterStopped(Object value) {
+                            model.searchAuthor(false);
+                            try {
+                                model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                            } catch (RemoteException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            } catch (DBLayerException ex) {
+                                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                                ex.printStackTrace();
+                                DefaultExceptionHandler.handle(view, ex);
+                                return;                    
+                            }
+                            model.reloadCache();                            
+                        }                        
+                    });
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
                 }
-                // Disable the dialog while saving author
-                view.setDialogEnabled(false);                                
-                timer.start();                
-                // Display dialog with progress bar
-                progress = new ProgressDialog(view.getDialog(), true);
-                progress.show();
                 // Close the add dialog when save finished
                 view.close();
             }

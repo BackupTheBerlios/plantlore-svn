@@ -1,9 +1,3 @@
-/*
- * AuthorManager.java
- *
- * Created on 15. leden 2006, 2:04
- *
- */
 
 package net.sf.plantlore.client.authors;
 
@@ -11,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.HistoryRecord;
@@ -84,6 +79,10 @@ public class AuthorManager extends Observable {
     private int sortDirection = 0;
     /** Author we want to edit */
     private Author editAuthor;
+    /** Enum used for notifying AppCore to reload cached publications */
+    private PlantloreConstants.Table[] editTypeArray = new PlantloreConstants.Table[]{PlantloreConstants.Table.AUTHOR};
+    
+    
     /** Constants used for identification of fields for sorting */
     public static final int SORT_NAME = 1;
     public static final int SORT_ORGANIZATION = 2;
@@ -115,12 +114,16 @@ public class AuthorManager extends Observable {
     /**
      *  Save new author to the database. Information about the author are stored in data fields of this class.
      *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
+     *
+     *  @return Task instance of the Task with the long running operation (saving data)
      */
-    public void saveAuthor() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+    public Task saveAuthor() {
+        // Create Task
+        final Task task = new Task() {
+            public Object task() throws Exception {
                 // The operation is not finished yet
                 done = false;
+                setStatusMessage(L10n.getString("Authors.ProgressBar.Save"));                
                 // Create Author object for author we want to add
                 Author author = new Author();
                 author.setWholeName(name);
@@ -133,95 +136,59 @@ public class AuthorManager extends Observable {
                 author.setDeleted(0);
                 author.setNote(note);
                 int rowId = -1;
-                try {
-                    // Execute query
-                    rowId = database.executeInsert(author);
-                } catch (DBLayerException e) {
-                    // Check the type of an exception
-                    int errorCode = e.getErrorCode();
-                    switch (errorCode) {
-                        case DBLayerException.ERROR_RIGHTS:
-                            logger.info("Insufficient rights for the operation");
-                            setError(ERROR_RIGHTS);
-                            break;
-                        case DBLayerException.ERROR_SAVE:
-                            logger.error("Saving author failed. Unable to execute insert query");
-                            setError(ERROR_SAVE);                            
-                            break;
-                        default:
-                            logger.error("Saving author failed. An error occurred");                            
-                            setError(ERROR_SAVE);                            
-                    }
-                    // Set operation state to finished
-                    done = true;
-                    return null;
-                } catch(RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                }
-                logger.info("Author "+name+" saved successfuly.");
-                if (isResultAvailable()) {
-                    searchAuthor();
-                }                
+                clearDataHolders();                
+                // Execute query
+                rowId = database.executeInsert(author);
+                logger.info("Author "+name+" saved successfuly.");                
+                // Set operation state to finished
                 done = true;
-                return rowId;
+                // Stop the Task
+                fireStopped(null);               
+                return rowId;                
             }
         };
-        worker.start();
+        return task;
     }
     
     /**
      *  Delete an author from the database. To-be-deleted author is identified by his ID and is
      *  retrieved based on the value of <code>authorIndex</code> field. Error is set in case of an exception.
+     *
+     *  @return instance of the Task with the long running operation (deleting data)
      */
-    public void deleteAuthor() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+    public Task deleteAuthor() {
+        // Create Task
+        final Task task = new Task() {
+            public Object task() throws Exception {
+                setStatusMessage(L10n.getString("Authors.ProgressBar.Delete"));
                 // Operation not finished yet
                 done = false;
-                try {
-                    // Execute query
-                    Author delAuthor = (Author)data.get(getAuthorIndex());
-                    delAuthor.setDeleted(1);
-                    database.executeUpdate(delAuthor);
-                } catch (DBLayerException e) {
-                    int errorCode = e.getErrorCode();
-                    switch (errorCode) {
-                        case DBLayerException.ERROR_RIGHTS:
-                            logger.info("Insufficient rights for the operation");
-                            setError(ERROR_RIGHTS);
-                            break;
-                        case DBLayerException.ERROR_DELETE:
-                            logger.error("Deleting author failed. Unable to execute delete query");
-                            setError(ERROR_DELETE);
-                            break;
-                        default:
-                            logger.error("Deleting author failed. An error occurred");                            
-                            setError(ERROR_DELETE);                            
-                    }                    
-                    // Set operation state to finished
-                    done = true;
-                    return false;
-                } catch(RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                }
+                // Execute query
+                Author delAuthor = (Author)data.get(getAuthorIndex());
+                delAuthor.setDeleted(1);
+                database.executeUpdate(delAuthor);
                 logger.info("Author "+name+" deleted succesfully");
-                // Execute author search - required in order to display up-to-date data in the table of authors
-                searchAuthor();
                 // Set operation state to finished
                 done = true;
+                // Stop the Task
+                fireStopped(null);
                 return true;
             }
         };
-        worker.start();
+        return task;
     }
 
     /**
      *  Update author in the database. To-be-updated author is stored in <code>editAuthor</code> field. Operation 
      *  is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
+     *
+     *  @return instance of the Task with the long running operation (updating data)
      */    
-    public void editAuthor() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+    public Task editAuthor() {
+        // Create the Task
+        final Task task = new Task() {
+            public Object task() throws Exception {
+                setStatusMessage(L10n.getString("Authors.ProgressBar.Save"));
                 // The operation is not finished yet
                 done = false;
                 // Update to*be-updated author based on user input
@@ -234,137 +201,128 @@ public class AuthorManager extends Observable {
                 author.setEmail(email);
                 author.setUrl(url);
                 author.setNote(note);
-                try {
-                    // Execute query
-                    database.executeUpdate(author);
-                } catch (DBLayerException e) {
-                    int errorCode = e.getErrorCode();
-                    switch (errorCode) {
-                        case DBLayerException.ERROR_RIGHTS:
-                            logger.info("Insufficient rights for the operation");
-                            setError(ERROR_RIGHTS);
-                            break;
-                        case DBLayerException.ERROR_UPDATE:
-                            logger.error("Updating author failed. Unable to execute update query");
-                            setError(ERROR_UPDATE);                            
-                            break;
-                        default:
-                            logger.error("Updating author failed. An error occurred");                            
-                            setError(ERROR_UPDATE);                            
-                    }                    
-                    // Set operation state to finished
-                    done = true;
-                    return false;
-                } catch(RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                }
+                clearDataHolders();                
+                // Execute query
+                database.executeUpdate(author);
                 logger.info("Author "+name+" updated successfuly.");
-                if (isResultAvailable()) {
-                    searchAuthor();
-                }
                 done = true;
+                // Stop the Task
+                fireStopped(null);
                 return true;
             }
         };
-        worker.start();        
+        return task;
     }
     
     /**
-     *  Search for authors in the database. Criteria for search are stored in data fields of this class.
-     *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception
-     */
-    public void searchAuthor() {
-        final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                // Operation not finished yet
-                done = false;
-                SelectQuery query;
-                try {
-                    // Create new Select query                    
-                    query = database.createQuery(Author.class);                    
-                    // Display only authors who haven't been deleted
-                    query.addRestriction(PlantloreConstants.RESTR_EQ, Author.DELETED, null, 0, null);
-                    // Add given restrictions (WHERE clause)
-                    if ((searchName != null) && (searchName != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.WHOLENAME, null, "%" + searchName + "%", null);
-                    if ((searchOrganization != null) && (searchOrganization != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.ORGANIZATION, null, "%" + searchOrganization + "%", null);
-                    if ((searchRole != null) && (searchRole != ""))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.ROLE, null, "%" + searchRole + "%", null);
-                    if ((searchEmail != null) && (searchEmail != null))
-                        query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.EMAIL, null, "%" + searchEmail + "%", null);
-                    String field;
-                    // Add ORDER BY clause
-                    switch (sortField) {
-                        case 1: field = Author.WHOLENAME;
-                                break;
-                        case 2: field = Author.ORGANIZATION;
-                                break;
-                        case 3: field = Author.ROLE;
-                                break;
-                        case 4: field = Author.EMAIL;
-                                break;
-                        case 5: field = Author.PHONENUMBER;
-                                break;
-                        case 6: field = Author.URL;
-                                break;
-                        default:field = Author.WHOLENAME;
-                    }
-                    
-                    if (sortDirection == 0) {
-                        query.addOrder(PlantloreConstants.DIRECT_ASC, field);
-                    } else {
-                        query.addOrder(PlantloreConstants.DIRECT_DESC, field);
-                    }
-                    int resultId = 0;
-                    try {
-                        // Execute query
-                        resultId = database.executeQuery(query);
-                    } catch (DBLayerException e) {
-                        int errorCode = e.getErrorCode();
-                        switch (errorCode) {
-                            case DBLayerException.ERROR_SELECT:
-                                logger.error("Searching authors failed. Unable to execute search query.");
-                                setError(ERROR_SEARCH);
-                                break;
-                            default:
-                                logger.error("Saving author failed. An error occurred");                            
-                                setError(ERROR_SEARCH);
-                        }                        
-                    } finally {
-                        // Set operation state to finished
-                        done = true;
-                        logger.info("Authors successfuly retrieved from the database");
-                        // Save the results
-                        setResult(resultId);
-                    }
-                    return resultId;
-                } catch (RemoteException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                    return null;
-                } catch (DBLayerException e) {
-                    System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                    return null;
-                }
-            }
-        };
-        worker.start();
-    }
-    
-    /**
-     * Checks whether an error is set. If yes, notifies observers to display it.
-     * Finally unsets the error flag.
+     *  Search for authors in the database. Criteria for search are stored in data fields of 
+     *  this class. Operation might be executed in a separate thread using the Task class (depends
+     *  on the input parameters). the reason for this is that we are sometimes executing search from
+     *  another long running operation, teherefore we do not need a new thread.
      *
-     * @return <code>true</code> if an error was set (and observers were notified), <code>false</code> otherwise
+     *  @param createTask tells whether to execute search in a separate thread
+     *  @return instance of the Task with the long running operation (searching data)
+     *  @see #search()
      */
-    public boolean processErrors() {
-        if (this.error != null) {
-            setChanged();
-            notifyObservers();
-            this.error = null;
-            return true;
+    public Task searchAuthor(boolean createTask) {
+        // Use the Task class to execute the search in a new thread
+        if (createTask) {
+            final Task task = new Task() {
+                public Object task() throws Exception {
+                    setStatusMessage(L10n.getString("Authors.ProgressBar.Search"));                    
+                    // Search the data
+                    int resultId = search();
+                    setResult(resultId);
+                    logger.info("Authors successfuly retrieved from the database");
+                    // Stop the Task
+                    fireStopped(null);
+                    return resultId;
+                }
+            };
+            return task;
+        } else {
+            // Do not use Task. Catch exceptions but do not display error.
+            try {
+                int resultId = search();
+                setResult(resultId);
+            } catch (DBLayerException ex1) {
+                logger.error("DBLayerException caught while searching the database. Details: "+ex1.getMessage());
+                ex1.printStackTrace();
+                return null;
+            } catch (RemoteException ex2) {
+                logger.error("RemoteException caught while searching the database. Details: "+ex2.getMessage());
+                ex2.printStackTrace();
+                return null;
+            }
+            logger.info("Authors successfuly retrieved from the database");
+            return null;
         }
-        return false;
+    }   
+    
+    /**
+     *  Method to construct and execute the search query. This method is called from searchAuthor method.
+     *
+     *  @return id identifying the search result
+     *  @throws DBLayerException in case search failed
+     *  @throws RemoteException in case network communication failed
+     *  @see #searchAuthor(boolean)
+     */
+    public Integer search() throws DBLayerException, RemoteException {
+        SelectQuery query;
+        // Create new Select query
+        query = database.createQuery(Author.class);
+        // Display only authors who haven't been deleted
+        query.addRestriction(PlantloreConstants.RESTR_EQ, Author.DELETED, null, 0, null);
+        // Add given restrictions (WHERE clause)
+        if ((searchName != null) && (searchName != ""))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.WHOLENAME, null, "%" + searchName + "%", null);
+        if ((searchOrganization != null) && (searchOrganization != ""))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.ORGANIZATION, null, "%" + searchOrganization + "%", null);
+        if ((searchRole != null) && (searchRole != ""))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.ROLE, null, "%" + searchRole + "%", null);
+        if ((searchEmail != null) && (searchEmail != null))
+            query.addRestriction(PlantloreConstants.RESTR_ILIKE, Author.EMAIL, null, "%" + searchEmail + "%", null);
+        String field;
+        // Add ORDER BY clause
+        switch (sortField) {
+            case 1: field = Author.WHOLENAME;
+            break;
+            case 2: field = Author.ORGANIZATION;
+            break;
+            case 3: field = Author.ROLE;
+            break;
+            case 4: field = Author.EMAIL;
+            break;
+            case 5: field = Author.PHONENUMBER;
+            break;
+            case 6: field = Author.URL;
+            break;
+            default:field = Author.WHOLENAME;
+        }
+        
+        if (sortDirection == 0) {
+            query.addOrder(PlantloreConstants.DIRECT_ASC, field);
+        } else {
+            query.addOrder(PlantloreConstants.DIRECT_DESC, field);
+        }
+        int resultId = 0;
+        // Execute query
+        resultId = database.executeQuery(query);
+        return resultId;
+    }
+     
+    /**
+     *  Clear the variables with author properties
+     */
+    private void clearDataHolders() {
+        this.name = null;
+        this.organization = null;
+        this.role = null;
+        this.address = null;
+        this.phoneNumber = null;
+        this.email = null;
+        this.url = null;
+        this.note = null;        
     }
     
     /**
@@ -376,7 +334,7 @@ public class AuthorManager extends Observable {
      * @param from  index of the first row to retrieve.
      * @param count number of rows to retrieve
      */
-    public void processResults(int from, int count) {
+    public void processResults(int from, int count) throws RemoteException, DBLayerException {
         if (this.resultId != 0) {
             logger.info("Processing "+count+" results from "+from);
             logger.debug("Rows in the result: "+getResultRows());
@@ -384,63 +342,73 @@ public class AuthorManager extends Observable {
             int to = Math.min(getResultRows(), from+count-1);
             if (to == 0) {
                 this.data = new ArrayList();
-            } else {
-                try {
-                    // Retrieve selected row interval
-                    Object[] objArray;
-                    try {
-                        // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
-                        // from-1 and to-1 just temporary
-                        objArray = database.more(resultId, from-1, to-1);
-                    } catch(RemoteException e) {
-                        System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
-                        return;
-                    }
-                    logger.debug("Results retrieved. Count: "+objArray.length);
-                    // Create storage for the results
-                    this.data = new ArrayList(objArray.length);
-                    // Cast the results to the AuthorRecord objects
-                    for (int i=0;i<objArray.length;i++) {
-                        Object[] objAuth = (Object[])objArray[i];
-                        this.data.add((Author)objAuth[0]);
-                    }
-                } catch (DBLayerException e) {
-                    // Log and set error in case of an exception
-                    logger.error("Processing search results failed: "+e.toString());
-                    setError(this.ERROR_PROCESS);
+            } else {                
+                // Retrieve selected row interval
+                Object[] objArray;
+                
+                // FIXME: Should change all the usages of processResults to use 0 as the index of the forst row
+                // from-1 and to-1 just temporary
+                objArray = database.more(resultId, from-1, to-1);
+                logger.debug("Results retrieved. Count: "+objArray.length);
+                // Create storage for the results
+                this.data = new ArrayList(objArray.length);
+                // Cast the results to the AuthorRecord objects
+                for (int i=0;i<objArray.length;i++) {
+                    Object[] objAuth = (Object[])objArray[i];
+                    this.data.add((Author)objAuth[0]);
                 }
-                // Update current first displayed row (only if data retrieval was successful).
-                if (!this.isError()) {
-                    logger.info("Results successfuly retrieved");
-                    // Update current first displayed row
-                    setCurrentFirstRow(from);
-                }
+                logger.info("Results successfuly retrieved");
+                // Update current first displayed row
+                setCurrentFirstRow(from);
+                
             }
             // Tell observers to update
             setChanged();
             notifyObservers();
-            // Clean error flag (if it was set)
-            this.error = null;
         }
     }
+
+    /**
+     *  Notify observers  about the change in the list of publications (used to reload cached publications)
+     */
+    public void reloadCache() {
+        // Notify observers about the change in the list of publications. Used to reload cached publications
+        setChanged();
+        notifyObservers(editTypeArray);        
+    }    
     
-    public boolean hasRights(int operation) {
-        try {
-            if (operation == ADD) {
-                if (database.getUserRights().getAdd() == 1) {
-                    return true;
-                } else {
-                    return false;
-                }            
-            } else if (operation == EDIT) {
-                // TODO
-            } else if (operation == DELETE) {
-                // TODO
+    /**
+     *  Check whether the user has appropriate rights for the given operation.
+     *
+     *  @param  operation operation that is executed (for operation codes see constants)
+     *  @return true if the user has the right to execute the operation, false otherwise
+     *  @throws RemoteException in case we could not get user's access privileges
+     */    
+    public boolean hasRights(int operation) throws RemoteException {       
+        if (operation == ADD) {
+            if (database.getUserRights().getAdd() == 1) {
+                return true;
+            } else {
+                return false;
+            }            
+        } else { // Same rules apply for EDIT and DELETE
+            // Check whether the user can edit all the records
+            if (database.getUserRights().getEditAll() == 1) {
+                return true;
             }
-        } catch (RemoteException e) {
-            logger.error("Remote exception caught");
+            // Check whether the user can edit the record through some other user
+            String[] group = database.getUserRights().getEditGroup().split(",");
+            // We will need Author that will be edited
+            Author selectedAuth = (Author)data.get(this.getAuthorIndex());
+            // Check whether someone in the group is an owner of the publication
+            for (int i=0;i<group.length;i++) {
+                if (selectedAuth.getCreatedWho().getId().toString().equals(group[i])) {
+                    return true;
+                }
+            }
+            // No rights to edit the record
+            return false;            
         }
-        return false;
     }
     
     /**
@@ -494,10 +462,14 @@ public class AuthorManager extends Observable {
      */
     public int getResultRows() {
         int result = 0;
-        if (resultId != 0) try {
-            result = database.getNumRows(resultId);
-        } catch(RemoteException e) {
-            System.err.println("Kdykoliv se pracuje s DBLayer nebo SelectQuery, musite hendlovat RemoteException");
+        if (resultId != 0) {
+            try {
+                result = database.getNumRows(resultId);
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while retrieving number of rows in the result. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                return 0;
+            }
         }
         return result;
     }

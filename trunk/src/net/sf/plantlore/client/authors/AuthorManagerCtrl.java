@@ -1,9 +1,3 @@
-/*
- * AuthorManagerCtrl.java
- *
- * Created on 15. leden 2006, 2:04
- *
- */
 
 package net.sf.plantlore.client.authors;
 
@@ -13,15 +7,18 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import net.sf.plantlore.common.*;
 import javax.swing.Timer;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 
 /**
  * Controller for the main AuthorManager dialog (part of the AutorManager MVC).
  *
  * @author Tomas Kovarik
- * @version 1.0 BETA, May 1, 2006
+ * @version 1.0
  */
 public class AuthorManagerCtrl {
     /** Instance of a logger */
@@ -30,12 +27,6 @@ public class AuthorManagerCtrl {
     AuthorManager model;
     /** View of the AuthorManager MVC */
     AuthorManagerView view;
-         
-    private Timer timerSearch;          // Used for periodic checking of the state of other thread
-    private Timer timerDelete;          // Used for periodic checking of the state of other thread    
-    private ProgressDialog progress;    // Dialog showing progressbar
-    /** Frequency of the timer used for periodic checking of the state of other threads */
-    private final int TIMER_FREQUENCY = 100;
     
     /** 
      * Creates a new instance of AuthorManagerCtrl 
@@ -64,58 +55,27 @@ public class AuthorManagerCtrl {
         view.rowsAddPropertyChangeListener(new RowsPropertyChangeListener());
         view.sortAddFocusListener(new SortComboFocusListener());
         view.sortDirectionAddFocusListener(new SortDirectionRadioFocusListener());
-        // Create a timer for search operation
-        timerSearch = new Timer(TIMER_FREQUENCY, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                // Check whether the other thread is still running
-                if (model.isOperationDone() == true) {
-                    timerSearch.stop();                    
-                    progress.close();               // Close dialog with progress bar
-                    view.setDialogEnabled(true);    // Enable view dialog                
-                    // Check for errors which might have occured. If none occured, tell model to process the result
-                    if (model.processErrors() == false) {
-                        model.setCurrentFirstRow(1);                                                    
-                        // Display first n rows (n = model.getDisplayRows())                        
-                        model.processResults(1, model.getDisplayRows());                        
-                    }
+
+        Task task = model.searchAuthor(true);
+        task.setPostTaskAction(new PostTaskAction() {
+            public void afterStopped(Object value) {
+                model.setCurrentFirstRow(1);
+                try {
+                    model.processResults(1, model.getDisplayRows());
+                } catch (RemoteException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                } catch (DBLayerException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
                 }
-            }
-        });                
-        // Create a timer for delete operation
-        timerDelete = new Timer(TIMER_FREQUENCY, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                // Check whether the other thread is still running
-                if (model.isOperationDone() == true) {
-                    timerDelete.stop();                    
-                    progress.close();               // Close dialog with progress bar
-                    view.setDialogEnabled(true);    // Enable view dialog                
-                    // Check for errors which might have occured. If none occured, tell model to process the result
-                    if (model.processErrors() == false) {
-                        // Update curent first row so that it is not greater than number of rows in the result
-                        // (this happens in case the last record in the list has been deleted and it was set as 
-                        // the current first row)
-                        if (model.getCurrentFirstRow() > model.getResultRows()) {                           
-                            int row = model.getCurrentFirstRow()-model.getDisplayRows();
-                            if (row < 1) {
-                                model.setCurrentFirstRow(1);                                
-                            } else {
-                                model.setCurrentFirstRow(row);                                                                
-                            }
-                        }
-                        // Update table with authors - remove deleted author                        
-                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
-                    }
-                }
-            }
-        });   
-        // Display all authors when Author manager is opened
-        model.searchAuthor();
-        // Disable current view and run timer
-        view.setDialogEnabled(false);                                
-        timerSearch.start();                
-        // Display dialog with progress bar
-        progress = new ProgressDialog(view.getDialog(), true);
-        progress.show();        
+            }            
+        });
+        Dispatcher.getDispatcher().dispatch(task, view, false);        
     }
     
     /**
@@ -134,10 +94,18 @@ public class AuthorManagerCtrl {
     class AddAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             // Check whether we have rights for this operation
-            if (!model.hasRights(model.ADD)) {
-                view.showErrorMessage("Rights");
+            try {
+                if (!model.hasRights(model.ADD)) {
+                    view.showErrorMessage(L10n.getString("Authors.Add.InsufficientRights"));
+                    return;
+                }
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while checking user's rights. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
                 return;
             }
+            
             // Display dialog for adding / editing authors. This dialog shares model with
             // the rest of the AuthorManager.
             AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), true);
@@ -161,6 +129,18 @@ public class AuthorManagerCtrl {
                 view.selectRowMsg();
                 return;
             }          
+            try {
+                // Check whether we have rights for this operation
+                if (!model.hasRights(model.EDIT)) {
+                    view.showErrorMessage(L10n.getString("Authors.Edit.InsufficientRights"));
+                    return;
+                }                        
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while checking user's rights. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;
+            }                        
             AddAuthorView addAuthView = new AddAuthorView(model, view.getFrame(), false);
             AddAuthorCtrl addAuthCtrl = new AddAuthorCtrl(model, addAuthView);            
             // Save author we are going to edit
@@ -185,20 +165,47 @@ public class AuthorManagerCtrl {
             if (index == -1) {
                 view.selectRowMsg();
                 return;
-            }           
+            }        
+            try {
+                // Check whether we have rights for this operation
+                if (!model.hasRights(model.DELETE)) {
+                    view.showErrorMessage(L10n.getString("Authors.Delete.InsufficientRights"));
+                    return;
+                }           
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while checking user's rights. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                
+            }
             // Confirm deletion
             if (!view.confirmDelete()) {
                 return;
             }
             // Call delete
-            model.setAuthorIndex(index);
-            model.deleteAuthor();
-            // Disable current view and run timer
-            view.setDialogEnabled(false);                    
-            timerDelete.start();                
-            // Display dialog with progress bar
-            progress = new ProgressDialog(view.getDialog(), true);
-            progress.show();                                                
+            model.setAuthorIndex(index);            
+            // Delete is executed in a separate thread using Task
+            Task task = model.deleteAuthor();
+            task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) {                    
+                    model.searchAuthor(false);
+                    try {
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    } catch (RemoteException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    } catch (DBLayerException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    }
+                    model.reloadCache();
+                }                
+            });
+            Dispatcher.getDispatcher().dispatch(task, view, false);            
         }
     }    
 
@@ -207,14 +214,25 @@ public class AuthorManagerCtrl {
      */    
     class SearchAuthorButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // Run DB search
-            model.searchAuthor();
-            // Disable current view and run timer
-            view.setDialogEnabled(false);                                
-            timerSearch.start();                
-            // Display dialog with progress bar
-            progress = new ProgressDialog(view.getDialog(), true);
-            progress.show();                                                
+            Task task = model.searchAuthor(true);
+            task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) {
+                    try {
+                        model.processResults(model.getCurrentFirstRow(), model.getDisplayRows());
+                    } catch (RemoteException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    } catch (DBLayerException ex) {
+                        logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                        ex.printStackTrace();
+                        DefaultExceptionHandler.handle(view, ex);
+                        return;                    
+                    }                        
+                }                
+            });
+            Dispatcher.getDispatcher().dispatch(task, view, false);            
         }
     }        
     
@@ -226,7 +244,19 @@ public class AuthorManagerCtrl {
             // Call processResults only if we don't see the first page (should not happen, button should be disabled)
             if (model.getCurrentFirstRow() > 1) {
                 int firstRow = Math.max(model.getCurrentFirstRow()-view.getDisplayRows(), 1);
-                model.processResults(firstRow, view.getDisplayRows());                
+                try {
+                    model.processResults(firstRow, view.getDisplayRows());                
+                } catch (RemoteException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                } catch (DBLayerException ex) {
+                    logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                    ex.printStackTrace();
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;                    
+                }                    
             }
         }
     }
@@ -237,8 +267,20 @@ public class AuthorManagerCtrl {
     class NextButtonListener implements ActionListener {    
         public void actionPerformed(ActionEvent e) {
             // Call processResults only if we don't see the last page (should not happen, button should be disabled)
-            if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResultRows()) {
-                model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());
+            try {
+                if (model.getCurrentFirstRow()+view.getDisplayRows()<=model.getResultRows()) {
+                    model.processResults(model.getCurrentFirstRow()+view.getDisplayRows(), view.getDisplayRows());
+                }
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
             }
         }
     }    
@@ -328,9 +370,21 @@ public class AuthorManagerCtrl {
             model.setDisplayRows(view.getDisplayRows());
             logger.debug("New number of rows to display: "+view.getDisplayRows());
             // If neccessary reload search results
-            if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
-                model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
-                logger.debug("Search results reloaded. First row: "+model.getCurrentFirstRow()+"; Display rows: "+view.getDisplayRows());
+            try {                        
+                if ((oldValue != view.getDisplayRows()) && (model.getDisplayRows() <= model.getResultRows())) {
+                    model.processResults(model.getCurrentFirstRow(), view.getDisplayRows());
+                    logger.debug("Search results reloaded. First row: "+model.getCurrentFirstRow()+"; Display rows: "+view.getDisplayRows());
+                }
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while processing search results. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;                    
             }
         }        
     }            
