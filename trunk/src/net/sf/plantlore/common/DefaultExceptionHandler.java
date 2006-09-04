@@ -20,7 +20,26 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class DefaultExceptionHandler {
 	
+	private static boolean isReconnectDisabled = false;
+	
+	
 	private DefaultExceptionHandler() {}
+	
+	/**
+	 * Do not offer reconnect at all.
+	 *
+	 */
+	public static void disableReconnect() {
+		isReconnectDisabled = true;
+	}
+	
+	/**
+	 * Offer the reconnect procedure only where applicable.
+	 *
+	 */
+	public static void enableReconnect() {
+		isReconnectDisabled = false;
+	}
 
 
 	/**
@@ -151,7 +170,7 @@ public class DefaultExceptionHandler {
 		}
 		
 		// Announce the error and offer the reconnection.
-		if( isReconnectReasonable && ! doNotOfferReconnect )
+		if( !isReconnectDisabled && isReconnectReasonable && ! doNotOfferReconnect )
 			DefaultReconnectDialog.show(parent, problemDescription);
 		// Just announce the problem.
 		else

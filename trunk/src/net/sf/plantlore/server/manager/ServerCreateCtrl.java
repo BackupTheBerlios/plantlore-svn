@@ -2,7 +2,7 @@ package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
-import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.server.DatabaseSettings;
@@ -22,6 +22,8 @@ public class ServerCreateCtrl {
 	private ServerMngView mngView;
 	
 	public ServerCreateCtrl(final ServerMng model, final ServerCreateView view) {
+            
+		Dispatcher.initialize( view.progress );
 		
 		mngView = new ServerMngView(model);
 		new ServerMngCtrl(model, mngView);
@@ -76,8 +78,7 @@ public class ServerCreateCtrl {
 					
 					// Create and run a new server.
 					Task createServer = model.createNewServerTask( serverPassword );
-					new DefaultProgressBar(createServer, view, true, true);
-					createServer.start();
+					Dispatcher.getDispatcher().dispatch(createServer, view, true);
 					break;
 				
 					
@@ -93,8 +94,7 @@ public class ServerCreateCtrl {
 					
 					Task connectToServer = model.createConnectToRunningServerTask(
 							view.remoteHost.getText(), port, password );
-					new DefaultProgressBar(connectToServer, view, true, true);
-					connectToServer.start();
+					Dispatcher.getDispatcher().dispatch(connectToServer, view, true);
 					
 					break;
 				}

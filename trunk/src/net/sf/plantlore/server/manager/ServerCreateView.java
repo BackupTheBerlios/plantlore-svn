@@ -50,6 +50,9 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
+        // Show the progress bar only when necessary.
+        progress.setVisible( false );
+        
         DocumentSizeFilter.patch(serverPassword, 20);
         DocumentSizeFilter.patch(serverPort, 5);
         DocumentSizeFilter.patch(databaseType, 30);
@@ -68,6 +71,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         plantloreLogo = new javax.swing.JPanel();
+        progress = new javax.swing.JProgressBar();
         next = new javax.swing.JButton();
         help = new javax.swing.JButton();
         choicePane = new javax.swing.JTabbedPane();
@@ -99,15 +103,23 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         setResizable(false);
         plantloreLogo.setBackground(new java.awt.Color(0, 0, 0));
         plantloreLogo.setPreferredSize(new java.awt.Dimension(300, 100));
+        progress.setBorderPainted(false);
+
         org.jdesktop.layout.GroupLayout plantloreLogoLayout = new org.jdesktop.layout.GroupLayout(plantloreLogo);
         plantloreLogo.setLayout(plantloreLogoLayout);
         plantloreLogoLayout.setHorizontalGroup(
             plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 408, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, plantloreLogoLayout.createSequentialGroup()
+                .addContainerGap(165, Short.MAX_VALUE)
+                .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 233, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         plantloreLogoLayout.setVerticalGroup(
             plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 100, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, plantloreLogoLayout.createSequentialGroup()
+                .addContainerGap(71, Short.MAX_VALUE)
+                .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         next.setText(L10n.getString("Server.Continue"));
@@ -350,6 +362,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel jPanel5;
     protected javax.swing.JButton next;
     protected javax.swing.JPanel plantloreLogo;
+    protected javax.swing.JProgressBar progress;
     protected javax.swing.JTextField remoteHost;
     protected javax.swing.JPasswordField remoteServerPassword;
     protected javax.swing.JTextField remoteServerPort;

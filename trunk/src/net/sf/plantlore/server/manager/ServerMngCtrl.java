@@ -2,7 +2,7 @@ package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
-import net.sf.plantlore.common.DefaultProgressBar;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.server.ConnectionInfo;
@@ -21,24 +21,21 @@ public class ServerMngCtrl {
 		view.kick.setAction(new StandardAction("Server.KickUser") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createKickTask( (ConnectionInfo)view.users.getSelectedValue() );
-				new DefaultProgressBar(t, view, true, true);
-				t.start();			
+				Dispatcher.getDispatcher().dispatch(t, view, true);			
 			}
 		});
 		
 		view.terminate.setAction(new StandardAction("Server.Terminate") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createTerminateServerTask();
-				new DefaultProgressBar(t, view, true, true);
-				t.start();	
+				Dispatcher.getDispatcher().dispatch(t, view, true);
 			}
 		});
 		
 		view.refresh.setAction(new StandardAction("Server.Refresh") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createUpdateConnectedUsersTask();
-				new DefaultProgressBar(t, view, true, true);
-				t.start();
+				Dispatcher.getDispatcher().dispatch(t, view, true);
 			}
 		});
 		

@@ -72,7 +72,9 @@ public class DefaultReconnectDialog {
 	 * @param problemDescription	The string that will be displayed to the User.
 	 */
 	public static void show(Component parent, String problemDescription) {
-		defaultReconnectAction.setParent(parent);
+		if(defaultReconnectAction != null)
+			defaultReconnectAction.setParent(parent);
+		
 		int choice = JOptionPane.showOptionDialog(
 				parent, 
 				problemDescription, 

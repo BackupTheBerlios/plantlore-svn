@@ -12,6 +12,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.exception.PlantloreException;
 import net.sf.plantlore.l10n.L10n;
@@ -53,6 +54,9 @@ public class Plantlore {
         } catch (PlantloreException e) {
             // TODO: Display error message
         }
+        
+        // Disable reconnect
+        DefaultExceptionHandler.disableReconnect();
 
 
         java.awt.EventQueue.invokeLater(new Runnable(){

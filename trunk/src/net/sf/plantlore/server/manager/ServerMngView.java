@@ -9,6 +9,7 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.ConnectionInfo;
@@ -36,6 +37,9 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
         PlantloreHelp.addKeyHelp(PlantloreHelp.SERVER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.SERVER, this.help);
         
+        // Show the progress bar only when necessary.
+        progress.setVisible( false );
+        
         setLocationRelativeTo(null); // center of the screen
     }
     
@@ -53,6 +57,7 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
         jToolBar1 = new javax.swing.JToolBar();
         refresh = new javax.swing.JButton();
         kick = new javax.swing.JButton();
+        progress = new javax.swing.JProgressBar();
         terminate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -71,25 +76,27 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
         kick.setText(L10n.getString("Server.KickUser"));
         jToolBar1.add(kick);
 
+        progress.setBorderPainted(false);
+        jToolBar1.add(progress);
+
         terminate.setText(L10n.getString("Server.Terminate"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                    .add(layout.createSequentialGroup()
                         .add(help)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 166, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 167, Short.MAX_VALUE)
                         .add(terminate)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(hide)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
-                .addContainerGap())
-            .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                        .add(hide)))
+                .add(10, 10, 10))
         );
 
         layout.linkSize(new java.awt.Component[] {hide, terminate}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
@@ -118,6 +125,7 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
     protected javax.swing.JButton kick;
+    protected javax.swing.JProgressBar progress;
     protected javax.swing.JButton refresh;
     protected javax.swing.JButton terminate;
     protected javax.swing.JList users;
@@ -136,12 +144,15 @@ public class ServerMngView extends javax.swing.JFrame implements Observer {
 			else 
 				users.setListData(new String[] {""});
 		} 
-		else if( parameter == ServerMng.CONNECTED ) 
+		else if( parameter == ServerMng.CONNECTED ) {
 			java.awt.EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					setVisible(true);
 				}
 			});
+			
+			Dispatcher.initialize( progress );
+		}
 	}
     
 }
