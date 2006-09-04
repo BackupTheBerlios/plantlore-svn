@@ -113,14 +113,12 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
     @Override
     public void setVisible(boolean visible) {
     	super.setVisible(visible);
-    	if( visible )
-    		Dispatcher.getDispatcher().justDispatch( monitoredTask );
 
     }
     
     
 	public void update(Observable arg0, Object parameter) {
-		System.out.println(parameter);
+		System.out.println(""+parameter);
 		// TODO Auto-generated method stub
 		if(parameter instanceof Pair) {
     		Pair p = (Pair)parameter;
@@ -133,6 +131,7 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
                 case STARTING:
                 	SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
+                            setVisible(true);
                         	  setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                               cancel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }

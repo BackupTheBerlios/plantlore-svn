@@ -1,6 +1,7 @@
 package net.sf.plantlore.client.export;
 
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JFileChooser;
@@ -105,7 +106,9 @@ public class ExportMngCtrl2 {
 	private void performExport() {
 		try {
 			ExportTask2 export = model.createExportTask();
-			new SimpleProgressBar2(export, parentView).setVisible(true);
+			new SimpleProgressBar2(export, parentView);
+            		Dispatcher.getDispatcher().justDispatch( export );
+                        
 		} catch(Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(parentView,
