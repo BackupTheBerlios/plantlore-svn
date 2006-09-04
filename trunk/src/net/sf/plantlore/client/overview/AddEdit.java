@@ -813,7 +813,7 @@ public class AddEdit extends Observable {
         //cIsoDateTimeBegin construction
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, year);
-        if (month != null) { 
+        if (month != null && day != null) { 
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH,day);
         } else {
