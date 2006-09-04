@@ -9,12 +9,9 @@
 
 package net.sf.plantlore.common;
 
-import java.util.Observable;
-import java.util.Observer;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
@@ -30,6 +27,19 @@ public class Dispatcher {
     private static ProgressBarManager pbm;
     
     private Dispatcher() {
+    }
+    
+    
+    public synchronized boolean justDispatch(Task task) {
+        if (taskRunning) {
+            logger.debug("Dispatcher: task already RUNNING, RETURNING.");
+            return false;
+        }
+        
+        taskRunning = true;
+        task.start();
+
+        return true;
     }
  
     public synchronized boolean dispatch(Task task, JFrame parent, boolean stoppable) {
@@ -78,9 +88,7 @@ public class Dispatcher {
         taskRunning = false;
         pbm.removeTask();
         pbm.setParent((JDialog)null);
-/*        do{
-        	try{ Thread.sleep(50); } catch(Exception e) {}
-        } while( dpb.isShowing() ); */
+
         logger.debug("Dispatcher: "+task+" finished, free to dispatch another.");
     }    
     

@@ -274,7 +274,8 @@ public abstract class Task extends Observable {
     public void kill() {
     	canceled = true;
     	
-    	worker.interrupt();
+    	if(worker != null)
+    		worker.interrupt();
     	
     	setChanged();
         notifyObservers(new Pair<Message,Object>(Message.STOPPING,null));

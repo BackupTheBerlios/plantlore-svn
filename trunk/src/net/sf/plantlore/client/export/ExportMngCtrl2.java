@@ -1,15 +1,20 @@
 package net.sf.plantlore.client.export;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import net.sf.plantlore.client.export.component.FileFormat;
 import net.sf.plantlore.common.DefaultCancelAction;
 import net.sf.plantlore.common.DefaultProgressBarEx;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.SimpleProgressBar;
+import net.sf.plantlore.common.SimpleProgressBar2;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.l10n.L10n;
 
@@ -100,9 +105,9 @@ public class ExportMngCtrl2 {
 	private void performExport() {
 		try {
 			ExportTask2 export = model.createExportTask();
-			new DefaultProgressBarEx(export, parentView, true);
-			export.start();
+			new SimpleProgressBar2(export, parentView).setVisible(true);
 		} catch(Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(parentView,
 					e.getMessage(),
 					L10n.getString("Export.Failed"),
