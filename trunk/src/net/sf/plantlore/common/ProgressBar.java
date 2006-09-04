@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
  *
  * @author  fraktalek
  */
+@Deprecated
 public abstract class ProgressBar extends javax.swing.JDialog implements Observer {
     protected Logger logger;
     protected Task task;

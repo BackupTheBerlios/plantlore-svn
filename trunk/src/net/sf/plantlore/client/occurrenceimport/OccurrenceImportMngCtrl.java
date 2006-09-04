@@ -6,7 +6,8 @@ import javax.swing.JOptionPane;
 import net.sf.plantlore.client.AppCoreView;
 import net.sf.plantlore.client.export.component.FileFormat;
 
-import net.sf.plantlore.common.DefaultProgressBarEx;
+import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
@@ -50,13 +51,9 @@ public class OccurrenceImportMngCtrl {
 				}
 				try {
 					Task task = model.createOccurrenceImportTask( choice.getSelectedFile().getAbsolutePath() );
-					new DefaultProgressBarEx(task, view, true);
-					task.start();
+					Dispatcher.getDispatcher().dispatch(task, view, true);
 				} catch(Exception e) {
-					JOptionPane.showMessageDialog(view,
-							L10n.getString("Error.ImportFailed") + "\n" + e.getMessage(),
-							L10n.getString("Import.Failed"),
-							JOptionPane.ERROR_MESSAGE);
+					DefaultExceptionHandler.handle(view, e, L10n.getString("Import.Failed"));
 				}
 			}
 		}

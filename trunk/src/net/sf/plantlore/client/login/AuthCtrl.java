@@ -5,8 +5,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import net.sf.plantlore.common.DefaultCancelAction;
-import net.sf.plantlore.common.DefaultExceptionHandler;
-import net.sf.plantlore.common.DefaultProgressBarEx;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.l10n.L10n;
 
@@ -39,17 +38,7 @@ public class AuthCtrl {
 		public void actionPerformed(ActionEvent arg0) {
 			String user = ((javax.swing.JTextField)view.user.getEditor().getEditorComponent()).getText();
 			Task connect = model.createConnectionTask(user, new String(view.password.getPassword()));
-			
-			// My own ProgressBar - 
-			// it would not be wise to offer reconnection right after the login failed...
-			new DefaultProgressBarEx(connect, view, true) {
-				@Override
-				public void exceptionHandler(Exception ex) {
-					getTask().stop();
-					DefaultExceptionHandler.handle(parent, ex, L10n.getString("Login.ConnectionFailed"), true);
-				}
-			};
-			connect.start();
+			Dispatcher.getDispatcher().dispatch( connect, view, false );
 			
 			// Discard the password!
 			view.password.setText("");

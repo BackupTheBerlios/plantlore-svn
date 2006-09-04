@@ -78,7 +78,7 @@ public class ServerCreateCtrl {
 					
 					// Create and run a new server.
 					Task createServer = model.createNewServerTask( serverPassword );
-					Dispatcher.getDispatcher().dispatch(createServer, view, true);
+					Dispatcher.getDispatcher().dispatch(createServer, view, false);
 					break;
 				
 					
@@ -94,7 +94,7 @@ public class ServerCreateCtrl {
 					
 					Task connectToServer = model.createConnectToRunningServerTask(
 							view.remoteHost.getText(), port, password );
-					Dispatcher.getDispatcher().dispatch(connectToServer, view, true);
+					Dispatcher.getDispatcher().dispatch(connectToServer, view, false);
 					
 					break;
 				}

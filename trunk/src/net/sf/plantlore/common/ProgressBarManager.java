@@ -77,8 +77,10 @@ public class ProgressBarManager implements Observer {
             progressBar.setIndeterminate(true);
         }
         
-        if (parent != null)
+        if (parent != null) {
             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            parent.setEnabled(false);
+        }
         
         task.addObserver(this);    
         
@@ -94,8 +96,10 @@ public class ProgressBarManager implements Observer {
     private synchronized void stop() {
         ended = true;
         progressBar.setVisible(false);
-        if (parent != null)
+        if (parent != null) {
             parent.setCursor(Cursor.getDefaultCursor());
+            parent.setEnabled(true);
+        }
         logger.debug(""+this+" STOPPING " + task );
         //!!! afterStopping();        
         Dispatcher.getDispatcher().finished();

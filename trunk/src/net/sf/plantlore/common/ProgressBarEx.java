@@ -32,6 +32,7 @@ import net.sf.plantlore.l10n.L10n;
  *
  * @author  Erik Kratochvíl
  */
+@Deprecated
 public abstract class ProgressBarEx extends ProgressBar {
     
     /** 

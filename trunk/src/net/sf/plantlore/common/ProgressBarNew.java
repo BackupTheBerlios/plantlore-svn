@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
  *
  * @author  fraktalek
  */
+@Deprecated
 public abstract class ProgressBarNew extends javax.swing.JDialog implements Observer {
     protected Logger logger;
     protected Task task;
@@ -104,7 +105,7 @@ public abstract class ProgressBarNew extends javax.swing.JDialog implements Obse
         parent.setCursor(Cursor.getDefaultCursor());
         logger.debug(""+this+" STOPPING " + task );
         afterStopping();        
-        Dispatcher.getDispatcher().finished();
+        
     }
     
     /** Changes the ProgressBar's state.
@@ -274,11 +275,14 @@ public abstract class ProgressBarNew extends javax.swing.JDialog implements Obse
                         });
                         break;
                     case STOPPING:
-                        SwingUtilities.invokeLater(new Runnable() {
+                    	try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
                             public void run() {
                                 stop();
                             }
                         });
+                    	}catch(Exception e) {}
+                        Dispatcher.getDispatcher().finished();
                         break;
                     case STOPPED:
                         afterStopped(value);

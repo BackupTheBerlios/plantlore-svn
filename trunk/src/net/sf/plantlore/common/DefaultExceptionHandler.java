@@ -20,7 +20,7 @@ import net.sf.plantlore.l10n.L10n;
  */
 public class DefaultExceptionHandler {
 	
-	private static boolean isReconnectDisabled = false;
+	private static boolean isReconnectDisabled = true;
 	
 	
 	private DefaultExceptionHandler() {}
@@ -77,7 +77,7 @@ public class DefaultExceptionHandler {
 			Exception e, 
 			String title, 
 			boolean doNotOfferReconnect) {
-		e.printStackTrace();//FIXME - print to log perhaps!
+//		e.printStackTrace();//FIXME - print to log perhaps!
 		boolean isReconnectReasonable = false;
 		String problemDescription = e.getMessage();
 		

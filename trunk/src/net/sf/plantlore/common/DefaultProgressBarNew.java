@@ -12,6 +12,7 @@ import javax.swing.JFrame;
  * @since 2006-07-26
  *
  */
+@Deprecated
 public class DefaultProgressBarNew extends ProgressBarNew {
 	
 	/**

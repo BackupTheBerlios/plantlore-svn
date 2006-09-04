@@ -7,6 +7,8 @@
 package net.sf.plantlore.common;
 
 import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,10 +28,20 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
     public SimpleProgressBar2(Task task, java.awt.Frame parent) {
     	super(parent, true);
     	monitoredTask = task;
-    	task.addObserver( this );
+    	initialize();
+    }
+    
+    public SimpleProgressBar2(Task task, java.awt.Dialog parent) {
+    	super(parent, true);
+    	monitoredTask = task;
+    	initialize();
+    }
+    
+    
+    private void initialize() {
+    	monitoredTask.addObserver( this );
     	
         initComponents();
-        
         setLocationRelativeTo(null);
         
         cancel.setAction( new StandardAction("Common.Cancel") {
@@ -38,11 +50,11 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
         		monitoredTask.deleteObservers();
         		Dispatcher.getDispatcher().finished();
         		
-        		 SwingUtilities.invokeLater(new Runnable() {
-                     public void run() {
-                         setVisible( false );
-                     }
-                 });
+        		SwingUtilities.invokeLater(new Runnable() {
+        			public void run() {
+        				setVisible( false );
+        			}
+        		});
         	}
         });
     }
@@ -54,24 +66,15 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        jProgressBar1 = new javax.swing.JProgressBar();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        status = new javax.swing.JTextArea();
+        progress = new javax.swing.JProgressBar();
         cancel = new javax.swing.JButton();
+        status = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(L10n.getString("Common.Progress"));
-
-        status.setBackground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        status.setColumns(20);
-        status.setEditable(false);
-        status.setRows(2);
-        status.setTabSize(2);
-        status.setAutoscrolls(false);
-        status.setBorder(null);
-        status.setEnabled(false);
-        status.setFocusable(false);
-        jScrollPane1.setViewportView(status);
+        setModal(true);
+        setResizable(false);
+        setUndecorated(true);
 
         cancel.setText(L10n.getString("Common.Cancel"));
 
@@ -79,21 +82,21 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, cancel))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, progress, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .add(cancel))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jProgressBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(status, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(cancel)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -104,22 +107,13 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
         
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton cancel;
-    protected javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JScrollPane jScrollPane1;
-    protected javax.swing.JTextArea status;
+    protected javax.swing.JProgressBar progress;
+    protected javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
     
     
-    @Override
-    public void setVisible(boolean visible) {
-    	super.setVisible(visible);
-
-    }
-    
-    
 	public void update(Observable arg0, Object parameter) {
-		System.out.println(""+parameter);
-		// TODO Auto-generated method stub
+
 		if(parameter instanceof Pair) {
     		Pair p = (Pair)parameter;
             Object first = p.getFirst();
@@ -130,20 +124,35 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
                 switch (msg) {
                 case STARTING:
                 	SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            setVisible(true);
-                        	  setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                              cancel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                        }
-                    });
+                		public void run() {
+                			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                			cancel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                	        if( monitoredTask.isDeterminate() ) {
+                	            progress.setIndeterminate(false);
+                	            progress.setMinimum(0);
+                	            progress.setMaximum(monitoredTask.getLength());
+                	        } else {
+                	            progress.setIndeterminate(true);
+                	        }
+                	        setVisible(true);
+                		}
+                	});
                 
                 case POSITION_CHANGED:
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                        	jProgressBar1.setValue(monitoredTask.getPosition());
+                        	 if( monitoredTask.isDeterminate() && progress.isIndeterminate() ) {
+                 	            progress.setIndeterminate(false);
+                 	            progress.setMinimum(0);
+                 	            progress.setMaximum(monitoredTask.getLength());
+                 	        } else if( !monitoredTask.isDeterminate() && !progress.isIndeterminate()){
+                 	            progress.setIndeterminate(true);
+                 	        }
+                        	progress.setValue(monitoredTask.getPosition());
                         }
                     });
                     break;
+                    
                 case MESSAGE_CHANGED:
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
@@ -151,6 +160,7 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
                         }
                     });
                     break;
+                    
                 case STOPPING:
                 case STOPPED:
                 	SwingUtilities.invokeLater(new Runnable() {
@@ -164,7 +174,9 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
             }
     	}
     	else if (parameter instanceof Exception) {
-            DefaultExceptionHandler.handle(this, (Exception)parameter);
+    		monitoredTask.stop();
+   			DefaultExceptionHandler.handle(this, (Exception)parameter);
+   			cancel.doClick();
         }
 		
 	}

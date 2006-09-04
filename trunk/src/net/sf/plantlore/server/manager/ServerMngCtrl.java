@@ -21,21 +21,21 @@ public class ServerMngCtrl {
 		view.kick.setAction(new StandardAction("Server.KickUser") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createKickTask( (ConnectionInfo)view.users.getSelectedValue() );
-				Dispatcher.getDispatcher().dispatch(t, view, true);			
+				Dispatcher.getDispatcher().dispatch(t, view, false);			
 			}
 		});
 		
 		view.terminate.setAction(new StandardAction("Server.Terminate") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createTerminateServerTask();
-				Dispatcher.getDispatcher().dispatch(t, view, true);
+				Dispatcher.getDispatcher().dispatch(t, view, false);
 			}
 		});
 		
 		view.refresh.setAction(new StandardAction("Server.Refresh") {
 			public void actionPerformed(ActionEvent arg0) {
 				Task t = model.createUpdateConnectedUsersTask();
-				Dispatcher.getDispatcher().dispatch(t, view, true);
+				Dispatcher.getDispatcher().dispatch(t, view, false);
 			}
 		});
 		

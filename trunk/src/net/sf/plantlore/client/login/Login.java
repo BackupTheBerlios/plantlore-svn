@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.client.MainConfig;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.User;
@@ -350,6 +351,8 @@ public class Login extends Observable {
 			// there is a new DBLayer and the observers of Login must know about it.
 			announceConnection();
 			
+			DefaultExceptionHandler.enableReconnect();
+			
 			return null;
 		}
 		
@@ -369,6 +372,7 @@ public class Login extends Observable {
 				currentDBLayer = null; accessRights = null; plantloreUser = null;
 				
 				proxyLayer.wrap( null );
+				DefaultExceptionHandler.disableReconnect();
 				
 				logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
 			} catch(RemoteException e) {

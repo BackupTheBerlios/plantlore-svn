@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 public class Dispatcher {
     private Logger logger = Logger.getLogger(Dispatcher.class.getPackage().getName());
     private boolean taskRunning = false;
-    private DefaultProgressBarNew dpb;
+    //private DefaultProgressBarNew dpb;
     private Task task;
     private static Dispatcher dispatcher = new Dispatcher();
     private static ProgressBarManager pbm;
@@ -51,10 +51,14 @@ public class Dispatcher {
         taskRunning = true;
         this.task = task;
         //dpb = new DefaultProgressBarNew(task, parent, true);
-
-        pbm.initialize();
-        pbm.setParent(parent);
-        pbm.setTask(task);
+        
+        if( stoppable )
+        	new SimpleProgressBar2(task, parent);
+        else {
+        	pbm.initialize();
+        	pbm.setParent(parent);
+        	pbm.setTask(task);
+        }
         
         task.start();
         
@@ -70,10 +74,14 @@ public class Dispatcher {
         taskRunning = true;
         this.task = task;
         //dpb = new DefaultProgressBarNew(task, parent, true);
-
-        pbm.initialize();
-        pbm.setParent(parent);
-        pbm.setTask(task);
+        
+        if( stoppable )
+        	new SimpleProgressBar2(task, parent);
+        else {
+        	pbm.initialize();
+        	pbm.setParent(parent);
+        	pbm.setTask(task);
+        }
         
         task.start();
         

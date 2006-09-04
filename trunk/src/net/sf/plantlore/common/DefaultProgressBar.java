@@ -14,6 +14,7 @@ import net.sf.plantlore.l10n.L10n;
  * @since 2006-07-26
  *
  */
+@Deprecated
 public class DefaultProgressBar extends ProgressBar {
 	
 	private boolean doNotOfferReconnect = false;
