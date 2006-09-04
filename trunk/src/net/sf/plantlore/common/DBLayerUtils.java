@@ -473,7 +473,7 @@ public class DBLayerUtils {
 			logger.debug("The record belongs to an immutable table "+record.getClass().getSimpleName());
 			Record counterpart = findMatchInDB( record );
 			if( counterpart == null ) {
-				logger.fatal("The counterpart for the record (in the immutable table " +
+				logger.fatal("The counterpart for the " + record.toFullString() + " (in the immutable table " +
 						record.getClass().getSimpleName()	+ ") was not found!");
 				throw new DBLayerException( L10n.getString("Error.RecordNotFound") );
 			}

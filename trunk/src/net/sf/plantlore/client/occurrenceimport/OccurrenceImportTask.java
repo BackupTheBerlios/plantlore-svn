@@ -34,7 +34,7 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 	private Logger logger = Logger.getLogger(OccurrenceImportTask.class.getPackage().getName());
 	
 	private OccurrenceParser parser;
-	private int count;
+	private int count, rejected;
 	private DBLayerUtils dbutils;
 	
 	private DBLayerException canceledByUser = new DBLayerException(L10n.getString("Import.CanceledByUser"));
@@ -72,7 +72,7 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 
 	@Override
 	public Object task() throws Exception {
-		count = 0;
+		count = rejected = 0;
 		try {
 			parser.startParsing();
 		} catch(SAXException e) {
@@ -114,7 +114,7 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 		if( isCanceled() ) 
 			throw canceledByUser;
 		count++;
-		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count));
+		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count, rejected));
 		try {
 			if(aos == null || aos.length == 0) {
 				logger.error("The occurrence record is either corrupted or incomplete. It will be skipped.");
@@ -124,7 +124,8 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 		} 
 		catch(DBLayerException e) {
 			if( IGNORE_ERRORS.contains(e.getErrorCode()) )
-				setStatusMessage( e.getMessage() );
+				//setStatusMessage( e.getMessage() );
+				rejected++;
 			else
 				throw e;
 		}

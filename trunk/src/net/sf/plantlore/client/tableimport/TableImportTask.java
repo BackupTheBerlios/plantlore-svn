@@ -94,7 +94,7 @@ public class TableImportTask extends Task {
 			try {
 				count++;
 				setPosition( count );
-				setStatusMessage(L10n.getFormattedString("Import.RecordsImported", count));
+				setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count, (count - deleted - updated - inserted) ));
 				data = parser.getNext();
 			} catch( ParserException pe ) {
 				logger.warn("The record is corrupted. " + pe);
@@ -107,7 +107,7 @@ public class TableImportTask extends Task {
 					|| (data.action == TableParser.Action.UPDATE 
 							&& (data.replacement == null || !data.replacement.areAllNNSet()))   ) {
 				
-				logger.info("Rejecting the record No. "+count+"! Some of the not-null values are not specified!");
+				logger.warn("Rejecting the record No. "+count+"! Some of the not-null values are not specified!");
 				setStatusMessage(L10n.getFormattedString("Import.IncompleteRecord", count));					
 			}
 			
@@ -121,6 +121,7 @@ public class TableImportTask extends Task {
 			try {
 				recordInDB = dbutils.findMatchInDB( data.record );
 			} catch(DBLayerException e) {
+				logger.warn("Unable to find a match in the database. " + e.getMessage());
 				continue;
 			}
 			boolean isRecordInDB = recordInDB != null;
