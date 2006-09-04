@@ -92,9 +92,9 @@ public class TableImportTask extends Task {
 		while( !isCanceled() && parser.hasNext() ) {
 			DataHolder data = null;
 			try {
-				count++;
 				setPosition( count );
 				setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count, (count - deleted - updated - inserted) ));
+				count++;
 				data = parser.getNext();
 			} catch( ParserException pe ) {
 				logger.warn("The record is corrupted. " + pe);
