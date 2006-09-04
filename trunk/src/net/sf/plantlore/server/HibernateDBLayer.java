@@ -1683,20 +1683,20 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     		// Save OldRecordId if neccessary
                     		 if (((String)columnName).equals(Occurrence.PLANT)) {
                     			 //this situation is improbability (new occurrence is insert into database during editinig of plant)   
-                    			 historyRecord.setOldRecordId(((Plant)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldRecordId(((Plant)origRec.getValue(columnName)).getId());
                     			 historyRecord.setOldValue(((Plant)origValue).getTaxon());
                          		 historyRecord.setNewValue(((Plant)newValue).getTaxon());
                     		 } else if (((String)columnName).equals(Occurrence.PUBLICATION)) {
-                    			 historyRecord.setOldRecordId(((Publication)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldRecordId(((Publication)origRec.getValue(columnName)).getId());
                                          String referenceCitation = (origValue == null) ? "" : ((Publication)origValue).getReferenceCitation();
                     			 historyRecord.setOldValue(referenceCitation);
                          		 historyRecord.setNewValue(((Publication)newValue).getReferenceCitation());
                     		 } else if (((String)columnName).equals(Occurrence.HABITAT)) {
-                    			 historyRecord.setOldRecordId(((Habitat)newRec.getValue(columnName)).getId());
+                    			 historyRecord.setOldRecordId(((Habitat)origRec.getValue(columnName)).getId());
                     			 historyRecord.setOldValue(((Habitat)origValue).getDescription());
                          		 historyRecord.setNewValue(((Habitat)newValue).getDescription());
                     		 } else if (((String)columnName).equals(Occurrence.METADATA)) {
-                    			 historyRecord.setOldRecordId(((Metadata)newRec.getValue(columnName)).getId());                    			 
+                    			 historyRecord.setOldRecordId(((Metadata)origRec.getValue(columnName)).getId());                    			 
                     			 historyRecord.setOldValue(((Metadata)origValue).getDataSetTitle());
                          		 historyRecord.setNewValue(((Metadata)newValue).getDataSetTitle());
                     		 } else {
@@ -1791,7 +1791,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     ArrayList cols = (ArrayList)origRec.getColumns();
                     for (int i=0;i<cols.size();i++) {
                         Object origValue = (origRec.getValue((String)cols.get(i)) == null) ? new String("") : origRec.getValue((String)cols.get(i));                        
-                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                
+                        Object newValue = (newRec.getValue((String)cols.get(i)) == null) ? new String("") : newRec.getValue((String)cols.get(i));                                                                        
                         if (!origValue.equals(newValue)) {
                         	System.out.println(" >> DIFFERENT_COLUMN: " + (String)cols.get(i));
                             // Read record from THISTORYCOLUMN first                           	
@@ -1812,22 +1812,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                             // Save OldRecordId if neccessary
                             
                     		 //TODO: Save oldRecordId
-                    		 if (((String)cols.get(i)).equals(Habitat.TERRITORY)) { 
-                    			 logger.debug("TERRITORY: " + ((Territory)newRec.getValue((String)cols.get(i))).getId());
-                    			 logger.debug("TERRITORY: " + ((Territory)newRec.getValue((String)cols.get(i))).getName());
-                    			 hist.setOldRecordId(((Territory)newRec.getValue((String)cols.get(i))).getId());
+                    		 if (((String)cols.get(i)).equals(Habitat.TERRITORY)) {                     			 
+                    			 hist.setOldRecordId(((Territory)origRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((Territory)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((Territory)newRec.getValue((String)cols.get(i))).getName());
-                    		 } else if (((String)cols.get(i)).equals(Habitat.PHYTOCHORION)) {
-                    			 logger.debug("PHYTOCHORION: " + ((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
-                    			 logger.debug("PHYTOCHORION: " + ((Phytochorion)newRec.getValue((String)cols.get(i))).getName());
-                    			 hist.setOldRecordId(((Phytochorion)newRec.getValue((String)cols.get(i))).getId());
+                    		 } else if (((String)cols.get(i)).equals(Habitat.PHYTOCHORION)) {                    			 
+                    			 hist.setOldRecordId(((Phytochorion)origRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((Phytochorion)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((Phytochorion)newRec.getValue((String)cols.get(i))).getName());
-                    		 } else if (((String)cols.get(i)).equals(Habitat.NEARESTVILLAGE)) {
-                    			 logger.debug("VILLAGE: " + ((NearestVillage)newRec.getValue((String)cols.get(i))).getId());
-                    			 logger.debug("VILLAGE: " + ((NearestVillage)newRec.getValue((String)cols.get(i))).getName());
-                    			 hist.setOldRecordId(((NearestVillage)newRec.getValue((String)cols.get(i))).getId());
+                    		 } else if (((String)cols.get(i)).equals(Habitat.NEARESTVILLAGE)) {                    			 
+                    			 hist.setOldRecordId(((NearestVillage)origRec.getValue((String)cols.get(i))).getId());
                     			 hist.setOldValue(((NearestVillage)origRec.getValue((String)cols.get(i))).getName());
                                  hist.setNewValue(((NearestVillage)newRec.getValue((String)cols.get(i))).getName());
                     		 } else {
