@@ -10,6 +10,10 @@
         <!-- Allows us to use the IzPack Ant task -->
         <taskdef name="izpack" classpath="${base.dir}/installer/standalone-compiler.jar"
          classname="com.izforge.izpack.ant.IzPackTask"/>
+        <taskdef name="launch4j"
+            classname="net.sf.launch4j.ant.Launch4jTask"
+            classpath="${base.dir}/installer/launch4j/launch4j.jar
+                :${base.dir}/installer/launch4j/lib/xstream.jar" />
          
 	<!-- the base classpath used for compilation -->
 	<path id="classpath.base">		
@@ -148,7 +152,21 @@
                     output="${dist.dir}/plantlore-install.jar"
                     installerType="standard"
                     basedir="${base.dir}"
-            />
+            />            
+        </target>
+        
+        <target name="nativeWinInstaller" depends="installer" description="Creates a native Windows installer using launch4j.">
+            <fail message="You have to install launch4j to the installer/launch4j directory first!">
+                <condition>
+                    <or> <!-- Just pick a few files from the ones that should be available and check if they are -->
+                        <not><available file="${base.dir}/installer/launch4j/launch4j.jar"/></not>
+                        <not><available file="${base.dir}/installer/launch4j/lib/xstream.jar"/></not>
+                        <not><available file="${base.dir}/installer/launch4j/head/head.o"/></not>
+                        <not><available file="${base.dir}/installer/launch4j/bin/windres"/></not>
+                    </or>
+                </condition>
+            </fail>
+            <launch4j configFile="installer/launch4j/windows_config.xml"/>            
         </target>
         
         <target name="javadoc" depends="init" description="Compile JavaDoc documentation for the project">

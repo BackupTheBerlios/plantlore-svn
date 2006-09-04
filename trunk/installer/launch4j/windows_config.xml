@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch4jConfig>
+    <!-- Header types: 0-GUI, 1-console -->
+    <headerType>0</headerType>
+    <outfile>../../dist/plantlore-installer-win.exe</outfile>
+    <jar>../../dist/plantlore-install.jar</jar>
+    <dontWrapJar>false</dontWrapJar>
+    <errTitle>Plantlore Install Error</errTitle>
+    <jarArgs></jarArgs>
+    <chdir>.</chdir>
+    <customProcName>true</customProcName>
+    <stayAlive>true</stayAlive>
+   <!-- <icon>install.ico</icon> -->
+    <jre>
+      <minVersion>1.5.0</minVersion>
+      <!-- Heap sizes in MB, 0-use default -->
+      <initialHeapSize>0</initialHeapSize>
+      <maxHeapSize>0</maxHeapSize>
+    </jre>
+<!--    <splash>
+      <file>splash.bmp</file>
+      <waitForWindow>true</waitForWindow>
+      <timeout>60</timeout>
+      <timeoutErr>true</timeoutErr>
+    </splash> -->
+    <versionInfo>
+      <fileVersion>1.0.0.0</fileVersion>
+      <txtFileVersion>1.0.0.0</txtFileVersion>
+      <fileDescription>Plantlore, Windows installer</fileDescription>
+      <copyright>Copyright the Plantlore team, 2000-2006</copyright>
+      <productVersion>1.0.0.0</productVersion>
+      <txtProductVersion>1.0</txtProductVersion>
+      <productName>Plantlore, Windows Installer</productName>
+<!--      <companyName>Plantlore</companyName> -->
+      <internalName>plantlore-install.jar</internalName>
+      <originalFilename>plantlore-installer-win.exe</originalFilename>
+    </versionInfo>
+  </launch4jConfig>
