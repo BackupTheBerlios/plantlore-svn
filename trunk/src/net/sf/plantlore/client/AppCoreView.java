@@ -443,8 +443,6 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
     }
 
     public void update(final Observable observable, final Object object) {
-        SwingUtilities.invokeLater( new Runnable() {
-            public void run() {
                 if (object != null && object instanceof String) {
                     String arg = (String) object;
                     if (arg.equals("PAGE_CHANGED")||arg.equals("RECORDS_PER_PAGE")) {
@@ -479,8 +477,6 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                         overview.getSelectionModel().setSelectionInterval(model.getSelectedRowNumber(),model.getSelectedRowNumber());
                     }
                 }//if instanceof String        
-            }//run()
-        });//invokeLater()
     }//update()
 
     private void setPreferredColumnSizes() {

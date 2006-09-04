@@ -9,6 +9,7 @@ package net.sf.plantlore.client;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +36,7 @@ import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -1577,7 +1579,7 @@ public class AppCoreCtrl {
                         //must be done to prevent problems when this listener would send commands to load data for a query
                         //that doesn't exist, or when the dblayer doesn't exist..
                         //it's again installed in the DatabaseChange bridge
-                        view.overviewScrollPane.removeComponentListener(overviewResizeListener);
+//                        view.overviewScrollPane.removeComponentListener(overviewResizeListener);
 
                         model.logout();
                     
@@ -1728,7 +1730,7 @@ public class AppCoreCtrl {
                                 //this can't be done earlier. must be done after the query is created
                                 //otherwise this listener would give the overview table model commands to load data
                                 //for a query that doesn't exist yet
-                                view.overviewScrollPane.addComponentListener(overviewResizeListener);
+//                                view.overviewScrollPane.addComponentListener(overviewResizeListener);
 
                                 /*-------------------------------------------------------------------
                                  *  This may no longer be necessary:
@@ -1917,25 +1919,31 @@ public class AppCoreCtrl {
 		}// update()
 	}// class ManagerBridge
 
-        /** Handles resizing of Plantlore's main window.
+        /** NOT USED, ONLY CAUSES PROBLEMS.
+         *
+         * JTable simply doesn't seem to be suited for this kind of manipulation. 
+         * 
+         * Handles resizing of Plantlore's main window.
          *
          * Computes and changes the page size if needed.
          */
 	class OverviewResizeListener implements ComponentListener {
 		private final static int sub = 20; // height of the header row perhaps
 
-		public void componentResized(ComponentEvent e) {
+		public synchronized void componentResized(ComponentEvent e) {
 			if (!model.loggedIn() || !model.dynamicPageLoading)
 				return;
 			Component c = e.getComponent();
 			int tableHeight = c.getSize().height - sub; // height of the row
+			//int tableHeight = ((JTable)c).getPreferredScrollableViewportSize().height;
 														// part of JTable ( -->
 														// without header)
+                        
 			int rowHeight = view.overview.getRowHeight();
 			int newRecordsCount = tableHeight / rowHeight;
 			try {
-				model.setRecordsPerPage(newRecordsCount);
-				view.recordsPerPage.setValue(newRecordsCount);
+				model.setRecordsPerPageNotNotify(newRecordsCount);
+				//view.recordsPerPage.setValue(newRecordsCount);
                         } catch (RemoteException ex) {
                             DefaultExceptionHandler.handle(view,ex);
                             return;

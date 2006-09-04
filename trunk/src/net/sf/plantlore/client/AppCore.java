@@ -80,7 +80,7 @@ public class AppCore extends Observable
     private Pair<String, Integer>[] publications = null;
     private Pair<String, Integer>[] projects = null;
     
-    protected boolean dynamicPageLoading;
+    protected boolean dynamicPageLoading = false;
     
     /** Creates a new instance of AppCore */
     public AppCore(MainConfig mainConfig)
@@ -221,6 +221,16 @@ public class AppCore extends Observable
             tableSorter.setPageSize(recordsPerPage);
             setChanged();
             notifyObservers("RECORDS_PER_PAGE");        
+        }
+    }
+
+    public void setRecordsPerPageNotNotify(int recordsPerPage) throws RemoteException, DBLayerException {        
+        if (tableSorter != null)
+        {
+            logger.info("Setting records per page NN to "+recordsPerPage);
+            if (recordsPerPage == -1)
+                throw new IllegalArgumentException("KURVA");
+            tableSorter.setPageSize(recordsPerPage);
         }
     }
 

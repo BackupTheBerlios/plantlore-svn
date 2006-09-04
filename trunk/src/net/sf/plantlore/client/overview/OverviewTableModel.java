@@ -295,7 +295,7 @@ public class OverviewTableModel extends AbstractTableModel {
     }
     
     public int getResultId() {
-        System.out.println("returning resultid "+resultId);
+        logger.debug("returning resultid "+resultId);
         return resultId;
     }
 

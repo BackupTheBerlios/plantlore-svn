@@ -72,7 +72,8 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         headerTwoField.setText(model.getHeaderTwo());
         
         //--- GENERAL TAB
-        dynamicPageCheckBox.setSelected(model.isDynamicPageLoading());
+        //dynamicPageCheckBox.setSelected(model.isDynamicPageLoading());
+        generalPanel.setVisible(false); //contains only the dynamic page size option which only causes many problems
     }
     
     
@@ -137,7 +138,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
         headerOneLabel = new javax.swing.JLabel();
         headerTwoLabel = new javax.swing.JLabel();
         headerTwoField = new javax.swing.JTextField();
-        jPanel7 = new javax.swing.JPanel();
+        generalPanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         dynamicPageCheckBox = new javax.swing.JCheckBox();
         cancelButton = new javax.swing.JButton();
@@ -387,23 +388,23 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .addContainerGap(73, Short.MAX_VALUE))
         );
 
-        org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7Layout.createSequentialGroup()
+        org.jdesktop.layout.GroupLayout generalPanelLayout = new org.jdesktop.layout.GroupLayout(generalPanel);
+        generalPanel.setLayout(generalPanelLayout);
+        generalPanelLayout.setHorizontalGroup(
+            generalPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(generalPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7Layout.createSequentialGroup()
+        generalPanelLayout.setVerticalGroup(
+            generalPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(generalPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addContainerGap(160, Short.MAX_VALUE))
         );
-        jTabbedPane1.addTab(L10n.getString("Settings.GeneralTab"), jPanel7);
+        jTabbedPane1.addTab(L10n.getString("Settings.GeneralTab"), generalPanel);
 
         cancelButton.setText("Cancel");
         cancelButton.setActionCommand("CANCEL");
@@ -473,6 +474,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JButton downButton;
     protected javax.swing.JCheckBox dynamicPageCheckBox;
     protected javax.swing.JRadioButton englishRadioButton;
+    private javax.swing.JPanel generalPanel;
     protected javax.swing.JTextField headerOneField;
     protected javax.swing.JLabel headerOneLabel;
     protected javax.swing.JTextField headerTwoField;
@@ -484,7 +486,6 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
