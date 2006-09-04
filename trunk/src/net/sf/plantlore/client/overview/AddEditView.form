@@ -86,7 +86,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jPanel7" alignment="0" min="-2" max="-2" attributes="3"/>
-                              <Component id="jPanel5" alignment="0" min="-2" max="-2" attributes="1"/>
+                              <Component id="jPanel5" alignment="0" min="-2" pref="914" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -169,7 +169,7 @@
                                                       <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" attributes="0">
-                                                      <Component id="jScrollPane2" pref="541" max="32767" attributes="1"/>
+                                                      <Component id="jScrollPane2" pref="561" max="32767" attributes="1"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -612,13 +612,13 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="checklistButton" linkSize="21" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="340" max="32767" attributes="0"/>
+                                              <EmptySpace pref="232" max="32767" attributes="0"/>
                                               <Component id="clearOccurrenceButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Component id="jPanel4" min="-2" max="-2" attributes="1"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jScrollPane1" pref="658" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane1" pref="645" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -631,11 +631,11 @@
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="herbariumTextField" alignment="0" pref="146" max="32767" attributes="1"/>
-                                          <Component id="publicationCombo" alignment="0" pref="146" max="32767" attributes="1"/>
-                                          <Component id="projectCombo" alignment="0" pref="146" max="32767" attributes="1"/>
+                                          <Component id="herbariumTextField" alignment="0" pref="132" max="32767" attributes="1"/>
+                                          <Component id="publicationCombo" alignment="0" pref="132" max="32767" attributes="1"/>
+                                          <Component id="projectCombo" alignment="0" pref="132" max="32767" attributes="1"/>
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="sourceCombo" pref="146" max="32767" attributes="1"/>
+                                              <Component id="sourceCombo" pref="132" max="32767" attributes="1"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -1067,7 +1067,7 @@
                           <Component id="settingsButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                           <Component id="requiredInfoLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="436" max="32767" attributes="0"/>
+                          <EmptySpace pref="350" max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>
@@ -1086,7 +1086,7 @@
                               <Component id="okButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="16" max="32767" attributes="0"/>
+                          <EmptySpace pref="13" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1162,7 +1162,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane6" pref="905" max="32767" attributes="0"/>
+                          <Component id="jScrollPane6" pref="906" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

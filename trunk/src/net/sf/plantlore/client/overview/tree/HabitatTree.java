@@ -68,6 +68,10 @@ public class HabitatTree extends Observable {
         
         int resultid = dblayer.executeQuery(query);
         int resultsCount = dblayer.getNumRows(resultid);
+        if (resultsCount <= 0) {
+            dblayer.closeQuery(query);
+            return;
+        }
         Object[] records = (Object[]) dblayer.more(resultid, 0,resultsCount - 1);
         dblayer.closeQuery(query);
         Territory territory;

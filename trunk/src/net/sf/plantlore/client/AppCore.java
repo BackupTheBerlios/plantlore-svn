@@ -387,6 +387,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             plants = null;
             return null;
         }
@@ -422,6 +423,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             authors = null;
             return null;
         }
@@ -481,7 +483,8 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
-            villages = null;
+           database.closeQuery(sq);
+           villages = null;
             return null;
         }
         records = database.more(resultid, 0, resultsCount-1);
@@ -512,6 +515,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             territories = null;
             return null;
         }
@@ -543,6 +547,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             phytNames = null;
             phytCodes = null;
             return null;
@@ -592,6 +597,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq); // the values can be doubled, we need to filter them 
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             countries = null;
             return null;
         }
@@ -639,6 +645,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             sources = null;
             return null;
         }
@@ -688,6 +695,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             publications = null;
             return null;
         }
@@ -727,6 +735,7 @@ public class AppCore extends Observable
         resultid = database.executeQuery(sq);
         resultsCount = database.getNumRows(resultid);
         if (resultsCount == 0) {
+            database.closeQuery(sq);
             projects = null;
             return null;
         }
