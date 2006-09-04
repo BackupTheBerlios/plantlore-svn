@@ -21,6 +21,8 @@ import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 
@@ -247,7 +249,25 @@ public class UserManagerCtrl {
            model.setUsedClose(true);
            //save new record Metadata into database
            Task task = model.addUserRecord();
+           task.setPostTaskAction(new PostTaskAction() {
+               public void afterStopped(Object value) {
+                   if (! model.isFinishedTask()) return;
+                   model.setInfoFinishedTask(false);
+                   //load data
+                   model.searchUser(false);
+                   if (model.isError()) {
+                       DefaultExceptionHandler.handle(view, model.getException());
+                       model.setError(null);
+                       model.setException(null);
+                       return;
+                   }
+                   reloadData(1, model.getDisplayRows());
+               }
+               
+           });
+           Dispatcher.getDispatcher().dispatch(task, view, false);
            
+/*           
            new DefaultProgressBar(task, view, true) {		   							 
    			   @Override
         	   public void afterStopping() {
@@ -264,7 +284,8 @@ public class UserManagerCtrl {
     	           reloadData(1, model.getDisplayRows());    	             	           
                } 		   		
    		};   			                   	                   
-        task.start();                                       
+            task.start();                                       
+ */
        }
     }
         	 
@@ -308,7 +329,20 @@ public class UserManagerCtrl {
                model.setUsedClose(true);
                //Update User               
                Task task = model.editUserRecord();
+               task.setPostTaskAction(new PostTaskAction() {
+                   public void afterStopped(Object value) {
+                       if (! model.isFinishedTask()) return;
+                       model.setInfoFinishedTask(false);
+                       //load User
+                       if (model.isError()) return;
+                       view.tableUserList.setModel(new UserManagerTableModel(model));
+                   }
+                   
+               });
+               Dispatcher.getDispatcher().dispatch(task, view, false);
+
                
+/*               
                new DefaultProgressBar(task, view, true) {		   							 
           		   @Override
             	   public void afterStopping() {
@@ -320,6 +354,7 @@ public class UserManagerCtrl {
                      } 		   					
           		};          			                   	                  
                 task.start();                                       
+ */
               }
        }
     }
@@ -390,31 +425,50 @@ public class UserManagerCtrl {
                }
                int okCancle = view.showQuestionMessage(UserManager.QUESTION_DELETE_TITLE, UserManager.QUESTION_DELETE);               
                if (okCancle == 0){
-            	   //Button OK was press
-            	   logger.debug("Button OK was press.");
-	               //Delete selected record
-	               Task task = model.deleteUserRecord();
-	               
-	               new DefaultProgressBar(task, view, true) {		   								  		   									
-					   @Override
-	            	   public void afterStopping() {
+                   //Button OK was press
+                   logger.debug("Button OK was press.");
+                   //Delete selected record
+                   Task task = model.deleteUserRecord();
+                   task.setPostTaskAction(new PostTaskAction() {
+
+                       public void afterStopped(Object value) {
+                           if (! model.isFinishedTask()) return;
+                           model.setInfoFinishedTask(false);
+                           // load User
+                           model.searchUser(false);
+                           if (model.isError()) {
+                               DefaultExceptionHandler.handle(view, model.getException());
+                               model.setError(null);
+                               model.setException(null);
+                               return;
+                           }
+                           reloadData(1, model.getDisplayRows());
+                       }
+                   });
+                   Dispatcher.getDispatcher().dispatch(task, view, false);
+                   
+/*
+                       new DefaultProgressBar(task, view, true) {
+                                           @Override
+                           public void afterStopping() {
                                    if (! model.isFinishedTask()) return;
                                         model.setInfoFinishedTask(false);
                                        // load User
-		   	               model.searchUser(false); 
-		   	               if (model.isError()) {
-		    	        	   DefaultExceptionHandler.handle(view, model.getException());
+                                       model.searchUser(false);
+                                       if (model.isError()) {
+                                           DefaultExceptionHandler.handle(view, model.getException());
                                            model.setError(null);
                                            model.setException(null);
-		    	        	   return;
-		    	           }    	
-		   	               reloadData(1, model.getDisplayRows());		   	               		   	              
-	                      }
-			   			};			   			                   	                   
-			            task.start();                                                                  
-		          }else {
-		        	  logger.debug("Button Cancle was press.");
-		          }	           
+                                           return;
+                                   }
+                                       reloadData(1, model.getDisplayRows());
+                              }
+                                                };
+                                    task.start();
+ */
+               }else {
+                   logger.debug("Button Cancle was press.");
+               }
            }
        }
    }    	       
@@ -445,7 +499,24 @@ public class UserManagerCtrl {
                      
            //Load User with specific conditions
            Task task = model.searchUser(true);   
-           
+           task.setPostTaskAction(new PostTaskAction() {
+               public void afterStopped(Object value) {
+                   if (! model.isFinishedTask()) return;
+                   model.setInfoFinishedTask(false);
+                   if (model.getDisplayRows() <= 0) {
+                       model.setDisplayRows(UserManager.DEFAULT_DISPLAY_ROWS);
+                   }
+                   //No record in result - show message to user
+                   if (model.getResultRows() < 1) {
+                       view.showInfoMessage(UserManager.INFORMATION_RESULT_TITLE,UserManager.INFORMATION_RESULT);
+                   }
+                   reloadData(1, model.getDisplayRows());
+               }
+               
+           });
+           Dispatcher.getDispatcher().dispatch(task, view, false);
+
+/*
            new DefaultProgressBar(task, view, true) {		   								  						    
         	   @Override
         	   public void afterStopping() {
@@ -462,7 +533,8 @@ public class UserManagerCtrl {
                } 		   					
 			};				                   	                   
             task.start();                                                                  
-       }
+ */
+        }
     }
 
     /**
