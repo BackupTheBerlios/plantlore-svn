@@ -928,16 +928,17 @@ public class AppCoreCtrl {
 
 		public void actionPerformed(ActionEvent actionEvent) {
                         habitatTreeModel.setDBLayer(model.getDatabase());
-                        try {
-                            habitatTreeModel.loadData();
-                        } catch (RemoteException ex) {
-                            DefaultExceptionHandler.handle(view,ex);
-                            return;
-                        } catch (DBLayerException ex) {
-                            DefaultExceptionHandler.handle(view,ex);
-                            return;
-                        }
-                        habitatTreeView.setVisible(true);
+                        Task task = habitatTreeModel.loadData();
+                        task.setPostTaskAction(new PostTaskAction() {
+                           public void afterStopped(Object value) {
+                               SwingUtilities.invokeLater(new Runnable() {
+                                  public void run() {
+                                    habitatTreeView.setVisible(true);                                      
+                                  } 
+                               });
+                           } 
+                        });
+                        Dispatcher.getDispatcher().dispatch(task, view, false);
 		}//actionPerformed
 	}// HabitatTreeAction
 

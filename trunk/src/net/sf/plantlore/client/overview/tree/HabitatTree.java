@@ -21,6 +21,7 @@ import javax.swing.tree.DefaultTreeModel;
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
@@ -58,33 +59,39 @@ public class HabitatTree extends Observable {
         this.dblayer = dblayer;
     }
     
-    public void loadData() throws DBLayerException, RemoteException {
-        SelectQuery subQuery = dblayer.createSubQuery(Habitat.class,"h");
-        subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY,"h." + Habitat.TERRITORY);
-        subQuery.addRestriction(PlantloreConstants.RESTR_EQ,"h."+Habitat.DELETED,null,0,null);
-        
-        SelectQuery query = dblayer.createQuery(Territory.class);
-        query.addRestriction(PlantloreConstants.SUBQUERY_IN,Territory.ID,null,subQuery,null);
-        
-        int resultid = dblayer.executeQuery(query);
-        int resultsCount = dblayer.getNumRows(resultid);
-        if (resultsCount <= 0) {
-            dblayer.closeQuery(query);
-            return;
-        }
-        Object[] records = (Object[]) dblayer.more(resultid, 0,resultsCount - 1);
-        dblayer.closeQuery(query);
-        Territory territory;
-        DefaultMutableTreeNode node;
-        for (Object record : records) {
-            territory = (Territory) ((Object [])record)[0];
-            node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.TERRITORY,territory.getName(),territory.getId(),getPhythochoriaCount(territory)));
-            rootNode.add(node);
-            addPhythochoria(node,territory);
-        }
-        
-        setChanged();
-        notifyObservers("LOADED_DATA");
+    public Task loadData() {
+        final HabitatTree model = this;
+        return new Task() {
+            public Object task() throws DBLayerException, RemoteException {
+                SelectQuery subQuery = dblayer.createSubQuery(Habitat.class,"h");
+                subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY,"h." + Habitat.TERRITORY);
+                subQuery.addRestriction(PlantloreConstants.RESTR_EQ,"h."+Habitat.DELETED,null,0,null);
+
+                SelectQuery query = dblayer.createQuery(Territory.class);
+                query.addRestriction(PlantloreConstants.SUBQUERY_IN,Territory.ID,null,subQuery,null);
+
+                int resultid = dblayer.executeQuery(query);
+                int resultsCount = dblayer.getNumRows(resultid);
+                if (resultsCount <= 0) {
+                    dblayer.closeQuery(query);
+                    return null;
+                }
+                Object[] records = (Object[]) dblayer.more(resultid, 0,resultsCount - 1);
+                dblayer.closeQuery(query);
+                Territory territory;
+                DefaultMutableTreeNode node;
+                for (Object record : records) {
+                    territory = (Territory) ((Object [])record)[0];
+                    node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.TERRITORY,territory.getName(),territory.getId(),getPhythochoriaCount(territory)));
+                    rootNode.add(node);
+                    addPhythochoria(node,territory);
+                }
+
+                model.setChanged();
+                model.notifyObservers("LOADED_DATA");
+                return null;
+            }
+        };//return new Task;
     }
     
     public int getPhythochoriaCount(Territory t) throws RemoteException, DBLayerException {
