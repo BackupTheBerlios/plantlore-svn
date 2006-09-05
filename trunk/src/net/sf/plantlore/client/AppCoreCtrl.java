@@ -1098,17 +1098,35 @@ public class AppCoreCtrl {
 				Task task = new Task() {
 					JasperPrint jasperPrint;
 
-					public Object task() throws JRException {
-						jasperPrint = JasperFillManager.fillReport(
+					public Object task() throws DBLayerException {
+                                                setStatusMessage(L10n.getString("Overview.Scheda.Generating"));
+                                                try {
+                                                    jasperPrint = JasperFillManager.fillReport(
 								schedaReport, params,
 								new JasperDataSource(model.getDatabase(), model
 										.getTableModel().getSelection()));
-						fireStopped(jasperPrint);
+                                                } catch (JRException jrException) {
+                                                    throw new DBLayerException(L10n.getString("Print.Message.BrokenReport"),jrException);
+                                                }
+						//fireStopped(jasperPrint);
+                                                setStatusMessage(L10n.getString("Common.Done"));
 						return jasperPrint;
 					}
 				};
-
-				ProgressBar pb = new ProgressBar(task, view, true) {
+                                task.setPostTaskAction(new PostTaskAction() {
+                                    public void afterStopped(final Object value) {
+                                        SwingUtilities.invokeLater( new Runnable() {
+                                            public void run() {
+                                                new SchedaView(view, true, (JasperPrint) value)
+                                                                .setVisible(true);
+                                            }
+                                        });//SwingUtils
+                                    }//afterStopped
+                                });//setPostTaskAction
+                                
+                                Dispatcher.getDispatcher().dispatch(task, view, false);
+                                
+/*				ProgressBar pb = new ProgressBar(task, view, true) {
 					public void exceptionHandler(final Exception ex) {
 						logger.error("Error while filling jasper report in SchedaAction: "+ ex);
 						ex.printStackTrace();
@@ -1126,7 +1144,7 @@ public class AppCoreCtrl {
                                                                 .setVisible(true);
 					}
 				};
-				task.start();
+				task.start(); */
 			} catch (Exception ex) { 
 				logger.error("Broken report: " + ex);
 				JOptionPane.showMessageDialog(view, L10n
@@ -1848,7 +1866,7 @@ public class AppCoreCtrl {
                             }
                         };*/
 
-			Dispatcher.getDispatcher().dispatch(task, view, true);
+			Dispatcher.getDispatcher().dispatch(task, view, false);
 		}
 
 	}
