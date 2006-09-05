@@ -171,12 +171,8 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
             }
 
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    model.reload();
-                } catch (Exception ex) {
-                    DefaultExceptionHandler.handle(view, ex);
-                    return;
-                }
+                    Task task = model.reload();
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
             }
     }//RefreshAction
    

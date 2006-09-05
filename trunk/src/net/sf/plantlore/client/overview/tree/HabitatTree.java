@@ -203,9 +203,9 @@ public class HabitatTree extends Observable {
      * Removes all children of the <code>rootNode</code> and then calls <code>loadData()</code>
      *
      */
-    public void reload() throws DBLayerException, RemoteException {
+    public Task reload() {
         rootNode.removeAllChildren();
-        loadData();
+        return loadData();
     }
     
     /** Invokes the Add dialog on given habitat.
