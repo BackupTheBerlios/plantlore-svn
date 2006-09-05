@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -407,6 +409,8 @@ public class AppCoreCtrl {
 	}
 
 	private void setDatabaseDependentCommandsEnabled(boolean enabled) {
+		if( enabled )
+			view.overviewScrollPane.setViewportView( view.overview );
 		settingsAction.setEnabled(enabled);
 		printAction.setEnabled(enabled);
 		exportAction.setEnabled(enabled);
@@ -1676,6 +1680,14 @@ public class AppCoreCtrl {
 	public class ReconnectAction extends AbstractAction {
 
 		private Component parent = view;
+		
+		private JLabel connectionLost = new JLabel(L10n.getString("Error.ConnectionLost")) {
+			{ setOpaque( false ); }
+			public void paintComponent (Graphics g) {
+				g.drawString(L10n.getString("Error.ConnectionLost"), 10, 20);
+		        //super.paintComponent(g);
+		      }
+		};
 
 		public ReconnectAction() {
 			putValue(NAME, L10n.getString("Overview.MenuFileReconnect"));
@@ -1699,6 +1711,15 @@ public class AppCoreCtrl {
 					// 1. Log out ( ~ dispose of the current DBLayer)
 					logger.debug("Logging out...");
 					loginModel.logout();
+					
+					// Make changes to the GUI.
+					setDatabaseDependentCommandsEnabled( false );
+					logoutAction.setEnabled( true);
+	                reconnectAction.setEnabled( true );
+	                loginAction.setEnabled( false );
+	                createNewDatabaseAction.setEnabled( false );
+	                view.overviewScrollPane.setViewportView( connectionLost );
+	                
 					// 2. Log in again ( ~ create a new DBLayer)
 					// Note that the ProgressBar is no longer needed - 
 					// the last task surely had one and it will become

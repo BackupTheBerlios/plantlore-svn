@@ -59,7 +59,7 @@ public class Login extends Observable {
 	
 	private MainConfig mainConfig = null;
 	private DBLayerFactory factory = null;
-	private DBLayer currentDBLayer; 
+	private DBLayer newDBLayer = null; 
 	private DBLayerProxy proxyLayer;
 	private Logger logger  = Logger.getLogger(this.getClass().getPackage().getName());
 	
@@ -307,7 +307,7 @@ public class Login extends Observable {
 				// Create a new database layer ~ ask the DBLayerFactory to create it for us..
 				logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + dbinfo.host + ":" + dbinfo.port);
 				setStatusMessage( L10n.getString("Login.Connecting") );
-				currentDBLayer = factory.create( dbinfo );
+				newDBLayer = factory.create( dbinfo );
 				if(isCanceled())
 					throw new Exception(L10n.getString("Common.Canceled"));
 				
@@ -318,7 +318,7 @@ public class Login extends Observable {
 				setStatusMessage( L10n.getString("Login.InitializingDBLayer") );
 				logger.debug("Initializing that DBLayer.");
 				
-				User init = currentDBLayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
+				User init = newDBLayer.initialize(dbinfo.getDatabaseIdentifier(), name, password);
 				if(isCanceled())
 					throw new DBLayerException(L10n.getString("Common.Canceled"));
 				plantloreUser = init;
@@ -330,9 +330,9 @@ public class Login extends Observable {
 				logger.error("The initialization of the DBLayer failed! " + e.getMessage());
 				// If the initialization of the DBLayer failed, the uninitialized DBLayer must be destroyed!
 				// Otherwise, the server's policy may not allow another connection from this client!
-				if(currentDBLayer != null)
+				if(newDBLayer != null)
 					try {
-						factory.destroy(currentDBLayer);
+						factory.destroy(newDBLayer);
 					} catch(Exception re) {
 						// There's nothing we can do; 
 						// the server is probably in trouble, or the network connection failed. 
@@ -341,11 +341,12 @@ public class Login extends Observable {
 				throw e;
 			}
 			
-			proxyLayer.wrap( currentDBLayer );
+			proxyLayer.wrap( newDBLayer );
 			
 			setStatusMessage( L10n.getString("Login.DBLayerInitialized") );
 			logger.debug("DBLayer initialized.");
 			
+		
 			fireStopped(null);
 			
 			// Everything went fine - 
@@ -367,20 +368,21 @@ public class Login extends Observable {
 	 * everyone using the database layer will get an exception from now on. 
 	 */
 	public void logout() {
-		if(currentDBLayer != null) 
+		if(newDBLayer != null) {
 			try {
-				factory.destroy(currentDBLayer);
-				currentDBLayer = null; accessRights = null; plantloreUser = null;
-				
-				proxyLayer.wrap( null );
-				DefaultExceptionHandler.disableReconnect();
-				
-				logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
+				factory.destroy(newDBLayer);
 			} catch(RemoteException e) {
 				logger.warn("Unable to disconnect from the server. " + e.getMessage());
 				// Not this time, this is supposed to be silent.
+			} finally {
+				newDBLayer = null; accessRights = null; plantloreUser = null;
+				proxyLayer.wrap( null );
+				DefaultExceptionHandler.disableReconnect();
+				logger.info("The client disconnected itself from the server. The communication may no longer be possible.");
 			}
+		}
 	}
+	
 	
 	
 	/**
