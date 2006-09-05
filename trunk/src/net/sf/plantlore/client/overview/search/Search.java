@@ -634,7 +634,6 @@ public class Search extends Observable {
         restrictions = new ArrayList<Restriction>(20);
         Object arg;
         String habitatAlias = Record.alias(Habitat.class) +".";
-        
             // Create subquery first
             SelectQuery subQuery = database.createSubQuery(AuthorOccurrence.class, "ao");
             // In the subquery select authors for the given occurrence (occurrence comes from the main query)
@@ -907,14 +906,23 @@ public class Search extends Observable {
                 sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.MONTHCOLLECTED,null,month,null);
                 restrictions.add(new Restriction(RESTR_EQ, Occurrence.MONTHCOLLECTED, month));
             }
+            this.newSelectQuery = sq;
             int resultId = database.executeQuery(sq);
             this.newResultId = resultId;
-            this.newSelectQuery = sq;
             logger.debug("Created new query. Number of results: "+database.getNumRows(resultId));
             //let the SearchBridge in AppCoreCtrl know that new result is there
             setChanged(); 
             notifyObservers(resultId);
         return sq;
+    }
+    
+    /** To be used in exceptional states to close the query.
+     * Otherwise the query is closed in {@link OverviewTableModel.setResultId() }.
+     */
+    public void closeQuery() throws RemoteException, DBLayerException {
+        if (newSelectQuery == null)
+            return;
+        database.closeQuery(newSelectQuery);
     }
     
     public void clearAndNotify() {

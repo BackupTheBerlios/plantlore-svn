@@ -153,17 +153,23 @@ public class DBLayerUtils {
      * @return null in case an exception is thrown or no row with that id exists
      */
     public Record getObjectFor(int id, Class c) throws DBLayerException, RemoteException {
-        logger.debug("Looking up "+c.getName()+" object in the database for id "+id);
-        SelectQuery sq = db.createQuery(c);
-        sq.addRestriction(PlantloreConstants.RESTR_EQ,"id",null,id,null);
-        int resultid = db.executeQuery(sq);
-        int resultCount = db.getNumRows(resultid);
-        if (resultCount == 0)
-            return null;
-        Object[] results = db.more(resultid, 0, 0);
-        Object[] tmp = (Object[]) results[0];
-        db.closeQuery(sq);
-        return (Record)tmp[0];
+            SelectQuery sq = db.createQuery(c);
+            logger.debug("Looking up "+c.getName()+" object in the database for id "+id);
+            try {
+                sq.addRestriction(PlantloreConstants.RESTR_EQ,"id",null,id,null);
+                int resultid = db.executeQuery(sq);
+                int resultCount = db.getNumRows(resultid);
+                if (resultCount == 0)
+                    return null;
+                Object[] results = db.more(resultid, 0, 0);
+                Object[] tmp = (Object[]) results[0];
+                db.closeQuery(sq);
+                return (Record)tmp[0];
+            } catch(DBLayerException ex) {
+                if (sq != null) //clean up and propagate
+                    db.closeQuery(sq);
+                throw ex;
+            }
     }
 
     /**

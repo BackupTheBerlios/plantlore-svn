@@ -69,9 +69,17 @@ public class HabitatTree extends Observable {
 
                 SelectQuery query = dblayer.createQuery(Territory.class);
                 query.addRestriction(PlantloreConstants.SUBQUERY_IN,Territory.ID,null,subQuery,null);
-
-                int resultid = dblayer.executeQuery(query);
-                int resultsCount = dblayer.getNumRows(resultid);
+                
+                int resultid;
+                int resultsCount;
+                try {
+                    resultid = dblayer.executeQuery(query);
+                    resultsCount = dblayer.getNumRows(resultid);
+                } catch(DBLayerException ex) {
+                    if (query != null)
+                        dblayer.closeQuery(query);
+                    throw ex;
+                }
                 if (resultsCount <= 0) {
                     dblayer.closeQuery(query);
                     return null;

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.prefs.Preferences;
@@ -107,7 +108,7 @@ public class Print extends Observable {
         final JasperReport report = this.jasperReport;
         
         Task task = new Task() {
-            public Object task() throws DBLayerException {
+            public Object task() throws DBLayerException, RemoteException {
                 JasperReport jasperReport;
                 switch (reportToUse) {
                     case SCHEDA:
@@ -135,7 +136,14 @@ public class Print extends Observable {
                         jasperPrint = JasperFillManager.fillReport(
                               jasperReport, params, new JasperDataSource(database, selection)  );    
                     } catch (JRException jrException) {
-                        throw new DBLayerException(L10n.getString("Print.Message.BrokenReport"),jrException);
+                        Throwable t = jrException.getCause();
+                        if (t != null) {
+                            if (t instanceof RemoteException)
+                                throw (RemoteException) t;
+                            if (t instanceof DBLayerException)
+                                throw (DBLayerException) t;
+                        }
+                        throw new DBLayerException(L10n.getString("Print.Message.BrokenReport")+" "+jrException.getMessage(),jrException);
                     }
                     reportChanged = false;
                 }

@@ -1122,7 +1122,7 @@ public class AppCoreCtrl {
 				Task task = new Task() {
 					JasperPrint jasperPrint;
 
-					public Object task() throws DBLayerException {
+					public Object task() throws DBLayerException, RemoteException {
                                                 setStatusMessage(L10n.getString("Overview.Scheda.Generating"));
                                                 try {
                                                     jasperPrint = JasperFillManager.fillReport(
@@ -1130,7 +1130,14 @@ public class AppCoreCtrl {
 								new JasperDataSource(model.getDatabase(), model
 										.getTableModel().getSelection()));
                                                 } catch (JRException jrException) {
-                                                    throw new DBLayerException(L10n.getString("Print.Message.BrokenReport"),jrException);
+                                                    Throwable t = jrException.getCause();
+                                                    if (t != null) {
+                                                        if (t instanceof RemoteException)
+                                                            throw (RemoteException)t;
+                                                        if (t instanceof DBLayerException)
+                                                            throw (DBLayerException)t;
+                                                    }
+                                                    throw new DBLayerException(L10n.getString("Print.Message.BrokenReport")+" "+jrException.getMessage(),jrException);
                                                 }
 						//fireStopped(jasperPrint);
                                                 setStatusMessage(L10n.getString("Common.Done"));
@@ -1842,11 +1849,16 @@ public class AppCoreCtrl {
 	private Task refreshOverview(boolean createTask) {
 		if (createTask) {
 			Task task = new Task() {
-				public Object task() throws DBLayerException, RemoteException {
+				public Object task() throws DBLayerException, RemoteException, Exception {
                                     //refreshAction.setEnabled(false);
                                     setStatusMessage(L10n.getString("Overview.Message.LoadingOccurrences"));
 					searchModel.clear();
-					searchModel.constructQuery();
+                                        try {
+                                            searchModel.constructQuery();
+                                        } catch (Exception ex) {
+                                            searchModel.closeQuery();
+                                            throw ex;
+                                        }
 					fireStopped(null);
 					return "Ahoj, uz koncim";
 				}

@@ -35,6 +35,7 @@ import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.Territory;
 import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.NearestVillage;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import org.apache.log4j.Logger;
 
@@ -70,9 +71,9 @@ public class JasperDataSource implements JRDataSource {
             try {
                 occurrence = (Occurrence) dlu.getObjectFor(it.next(), Occurrence.class);
             } catch (RemoteException ex) {
-                throw new JRException(ex);
+                throw new JRException(ex.getMessage(),ex);
             } catch (DBLayerException ex) {
-                throw new JRException(ex);
+                throw new JRException(ex.getMessage(),ex);
             }
             return true;
         } else
