@@ -898,15 +898,24 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             this.longTx = null;
             // Close the session
             this.txSession.close();            
-       } catch (JDBCException e) {
+       } catch (StaleObjectStateException e) {   
+            this.rollbackTransaction();
+            logger.error("StaleObjectStateException caught (Concurrent transactions running and trying to commit). Details: "+e.getMessage());
+            throw new DBLayerException("Error.ConcurrentUpdate", DBLayerException.ERROR_TRANSACTION, e);
+        }   catch (JDBCException e) {
             this.rollbackTransaction();
             logger.fatal("JDBC Exception caught while commiting database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Exception.CommitTransaction"), DBLayerException.ERROR_TRANSACTION, e);
+            DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
+            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
+            throw ex;
         } catch (HibernateException e) {
             this.rollbackTransaction();            
             logger.fatal("Cannot commit database transaction");
-            throw new DBLayerException(L10n.getString("Exception.CommitTransaction"), DBLayerException.ERROR_TRANSACTION, e);        
+            DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
+            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            throw ex;            
         }
+
         return true;
     }
     
@@ -1406,29 +1415,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         Integer updatedId = null;
         ScrollableResults sr;
         
-        // Update tMetaData.cDateModified for any operation on Occurrences and Habitats
-/*        
-        if (data instanceof Occurrence) {
-            Integer occId = ((Occurrence)data).getId();
-            // Read the associated metadata
-            Session tmpSess = this.sessionFactory.openSession();
-            sr = tmpSess.createCriteria(Occurrence.class)
-                .add(Restrictions.eq(Occurrence.ID, occId))
-                .scroll();
-            if (!sr.next()) {
-                logger.error("Occurrence record for the given Metadata not found");
-                DBLayerException ex = new DBLayerException("Occurrence record for the given Metadata not found");
-                ex.setError(ex.ERROR_OTHER, null);
-                tmpSess.close();
-                throw ex;                    
-            }
-            Object[] res = sr.get();
-            tmpSess.close();
-            Occurrence occ = (Occurrence)res[0];
-            occ.getMetadata().setDateModified(new java.util.Date());
-            sess.update(occ.getMetadata());
-        }
-*/ 
+      
         // Set right type of operation for AuthorOccurrence
         int aoInsert = 0;
         if (data instanceof AuthorOccurrence) {
