@@ -206,14 +206,16 @@ public class UnifiedTableParser implements TableParser {
     
 	public void cleanup() {
 		recIterator = null;
-		saxReader.resetHandlers();
-		document.clearContent();
+		if(document != null)
+			document.clearContent();
 		document = null;
 		data = null;
 		saxReader = null;
 		try {
 			reader.close();
 		} catch(Exception e) {}
+		// Get rid of the ugly memory consuming DOM4J tree.
+		System.gc();
 	}
      
 }
