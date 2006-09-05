@@ -156,8 +156,8 @@ public class PublicationManager extends Observable {
                 // Clear variables with publication properties
                 clearDataHolders();
                 // Execute query
-                rowId = database.executeInsert(publication);
-                logger.info("Publication "+collectionName+" saved successfuly.");
+                publication = (Publication)database.executeInsert(publication);
+                logger.info("Publication "+publication.getCollectionName()+" saved successfuly.");
                 // Stop the Task
                 fireStopped(null);               
                 return rowId;
@@ -245,7 +245,7 @@ public class PublicationManager extends Observable {
                 clearDataHolders();
                 // Execute query
                 database.executeUpdate(publication);
-                logger.info("Publication "+collectionName+" updated successfuly.");
+                logger.info("Publication "+publication.getCollectionName()+" updated successfuly.");
                 // Stop the Task
                 fireStopped(null);
                 return true;

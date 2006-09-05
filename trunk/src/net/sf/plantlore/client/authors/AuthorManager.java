@@ -138,7 +138,7 @@ public class AuthorManager extends Observable {
                 int rowId = -1;
                 clearDataHolders();                
                 // Execute query
-                rowId = database.executeInsert(author);
+                author = (Author)database.executeInsert(author);
                 logger.info("Author "+name+" saved successfuly.");                
                 // Set operation state to finished
                 done = true;
