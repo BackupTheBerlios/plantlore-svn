@@ -507,9 +507,7 @@ public class DBLayerUtils {
 		if(counterpart == null) {
 			logger.debug("The record is not in the database. It will be inserted.");
 			// Insert it!
-			Integer newId = db.executeInsertInTransaction(record);
-			record.setId( newId );
-			return record;
+			return db.executeInsertInTransaction(record);
 		}
 		
 		// The record is in the database.
@@ -534,9 +532,7 @@ public class DBLayerUtils {
 		if( recordInDB != null)
 			return recordInDB;
 		
-		Integer newId = db.executeInsertHistory( record );
-		record.setId( newId );
-		return record;
+		return db.executeInsertHistory( record );
 	}
 	
 	/**
@@ -667,8 +663,7 @@ public class DBLayerUtils {
 						db.executeUpdateInTransaction(current);
 					else {
 						// User decided to insert new copy (safer).
-						Integer newId = db.executeInsertInTransaction(current);
-						current.setId(newId);
+						current = db.executeInsertInTransaction(current);
 					}
 				}
 			}
@@ -697,8 +692,7 @@ public class DBLayerUtils {
 		
 		if( replacementInDB == null ) {
 			if( currentInDB == null ) {
-				Integer newId = db.executeInsertHistory( replacement );
-				replacement.setId( newId );
+				replacement = db.executeInsertHistory( replacement );
 				return replacement;
 			}
 			else {

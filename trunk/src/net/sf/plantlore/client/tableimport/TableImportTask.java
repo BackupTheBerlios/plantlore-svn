@@ -207,8 +207,7 @@ public class TableImportTask extends Task {
 	 */
 	protected void insert(Record record) 
 	throws RemoteException, DBLayerException {
-		Integer newId = db.executeInsertHistory( record );
-		record.setId( newId ); // It is not important here - these records won't be referenced (in here).
+		db.executeInsertHistory( record );
 	}
 	
 	/**
