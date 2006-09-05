@@ -131,4 +131,15 @@ public class ChecklistView extends javax.swing.JDialog {
     protected JFileChooser choice;
 
     
+    @Override
+    public void setVisible(boolean arg0) {
+    	if( !arg0 ) {
+    		checklist.clearSelection();
+    		if(checklist.getModel().getSize() > 0)
+    			checklist.ensureIndexIsVisible(0);
+    	}
+    	
+    	super.setVisible(arg0);
+    }
+    
 }

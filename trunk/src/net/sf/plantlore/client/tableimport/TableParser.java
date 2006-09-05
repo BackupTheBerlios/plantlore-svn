@@ -60,5 +60,10 @@ public interface TableParser {
 	 * @return	The total number of records on the input, or -1 if the number could not be determined. 
 	 */
 	int getNumberOfRecords();
-
+	
+	/**
+	 * Made some final cleanup.
+	 * 
+	 */
+	void cleanup();
 }

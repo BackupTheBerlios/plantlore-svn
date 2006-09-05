@@ -89,6 +89,7 @@ public class TableImportTask extends Task {
 		setStatusMessage(L10n.getString("Import.Initialized"));
 		setLength( parser.getNumberOfRecords() );
 				
+		try {
 		while( !isCanceled() && parser.hasNext() ) {
 			DataHolder data = null;
 			try {
@@ -153,6 +154,7 @@ public class TableImportTask extends Task {
 					updated ++;
 					break;
 				}
+				
 			} catch(ImportException ie) {
 				logger.error("The import of the record No. " + count + " was unsuccessful! " + ie.getMessage());
 				//setStatusMessage( ie.getMessage() );
@@ -161,7 +163,13 @@ public class TableImportTask extends Task {
 				//setStatusMessage( L10n.getFormattedString("Import.UnableToProcess", count) + " " + 
 				//		((de.getMessage() == null) ? L10n.getString("Import.UnknownReason") : de.getMessage()) );
 			}
+			
 		}
+		}
+		finally {
+			parser.cleanup();
+		}
+		
 		
 		
 		if( !isCanceled() ) {
@@ -178,6 +186,8 @@ public class TableImportTask extends Task {
 		setStatusMessage(L10n.getString("Import.UpdatingEnvironment"));
 		setChanged();
 		notifyObservers( new PlantloreConstants.Table[] { PlantloreConstants.classToTable.get(table) } );
+		
+		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count, (count - deleted - updated - inserted) ));
 		
 		fireStopped(null);
 		return null;

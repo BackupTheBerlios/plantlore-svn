@@ -70,6 +70,7 @@ public class UnifiedTableParser implements TableParser {
 	private int numberOfRecords = -1;
 	private Class rootTable;
 	private Iterator recIterator;
+	private SAXReader saxReader;
 	
 	private Reader reader;
 	
@@ -100,8 +101,11 @@ public class UnifiedTableParser implements TableParser {
 	 */
 	public Class initialize() throws ParserException {
 		try {
-        	SAXReader saxReader = new SAXReader();
+        	saxReader = new SAXReader();
+        	
+        	System.out.println("ABOUT TO PARSER THE DOCUMENT WITH DOM4J");
             document = saxReader.read( reader );
+            System.out.println("COMPLETED.");
             
             Node root = document.getRootElement();
             if(root == null)
@@ -149,8 +153,9 @@ public class UnifiedTableParser implements TableParser {
 			
 			Node node = (Node) recIterator.next();
 			reconstruct( data.record, node );
-			node = node.getParent();
-			String name = (node == null) ? "add" : node.getName().toLowerCase();
+			Node parent = node.getParent();
+			String name = (parent == null) ? "add" : parent.getName().toLowerCase();
+			node.detach();
 			
 			if( name.startsWith("add") )
 				data.action = Action.INSERT;
@@ -163,6 +168,7 @@ public class UnifiedTableParser implements TableParser {
 					throw new ParserException(L10n.getString("Error.MissingUpdateRecord"));
 				data.replacement = (Record)rootTable.newInstance();
 				reconstruct( data.replacement, node );
+				node.detach();
 			}
 		} catch(IllegalAccessException e) {
 			throw new ParserException(L10n.getString("Error.Internal"));
@@ -196,5 +202,18 @@ public class UnifiedTableParser implements TableParser {
     		part.setValue(property, value);
     	}
     }
+
+    
+	public void cleanup() {
+		recIterator = null;
+		saxReader.resetHandlers();
+		document.clearContent();
+		document = null;
+		data = null;
+		saxReader = null;
+		try {
+			reader.close();
+		} catch(Exception e) {}
+	}
      
 }

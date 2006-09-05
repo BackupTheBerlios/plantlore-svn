@@ -46,6 +46,7 @@ import org.hibernate.sql.JoinFragment;
 public class SelectQueryImplementation implements SelectQuery {
 	
 	private static final long serialVersionUID = 2006060433450880L;
+	private Integer resultsetIdentifier = null;
 	
     // Hibernate criteria used in criteria query
     private Criteria criteria;
@@ -402,4 +403,14 @@ public class SelectQueryImplementation implements SelectQuery {
     public void addAssociation(String associationPath) throws RemoteException {
         criteria.createCriteria(associationPath);
     }
+
+	public Integer getResultsetIdentifier() throws RemoteException {
+		return resultsetIdentifier;
+	}
+
+	public synchronized void setResultsetIdentifier(Integer id) throws RemoteException {
+		if(resultsetIdentifier != null)
+			throw new IllegalArgumentException("The identifier is set already!");
+		resultsetIdentifier = id;
+	}
 }

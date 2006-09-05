@@ -85,6 +85,9 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 			setChanged();
 			notifyObservers( TABLES_TO_UPDATE );
 		}
+		
+		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count, rejected));
+		
 		fireStopped(null);
 		return null;
 	}
@@ -113,8 +116,8 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 	throws DBLayerException, RemoteException {
 		if( isCanceled() ) 
 			throw canceledByUser;
-		count++;
 		setStatusMessage(L10n.getFormattedString("Import.RecordsProcessed", count, rejected));
+		count++;
 		try {
 			if(aos == null || aos.length == 0) {
 				logger.error("The occurrence record is either corrupted or incomplete. It will be skipped.");

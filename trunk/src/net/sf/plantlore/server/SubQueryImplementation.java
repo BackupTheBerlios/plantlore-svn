@@ -328,4 +328,14 @@ public class SubQueryImplementation implements SelectQuery {
     public void addAssociation(String associationPath) throws RemoteException {
         criteria.createCriteria(associationPath);
     }
+
+	public Integer getResultsetIdentifier() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setResultsetIdentifier(Integer id) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
 }

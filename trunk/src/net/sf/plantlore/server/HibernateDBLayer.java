@@ -718,6 +718,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // Update current maximum result id and save the results
         maxResultId++; 
         results.put(maxResultId, res);
+        sq.setResultsetIdentifier( maxResultId );
         return maxResultId;
     }
        
@@ -791,7 +792,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
      *  @param query query we want to close
      */
     public void closeQuery(SelectQuery query) throws RemoteException, DBLayerException {
-        
         // TODO: Problem - we don't have any session for subqueries
         // TODO: We should probably catch HibernateException...
         Session session = sessions.remove(query);
@@ -802,13 +802,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         session.close();     
     	// Remove the query from the list of opened queries
-        SelectQuery selectQuery = queries.remove(query);        
+        SelectQuery selectQuery = queries.remove(query);
         // Unexport the SelectQuery object
         if(undertaker != null && selectQuery != null) {
             try {
                 UnicastRemoteObject.unexportObject(selectQuery, true);
             } catch(NoSuchObjectException e) {}
         }
+        
+        Integer resultsetIdentifier = selectQuery.getResultsetIdentifier();
+        results.remove( resultsetIdentifier  );
     }
     
     /**

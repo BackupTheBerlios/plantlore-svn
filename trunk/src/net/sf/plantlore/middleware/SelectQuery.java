@@ -100,4 +100,9 @@ public interface SelectQuery extends Serializable, Remote {
      */
     void addAssociation(String associationPath) throws RemoteException;
     
+    
+    Integer getResultsetIdentifier() throws RemoteException;
+    
+    void setResultsetIdentifier(Integer id) throws RemoteException;
+    
 }

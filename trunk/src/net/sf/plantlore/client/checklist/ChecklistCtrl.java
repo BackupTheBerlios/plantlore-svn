@@ -63,7 +63,6 @@ public class ChecklistCtrl {
 		public void actionPerformed(ActionEvent arg0) {
 			model.addLines( view.checklist.getSelectedValues() );
 			view.setVisible(false);
-			view.checklist.clearSelection();
 		}
 	}
 	
