@@ -1,5 +1,7 @@
 package net.sf.plantlore.client.export;
 
+import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
+
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -259,6 +261,9 @@ public class ExportMng2 {
 		
 		logger.debug("Creating necessary participants.");
 		projections.set(Occurrence.class, Occurrence.ID);
+		projections.set(Occurrence.class, Deletable.DELETED);
+		projections.set(AuthorOccurrence.class, Deletable.DELETED);
+		projections.set(Habitat.class, Deletable.DELETED);
 		
 		// Prepare the query for projections.
 		if(useProjections) {
@@ -298,6 +303,9 @@ public class ExportMng2 {
 			writer.close();
 			(new java.io.File(filename)).delete();
 		}
+		
+		if( format.ignoreDead() )
+			query.addRestriction(RESTR_EQ, Deletable.DELETED, null, 0, null);
 
 		// Create the task!
 		ExportTask2 t;
