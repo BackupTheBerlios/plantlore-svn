@@ -38,11 +38,8 @@ log.info("FILTER OBJ: %s"%unicode(str(filterObj), errors='replace'))
 # generate the protocol
 QG = QueryGenerator(protocol)
 
-ff = open("infoXML.txt",'w')
-ff.write(str(schemaObj) + "\n\n")  
 protocolXML = QG.getSearchProtocol(NS=schemaObj.NS, respNS=schemaObj.NS, count=False, filterObj=filterObj, destination=wrapper_url)
 log.info("QUERY PROTOCOL CREATED:\n%s"%protocolXML)
-ff.write(str(protocolXML))
 # query the wrapper
 QD = QueryDispatcher(protocolNS=protocol)
 recStatus = QD.sendQuery(wrapper_url, protocolXML, security_role=security_role)
