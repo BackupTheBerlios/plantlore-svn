@@ -14,6 +14,9 @@ import java.rmi.RemoteException;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import net.sf.plantlore.client.*;
+import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
@@ -44,13 +47,13 @@ public class DetailCtrl {
         public void actionPerformed(ActionEvent e) {
             logger.debug("Next detail.");
             try {
-                model.next();
-            } catch (DBLayerException ex) {
-                JOptionPane.showMessageDialog(view,"Database problem: "+ex);
-                ex.printStackTrace();
+                Task task = model.next();
+                if (task == null)
+                    return;
+                Dispatcher.getDispatcher().dispatch(task, view, false);
             } catch (RemoteException ex) {
-                JOptionPane.showMessageDialog(view,"Remote connection problem: "+ex);
-                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;
             }
         }
         
@@ -64,13 +67,13 @@ public class DetailCtrl {
         public void actionPerformed(ActionEvent e) {
             logger.debug("Prev detail.");
             try {
-                model.prev();
-            } catch (DBLayerException ex) {
-                JOptionPane.showMessageDialog(view,"Database problem: "+ex);
-                ex.printStackTrace();
+                Task task = model.prev();
+                if (task == null)
+                    return;
+                Dispatcher.getDispatcher().dispatch(task, view, false);
             } catch (RemoteException ex) {
-                JOptionPane.showMessageDialog(view,"Remote connection problem: "+ex);
-                ex.printStackTrace();
+                DefaultExceptionHandler.handle(view, ex);
+                return;
             }
         }
         

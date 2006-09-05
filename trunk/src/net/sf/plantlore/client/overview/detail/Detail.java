@@ -16,6 +16,8 @@ import javax.swing.table.AbstractTableModel;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.client.AppCore;
 import net.sf.plantlore.common.PlantloreConstants;
+import net.sf.plantlore.common.PostTaskAction;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.common.record.AuthorOccurrence;
@@ -76,90 +78,105 @@ public class Detail extends Observable {
     }
     
     
-    public void load(int result) throws DBLayerException, RemoteException {
-        this.currentResult = result;
-        Integer occurrenceId = appCore.getOccurrence(result);
-        logger.debug("Detail model: loading data for occurrence id "+occurrenceId);
-        SelectQuery sq = null;
-        
-        sq = database.createQuery(Occurrence.class);
-        sq.createAlias(Occurrence.HABITAT,"habitat");
-        sq.createAlias(Occurrence.PLANT,"plant");
-        // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well
-        sq.createAlias(Occurrence.PUBLICATION,"publication", PlantloreConstants.LEFT_OUTER_JOIN);
-        sq.createAlias(Occurrence.METADATA,"metadata");
-        sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
-        sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
-        sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
-        // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
-        sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, occurrenceId, null);
-        
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.DATASOURCE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.HERBARIUM);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.TIMECOLLECTED);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.DAYCOLLECTED);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.MONTHCOLLECTED);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.YEARCOLLECTED);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.NOTE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.CREATEDWHO);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.CREATEDWHEN);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.UPDATEDWHO);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.UPDATEDWHEN);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.ALTITUDE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LATITUDE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LONGITUDE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.COUNTRY);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);                    
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.QUADRANT);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+NearestVillage.NAME);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"metadata."+Metadata.DATASETTITLE);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.CODE);                    
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);                    
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"publication."+Publication.REFERENCECITATION);
-        sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
-        
-        int resultId = database.executeQuery(sq);
-        int resultsCount = database.getNumRows(resultId);
-        if (resultsCount == 0) {
-            logger.error("Detail: occurrence "+occurrenceId+" has no record in the database.");
-            throw new DBLayerException("The occurrence you selected is no longer in the database.");
-        }
-        assert resultsCount == 1;
-        
-        Object[] records = database.more(resultId, 0, resultsCount - 1);
-        database.closeQuery(sq);
-        Object[] pa = (Object[]) records[0];
-        source = (String)pa[0];
-        herbarium = (String)pa[1];
-        time = (Date)pa[2];
-        day = (Integer)pa[3];
-        month = (Integer)pa[4];
-        year = (Integer)pa[5];
-        occNote = (String)pa[6];
-        createdWho = ((User)pa[7]).getWholeName();
-        createdWhen= (Date)pa[8];
-        updatedWho = ((User)pa[9]).getWholeName();
-        updatedWhen = (Date)pa[10];
-        altitude= (Double)pa[11];
-        latitude = (Double)pa[12];
-        longitude = (Double)pa[13];
-        country = (String)pa[14];
-        placeDescription = (String)pa[15];
-        quadrant = (String)pa[16];
-        habNote = (String)pa[17];
-        village = (String)pa[18];
-        project = (String)pa[19];
-        phytCode = (String)pa[20];
-        phytName = (String)pa[21];
-        taxon = (String)pa[22];
-        publication = (String)pa[23];
-        territory = (String)pa[24];
-        
-        detailTableModel = new DetailTableModel(occurrenceId);
-        setChanged();
-        notifyObservers("NEW_DETAIL_LOADED");
+    public Task load(final int result) {
+        final Detail model = this;
+        Task task = new Task() {
+            public Object task() throws DBLayerException, RemoteException {
+                setStatusMessage(L10n.getString("Overview.Detail.Loading"));
+                currentResult = result;
+                Integer occurrenceId = appCore.getOccurrence(result);
+                logger.debug("Detail model: loading data for occurrence id "+occurrenceId);
+                SelectQuery sq = null;
+
+                sq = database.createQuery(Occurrence.class);
+                sq.createAlias(Occurrence.HABITAT,"habitat");
+                sq.createAlias(Occurrence.PLANT,"plant");
+                // Add publications using LEFT OUTER JOIN - so that occurrences without a publication are displayed as well
+                sq.createAlias(Occurrence.PUBLICATION,"publication", PlantloreConstants.LEFT_OUTER_JOIN);
+                sq.createAlias(Occurrence.METADATA,"metadata");
+                sq.createAlias("habitat."+Habitat.PHYTOCHORION,"phyt");
+                sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
+                sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
+                // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
+                sq.addRestriction(PlantloreConstants.RESTR_EQ, Occurrence.ID, null, occurrenceId, null);
+
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.DATASOURCE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.HERBARIUM);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.TIMECOLLECTED);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.DAYCOLLECTED);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.MONTHCOLLECTED);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.YEARCOLLECTED);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.NOTE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.CREATEDWHO);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.CREATEDWHEN);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.UPDATEDWHO);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,Occurrence.UPDATEDWHEN);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.ALTITUDE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LATITUDE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.LONGITUDE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.COUNTRY);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.DESCRIPTION);                    
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.NOTE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"habitat."+Habitat.QUADRANT);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"vill."+NearestVillage.NAME);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"metadata."+Metadata.DATASETTITLE);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.CODE);                    
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"phyt."+Phytochorion.NAME);                    
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"plant."+Plant.TAXON);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"publication."+Publication.REFERENCECITATION);
+                sq.addProjection(PlantloreConstants.PROJ_PROPERTY,"territory."+Territory.NAME);
+
+                int resultId;
+                int resultsCount;
+                try {
+                    resultId = database.executeQuery(sq);
+                    resultsCount = database.getNumRows(resultId);
+                } catch(DBLayerException ex) {
+                    database.closeQuery(sq);
+                    throw ex;
+                }
+                if (resultsCount == 0) {
+                    logger.error("Detail: occurrence "+occurrenceId+" has no record in the database.");
+                    throw new DBLayerException("The occurrence you selected is no longer in the database.");
+                }
+                assert resultsCount == 1;
+
+                Object[] records = database.more(resultId, 0, resultsCount - 1);
+                database.closeQuery(sq);
+                Object[] pa = (Object[]) records[0];
+                source = (String)pa[0];
+                herbarium = (String)pa[1];
+                time = (Date)pa[2];
+                day = (Integer)pa[3];
+                month = (Integer)pa[4];
+                year = (Integer)pa[5];
+                occNote = (String)pa[6];
+                createdWho = ((User)pa[7]).getWholeName();
+                createdWhen= (Date)pa[8];
+                updatedWho = ((User)pa[9]).getWholeName();
+                updatedWhen = (Date)pa[10];
+                altitude= (Double)pa[11];
+                latitude = (Double)pa[12];
+                longitude = (Double)pa[13];
+                country = (String)pa[14];
+                placeDescription = (String)pa[15];
+                quadrant = (String)pa[16];
+                habNote = (String)pa[17];
+                village = (String)pa[18];
+                project = (String)pa[19];
+                phytCode = (String)pa[20];
+                phytName = (String)pa[21];
+                taxon = (String)pa[22];
+                publication = (String)pa[23];
+                territory = (String)pa[24];
+
+                detailTableModel = new DetailTableModel(occurrenceId);
+                model.setChanged();
+                model.notifyObservers("NEW_DETAIL_LOADED");
+                return null;
+            }//task()
+        };
+        return task;
     }
         
     
@@ -168,20 +185,30 @@ public class Detail extends Observable {
         logger.debug("Detail model - database set.");
     }
     
-    public void next() throws DBLayerException, RemoteException {
+    public Task next() throws RemoteException {
         if (appCore.getResultsCount() <= currentResult+1)
-            return;
+            return null;
         currentResult++;
-        load(currentResult);
-        appCore.selectAndShow(currentResult);
+        Task task = load(currentResult);
+        task.setPostTaskAction(new PostTaskAction() {
+            public void afterStopped(Object value) throws DBLayerException, RemoteException {
+                appCore.selectAndShow(currentResult);                        
+            }
+        });
+        return task;
     }
     
-    public void prev() throws DBLayerException, RemoteException {
+    public Task prev() throws RemoteException {
         if (currentResult <=0)
-            return;
+            return null;
         currentResult--;
-        load(currentResult);
-        appCore.selectAndShow(currentResult);
+        Task task = load(currentResult);
+        task.setPostTaskAction(new PostTaskAction() {
+            public void afterStopped(Object value) throws DBLayerException, RemoteException {
+                appCore.selectAndShow(currentResult);                        
+            }
+        });
+        return task;
     }
     
     class DetailTableModel extends AbstractTableModel {

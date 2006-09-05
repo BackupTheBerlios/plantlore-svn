@@ -1531,14 +1531,22 @@ public class AppCoreCtrl {
 					int resultNumber = model.getSelectedResultNumber();
                                         if (resultNumber > model.getResultsCount()) {
                                             logger.error("Trying to show detail for a record number of which is bigger than results count. Have we been disconnected?");
-                                            JOptionPane.showMessageDialog(view,L10n.getString("Error.LostConnection"));
-                                            return;
+                                            throw new DBLayerException(L10n.getString("DBLayer.Error.Login"), DBLayerException.ERROR_CONNECT);
                                         }
                                         
 					if (resultNumber != model.getResultsCount())
 						model.selectAndShow(resultNumber);
-					detailModel.load(model.getSelectedResultNumber());
-                                        detailView.setVisible(true);
+					Task task = detailModel.load(model.getSelectedResultNumber());
+                                        task.setPostTaskAction(new PostTaskAction() {
+                                           public void afterStopped(Object value) {
+                                               SwingUtilities.invokeLater(new Runnable() {
+                                                   public void run() {
+                                                        detailView.setVisible(true);                                                       
+                                                   }
+                                               });
+                                           } 
+                                        });
+                                        Dispatcher.getDispatcher().dispatch(task, view, false);
 				} catch (RemoteException ex) {
                                     DefaultExceptionHandler.handle(view,ex);
                                     return;
@@ -1572,8 +1580,7 @@ public class AppCoreCtrl {
 					int resultNumber = model.getSelectedResultNumber();
                                         if (resultNumber > model.getResultsCount()) {
                                             logger.error("Trying to show detail for a record number of which is bigger than results count. Have we been disconnected?");
-                                            JOptionPane.showMessageDialog(view,"The connection has been probably lost.");
-                                            return;
+                                            throw new DBLayerException(L10n.getString("DBLayer.Error.Login"), DBLayerException.ERROR_CONNECT);
                                         }
                                         
 					if (resultNumber != model.getResultsCount())
@@ -1585,8 +1592,17 @@ public class AppCoreCtrl {
 					// next row, so
 					// we need to
 					// correct that
-					detailModel.load(model.getSelectedResultNumber());
-                                        detailView.setVisible(true);
+					Task task = detailModel.load(model.getSelectedResultNumber());
+                                        task.setPostTaskAction(new PostTaskAction() {
+                                           public void afterStopped(Object value) {
+                                               SwingUtilities.invokeLater(new Runnable() {
+                                                   public void run() {
+                                                        detailView.setVisible(true);                                                       
+                                                   }
+                                               });
+                                           } 
+                                        });
+                                        Dispatcher.getDispatcher().dispatch(task, view, false);
 				} catch (RemoteException ex) {
                                     DefaultExceptionHandler.handle(view,ex);
                                     return;
