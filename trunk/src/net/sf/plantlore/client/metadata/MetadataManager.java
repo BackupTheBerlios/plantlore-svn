@@ -78,7 +78,7 @@ public class MetadataManager  extends Observable {
     /**Metadata - istitution*/
     private String sourceInstitutionId;
     /**Metadata - data source*/
-    private String sourceId;    
+    private String sourceId;        
     
     /** Constants with error descriptions */
     public static final String ERROR_SEARCH = L10n.getString("Error.MetadataSearchFailed");        
@@ -369,11 +369,11 @@ public class MetadataManager  extends Observable {
     			try {
 		            database.executeInsert(metadataRecord);		            		            
 		        }catch (Exception e) {
-		        	logger.error("Process add metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();                    
+		        	logger.error("Process add metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());		        	               
                                 throw e; 		            
 		        } 		       		      
 		        setInfoFinishedTask(true);
+                         // Stop the Task                        
 		        return null;
     		}
 	    };
@@ -392,13 +392,12 @@ public class MetadataManager  extends Observable {
     		public Object task() throws Exception {
     			try {
 		        	database.executeUpdate(metadataRecord);
-		        	metadataList.set(idRecord, metadataRecord);
+		        	//metadataList.set(idRecord, metadataRecord);
 		        }catch (Exception e) {
-		        	logger.error("Process update metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
-		        	database.rollbackTransaction();                   
+		        	logger.error("Process update metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());		        	                  
                                 throw e; 		            
 		        } 		        		        
-		        setInfoFinishedTask(true);
+		        setInfoFinishedTask(true);                                               
 		        return null;
     		}
 	    };            

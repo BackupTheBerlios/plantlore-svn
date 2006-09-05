@@ -253,16 +253,17 @@ public class MetadataManagerCtrl {
                 public void afterStopped(Object value) {
                    if (! model.isFinishedTask()) return;
                    model.setInfoFinishedTask(false);
-                   //load metadata
-    	           model.searchMetadata(false);
-    	           if (model.isError()) {
-    	        	   DefaultExceptionHandler.handle(view, model.getException());
-                           model.setError(null);
-    	        	   return;
-    	           }    	           
-    	           reloadData(1, model.getDisplayRows());   
+                     // load metadata
+                   model.searchMetadata(false);  
+                   if (model.isError()) {
+                       DefaultExceptionHandler.handle(view, model.getException());
+                        model.setError(null);
+                        model.setException(null);
+                       return;
+                   }
+                   reloadData(1, model.getDisplayRows());
                    model.callNotifyObserver();
-               } 		   		               
+                }//afterStopped 		               
            });
            Dispatcher.getDispatcher().dispatch(task, view, false);
            
@@ -325,11 +326,17 @@ public class MetadataManagerCtrl {
                     public void afterStopped(Object value) {
                          if (! model.isFinishedTask()) return;
                          model.setInfoFinishedTask(false);
-                       //load metadata          				
-                        if (model.isError()) return;
-                        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));  
-                        model.callNotifyObserver();
-                     } 		   					                   
+                          // load metadata
+                           model.searchMetadata(false);  
+                           if (model.isError()) {
+                               DefaultExceptionHandler.handle(view, model.getException());
+                                model.setError(null);
+                                model.setException(null);
+                               return;
+                           }
+                           reloadData(1, model.getDisplayRows());
+                           model.callNotifyObserver();
+                        }//afterStopped 		
                });
                Dispatcher.getDispatcher().dispatch(task, view, false);
                
