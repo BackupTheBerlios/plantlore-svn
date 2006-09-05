@@ -372,10 +372,7 @@ public class MetadataManager  extends Observable {
 		        	logger.error("Process add metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();                    
                                 throw e; 		            
-		        } 		       
-		        //Tell AppCore observerber
-		        setChanged(); 
-		        notifyObservers(editTypeArray);	
+		        } 		       		      
 		        setInfoFinishedTask(true);
 		        return null;
     		}
@@ -400,16 +397,21 @@ public class MetadataManager  extends Observable {
 		        	logger.error("Process update metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();                   
                                 throw e; 		            
-		        } 		        
-		        //Tell AppCore observerber
-		        setChanged(); 
-		        notifyObservers(editTypeArray);	
+		        } 		        		        
 		        setInfoFinishedTask(true);
 		        return null;
     		}
-	    };
-	    return task;
+	    };            
+	    return task;            
     } 
+    
+    /**
+     * Propagates changes made in metadata manager to the rest of the application.
+     */
+    public void callNotifyObserver() {
+        setChanged(); 
+        notifyObservers(editTypeArray); 
+    }
     	    	    	
     /**     
      *  Update metadata in the database. To-be-updated metadata is stored in <code>metadataRecord</code> field.
@@ -427,10 +429,7 @@ public class MetadataManager  extends Observable {
 		        }catch (Exception e) {
 		        	logger.error("Process delete metadata failed. Remote exception caught in MetadataManager. Details: "+e.getMessage());		        	
                                 throw e; 		            
-		        } 			        
-		        //Tell AppCore observerber
-		        setChanged(); 
-		        notifyObservers(editTypeArray);		
+		        } 			        		       
 		        setInfoFinishedTask(true);
 		        return null;
     		}

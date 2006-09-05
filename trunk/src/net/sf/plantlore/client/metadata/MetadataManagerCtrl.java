@@ -260,7 +260,8 @@ public class MetadataManagerCtrl {
                            model.setError(null);
     	        	   return;
     	           }    	           
-    	           reloadData(1, model.getDisplayRows());    	                   
+    	           reloadData(1, model.getDisplayRows());   
+                   model.callNotifyObserver();
                } 		   		               
            });
            Dispatcher.getDispatcher().dispatch(task, view, false);
@@ -326,7 +327,8 @@ public class MetadataManagerCtrl {
                          model.setInfoFinishedTask(false);
                        //load metadata          				
                         if (model.isError()) return;
-                        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));                         
+                        view.tableMetadataList.setModel(new MetadataManagerTableModel(model));  
+                        model.callNotifyObserver();
                      } 		   					                   
                });
                Dispatcher.getDispatcher().dispatch(task, view, false);
@@ -429,7 +431,8 @@ public class MetadataManagerCtrl {
                                                 model.setException(null);
                                                return;
                                            }
-                                           reloadData(1, model.getDisplayRows());		   	              		   	               
+                                           reloadData(1, model.getDisplayRows());
+                                           model.callNotifyObserver();
         		                }//afterStopped 		   					                                   
                                });
                                Dispatcher.getDispatcher().dispatch(task, view, false);
