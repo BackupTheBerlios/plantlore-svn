@@ -194,8 +194,6 @@ public abstract class Task extends Observable {
                         action.afterStopped(value);
                     }
                 } catch (Exception ex) {
-                    //FIXME:
-                    ex.printStackTrace();
                     setChanged();
                     notifyObservers(ex);
                 }

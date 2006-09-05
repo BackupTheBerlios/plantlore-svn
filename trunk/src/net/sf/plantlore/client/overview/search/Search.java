@@ -454,7 +454,6 @@ public class Search extends Observable {
     }
     
     public Pair<Boolean,String> checkData() {
-        //TODO: check that the author set contains reasonable (not null) values
         boolean allNull = true;
         for (int i = 0; i < authorList.size(); i++) {
             Pair<Pair<String,Integer>,String> p = authorList.get(i);
@@ -862,7 +861,7 @@ public class Search extends Observable {
             }
 
             if (isNotEmpty(publication)) {
-                //FIXME: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
+                //TODO: mozna pridat addOrRestriction na vsechny relevantni sloupky Publication
                     arg = dlu.getObjectFor(publication.getSecond(),Publication.class);
                 sq.addRestriction(PlantloreConstants.RESTR_EQ,"occ."+Occurrence.PUBLICATION,null,arg,null);
                 restrictions.add(new Restriction(RESTR_EQ, Occurrence.PUBLICATION, arg));

@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -727,8 +728,16 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {                    
-                    if (model.getResultsCount() == 0) {
-                        JOptionPane.showMessageDialog(view,L10n.getString("Overview.NothingToEdit"),L10n.getString("Overview.NothingToEditTitle"),JOptionPane.INFORMATION_MESSAGE);
+                    try {
+                        if (model.getResultsCount() == 0) {
+                            JOptionPane.showMessageDialog(view,L10n.getString("Overview.NothingToEdit"),L10n.getString("Overview.NothingToEditTitle"),JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+                    } catch (HeadlessException ex) {
+                        DefaultExceptionHandler.handle(view,ex);  
+                        return;
+                    } catch (RemoteException ex) {
+                        DefaultExceptionHandler.handle(view,ex);  
                         return;
                     }
                         
@@ -869,8 +878,13 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (model.getResultsCount() > 0)
-				model.selectAll();
+                        try {
+                            if (model.getResultsCount() > 0)
+                                    model.selectAll();
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view,ex);  
+                            return;
+                        }
 		}
 	}
 
@@ -884,8 +898,13 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (model.getResultsCount() > 0)
-				model.selectNone();
+                        try {
+                            if (model.getResultsCount() > 0)
+                                    model.selectNone();
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view,ex);  
+                            return;
+                        }
 		}
 	}
 
@@ -900,8 +919,13 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (model.getResultsCount() > 0)
-				model.invertSelected();
+                    try {
+                        if (model.getResultsCount() > 0)
+                                model.invertSelected();
+                    } catch (RemoteException ex) {
+                        DefaultExceptionHandler.handle(view,ex);  
+                        return;
+                    }
 		}
 	}
 
@@ -1302,10 +1326,18 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			logger.debug("Showing history of record: "+ model.getSelectedOccurrence());	
-			
-                        if (model.getResultsCount() == 0) {
-                            JOptionPane.showMessageDialog(view,L10n.getString("Overview.NoOccurrence"),L10n.getString("Overview.NoOccurrenceTitle"),JOptionPane.INFORMATION_MESSAGE);                            
+			logger.debug("Showing history of record: "+ model.getSelectedOccurrence());
+                        try {
+
+                            if (model.getResultsCount() == 0) {
+                                JOptionPane.showMessageDialog(view,L10n.getString("Overview.NoOccurrence"),L10n.getString("Overview.NoOccurrenceTitle"),JOptionPane.INFORMATION_MESSAGE);                            
+                                return;
+                            }
+                        } catch (HeadlessException ex) {
+                            DefaultExceptionHandler.handle(view,ex);  
+                            return;
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(view,ex);  
                             return;
                         }
                         
@@ -1730,8 +1762,6 @@ public class AppCoreCtrl {
                                 logger.debug("Database layer retrieval.");
                                 DBLayer dblayer = loginModel.getDBLayer();
 
-                                // FIXME: neni potreba zresetovat stav treba loginModelu, pokdu
-                                // neco takhle selze? pripadne stav jinyho objektu?
                                 try {
                                         model.setDatabase(dblayer);
                                 } catch (RemoteException ex) {
@@ -1771,7 +1801,6 @@ public class AppCoreCtrl {
                                 view.initOverview();
                                 view.setCursor(Cursor.getDefaultCursor());
                                 setDatabaseDependentCommandsEnabled(true);
-                                logger.debug("======= rows: "+model.getResultsCount());
                                 //this can't be done earlier. must be done after the query is created
                                 //otherwise this listener would give the overview table model commands to load data
                                 //for a query that doesn't exist yet

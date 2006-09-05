@@ -268,14 +268,9 @@ public class AppCore extends Observable
         }
     }
     
-    public int getResultsCount() {
-        //FIXME
+    public int getResultsCount() throws RemoteException {
         if (tableSorter != null) {        
-        	try {
-                return database.getNumRows(this.getTableModel().getResultId());
-            } catch (RemoteException e) {
-                //
-            }
+            return database.getNumRows(this.getTableModel().getResultId());
         }
         return 0;
     }
@@ -911,8 +906,8 @@ public class AppCore extends Observable
                         setStatusMessage(L10n.getFormattedString("Delete.Message.ProgressInfo",deleted,toBeDeleted.size()));
                     }
                 } catch (DBLayerException ex) {
-                    database.rollbackTransaction();//FIXME:
-                    DBLayerException dbex = new DBLayerException("Delete rolled back. Some database problem occurred: "+ex);
+                    database.rollbackTransaction();
+                    DBLayerException dbex = new DBLayerException(L10n.getString("DBLayer.Error.Transaction"),DBLayerException.ERROR_TRANSACTION,ex);
                     dbex.setStackTrace(ex.getStackTrace());
                     throw dbex;
                 }
@@ -948,8 +943,8 @@ public class AppCore extends Observable
             int resId = database.executeQuery(sq);
             int resCount = database.getNumRows(resId);
             assert resCount == 1;
-            if (resCount == 0) //FIXME
-                throw new DBLayerException("The record is no longer in the database.");
+            if (resCount == 0)
+                throw new DBLayerException(L10n.getString("Error.RecordNoLongerInDatabase"));
             Object[] obj = database.more(resId, 0, 0);
             Object[] res = (Object[])obj[0];
             String userId = ""+res[0];            

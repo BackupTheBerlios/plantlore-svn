@@ -716,18 +716,18 @@ public class SearchView extends javax.swing.JDialog implements Observer {
 
         JComboBox cb;
         if (model.getAuthors() == null) 
-            cb = new AutoComboBoxNG3();
+            cb = new JComboBox();
         else
-            cb = new AutoComboBoxNG3(model.getAuthors());
+            cb = new JComboBox(model.getAuthors());
         
         //Fix of Bug #008588	Author table breaks sometimes
         PopupListener pl = new PopupListener(); cb.addPopupMenuListener(pl); DefaultCellEditor dce = new DefaultCellEditor(cb); pl.setCellEditor(dce);
         tc1.setCellEditor(dce);  
 
         if (model.getAuthorRoles() == null) 
-            cb = new AutoComboBoxNG3();
+            cb = new JComboBox();
         else
-            cb = new AutoComboBoxNG3(model.getAuthorRoles());
+            cb = new JComboBox(model.getAuthorRoles());
 
         //Fix of Bug #008588	Author table breaks sometimes
         pl = new PopupListener(); cb.addPopupMenuListener(pl); dce = new DefaultCellEditor(cb); pl.setCellEditor(dce);
@@ -900,9 +900,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                         JComboBox cb;
 
                         if (model.getAuthors() == null) 
-                            cb = new AutoComboBoxNG3();
+                            cb = new JComboBox();
                         else
-                            cb = new AutoComboBoxNG3(model.getAuthors());
+                            cb = new JComboBox(model.getAuthors());
 
                         TableColumn tc1 = authorTable.getColumnModel().getColumn(0);
 
@@ -916,9 +916,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                         JComboBox cb;
 
                         if (model.getAuthorRoles() == null)
-                            cb = new AutoComboBoxNG3();
+                            cb = new JComboBox();
                         else
-                            cb = new AutoComboBoxNG3(model.getAuthorRoles());
+                            cb = new JComboBox(model.getAuthorRoles());
 
                         TableColumn tc2 = authorTable.getColumnModel().getColumn(1);
 

@@ -101,7 +101,7 @@ public class Dispatcher {
     }    
     
     public static Dispatcher getDispatcher() {
-        if (pbm == null) //FIXME: think of a better kind of exception
+        if (pbm == null) //TODO: think of a better kind of exception
             throw new IllegalArgumentException("You have to call Dispatcher.initialize() first!");
         
         return dispatcher;

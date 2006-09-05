@@ -39,6 +39,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import com.toedter.calendar.JCalendar;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
@@ -684,12 +685,12 @@ public class AddEditCtrl {
                 }
             } catch (RemoteException ex) {
                 logger.error("Remote problem: "+ex);
-                ex.printStackTrace();
-                DefaultReconnectDialog.show(view,ex);
+                DefaultExceptionHandler.handle(view, ex);
+                return;
             } catch (DBLayerException ex) {
                 logger.error("Database problem: "+ex);
-                ex.printStackTrace();
-                DefaultReconnectDialog.show(view,ex);
+                DefaultExceptionHandler.handle(view, ex);
+                return;
             }
         }//mouseClicked
             

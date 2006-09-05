@@ -23,6 +23,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import net.sf.plantlore.client.resources.Resource;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Dispatcher;
@@ -173,10 +174,8 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
                 try {
                     model.reload();
                 } catch (Exception ex) {
-                    if (ex instanceof DBLayerException || ex instanceof RemoteException)
-                        DefaultReconnectDialog.show(view,ex);
-                    else
-                        JOptionPane.showMessageDialog(view,L10n.getString("Error.General"));//FIXME
+                    DefaultExceptionHandler.handle(view, ex);
+                    return;
                 }
             }
     }//RefreshAction
@@ -204,10 +203,7 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
                 try {
                     model.reload();
                 } catch (Exception ex) {
-                    if (ex instanceof DBLayerException || ex instanceof RemoteException)
-                        DefaultReconnectDialog.show(view,ex);
-                    else
-                        JOptionPane.showMessageDialog(view,L10n.getString("Error.General"));//FIXME
+                    DefaultExceptionHandler.handle(view,ex);
                 }
             }
     }//RefreshAction

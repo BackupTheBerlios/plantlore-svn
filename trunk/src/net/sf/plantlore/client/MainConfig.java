@@ -93,7 +93,7 @@ public class MainConfig {
             }
             if (c != null) {
                 Number preferredSize = n.numberValueOf("@preferredSize");
-                if (!preferredSize.toString().equals("NaN")) //FIXME: better way to recognize a NaN?
+                if (!preferredSize.toString().equals("NaN")) //TODO: better way to recognize a NaN?
                     c.setPreferredSize(preferredSize.intValue());
                 columns.add(c);
             }

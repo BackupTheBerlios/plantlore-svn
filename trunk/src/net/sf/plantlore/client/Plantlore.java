@@ -59,11 +59,10 @@ public class Plantlore {
         ClassLoader cl = this.getClass().getClassLoader();
         InputStream is = cl.getResourceAsStream(LOGGER_PROPS);
         Properties props = new Properties();
-        //FIXME:
         try {
             props.load(is);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, L10n.getString("Message.CorruptedJarMissingResource"),L10n.getString("Message.CorruptedJarMissingResourceTitle"),JOptionPane.ERROR_MESSAGE);
         }
         //maybe CHANGE to configureAndWatch()
         PropertyConfigurator.configure(props);
@@ -94,7 +93,7 @@ public class Plantlore {
         try {
             PlantloreHelp.initialize();
         } catch (PlantloreException e) {
-            // TODO: Display error message
+            JOptionPane.showMessageDialog(null, L10n.getString("Message.HelpInitProblem"),L10n.getString("Message.HelpInitProblemTitle"),JOptionPane.ERROR_MESSAGE);
         }
         
         plantlore.run();

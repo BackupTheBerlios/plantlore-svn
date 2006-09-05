@@ -9,6 +9,7 @@ package net.sf.plantlore.client;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
@@ -19,6 +20,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import net.sf.plantlore.client.overview.*;
+import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.l10n.L10n;
@@ -446,9 +448,14 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                 if (object != null && object instanceof String) {
                     String arg = (String) object;
                     if (arg.equals("PAGE_CHANGED")||arg.equals("RECORDS_PER_PAGE")) {
-                        recordsCount.setText(""+model.getResultsCount());
+                        try {
+                            recordsCount.setText(""+model.getResultsCount());
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(this, ex);
+                            return;
+                        }
                         pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount());
-                        //FIXME: change selection only if really required
+                        //TODO: change selection only if really required
                         overview.changeSelection(model.getSelectedRowNumber(),0,false,false);
                         return;
                     }
@@ -456,7 +463,12 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
                         //setPreferredColumnSizes();
                         overview.setEnabled(true);
                         overview.setVisible(true);
-                        recordsCount.setText(""+model.getResultsCount());
+                        try {
+                            recordsCount.setText(""+model.getResultsCount());
+                        } catch (RemoteException ex) {
+                            DefaultExceptionHandler.handle(this, ex);
+                            return;
+                        }
                         pageStatus.setText(""+model.getCurrentPage()+"/"+model.getPagesCount()); 
                         overview.getSelectionModel().setSelectionInterval(0,0);
                         return;
@@ -494,7 +506,6 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         OverviewTableModel otm = model.getTableModel();
         TableSorter tableSorter = model.getTableSorter();
 
-        //FIXME: what if otm == null ????????????
         overview.setModel(tableSorter);
         tableSorter.setTableHeader(overview.getTableHeader());
         overview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
