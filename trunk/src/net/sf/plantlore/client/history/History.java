@@ -41,6 +41,7 @@ import net.sf.plantlore.middleware.SelectQuery;
 import net.sf.plantlore.common.exception.DBLayerException;
 import org.apache.log4j.Logger;
 
+
 /**
  * History model. Contains bussines logic and data fields of the History. Implements
  * operations including search history data, undo, cleare database.
@@ -116,7 +117,9 @@ public class History extends Observable {
     /** Name of author for specific occurrence*/
     private String nameAuthor;
     /** Informaciton about location for specific occurrence*/
-    private String location;    
+    private String location;  
+    /**Model of history*/
+    final History model = this;    
     
     /** Instances of Record */
     private Object data;   
@@ -435,8 +438,8 @@ public class History extends Observable {
     		historyRecord = (HistoryRecord)historyDataList.get(i);    		
     		historyChange = historyRecord.getHistoryChange();
     		tableName = historyRecord.getHistoryColumn().getTableName();
-            recordId = historyChange.getRecordId();
-            operation = historyChange.getOperation();
+                recordId = historyChange.getRecordId();
+                operation = historyChange.getOperation();
 		  
             if (operation == HistoryChange.HISTORYCHANGE_INSERT) {
                 undoInsertDelete(1);
@@ -487,14 +490,20 @@ public class History extends Observable {
      *   @param isDelete int containing informaciton about insertion or erasure of record. 
      */
     public void undoInsertDelete(int isDelete) {
+        int contains = -1;
         if (tableName.equals(PlantloreConstants.ENTITY_OCCURRENCE)){        	
         	Object[] object = searchObject(PlantloreConstants.ENTITY_OCCURRENCE,recordId);        	        	
         	if (isError()) return; //tOccurrence doesn`t contain required data        	       		        		
         	Occurrence occurrence = (Occurrence)object[0];             
             occurrence.setDeleted(isDelete);                      	     	 
              //Add to list of changed Record
-             if (!editObjectList.contains((Record)occurrence))                 
-                editObjectList.add((Record)occurrence);       
+             contains = this.isInObjectList(Occurrence.class, occurrence.getId());
+             if (contains == -1) {
+                 logger.debug("ObjectList - add occurrence " + occurrence.getId());
+                 editObjectList.add((Record)occurrence);
+             } else {
+                 editObjectList.set(contains, (Record)occurrence); 
+             }       
              //Update author of specific occurrence
              isDelete = (isDelete == 1) ? 2 : isDelete;
              Object[] objects = getAllAuthors(occurrence, 2-isDelete);
@@ -505,8 +514,13 @@ public class History extends Observable {
                 AuthorOccurrence authorOccurrence = (AuthorOccurrence)autOcc[0];
                 authorOccurrence.setDeleted(isDelete);
                  //Add to list of changed Record
-                 if (!editObjectList.contains((Record)authorOccurrence))                 
-                    editObjectList.add((Record)authorOccurrence);                 
+                contains = this.isInObjectList(AuthorOccurrence.class, authorOccurrence.getId());
+                 if (contains == -1) {
+                     logger.debug("ObjectList - add authorOccurrence " + authorOccurrence.getId());
+                     editObjectList.add((Record)authorOccurrence);
+                 } else {
+                     editObjectList.set(contains, (Record)authorOccurrence); 
+                 }      
             }                                     
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOROCCURRENCE)) {
              Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOROCCURRENCE,recordId);               
@@ -514,44 +528,85 @@ public class History extends Observable {
              AuthorOccurrence authorOccurrence = (AuthorOccurrence)object[0];
              authorOccurrence.setDeleted(isDelete);             
              //Add to list of changed Record             
-             if (!editObjectList.contains((Record)authorOccurrence))                 
-                editObjectList.add((Record)authorOccurrence);             
+             contains = this.isInObjectList(AuthorOccurrence.class, authorOccurrence.getId());
+             if (contains == -1) {
+                 logger.debug("ObjectList - add authorOccurrence " + authorOccurrence.getId());
+                 editObjectList.add((Record)authorOccurrence);
+             } else {
+                 editObjectList.set(contains, (Record)authorOccurrence); 
+             }                
        } else if (tableName.equals(PlantloreConstants.ENTITY_HABITAT)) {            
                Object[] object = searchObject(PlantloreConstants.ENTITY_HABITAT,recordId);  
                if (isError()) return; //tHabitat doesn`t contain required data
                Habitat habitat = (Habitat)object[0];
                habitat.setDeleted(isDelete);
                //Add to list of changed Record             
-               if (!editObjectList.contains((Record)habitat))                 
-                   editObjectList.add((Record)habitat);             
+               contains = this.isInObjectList(Habitat.class, habitat.getId());
+                 if (contains == -1) {
+                     logger.debug("ObjectList - add habitat " + habitat.getId());
+                     editObjectList.add((Record)habitat);
+                 } else {
+                     editObjectList.set(contains, (Record)habitat); 
+                 }   
         } else if (tableName.equals(PlantloreConstants.ENTITY_METADATA)) {
              Object[] object = searchObject(PlantloreConstants.ENTITY_METADATA,recordId); 
              if (isError()) return; //tMetadata doesn`t contain required data
              Metadata metadata = (Metadata)object[0];
              metadata.setDeleted(isDelete);
              //Add to list of changed Record             
-             if (!editObjectList.contains((Record)metadata))                 
-                editObjectList.add((Record)metadata);             
+             contains = this.isInObjectList(Metadata.class, metadata.getId());
+             if (contains == -1) {
+                 logger.debug("ObjectList - add metadata ID " + metadata.getId());
+                 editObjectList.add((Record)metadata);
+             } else {
+                 editObjectList.set(contains, (Record)metadata); 
+             }                                
         } else if (tableName.equals(PlantloreConstants.ENTITY_PUBLICATION)) {
              Object[] object = searchObject(PlantloreConstants.ENTITY_PUBLICATION,recordId);
              if (isError()) return; //tPublication doesn`t contain required data
              Publication publication = (Publication)object[0];
              publication.setDeleted(isDelete);
              //Add to list of changed Record             
-             if (!editObjectList.contains((Record)publication))                 
-                editObjectList.add((Record)publication);             
+             contains = this.isInObjectList(Publication.class, publication.getId());
+             if (contains == -1) {
+                 logger.debug("ObjectList - add publications");
+                 editObjectList.add((Record)publication);
+             } else {
+                 editObjectList.set(contains, (Record)publication); 
+             }                       
         } else if (tableName.equals(PlantloreConstants.ENTITY_AUTHOR)) {             
              Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOR,recordId);  
              if (isError()) return; //tAuthor doesn`t contain required data
              Author author = (Author)object[0];
              author.setDeleted(isDelete);
              //Add to list of changed Record             
-             if (!editObjectList.contains((Record)author))                 
-                editObjectList.add((Record)author);             
+             contains = this.isInObjectList(Author.class, author.getId());
+             if (contains == -1) {
+                 logger.debug("ObjectList - add authors");
+                 editObjectList.add((Record)author);
+             } else {
+                 editObjectList.set(contains, (Record)author); 
+             }                       
         }  else {
             logger.error("Name of table is incorrect.");
         }
     }
+    
+    
+    public int isInObjectList(Class type, int historyRecordId) {     
+    	int placings = -1;        
+    	for (int i=0; i < editObjectList.size(); i++) {                
+    		if (editObjectList.get(i).getClass().equals(type)) {                        
+    			int listId = ((Record)editObjectList.get(i)).getId();                       
+    			if (historyRecordId == listId) {    				
+    				placings = i;       				
+    				break;
+    			}
+    		}
+    	}             
+        return placings;
+    }
+    
     
     /**
      * Rollaback operation Update.
@@ -613,14 +668,8 @@ public class History extends Observable {
         	// Select record AuthorOccurrence where id = authorOccurrenceId 
     		Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOROCCURRENCE, authorOccId);
     		if (isError()) return; //tAuthorOccurrence doesn`t contain required data
-            authorOccurrence = (AuthorOccurrence)object[0];
-        }     	                 
-                
-        boolean objectList = editObjectList.contains((Record)authorOccurrence); 
-        if (!objectList) {
-        	//add object to list of editing object
-            editObjectList.add((Record)authorOccurrence);
-        }
+               authorOccurrence = (AuthorOccurrence)object[0];
+        }     	                                        
        
        // Get number of columnName from authorOccurrence mapping
         int columnConstant;
@@ -922,8 +971,8 @@ public class History extends Observable {
                         Object[] objectVill = searchObject(PlantloreConstants.ENTITY_VILLAGE,oldRecordId);
                         if (isError()) return; //tVillage doesn`t contain required data
                         NearestVillage village = (NearestVillage)objectVill[0];
-                hab.setNearestVillage(village);
-                logger.debug("Set selected value for update of attribute NearesVillage.");
+                        hab.setNearestVillage(village);                        
+                        logger.debug("Set selected value for update of attribute NearesVillage." + village.getName());
                 } else {
                         logger.error("UNDO - Incorrect oldRecordId for NearestVillage.");
                 }                
@@ -1140,10 +1189,10 @@ public class History extends Observable {
         Metadata metadata = null;
     	int placings = 0;
     	boolean contain = false;
-    	for (int i=0; i < editObjectList.size(); i++) {
-    		if (editObjectList.get(i) instanceof Metadata) {    			
-    			int listOccId = ((Metadata)(editObjectList.get(i))).getId();
-    			if (metadataId == listOccId) {
+    	for (int i=0; i < editObjectList.size(); i++) {                        
+    		if (editObjectList.get(i) instanceof Metadata) {                                               
+    			int listId = ((Metadata)(editObjectList.get(i))).getId();                        
+    			if (metadataId == listId) {                                
     				contain = true;
     				placings = i; 
     				metadata = (Metadata)(editObjectList.get(i));
@@ -1156,7 +1205,7 @@ public class History extends Observable {
         	// Select record Metadata where id = metadataId 
     		Object[] object = searchObject(PlantloreConstants.ENTITY_METADATA, metadataId);
     		if (isError()) return; //tMetadata doesn`t contain required data
-    	    metadata = (Metadata)object[0];
+                metadata = (Metadata)object[0];
         }
     	
         // Get number of columnName from metadata mapping.
@@ -1229,7 +1278,7 @@ public class History extends Observable {
         	editObjectList.set(placings,(Record)metadata);        
         } else {
         	// add object to list of editing object
-            logger.debug("ObjectList - add metadata");
+            logger.debug("ObjectList - add metadata "+metadata.getId());
             editObjectList.add(metadata);
         }
     }
@@ -1531,7 +1580,7 @@ public class History extends Observable {
 		        
 		        try {
 			    	for (int i=0; i< count; i++) {			    		
-			    			logger.debug("Object for update: "+ ((Record)editObjectList.get(i)).getId());                         
+			                logger.debug("Object for update: "+ editObjectList.get(i).getClass()+ ", id" + ((Record)editObjectList.get(i)).getId());                         
 			                type = editObjectList.get(i).getClass().getSimpleName();			                		               
 			                 if (editTypeHash.containsKey(type)) {
 			                         key = (Enum)editTypeHash.get(type); 
@@ -1540,9 +1589,9 @@ public class History extends Observable {
 			                }                                  			                
 			                database.executeUpdateInTransactionHistory(editObjectList.get(i));
 			    		}
-			    	//Delete selected data from history tables 
+			    	//Delete selected data from history tables                                 
 			    	deleteHistory();
-		        } catch (Exception e) {
+                        } catch (Exception e) {
 		        	logger.error("Process UNDO failed. Exception caught in History. Details: "+e.getMessage());
 		        	database.rollbackTransaction();                    
                                  throw e; 		           		       	    
@@ -1569,8 +1618,8 @@ public class History extends Observable {
             logger.debug("Type of editing object (array for appcore): " + editType.get(i));
             editTypeArray[i] = editType.get(i);
         }
-        setChanged(); 
-        notifyObservers(editTypeArray);
+        model.setChanged(); 
+        model.notifyObservers(editTypeArray);
     }
     
     /**
@@ -1601,6 +1650,7 @@ public class History extends Observable {
                         logger.debug("Deleting historyRecord successfully. Number of result: "+i);
                 } catch (Exception e) {								
                         logger.error("Process UNDO failed. Deleting historyRecord failed. Exception caught in History. Details: "+e.getMessage());	        	                
+                        //database.rollbackTransaction();  
                         throw e; 		           
 		} 						
                 try {
@@ -1613,6 +1663,7 @@ public class History extends Observable {
                         }
                 } catch (Exception e) {
                         logger.error("Process UNDO failed. Deleting historyChange failed. Exception caught in History. Details: "+e.getMessage());	        		                
+                        //database.rollbackTransaction();  
                         throw e; 		           
 			} 		 
     	}    	
@@ -1851,6 +1902,8 @@ public class History extends Observable {
 		            database.conditionDelete(Occurrence.class, Occurrence.DELETED, "=", 1);
 		            // delete data from table tHabitat with contidion cDelete == 1
 		            database.conditionDelete(Habitat.class, Habitat.DELETED, "=", 1);
+                            // delete data from table tMetadata with contidion cDelete == 1
+		            database.conditionDelete(Metadata.class, Metadata.DELETED, "=", 1);
 		            // delete data from table tPublication with contidion cDelete == 1
 		            database.conditionDelete(Publication.class, Publication.DELETED, "=", 1);
 		            //Delete all date from tables tHistory and tHistoryChange

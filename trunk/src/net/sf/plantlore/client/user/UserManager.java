@@ -346,8 +346,7 @@ public class UserManager extends Observable {
     				//Create database user
     				database.createUser(userRecord.getLogin(), getPassword(), isAdmin); 
     				//Insert information about user into tRight, tUser
-    				int rightId = database.executeInsert(right);
-                                right.setId(rightId);
+    				right = (Right)database.executeInsert(right);                               
                                 database.executeInsertInTransaction(userRecord);		                                
                                 //Add new name (login) of user to user list    	            
                                 int count = users.length;
