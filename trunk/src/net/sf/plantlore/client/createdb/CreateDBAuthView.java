@@ -78,9 +78,9 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
                             .add(user, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
                             .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(cancel)
+                        .add(create)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(create)))
+                        .add(cancel)))
                 .addContainerGap())
         );
 
@@ -99,8 +99,8 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
                     .add(password, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(create)
-                    .add(cancel))
+                    .add(cancel)
+                    .add(create))
                 .addContainerGap())
         );
 

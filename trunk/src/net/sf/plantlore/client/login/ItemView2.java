@@ -226,9 +226,9 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                     .add(layout.createSequentialGroup()
                         .add(help)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 171, Short.MAX_VALUE)
-                        .add(discard)
+                        .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next)))
+                        .add(discard)))
                 .addContainerGap())
         );
 
@@ -241,9 +241,9 @@ public class ItemView2 extends javax.swing.JDialog implements Observer {
                 .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(next)
+                    .add(help)
                     .add(discard)
-                    .add(help))
+                    .add(next))
                 .addContainerGap())
         );
         pack();

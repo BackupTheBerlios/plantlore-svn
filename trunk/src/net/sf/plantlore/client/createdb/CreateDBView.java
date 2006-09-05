@@ -83,11 +83,11 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(jLabel1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(databaseEngine, 0, 144, Short.MAX_VALUE)
+                .add(databaseEngine, 0, 149, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel2)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
+                .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -128,8 +128,8 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                             .add(jLabel4))
                         .add(11, 11, 11)
                         .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(databaseAlias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-                            .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)))
+                            .add(databaseAlias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                            .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)))
                     .add(jPanel2Layout.createSequentialGroup()
                         .add(10, 10, 10)
                         .add(leaveEmpty)))
@@ -167,10 +167,10 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(help)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 128, Short.MAX_VALUE)
-                        .add(cancel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 138, Short.MAX_VALUE)
+                        .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next)))
+                        .add(cancel)))
                 .addContainerGap())
         );
 
@@ -185,9 +185,9 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(next)
+                    .add(help)
                     .add(cancel)
-                    .add(help))
+                    .add(next))
                 .addContainerGap())
         );
         pack();

@@ -99,9 +99,9 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(help)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 126, Short.MAX_VALUE)
-                        .add(discard)
+                        .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next)))
+                        .add(discard)))
                 .addContainerGap())
         );
 
@@ -114,9 +114,9 @@ public class LoginView extends javax.swing.JDialog implements Observer {
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(next)
+                    .add(help)
                     .add(discard)
-                    .add(help))
+                    .add(next))
                 .addContainerGap())
         );
         pack();

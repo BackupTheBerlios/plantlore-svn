@@ -73,9 +73,9 @@ public class ExportMngViewB extends javax.swing.JDialog {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(help)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 171, Short.MAX_VALUE)
-                        .add(cancel)
+                        .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next)))
+                        .add(cancel)))
                 .addContainerGap())
         );
 
@@ -88,9 +88,9 @@ public class ExportMngViewB extends javax.swing.JDialog {
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(next)
+                    .add(help)
                     .add(cancel)
-                    .add(help))
+                    .add(next))
                 .addContainerGap())
         );
         pack();

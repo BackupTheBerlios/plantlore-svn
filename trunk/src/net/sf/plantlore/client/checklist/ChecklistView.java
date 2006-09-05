@@ -86,9 +86,9 @@ public class ChecklistView extends javax.swing.JDialog {
                 .addContainerGap()
                 .add(help)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 171, Short.MAX_VALUE)
-                .add(cancel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(submit)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(cancel)
                 .addContainerGap())
             .add(layout.createSequentialGroup()
                 .addContainerGap()
@@ -106,9 +106,9 @@ public class ChecklistView extends javax.swing.JDialog {
                 .add(scrollpane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(submit)
+                    .add(help)
                     .add(cancel)
-                    .add(help))
+                    .add(submit))
                 .addContainerGap())
         );
         pack();

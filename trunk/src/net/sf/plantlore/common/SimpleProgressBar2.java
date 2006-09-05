@@ -76,6 +76,7 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
         setUndecorated(true);
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         progress.setForeground(new java.awt.Color(0, 0, 0));
+        progress.setIndeterminate(true);
 
         cancel.setText(L10n.getString("Common.Cancel"));
 
@@ -140,7 +141,7 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
                 		public void run() {
                 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 			cancel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                			progress.setIndeterminate(true);
+                			//progress.setIndeterminate(true);
                 	        setVisible(true);
                 		}
                 	});
@@ -148,8 +149,10 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
                 case LENGTH_CHANGED:
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            if(progress.isIndeterminate())
+                            if(progress.isIndeterminate()) {
                                 progress.setIndeterminate(false);
+                                progress.setMinimum(0);
+                            }
                             progress.setMaximum(monitoredTask.getLength());
                         }
                     });

@@ -313,9 +313,9 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
                     .add(layout.createSequentialGroup()
                         .add(help)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 191, Short.MAX_VALUE)
-                        .add(cancel)
+                        .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next))
+                        .add(cancel))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -331,9 +331,9 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
                 .add(choicePane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 174, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(next)
                     .add(help)
-                    .add(cancel))
+                    .add(cancel)
+                    .add(next))
                 .addContainerGap())
         );
         pack();

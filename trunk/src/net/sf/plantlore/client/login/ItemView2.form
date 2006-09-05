@@ -24,9 +24,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="help" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="171" max="32767" attributes="0"/>
-                      <Component id="discard" linkSize="3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="next" linkSize="3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="discard" linkSize="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -40,9 +40,9 @@
               <Component id="jTabbedPane1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="next" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="discard" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="help" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="discard" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="next" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

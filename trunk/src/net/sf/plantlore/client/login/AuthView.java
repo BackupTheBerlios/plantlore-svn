@@ -81,9 +81,9 @@ public class AuthView extends javax.swing.JDialog implements Observer {
                             .add(password, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
                             .add(user, 0, 223, Short.MAX_VALUE)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(discard)
+                        .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(next)))
+                        .add(discard)))
                 .addContainerGap())
         );
 
@@ -102,8 +102,8 @@ public class AuthView extends javax.swing.JDialog implements Observer {
                     .add(password, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(next)
-                    .add(discard))
+                    .add(discard)
+                    .add(next))
                 .addContainerGap())
         );
         pack();

@@ -667,13 +667,8 @@ public class AppCoreCtrl {
 				
 				exportModel.setSelectQuery(query);
 				exportModel.setSelection(model.getTableModel().getSelection());
-			} catch (DBLayerException e) {
-				// TODO: Some errors may lead to ReconnectDialog.show()!
-				JOptionPane.showMessageDialog(view, "DBLayer Exception: "
-						+ e.getMessage());
-				return;
-			} catch (RemoteException e) {
-				DefaultReconnectDialog.show(view, e);
+			} catch (Exception e) {
+				DefaultExceptionHandler.handle(view, e, L10n.getString("Export.Failed"));				
 				return;
 			}
 

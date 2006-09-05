@@ -79,7 +79,7 @@ public class DefaultExceptionHandler {
 			Exception e, 
 			String title, 
 			boolean doNotOfferReconnect) {
-//		e.printStackTrace();//FIXME - print to log perhaps!
+		e.printStackTrace();//FIXME - print to log perhaps!
 		boolean isReconnectReasonable = false;
 		String problemDescription = e.getMessage();
 		
