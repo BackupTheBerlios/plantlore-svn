@@ -191,7 +191,7 @@ public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer 
              	            progress.setMaximum(100);
              	            progress.setValue(100);
                         	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                        	cancel.setText(L10n.getString("Common.Hide"));
+                        	cancel.setText(L10n.getString("Common.Ok"));
                         }
                     });
                 

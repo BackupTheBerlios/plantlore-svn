@@ -1700,7 +1700,7 @@ public class AppCoreCtrl {
 		private JLabel connectionLost = new JLabel(L10n.getString("Error.ConnectionLost")) {
 			{ setOpaque( false ); }
 			public void paintComponent (Graphics g) {
-				g.drawString(L10n.getString("Error.ConnectionLost"), 10, 20);
+				g.drawString(L10n.getString("Information.NoConnectionAvailable"), 10, 20);
 		        //super.paintComponent(g);
 		      }
 		};

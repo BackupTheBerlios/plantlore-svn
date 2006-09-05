@@ -115,6 +115,8 @@ public class AuthView extends javax.swing.JDialog implements Observer {
     public void setVisible(boolean arg0) {
     	next.setEnabled(true);
     	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		// Discard the password!
+		password.setText("");
     	super.setVisible(arg0);
     }
     

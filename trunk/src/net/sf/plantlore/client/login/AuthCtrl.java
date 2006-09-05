@@ -39,9 +39,6 @@ public class AuthCtrl {
 			String user = ((javax.swing.JTextField)view.user.getEditor().getEditorComponent()).getText();
 			Task connect = model.createConnectionTask(user, new String(view.password.getPassword()));
 			Dispatcher.getDispatcher().dispatch( connect, view, false );
-			
-			// Discard the password!
-			view.password.setText("");
 		}
 	}
 	

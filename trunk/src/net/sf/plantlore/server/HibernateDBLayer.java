@@ -725,7 +725,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 tx.rollback();
             }            
             logger.fatal("JDBC Exception caught while executing Select query. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Exception.DatabaseQuery"), DBLayerException.ERROR_SELECT, e);            
+            throw new DBLayerException(L10n.getString("Error.DatabaseQuery"), /*DBLayerException.ERROR_SELECT, */e);            
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
