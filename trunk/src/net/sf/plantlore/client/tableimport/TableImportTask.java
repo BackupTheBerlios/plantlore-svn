@@ -84,7 +84,13 @@ public class TableImportTask extends Task {
 		logger.info("Table Import begins...");
 		
 		setStatusMessage(L10n.getString("Import.Initializing"));
-		Class table = parser.initialize();
+		Class table = null;
+		try {
+			table = parser.initialize();
+		} catch(OutOfMemoryError e) {
+			parser.cleanup();
+			throw new Exception(L10n.getString("Error.OutOfMemory"), e);
+		}
 		
 		setStatusMessage(L10n.getString("Import.Initialized"));
 		setLength( parser.getNumberOfRecords() );
