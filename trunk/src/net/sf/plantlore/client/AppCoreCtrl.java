@@ -1697,7 +1697,7 @@ public class AppCoreCtrl {
 					// the last task surely had one and it will become
 					// active once we start the task again.
 					logger.debug("Performing the connection procedure again...");
-					t.start(); 
+					Dispatcher.getDispatcher().dispatch(t, view, false);
 				}
 			}
 		}

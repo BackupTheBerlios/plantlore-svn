@@ -94,6 +94,7 @@ public class UnifiedTableParser implements TableParser {
 	 */
 	public UnifiedTableParser(Reader reader) {
 		this.reader = reader;
+		saxReader = new SAXReader();
 	}
 	
 	/**
@@ -101,11 +102,7 @@ public class UnifiedTableParser implements TableParser {
 	 */
 	public Class initialize() throws ParserException {
 		try {
-        	saxReader = new SAXReader();
-        	
-        	System.out.println("ABOUT TO PARSER THE DOCUMENT WITH DOM4J");
             document = saxReader.read( reader );
-            System.out.println("COMPLETED.");
             
             Node root = document.getRootElement();
             if(root == null)
@@ -123,6 +120,8 @@ public class UnifiedTableParser implements TableParser {
             	throw new ParserException(L10n.getString("Error.EmptyXMLFile"));
 			
 		} catch( OutOfMemoryError er ) {
+			cleanup();
+			System.gc();
 			throw new ParserException(L10n.getString("Error.OutOfMemory"));			
         } catch (DocumentException e) {
         	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
@@ -214,8 +213,6 @@ public class UnifiedTableParser implements TableParser {
 		try {
 			reader.close();
 		} catch(Exception e) {}
-		// Get rid of the ugly memory consuming DOM4J tree.
-		System.gc();
 	}
      
 }

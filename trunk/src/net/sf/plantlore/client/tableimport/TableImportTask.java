@@ -88,8 +88,7 @@ public class TableImportTask extends Task {
 		try {
 			table = parser.initialize();
 		} catch(OutOfMemoryError e) {
-			parser.cleanup();
-			throw new Exception(L10n.getString("Error.OutOfMemory"), e);
+			throw new Exception(L10n.getString("Error.OutOfMemory"));
 		}
 		
 		setStatusMessage(L10n.getString("Import.Initialized"));
@@ -174,6 +173,9 @@ public class TableImportTask extends Task {
 		}
 		finally {
 			parser.cleanup();
+			parser = null;
+			logger.debug("Removing the DOM4J tree from memory?");
+			System.gc();
 		}
 		
 		

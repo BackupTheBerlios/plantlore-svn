@@ -173,12 +173,13 @@ public class DefaultExceptionHandler {
 		if( !isReconnectDisabled && isReconnectReasonable && ! doNotOfferReconnect )
 			DefaultReconnectDialog.show(parent, problemDescription);
 		// Just announce the problem.
-		else
+		else {
 			JOptionPane.showMessageDialog( 
 					parent, 
 					problemDescription, 
 					title, 
 					JOptionPane.ERROR_MESSAGE );
+		}
 		
 	}
 	
