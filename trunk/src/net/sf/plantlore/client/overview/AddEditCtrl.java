@@ -286,6 +286,7 @@ public class AddEditCtrl {
             oldColor = view.altitudeTextField.getForeground();
             nf.setMaximumFractionDigits(MAXIMUM_FRACTION_DIGITS);
             nf.setMaximumIntegerDigits(MAXIMUM_INTEGER_DIGITS);
+            nf.setGroupingUsed(false);
         }
 
         public void processEvent(DocumentEvent e) {
@@ -340,10 +341,10 @@ public class AddEditCtrl {
             oldColor = view.latitudeTextField.getForeground();
             nf.setMaximumFractionDigits(MAXIMUM_FRACTION_DIGITS);
             nf.setMaximumIntegerDigits(MAXIMUM_INTEGER_DIGITS);
+            nf.setGroupingUsed(false);
         }
 
         public void processEvent(DocumentEvent e) {
-            System.out.println("LATITUDE old COLOR = "+oldColor);
             if (e.getDocument().getLength() == 0) {
                 model.setLatitude(null);
                 return;
@@ -395,6 +396,7 @@ public class AddEditCtrl {
             oldColor = view.longitudeTextField.getForeground();
             nf.setMaximumFractionDigits(MAXIMUM_FRACTION_DIGITS);
             nf.setMaximumIntegerDigits(MAXIMUM_INTEGER_DIGITS);
+            nf.setGroupingUsed(false);
         }
 
         public void processEvent(DocumentEvent e) {

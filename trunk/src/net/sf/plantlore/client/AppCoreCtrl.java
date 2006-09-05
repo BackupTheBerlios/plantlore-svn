@@ -7,6 +7,7 @@
 
 package net.sf.plantlore.client;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -409,8 +410,14 @@ public class AppCoreCtrl {
 	}
 
 	private void setDatabaseDependentCommandsEnabled(boolean enabled) {
-		if( enabled )
+		if( enabled ) {
 			view.overviewScrollPane.setViewportView( view.overview );
+                        view.overviewScrollPane.getViewport().setBackground(Color.WHITE);        
+                } else {
+                    view.overviewScrollPane.getViewport().setBackground(Color.LIGHT_GRAY);    
+                    //javax.swing.UIManager.getDefaults().getColor("Button.background")
+                }
+
 		settingsAction.setEnabled(enabled);
 		printAction.setEnabled(enabled);
 		exportAction.setEnabled(enabled);
@@ -698,12 +705,8 @@ public class AppCoreCtrl {
 					return;
 				}
 			} catch (RemoteException ex) {
-				JOptionPane.showMessageDialog(view, L10n
-						.getString("Error.RemoteException")
-						+ "\n" + ex.getMessage(), L10n
-						.getString("Error.RemoteExceptionTitle"),
-						JOptionPane.WARNING_MESSAGE);
-				logger.error(ex);
+                            DefaultExceptionHandler.handle(view, ex);
+                            return;
 			}
 			addModel.clear();
 			addView.setVisible(true);
@@ -1464,7 +1467,7 @@ public class AppCoreCtrl {
 				if (i > MAX_RECORDS_PER_PAGE) {
 					JOptionPane.showMessageDialog(view, L10n
 							.getString("Overview.Warning.MaxRecordsPerPage")
-							+ " " + MAX_RECORDS_PER_PAGE);
+							+ " " + MAX_RECORDS_PER_PAGE, L10n.getString("Overview.Warning.MaxRecordsPerPageTitle"),JOptionPane.INFORMATION_MESSAGE);
 					Object obj = e.getOldValue();                                        
 					if (obj != null) 
 						tf.setValue(obj);
@@ -1680,7 +1683,7 @@ public class AppCoreCtrl {
 			 * Do some more work here (switch the enabled/disabled menu items,
 			 * etc.)
 			 */
-
+                        
                         setDatabaseDependentCommandsEnabled(false);
 		}
 

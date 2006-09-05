@@ -6,21 +6,30 @@
 
 package net.sf.plantlore.client;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
+import java.text.ParseException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFormattedTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.PlainDocument;
 import net.sf.plantlore.client.overview.*;
 import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.StatusBarManager;
 import net.sf.plantlore.l10n.L10n;
@@ -60,7 +69,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         progressBar.setVisible(false);
         progressBar.setBorderPainted(false);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -255,7 +264,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         );
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+            .add(overviewScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
         );
 
         recordsCount.setText("-");
@@ -517,6 +526,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         recordsPerPage.setValue(new Integer(model.getRecordsPerPage()));  
         overview.getSelectionModel().setSelectionInterval(0,0);
         overview.setAutoCreateColumnsFromModel(true);
+        overviewScrollPane.getViewport().setBackground(Color.WHITE);        
     }
 
     /** Returns the main window <code>StatusBarManager</code>.

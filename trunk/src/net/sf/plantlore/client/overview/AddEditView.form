@@ -4,6 +4,43 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="convertCoordinatesGroup">
     </Component>
+    <Component class="javax.swing.JButton" name="gpsLoadButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Load"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="gpsShowButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Show"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JTextField" name="gpsSymbolTextField">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="gpsSymbolLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Symbol:"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="gpsTableLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="GPS table:"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -86,7 +123,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jPanel7" alignment="0" min="-2" max="-2" attributes="3"/>
-                              <Component id="jPanel5" alignment="0" min="-2" pref="914" max="-2" attributes="1"/>
+                              <Component id="jPanel5" alignment="0" min="-2" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -169,7 +206,7 @@
                                                       <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" attributes="0">
-                                                      <Component id="jScrollPane2" pref="561" max="32767" attributes="1"/>
+                                                      <Component id="jScrollPane2" pref="572" max="32767" attributes="1"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -378,43 +415,27 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="gpsLoadButton" linkSize="16" min="-2" max="-2" attributes="0"/>
-                                      <Component id="gpsShowButton" linkSize="16" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="gpsSymbolLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="gpsSymbolTextField" linkSize="18" pref="80" max="32767" attributes="1"/>
-                                          <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
                                           <Component id="latitudeLabel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                          <Component id="latitudeTextField" linkSize="22" min="-2" pref="153" max="-2" attributes="1"/>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="gpsTableLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="155" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="coordinateSystemLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="latitudeTextField" linkSize="18" min="-2" pref="80" max="-2" attributes="1"/>
-                                          <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Group type="102" attributes="0">
                                           <Component id="longitudeLabel" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="longitudeTextField" linkSize="18" min="-2" pref="80" max="-2" attributes="1"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="altitudeLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="altitudeTextField" linkSize="18" min="-2" pref="80" max="-2" attributes="1"/>
+                                          <Component id="longitudeTextField" linkSize="22" min="-2" pref="144" max="-2" attributes="1"/>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="1">
-                                          <Component id="coordinateSystemLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
-                                          <Component id="gpsChangeButton" linkSize="16" min="-2" max="-2" attributes="1"/>
-                                      </Group>
+                                      <Component id="gpsChangeButton" min="-2" max="-2" attributes="1"/>
                                   </Group>
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                                  <Component id="altitudeLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="altitudeTextField" linkSize="22" pref="165" max="32767" attributes="1"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -422,22 +443,17 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="gpsLoadButton" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="gpsSymbolLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="gpsSymbolTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="altitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="latitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="latitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="longitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="longitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="altitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="altitudeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="latitudeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="gpsShowButton" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="gpsTableLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="gpsChangeButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="coordinateSystemLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="gpsChangeButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -489,43 +505,6 @@
                           </AuxValues>
                         </Component>
                         <Component class="javax.swing.JTextField" name="longitudeTextField">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="gpsLoadButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Load"/>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="gpsShowButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Show"/>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JTextField" name="gpsSymbolTextField">
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="gpsSymbolLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="Symbol:"/>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="gpsTableLabel">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" value="GPS table:"/>
-                          </Properties>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
                           </AuxValues>

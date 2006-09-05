@@ -228,8 +228,6 @@ public class AppCore extends Observable
         if (tableSorter != null)
         {
             logger.info("Setting records per page NN to "+recordsPerPage);
-            if (recordsPerPage == -1)
-                throw new IllegalArgumentException("KURVA");
             tableSorter.setPageSize(recordsPerPage);
         }
     }
