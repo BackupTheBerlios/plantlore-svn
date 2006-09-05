@@ -10,6 +10,7 @@ package net.sf.plantlore.middleware;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import net.sf.plantlore.common.record.Record;
 
 import net.sf.plantlore.common.record.Right;
 import net.sf.plantlore.common.record.User;
@@ -23,18 +24,22 @@ import net.sf.plantlore.common.exception.DBLayerException;
  */
 public interface DBLayer extends Remote, Serializable {
 	
+    public static final int CREATE_USERS = 1;
+    public static final int CREATE_TABLES = 2;
+    
     /**
      *  Initialize database connection. Authenticate user and Load rights of this user
      *
      *  @param dbID identifier of the database we want to connect to
      *  @param user username for the access to plantlore on the server
      *  @param password password for the access to plantlore on the server
-     *  @return array with two objects - User object with logged in user (index 0) and user's rights 
+ t     *  @return array with two objects - User object with logged in user (index 0) and user's rights 
      *          (Right object, index 1)
      *  @throws DBLayerException when the database connection cannot be initialized
      */
     public User initialize(String dbID, String user, String password) throws DBLayerException, RemoteException;
 
+    public void initializeNewDB(String dbID, String user, String password) throws DBLayerException, RemoteException;
     /**
      * The database layer performs several kinds of operations each of which may
      * fail at any time. In order to notify the User and present him with a reasonable
@@ -51,10 +56,10 @@ public interface DBLayer extends Remote, Serializable {
      *  Insert data into the database.
      *
      *  @param data data to insert (one of the data holder objects)
-     *  @return identifier (primary key) of the inserted row
+     *  @return inserted record including the primary key ID
      *  @throws DBLayerException when saving data into the database fails
      */    
-    public int executeInsert(Object data) throws DBLayerException, RemoteException;
+    public Record executeInsert(Object data) throws DBLayerException, RemoteException;
     
     /**
      *  Delete data from the database.
@@ -68,18 +73,19 @@ public interface DBLayer extends Remote, Serializable {
      *  Update data in the database.
      *
      *  @param data to update (must be one of the holder objects)
+     *  @return updated record
      *  @throws DBLayerException when updating data fails
      */    
-    public void executeUpdate(Object data) throws DBLayerException, RemoteException;
+    public Record executeUpdate(Object data) throws DBLayerException, RemoteException;
 
     /**
      *  Insert data into the database without modifying history tables
      *
      *  @param data data to insert (one of the data holder objects)
-     *  @return identifier (primary key) of the inserted row
+     *  @return inserted record including the primary key ID
      *  @throws DBLayerException when saving data into the database fails
      */    
-    public int executeInsertHistory(Object data) throws DBLayerException, RemoteException;
+    public Record executeInsertHistory(Object data) throws DBLayerException, RemoteException;
     
     /**
      *  Delete data from the database without modifying history tables
@@ -93,9 +99,10 @@ public interface DBLayer extends Remote, Serializable {
      *  Update data in the database without modifying history tables.
      *
      *  @param data to update (must be one of the holder objects)
+     *  @return updated record
      *  @throws DBLayerException when updating data fails
      */    
-    public void executeUpdateHistory(Object data) throws DBLayerException, RemoteException;
+    public Record executeUpdateHistory(Object data) throws DBLayerException, RemoteException;
 
     /**
      *  Execute DB update using a long running transaction. For this method to work, it is neccessary
@@ -104,11 +111,12 @@ public interface DBLayer extends Remote, Serializable {
      *  This method checks whether the user has appropriate priviliges and DOES NOT save history
      *
      *  @param data holder object with the record we want to update
+     *  @return updated record
      *  @throws DBLayerException in case we are not connected to the database or an error occurred
      *                           while executing the update
      *  @throws RemoteException in case network connection failed
      */
-    public void executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException;
+    public Record executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException;
     
     /**
      *  Get more rows from the current result set.
@@ -244,12 +252,13 @@ public interface DBLayer extends Remote, Serializable {
      *  the holder with the author (CCREATEDWHO) and time of creation (CREATEDWHEN).
      *
      *  @param data holder object with the record we want to insert
+     *  @return inserted record including the primary key ID
      *  @throws DBLayerException in case we are not connected to the database or an error occurred
      *                           while executing the insert
      *  @throws RemoteException in case server connection failed
      */        
-    public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException;
-            
+    public Record executeInsertInTransaction(Object data) throws DBLayerException, RemoteException;
+                
     /**
      *  Execute DB insert using a long running transaction. For this method to work, it is neccessary
      *  to begin long running transaction using beginTransaction() method of this class.
@@ -258,11 +267,12 @@ public interface DBLayer extends Remote, Serializable {
      *  updates the holder with the author (CCREATEDWHO) and time of creation (CREATEDWHEN).
      *
      *  @param data holder object with the record we want to insert
+     *  @return inserted record including the primary key ID
      *  @throws DBLayerException in case we are not connected to the database or an error occurred
      *                           while executing the insert
      *  @throws RemoteException in case server connection failed
      */    
-    public int executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException;
+    public Record executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException;
     
     /**
      *  Execute DB update using a long running transaction. For this method to work, it is neccessary
@@ -271,11 +281,12 @@ public interface DBLayer extends Remote, Serializable {
      *  This method checks whether the user has appropriate priviliges and saves history
      *
      *  @param data holder object with the record we want to update
+     *  @return updated record
      *  @throws DBLayerException in case we are not connected to the database or an error occurred
      *                           while executing the update
      *  @throws RemoteException in case network connection failed
      */
-    public void executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException;
+    public Record executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException;
     
     /**
      *  Execute DB delete using a long running transaction. For this method to work, it is neccessary
@@ -351,6 +362,16 @@ public interface DBLayer extends Remote, Serializable {
      *  @throws RemoteException in case network connection failed
      */
     public int getConnectionCount() throws RemoteException;
+    
+    /**
+     *  TODO: JavaDoc pending     
+     */
+    public void createDatabase(String dbname) throws DBLayerException, RemoteException;
+
+    /**
+     *  TODO: JavaDoc pending     
+     */    
+    public void executeSQLScript(int scriptid, String dbname, String username, String password) throws DBLayerException, RemoteException;
     
     /**
      * This method is intended for final cleanup. <b>Do not call this method

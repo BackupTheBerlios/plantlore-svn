@@ -73,11 +73,11 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="databaseEngine" pref="144" max="32767" attributes="2"/>
+                  <Component id="databaseEngine" pref="149" max="32767" attributes="2"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="databasePort" pref="71" max="32767" attributes="0"/>
+                  <Component id="databasePort" pref="76" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -166,8 +166,8 @@
                           </Group>
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="databaseAlias" alignment="0" pref="268" max="32767" attributes="0"/>
-                              <Component id="databaseIdentifier" alignment="0" pref="268" max="32767" attributes="0"/>
+                              <Component id="databaseAlias" alignment="0" pref="278" max="32767" attributes="0"/>
+                              <Component id="databaseIdentifier" alignment="0" pref="278" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">

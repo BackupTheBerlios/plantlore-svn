@@ -2,6 +2,11 @@ package net.sf.plantlore.client.createdb;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.common.record.User;
+import net.sf.plantlore.middleware.DBLayer;
+import net.sf.plantlore.middleware.DBLayerFactory;
+import net.sf.plantlore.middleware.RMIDBLayerFactory;
 
 import org.apache.log4j.Logger;
 
@@ -43,7 +48,9 @@ public class CreateDB extends Observable {
 	private MainConfig config;
 	private DBInfo info;
 	private boolean leaveEmpty = false;
-		
+	private DBLayerFactory factory = null;
+	private DBLayer currentDBLayer; 
+		        
 	/**
 	 * Create a new CreateDB.
 	 * 
@@ -135,15 +142,68 @@ public class CreateDB extends Observable {
 		public Object task() throws Exception {
 			
 			try {
-				if(isCanceled())
+				if(isCanceled()) {
 					throw new Exception(L10n.getString("Common.Canceled"));
+                                }				
+                                                               
+				// Create a new database layer ~ ask the DBLayerFactory to create it for us..
+				logger.debug("Asking the DBLayerFactory for a new DBLayer @ " + dbinfo.getHost() + ":" + dbinfo.getPort());
+				setStatusMessage(L10n.getString("Login.Connecting") );
+                                factory = RMIDBLayerFactory.getDBLayerFactory();
+				currentDBLayer = factory.create(dbinfo);
+				if(isCanceled()) { throw new Exception(L10n.getString("Common.Canceled")); }		
+                                logger.debug("Connection successful.");
 				
+				// Initialize the database layer.
+				setStatusMessage(L10n.getString("Login.InitializingDBLayer"));
+				logger.debug("Initializing that DBLayer.");				
+                                // Connect to template1 database. TODO: this should not be hardcoded
+				currentDBLayer.initializeNewDB("template1", name, password);
+				if(isCanceled()) { throw new DBLayerException(L10n.getString("Common.Canceled")); }
+				logger.debug("Initialization successful. Connected to template1 database");
+                                
+                                // Create users in the database
+                                setStatusMessage(L10n.getString("CreateDB.CreatingUsers") );                                
+                                currentDBLayer.executeSQLScript(DBLayer.CREATE_USERS, dbinfo.getDatabaseIdentifier(), name, password);
+                                logger.debug("Database "+dbinfo.getDatabaseIdentifier()+" users created successfuly");
+                                
+                                // Create new database
+                                setStatusMessage(L10n.getString("CreateDB.CreatingDatabase") );                                
+                                currentDBLayer.createDatabase(dbinfo.getDatabaseIdentifier());
+                                logger.debug("New database created succesfully");
+
+                                // Disconnect - destroy DBLayer
+                                factory.destroy(currentDBLayer);
+                                logger.debug("Disconnected from the database template1");
+                                
+                                // Connect to the newly created database
+				currentDBLayer = factory.create(dbinfo);
+				if(isCanceled()) { throw new Exception(L10n.getString("Common.Canceled")); }
+				logger.debug("Connection successful.");
+				setStatusMessage( L10n.getString("Login.Connected") );
+				
+				// Initialize the database layer.
+				setStatusMessage(L10n.getString("Login.InitializingDBLayer"));
+				logger.debug("Initializing that DBLayer.");
+				
+				currentDBLayer.initializeNewDB(dbinfo.getDatabaseIdentifier(), name, password);
+				if(isCanceled()) { throw new DBLayerException(L10n.getString("Common.Canceled")); }
+				logger.debug("Initialization successful. Connected to database "+dbinfo.getDatabaseIdentifier());
+                                
+                                // Create tables in the new database
+				setStatusMessage(L10n.getString("CreateDB.CreatingTables"));                                
+                                currentDBLayer.executeSQLScript(DBLayer.CREATE_TABLES, dbinfo.getDatabaseIdentifier(), name, password);
+                                logger.debug("New database tables created");
+                                // Disconnect - destroy DBLayer
+                                factory.destroy(currentDBLayer);
+                                logger.debug("Disconnected from the database "+dbinfo.getDatabaseIdentifier());
+                                
 				/*
 				 * TODO:
 				 * 
 				 * HERE GOES YOUR CODE THAT PERFORMS 
 				 * 1. THE CONNECTION TO THE DATABASE ENGINE
-				 *    You should use ifnormation stored in dbinfo and the stored name and password.
+				 *    You should use inormation stored in dbinfo and the stored name and password.
 				 *    See HibernateDBLayer.initialize().
 				 * 2. THE CREATION OF THE NEW DATABASE
 				 *    Here it is up to you, I have no idea what should be done here.
@@ -159,8 +219,7 @@ public class CreateDB extends Observable {
 
 			} 
 			catch (Exception e) {
-				logger.error("The creation of the database failed! " + e.getMessage());
-				
+				logger.error("The creation of the database failed! " + e.getMessage());			
 				// Re-throw the exception so that the view is updated as well.
 				throw e;
 			}

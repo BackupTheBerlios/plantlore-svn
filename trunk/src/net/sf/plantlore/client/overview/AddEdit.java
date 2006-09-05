@@ -888,8 +888,7 @@ public class AddEdit extends Observable {
         } else {
             //we've already created and set up a new Habitat now we have to store it into the database
             h.setDeleted(0);
-            int habId = database.executeInsertInTransaction(h);
-            h.setId(habId);
+            h = (Habitat)database.executeInsertInTransaction(h);
         }
         
         m = o.getMetadata();
@@ -959,8 +958,7 @@ public class AddEdit extends Observable {
         hTmp.setTerritory(o.getHabitat().getTerritory());
         hTmp.setDeleted(0);
         
-        int habId = database.executeInsertInTransaction(hTmp);
-        hTmp.setId(habId);
+        hTmp = (Habitat)database.executeInsertInTransaction(hTmp);
         
         occTmp.setDataSource(o.getDataSource());
         occTmp.setDayCollected(o.getDayCollected());
@@ -1106,8 +1104,7 @@ public class AddEdit extends Observable {
                                 logger.info("Creating a new occurrence for "+taxonList.get(j));
                                 Occurrence occTmp = cloneOccurrence();
                                 occTmp.setPlant((Plant) dlu.getObjectFor(lookupPlant(taxonList.get(j)),Plant.class));
-                                int occId = database.executeInsertInTransaction(occTmp);
-                                occTmp.setId(occId);
+                                occTmp = (Occurrence)database.executeInsertInTransaction(occTmp);
                                 logger.debug("Occurrence for "+taxonList.get(j)+" inserted. Id="+occTmp.getId());
                                 Integer id = lookupPlant(taxonList.get(j));
                                 if (!id.equals(-1)) {
@@ -1187,23 +1184,22 @@ public class AddEdit extends Observable {
 
                             logger.info("Creating a shared habitat");
                             Record rec = dlu.findMatchInDB(h);
+
                             if (rec == null) {
                                 logger.debug("THIS HABITAT is NOT in the database yet. Creating a new one.");
-                                int habId = database.executeInsertInTransaction(h);//insert the shared habitat
-                                h.setId(habId);
+                                h = (Habitat)database.executeInsertInTransaction(h);//insert the shared habitat                                
                                 logger.debug("Shared habitat created. Id="+h.getId());
                             } else {
                                 logger.debug("THIS HABITAT ALREADY IS in the database! Using it.");
                                 h = (Habitat) rec;
                             }
-
+                            int aoTmpId = 0;
                             for (int j = 0; j < taxonList.size(); j++) {
                                 logger.info("Creating an Occurrence using the shared habitat");
                                 Occurrence occ = prepareNewOccurrence(taxonList.get(j), h);//share the habitat
-                                int occId = database.executeInsertInTransaction(occ);
-                                occ.setId(occId);
+                                occ = (Occurrence)database.executeInsertInTransaction(occ);
                                 logger.debug("Occurrence for "+taxonList.get(j)+" inserted. Id="+occ.getId());
-
+                                
                                 for (int k = 0; k < authorList.size(); k++) {
                                     Pair<Pair<String,Integer>,String> pTmp = authorList.get(k);
                                     logger.info("Creating an AuthorOccurrence for "+occ.getPlant().getTaxon()+" and "+pTmp.getFirst().getFirst());
@@ -1213,12 +1209,11 @@ public class AddEdit extends Observable {
                                     aoTmp.setNote(resultRevision.get(k));
                                     aoTmp.setOccurrence(occ);
                                     aoTmp.setDeleted(0);
-                                    database.executeInsertInTransaction(aoTmp);                            
+                                    aoTmp = (AuthorOccurrence)database.executeInsertInTransaction(aoTmp);
                                 }//for authorList
-                            }// for taxonList
-
+                            }// for taxonList                            
                             database.commitTransaction();
-                            occurrenceTableModel.load(h.getId());
+                            occurrenceTableModel.load(h.getId());                                
                         }//add mode
                 } catch (DBLayerException ex) {
                     database.rollbackTransaction();

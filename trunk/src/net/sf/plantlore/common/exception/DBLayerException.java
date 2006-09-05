@@ -61,7 +61,9 @@ public class DBLayerException extends PlantloreException {
         /** Out of memmory error occurred */
         public static final int ERROR_OUT_OF_MEMORY = 15;        
         /** Maximum number of connections achieved */
-        public static final int ERROR_MAX_CONNECTIONS = 16;                
+        public static final int ERROR_MAX_CONNECTIONS = 16;  
+        /** CREATE DATABASE statement failed or unable to create tables/users */
+        public static final int ERROR_CREATEDB = 17;
         /** Some other error */        
         public static final int ERROR_OTHER = 20;
         // ==============================================

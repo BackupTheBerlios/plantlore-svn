@@ -1,6 +1,7 @@
 package net.sf.plantlore.client.createdb;
 
 import java.awt.Frame;
+import java.awt.event.FocusListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -223,5 +224,28 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
     		}
 		});
 	}
+ 
+    /**
+     *  Add FocusListener to DatabaseEngine combo.
+     *  @param fl FocusListener for the DatabaseEngine combo
+     */    
+    void databaseEngineAddFocusListener(FocusListener fl) {
+        databaseEngine.addFocusListener(fl);
+    }
+        
+    /**
+     *  Return index of the selected database engine in the combobox
+     *  @return index of the selected item in the combobox
+     */
+    public int getDatabaseEngine() {
+        return databaseEngine.getSelectedIndex();
+    }
     
+    /**
+     *  Set the database port in the dialog to the given value
+     *  @param port port number to set
+     */
+    public void setDatabasePort(String port) {
+        databasePort.setText(port);
+    }
 }

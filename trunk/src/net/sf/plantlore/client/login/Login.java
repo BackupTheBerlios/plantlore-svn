@@ -8,6 +8,7 @@ import net.sf.plantlore.client.MainConfig;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.User;
 
 import org.apache.log4j.Logger;
@@ -454,12 +455,17 @@ public class Login extends Observable {
 			return wrappedDBLayer.initialize(dbID, user, password);
 		}
 
+		synchronized public void initializeNewDB(String dbID, String user, String password) throws DBLayerException, RemoteException {
+			verifyValidity();
+			wrappedDBLayer.initializeNewDB(dbID, user, password);
+		}
+                
 		synchronized public void setLanguage(String locale) throws DBLayerException, RemoteException {
 			verifyValidity();
 			wrappedDBLayer.setLanguage(locale);
 		}
 
-		synchronized public int executeInsert(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeInsert(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
 			return wrappedDBLayer.executeInsert(data);
 		}
@@ -469,12 +475,12 @@ public class Login extends Observable {
 			wrappedDBLayer.executeDelete(data);
 		}
 
-		synchronized public void executeUpdate(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeUpdate(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
-			wrappedDBLayer.executeUpdate(data);
+			return wrappedDBLayer.executeUpdate(data);
 		}
 
-		synchronized public int executeInsertHistory(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeInsertHistory(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
 			return wrappedDBLayer.executeInsertHistory(data);
 		}
@@ -489,14 +495,14 @@ public class Login extends Observable {
 			wrappedDBLayer.executeDeleteInTransactionHistory(data);
 		}
                 
-		synchronized public void executeUpdateHistory(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeUpdateHistory(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
-			wrappedDBLayer.executeUpdateHistory(data);
+			return wrappedDBLayer.executeUpdateHistory(data);
 		}
 
-		synchronized public void executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeUpdateInTransactionHistory(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
-			wrappedDBLayer.executeUpdateInTransactionHistory(data);
+			return wrappedDBLayer.executeUpdateInTransactionHistory(data);
 		}
 
 		synchronized public Object[] more(int resultId, int from, int to) throws DBLayerException, RemoteException {
@@ -564,19 +570,19 @@ public class Login extends Observable {
 			return wrappedDBLayer.rollbackTransaction();
 		}
 
-		synchronized public int executeInsertInTransaction(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeInsertInTransaction(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
 			return wrappedDBLayer.executeInsertInTransaction(data);
 		}
-
-		synchronized public int executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException {
+               
+		synchronized public Record executeInsertInTransactionHistory(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
 			return wrappedDBLayer.executeInsertInTransactionHistory(data);
 		}
 
-		synchronized public void executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException {
+		synchronized public Record executeUpdateInTransaction(Object data) throws DBLayerException, RemoteException {
 			verifyValidity();
-			wrappedDBLayer.executeUpdateInTransaction(data);
+			return wrappedDBLayer.executeUpdateInTransaction(data);
 		}
 
 		synchronized public void executeDeleteInTransaction(Object data) throws DBLayerException, RemoteException {
@@ -613,6 +619,16 @@ public class Login extends Observable {
 			throw new Error("It is forbidden to call this method. The proper way to destroy a database layer is the logout() method!");
 		}
 		
+                synchronized public void createDatabase(String dbname) throws RemoteException, DBLayerException {
+			verifyValidity();
+			wrappedDBLayer.createDatabase(dbname);
+                }
+
+                synchronized public void executeSQLScript(int scriptid, String dbname, String username, String password) throws RemoteException, DBLayerException {
+			verifyValidity();
+			wrappedDBLayer.executeSQLScript(scriptid, dbname, username, password);
+                }                
+                
 		@Override
 		public String toString() {
 			return "Safety wrapper of " + super.toString();

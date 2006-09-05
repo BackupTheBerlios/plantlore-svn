@@ -143,9 +143,10 @@ public class PlantloreConstants {
     /** Constants used for Preferences keys */
     public static final String PREF_DYNAMIC_PAGE_SIZE = "Overview.dynamicPageSize";
     
-    
-//    /** Creates a new instance of PlantloreConstants */
-//    public PlantloreConstants() {
-//    }
-    
+    /** Default port numbers for different databases */
+    public static final String POSTGRE_PORT = "5432";
+    public static final String FIREBIRD_PORT = "3050";
+    public static final String MYSQL_PORT = "3306";
+    public static final String ORACLE_PORT = "1521";        
+        
 }

@@ -1,10 +1,13 @@
 package net.sf.plantlore.client.createdb;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JOptionPane;
 
 import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.PlantloreConstants;
 import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.l10n.L10n;
 
@@ -33,7 +36,7 @@ public class CreateDBCtrl {
 		/*authCtrl =*/ new CreateDBAuthCtrl( model, authView );
 		
 		view.cancel.setAction( new DefaultCancelAction(view) );
-		
+                view.databaseEngineAddFocusListener(new DatabaseEngineComboFocusListener());
 		view.next.setAction( new StandardAction("Login.Next") {
 			public void actionPerformed(ActionEvent arg0) {
 				String 
@@ -61,6 +64,32 @@ public class CreateDBCtrl {
 			}
 		});
 	}
-	
+        
+    /**
+     *  Focus listener for the <strong>DatabaseEngine combobox</strong>. After losing focus
+     *  automaticaly loads default port for the given database.
+     */
+    class DatabaseEngineComboFocusListener implements FocusListener {
+        public void focusLost(FocusEvent e) {
+            switch (view.getDatabaseEngine()) {
+                case 0: // PostgreSQL
+                    view.setDatabasePort(PlantloreConstants.POSTGRE_PORT);
+                    break;
+                case 1: // Firebird
+                    view.setDatabasePort(PlantloreConstants.FIREBIRD_PORT);
+                    break;                    
+                case 2: // MySQL
+                    view.setDatabasePort(PlantloreConstants.MYSQL_PORT);
+                    break;                    
+                case 3: // Oracle
+                    view.setDatabasePort(PlantloreConstants.ORACLE_PORT);
+                    break;
+            }
+        }        
+
+        public void focusGained(FocusEvent e) {
+            // Empty, no action when focus gained
+        }
+    }            	
 
 }
