@@ -13,6 +13,8 @@ import net.sf.plantlore.l10n.L10n;
 /**
  * The Default Exception Handler offers a united exception handling and
  * error presentation. It can offer reconnect if it is reasonable.
+ * <br/>
+ * The reconnect has been disabled permanently.
  * 
  * @author Erik Kratochvíl (discontinuum@gmail.com)
  * @since 2006-08-28
@@ -170,16 +172,17 @@ public class DefaultExceptionHandler {
 		}
 		
 		// Announce the error and offer the reconnection.
-		if( !isReconnectDisabled && isReconnectReasonable && ! doNotOfferReconnect )
+		if( false && !isReconnectDisabled && isReconnectReasonable && ! doNotOfferReconnect )
 			DefaultReconnectDialog.show(parent, problemDescription);
+		
 		// Just announce the problem.
-		else {
+		else 
 			JOptionPane.showMessageDialog( 
 					parent, 
 					problemDescription, 
 					title, 
 					JOptionPane.ERROR_MESSAGE );
-		}
+		
 		
 	}
 	
