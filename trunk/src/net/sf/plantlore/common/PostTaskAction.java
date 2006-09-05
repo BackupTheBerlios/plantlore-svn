@@ -14,5 +14,5 @@ package net.sf.plantlore.common;
  * @author fraktalek
  */
 public interface PostTaskAction {    
-    public void afterStopped(Object value);
+    public void afterStopped(Object value) throws Exception;
 }

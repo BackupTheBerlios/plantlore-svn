@@ -9,6 +9,7 @@ package net.sf.plantlore.client.print;
 import java.util.Observable;
 import java.util.Observer;
 import net.sf.plantlore.client.*;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -39,6 +40,9 @@ public class PrintView extends javax.swing.JDialog implements Observer {
                 break;
             default:                
         }
+        
+        setLocationRelativeTo(parent);
+        new DefaultEscapeKeyPressed(this);
     }
     
     /** This method is called from within the constructor to

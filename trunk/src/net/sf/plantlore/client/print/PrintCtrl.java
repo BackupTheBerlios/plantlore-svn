@@ -20,6 +20,7 @@ import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -29,6 +30,10 @@ import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.plantlore.client.*;
 import net.sf.plantlore.client.overview.SchedaView;
+import net.sf.plantlore.common.Dispatcher;
+import net.sf.plantlore.common.PostTaskAction;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.l10n.L10n;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXParseException;
@@ -111,21 +116,20 @@ public class PrintCtrl {
             putValue(MNEMONIC_KEY, L10n.getMnemonic("Print.Print"));                                    
         }
         public void actionPerformed(ActionEvent e) {
-            try {
-                model.createJasperPrint();
-            } catch (JRException ex) {
-                logger.error("Broken report: "+ex);
-                JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);            
-                return;
-            }
-            
-            try {
-                JasperPrintManager.printReport(model.getJasperPrint(), true);
-            } catch (JRException ex) {
-                logger.error("Problem while trying to print: "+ex);
-                JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.PrintProblem")+"\n"+ex.getMessage(),L10n.getString("Print.Message.PrintingProblemTitle"),JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+            Task task = model.createJasperPrint();
+            task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(Object value) throws DBLayerException, Exception {
+                    if (value == null || !(value instanceof JasperPrint))
+                        throw new Exception(L10n.getString("Print.Message.PrintProblem"));
+                    try {
+                        JasperPrintManager.printReport((JasperPrint)value, true);
+                    } catch (JRException ex) {
+                        logger.error("Problem while trying to print: "+ex);
+                        throw new DBLayerException(L10n.getString("Print.Message.PrintProblem"),ex);
+                    }
+                }
+            });
+            Dispatcher.getDispatcher().dispatch(task, view, false);
         }
         
     }
@@ -158,17 +162,22 @@ public class PrintCtrl {
             putValue(MNEMONIC_KEY, L10n.getMnemonic("Print.Preview"));                                    
         }
         public void actionPerformed(ActionEvent e) {     
-            try {
-                model.createJasperPrint();
-            } catch (JRException ex) {
-                logger.error("Broken report: "+ex);
-                JOptionPane.showMessageDialog(view.getParent(), L10n.getString("Print.Message.BrokenReport")+"\n"+ex.getMessage(),L10n.getString("Print.Message.BrokenReport"),JOptionPane.WARNING_MESSAGE);                            
-                return;
-            }
-            new SchedaView((Frame) view.getParent(), true, model.getJasperPrint()).setVisible(true);
-        }
+            Task task = model.createJasperPrint();
+            task.setPostTaskAction(new PostTaskAction() {
+                public void afterStopped(final Object value) throws Exception {
+                    if (value == null || !(value instanceof JasperPrint))
+                        throw new Exception(L10n.getString("Print.Message.PrintProblem"));
+                    SwingUtilities.invokeLater(new Runnable() {
+                       public void run() {
+                            new SchedaView((Frame) view.getParent(), true, (JasperPrint)value).setVisible(true);                           
+                       } 
+                    });//SwingUtils
+                }//afterStopped
+            });//setPostTaskAction
+            Dispatcher.getDispatcher().dispatch(task, view, false);
+        }//actionPerformed
         
-    }
+    }//PreviewAction
     
     class PrintFileFilter extends FileFilter {
         public boolean accept(File f) {

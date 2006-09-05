@@ -30,6 +30,9 @@ import net.sf.plantlore.client.*;
 import net.sf.plantlore.client.AppCoreCtrl;
 import net.sf.plantlore.client.overview.JasperDataSource;
 import net.sf.plantlore.common.Selection;
+import net.sf.plantlore.common.Task;
+import net.sf.plantlore.common.exception.DBLayerException;
+import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
 import org.apache.log4j.Logger;
 
@@ -100,35 +103,46 @@ public class Print extends Observable {
         notifyObservers("REPORT_CHOSEN");
     }
     
-    public JasperPrint createJasperPrint() throws JRException {
-        JasperReport jasperReport;
-        switch (reportToUse) {
-            case SCHEDA:
-                jasperReport = schedaReport;
-                break;
-            case A4LIST:
-                jasperReport = a4listReport;
-                break;
-            case OWNREPORT:
-                jasperReport = this.jasperReport;
-                break;
-            default:
-                jasperReport = a4listReport;
-                logger.warn("Inconsistency detected. Unknown report constant: "+reportToUse);
-        }
+    public Task createJasperPrint() {
+        final JasperReport report = this.jasperReport;
         
-        if (jasperPrint == null || reportChanged) { //jasperPrint is nulled in setSource()
-            Preferences prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
-            String h1 = prefs.get("HEADER_ONE","Set the first header in settings, please.");
-            String h2 = prefs.get("HEADER_TWO","Set the second header in settings, please.");
-            HashMap params = new HashMap();
-            params.put("HEADER_ONE",h1);
-            params.put("HEADER_TWO",h2);
-            jasperPrint = JasperFillManager.fillReport(
-                  jasperReport, params, new JasperDataSource(database, selection)  );    
-            reportChanged = false;
-        }
-        return jasperPrint;
+        Task task = new Task() {
+            public Object task() throws DBLayerException {
+                JasperReport jasperReport;
+                switch (reportToUse) {
+                    case SCHEDA:
+                        jasperReport = schedaReport;
+                        break;
+                    case A4LIST:
+                        jasperReport = a4listReport;
+                        break;
+                    case OWNREPORT:
+                        jasperReport = report;
+                        break;
+                    default:
+                        jasperReport = a4listReport;
+                        logger.warn("Inconsistency detected. Unknown report constant: "+reportToUse);
+                }
+
+                if (jasperPrint == null || reportChanged) { //jasperPrint is nulled in setSource()
+                    Preferences prefs = Preferences.userNodeForPackage(AppCoreCtrl.class);
+                    String h1 = prefs.get("HEADER_ONE","Set the first header in settings, please.");
+                    String h2 = prefs.get("HEADER_TWO","Set the second header in settings, please.");
+                    HashMap params = new HashMap();
+                    params.put("HEADER_ONE",h1);
+                    params.put("HEADER_TWO",h2);
+                    try {
+                        jasperPrint = JasperFillManager.fillReport(
+                              jasperReport, params, new JasperDataSource(database, selection)  );    
+                    } catch (JRException jrException) {
+                        throw new DBLayerException(L10n.getString("Print.Message.BrokenReport"),jrException);
+                    }
+                    reportChanged = false;
+                }
+                return jasperPrint;
+            }
+        };
+        return task;
     }
 
     public Selection getSelection() {
