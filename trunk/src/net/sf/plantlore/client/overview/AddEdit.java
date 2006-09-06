@@ -1121,7 +1121,7 @@ public class AddEdit extends Observable {
                                     aoTmp.setNote(resultRevision.get(k));
                                     aoTmp.setOccurrence(occTmp);
                                     aoTmp.setDeleted(0);
-                                    database.executeInsertInTransaction(aoTmp);
+                                    database.executeInsertInTransactionHistory(aoTmp);
                                     logger.debug("AuthorOccurrence for "+pTmp.getFirst().getFirst()+" inserted. Id="+aoTmp.getId());
                                     newOccurrenceInserted = true;
                                 }
@@ -1209,7 +1209,7 @@ public class AddEdit extends Observable {
                                     aoTmp.setNote(resultRevision.get(k));
                                     aoTmp.setOccurrence(occ);
                                     aoTmp.setDeleted(0);
-                                    aoTmp = (AuthorOccurrence)database.executeInsertInTransaction(aoTmp);
+                                    aoTmp = (AuthorOccurrence)database.executeInsertInTransactionHistory(aoTmp);
                                 }//for authorList
                             }// for taxonList                            
                             database.commitTransaction();
