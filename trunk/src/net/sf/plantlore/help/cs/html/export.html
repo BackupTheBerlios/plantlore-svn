@@ -8,35 +8,49 @@
   <body>
   <h1>Export dat</h1>
 	<p>
-	Vaše nálezová data jsou při práci s Plantlore ukládána do databáze. 
-	K databázi nelze přistupovat přímo a pokud byste chtěli svoje data přenášet i na jiné
-	počítače, je potřeba použít Export. Export dat slouží k "vytažení" nálezových dat z databáze
-	a uložení do souboru na disku Vašeho počítače.
+	Vaše nálezová data jsou při práci s Plantlore uchovávána v databázi. 
+	K datům nelze přistupovat přímo; pro přenos svých dat na jiné
+	počítače vyžaduje použití Exportu. 
+	Export dat slouží k "vytažení" nálezových dat z databáze
+	a uložení do souboru na disku vašeho počítače.
 	</p>
 
 	<p>
-	Export lze provádět po připojení k jakékoli databázi - tedy i k databázi vzdálené.
+	Export lze provádět po připojení k jakékoli databázi - i k databázi vzdálené.
 	Tehdy se vyplatí zvážit přenosovou kapacitu linky, kterou používáte pro připojení,
-	neboť se může přenášet velké množství dat a doba nutná k vyexportování nálezových dat
+	neboť se může přenášet velké množství dat a doba nutná k provedení celé operace
 	by byla neúnosná.
 	</p>
 
+	<p>
+	Současně může probíhat pouze jeden export nálezových dat.
+	</p>
+	
 
-	<h2>1. Dříve, než začnete exportovat</h2>
+	<h2>Obsah</h2>
 
 	<p>
-	Před vlastním exportem je nejprve nutné vybrat (označit) nálezové záznamy, 
+	<ol>
+		<li>1. Co je nutné provést před tím, než začnete exportovat</li>
+		<li>2. Vlastní export záznamů</li>
+	</ol>
+	</p>
+
+
+
+	<h2>1. Co je nutné provést před tím, než začnete exportovat</h2>
+
+	<p>
+	V <a href="./overview.html">Přehledu záznamů</a> je nutné vybrat (označit) nálezové záznamy, 
 	které chcete exportovat. 
-	Pro zúžení okruhu, z něhož budete záznamy vybírat, slouží <a href="./search.html">Vyhledávání</a>.
-	Ve vyhledávacím formuláři zadáte požadovaná kriteria a v 
-	<a href="./overview.html">Přehledu</a> se zobrazí všechny relevantní
-	záznamy uložené v databázi. Z těchto záznamů můžete ještě explicitně označit ty, které jsou
-	pro vás důležité. Neoznačíte-li žádné záznamy, Plantlore se bude chovat, jako byste označili
-	všechny; tím Vám usnadní práci s jejich označováním.
+	Pro zúžení okruhu, z něhož budete záznamy vybírat, použijte <a href="./search.html">Vyhledávání</a>.
+	Z těchto záznamů můžete ještě explicitně označit ty, které jsou důležité. 
+	Neoznačíte-li žádné záznamy, Plantlore se bude chovat, jako byste označili
+	všechny; tím vám usnadní práci s jejich označováním.
 	</p>
 
 	<p>
-	Na následujícím obrázku je označeno 11 záznamů z devatenácti.
+	Na následujícím obrázku je označeno 11 záznamů z 19. Vyexportováno bude označených 11 záznamů.
 	</p>
 
 	<p>
@@ -45,10 +59,10 @@
 
 
 
-	<h2>2. Vlastní export dat</h2>
+	<h2>2. Vlastní export záznamů</h2>
 
 	<p>
-	Export probíhá ve dvou krocích.
+	Exportování nálezových dat probíhá ve dvou krocích.
 	</p>
 
 	<h3>2.1. Volba jména souboru a formátu dat</h3>
@@ -57,33 +71,39 @@
 	Zvolte jméno souboru, do kterého se mají data uložit, a jeho formát.
 	K dispozici je několik základních formátů:
 	<ul>
-		<li>PlantloreNative je formát, který je navržen přímo pro pohodlný přenos dat mezi
+		<li>
+		PlantloreNative je formát, který je přímo navržen pro pohodlný přenos dat mezi
 		dvěma programy Plantlore. Nevíte-li, který formát pro přenos dat zvolit,
 		doporučujeme vybrat tento.
 		</li>
-		<li>XML je formát využívající tzv. Extensible Markup Language (XML). Data jsou ukládána v přehledné
+		<li>
+		XML je formát využívající tzv. Extensible Markup Language (XML). Data jsou ukládána v přehledné
 		stromové struktuře uvozené tzv. tagy. Formát navíc umožňuje výběr konkrétních částí záznamu,
 		které chcete exportovat. Tento formát je vhodný jak pro přenášení dat, tak pro jejich vizualizaci
 		např. v programu Internet Explorer.
 		</li>
-		<li>ABCD Schema je formát založený na XML, ale struktura se liší - odpovídá požadavkům kladeným
+		<li>
+		ABCD Schema je formát založený na XML, ale struktura se liší - odpovídá požadavkům kladeným
 		na ABCD Schema.
 		</li>
-		<li>DarwinCore je formát založený na XML, ale struktura se liší - odpovídá požadavkům kladeným
+		<li>
+		DarwinCore je formát založený na XML, ale struktura se liší - odpovídá požadavkům kladeným
 		na DarwinCore.
 		</li>
-		<li>CSV neboli Comma Separated Values (hodnoty oddělené čárkami) je formát obsahující
+		<li>
+		CSV neboli Comma Separated Values (hodnoty oddělené čárkami) je formát obsahující
 		každý záznam na jednom řádku, přičemž hodnoty sloupečků jsou odděleny čárkami.
 		První řádek obsahuje názvy atributů záznamu. Struktura souboru připomíná tabulku.
 		Formát se hodí pro pohodlné načítání v některých jiných programech, např. tabulkových procesorech
 		jako Microsoft Excel.
 		</li>
-		<li>StdOut neukládá záznamy do souboru, ale na tzv. standardní výstup. Data jsou odesílána 
+		<li>
+		StdOut neukládá záznamy do souboru, ale na tzv. standardní výstup. Data jsou odesílána 
 		ve velmi čitelné podobě. Tento druh formátu je určen pro testování nebo proudové zpracování
-		v příkazové řádce nebo shellu. 
+		v příkazové řádce. 
 		</li>
 	</ul>
-	Nejste-li si jisti, který formát je pro Vás ten správný, doporučujeme volit PlantloreNative,
+	Nejste-li si jisti, který formát vybrat, doporučujeme volit PlantloreNative,
 	který se nejlépe hodí pro přenos mezi dvěma programy Plantlore.
 	</p>
 
@@ -95,13 +115,13 @@
 
 	<p>
 	Tento krok je volitelný a nabízí jej pouze formáty XML, CSV a StdOut. Zbylé formáty automaticky exportují
-	záznam se všemi jeho atributy. Volba atributů (též sloupečků) nálezového záznamu se provádí označováním
+	záznam se všemi jeho atributy. Volba atributů nálezového záznamu se provádí označováním
 	položek v zobrazeném stromě. Červeně jsou označeny položky, které je nutné vybrat, pokud budete chtít
-	data znovu nahrát do Plantlore (více viz <a href="./import.html">Import</a>).
+	data znovu nahrát do Plantlore (více viz <a href="./import.html">Import nálezových dat</a>).
 	</p>
 	
 	<p>
-	Nevyberete-li žádné sloupečky, předpokládá se, že jste označili všechny.
+	Nevyberete-li žádné atributy, předpokládá se, že jste označili všechny.
 	</p>
 
 	<p>
@@ -109,11 +129,13 @@
 	</p>
 
 
-	<h3>2.3. Export záznamů</h3>
+	<h3>2.3. Průběh exportu</h3>
 
 	<p>
-	Po dokončení výběru atributů se spustí Export. Průběh procesu můžete sledovat v otevřeném okně.
-	Rozhodnete-li se Export zrušit, stiskněte tlačítko <i>Storno</i> a export bude předčasně ukončen.
+	Po dokončení výběru atributů je zahájen export dat. Průběh procesu můžete sledovat v otevřeném okně.
+	Rozhodnete-li se export zrušit, stiskněte tlačítko <i>Storno</i> a export bude předčasně ukončen.
+	Soubor bude obsahovat pouze ta data, která se stihla zapsat, než došlo ke zrušení operace.
+	Je zaručeno, že i při zrušení operace bude formát souboru validní.
 	</p>
 
 	<p>
@@ -121,15 +143,5 @@
 	<p>
 
 
-
-	<h2>3. Omezení, která je nutno zvážit při Exportu</h2>
-
-	<p>
-	Exportovat lze jakákoli nálezová data, která jste označili a tedy máte právo je prohlížet.
-	Pamatujte: <i>nic znamená vše</i> - neoznačíte-li explicitně žádné záznamy nebo sloupečky, Plantlore
-	se chová, jako byste vybrali všechny. 
-	Současně může probíhat v jedné instanci programu Plantlore pouze jeden Export nálezových dat.
-	</p>
-  
   </body>
 </html>
