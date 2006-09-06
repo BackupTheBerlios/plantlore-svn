@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<langpack>
+    <str id="pack.core" txt="Core files"/>
+    <str id="pack.core.description" txt="Files that Plantlore needs always. These files include libraries and other resources"/>
+    <str id="pack.client" txt="Plantlore Client"/>
+    <str id="pack.client.description" txt="Client application used for connecting to Plantlore server and data management"/>
+    <str id="pack.server" txt="Plantlore Server"/>
+    <str id="pack.server.description" txt="Server application for managing client connections and requests"/>
+    <str id="pack.postgresql" txt="PostgreSQL"/>
+    <str id="pack.postgresql.description" txt="The PostgreSQL database system"/>
+    <str id="pack.docs" txt="Documents"/>
+    <str id="pack.docs.description" txt="The documentation including user manual"/>        
+    <str id="pack.sources" txt="Sources"/>
+    <str id="pack.sources.description" txt="Java source files for both Client and Server applications"/>
+</langpack>        

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shortcuts>
+    <skipIfNotSupported/>
+    <programGroup defaultName="Plantlore" location="applications"/>
+    <shortcut name="Plantlore Client" 
+              target="$INSTALL_PATH\plantlore-client.jar" 
+              workingDirectory="$INSTALL_PATH" description="Start Plantlore Client"
+              initialState="normal"
+              programGroup="yes"
+              desktop="yes"
+              applications="no"
+              startMenu="no"
+              startup="no">
+        <createForPack name="Client"/>
+    </shortcut>
+    <shortcut name="Plantlore Server" 
+              target="$INSTALL_PATH\plantlore-server.jar" 
+              workingDirectory="$INSTALL_PATH" description="Start Plantlore Server"
+              initialState="normal"
+              programGroup="yes"
+              desktop="yes"
+              applications="no"
+              startMenu="no"
+              startup="no">
+        <createForPack name="Server"/>
+    </shortcut>
+    <shortcut name="Uninstall Plantlore" 
+              target="$INSTALL_PATH\uninstaller\uninstaller.jar" 
+              workingDirectory="$INSTALL_PATH" description="This removes Plantlore from the system"              
+              initialState="normal"
+              programGroup="yes"
+              desktop="no"
+              applications="no"
+              startMenu="no"
+              startup="no">
+        <createForPack name="Server"/>
+    </shortcut>    
+</shortcuts>
