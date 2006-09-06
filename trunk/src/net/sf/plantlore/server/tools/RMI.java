@@ -96,6 +96,12 @@ public class RMI {
 		try {
 			InetAddress address = InetAddress.getLocalHost();
 			String ip = address.getHostAddress();
+			if( "127.0.0.1".equals(ip) ) {
+				logger.warn("Java on Linux!");
+				String name = address.getHostName();
+				address = InetAddress.getByName(name);
+				ip = address.getHostAddress();				
+			}
 			System.setProperty(PROPERTY_HOSTNAME, ip);
 			logger.info("Hostname set to " + ip);
 		} catch (UnknownHostException e) {
