@@ -556,7 +556,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             }
         } catch (JDBCException e) {
             logger.fatal("JDBC Exception caught while retrieving the data from the database. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Exception.RetrieveData"), DBLayerException.ERROR_LOAD_DATA, e);
+            throw new DBLayerException(L10n.getString("Exception.RetrieveData"), e);
         } catch (HibernateException e) {
             logger.error("Cannot move to the given row of results: "+from+"; Details: "+e.getMessage());
             throw new DBLayerException(L10n.getString("Exception.RetrieveData"), DBLayerException.ERROR_LOAD_DATA, e);
@@ -727,7 +727,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 tx.rollback();
             }            
             logger.fatal("JDBC Exception caught while executing Select query. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Error.DatabaseQuery"), /*DBLayerException.ERROR_SELECT, */e);            
+            throw new DBLayerException(L10n.getString("Error.DatabaseQuery"), e);            
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();
@@ -791,7 +791,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 tx.rollback();
             }            
             logger.fatal("Cannot execute conditional delete on table "+tableClass.getName());
-            throw new DBLayerException(L10n.getString("Exception.DeleteRecord"), DBLayerException.ERROR_DELETE, e);            
+            throw new DBLayerException(L10n.getString("Exception.DeleteRecord"), e);            
         } finally {
             if (session != null) session.close();
         }
@@ -869,7 +869,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             this.longTx = this.txSession.beginTransaction();
        } catch (JDBCException e) {
             logger.fatal("JDBC Exception caught while starting database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Exception.StartTransaction"), DBLayerException.ERROR_TRANSACTION, e);
+            throw new DBLayerException(L10n.getString("Exception.StartTransaction"), e);
         } catch (HibernateException e) {
             logger.fatal("Cannot start database transaction");
             throw new DBLayerException(L10n.getString("Exception.StartTransaction"), DBLayerException.ERROR_TRANSACTION, e);
@@ -907,14 +907,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }   catch (JDBCException e) {
             this.rollbackTransaction();
             logger.fatal("JDBC Exception caught while commiting database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
-            ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
+            DBLayerException ex = new DBLayerException("Exception.CommitTransaction", e);
             throw ex;
         } catch (HibernateException e) {
             this.rollbackTransaction();    
             logger.fatal("Cannot commit database transaction");
-            DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
-            ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
+            DBLayerException ex = new DBLayerException("Exception.CommitTransaction", DBLayerException.ERROR_TRANSACTION, e);
             throw ex;            
         }
 
@@ -947,7 +945,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             this.txSession.close();
        } catch (JDBCException e) {
             logger.fatal("JDBC Exception caught while rollbacking database transaction. SQL State: "+e.getSQLState()+"; Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Exception.RollbackTransaction"), DBLayerException.ERROR_TRANSACTION, e);
+            throw new DBLayerException(L10n.getString("Exception.RollbackTransaction"), e);
         } catch (HibernateException e) {
             logger.fatal("Cannot rollback database transaction");
             throw new DBLayerException(L10n.getString("Exception.RollbackTransaction"), DBLayerException.ERROR_TRANSACTION, e);            
