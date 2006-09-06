@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <langpack>
     <str id="title.PostgreSQL" txt="Detaily instalace PostgreSQL"/>
-    <str id="serviceaccount.description" txt="Databázový systém PostgreSQL musí bìžet v operaèním systému pod uživatelským úètem s omezenými právy. Zadejte jméno a heslo pro tohoto uživatele a instalátor ho pro Vás vytvoøí. Ujistìte se, že zadané jméno uživatele je v systému unikátní"/>
-    <str id="serviceaccount.text" txt="Jméno: "/>
+    <str id="serviceaccount.description" txt="DatabÃ¡zovÃ½ systÃ©m PostgreSQL musÃ­ bÄ›Å¾et v operaÄnÃ­m systÃ©mu pod uÅ¾ivatelskÃ½m Å¯Ätem s omezenÃ½mi prÃ¡vy. Zadejte jmÃ©no a heslo pro tohoto uÅ¾ivatele a instalÃ¡tor ho pro VÃ¡s vytvoÅ™Ã­. UjistÄ›te se, Å¾e zadanÃ© jmÃ©no uÅ¾ivatele je v systÃ©mu unikÃ¡tnÃ­"/>
+    <str id="serviceaccount.text" txt="JmÃ©no: "/>
     <str id="servicepassword.text" txt="Heslo: "/>
 
-    <str id="superuser.description" txt="Pro používání systému PostgreSQL musíte vytvoøit prvního databázového uživatele pomocí kterého se po prvé pøihlásíte do Plantlore. Potom bude možné pomocí klienta Plantlore spravovat další databázové uživatele."/>
-    <str id="superuser.text" txt="Jméno: "/>
+    <str id="superuser.description" txt="Pro pouÅ¾Ã­vÃ¡nÃ­ systÃ©mu PostgreSQL musÃ­te vytvoÅ™it prvnÃ­ho databÃ¡zovÃ©ho uÅ¾ivatele pomocÃ­ kterÃ©ho se po prvÃ© pÅ™ihlÃ¡sÃ­te do Plantlore. Potom bude moÅ¾nÃ© pomocÃ­ klienta Plantlore spravovat dalÅ¡Ã­ databÃ¡zovÃ© uÅ¾ivatele."/>
+    <str id="superuser.text" txt="JmÃ©no: "/>
     <str id="superpassword.text" txt="Heslo: "/>
 
-    <str id="portnumber.text" txt="Èíslo portu: "/>
+    <str id="portnumber.text" txt="ÄŒÃ­slo portu: "/>
 
-    <str id="postgreshortcuts.description" txt="Vyberte jestli mají být vytvoøeny odkazy na systém PostgreSQL v Start menu"/>
-    <str id="postgreshortcuts.create" txt="Vytvoøit odkazy"/>
+    <str id="postgreshortcuts.description" txt="Vyberte jestli majÃ­ bÃ½t vytvoÅ™eny odkazy na systÃ©m PostgreSQL v Start menu"/>
+    <str id="postgreshortcuts.create" txt="VytvoÅ™it odkazy"/>
 
-    <str id="postgrehome.description" txt="Czech:Prosím vyberte adresáø do kterého bude systém PostgreSQL nainstalován. Tento adresáø musí být na diskovém oddílu formátu NTFS. Podrobné informace najdete v instalaèní pøíruèce pøiložené k tomuto instalátoru."/>
-    <str id="postgrehome.text" txt="PostgreSQL adresáø: "/>
+    <str id="postgrehome.description" txt="ProsÃ­m vyberte adresÃ¡Å™ do kterÃ©ho bude systÃ©m PostgreSQL nainstalovÃ¡n. Tento adresÃ¡Å™ musÃ­ bÃ½t na diskovÃ©m oddÃ­lu formÃ¡tu NTFS. PodrobnÃ© informace najdete v instalaÄnÃ­ pÅ™Ã­ruÄce pÅ™iloÅ¾enÃ© k tomuto instalÃ¡toru."/>
+    <str id="postgrehome.text" txt="PostgreSQL adresÃ¡Å™: "/>
 </langpack>
