@@ -7,7 +7,7 @@
   </head>
   <body>
   <h1>Historie úprav</h1>
-Plantlore vám nabízí možnost sledovat historii změn vašich nálezových dat. Diky této funkci máte možnost zjistit kdo, kdy a jak změnil informace o 
+Plantlore vám nabízí možnost sledovat historii změn vašich nálezových dat. Díky této funkci máte možnost zjistit kdo, kdy a jak změnil informace o 
 konkrétním nálezu, autorovi, publikaci či metadatech.<br> 
 Mezi základní zaznamenéváné informace o změně patří:
 <ul> 
@@ -19,7 +19,7 @@ Mezi základní zaznamenéváné informace o změně patří:
  <li>nová hodnota editované položky
 </ul>
   
-Plantlore kromě možnosti sledovat zmíněné změny v nálezových datech vám umožní zrušit některé změny a vrátit se tak k dřívějším hodnotám. Historie
+Plantlore kromě možnosti sledovat zmíněné změny v nálezových datech vám umožní zrušit tyto změny a vrátit se tak k dřívějším hodnotám. Historie
 je silným nástrojem umožňující zásah do vašich nálezových dat a proto je nutne, aby práce s historií byla z bezpečnostních důvodů omezena jen na uživatele, kteří mají dostatečné oprávnění (viz. <a href="./user.html">Práva uživatelů</a>).  
 
 <p>
@@ -36,15 +36,15 @@ je silným nástrojem umožňující zásah do vašich nálezových dat a proto 
 
 <p><br>
 Pro přístup k historii vybraného nálezu stačí jen označit tento nález a kliknout na tlačítko <i><b>History</b></i>. Pokud je tlačítko <i><b>History</b></i>
-neaktivní a přístup k hsitorii úprav vám byl tímto znemožněn, tak nemáte právo na práci s vybraným nálezem. Určitě nebude naškodu  
-zmínit, kdy máte právo pracovat s historií nálezu.
+neaktivní, tak přístup k historii úprav vám byl znemožněn a nemáte právo na práci s vybraným nálezem. Určitě nebude na škodu  
+zmínit, v jakém případě máte právo pracovat s historií nálezu.
 </p>
-Historie nálezu je přístupná:
+Historie nálezu je přístupná uživateli, který:
 <ul>
-   <li>uživatelovi, který daný nález vložil do databáze</li>
-   <li>uživatelovi, který má právo editovat záznamy uživatele, který tento nález vložil do databáze</li>
-   <li>uživatelovi, který má právo editovat všechny nálezy uložené v databázi</li>
-   <li>uživatelovi, který má právo administrátor</li>   
+   <li>daný nález vložil do databáze</li>
+   <li>má právo editovat záznamy uživatele, který tento nález vložil do databáze</li>
+   <li>má právo editovat všechny nálezy uložené v databázi</li>
+   <li>má právo administrátor</li>   
 </ul>    
 
 Pokud nemáte přístup k historii nálezu a chtěli byste ho získat, tak kontaktujte administrátora Plantlore.<br>
@@ -57,7 +57,7 @@ Podrobnější informace o právech uživatelů můžete nastudovat v časti <a 
 
 Dialog historie nálezu je rozdělen do tří částí. 
 <ul>
-  <li><b>Detaily nálezu</b> - zde jsou zobrazeny základní informace o nálezu (taxon, autoři nálezu a lokalita)
+  <li><b>Detaily nálezu</b> - zde jsou zobrazeny aktuální informace o nálezu (taxon, autoři nálezu a lokalita)
   <li><b>Vytvoření nálezu</b> - zde jsou zobrazeny informace o vložení nálezu do databáze (datum/čas vložení a uživatel, který záznam vložil do databáze)
   <li><b>Seznam změn</b> - zde jsou zobrazeny základní informace o jednotlivých změnách nálezu 
 </ul>
@@ -69,36 +69,36 @@ Seznam změn nálezu je setřízen od časově nejmladších po časově nejstar
 <ul>
 <li><b>X</b> - slouží pro výběr jednotlivých změn</li>
 <li><b>Datum/Čas</b> - informuje o době, kdy ke změně došlo</li>
-<li><b>Uživatel</b> - odpovídá uživatelovi, který změnu provedl</li>
+<li><b>Uživatel</b> - odpovídá uživateli, který změnu provedl</li>
 <li><b>Položka</b> - informuje o položce, která byla změněna</li>
 <li><b>Stará hodnota</b> - obsahuje hodnotu položky před změnou </li>
-<li><b>Nová hodnota</b> - obseahuje novou hodnotu položky </li>
+<li><b>Nová hodnota</b> - obsahuje novou hodnotu položky </li>
 </ul>
 
 
 <h3>Operace UNDO na vybrané položky</h3>
 
 V historii nálezu si můžete vybrat změnu <b>jen konkrétní položky</b> v záznamu a vrátit se k její staré hodnotě. Liší se tedy od klasické UNDO operace, 
-kde se proveděné změny v záznamu vrací od nejmladší po nejstarší v časovém sledu v jakém k nim došlo. Uveďmě si příklad, kdy využijeme zmíněného 
+kde se provedené změny v záznamu vrací od nejmladší po nejstarší v časovém sledu v jakém k nim došlo. Uveďmě si příklad, kdy využijeme zmíněného 
 vylepšení operace UNDO: 
 <div style="text-align:justify; padding: 20 20 30 20">
-<i> Uděláte opravy položek "Herbář", "Rok nálezu", "Poznámku k nálezu" a po těchto opravách uděláte ještě dalších dvacet změnám. 
+<i> Uděláte opravy položek "Herbář", "Rok nálezu", "Poznámku k nálezu" a po těchto opravách uděláte ještě dalších dvacet změn. 
 Už si nepamatujete přesně první uložené znění poznámky k nálezu, ale chcete se k němu vrátit. U klasického operace UNDO byste museli zrušit postupně všechny 
-poslední změn, abyste nastavili zpět první znění poznáky k nálezu. V dialogu historie je splnění vašeho požadavku jednoduché. Pokud budete chtít jen
+poslední změny, abyste nastavili zpět první znění poznáky k nálezu. V dialogu historie je splnění vašeho požadavku jednoduché. Pokud budete chtít jen
 zjistit první znění poznámky k nálezu, stačí si v seznamu změn najít nejstarší zněmu poznámky a v sloupku STARÁ HODNOTA už vidíte hledaný text.
 Pokud chcete poznámce nastavit její první uloženou hodnotu, tak stačí najít nejstarší změnu výsledku revize, vybrat daný řádek pomocí
 sloupku X a kliknout na tlačítko <b>UNDO</b>. Nelekněte se, že výběrem daného řádku se vám vyberou i řádky, v kterých je zaznamenána mladší
 změna této poznámky, toto chování vychází z logiky označování změn (popsáno níže).</i> 
 </div>
 
-Jak již bylo zmíněno, tak pomocí sloubku X vybíráte úpravy, které chcete vrátit. Označení či odznačení lze provést myší kliknutím v sloubku X požadovaného
+Jak již bylo zmíněno, tak pomocí sloupku X vybíráte úpravy, které chcete vrátit. Označení či odznačení lze provést myší kliknutím v sloubku X požadovaného
 řádku. Pro označování můžete využít i tlačítka <b><i>Vyber vše</i></b> a <b><i>Odznač vše</i></b>, která označí nebo odznačí všechny změny nálezu zobrazené v tabulce.
 Počet položek zobrazených v tabulce si můžete sami nastavit přepsáním hodnoty pro <b><i>Zobrazit řádků</i></b> a potvrzením nové hodnoty klávesovým tlačítkem 
 ENTER. V tabulce se přepínáte na další nebo předchozí seznam změn pomocí tlačítek <b><i>Předchozí</i></b> a <b><i>Následující</i></b>. Informace o aktuálně 
 zobrazeném seznamu změn jsou uvedeny v části pod tabulkou.
 
 <br><br> 
-Po stisknutí tlačítko <b><i>UNDO</i></b> se zobrazí informace se seznamem změn, které budou provedeny. Volbou tlačítka CANCLE zrušíte operaci. 
+Po stisknutí tlačítko <b><i>UNDO</i></b> se zobrazí informace se seznamem změn, které budou provedeny. Volbou tlačítka STORNO zrušíte operaci. 
 Volbou tlačítka OK naopak potvrdíte operaci a provede se návrat vybraných změn nálezu. Z historie budou smazány všechny označené řádky v době zavolání
 operace <b><i>UNDO</i></b> (na označené řádky byla provedena operace UNDO). 
 
@@ -108,7 +108,7 @@ operace <b><i>UNDO</i></b> (na označené řádky byla provedena operace UNDO).
 
 <h3><i>Logika označování změn</i></h3>
 
-Položky v záznamu můžou být upravovány vícekrát, proto je při označování změn v dialogu historie nutné ošetřit několik situací (viz. níže).<br>
+Položky v záznamu můžou být upravovány vícekrát, proto je při označování změn v dialogu historie nutné ošetřit několik situací.<br>
 Pro lepší názornější vysvětlení si to uveďme na příkladu:<br><br> 
 
 <img src="picture/historyOccMark_cs.png">
@@ -137,8 +137,8 @@ Uživatel odznačením mladší změny řekne, že chce zachovat tuto změnu pol
 <img src="picture/wholeHistoryEnter_cs.png">
 <br><br>
 
-Dialog celkové historie sledovaných změn je přístupný pouze uživatelovi s právem administrátora. Pokud máte administrátorská práva můžete tento 
-dialog otevří z menu <b>Data/Celková historie</b>. Pokud administrátorská práva nemáte je položka v menu pro vás neaktivní.
+Dialog celkové historie sledovaných změn je přístupný pouze uživateli s právem administrátora. Pokud máte administrátorská práva můžete tento 
+dialog otevří z menu <b>Data/Celková historie</b>. Pokud administrátorská práva nemáte, je položka v menu pro vás neaktivní.
 
 <h5>Dialog celkové historie</h5>
 
@@ -154,7 +154,7 @@ V dialogu je zobrazen seznam všech změn týkajících se metadat, nálezů, au
 <li><b>Uživatel</b> - odpovídá uživatelovi, který změnu provedl</li>
 <li><b>Položka</b> - informuje o položce, která byla změněna</li>
 <li><b>Stará hodnota</b> - obsahuje hodnotu položky před změnou (vyplněna jen pro operaci edit)</li>
-<li><b>Nová hodnota</b> - obseahuje novou hodnotu položky (vyplněna jen pro operaci edit)</li>
+<li><b>Nová hodnota</b> - obsahuje novou hodnotu položky (vyplněna jen pro operaci edit)</li>
 </ul>
 
 
@@ -173,9 +173,10 @@ vrácených změn z historie.
 
 <h3>Pročištění databáze a smazání historie</h3>
 
-V databázi jsou uloženy i neaktivní záznamy, aby bylo možné pří operaci UNDO je opět aktivovat. Máte však možnost využí operace <b><i>Smaž</i></b>, 
+V databázi jsou uloženy i záznamy, které uživatel smaza a informace o tomto smazání je zaznamenána v tabulkách historie. 
+Existence těchto neaktivních záznamů je nutná pro operaci UNDO. Máte však možnost využít operace <b><i>Smaž</i></b>, 
 která pročistí databázi od neaktivních záznamů a zároveň smaže všechny data z historie. Před provedení této operace by bylo dobré provést zálohu 
-databáze. Po stisku tlačítka <b><i>Smaž</i></b> se objevi dilog s informaci o operaci, kterou se chystáte provést, a teprve po potvrzení tohoto
-dialogu bude operace provedena.  
+databáze. Zálohu databáze je nutné provést pomocí nástroje třetí strany. Po stisku tlačítka <b><i>Smaž</i></b> se objeví dialog s informací o operaci, 
+kterou se chystáte provést, a teprve po potvrzení tohoto dialogu bude operace provedena.  
   </body>
 </html>

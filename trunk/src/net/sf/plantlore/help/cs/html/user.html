@@ -10,6 +10,9 @@
 <img src="picture/userEnter_cs.png">
 <br><br>
 
+Aplikace Plantlore umožní přístup a práci s nálezovými daty jen uživatelům, kteří mají v aplikaci vytvořený uživatelský účet. Data jsou tímto více
+chráněná před poškozením a zneužití. Administrátor má přehled, kdo má k nálezovým datům přístup a kdo je editoval.
+
 Správce uživatelů umožňuje administrátorovi přidávat a editovat uživatele, nastavovat práva uživatelů a také ukončovat jejich přístup do aplikace. 
 Správce uživatelů otevřete z menu <b>Data/Správa uživatelů</b>.
 
@@ -40,12 +43,13 @@ Pro práci se záznamem jsou zde k dispozici tlačítka:
   
 <h2>Vyhledávání</h2>
 
-Správce uživatelů nábízí administrátorovi možnost vyhledávat podle čtyř parametrů: login, jméno, email a adresa. Výsledek může být setřízen podle loginu,
+Správce uživatelů nábízí administrátorovi možnost vyhledávat podle čtyř parametrů: přihlašovací jméno (login), jméno, email a adresa. Výsledek může 
+být setřízen podle přihlašovacího jména,
 křesního jména, příjmení a datumu vytvoření uživatele a to sestupně, nebo vzestupně. Dalším kritériem pro vyhledávání je požadavek zobrazení všech 
 uživatelů, nebo jen uživatelů s platným přístupem do aplikace (hodnota položky <i>Datum zrušení uživatele</i> je u těchto uživatelů nevyplněna). 
-Pokud nejsou zadány, žadné parametry a omezení budou vyhledáni všichni uživatelé. 
+Pokud nejsou zadány žadné parametry a omezení budou vyhledáni všichni uživatelé. 
 <br><br>
-<b>Pozor:</b>  při vyhledávání jsou rozlišévána velká a malá písmena (case insensitive).
+<b>Pozor:</b>  při vyhledávání jsou rozlišována velká a malá písmena (case sensitive).
 
 <a name="add"></a><h2>Přidání uživatele</h2>
   
@@ -53,18 +57,24 @@ Pokud nejsou zadány, žadné parametry a omezení budou vyhledáni všichni už
   
   <img src="picture/userAdd_cs.png">
   <br><br>
-  Dialog pro přidání nového uživatele můžete otevřít ze Správce Uživatelů. V zobrazeném okně jsou k vyplnění následující položky:
+  Dialog pro přidání nového uživatele můžete otevřít ze Správce uživatelů. V zobrazeném okně jsou k vyplnění následující položky:
+  
+  <h4>Uživatelská data</h4>
   <ul>
-    <li><b>Login</b> - login uživatele, který bude používat k přihlašování do aplikace. Tato položka je povinná a bez jejího vyplnění vám aplikace nedovolí
-    živatele přidat. Login musi být v rámci databáze jednoznačný a není po uložení uživatele editovatelný.</li>
+    <li><b>Login</b> - login uživatele, který bude používán k přihlašování do aplikace. Tato položka je povinná a bez jejího vyplnění vám aplikace nedovolí
+    živatele přidat. Login musí být v rámci databáze jednoznačný a není po uložení uživatele editovatelný.</li>
     <li><b>Heslo</b> - přihlašovací heslo uživatele. Tato položka je povinná.</li>
     <li><b>Jméno</b> - křesní jméno uživatele. Tato položka je povinná.</li>
     <li><b>Příjmení</b> - příjmení uživatele. Tato položka je povinná.</li>
-    <li><b>Email</b> - email uživatele. Tato položka je povinná.</li>
+    <li><b>Email</b> - email uživatele. </li>
     <li><b>Adresa</b> - adresa uživatele.</li>    
-    <li><b>Poznámka</b> - poznámka administrátora o uživateli</li>    
-    <li><b>Administrátorské právo</b> - jeho označením získá uživatel stejná práva jako administrátor</li>
-    <li><b>Právo editovat vše</b> - jeho označením získá uživatel právo editovat všechny nálezy v databázy</li>
+    <li><b>Poznámka</b> - poznámka administrátora o uživateli</li>   
+  </ul>
+  <h4>Uživatelská práva</h4>  
+  <ul>   
+    <li><b>Administrátorské právo</b> - jeho označením získá uživatel stejná práva jako administrátor. Přidělení administrátorských práv důkladně 
+    promyslete. <i><b>Doporučení:</b> administrátorská práva by měl mít jen jeden uživatel, abyste docílili větší bezpečnosti.</li>
+    <li><b>Právo editovat vše</b> - jeho označením získá uživatel právo editovat všechny nálezy v databázi</li>
     <li><b>Právo přidávat záznamy</b> - jeho označením získá uživatel právo pro přidávání nových nálezů</li>
     <li><b>Pravo editace nálezů uživatelů</b> - tato položka obsahuje seznam uživatelů, jejichž nálezy bude moci daný uživatel editovat</li>    
  </ul>
@@ -74,7 +84,7 @@ Pokud nejsou zadány, žadné parametry a omezení budou vyhledáni všichni už
 <img src="picture/userEdit_cs.png">
 <br><br>
   Dialog pro editaci existujícího uživatele otevřete ze Správce uživatelů. Nezapomeňte, že pro otevření dialogu musíte mít označeného uživatele.
-  Vzhled edit dialogu je téměř totožný s add dialogem. Povinné položky jsou: heslo, jméno, příjmení, email.<br> 
+  Vzhled editačního dialogu je téměř totožný s dialogem pro přidávání uživatele. Povinné položky jsou: heslo, jméno, příjmení, email.<br> 
   Needitovatelené položky jsou: 
   <ul>
     <li><b>Login</b></li>
@@ -85,18 +95,19 @@ Pokud nejsou zadány, žadné parametry a omezení budou vyhledáni všichni už
 <a name="detail"></a><h2>Detailní data a práva uživatele</h2>
 
   Dialog zobrazující detailní informaci o uživatelovi a jeho právech otevřete ze Správce uživatelů. Pro otevření tohoto dialogu je nutné 
-  označit požadovaného uživatele v seznamu uživatelů. Dialog je téměř totožný s edit dialogem. Všechny položky jsou needitovatelné, mají jen 
+  označit požadovaného uživatele v seznamu uživatelů. Dialog je téměř totožný s editačním dialogem. Všechny položky jsou needitovatelné, mají jen 
   informační charakter.
   
 <a name="drop"></a><h2>Zrušení přístupu uživatele</h2>
 
   Pro zrušení přístupu uživatele do aplikace se použije tlačítko <i><b>Zruš uživatele</b></i> ve správci uživatelů. Před stisknutím tohoto tlačítka je nutné
   označi požadovaného uživatele v seznamu uživatelů. Po stisku tohoto tlačítka bude uživatel informován o operaci, kterou se chystá provést. Potvrzením
-  této operace bude uživatelovi nastaven aktualní čas do položky <i>Datum zrušení uživatele.</i>.   
+  této operace bude uživateli nastaven aktuální čas do položky <i>Datum zrušení uživatele.</i>.   
   <br><br>
   <img src="picture/userDrop_cs.png">
   <br><br>
-  Obnovení přístupu pro zrušeného uživate znamená přidání nového uživatele. V databázi tak zůstává přehled o obdobích, kdy měl který uživatel 
+  Obnovení přístupu pro zrušeného uživate znamená přidání nového uživatele. Login přidávaného uživatele musí být v rámci databáze jednoznačný (tzn. 
+  nelze použít login uživatele, který má nebo dříve měl účet v dané databázi). V databázi tak zůstává přehled o obdobích, kdy měl který uživatel 
   přístup do aplikace.  
 
 <a name="rights"></a><h2>Práva uživatele</h2>
@@ -110,7 +121,7 @@ Pokud nejsou zadány, žadné parametry a omezení budou vyhledáni všichni už
   <ul>
     <li><b>právo prohlížení dat</b> - toto právo se nikde nenastavuje a uživatel je získává automaticky s vytvořením přístupu do aplikace</li>
     <li><b>právo přidávat data</b> - nastavením tohoto práva má uživatel možnost přídávat nálezy, autory a publikace. Zároveň má automaticky právo
-    editovat záznamy, které přidal. Dále má právo na zobrazení historie nálezu, který přidal.</li>
+    editovat záznamy, které přidal a  prohlížet všechny nálezy. Dále má právo na zobrazení historie nálezu, který přidal.</li>
     <li><b>právo editace data jiných uživatelů</b> - uživatel (Pepa) může požadat administrátora o přidání konkrétního  
     uživatele (Franty) do senamu uživatelů, jejichž záznamy má právo editovat (s právem editovat záznam je i spojeno právo přistupovat k historii 
     tohoto záznamu). Přidání uživatelů do tohoto seznamu záleží na administrátorovi a na vzájemné domluvě uživatelů.</li>
