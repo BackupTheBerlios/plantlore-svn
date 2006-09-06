@@ -43,7 +43,6 @@ public class CreateDBCtrl {
 					engine = ((javax.swing.JTextField)view.databaseEngine.getEditor().getEditorComponent()).getText(),
 					identifier = view.databaseIdentifier.getText(),
 					alias = view.databaseAlias.getText();
-				boolean leaveEmpty = view.leaveEmpty.isSelected();
 				int port = -1;
 				try { 
 					port = Integer.parseInt(view.databasePort.getText());
@@ -59,7 +58,7 @@ public class CreateDBCtrl {
 					return;
 				}
 				
-				model.setDBInfo(alias, engine, port, identifier, leaveEmpty); 
+				model.setDBInfo(alias, engine, port, identifier); 
 				authView.setVisible(true);
 			}
 		});

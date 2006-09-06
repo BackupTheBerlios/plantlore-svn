@@ -169,6 +169,9 @@ public class DBLayerException extends PlantloreException {
             	case ERROR_OTHER:
             		this.errorInfo = L10n.getString("DBLayer.Error.Other");
             		break;
+                case ERROR_CREATEDB:
+                        this.errorInfo = L10n.getString("DBLayer.Error.CreateDB");
+                        break;
             	default:
             		throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));
             	}

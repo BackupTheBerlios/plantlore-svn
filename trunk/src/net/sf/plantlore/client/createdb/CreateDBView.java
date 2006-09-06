@@ -56,7 +56,6 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         databaseIdentifier = new javax.swing.JTextField();
-        leaveEmpty = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
         databaseAlias = new javax.swing.JTextField();
         next = new javax.swing.JButton();
@@ -69,11 +68,13 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
 
         jLabel2.setText(L10n.getString("Login.DatabasePort"));
 
+        databasePort.setText("5432");
         databasePort.setToolTipText(L10n.getString("Login.DatabasePortTT"));
 
         databaseEngine.setEditable(true);
         databaseEngine.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "postgresql", "firebirdsql", "mysql", "oraclesql" }));
         databaseEngine.setToolTipText(L10n.getString("Login.DatabaseTT"));
+        databaseEngine.setEnabled(false);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -83,11 +84,11 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(jLabel1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(databaseEngine, 0, 149, Short.MAX_VALUE)
+                .add(databaseEngine, 0, 154, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel2)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                .add(databasePort, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -106,11 +107,6 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
 
         databaseIdentifier.setToolTipText(L10n.getString("Login.DatabaseIdentifierTT"));
 
-        leaveEmpty.setText(L10n.getString("CreateDB.LeaveEmpty"));
-        leaveEmpty.setToolTipText(L10n.getString("CreateDB.LeaveEmptyTT"));
-        leaveEmpty.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        leaveEmpty.setMargin(new java.awt.Insets(0, 0, 0, 0));
-
         jLabel5.setText(L10n.getString("Login.Alias"));
 
         databaseAlias.setToolTipText(L10n.getString("Login.AliasTT"));
@@ -120,19 +116,14 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel5)
-                            .add(jLabel4))
-                        .add(11, 11, 11)
-                        .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(databaseAlias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
-                            .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)))
-                    .add(jPanel2Layout.createSequentialGroup()
-                        .add(10, 10, 10)
-                        .add(leaveEmpty)))
+                    .add(jLabel5)
+                    .add(jLabel4))
+                .add(11, 11, 11)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(databaseAlias, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                    .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -145,8 +136,6 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel4)
                     .add(databaseIdentifier, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(leaveEmpty)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -208,7 +197,6 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    protected javax.swing.JCheckBox leaveEmpty;
     protected javax.swing.JButton next;
     // End of variables declaration//GEN-END:variables
     

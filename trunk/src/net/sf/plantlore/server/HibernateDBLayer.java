@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
@@ -369,10 +370,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         } else {
         	touchRecord(data);
         }
-        
         // Check whether we have sufficient rights.
         checkRights(data, operation);
-
         // Perform the Operation.
         Transaction tx = null;
 
@@ -383,7 +382,6 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         try {            
             // Begin transaction, if it is required. If not, the `tx` stays null.
             if(useOwnTransaction) tx = session.beginTransaction();
-            
             // Make changes in the database.
             switch(operation) {
                 case INSERT:
@@ -909,7 +907,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             ex.setError(ex.translateSQLState(e.getSQLState()), e.getMessage());                        
             throw ex;
         } catch (HibernateException e) {
-            this.rollbackTransaction();            
+            this.rollbackTransaction();    
             logger.fatal("Cannot commit database transaction");
             DBLayerException ex = new DBLayerException("Exception.CommitTransaction");
             ex.setError(ex.ERROR_TRANSACTION, e.getMessage());
@@ -2053,7 +2051,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }        
         try {
             Connection conn = txSession.connection();                    
-            PreparedStatement pstmt = conn.prepareStatement("CREATE USER " + this.userPrefix + name+ " WITH PASSWORD '" +password+ "' "+admin);            
+            PreparedStatement pstmt = conn.prepareStatement("CREATE USER " + this.userPrefix + name+ " WITH PASSWORD '" +password+ "' "+admin);
             pstmt.execute();
             PreparedStatement pstmtGrant = conn.prepareStatement("GRANT "+role+" TO  " + this.userPrefix + name);   
             pstmtGrant.execute();
@@ -2205,27 +2203,51 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     break;
         }
         // Check whether we are connected and obtain a session
-        checkConnection();     
-        // Read the script file from resources
-        StringBuffer sql = new StringBuffer();
-        try {
-            ClassLoader cl = HibernateDBLayer.class.getClassLoader();
-            URL sqlfile = cl.getResource(file);
-            BufferedReader in = new BufferedReader(new InputStreamReader(sqlfile.openStream()));
-            String str;
-            while ((str = in.readLine()) != null) {
-                sql.append(str);
-            }
-            in.close();
-        } catch (IOException e) {
-            // Deal with I/O Exception
-            logger.error("I/O Exception caught. Cannot read sql script from file. Details: "+e.getMessage());
-            throw new DBLayerException(L10n.getString("Error.CreateDatabase"), DBLayerException.ERROR_CREATEDB, e);
-        }
+        checkConnection();  
         // Open new session
         Session session = sessionFactory.openSession();
         // Obtain JDBC connection from session
-        Connection con = session.connection();        
+        Connection con = session.connection();                
+        // Read the script file from resources - check the existing roles first. If the roles exist, 
+        // skip this step completely
+        boolean skipRoles = false;
+        try {
+            if (scriptid == DBLayer.CREATE_USERS) {        
+                Statement st = con.createStatement();
+                st.execute("SELECT count(*) AS rolecount FROM pg_roles WHERE rolname = 'plantlore_role_admin'");
+                ResultSet rs = st.getResultSet();
+                rs.next();
+                int rolecount = rs.getInt("rolecount");
+                if (rolecount > 0) {
+                    skipRoles = true;
+                }
+            }        
+        } catch (SQLException e) {
+            // Close session
+            session.close();
+            // Deal with the exception
+            logger.error("SQLException caught while executing SQL script. Details: "+e.getMessage()+"; SQL State: "+e.getSQLState());
+            throw new DBLayerException(L10n.getString("Error.CreateDatabase"), DBLayerException.ERROR_CREATEDB, e);
+        }
+        StringBuffer sql = new StringBuffer();
+        if (!skipRoles) {
+            try {
+                ClassLoader cl = HibernateDBLayer.class.getClassLoader();
+                URL sqlfile = cl.getResource(file);
+                BufferedReader in = new BufferedReader(new InputStreamReader(sqlfile.openStream()));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    sql.append(str);
+                }
+                in.close();
+            } catch (IOException e) {
+                // Close session
+                session.close();
+                // Deal with I/O Exception
+                logger.error("I/O Exception caught. Cannot read sql script from file. Details: "+e.getMessage());
+                throw new DBLayerException(L10n.getString("Error.CreateDatabase"), DBLayerException.ERROR_CREATEDB, e);
+            }
+        }
         // In case we are creating users, add statement to create first user for accesing plantlore
         if (scriptid == DBLayer.CREATE_USERS) {
             sql.append("CREATE USER "+dbname+"_"+username+" PASSWORD '"+password+"';");
