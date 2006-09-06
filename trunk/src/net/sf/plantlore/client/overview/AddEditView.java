@@ -199,7 +199,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         basicPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.BasicData"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
         basicPanel.setMinimumSize(new java.awt.Dimension(600, 0));
         basicPanel.setPreferredSize(new java.awt.Dimension(900, 520));
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("AddEdit.LocationPanel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("AddEdit.LocationPanel")));
         jPanel5.setPreferredSize(new java.awt.Dimension(914, 500));
         quadrantLabel.setText("Quadrant:");
 
@@ -390,7 +390,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Occurrence"));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("Occurrence")));
         jPanel7.setPreferredSize(new java.awt.Dimension(914, 300));
         taxonTextArea.setColumns(20);
         taxonTextArea.setRows(5);

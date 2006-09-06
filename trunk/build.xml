@@ -77,6 +77,7 @@
                       fork="true"
                       dir="${dist.dir}">
                         <jvmarg value="-Djava.rmi.server.codebase=file://${dist.dir}/"/>
+                        <!--<jvmarg value="-Djava.rmi.server.hostname=my.ip.add.ress"/> -->
 		</java>
 	</target>
 	

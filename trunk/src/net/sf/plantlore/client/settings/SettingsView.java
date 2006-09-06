@@ -305,9 +305,7 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                         .add(45, 45, 45))))
         );
 
-        jPanel4Layout.linkSize(new java.awt.Component[] {addButton, removeButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        jPanel4Layout.linkSize(new java.awt.Component[] {downButton, upButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        jPanel4Layout.linkSize(new java.awt.Component[] {addButton, downButton, removeButton, upButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         jPanel4Layout.linkSize(new java.awt.Component[] {jScrollPane1, jScrollPane2}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
@@ -334,6 +332,8 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                         .add(removeButton)))
                 .addContainerGap())
         );
+
+        jPanel4Layout.linkSize(new java.awt.Component[] {addButton, downButton, removeButton, upButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -426,9 +426,9 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .addContainerGap()
                 .add(helpButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 367, Short.MAX_VALUE)
-                .add(cancelButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(okButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(cancelButton)
                 .addContainerGap())
             .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
         );
@@ -442,8 +442,8 @@ public class SettingsView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(helpButton)
-                    .add(okButton)
-                    .add(cancelButton))
+                    .add(cancelButton)
+                    .add(okButton))
                 .addContainerGap())
         );
         pack();

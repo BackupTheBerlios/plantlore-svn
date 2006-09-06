@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JRViewer;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 
 /**
  *
@@ -25,6 +26,8 @@ public class SchedaView extends javax.swing.JDialog {
         jrv.setPreferredSize(new Dimension(670,550));
         add(jrv, BorderLayout.CENTER);        
         pack();
+        setLocationRelativeTo(parent);
+        new DefaultEscapeKeyPressed(this);
     }
     
     /** This method is called from within the constructor to

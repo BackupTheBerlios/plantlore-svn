@@ -102,9 +102,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="helpButton" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="367" max="32767" attributes="0"/>
-              <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
               <Component id="okButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Component id="jTabbedPane1" alignment="0" pref="622" max="32767" attributes="0"/>
@@ -117,8 +117,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="helpButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -319,8 +319,8 @@
                                   <Component id="jScrollPane1" linkSize="5" min="-2" pref="156" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="addButton" linkSize="2" min="-2" pref="80" max="-2" attributes="0"/>
-                                      <Component id="removeButton" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="addButton" linkSize="8" min="-2" pref="80" max="-2" attributes="0"/>
+                                      <Component id="removeButton" linkSize="8" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="availableLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -335,8 +335,8 @@
                                   <Component id="jScrollPane2" linkSize="5" min="-2" pref="136" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="upButton" linkSize="6" min="-2" max="-2" attributes="0"/>
-                                      <Component id="downButton" linkSize="6" min="-2" max="-2" attributes="0"/>
+                                      <Component id="upButton" linkSize="8" min="-2" max="-2" attributes="0"/>
+                                      <Component id="downButton" linkSize="8" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                               </Group>
@@ -361,13 +361,13 @@
                                   </Group>
                               </Group>
                               <Group type="102" alignment="1" attributes="1">
-                                  <Component id="upButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="upButton" linkSize="7" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="downButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="downButton" linkSize="7" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-                                  <Component id="addButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="addButton" linkSize="7" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="removeButton" min="-2" max="-2" attributes="0"/>
+                                  <Component id="removeButton" linkSize="7" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>

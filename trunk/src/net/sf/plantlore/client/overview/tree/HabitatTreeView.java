@@ -9,6 +9,7 @@ package net.sf.plantlore.client.overview.tree;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JTree;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -28,6 +29,8 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
         searchMenuItem.setText(L10n.getString("Overview.Tree.SearchMenuItem"));
         refreshMenuItem.setText(L10n.getString("Overview.Tree.RefreschMenuItem"));
         deleteMenuItem.setText(L10n.getString("Overview.Tree.DeleteMenuItem"));
+        setTitle(L10n.getString("Overview.HabitatTree"));
+        new DefaultEscapeKeyPressed(this);
     }
     
     /** This method is called from within the constructor to
