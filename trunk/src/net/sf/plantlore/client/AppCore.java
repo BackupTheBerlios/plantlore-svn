@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.prefs.Preferences;
 import javax.swing.table.TableModel;
@@ -879,6 +881,7 @@ public class AppCore extends Observable
                     throw new DBLayerException("Can't create transaction. Another already running.");
                 }
                 
+                HashSet<Habitat> habitatsToCheck = new HashSet<Habitat>();
                 try {
                     Collection<Integer> toBeDeleted = getTableModel().getSelection().values();
                     setLength(toBeDeleted.size()*2); //inform about approx. length of this task
@@ -890,7 +893,8 @@ public class AppCore extends Observable
                         logger.debug("Deleting occurrence id "+i);
                         occ.setDeleted(1);
                         database.executeUpdateInTransaction(occ);
-                        dlu.deleteHabitatInTransaction(occ.getHabitat());
+                        //dlu.deleteHabitatInTransaction(occ.getHabitat());
+                        habitatsToCheck.add(occ.getHabitat());
                         logger.debug("Occurrence id "+occ.getId()+" "+occ.getPlant().getTaxon()+" deleted.");
                         setPosition(getPosition()+1);
 
@@ -911,6 +915,13 @@ public class AppCore extends Observable
                 }
                 
                 database.commitTransaction();
+                
+                Iterator<Habitat> it = habitatsToCheck.iterator();
+                while (it.hasNext()) {
+                    Habitat h = it.next();
+                    dlu.deleteHabitat(h);
+                }
+                
                 getTableModel().clearSelection();
                 fireStopped(null);
                 return null;

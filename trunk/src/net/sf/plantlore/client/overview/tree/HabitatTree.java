@@ -105,6 +105,7 @@ public class HabitatTree extends Observable {
     public int getPhythochoriaCount(Territory t) throws RemoteException, DBLayerException {
         SelectQuery query = dblayer.createQuery(Habitat.class);
         query.addRestriction(PlantloreConstants.RESTR_EQ,Habitat.TERRITORY,null,t,null);
+        query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.DELETED, null, 0, null);        
         query.addProjection(PlantloreConstants.PROJ_COUNT_DISTINCT,Habitat.PHYTOCHORION);
         int resultid = dblayer.executeQuery(query);
         int rowCount = dblayer.getNumRows(resultid);
@@ -135,6 +136,7 @@ public class HabitatTree extends Observable {
     protected void addPhythochoria(DefaultMutableTreeNode territoryNode, Territory t) throws DBLayerException, RemoteException {
         SelectQuery query = dblayer.createQuery(Habitat.class);
         query.addRestriction(PlantloreConstants.RESTR_EQ,Habitat.TERRITORY,null,t,null);
+        query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.DELETED, null, 0, null);
         query.addProjection(PlantloreConstants.PROJ_DISTINCT,Habitat.PHYTOCHORION);
         int resultid = dblayer.executeQuery(query);
         int rowCount = dblayer.getNumRows(resultid);
@@ -168,6 +170,7 @@ public class HabitatTree extends Observable {
         
         SelectQuery query = dblayer.createQuery(Habitat.class);
         query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.PHYTOCHORION, null, dlu.getObjectFor(phytochorionId, Phytochorion.class),null);
+        query.addRestriction(PlantloreConstants.RESTR_EQ, Habitat.DELETED, null, 0, null);
         query.addProjection(PlantloreConstants.PROJ_PROPERTY, Habitat.ID);
         query.addProjection(PlantloreConstants.PROJ_PROPERTY, Habitat.DESCRIPTION);
         query.addProjection(PlantloreConstants.PROJ_PROPERTY, Habitat.NEARESTVILLAGE);
@@ -175,14 +178,17 @@ public class HabitatTree extends Observable {
 
         int resultid = dblayer.executeQuery(query);
         int rowCount = dblayer.getNumRows(resultid);
-                
+        if (rowCount == 0)
+            return;
+        
         Object[] records = dblayer.more(resultid, 0, rowCount - 1);
         dblayer.closeQuery(query);
         DefaultMutableTreeNode node;
         for (Object record : records) {
             Object[] obj = (Object[])record;
             String name = ((NearestVillage)obj[2]).getName() + " - " + obj[1] + " (quadrant " + obj[3] + ")";
-            name = "("+getOccurrenceCount((Integer)obj[0])+") "+name;
+            Integer count = getOccurrenceCount((Integer)obj[0]);
+            name = "("+count+") "+name;
             node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.HABITAT,name,(Integer)obj[0],-1));
             treeModel.insertNodeInto(node, phytNode,0);
             //phytNode.add(node);
@@ -206,6 +212,17 @@ public class HabitatTree extends Observable {
         }
     }
     
+    /** Notifies observers about a requirement to delete a node.
+     *
+     * Sends the <code>NodeInfo</code> object of the selected node to the observer.
+     */
+    public void delete() {
+        if (selectedNode != null) {
+            setChanged();
+            notifyObservers(new Pair<String,NodeInfo>("DELETE",(NodeInfo)selectedNode.getUserObject()));
+        }        
+    }
+    
     /** Reloads the whole tree.
      *
      * Removes all children of the <code>rootNode</code> and then calls <code>loadData()</code>
@@ -213,6 +230,7 @@ public class HabitatTree extends Observable {
      */
     public Task reload() {
         rootNode.removeAllChildren();
+        treeModel.nodeStructureChanged(rootNode);
         return loadData();
     }
     

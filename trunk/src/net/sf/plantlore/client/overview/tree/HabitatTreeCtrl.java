@@ -56,6 +56,7 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
         view.refreshButton.setAction(new RefreshAction());
         view.refreshMenuItem.setAction(new RefreshItemAction());
         view.addMenuItem.setAction(new AddItemAction());
+        //view.deleteMenuItem.setAction(new DeleteItemAction()); ... it would cause problems to history
     }
 
     /** Expansion event handler.
@@ -188,6 +189,18 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
             }
     }//SearchAction
    
+    class DeleteItemAction extends AbstractAction {
+            public DeleteItemAction() {
+                    putValue(NAME, L10n.getString("Overview.Tree.Delete"));
+//                    putValue(SMALL_ICON, Resource.createIcon("/toolbarButtonGraphics/general/Search24.gif"));
+                    putValue(SHORT_DESCRIPTION, L10n.getString("Overview.Tree.DeleteTT"));
+            }
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                model.delete();
+            }
+    }//SearchAction
+   
     class RefreshItemAction extends AbstractAction {
             public RefreshItemAction() {
                     putValue(NAME, L10n.getString("Overview.Tree.Refresh"));
@@ -196,11 +209,8 @@ public class HabitatTreeCtrl implements TreeExpansionListener, TreeSelectionList
             }
 
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    model.reload();
-                } catch (Exception ex) {
-                    DefaultExceptionHandler.handle(view,ex);
-                }
+                    Task task = model.reload();
+                    Dispatcher.getDispatcher().dispatch(task, view, false);
             }
     }//RefreshAction
     

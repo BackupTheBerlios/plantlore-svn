@@ -7,6 +7,8 @@
 package net.sf.plantlore.client;
 
 import java.io.File;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import net.sf.plantlore.l10n.L10n;
 
 /**
@@ -25,7 +27,7 @@ public class AboutView extends javax.swing.JDialog {
     
     private void loadData() {
         String os = System.getProperty("os.name");
-        String plantloreDir = (os.equals("linux") ? "." : "") + Plantlore.PLANTLORE;
+        String plantloreDir = (os.equals("Linux") ? "." : "") + Plantlore.PLANTLORE;
         configDirLabel.setText(configDirLabel.getText()+System.getProperty("user.home")+File.separator+plantloreDir);
         osLabel.setText(osLabel.getText()+System.getProperty("os.name"));
         userDirLabel.setText(userDirLabel.getText()+System.getProperty("user.home"));
@@ -42,6 +44,7 @@ public class AboutView extends javax.swing.JDialog {
     private void initComponents() {
         aboutTabbedPane = new javax.swing.JTabbedPane();
         aboutTab = new javax.swing.JPanel();
+        aboutLabel = new JLabel(new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(AppCoreView.class.getResource("resources/splash_new.jpg"))));
         detailTab = new javax.swing.JPanel();
         versionLabel = new javax.swing.JLabel();
         osLabel = new javax.swing.JLabel();
@@ -57,18 +60,22 @@ public class AboutView extends javax.swing.JDialog {
         setTitle(L10n.getString("Overview.About.About"));
         setResizable(false);
         aboutTab.setName(L10n.getString("Overview.About.About"));
+        aboutLabel.getAccessibleContext().setAccessibleName("Plantlore 1.0");
+
         org.jdesktop.layout.GroupLayout aboutTabLayout = new org.jdesktop.layout.GroupLayout(aboutTab);
         aboutTab.setLayout(aboutTabLayout);
         aboutTabLayout.setHorizontalGroup(
             aboutTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 377, Short.MAX_VALUE)
+            .add(aboutLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
         );
         aboutTabLayout.setVerticalGroup(
             aboutTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 250, Short.MAX_VALUE)
+            .add(aboutLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
         );
         aboutTabbedPane.addTab(L10n.getString("Overview.About.About"), aboutTab);
 
+        detailTab.setBackground(new java.awt.Color(255, 255, 255));
+        detailTab.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         detailTab.setName(L10n.getString("Overview.About.Detail"));
         versionLabel.setText(L10n.getString("Overview.About.Version"));
 
@@ -95,34 +102,24 @@ public class AboutView extends javax.swing.JDialog {
         detailTabLayout.setHorizontalGroup(
             detailTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(detailTabLayout.createSequentialGroup()
+                .addContainerGap()
                 .add(detailTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(detailTabLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(versionLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))
-                    .add(detailTabLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(osLabel))
-                    .add(detailTabLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(javaLabel))
-                    .add(detailTabLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(userDirLabel))
-                    .add(detailTabLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(configDirLabel))
-                    .add(detailTabLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(authorsLabel)))
-                .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, detailTabLayout.createSequentialGroup()
-                .addContainerGap(75, Short.MAX_VALUE)
-                .add(detailTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(erikLabel)
-                    .add(ladaLabel)
-                    .add(kovoLabel)
-                    .add(jakubLabel))
-                .add(29, 29, 29))
+                        .add(detailTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(versionLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                            .add(osLabel)
+                            .add(javaLabel)
+                            .add(userDirLabel)
+                            .add(configDirLabel)
+                            .add(authorsLabel))
+                        .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, detailTabLayout.createSequentialGroup()
+                        .add(detailTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(erikLabel)
+                            .add(ladaLabel)
+                            .add(kovoLabel)
+                            .add(jakubLabel))
+                        .add(29, 29, 29))))
         );
         detailTabLayout.setVerticalGroup(
             detailTabLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -147,7 +144,7 @@ public class AboutView extends javax.swing.JDialog {
                 .add(kovoLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jakubLabel)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         aboutTabbedPane.addTab(L10n.getString("Overview.About.Detail"), detailTab);
 
@@ -176,6 +173,7 @@ public class AboutView extends javax.swing.JDialog {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel aboutLabel;
     private javax.swing.JPanel aboutTab;
     private javax.swing.JTabbedPane aboutTabbedPane;
     private javax.swing.JLabel authorsLabel;

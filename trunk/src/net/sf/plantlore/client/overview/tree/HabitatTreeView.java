@@ -27,6 +27,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
         setLocationRelativeTo(parent);
         searchMenuItem.setText(L10n.getString("Overview.Tree.SearchMenuItem"));
         refreshMenuItem.setText(L10n.getString("Overview.Tree.RefreschMenuItem"));
+        deleteMenuItem.setText(L10n.getString("Overview.Tree.DeleteMenuItem"));
     }
     
     /** This method is called from within the constructor to
@@ -40,6 +41,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
         searchMenuItem = new javax.swing.JMenuItem();
         refreshMenuItem = new javax.swing.JMenuItem();
         addMenuItem = new javax.swing.JMenuItem();
+        deleteMenuItem = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         habitatTree = new JTree(model.getTreeModel());
         jPanel1 = new javax.swing.JPanel();
@@ -54,6 +56,8 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
 
         addMenuItem.setText("Item");
         popupMenu.add(addMenuItem);
+
+        deleteMenuItem.setText("Item");
 
         jScrollPane1.setViewportView(habitatTree);
 
@@ -115,6 +119,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JMenuItem addMenuItem;
+    protected javax.swing.JMenuItem deleteMenuItem;
     protected javax.swing.JTree habitatTree;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

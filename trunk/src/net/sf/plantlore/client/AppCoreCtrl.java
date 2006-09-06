@@ -1050,6 +1050,21 @@ public class AppCoreCtrl {
                         addView.loadComponentData();
                         addView.setVisible(true);   
                     }//if ADD
+                    if (message.equals("DELETE")) {
+                        switch (nodeInfo.getType()) {
+                            case HABITAT:
+                                System.out.println("=== DELETE "+nodeInfo.getChildCount());
+                                if (nodeInfo.getChildCount() > 0) {
+                                    JOptionPane.showMessageDialog(view,
+                                            L10n.getString("Overview.Tree.ContainsOccurrencesCantDelete"),
+                                            L10n.getString("Overview.Tree.ContainsOccurrencesCantDelete"),
+                                            JOptionPane.INFORMATION_MESSAGE);
+                                    return;
+                                }
+                                break;
+                        }//switch
+                        
+                    }//if DELETE
                 }//if
             }//update
         }//class HabitatTreeBridge

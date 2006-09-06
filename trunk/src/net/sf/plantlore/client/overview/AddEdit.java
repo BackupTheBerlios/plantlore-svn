@@ -1018,7 +1018,8 @@ public class AddEdit extends Observable {
                                 logger.debug("AppCore.deleteSelected(): Can't create transaction. Another is probably already running.");
                                 throw new DBLayerException("Can't create transaction. Another already running.");
                             }
-
+                            Habitat habitatToCheck = null;
+                            
                             prepareOccurrenceUpdate(updateAllPlants);
                             if (originalTaxonSurvived) {
                                 // update original occurrence
@@ -1030,7 +1031,7 @@ public class AddEdit extends Observable {
                                 logger.info("Deleting original occurrence and associated author occurrences");
                                 o.setDeleted(1);
                                 database.executeUpdateInTransaction(o);
-                                dlu.deleteHabitatInTransaction(o.getHabitat());
+                                habitatToCheck = o.getHabitat(); //we'll maybe have to delete this habitat
                                 logger.debug("Occurrence id "+o.getId()+" "+o.getPlant().getTaxon()+" deleted.");
                                 Set<Map.Entry<Integer,AuthorOccurrence>> aoSet = authorOccurrences.entrySet();
                                 Iterator it = aoSet.iterator();
@@ -1153,6 +1154,8 @@ public class AddEdit extends Observable {
                                 }
 
                             database.commitTransaction();
+                            if (habitatToCheck != null)
+                                dlu.deleteHabitat(habitatToCheck);
                             occurrenceTableModel.reload();
                             newOccurrenceInserted = false;
 

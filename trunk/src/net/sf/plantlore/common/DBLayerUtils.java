@@ -208,11 +208,20 @@ public class DBLayerUtils {
      *
      */
     public void deleteHabitat(Habitat h) throws DBLayerException, RemoteException {
+        if (h == null)
+            return;
         SelectQuery sq = db.createQuery(Occurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Deletable.DELETED, null, 0, null);
-        int resultid = db.executeQuery(sq);
-        int resultCount = db.getNumRows(resultid);
+        int resultid;
+        int resultCount;
+        try {
+            resultid = db.executeQuery(sq);
+            resultCount = db.getNumRows(resultid);
+        } catch (DBLayerException ex) {
+            db.closeQuery(sq);
+            throw ex;
+        }
         if (resultCount == 0) {
             logger.info("Deleting habitat id="+h.getId()+" with nearest village "+h.getNearestVillage().getName());
             h.setDeleted(1);
@@ -229,6 +238,8 @@ public class DBLayerUtils {
      *
      */
     public void deleteHabitatInTransaction(Habitat h) throws DBLayerException, RemoteException {
+        if (h == null)
+            return;
         SelectQuery sq = db.createQuery(Occurrence.class);        
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Occurrence.HABITAT,null,h,null);
         sq.addRestriction(PlantloreConstants.RESTR_EQ,Deletable.DELETED, null, 0, null);

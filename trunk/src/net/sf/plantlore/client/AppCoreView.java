@@ -68,6 +68,7 @@ public class AppCoreView extends javax.swing.JFrame implements Observer {
         model.addObserver(sbm);
         progressBar.setVisible(false);
         progressBar.setBorderPainted(false);
+        setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(AppCoreView.class.getResource("resources/icon.gif")));
     }
 
     /** This method is called from within the constructor to

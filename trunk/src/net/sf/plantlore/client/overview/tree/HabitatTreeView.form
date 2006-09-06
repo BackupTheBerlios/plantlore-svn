@@ -33,6 +33,14 @@
         </MenuItem>
       </SubComponents>
     </Menu>
+    <MenuItem class="javax.swing.JMenuItem" name="deleteMenuItem">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Item"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+    </MenuItem>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>

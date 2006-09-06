@@ -144,7 +144,7 @@ public class Plantlore {
             }
             
             logger.info("Constructing AppCore MVC");
-            splashScreen = new SplashScreen("resources/splashscreen.gif");
+            splashScreen = new SplashScreen("resources/splash_new.jpg");
             splashScreen.splash();
             model = new AppCore(mainConfig);
             view = new AppCoreView(model);
