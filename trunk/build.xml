@@ -62,6 +62,7 @@
 		<rmic classname="net.sf.plantlore.server.SubQueryImplementation" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
 		<rmic classname="net.sf.plantlore.server.RMIServerControl" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
 		<rmic classname="net.sf.plantlore.server.RMIServer" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/>
+		<rmic classname="net.sf.plantlore.server.RMIRemoteDBLayerFactory" base="${build.dir}" classpathref="classpath.server.rmic" debug="${DEBUG}"/> 
 	</target>
 	
 	<!-- clean the build directory -->
@@ -85,7 +86,6 @@
                       fork="true"
                       dir="${dist.dir}">
                         <jvmarg value="-Djava.security.policy=${dist.dir}/java.policy"/>
-                        <jvmarg value="-Djava.rmi.server.codebase=file://${dist.dir}/"/>
 		</java>
 	</target>
         
