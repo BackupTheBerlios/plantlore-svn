@@ -1,9 +1,3 @@
-/*
- * Selectcriteria.java
- *
- * Created on 24. březen 2006, 20:53
- *
- */
 
 package net.sf.plantlore.server;
 
@@ -323,7 +317,6 @@ public class SelectQueryImplementation implements SelectQuery {
         }
         for (Iterator projIter = projections.iterator(); projIter.hasNext(); ) {
             ArrayList proj = (ArrayList)projIter.next();
-            System.out.println("Processing projection for: "+proj.get(1));
             switch ((Integer)proj.get(0)) {
                 case PlantloreConstants.PROJ_AVG:
                     pList.add(Projections.avg((String)proj.get(1)));

@@ -308,9 +308,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (!sr.next()) {
             // No records in the database, set the first unitvalue to 1
             return 1;
-        }
+        }        
         Object[] result = sr.get();
-        sess.close();
+        sess.close();        
+        // There is no occurrence in the database so far. Why the hell is result[0] null?
+        if ((result != null) && (result[0] == null)) {
+            return 1;
+        }
         int maxUnitValue = (Integer)result[0];
         maxUnitValue++;
         return maxUnitValue;
