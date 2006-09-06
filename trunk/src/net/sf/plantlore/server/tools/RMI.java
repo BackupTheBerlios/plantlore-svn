@@ -97,10 +97,22 @@ public class RMI {
 			InetAddress address = InetAddress.getLocalHost();
 			String ip = address.getHostAddress();
 			if( "127.0.0.1".equals(ip) ) {
-				logger.warn("Java on Linux!");
 				String name = address.getHostName();
+				logger.warn("Java on Linux! The name of this damn machine is " + name);
 				address = InetAddress.getByName(name);
-				ip = address.getHostAddress();				
+				ip = address.getHostAddress();
+				if( "127.0.0.1".equals(ip) ) {
+					logger.warn("I'm getting a little desperate here!");
+					InetAddress[] addresses = InetAddress.getAllByName(name);
+					for(InetAddress inetAddress : addresses) {
+						ip = inetAddress.getHostAddress();
+						if( !"127.0.0.1".equals(ip) )
+							break;
+					}
+					if(  "127.0.0.1".equals(ip) )
+						logger.fatal("Unable to obtain the host ip! Remote connections may not be possible! Please specify it yourself by adding java -Djava.rmi.server.hostname=YourIP");
+
+				}
 			}
 			System.setProperty(PROPERTY_HOSTNAME, ip);
 			logger.info("Hostname set to " + ip);
