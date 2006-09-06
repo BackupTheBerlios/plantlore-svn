@@ -6,6 +6,7 @@
 
 package net.sf.plantlore.client.overview.detail;
 
+import java.awt.Color;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +35,8 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         
         new DefaultEscapeKeyPressed(this);
         setLocationRelativeTo(parent);
+        setTitle(L10n.getString("Overview.DetailTitle"));
+        jScrollPane1.getViewport().setBackground(Color.WHITE);
     }
     
     /** This method is called from within the constructor to
@@ -44,10 +47,12 @@ public class DetailView extends javax.swing.JDialog implements Observer {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        authorTable = new javax.swing.JTable();
+        sourceLabel = new javax.swing.JLabel();
         taxonLabel = new javax.swing.JLabel();
         projectLabel = new javax.swing.JLabel();
+        herbariumLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        authorTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         territoryLabel = new javax.swing.JLabel();
@@ -69,8 +74,6 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         occAreaLabel = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         occNoteArea = new javax.swing.JTextArea();
-        herbariumLabel = new javax.swing.JLabel();
-        sourceLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         nextButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -81,15 +84,46 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         prevButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(javax.swing.UIManager.getDefaults().getColor("Button.background"));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        sourceLabel.setText("jLabel1");
+
+        taxonLabel.setText("jLabel1");
+
+        projectLabel.setText("jLabel1");
+
+        herbariumLabel.setText("jLabel1");
+
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 0, Short.MAX_VALUE)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(taxonLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 543, Short.MAX_VALUE)
+                        .add(projectLabel))
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(sourceLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 543, Short.MAX_VALUE)
+                        .add(herbariumLabel)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 0, Short.MAX_VALUE)
+            .add(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(taxonLabel)
+                    .add(projectLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(sourceLabel)
+                    .add(herbariumLabel))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         authorTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -102,11 +136,9 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         ));
         jScrollPane1.setViewportView(authorTable);
 
-        taxonLabel.setText("jLabel1");
-
-        projectLabel.setText("jLabel1");
-
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         territoryLabel.setText("jLabel1");
 
         quadrantLabel.setText("jLabel1");
@@ -141,7 +173,7 @@ public class DetailView extends javax.swing.JDialog implements Observer {
                     .add(quadrantLabel)
                     .add(phytLabel)
                     .add(villageLabel))
-                .addContainerGap(323, Short.MAX_VALUE))
+                .addContainerGap(313, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -215,7 +247,7 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(22, Short.MAX_VALUE)
                 .add(descAreaLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -250,10 +282,6 @@ public class DetailView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        herbariumLabel.setText("jLabel1");
-
-        sourceLabel.setText("jLabel1");
-
         nextButton.setText("jButton2");
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
@@ -269,6 +297,7 @@ public class DetailView extends javax.swing.JDialog implements Observer {
             .add(nextButton)
         );
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         createdWhoLabel.setText("jLabel1");
 
@@ -315,41 +344,25 @@ public class DetailView extends javax.swing.JDialog implements Observer {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(layout.createSequentialGroup()
-                        .add(taxonLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 577, Short.MAX_VALUE)
-                        .add(projectLabel))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(sourceLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 577, Short.MAX_VALUE)
-                        .add(herbariumLabel))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+                    .add(jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(prevButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(taxonLabel)
-                        .add(projectLabel)))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(herbariumLabel)
-                    .add(sourceLabel))
-                .add(14, 14, 14)
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
