@@ -196,6 +196,7 @@ private Logger logger = Logger.getLogger(getClass().getPackage().getName());
 
 			build.footer();
 			logger.info("Export completed. " + count + " records sent to output. ");
+			setStatusMessage(count + " " + L10n.getString("Export.RecordsExported"));
 			cleanup();
 		}
 		catch(Exception e) {
