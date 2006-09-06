@@ -3,43 +3,72 @@
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
-    <title>Import dat</title>
+    <title>Úprava dat</title>
   </head>
   <body>
-  <h1>Import dat do tabulek</h1>
+  <h1>Úprava dat v tabulkách</h1>
+
+
+
 	<p>
-	Import dat do tabulek je určen pouze pro administrátory databáze a slouží k aktualizaci (především k opravě)
+	Úprava dat v tabulkách je určena výhradně pro administrátory databáze a slouží k aktualizaci 
 	dat v následujících tabulkách: 
 	Rostliny (Plants), Metadata, Fytochoriony, Teritoria a Nejbližší větší sídla (Villages).
 	</p>
 
 	<p>
-	Předpokládá se, že Plantlore bude dodáván se seznamem rostlin, Fytochorionů, Teritorií a
-	Nejbližších větších sídel; záznamy obsažené v těchto tabulkách mohou vznikat, zanikat, 
-	nebo obsahovat chyby. Jejich úpravu lze zajistit naimportováním speciálního souboru.
-	</p>
-
-
-	<h2>1. Vlastní import dat do tabulek</h2>
-
-	<p>
-	Import začíná výběrem souboru, v němž jsou uložena data.
-	Formát souboru je speciální a je popsán níže.
+	Jedná se o tabulky, které obsahují data, 
+	jež musí být udržována jednotná napříč všemi databázemi, a tedy o jejich aktualizaci
+	by měla pečovat zodpovědná osoba. Nálezová data, která obsahují záznamy s neplatnými údaji 
+	v těchto tabulkách, není možné importovat z důvodu ochrany kvality nálezových dat.
+	Není např. možné při <a href="./import.html">Importu nálezových dat</a> vložit záznam
+	obsahující neplatné (tj. v tabulce Plants neexistující) rostliny.
 	</p>
 
 	<p>
-	Po výběru souboru je zobrazeno okno zobrazující průběh procesu importování dat. 
-	Import lze přerušit stiskem tlačítka <i>Storno</i>. 
-	Přerušíte-li Import, nálezová data, která se stihla naimportovat, v databázi zůstanou.
+	Plantlore je dodávána se seznamem rostlin, fytochorionů, teritorií a
+	nejbližších větších sídel, která se nachází na území České republiky; 
+	záznamy obsažené v těchto tabulkách mohou vznikat, zanikat, 
+	nebo obsahovat chyby. Jejich úpravu lze zajistit importováním speciálního souboru.
 	</p>
 
 
-	<h2>2. Formát souboru pro import dat do tabulek - pro Administrátory databáze</h2>
+
+	<h2>Obsah</h2>
+
+	<p>
+	<ol>
+		<li>Úprava dat v tabulkách</li>
+		<li>Detailní popis formátu aktualizačního souboru</li>
+		<li>Ukázky rozdílových souborů</li>
+		<li>Omezení při úpravě tabulek</li>
+	</ol>
+	</p>
+
+
+	<h2>1. Úprava dat v tabulkách</h2>
+
+	<p>
+	Operace začíná výběrem souboru, v němž jsou uložena data s opravami.
+	</p>
+
+	<p>
+	Po výběru souboru je zahájena úprava dat v tabulce. 
+	Průběh procesu můžete sledovat v otevřeném okně.
+	Úpravu dat lze zrušit stiskem tlačítka "Storno". 
+	Přerušíte-li úpravu, provedené změny v databázi zůstanou.
+	Opakované provedení těchtýž úprav nemá žádný efekt.
+	</p>
+
+
+
+
+	<h2>2. Formát souboru pro úpravu tabulek</h2>
 
 	<p>
 	Formát souboru dovoluje přidávání nových záznamů, odmazávání původních záznamů v tabulkách
 	a aktualizaci stávajících záznamů. Základem je XML strom obsahující na tři větve - ADD, DELETE
-	a UPDATE. Kořen stromu určuje tabulku, do která budou data náležet.
+	a UPDATE. Kořen stromu určuje tabulku, do které budou data náležet.
 	</p>
 
 
@@ -52,7 +81,7 @@
  			<td>plants</td><td>plant (rostliny)</td>
 		</tr>
 		<tr>
-			<td>villages</td><td>village (nejbližší větší sídla)</td>
+			<td>villages</td><td>nearestvillage (nejbližší větší sídla)</td>
 		</tr>
 		<tr>
 			<td>phytochoria</td><td>phytochorion (fytochoriony)</td>
@@ -75,23 +104,23 @@
 	<pre>
 	&lt;plants&gt;
 
-	  &lt;add&gt;
+	  &lt;<b>add</b>&gt;
 		&lt;plant&gt;&lt;/plant&gt;
 		&lt;plant&gt;&lt;/plant&gt;
 		...
-	  &lt;/add&gt;
+	  &lt;<b>/add</b>&gt;
 
-	  &lt;delete&gt;
+	  &lt;<b>delete</b>&gt;
 		&lt;plant&gt;&lt;/plant&gt;
 		&lt;plant&gt;&lt;/plant&gt;
 		...
-	  &lt;/delete&gt;
+	  &lt;<b>/delete</b>&gt;
 
-	  &lt;update&gt;	  
+	  &lt;<b>update</b>&gt;	  
 		&lt;plant&gt;&lt;/plant&gt;
 		&lt;plant&gt;&lt;/plant&gt;
 		...
-	  &lt;/update&gt;
+	  &lt;<b>/update</b>&gt;
 
 	&lt;/plants&gt;
 	</pre>
@@ -159,8 +188,13 @@
 
 	<p>
 	Větev UPDATE obsahuje dvojice po sobě jdoucích záznamů - <i>originál</i> a <i>náhradu</i>. 
+
+	Pokud <i>originál</i> v tabulce je, ale <i>náhrada</i> nikoli, je <i>originál</i> upraven tak,
+	aby odpovídal <i>náhradě</i>.
+
 	Pokud se originál v tabulce nenachází,
 	provede se s <i>náhradou</i> operace vložení (jako kdyby byla ve větvi ADD).
+
 	Pokud už se <i>náhrada</i> v databázi nalézá, 
 	provede se s <i>originálem</i> operace smazání (jako kdyby byl umístěn ve větvi DELETE).
 	</p>
@@ -176,7 +210,7 @@
 		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
 		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
 		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
-		  &lt;surveytaxid&gt;<font color=RED>ARVACoacg</font>&lt;/surveytaxid&gt;
+		  &lt;surveytaxid&gt;<font color=RED>Aoacg</font>&lt;/surveytaxid&gt;
 		&lt;/plant&gt;
 		&lt;plant&gt;
 		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
@@ -194,23 +228,59 @@
 
 
 
-
-
-	<h2>3. Omezení, která je nutno zvážit při Importu do tabulek</h2>
+	<h2>3. Ukázky rozdílových souborů pro různé tabulky</h2>
 
 	<p>
-	Import do zmiňovaných tabulek je výsadou administrátora databáze. Jedná se o data, 
-	která musí být udržována jednotná napříč všemi databázemi, a tedy o jejich aktualizaci
-	by měla pečovat zodpovědná osoba. Nálezová data, která obsahují záznamy s neplatnými údaji 
-	v těchto tabulkách, není možné naimportovat z důvodu ochrany kvality nálezových dat.
-	Není např. možné při <a href="./import.html">Importu nálezových dat</a> vložit záznam
-	obsahující neplatné (tj. v tabulce Plants neexistující) jméno rostliny.
+	Přidání nového nejbližšího většího sídla.
+	<pre>
+	&lt;villages&gt;
+	  &lt;add&gt;
+	    &lt;nearestvillage&gt;
+	      &lt;name&gt;Newcastle&lt;/name&gt;
+	    &lt;/nearestvillage&gt;
+	  &lt;add&gt;
+	&lt;villages&gt;
+	</pre>
 	</p>
 
 	<p>
-	Import do tabulek je primárně navržen pro práci s malými rozdílovými seznamy
-	(obsahující řádově tisíce záznamů). Větší soubory mohou mít neúnosné paměťové
+	Přidání nového teritoria.
+	<pre>
+	&lt;territories&gt;
+	  &lt;add&gt;
+	    &lt;territory&gt;
+	      &lt;name&gt;Niederösterreich&lt;/name&gt;
+	    &lt;/territory&gt;
+	   &lt;/add&gt;
+	  &lt;/add&gt;
+	&lt;territories&gt;
+	</pre>
+	</p>
+
+
+	<p>
+	Přidání nového fytochorionu.
+	<pre>
+	&lt;phytochoria&gt;
+	  &lt;add&gt;
+	    &lt;phytochorion&gt;
+	      &lt;code&gt;25b&lt;/code&gt;
+	      &lt;name&gt;Libouchecká plošina&lt;/name&gt;
+	    &lt;/phytochorion&gt;
+	   &lt;/add&gt;
+	&lt;/phytochoria&gt;
+	</pre>
+	</p>
+
+
+
+	<h2>4. Omezení při úpravě tabulek</h2>
+
+	<p>
+	Úprava dat v tabulkách je primárně navržena pro práci s malými rozdílovými seznamy
+	obsahující řádově stovky až tisíce záznamů. Větší soubory mohou mít neúnosné paměťové
 	nároky.
 	</p>  
+
   </body>
 </html>

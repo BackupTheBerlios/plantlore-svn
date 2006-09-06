@@ -6,74 +6,85 @@
     <title>Škrták</title>
   </head>
   <body>
-  <h1>Škrtací seznam</h1>
+
+	<h1>Škrtací seznam</h1>
+
 	<p>
-	Škrtací seznam představuje uživatelsky pohodlný způsob vkládání názvů rostlin.
-	Hned po spuštění obsahuje názvy všech rostlin tak, jak jsou uloženy v databázi.
+	Škrtací seznam, zkráceně Škrták, usnadňuje vkládání rostlin nalezených na určité lokalitě -
+	ze seznamu rostlin se zaškrtnutím vyberou ty, které byly nalezeny.
+	Je přístupný při <a href="./addoccurrence.html">vkládání nálezových dat</a>.
 	</p>
 
 
-	<div style="position: relative; left: 30; top: 10;"><br>
+	<h2>Obsah</h2>
+
+	<p>
+	<ol>
+		<li>Práce se Škrtákem</li>
+		<li>Vytváření a načítání vlastního škrtacího seznamu</li>
+	</ol>
+	</p>
+
+
+	<h2>1. Práce se Škrtacím seznamem</h2>
+
+	<p>
+	Po otevření Škrták obsahuje seznam všech rostlin, které jsou v databázi dostupné.
+	Těch může být i několik tisíc.
+	Ve Škrtáku se pohybujete pomocí šipek nahoru a dolů a šipek doleva a doprava.
+	Napíšete-li dostatečně rychle po sobě počáteční písmena názvu rostliny,
+	Škrták se přesune na první vyhovující záznam.
+	Například rychle po sobě stisknutá písmena Z, E, L, K povedou na
+	"Zelkova serrata (Thunb.) Makino". 
+	Na velikosti písmen nezáleží.
+	Nejdelší prodleva mezi jednotlivými znaky je 1 sekunda;
+	poté je další znak chápán jako vyhledávání jiné rostliny.
+	</p>
+
+	<p>
+	Označení a zrušení označení záznamu provedete klinutím levého tlačíka myši nebo mezerníkem.
+	Zrušení označení všech záznamů provedete stiskem tlačítka "Odznačit vše".
+	</p>
+
+	<p>
 	<img src="picture/ChecklistDefault.jpg" alt="Škrták po otevření.">
-	</div>
-
-	<p>
-	Jelikož se v databázi může nacházet několik tisíc rostlin, práce se škrtákem by mohla být
-	nepříjemná. Proto je možné se ve škrtáku pohybovat pomocí šipek nahoru i dolů a šipek
-	doleva a doprava. Pro větší pohodlí je možné zadat i počáteční písmena záznamu - 
-	škrták zobrazí první vyhovující název. Napíšete-li kupříkladu rychle po sobě písmena "ZELK",
-	škrták přejde na záznam "Zelkova serrata (Thunb.) Makino". Na velikosti písmen nezáleží.
-	</p>
-
-
-	<p>
-	Výběr záznamu lze provádět klinutím levého tlačíka myši nebo mezerníkem. 
-	Odznačení záznamu se provádí stejně.
-	</p>
-
-
-	<h2>Vlastní škrtací seznam</h2>
-
-	<p>
-	Pro ještě větší pohodlí je možné vytvořit si ze seznamu rostlin vlastní škrták.
-	Vyberte ze základního seznamu všechny záznamy, ze kterých se má vytvořit nový škrták
-	a klikněte na "Vytvořit". 
-	</p>
-
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/ChecklistCreate.jpg" alt="Vytváření škrtáku.">
-	</div>
-
-	<p>
-	Vytvořený škrták si můžete uložit pod zvoleným jménem a příště jej pomocí tlačítka
-	"Nahrát" můžete rovnou využít.
 	</p>
 
 	<p>
-	Škrtací seznam může vypadat nějak takto:
+	Stiskem tlačítka "Vložit" vložíte označené rostliny do dialogu pro přidávání nálezových dat.
 	</p>
 
 
-	<div style="position: relative; left: 30; top: 10"><br>
-	<img src="picture/ChecklistUsage.jpg" alt="Nový škrták.">
-	</div>
+
+	<h2>2. Vytváření a načítání vlastního Škrtacího seznamu</h2>
+
+	<p>
+	Pokud vám seznam všech dostupných rostlin přijde příliš obsáhlý, neboť na vámi
+	mapované lokalitě roste řádově jen několik stovek druhů, vytvořte si vlastní Škrtací seznam,
+	který bude obsahovat jména těch rostlin, které považujete za nutné.
+	</p>
+
+	<p>
+	Označte názvy všech rostlin, které chcete ve výsledném Škrtáku mít, a stiskněte tlačítko
+	"Vytvořit". Uložte Škrták do souboru, ze kterého jej budete moci příště nahrát tlačítkem "Nahrát".
+	</p>
+	
+	<p>
+	Vlastní Škrtací seznam může vypadat třeba takto:
+	</p>
+
+	<p>
+	<img src="picture/ChecklistUsage.jpg" alt="Nový Škrták.">
+	</p>
 
 	
 	<p>
-	Pro odznačení všech záznamů naráz použijte tlačítko "Odznačit všechny".
-	Pro zobrazení všech jmen rostlin (jako na začátku), stiskněte tlačítko "Obnovit".
-	</p>
-
-	<p>
-	Poznámka: Tlačítka "Obnovit" a "Nahrát" nezruší vámi vybrané položky. Pokud se stane, že ve vašem
-	vlastním škrtáku není nějaká rostlina, můžete bez obav stisknout tlačítko "Obnovit", které načte seznam
-	všech rostlin, aniž by poškodilo seznam vámi již označených rostlin.
+	Tlačítko "Obnovit" vrací seznam rostlin do původního stavu obsahujícího všechny rostliny
+	v databázi. Obnovení Škrtáku neruší vámi označené položky - pokud se stane, že ve vašem
+	vlastním Škrtáku není nějaká rostlina, stiskněte tlačítko "Obnovit" a doplňte chybějící
+	rostlinu z úplného seznamu.
 	</p>
 
 
-	<p>
-	Po dokončení výběru rostlin stiskněte "Vložit" a všechny vybrané rostliny budou vloženy do
-	seznamu v <a href="./addoccurrence.html">Přidávání záznamů</a>.
-	</p>  
   </body>
 </html>

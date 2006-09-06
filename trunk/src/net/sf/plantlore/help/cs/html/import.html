@@ -7,21 +7,40 @@
   </head>
   <body>
   <h1>Import nálezových dat</h1>
+
 	<p>
+	Vaše nálezová data jsou při práci s Plantlore uchovávána v databázi. 
+	K datům nelze přistupovat přímo; přenos  dat na jiné
+	počítače vyžaduje použití <a href="./export.html">Exportu</a> a Importu. 
 	Import slouží k znovunačtení nálezových dat ze souboru na disku do databáze programu.
-	Jde o komplement <a href="./export.html">Exportu</a>.
 	</p>
 
 	<p>
-	Import lze provádět po přihlášení k jakékoli databázi - tedy i k databázi vzdálené.
+	Import lze provádět po přihlášení k jakékoli databázi - i databázi vzdálené.
 	U vzdáleného připojení je nutné uvážit přenosovou kapacitu linky, 
-	kterou používáte pro připojení, 
-	neboť přenášené množství dat může být velké a doba nutná 
-	k naimportování nálezových dat by byla neúnosná.
+	kterou používáte pro připojení, neboť se může přenášet značné množství dat 
+	a doba nutná k provedení celé operace by byla neúnosná.
+	</p>
+
+	<p>
+	Při importu nálezových dat dochází k modifikaci obsahu databáze.
+	Aby se předešlo neoprávněné manipulaci s daty, je potřeba mít k importu
+	dostatečná uživatelská práva. Nemáte-li právo přidávat záznamy, import neuspěje nikdy.
+	O právech se pojednává v sekci <a href="./user.html">Správa uživatelů</a>.
 	</p>
 
 
-	<h2>1. Vlastní import nálezových dat</h2>
+	<h2>Obsah</h2>
+
+	<p>
+	<ol>
+		<li>Importování nálezových dat</li>
+		<li>Detailní popis průběhu importu</li>
+	</ol>
+	</p>
+
+
+	<h2>1. Importování nálezových dat</h2>
 
 	<p>
 	Import začíná výběrem souboru, v němž jsou uložena nálezová data.
@@ -30,40 +49,26 @@
 	</p>
 
 	<p>
-	Po výběru souboru je zobrazeno okno zobrazující průběh procesu importování dat. 
-	Import lze přerušit stiskem tlačítka <i>Storno</i>. 
-	Přerušíte-li Import, nálezová data, která se stihla naimportovat, v databázi zůstanou.
+	Po výběru souboru je zahájen import dat. Průběh procesu můžete sledovat v otevřeném okně.
+	Import lze zrušit stiskem tlačítka "Storno". 
+	Zrušíte-li Import, nálezová data, která se stihla naimportovat, v databázi zůstanou.
+	Pokud chcete naimportované záznamy odstranit, použijte <a href="./history.html">historii</a>,
+	která umožňuje vracení operací s databází (undo).
 	</p>
 
 
-	<h2>2. Co je dobré vědět při importu nálezových dat</h2>
+	<h2>2. Detailní popis průběhu importu</h2>
 
 	<p>
 	Import dat je <b>dlouhotrvající</b> operace, při níž dochází k modifikaci databáze. 
-	Plantlore musí zajistit,
-	aby nebyla poškozena integrita stávajících nálezových dat. 
-	</p>
-
-	<p>
-	Při importu může dojít k situaci, kdy jsou některé části nálezového záznamu sdíleny více záznamy
-	(např. Habitat). Pokud se do databáze importují nálezová data, která se již v databázi
-	nachází a přitom se liší, budou sdílené části, které jsou odlišné, nahrazeny novými
-	(aktualizovanými), přičemž původní část zůstane nedotčena.
-	<br/>
-	Pokud například nálezové záznamy A a B v databázi sdílí habitat H a při importu narazíme
-	na modifikaci záznamu A s habitatem I, bude záznamu A přiřazen nový habitat I, ale
-	nedojde k opravě habitatu H. V databázi se pak budou nacházet záznamy A-I a B-H, oba
-	dva s různými habitaty.
-	</p>
-
-	<p>
-	Zamítnutí záznamu, tj. neprovedení požadované operace s nálezovým záznamem, 
-	může nastat z následujících důvodů:
+	Plantlore zajišťuje, aby nebyla poškozena integrita nebo bezpečnost stávajících nálezových dat. 
+	Vkládání záznamu se proto nemusí zdařit. Zamítnutí záznamu, 
+	tj. neprovedení požadované operace, může nastat z následujících důvodů:
 	<ol>
 		<li>
-		Nedostatečné oprávnění - nemáte-li právo nálezová data modifikovat -
-		typicky nesmíte modifikovat záznamy, které jste v databázi sami nevytvořili. 
-		Více o právech lze nalézt v sekci <a href="./user.html">Práva uživatelů</a>.
+		Nedostatečné oprávnění - např. nemáte právo přidávat nová nálezová data
+		nebo právo modifikovat záznamy jiných uživatelů.
+		Více o právech lze nalézt v sekci <a href="./user.html">Správa uživatelů</a>.
 		</li>
 
 		<li>
@@ -71,13 +76,35 @@
 		</li>
 
 		<li>
-		Nekorektní záznam, tj. záznam, který obsahuje data, která nelze dohledat
-		v databázi - platí pro tabulky Plants, Villages, Phytochoria, Territories
-		a Metadata. Do databáze např. nelze vložit nález, který obsahuje rostlinu,
-		která se nenachází v databázi. Více v 
+		Nekorektní záznam, tj. záznam, který obsahuje části, která nelze dohledat
+		v databázi. Do databáze nelze vložit nález, který obsahuje rostlinu,
+		nejbližší větší sídlo, fytochorion nebo teritorium,
+		které se nenachází v databázi.
+		Důvody pro toto opatření jsou uvedeny v sekci
 		<a href="./table_import.html">Import dat do tabulek</a>.
 		</li>
 	</ol>
+	Předchozí seznam udává důvody zamítnutí záznamu, které nevedou ke zrušení importu.
+	Pokud soubor, z něhož mají být záznamy načteny, 
+	má neplatný nebo neznámý formát, dojde k automatickému zrušení importu, jako kdybyste
+	stiskli tlačítko "Storno".
 	</p>  
+
+
+	<p>
+	Export a Import byl navržen i pro snadné přenášení změn v nálezových datech mezi dvěma
+	databázemi. Používáte-li Plantlore například doma i v práci, můžete část změn provést
+	doma a poté dané změny promítnout do databáze v práci. Ukažme si to na příkladu.
+	Doma vytvoříte novou lokalitu, řekněme "50 metrů od pravého břehu řeky Jihlavy".
+	V této lokalitě jste identifikovali dvě rostliny, Rubus saxatilis L. a Caltha palustris.
+	Po přidání těchto dvou rostlin provedete export těchto dvou záznamů a přenesete je 
+	na své pracoviště, kde záznamy importujete. V práci zjistíte, že se nejednalo
+	o Rubus saxatilis L, nýbrž o Rubus albocarpaticus, a 
+	<a href="./addoccurrence.html">editací</a>
+	provedete změnu. Přenesete-li
+	potom data domů a importujete-li je, změna se projeví i ve vaší domácí databázi.
+	</p>
+
+
   </body>
 </html>
