@@ -36,6 +36,7 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_DATA, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);        
         this.detailsTextArea.setEditable(false);
+        setTitle(L10n.getString("WholeHistory.DetailTitle"));
         setLocationRelativeTo(null);
     }
         
@@ -81,9 +82,9 @@ public class DetailsHistoryView extends javax.swing.JDialog implements Observer 
             .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
         );
 
-        closeButton.setText(L10n.getString("History.ButtonClose"));
+        closeButton.setText(L10n.getString("Common.Cancel"));
 
-        helpButton.setText(L10n.getString("History.ButtonHelp"));
+        helpButton.setText(L10n.getString("Common.Help"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

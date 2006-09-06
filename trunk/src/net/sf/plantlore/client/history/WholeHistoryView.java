@@ -44,6 +44,7 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         // Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.HISTORY_DATA, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.HISTORY_DATA, this.helpButton);    
+        setTitle(L10n.getString("WholeHistory.Title"));
         setLocationRelativeTo(null);
     }
     
@@ -130,9 +131,9 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
         TransferFocus.patch(tableHistoryList);
         jScrollPane1.setViewportView(tableHistoryList);
 
-        previousButton.setText(L10n.getString("History.ButtonPrev"));
+        previousButton.setText(L10n.getString("Common.Prev"));
 
-        nextButton.setText(L10n.getString("History.ButtonNext"));
+        nextButton.setText(L10n.getString("Common.Next"));
 
         clearHistoryButton.setText(L10n.getString("History.Whole.ButtonClearHistory"));
 
@@ -206,9 +207,9 @@ public class WholeHistoryView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
-        helpButton.setText(L10n.getString("History.ButtonHelp"));
+        helpButton.setText(L10n.getString("Common.Help"));
 
-        closeButton.setText(L10n.getString("History.ButtonClose"));
+        closeButton.setText(L10n.getString("Common.Cancel"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

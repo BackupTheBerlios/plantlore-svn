@@ -276,6 +276,7 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         showCurrentUserRadioButton = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(L10n.getString("UserManager.Title"));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserManager.UserList")));
         jScrollPane1.getViewport().setBackground(Color.WHITE);
         tableUserList.setModel(new javax.swing.table.DefaultTableModel(
@@ -292,9 +293,9 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
         TransferFocus.patch(tableUserList);
         jScrollPane1.setViewportView(tableUserList);
 
-        previousButton.setText(L10n.getString("UserManager.ButtonPrev"));
+        previousButton.setText(L10n.getString("Common.Prev"));
 
-        nextButton.setText(L10n.getString("UserManager.ButtonNext"));
+        nextButton.setText(L10n.getString("Common.Next"));
 
         deleteButton.setText(L10n.getString("UserManager.ButtonDrop"));
 
@@ -378,9 +379,9 @@ public class UserManagerView extends javax.swing.JDialog implements Observer{
                 .addContainerGap())
         );
 
-        closeButton.setText(L10n.getString("UserManager.ButtonClose"));
+        closeButton.setText(L10n.getString("Common.Cancel"));
 
-        helpButton.setText(L10n.getString("UserManager.ButtonHelp"));
+        helpButton.setText(L10n.getString("Common.Help"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserMnager.SearchPanel")));
         wholeNameLabel.setText(L10n.getString("UserManager.Name")+ ": ");

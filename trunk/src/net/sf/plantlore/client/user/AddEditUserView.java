@@ -93,7 +93,8 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
      /**
       * Set add form
       */
-     public void setAddForm() {    	 
+     public void setAddForm() {    
+         setTitle(L10n.getString("UserManager.AddTitle"));
          operationButton.setText(L10n.getString("UserManager.ButtonAdd"));         
          createWhenuser.setText("");        
          dropWhenLabel.setText("");        
@@ -119,6 +120,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
      }
      
       public void setEditForm() {
+          setTitle(L10n.getString("UserManager.EditTitle"));
          operationButton.setText(L10n.getString("UserManager.ButtonEdit"));
          loginText.setEditable(false);
          passwordLabel.setText(L10n.getString("UserManager.Password")+ ": (**) ");
@@ -135,6 +137,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
        * Set Details form       
        */
      public void setDetailsForm() {
+         setTitle(L10n.getString("UserManager.DetailTitle"));
        operationButton.setText(L10n.getString("UserManager.ButtonOk"));
        this.loginText.setEditable(false);
        this.passwordtext.setEditable(false);
@@ -275,6 +278,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         helpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(L10n.getString("UserManager.AddTitle"));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("UserManager.UserDataPanel")));
         loginLabel.setText(L10n.getString("UserManager.Login") + ": (*) ");
 
@@ -466,10 +470,10 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
         operationButton.setText("");
         operationButton.setNextFocusableComponent(closeButton);
 
-        closeButton.setText(L10n.getString("UserManager.ButtonClose"));
+        closeButton.setText(L10n.getString("Common.Cancel"));
         closeButton.setNextFocusableComponent(helpButton);
 
-        helpButton.setText(L10n.getString("UserManager.ButtonHelp"));
+        helpButton.setText(L10n.getString("Common.Help"));
         helpButton.setNextFocusableComponent(loginText);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());

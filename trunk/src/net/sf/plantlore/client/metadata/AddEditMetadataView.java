@@ -99,6 +99,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
       * Set add form. 
       */
      public void setAddForm() {
+         setTitle(L10n.getString("MetadataManager.AddTitle"));
          operationButton.setText(L10n.getString("MetadataManager.ButtonAdd"));         
          dateCreateText.setVisible(false);
          dateModifiedText.setVisible(false);  
@@ -124,6 +125,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
       * Set edit form.      
       */
       public void setEditForm() {
+          setTitle(L10n.getString("MetadataManager.EditTitle"));
          operationButton.setText(L10n.getString("MetadataManager.ButtonEdit"));
          dateCreateText.setEditable(false);
          dateModifiedText.setEditable(false);
@@ -135,6 +137,7 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
       * Set details form.      
       */ 
      public void setDetailsForm() {
+         setTitle(L10n.getString("MetadataManager.DetailTitle"));
        operationButton.setText(L10n.getString("MetadataManager.ButtonOk"));
        operationButton.setVisible(false);
        technicalContactNameText.setEditable(false);
@@ -582,11 +585,11 @@ public class AddEditMetadataView extends javax.swing.JDialog  implements Observe
                 .add(52, 52, 52))
         );
 
-        closeButton.setText(L10n.getString("MetadataManager.ButtonClose"));
+        closeButton.setText(L10n.getString("Common.Cancel"));
 
         operationButton.setText("");
 
-        helpButton.setText(L10n.getString("MetadataManager.ButtonHelp"));
+        helpButton.setText(L10n.getString("Common.Help"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

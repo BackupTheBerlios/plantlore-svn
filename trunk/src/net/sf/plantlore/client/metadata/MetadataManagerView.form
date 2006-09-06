@@ -167,7 +167,7 @@
         <Component class="javax.swing.JButton" name="previousButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;MetadataManager.ButtonPrev&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;Common.Prev&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -177,7 +177,7 @@
         <Component class="javax.swing.JButton" name="nextButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="L10n.getString(&quot;MetadataManager.ButtonNext&quot;)" type="code"/>
+              <Connection code="L10n.getString(&quot;Common.Next&quot;)" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -280,7 +280,7 @@
     <Component class="javax.swing.JButton" name="closeButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;MetadataManager.ButtonClose&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;Common.Cancel&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -290,7 +290,7 @@
     <Component class="javax.swing.JButton" name="helpButton">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="L10n.getString(&quot;MetadataManager.ButtonHelp&quot;)" type="code"/>
+          <Connection code="L10n.getString(&quot;Common.Help&quot;)" type="code"/>
         </Property>
       </Properties>
       <AuxValues>

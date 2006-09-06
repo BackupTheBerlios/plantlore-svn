@@ -261,11 +261,12 @@ public class HistoryCtrl {
                } else {            	  
             	   logger.debug("Button Cancle was press."); 
                }  
-           } else {                
+           } else {     
+                model.setError(null);
         	Exception ex = model.getException();  
                 ex.printStackTrace();
                 DefaultExceptionHandler.handle(view, ex);                                   
-        	model.setError(null);        	           	  
+        	model.setException(null);
            }
        }
    }

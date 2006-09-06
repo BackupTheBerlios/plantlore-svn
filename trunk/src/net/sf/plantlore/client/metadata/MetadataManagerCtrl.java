@@ -109,9 +109,22 @@ public class MetadataManagerCtrl {
            ex.printStackTrace();
            DefaultExceptionHandler.handle(view, ex);         
            return;
-        } 
-       
-    }       
+        }        
+    }     
+    
+     /**
+     * Search and reload new data for displaying in view dialog.   
+     */
+    public void searchReloadData() {
+        model.searchMetadata(false);  
+       if (model.isError()) {
+           DefaultExceptionHandler.handle(view, model.getException());
+            model.setError(null);
+            model.setException(null);            
+           return;
+       }
+       reloadData(1, model.getDisplayRows());
+    }
      
    /**
     *  ActionListener class controlling the <b>PREV</b> button on the form.
@@ -254,14 +267,7 @@ public class MetadataManagerCtrl {
                    if (! model.isFinishedTask()) return;
                    model.setInfoFinishedTask(false);
                      // load metadata
-                   model.searchMetadata(false);  
-                   if (model.isError()) {
-                       DefaultExceptionHandler.handle(view, model.getException());
-                        model.setError(null);
-                        model.setException(null);
-                       return;
-                   }
-                   reloadData(1, model.getDisplayRows());
+                    searchReloadData(); 
                    model.callNotifyObserver();
                 }//afterStopped 		               
            });
@@ -327,14 +333,7 @@ public class MetadataManagerCtrl {
                          if (! model.isFinishedTask()) return;
                          model.setInfoFinishedTask(false);
                           // load metadata
-                           model.searchMetadata(false);  
-                           if (model.isError()) {
-                               DefaultExceptionHandler.handle(view, model.getException());
-                                model.setError(null);
-                                model.setException(null);
-                               return;
-                           }
-                           reloadData(1, model.getDisplayRows());
+                           searchReloadData();
                            model.callNotifyObserver();
                         }//afterStopped 		
                });
@@ -431,15 +430,8 @@ public class MetadataManagerCtrl {
                                             if (! model.isFinishedTask()) return;
                                             model.setInfoFinishedTask(false);
                                             // load metadata
-                                           model.searchMetadata(false);  
-                                           if (model.isError()) {
-                                               DefaultExceptionHandler.handle(view, model.getException());
-                                                model.setError(null);
-                                                model.setException(null);
-                                               return;
-                                           }
-                                           reloadData(1, model.getDisplayRows());
-                                           model.callNotifyObserver();
+                                          searchReloadData();
+                                          model.callNotifyObserver();
         		                }//afterStopped 		   					                                   
                                });
                                Dispatcher.getDispatcher().dispatch(task, view, false);

@@ -47,6 +47,7 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         //Init Help
         PlantloreHelp.addKeyHelp(PlantloreHelp.METDATA_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.METDATA_MANAGER, this.helpButton);    
+        setTitle(L10n.getString("MetadataManager.Title"));
         setSizeRestrictions();
         setLocationRelativeTo(null);
     }
@@ -269,9 +270,9 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
         TransferFocus.patch(tableMetadataList);
         jScrollPane1.setViewportView(tableMetadataList);
 
-        previousButton.setText(L10n.getString("MetadataManager.ButtonPrev"));
+        previousButton.setText(L10n.getString("Common.Prev"));
 
-        nextButton.setText(L10n.getString("MetadataManager.ButtonNext"));
+        nextButton.setText(L10n.getString("Common.Next"));
 
         deleteButton.setText(L10n.getString("MetadataManager.ButtonDelete"));
 
@@ -355,9 +356,9 @@ public class MetadataManagerView extends javax.swing.JDialog implements Observer
                 .addContainerGap())
         );
 
-        closeButton.setText(L10n.getString("MetadataManager.ButtonClose"));
+        closeButton.setText(L10n.getString("Common.Cancel"));
 
-        helpButton.setText(L10n.getString("MetadataManager.ButtonHelp"));
+        helpButton.setText(L10n.getString("Common.Help"));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(L10n.getString("MetadataManager.SearchPanel")));
         sourceInstitutionIdLabel.setText(L10n.getString("MetadataManager.SourceInstitutionId") + ": "
