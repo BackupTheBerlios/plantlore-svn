@@ -123,8 +123,8 @@ public class AddEditUserCtrl {
                    model.getUserRecord().setAddress(view.addressText.getText());                  
                    model.getUserRecord().setNote(view.noteText.getText());
                    //Right
-                   Right right = model.getUserRecord().getRight();                   
-                   right.setEditGroup(model.getEditGroupID());                   
+                   Right right = model.getUserRecord().getRight();                      
+                   right.setEditGroup(model.getEditGroupID());                     
                    if (view.administratorCheckBox.isSelected()) {
                        right.setAdministrator(1);
                    } else {
@@ -134,8 +134,7 @@ public class AddEditUserCtrl {
                        right.setEditAll(1);
                    } else {
                        right.setEditAll(0);
-                   }
-                   //FIXME: rozmyslet nejake chytre oznacovani aneb pokud mohu editovat vse, tak je jasne, ze mohu editovat i svoje, atd.
+                   }                  
                                 
                    if (view.addRightCheckBox.isSelected()) {
                        right.setAdd(1);
@@ -162,14 +161,15 @@ public class AddEditUserCtrl {
         }
 
         public void focusLost(FocusEvent e) {
-            ArrayList<String> userList = new ArrayList<String>();
+            ArrayList<String> userGroupList = new ArrayList<String>();
             AutoTextArea ta = (AutoTextArea) e.getSource();
             int lineCount = ta.getLineCount();
             for (int i=0; i < lineCount; i++) {
-                String tmp = ta.getLine(i);
+                String tmp = ta.getLine(i);                
                 if (tmp.length() > 1) 
-                    userList.add(tmp);
-            }            
+                    userGroupList.add(tmp);                   
+            }       
+            model.setUserGroupList(userGroupList);
         }
     }
     

@@ -85,7 +85,7 @@ public class UserManagerCtrl {
     public void reloadData(int fromRow, int countRow) {
     	try {
             model.processResult(fromRow, countRow);     
-            view.tableUserList.setModel(new UserManagerTableModel(model));
+            view.tableUserList.setModel(new UserManagerTableModel(model));            
             int from = model.getCurrentFirstRow();
             int to = from + view.tableUserList.getRowCount() - 1;
             if (to <= 0 ) {
@@ -334,11 +334,16 @@ public class UserManagerCtrl {
                        if (! model.isFinishedTask()) return;
                        model.setInfoFinishedTask(false);
                        //load User
-                       if (model.isError()) return;
-                       view.tableUserList.setModel(new UserManagerTableModel(model));
-                   }
-                   
-               });
+                       model.searchUser(false);                       
+                       if (model.isError()) {
+                           DefaultExceptionHandler.handle(view, model.getException());
+                           model.setError(null);
+                           model.setException(null);
+                           return;
+                       }                        
+                       reloadData(1, model.getDisplayRows());                       
+                   }                                   
+               });                               
                Dispatcher.getDispatcher().dispatch(task, view, false);
 
                

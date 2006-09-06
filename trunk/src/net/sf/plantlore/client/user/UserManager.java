@@ -93,6 +93,8 @@ public class UserManager extends Observable {
     private Pair<String, Integer>[] users = null;
     /** List of all used login */
     private ArrayList<String> userLogin = new ArrayList<String>(); 
+    /** */
+    private ArrayList<String> userGroupList = new ArrayList<String>();
     
     /** Constants used for identification of fields for sorting */
     public static final int SORT_LOGIN = 0;
@@ -343,10 +345,12 @@ public class UserManager extends Observable {
     			try {
     				boolean isAdmin = false;
     				if (right.getAdministrator() == 1) isAdmin = true;
+                                logger.debug("Create user: "+ userRecord.getLogin());
     				//Create database user
     				database.createUser(userRecord.getLogin(), getPassword(), isAdmin); 
     				//Insert information about user into tRight, tUser
-    				right = (Right)database.executeInsert(right);                               
+    				right = (Right)database.executeInsertInTransaction(right);  
+                                userRecord.setRight(right);
                                 database.executeInsertInTransaction(userRecord);		                                
                                 //Add new name (login) of user to user list    	            
                                 int count = users.length;
@@ -355,9 +359,9 @@ public class UserManager extends Observable {
                                     usersNew[i] = users[i];                                    
                                 }
                                 usersNew[count] = new Pair(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )", userRecord.getId());
-                                logger.debug(userRecord.getId());
-                                //TODO overit, zda znam cID nebo je zjistit jinak ... pravdepodobne se rovna count+1    	            
+                                logger.debug(userRecord.getId());                                    	            
                                 users = usersNew;
+                                userLogin.add(userRecord.getLogin());
                         }catch (Exception e) {
                                 logger.error("Process add User failed. Exception caught in UserManager. Details: "+e.getMessage());
                                 database.rollbackTransaction();	                               
@@ -380,7 +384,7 @@ public class UserManager extends Observable {
     public Task editUserRecord() {       
            	
     	final Task task = new Task() {    		    		
-    		public Object task() throws DBLayerException, RemoteException {
+    		public Object task() throws Exception {
     			
     			boolean ok = false;
     			ok = database.beginTransaction();
@@ -400,15 +404,8 @@ public class UserManager extends Observable {
     				//Edit information about user in database                                
     				database.executeUpdateInTransaction(userRecord.getRight());                                
                                 database.executeUpdateInTransaction(userRecord);                                 
-                                userList.set(idRecord, userRecord);                                  
-                                // Update list of names (logins) of users                                
-                                //logger.debug("Edit user - before update user list");
-                                //Pair<String, Integer> userTmp = users[userRecord.getId()];
-                                //userTmp.setFirst(userRecord.getWholeName()+ " (" + userRecord.getLogin() + " )");
-                                //logger.debug(userTmp.getFirst());
-                                //users[userRecord.getId()] = userTmp; 
-                                //logger.debug("Edit user - after update user list");
-		        }catch (RemoteException e) {
+                                userList.set(idRecord, userRecord);                                                                    
+		        }catch (Exception e) {
 		        	logger.error("Process update User failed. Remote exception caught in UserManager. Details: "+e.getMessage());
 		        	database.rollbackTransaction();		        	                       
                                 throw e; 		            
@@ -578,9 +575,9 @@ public class UserManager extends Observable {
      */
     public String getEditGroupID() {
         ArrayList<Integer> tmpUserId = new ArrayList<Integer>();
-        for (int i=0 ; i < userList.size() ; i++) {
+        for (int i=0 ; i < userGroupList.size() ; i++) {
             for (int j=0; j < users.length; j++) {
-                if (users[j].getFirst().equals(userList.get(i))) {
+                if (users[j].getFirst().equals(userGroupList.get(i))) {
                     Integer userId = users[j].getSecond();
                     //Check duplicity
                     if (!tmpUserId.contains(userId)) {
@@ -597,6 +594,10 @@ public class UserManager extends Observable {
         return editGroupId;
     }
  
+    
+    public void setUserGroupList(ArrayList<String> userGroupList) {
+        this.userGroupList = userGroupList;
+    }
     
     /**
      * Set new list of pair (name of user(login), index of user).

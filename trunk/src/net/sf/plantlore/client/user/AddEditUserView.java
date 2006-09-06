@@ -126,7 +126,7 @@ public class AddEditUserView extends javax.swing.JDialog  implements Observer {
          Pair<String, Integer>[] users = model.getUsers();
          String[] choices = new String[users.length];
          for (int i = 0; i < users.length; i++) {
-             choices[i] = users[i].getFirst();
+             choices[i] = users[i].getFirst();             
          }
          ((AutoTextArea)editGroupTextArea).setChoices(choices);
      }
