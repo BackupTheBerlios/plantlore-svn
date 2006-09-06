@@ -276,11 +276,11 @@ public class Checklist extends JList {
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		Vector<String> listData = (Vector<String>) ois.readObject();
 		ois.close();
-		Object[] selected = getSelectedValues();
+//		Object[] selected = getSelectedValues();
 		clearSelection();
 		setListData(listData);
-		for(Object r : selected)
-			setSelectedValue(r, false);
+//		for(Object r : selected)
+//			setSelectedValue(r, false);
 	}
 	
 	

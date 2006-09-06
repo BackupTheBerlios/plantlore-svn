@@ -17,6 +17,7 @@ import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.common.exception.PlantloreException;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.server.manager.*;
+import net.sf.plantlore.server.tools.RMI;
 
 
 /**
@@ -57,6 +58,9 @@ public class Plantlore {
         
         // Disable reconnect
         DefaultExceptionHandler.disableReconnect();
+        
+        // Set the hostname to make remote connections possible
+        RMI.setHostName();
 
 
         java.awt.EventQueue.invokeLater(new Runnable(){

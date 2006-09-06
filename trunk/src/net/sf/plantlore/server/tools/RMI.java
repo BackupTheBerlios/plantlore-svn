@@ -1,17 +1,23 @@
 package net.sf.plantlore.server.tools;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.UnicastRemoteObject;
+
+import org.apache.log4j.Logger;
 
 
 
 
 public class RMI {
 	
+	private static Logger logger = Logger.getLogger(RMI.class.getPackage().getName());
 	
 	public static final String PROPERTY_CODEBASE = "java.rmi.server.codebase";
 	public static final String PROPERTY_LEASEVALUE = "java.rmi.dgc.leaseValue";
+	public static final String PROPERTY_HOSTNAME = "java.rmi.server.hostname";
 	
 
 	public static void bind(Remote object, String name) 
@@ -77,12 +83,24 @@ public class RMI {
 			codebase = directory;
 		
 		System.setProperty(PROPERTY_CODEBASE, codebase);
-		System.out.println("java.rmi.server.codebase = " + codebase);
+		logger.info("java.rmi.server.codebase = " + codebase);
 	}
 	
 	
 	public static void setLeaseValue(int value) {
 		System.setProperty( PROPERTY_LEASEVALUE, Integer.toString(value) ); 
+	}
+	
+	
+	public static void setHostName() {
+		try {
+			InetAddress address = InetAddress.getLocalHost();
+			String ip = address.getHostAddress();
+			System.setProperty(PROPERTY_HOSTNAME, ip);
+			logger.info("Hostname set to " + ip);
+		} catch (UnknownHostException e) {
+			logger.fatal("Unable to obtain the host ip! Remote connections may not be possible! " + e.getMessage());
+		}
 	}
 
 }

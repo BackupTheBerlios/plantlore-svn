@@ -82,7 +82,7 @@ public class Utils {
         	if (System.getProperty("os.name").toLowerCase().startsWith("win"))
         		dir = dir.substring(1, dir.indexOf(Utils.class.getName().replaceAll("\\.", "/")));
         	else
-        		dir = dir.substring(0, dir.indexOf(Utils.class.getName().replaceAll("\\.","/")));            
+        		dir = "/" + dir.substring(0, dir.indexOf(Utils.class.getName().replaceAll("\\.","/")));            
         }
         
         return dir;
