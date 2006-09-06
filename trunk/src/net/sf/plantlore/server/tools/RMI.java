@@ -98,7 +98,7 @@ public class RMI {
 			String ip = address.getHostAddress();
 			if( "127.0.0.1".equals(ip) ) {
 				String name = address.getHostName();
-				logger.warn("Java on Linux! The name of this damn machine is " + name);
+				logger.info("The name of this machine is " + name);
 				address = InetAddress.getByName(name);
 				ip = address.getHostAddress();
 				if( "127.0.0.1".equals(ip) ) {
@@ -109,8 +109,10 @@ public class RMI {
 						if( !"127.0.0.1".equals(ip) )
 							break;
 					}
-					if(  "127.0.0.1".equals(ip) )
-						logger.fatal("Unable to obtain the host ip! Remote connections may not be possible! Please specify it yourself by adding java -Djava.rmi.server.hostname=YourIP");
+					if(  "127.0.0.1".equals(ip) ) {
+						logger.fatal("Unable to obtain the " + name + "'s ip! Remote connections may not be possible! Please specify it yourself by adding java -Djava.rmi.server.hostname=YourIP");
+						return;
+					}
 
 				}
 			}
