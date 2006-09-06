@@ -69,11 +69,16 @@ public class AddEditUserCtrl {
                 logger.debug("Add of User.");
                 //check wether all obligatory fields were filled 
                  if (view.checkNotNull()) {
-                     //Check if new name of project (dataSetTitle) already exist
+                    //Check if new name login containing correctly char
+                    if(! model.correctlyLogin(view.loginText.getText())) {
+                        view.showErrorMessage(UserManager.ERROR_TITLE, UserManager.ERROR_CHAR_LOGIN);
+                 		return;
+                    }
+                     //Check if new name of lodin already exist
                  	if (model.uniqueLogin(view.loginText.getText())){                		
                  		view.showErrorMessage(UserManager.ERROR_TITLE, UserManager.ERROR_LOGIN);
                  		return;
-                 	}
+                 	}                                                
                     //create new instance of User and save filed values    
                    User user = new User();                                                                            
                    user.setLogin(view.loginText.getText());

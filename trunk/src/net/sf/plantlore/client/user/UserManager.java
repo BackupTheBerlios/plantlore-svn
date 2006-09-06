@@ -125,6 +125,7 @@ public class UserManager extends Observable {
     public static final String ERROR_CREATE_PAIRS = L10n.getString("Error.UserManagerCreatePairs"); 
     public static final String ERROR_LOGIN = L10n.getString("Error.UserManagerDuplicityLogin");
     public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
+    public static final String ERROR_CHAR_LOGIN = L10n.getString("Error.UserManagerIncorrectlyLogin");
     
     public static final String QUESTION_DELETE_TITLE = L10n.getString("Question.DeleteUserTitle");
     public static final String QUESTION_DELETE = L10n.getString("Question.DeleteUser");
@@ -464,7 +465,7 @@ public class UserManager extends Observable {
      */
     public Pair<String, Integer>[] loadLoginUsers() throws Exception{
         if (users == null)
-        {  
+        {              
             SelectQuery sq;
             int resultLoginid;
             int resultsCount;
@@ -501,12 +502,27 @@ public class UserManager extends Observable {
      }       
    
     /** 
-     *  Check whther exists login of usr adding by add dialog.
+     *  Check whether exists login of usr adding by add dialog.
      *  @param login login of user adding by add dialog 
      *  @return true if login doesn`t exist yet, false in other way
      */
     public boolean uniqueLogin(String login) {               
         return userLogin.contains(login);
+    }
+    
+    /**
+     *  Check whether login containing permissible char (a-z,A-Z,0-9).
+     * @param login login of user additing by add dialog
+     * @return true if login is correctly
+     */
+    public boolean correctlyLogin(String login) {
+       int countChars = login.length();
+       String charTest = "";          
+       for(int i = 0; i < countChars; i++) {
+           char ch = login.charAt( i );
+           if( ! Character.isLetterOrDigit(ch) ) return false;
+        }
+        return true;  
     }
     
     /**
