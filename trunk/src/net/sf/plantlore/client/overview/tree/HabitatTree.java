@@ -186,7 +186,7 @@ public class HabitatTree extends Observable {
         DefaultMutableTreeNode node;
         for (Object record : records) {
             Object[] obj = (Object[])record;
-            String name = ((NearestVillage)obj[2]).getName() + " - " + obj[1] + " (quadrant " + obj[3] + ")";
+            String name = ((NearestVillage)obj[2]).getName() + " - " + obj[1] + " ("+L10n.getString("HABITAT.quadrant")+" "+ obj[3] + ")";
             Integer count = getOccurrenceCount((Integer)obj[0]);
             name = "("+count+") "+name;
             node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.HABITAT,name,(Integer)obj[0],-1));
