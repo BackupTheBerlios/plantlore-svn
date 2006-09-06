@@ -76,7 +76,7 @@ public class Utils {
         	dir = dir.substring(0, dir.lastIndexOf("/"));
             //remove path to the package and the trailing "!/"
             dir = dir.substring(0, dir.indexOf(Utils.class.getPackage().getName().replaceAll("\\.","/"))-2);
-            dir = dir.substring(dir.indexOf("file:")+5);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
+            dir = "/" + dir.substring(dir.indexOf("file:")+5);//if the url contains path to a jar it begins with "jar:file:/" and getPath() then begins with "file:/"            
         } else {
             // Just remove the path to the package
         	if (System.getProperty("os.name").toLowerCase().startsWith("win"))
