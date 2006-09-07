@@ -139,21 +139,14 @@ public class History extends Observable {
     public static final int HISTORY_RECORD = 1;
     public static final int HISTORY_WHOLE = 2;
     
-    /** Constants used for description of errors */
-    public static final String ERROR_SEARCH_RECORD = "Error.HistoryRecordSearchFailed";
-    public static final String ERROR_SEARCH_DATA = "Error.HistoryDataSearchFailed";
+    /** Constants used for description of errors */    
     public static final String ERROR_SEARCH_OBJECT = "Error.HistoryObjectSearchFailed";
     public static final String ERROR_SEARCH_AUTHOR = "Error.HistoryAuthorSearchFailed";
-    public static final String ERROR_PROCESS = "Error.HistoryProcessResultsFailed";
-    public static final String ERROR_UPDATE = "Error.HistoryUpdateResultsFailed";
-    public static final String ERROR_DELETE = "Error.HistoryDeleteResultsFailed";  
-    public static final String ERROR_CLEAR_DATABASE = "Error.HistoryClearDatabase";
-    public static final String ERROR_CLEAR_HISTORY = "Error.HistoryClearHistory";
-    public static final String ERROR_PARSE_DATE = "Error.HistoryParseData";
-    public static final String ERROR_NUMBER_ROWS = "Error.HistoryGetNumberRows";
-    public static final String ERROR_NO_RIGHTS = "Error.HistoryNoRights"; 
-    public static final String ERROR_TRANSACTION = "Error.TransactionRaceConditions";    
-    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
+    public static final String ERROR_PROCESS = "Error.HistoryProcessResultsFailed"; 
+    public static final String ERROR_PARSE_DATE = "Error.HistoryParseData"; // 
+    public static final String ERROR_NO_RIGHTS = "Error.HistoryNoRights"; //
+    public static final String ERROR_TRANSACTION = "Error.TransactionRaceConditions";    //
+    
     
     /**
      * Creates a new instance of History - history of Occurrences, Habitats, Authors, 
@@ -254,7 +247,7 @@ public class History extends Observable {
         
         if (object == null) {
      	   logger.error("tOccurrence doesn't contain required data");  
-     	   throw  new DBLayerException(ERROR_SEARCH_RECORD + "tOccurrence doesn't contain required data");                           	   		            
+     	   throw  new DBLayerException(ERROR_SEARCH_OBJECT + "tOccurrence doesn't contain required data");                           	   		            
         } else {
      	   
      	   Occurrence occurrence = (Occurrence)object[0];    	   

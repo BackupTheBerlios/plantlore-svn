@@ -123,20 +123,12 @@ public class UserManager extends Observable {
     public static final String ERROR_TITLE = L10n.getString("Error.MessageTitle");
     public static final String ERROR_TRANSACTION = L10n.getString("Error.TransactionRaceConditions");
     public static final String ERROR_CREATE_PAIRS = L10n.getString("Error.UserManagerCreatePairs"); 
-    public static final String ERROR_LOGIN = L10n.getString("Error.UserManagerDuplicityLogin");
-    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
+    public static final String ERROR_LOGIN = L10n.getString("Error.UserManagerDuplicityLogin");   
     public static final String ERROR_CHAR_LOGIN = L10n.getString("Error.UserManagerIncorrectlyLogin");
     
     public static final String QUESTION_DELETE_TITLE = L10n.getString("Question.DeleteUserTitle");
     public static final String QUESTION_DELETE = L10n.getString("Question.DeleteUser");
-    public static final String QUESTION_DROP = L10n.getString("Question.DropUser");
-    public static final String QUESTION_DROP_TITLE = L10n.getString("Question.DropUserTitle");
-    
-    public static final String PROGRESS_SEARCH = L10n.getString("User.Search.ProgressTitle");
-    public static final String PROGRESS_ADD = L10n.getString("User.Add.ProgressTitle");
-    public static final String PROGRESS_EDIT = L10n.getString("User.Edit.ProgressTitle");
-    public static final String PROGRESS_DELETE = L10n.getString("User.Delete.ProgressTitle");
-    
+   
     public static final String WARNING_SELECTION_TITLE = L10n.getString("Warning.EmptySelectionTitle");
     public static final String WARNING_SELECTION = L10n.getString("Warning.EmptySelection");
     
@@ -149,6 +141,8 @@ public class UserManager extends Observable {
     public static final String INFORMATION_DELETE_HIMSELF = L10n.getString("Information.UserDeleteHimself");    
     public static final String INFORMATION_EDIT_TITLE = L10n.getString("Information.UserCannotEditTitle");
     public static final String INFORMATION_EDIT = L10n.getString("Information.UserCannotEdit");    
+    public static final String INFORMATION_REVOKE_TITLE = L10n.getString("Information.UserRevokeAdmin");    
+    public static final String INFORMATION_REVOKE_HIMSELF = L10n.getString("Information.UserRevokeAdminHimself");    
    
     /**
      * Creates a new instance of UserManager
@@ -544,6 +538,22 @@ public class UserManager extends Observable {
     public boolean deleteHimself() {
         try {            
             if ((database.getUser().getLogin()).equals(userRecord.getLogin())) {                
+                return true;
+            }
+        } catch (Exception e) {
+           // Never mind.           
+        }
+        return false;
+    }
+    
+    /**
+     * Check if administrator can revoke own right
+     * @return true if admin can revoke own right
+     */
+    public boolean revokeAdminHimself() {
+        try {            
+            if ((database.getUser().getLogin()).equals(userRecord.getLogin())) {
+                if (userRecord.getRight().getAdministrator() == 0)
                 return true;
             }
         } catch (Exception e) {

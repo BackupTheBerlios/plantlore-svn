@@ -95,16 +95,10 @@ public class MetadataManager  extends Observable {
     public static final String ERROR_UNKNOWEN = L10n.getString("Error.UnknownException");
     public static final String ERROR_TITLE = L10n.getString("Error.MetadataMessageTitle");
     public static final String ERROR_CHECK_DELETE = L10n.getString("Error.MetadataCheckDelete");
-    public static final String ERROR_DATASETTITLE = L10n.getString("Error.MetadataUniqueDatasetTitle"); 
-    public static final String ERROR_REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
+    public static final String ERROR_DATASETTITLE = L10n.getString("Error.MetadataUniqueDatasetTitle");     
     
     public static final String QUESTION_DELETE_TITLE = L10n.getString("Question.DeleteMetadataTitle");
     public static final String QUESTION_DELETE = L10n.getString("Question.DeleteMetadata");
-    
-    public static final String PROGRESS_SEARCH = L10n.getString("Metadata.Search.ProgressTitle");
-    public static final String PROGRESS_ADD = L10n.getString("Metadata.Add.ProgressTitle");
-    public static final String PROGRESS_EDIT = L10n.getString("Metadata.Edit.ProgressTitle");
-    public static final String PROGRESS_DELETE = L10n.getString("Metadata.Delete.ProgressTitle");
     
     public static final String WARNING_SELECTION_TITLE = L10n.getString("Warning.EmptySelectionTitle");
     public static final String WARNING_SELECTION = L10n.getString("Warning.EmptySelection");
