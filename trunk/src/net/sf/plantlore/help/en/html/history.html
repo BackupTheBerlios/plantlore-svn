@@ -1,10 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content−Language" content="en−US" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>History</title>
-</head>
-<body>
-<h1>History</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Editing history</title>
+  </head>
+  <body>
+  <h1>Editing history</h1>
+Plantlore enables you to trace the history of your occurrence data. Thanks to this function, you can find out who, when, and how changed the information
+about a specific occurrence, author, publication, or metadata.<br> 
+The basic information recorded about a modification includes:
+<ul> 
+ <li>date and time of the modification
+ <li>operation type (insert, edit, remove)
+ <li>name of the user carrying out the modification
+ <li>name of the edited item, or identification of inserted/removed record
+ <li>old value of the edited item
+ <li>new value of the edited item
+</ul>
+  
+Plantlore, apart from enabling you to follow the abovementioned changes in the occurrence data also allows you to easily cancel these modifications
+and return to the previous values. History is a powerful tool enabling interference with your occurrence data and it is thus necessary to limit the access
+to the history to users possessing sufficient privileges (see  <a href="./user.html">User rights</a>).  
+
+<p>
+<i><b>There are two different types of work with the editing history:</b></i> 
+</p>
+
+<a href="#historyRecord">Occurrence history</a> - a user's tool to trace the history of modifications to a selected occurrence and use the UNDO operation for selected modifications<br> 
+<a href="#historyData">Whole history</a> - an administrator's tool to check the modifications performed in the data and use the operation "UNDO to the selected data and time"
+
+
+
+<br><br>
+<a name="historyRecord"><h2>Occurrence history</h2></a>
+
+<img src="picture/historyEnter_cs.png" alt="History occurence - enter">
+
+<p><br>
+To access the history of a selected occurrence just select this occurrence and click on the <i><b>History</b></i> button. If the <i><b>History</b></i> button is inactive,
+your access to the editing history has been disabled and you do not have the right to work with the selected occurrence. It will certainly do no harm to mention
+in what cases you have the right to work with the history of an occurrence.
+
+</p>
+The occurrence history is accessible to a user who:
+<ul>
+   <li>entered the occurrence into the database</li>
+   <li>has the right to edit the records of the user that entered this occurrence into the database</li>
+   <li>has the right to edit all the occurrences in a database</li>
+   <li>has administrator rights</li>   
+</ul>    
+
+If you do not have access to the occurrence history and you would like to, please contact the administrator of Plantlore.<br>
+You will find more detailed information about user rights in section <a href="./user.html">User rights</a>.
+
+<h5>Occurrence history dialog</h5>
+
+<img src="picture/historyOcc_cs.png">
+<br><br>
+
+The occurrence history dialog is divided into three parts.
+<ul>
+  <li><b>Occurrence details</b> - current information about the occurrence (taxon, occurrence authors, and locality)
+  <li><b>Occurrence creation</b> - information about the insertion of the occurrence into the database (date/time of insertion and user who entered the record into the database)
+  <li><b>List of modifications</b> - basic information about individual modifications of the occurrence
+</ul>
+  
+<h3>List of modifications</h3>
+
+The list of modifications of an occurrence is sorted from the most recent to the oldest change and it is displayed in a table containing the following data:
+  
+<ul>
+<li><b>X</b> - selection of individual modifications</li>
+<li><b>Date/Time</b> - date/time of the modification</li>
+<li><b>User</b> - user who carried out the modification</li>
+<li><b>Item</b> - item that was changed</li>
+<li><b>Old value</b> - value of the item prior to the modification</li>
+<li><b>New value</b> - value of the item after the modification</li>
+</ul>
+
+
+<h3>UNDO operation on selected items</h3>
+
+In occurrence history you may choose to amend <b>only a specific item </b>in the record and return to its previous value. This operation is thus different from a classic UNDO
+operation which reverts changes in a chronological order, from the most recent to the oldest. Let's mention an example utilizing this improvement of the UNDO operation:
+
+<div style="text-align:justify; padding: 20 20 30 20">
+<i> 
+You have modified the items "Herbarium", "Occurrence year", "Occurrence note" and then perform about twenty other modifications. You don't remember the original wording of the 
+occurrence note, but you would like to return to it. With a classic UNDO operation, you would have to cancel one-by-one all of the changes until you would get to the
+original wording of the occurrence note. In the history dialog, however, it is simple to meet your demand. If you only want to find out the original wording of the occurrence
+note, it is sufficient to select the oldest modification of the note in the list of modifications and the desired text will be displayed in the column OLD VALUE. If you 
+wanted to revert the change to the original wording, you only need to find the oldest change, select the given line in column X and click on the <b>UNDO </b>button.
+Don't be worried about the fact that by selecting that line, more recent changes of the note will also be selected -- this behavior is implied by the logic of modifications 
+selection (see below).</i> 
+</div>
+
+As stated above, you can use column X to select the modifications you want to revert. Select or deselect a modification by a mouse-click in column X of a given line. 
+You can also use the buttons <i><b>Select all</b></i> and <i><b>Deselect all</b></i> which select or deselect all occurrence modifications displayed int he table. The number 
+of items displayed in the table may be changed by modifying the value of <i><b>Lines displayed </b></i>and confirming the new value by the ENTER key. You can switch
+over to the previous or next list of modifications using the <b><i>Previous </i></b>and <i><b>Next </b></i>buttons. The information about the currently displayed
+list of changes are stated in the part below the table.
+
+<br><br> 
+After pressing the <i><b>UNDO </b></i>button, information will be displayed about the list of changes about to be performed. Use the CANCEL button to
+cancel the operation. Use the OK button to confirm the operation and reversion of the selected occurrence modifications. All of the selected lines will
+be deleted from the history.
+
+<br><br>
+<img src="picture/historyUndo_cs.png">
+<br><br>
+
+<h3><i>Logic of modification selection</i></h3>
+
+Items in the record might be modified more than once. Thus, it is necessary to provide for several possible situations while selecting changes in the history dialog.<br>
+Here's an illustrative example:<br><br> 
+
+<img src="picture/historyOccMark_cs.png">
+<br><br>
+
+<i>
+Let's suppose that item HERBARIUM was modified n-times. In the history dialog, there are n lines informing about the change to item HERBARIUM. The figure above 
+shows a modification HERBARIUM 15.8.2006 11:39 from value CB/910 to value CB/913, a more recent modification HERBARIUM 15.8.2006 11:40 from value CB/913 to value CB/918,
+and the most recent modification HERBARIUM 15.8.2006 12:36 from value CB/918 to value CB/968. While selecting and deselecting these modifications, following situations
+may come about:
+
+<ul> 
+<li> The user wants to revert to the situation when item HERBARIUM had a value of CB/910. He must therefore select the relevant line with the modification from 
+15.8.2006 11:39. Because there are also more recent changes to item HERBARIUM, lines for changes HERBARIUM 15.8.2006 11:40 and HERBARIUM 15.8.2006 12:36  will also
+be selected. After the <b>UNDO</b> operation is performed, item HERBARIUM of the given record will have the value of CB/910 and all of the selected lines will be
+removed from the history.
+<li> The user has selected the modifications of item HERBARIUM from 15.8.2006 11:39, 15.8.2006 11:40 and 15.8.2006 12:36 and he decides to revert only the change 
+from 15.8.2006 11:39, i.e. to value CB/918. In this situation, the user must deselect the modification of 15.8.2006 11:40. If older modifications (e.g. 15.8.2006 11:39)
+were also deselected, this will lead to the automatic deselection of the modification of 15.8.2006 11:40.
+<li> The user has selected the modifications of item HERBARIUM from 15.8.2006 11:39, 15.8.2006 11:40 and 15.8.2006 12:36 and he decides not to revert any of these
+changes. To deselect all modifications of item HERBARIUM, he only needs to deselect the most recent modification and the older modifications will be deselected 
+automatically. By deselecting a more recent modification the user expresses that he wants to keep this modification of item HERBARIUM.
+</ul>
+</i><br>
+
+<a name="historyData"><h2>Whole history</h2></a> 
+
+<br>
+<img src="picture/wholeHistoryEnter_cs.png">
+<br><br>
+
+Dialog of the whole history of modifications is only accessible to the user with administrator rights. If you have administrator rights, you may open
+this dialog from menu <b>Data/Whole history</b>. If you do not have administrator rights, this menu item is disabled.
+
+<h5>Whole history dialog</h5>
+
+<img src="picture/wholeHistoryDialog_cs.png">
+<br><br>
+
+This dialog displays a list of all modifications relating to metadata, occurrences, authors, and publications. This list is sorted from the most recent
+to the oldest modification and it is displayed in a table containing the following data:
+  
+<ul>
+<li><b>Date/time</b> - date and time of the modification</li>
+<li><b>Operation</b> - operation type (insert, edit, remove)</li>
+<li><b>User</b> - name of the user carrying out the modification</li>
+<li><b>Item</b> - name of the modified item</li>
+<li><b>Old value</b> - old value of the edited item (filled in only for edit operation)</li>
+<li><b>New value</b> - new value of the edited item (filled in only for edit operation)</li>
+</ul>
+
+
+<img src="picture/wholeHistoryDetail_cs.png">
+<br><br>
+
+If you want to find out more detailed information about an occurrence, metadata, author, or publication, please select the
+line with the relevant modification in the table and press the <b><i>Detail</i></b> button. 
+
+<h3>Operation "UNDO to the selected date and time"</h3>
+
+The <b><i>Undo</i></b> operation reverts the changes performed in a database, starting from the most recent to the oldest change. Prior to pressing the UNDO
+button, you must select the line into which (including this line) the modification reversal is supposed to be performed. After pressing the <i><b>Undo</b></i> button,
+you will see the information about the selected date/time for this operation. Confirm the operation by pressing OK; this way, the UNDO operation will be performed
+and the reversed changes will be deleted from the history.
+
+<h3>Database cleanup and deletion of history</h3>
+
+The database also contains records which the user has erased and the information about this deletion is recorded in the history tables. The existence of these
+inactive records is necessary for the UNDO operation. However, you have the option to use the <b><i>Delete</i></b> operation, by means of which you can clean the database
+of inactive records and also delete all data from the history. It is advisable to backup the database before performing this operation. You have to use a third-party tool 
+for database backup. After pressing the <i><b>Delete</b></i> button, a dialog with information about the operation about to be performed will appear. Only after confirming 
+this dialog will the operation be carried out.
+  </body>
 </html>

@@ -1,10 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content−Language" content="en−US" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Metadata manager</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<title>Plantlore - Metadata management</title>
 </head>
 <body>
-<h1>Metadata manager</h1>
-</body>
+<h1>Metadata management</h1>
+<img src="picture/metadataEnter_cs.png">
+<br><br>
+
+Metadata manager allows the <b><i>administrator </i></b>to add, edit, and delete the metadata of individual projects.
+You can open the metadata manager from menu <b>Data/Metadata management</b> or by keyboard shortcut CTRL + M.
+
+<h5>Metadata manager dialog</h5>
+
+<img src="picture/metadataDialog_cs.png">
+<br><br>
+The metadata management dialog is divided into two parts:
+<ul>
+  <li><b>List of project metadata</b> - displays the list of metadata of existing projects based on criteria entered for searching and sorting 
+  <li><b>Search</b> - requirements for searching and sorting of metadata
+</ul>
+
+<h2>List of metadata</h2>
+
+This part displays the list of metadata found after a successful search. You can set the number of projects displayed in the table 
+yourselves by changing the value of <i><b>Lines displayed</b></i> and confirming the new value by the ENTER key. Use <i><b>Previous </b></i>and <i><b>Next </b></i>buttons 
+to switch over to the previous or next list of metadata. Information about the currently displayed list of project metadata is stated in the 
+part below the table.<br>
+The following buttons enable the work with a record:
+<ul>    
+   <li><i><b>Add metadata</i></b> - <a href=#add>adds project metadata</a></li>
+   <li><i><b>Edit metadata</i></b> - <a href=#edit>edits project metadata</a></li>
+   <li><i><b>Metadata detail </i></b> - <a href=#detail>detailed project metadata</a></li>
+   <li><i><b>Remove metadata</i></b> - <a href=#drop>removes project metadata</a></li> 
+</ul>   
+
+  
+<h2>Search</h2>
+
+Metadata manager 
+
+User manager offers the administrator the option to search using the following three parameters: institution, project name, and data source.
+The results may be sorted by the institution name, project name, data source, name of the person responsible for technical assistance, name of the person
+responsible for content assistance, date of the project creation and date of the most recent project modification.
+If no parameters and limitations are entered, all project metadata will be found. 
+<br><br>
+<b>Note:</b> the search is case sensitive.
+
+a (case sensitive).
+
+<a name="add"></a><h2>Adding project metadata</h2>
+  
+  <h5>Add metadata dialog</h5>
+  
+  <img src="picture/metadataAdd_cs.png">
+  <br><br>
+Open the Add metadata dialog from Metadata manager. The window displayed offers the following items:
+
+  
+  <ul>
+    <li><b>Institution</b> - unequivocal identifier of the institution that owns the original data source.
+    This item is obligatory and you will not be able to add metadata without filling it in.</li>
+    <li><b>Organization</b> - abbreviation of the organization.</li>
+    <li><b>Technical assistance</b> - name of the person responsible for the technical part of the project. This item is obligatory.</li>
+    <li><b>Technical assistance - e-mail</b> - contact e-mail of the person responsible for the technical part of the project.</li>
+    <li><b>Technical assistance - address</b> - contact address of the person responsible for the technical part of the project.</li>
+    <li><b>Content assistance</b> - name of the person responsible for the content part of the project. This item is obligatory.</li>
+    <li><b>Content assistance - e-mail</b> - contact e-mail of the person responsible for the content part of the project.</li>
+    <li><b>Content assistance - address</b> - contact address of the person responsible for the content part of the project.</li>
+    <li><b>Project name</b> - short name of the project. Project name is an obligatory item and must be unequivocal in the database.</li>
+    <li><b>Project details</b> - detailed description of the project.</li>
+    <li><b>Source</b> - name or code of the data source. This item is obligatory.</li>
+    <li><b>Basis</b> -  information about what the given records describe (preserved specimen, ...).</li>
+    <li><b>Biotope</b> - information about the biotope</li>
+    <li><b>Date of project creation</b> - date and time of project creation. This item is obligatory.</li>
+    <li><b>Date of most recent project modification</b> - date and time of the most recent modification, entering, or deletion of records in the project.</li>        
+ </ul>
+ 
+<a name="edit"></a><h2>Editing metadata</h2>
+
+Open the Edit metadata dialog from Metadata manager. Don’t forget that you must select a project the metadata of which you aim to edit in order to open this dialog. 
+The layout of the Edit metadata dialog is almost identical with the Add metadata dialog. The obligatory items are: institution, name of the person responsible for 
+technical assistance, name of the person responsible for content assistance, name of the project, and data source.<br> 
+  Non-editable items:
+
+  
+  <ul>    
+    <li><b>Date of project creation</b> - date and time of project creation. 
+	Non-editable item.</li>
+    <li><b>Date of most recent project modification</b> - date and time of the 
+	most recent modification, entering, or deletion of records in the project. 
+	Non-editable item.</li>
+  </ul>
+
+The administrator may find the information about the changes performed in individual pieces of metadata in the <a href="./history.html#historyData">whole history</a>
+dialog, where he may also utilize the option of reverting into previous values.
+
+<a name="detail"></a><h2>Detailed project metadata</h2>
+
+This dialog displays detailed information about the project metadata. You have to select a project in order to be able to open this dialog. 
+The dialog is almost identical with the Edit metadata dialog. All items are non-editable, their nature is purely informative.
+
+  
+<a name="drop"></a><h2>Removing project metadata</h2>
+
+Use button <b><i>Delete metadata </i></b>in the Metadata manager to delete the metadata of a particular project. Before pressing this 
+  button, it is necessary to select the metadata. After the button is pressed, the user will be informed about the 
+  operation about to be performed. By confirming the operation, the metadata will be deleted. 
+
+  <br><br>
+  <img src="picture/metadataDelete_cs.png">
+  <br><br>
+  The administrator may recover the deleted metadata by means of the <a href="./history.html#historyData">whole history</a> dialog.
+  </body>
 </html>
