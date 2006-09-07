@@ -8,25 +8,25 @@
   <body>
   <h1>Správa publikací</h1>
 Správa publikací umožňuje uživateli přidávat, upravovat a vyhledávat publikace, ve kterých byly nálezy 
-publikované. Dialogové okno se správou publikací je možné otevřít pomocí menu Data|Správa publikací.
+publikované. Dialogové okno se správou publikací je možné otevřít pomocí menu <b>Data|Správa publikací</b>.
 <p>
 Dialog pro správu publikací se skládá ze dvou základních částí:
 <ul>
 <li><b>Seznam publikací</b> - publikace, které jsou výsledkem posledního hledání</li>
 <li><b>Vyhledávání publikací</b> - zde můžete zadat kritéria pro vyhledávání publikací</li>
 </ul>
-
+<img src="picture/PublicationsMain.png">
 <h2>Seznam publikací</h2>
 Po úspěšném vyhledání jsou výsledky zobrazeny v této části formuláře. Výsledky jsou zobrazeny po stránkách, 
 proto nejsou bezprostředně po vyhledání zobrazené všechny publikace. Pro přecházení mezi jednotlivými 
-stránkami výsledků použijte tlačítek Předchozí a Následující které najdete pod tabulkou se seznamem 
+stránkami výsledků použijte tlačítek <i>Předchozí</i> a <i>Následující</i> které najdete pod tabulkou se seznamem 
 publikací. V případě, že chcete zobrazit více záznamů na jedné stránce, zadejte počet zobrazovaných záznamů 
-do pole pod tabulkou se seznamem publikací a stiskněte klávesu enter. Vedle tohoto pole se taktéž nachází 
-informace celkovém počtu nalezných záznamů a rozsah který je právě zobrazen.
+do pole pod tabulkou se seznamem publikací a stiskněte klávesu <code>enter</code>. Vedle tohoto pole se taktéž 
+nachází informace celkovém počtu nalezných záznamů a rozsah který je právě zobrazen.
 <p>
-Tato část formuláře obsahuje taky tlačítka pro přidávání, úpravu a mazání publikací. Tlačitka Přidej 
-publikaci a Uprav publikaci otevřou dialogové okno pro přidávání/úpravu publikací (viz níže). Tlačítko 
-Odeber publikaci smaže (po potvrzení uživatelem) vybranou publikaci. Pro úpravu nebo smazání publikace 
+Tato část formuláře obsahuje taky tlačítka pro přidávání, úpravu a mazání publikací. Tlačitka <i>Přidej 
+publikaci</i> a <i>Uprav publikaci</i> otevřou dialogové okno pro přidávání/úpravu publikací (viz níže). Tlačítko 
+<i>Odeber publikaci</i> smaže (po potvrzení uživatelem) vybranou publikaci. Pro úpravu nebo smazání publikace 
 musí být daná publikace vybraná v tabulce se seznamem publikací (v opačném případě systém uživatele 
 upozorní že není vybraná žádná publikace). Úpravy a mazání publikací podléhá systému oprávnění v Plantlore. 
 Pro podrobnější informace o systému oprávnění navštivte sekci Práva.
@@ -36,31 +36,36 @@ Dialog pro správu publikací umožňuje vyhledávání podle 4 parametrů: Jmé
 podrobné informace. Výsledky můžou být uspořádané podle jména kolekce, roku publikace, jména článku, autora 
 článku, citace a podrobných informací vzestupně nebo sestupně. Řetězec pro vyhledávání nemusí přesně 
 odpovídat položce v databázi, nalezeny budou všechny záznamy, u kterých je zadaná položka podřetězcem 
-odpovídajíci položky v databázi. Po zadaní parametrů pro hledání se vyhledávaní spouští tlačítkem Vyhledej 
-publikace.
+odpovídajíci položky v databázi. Po zadaní parametrů pro hledání se vyhledávaní spouští tlačítkem <i>Vyhledej 
+publikace</i>.
 <p>
 Vyhledávání nerozlišuje malá a velká písmena.
 <p>
 Po otevření dialogového okna pro správu publikací se zobrazí všechny dostupné publikace. Pro pozdější 
-zobrazení všech publikací stiskněte tlačítko Vyhledej publikace bez vyplnění vyhledávacích parametrů.
+zobrazení všech publikací stiskněte tlačítko <i>Vyhledej publikace</i> bez vyplnění vyhledávacích parametrů.
 
 <h1>Přidávání a editace publikací</h1>
 Dialogové okno pro přidávaní nebo editaci publikací se otevírá z hlavního okna správy publikací tlačítkem 
-Přidej publikaci resp. Uprav publikaci. Toto okno obsahuje následující položky:
+<i>Přidej publikaci</i> resp. <i>Uprav publikaci</i>. Toto okno obsahuje následující položky:
 <ul>
-<li><b>Jméno kolekce</b> - Jméno kolekce do které daná publikace patří.</li>
+<li><b>Jméno kolekce</b> - Jméno kolekce do které daná publikace patří. Maximální délka této položky je 255 znaků.</li>
 <li><b>Rok publikace</b> - Rok, ve kterém došlo k publikaci nálezu.</li>
-<li><b>Název článku</b> - Název článku, ve kterém byl nález publikován.</li>
-<li><b>Jméno autora článku</b> - Autor článku ve kterém byl nález publikován.</li>
-<li><b>Detail</b> - Detail odkazu na článek.</li>
-<li><b>Poznámka</b> - Jakákoli další informace o publikaci.</li>
+<li><b>Název článku</b> - Název článku, ve kterém byl nález publikován. Maximální délka této položky je 255 znaků.</li>
+<li><b>Jméno autora článku</b> - Autor článku ve kterém byl nález publikován. Maximální délka této položky je 255 znaků.</li>
+<li><b>Detail</b> - Detail odkazu na článek. Maximální délka této položky je 100 znaků.</li>
+<li><b>URL</b> - URL odkazující na publikaci. Maximální délka této položky je 100 znaků.</li>
+<li><b>Poznámka</b> - Jakákoli další informace o publikaci. Maximální délka této položky je 4096 znaků.</li>
 </ul>
+<img src="resources/PublicationsAdd.png">
+<p>
 Pokud přidáváte novou publikaci, vyplňte jednotlivé položky a stiskněte tlačítko Ulož publikaci. Alespoň 
 jedna z následujících položek musí být vyplňena: Autor článku, rok publikace, jméno článku, jméno kolekce.
+</p>
 <p>
 V případě, že upravujete už existující publikaci, vyplní se parametry vybrané publikace do formuláře a 
 můžete je upravit. Pomocí tlačítka Ulož publikaci  se změny uloží do databáze. Tak jako u přidávání 
 publikací, alespoň jedna z těchto položek musí být vyplněná: Autor článku, rok publikace, jméno článku, 
 jméno kolekce
+</p>
   </body>
 </html>

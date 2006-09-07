@@ -7,6 +7,38 @@
   </head>
   <body>
   <h1>Vytváření nové databáze</h1>
-  
+  Aby jste mohli po instalaci začat pracovat s nálezovými záznamy je potřeba nejprve vytvořit databázi do které se data budou ukládat (v případě, že
+  se připojujete k lokální databázi). V případě připojení ke vzdálenému serveru není potřeba databázi vytvářet. Plantlore umožňuje taky práci s více 
+  databázemi na jednom serveru proto je nutné mít možnost vytvořit novou databázi. Důvodem pro více databází může být například oddělení dat různých 
+  projektů či institucí. Počet databází a jejich využití je na vás.
+  <p>
+  Plantlore poskytuje jednoduché rozhraní pro vytváření nové databáze, které je přístupné z hlavního menu aplikace <b>Data|Vytvořit novou databázi</b>.
+  <p>
+  <img src="picture/CreateDBMain.png" />
+  <p>
+  <b>Důležité upozornění: Z bezpečnostních důvodů je možné vytvářet novou databázi jenom přes lokální připojení k databázi.</b> Taky se ujistěte, že
+     není žádný jiný program právě nepoužívá databázový systém PostgreSQL.
+  <p>
+  V tomto dialogu musíte zadat základní informace o databázovém systému ve kterém chcete databázi vytvořit a o nové databázi.
+  <ul>
+    <li><i>Databáze</i> - Typ databázového systému. V současné verzi je podporován pouze systém PostgreSQL</li>
+    <li><i>Port DB</i> - Port na kterém databázový systém běží. V tomto poli je předvyplněný výchozí port pro vybraný databázový systém</li>
+    <li><i>Alias</i> - Popis nové databáze který se použije při přihlašování (tato informace se po vytvoření databáze automaticky přidá do přihlašovacího dialogu kde si volíte databázi ke které se chcete připojit)</li>
+    <li><i>Identifikátor DB</i> - jméno samotné databáze. Ujistěte se, že databáze s tímto jménem ještě neexistuje. V názvu databáze je možné použít pouze alfanumerické znaky (A-Z, a-z, 0-9)</li>
+  </ul>
+  Po stisku tlačítka Pokračuj se zobrazí dialog pro zadání přihlašovacího jména a hesla které jsou potřeba pro přihlášení do databázového systému. 
+  <p>
+  <img src="picture/CreateDBAuth.png">
+  <p>
+  <b>Vytváření nové databáze po instalaci Plantlore</b>
+  <p>
+    V případě, že vytváříte databázi po nové instalaci Plantlore, zadejte jméno a heslo databázového uživatele které jste si zvolili v instalátoru. Plantlore automaticky umožní tomuto uživateli administrátorský přístup k nové databázi a následné
+    vytváření nových uživatelů.
+  </p>
+  <b>Vytváření nové databáze v už fungujícím systému</b> 
+  <p>
+    Pokud vytváříte novou databázi v systému kde už existují jiné databáze musíte pořád používat původního databázového, kterého jste použili pro vytvoření originální databáze.
+  </p>
+    Po úspěšném vytvoření databáze se zobrazí správa o úspěšném dokončení operace a můžete se přihlásit k nově vytvořené databázi.
   </body>
 </html>
