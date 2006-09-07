@@ -31,9 +31,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jPanel7" alignment="0" max="32767" attributes="2"/>
                   <Group type="102" alignment="0" attributes="1">
-                      <Component id="helpBtn" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="585" max="32767" attributes="0"/>
-                      <Component id="closeBtn" min="-2" max="-2" attributes="0"/>
+                      <Component id="helpBtn" min="-2" pref="120" max="-2" attributes="0"/>
+                      <EmptySpace pref="548" max="32767" attributes="0"/>
+                      <Component id="closeBtn" min="-2" pref="120" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jPanel8" alignment="0" max="32767" attributes="1"/>
               </Group>
@@ -75,9 +75,9 @@
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane3" alignment="0" pref="755" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" alignment="0" pref="756" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="previousBtn" min="-2" pref="107" max="-2" attributes="0"/>
+                          <Component id="previousBtn" min="-2" pref="120" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="totalResultLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -89,17 +89,17 @@
                           <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
                           <Component id="displayedLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="displayedLabel" pref="97" max="32767" attributes="0"/>
+                          <Component id="displayedLabel" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="nextBtn" min="-2" max="-2" attributes="1"/>
+                          <Component id="nextBtn" min="-2" pref="120" max="-2" attributes="1"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="addBtn" min="-2" pref="111" max="-2" attributes="3"/>
+                          <Component id="addBtn" min="-2" pref="120" max="-2" attributes="3"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="editBtn" min="-2" pref="113" max="-2" attributes="1"/>
+                          <Component id="editBtn" min="-2" pref="120" max="-2" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="deleteBtn" min="-2" pref="136" max="-2" attributes="1"/>
+                          <Component id="deleteBtn" min="-2" pref="120" max="-2" attributes="1"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -284,11 +284,11 @@
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="referenceDetailField" pref="183" max="32767" attributes="2"/>
-                              <Component id="referenceCitationField" alignment="0" pref="183" max="32767" attributes="2"/>
+                              <Component id="referenceDetailField" pref="184" max="32767" attributes="2"/>
+                              <Component id="referenceCitationField" alignment="0" pref="184" max="32767" attributes="2"/>
                           </Group>
                       </Group>
-                      <Component id="searchBtn" min="-2" pref="149" max="-2" attributes="1"/>
+                      <Component id="searchBtn" min="-2" pref="120" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel9" min="-2" max="-2" attributes="0"/>

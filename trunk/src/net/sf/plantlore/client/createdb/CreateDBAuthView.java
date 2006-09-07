@@ -31,7 +31,7 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
         PlantloreHelp.addButtonHelp(PlantloreHelp.CREATE_DB, this.help);
         */
         new DefaultEscapeKeyPressed( this );
-        
+
         DocumentSizeFilter.patch(password, 20);
     }
 
@@ -50,6 +50,7 @@ public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
         user = new javax.swing.JTextField();
         cancel = new javax.swing.JButton();
 
+        setTitle(L10n.getString("Login.Authentication"));
         jLabel1.setText(L10n.getString("Login.UserName"));
 
         jLabel2.setText(L10n.getString("Login.Password"));

@@ -193,26 +193,7 @@ public class CreateDB extends Observable {
                     // Disconnect - destroy DBLayer
                     factory.destroy(currentDBLayer);
                     logger.debug("Disconnected from the database "+dbinfo.getDatabaseIdentifier());
-                    
-                            /*
-                             * TODO:
-                             *
-                             * HERE GOES YOUR CODE THAT PERFORMS
-                             * 1. THE CONNECTION TO THE DATABASE ENGINE
-                             *    You should use inormation stored in dbinfo and the stored name and password.
-                             *    See HibernateDBLayer.initialize().
-                             * 2. THE CREATION OF THE NEW DATABASE
-                             *    Here it is up to you, I have no idea what should be done here.
-                             *    Creation of all tables and roles + user admin with some default password +
-                             *    neccessary columns (history).
-                             * 3. PRE-FILLING THE DATABASE WITH SOME VALUES
-                             *    Polluting the database with all villages, plants, territories, and phytochoria.
-                             *    This may be optional - only if leaveEmpty is true.
-                             *
-                             * Everything you want do, do it here in the CreationTask!
-                             *
-                             */
-                    
+                                                
                     // Everything went fine.
                     addDBInfoPermanently( dbinfo );
                     logger.info("The creation of a new database was successful.");

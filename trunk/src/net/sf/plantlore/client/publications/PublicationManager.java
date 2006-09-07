@@ -556,13 +556,20 @@ public class PublicationManager extends Observable {
     
     /**
      *  Close active SelectQuery (if there is one)
-     *
-     *  @throws DBLayerException    In case database operation failed
-     *  @throws RemoteException     In case network operation failed
      */
-    public void closeActiveQuery() throws DBLayerException, RemoteException {
+    public void closeActiveQuery()  {
         if (this.activeSelectQuery != null) {
-            database.closeQuery(this.activeSelectQuery);
+            try {
+                database.closeQuery(this.activeSelectQuery);
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                return;                    
+            }            
             this.activeSelectQuery = null;
         }
     }

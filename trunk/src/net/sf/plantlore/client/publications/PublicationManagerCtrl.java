@@ -40,6 +40,8 @@ public class PublicationManagerCtrl {
         // Save model and view
         this.model = publModel;
         this.view = publView;
+        // Add escape key event - close dialog
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);        
         // Add action listeners to buttons
         view.addPublicationWindowListener(new PublicationWindowListener());        
         view.closeBtnAddActionListener(new CloseButtonListener());
@@ -112,19 +114,8 @@ public class PublicationManagerCtrl {
     class PublicationWindowListener extends WindowAdapter {
         public void windowClosed(WindowEvent e) {
             // Close database connection
-            try {
-                model.closeActiveQuery();
-            } catch (RemoteException ex) {
-                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
-                ex.printStackTrace();
-                DefaultExceptionHandler.handle(view, ex);
-                return;                    
-            } catch (DBLayerException ex) {
-                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
-                ex.printStackTrace();
-                DefaultExceptionHandler.handle(view, ex);
-                return;                    
-            }
+            System.out.println("closing window and query");
+            model.closeActiveQuery();
         }
     }
 

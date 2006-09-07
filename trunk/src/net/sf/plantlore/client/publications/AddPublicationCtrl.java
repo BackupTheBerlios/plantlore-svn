@@ -8,6 +8,7 @@ import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.DefaultProgressBar;
 import net.sf.plantlore.common.Dispatcher;
@@ -42,6 +43,8 @@ public class AddPublicationCtrl {
         // Save instance of view and model
         this.model = addModel;
         this.view = addView;
+        // Add escape key event - close dialog
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);                
         // Add listeners for buttons and fields
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.saveBtnAddActionListener(new SavePublicationButtonListener());        

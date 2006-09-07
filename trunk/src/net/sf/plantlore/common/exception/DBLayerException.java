@@ -205,8 +205,6 @@ public class DBLayerException extends PlantloreException {
             String errorClass = sqlstate.substring(0,2);
             String errorDetail = sqlstate.substring(2);
             
-            System.out.println("---------------------------------------Translating sqlstate = " + sqlstate);
-            
             // Connection exception - Connection does not exist, was interrupted or cannot be established
             if (errorClass.equals("08")) {
             	/* POINTLESS :(

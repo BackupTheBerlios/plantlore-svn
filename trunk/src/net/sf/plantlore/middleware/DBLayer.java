@@ -364,13 +364,22 @@ public interface DBLayer extends Remote, Serializable {
     public int getConnectionCount() throws RemoteException;
     
     /**
-     *  TODO: JavaDoc pending     
+     *  Method used to create new database in the PostgreSQL system.
+     *  @param dbname name of the database to create
+     *  @throws DBLayerException in case database error occurred
+     *  @throws RemoteException in case network error occurred
      */
     public void createDatabase(String dbname) throws DBLayerException, RemoteException;
 
     /**
-     *  TODO: JavaDoc pending     
-     */    
+     *  Executes given SQL script. This method is used for creating new users in the new database nad createing tables.
+     *  @param scriptid id of the script to execute
+     *  @param dbname name of the database to execute the script in
+     *  @param username username used to connect to the database
+     *  @password password used to connect to the database
+     *  @throws DBLayerException in case database error occurred
+     *  @throws RemoteException in case network error occurred
+     */
     public void executeSQLScript(int scriptid, String dbname, String username, String password) throws DBLayerException, RemoteException;
     
     /**

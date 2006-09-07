@@ -43,6 +43,14 @@ public class CreateDBCtrl {
 					engine = ((javax.swing.JTextField)view.databaseEngine.getEditor().getEditorComponent()).getText(),
 					identifier = view.databaseIdentifier.getText(),
 					alias = view.databaseAlias.getText();
+                                if (!identifier.matches("[A-Za-z0-9][A-Za-z0-9]*")) {
+					JOptionPane.showMessageDialog(
+    						view, 
+    						L10n.getString("Error.BadDatabaseIdentifier"), 
+    						L10n.getString("Error.BadDatabaseIdentifierTitle"), 
+    						JOptionPane.ERROR_MESSAGE);   
+                                        return;
+                                }
 				int port = -1;
 				try { 
 					port = Integer.parseInt(view.databasePort.getText());
@@ -63,8 +71,8 @@ public class CreateDBCtrl {
 			}
 		});
 	}
-        
-    /**
+       
+   /**
      *  Focus listener for the <strong>DatabaseEngine combobox</strong>. After losing focus
      *  automaticaly loads default port for the given database.
      */

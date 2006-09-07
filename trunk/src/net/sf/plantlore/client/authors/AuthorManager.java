@@ -81,7 +81,8 @@ public class AuthorManager extends Observable {
     private Author editAuthor;
     /** Enum used for notifying AppCore to reload cached publications */
     private PlantloreConstants.Table[] editTypeArray = new PlantloreConstants.Table[]{PlantloreConstants.Table.AUTHOR};
-    
+    /** Currently running query */
+    private SelectQuery activeSelectQuery = null;    
     
     /** Constants used for identification of fields for sorting */
     public static final int SORT_NAME = 1;
@@ -139,7 +140,7 @@ public class AuthorManager extends Observable {
                 clearDataHolders();                
                 // Execute query
                 author = (Author)database.executeInsert(author);
-                logger.info("Author "+name+" saved successfuly.");                
+                logger.info("Author "+author.getWholeName()+" saved successfuly.");                
                 // Set operation state to finished
                 done = true;
                 // Stop the Task
@@ -308,9 +309,35 @@ public class AuthorManager extends Observable {
         int resultId = 0;
         // Execute query
         resultId = database.executeQuery(query);
+        if (this.activeSelectQuery != null) {
+            database.closeQuery(this.activeSelectQuery);
+        }
+        // Save the query as the active search query        
+        this.activeSelectQuery = query;        
         return resultId;
     }
      
+    /**
+     *  Close active SelectQuery (if there is one)
+     */
+    public void closeActiveQuery()  {
+        if (this.activeSelectQuery != null) {
+            try {
+                database.closeQuery(this.activeSelectQuery);
+            } catch (RemoteException ex) {
+                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                return;                    
+            } catch (DBLayerException ex) {
+                logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
+                ex.printStackTrace();
+                return;                    
+            }            
+            this.activeSelectQuery = null;
+        }
+    }
+    
+    
     /**
      *  Clear the variables with author properties
      */

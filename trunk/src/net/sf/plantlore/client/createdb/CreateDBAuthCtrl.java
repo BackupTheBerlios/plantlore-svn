@@ -32,13 +32,17 @@ public class CreateDBAuthCtrl {
 
 				Task creation = model.createCreationTask(user, new String(view.password.getPassword()));
                                 Dispatcher.getDispatcher().dispatch(creation, view, false);
-                                /*
-				new DefaultProgressBar(creation, view, true);
-				creation.start(); */
 				
 				view.password.setText("");
 			}
 		});
+                /*
+		JOptionPane.showMessageDialog(
+                    view, 
+                    L10n.getString("Error.BadDatabaseIdentifier"), 
+                    L10n.getString("Error.BadDatabaseIdentifierTitle"), 
+                    JOptionPane.ERROR_MESSAGE);                   
+                 */
 	}
 
 }

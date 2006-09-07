@@ -261,7 +261,13 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return plantloreUser;
     }
     
-    // TODO: JavaDoc, cleanup
+    /**
+     *  Initialization of DBLayer when creating new DB (login without database prefix)
+     *
+     *  @param dbID database identifier - database we want to use
+     *  @param user loginname of the user
+     *  @param password password of the user
+     */
     public void initializeNewDB(String dbID, String user, String password) throws DBLayerException, RemoteException {
         Configuration cfg;
         // Load Hibernate configuration
@@ -1066,7 +1072,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
     public void executeDeleteInTransactionHistory(Object data) throws DBLayerException, RemoteException {
         lowLevelOperation(DELETE, data, false, false);
     }
-    
+
+    /**
+     *  Method to check the rights of the user, whether he is allowed to execute given operation
+     *  @data data we inserted/updated
+     *  @type type of the operation (INSERT/UPDATE/DELETE)
+     */
     private void checkRights(Object data, int type) throws DBLayerException {
         DBLayerException ex;
         Session sess;
@@ -1404,6 +1415,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }        
     }
     
+    /**
+     *  Method for saving history of database modifications
+     *
+     *  @param sess session to use for databas queries
+     *  @param data data we inserted/updated
+     *  @param type type of operation (SAVE, UPDATE)
+     *  @param recordId id of the newly created record
+     *  @throws DBLayerException in case database error occurred
+     */
     private void saveHistory(Session sess, Object data, int type, Integer recordId) throws DBLayerException {
         String table;
         Integer id, result = 0;
@@ -2174,6 +2194,12 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return sessions.size();
     }
     
+    /**
+     *  Method used to create new database in the PostgreSQL system.
+     *  @param dbname name of the database to create
+     *  @throws DBLayerException in case database error occurred
+     *  @throws RemoteException in case network error occurred
+     */
     public void createDatabase(String dbname) throws DBLayerException, RemoteException {
         // Check whether we are connected and obtain a session
         checkConnection();     
@@ -2194,6 +2220,15 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
     }
     
+    /**
+     *  Executes given SQL script. This method is used for creating new users in the new database nad createing tables.
+     *  @param scriptid id of the script to execute
+     *  @param dbname name of the database to execute the script in
+     *  @param username username used to connect to the database
+     *  @password password used to connect to the database
+     *  @throws DBLayerException in case database error occurred
+     *  @throws RemoteException in case network error occurred
+     */
     public void executeSQLScript(int scriptid, String dbname, String username, String password) throws DBLayerException, RemoteException {
         String file;
         switch (scriptid) {

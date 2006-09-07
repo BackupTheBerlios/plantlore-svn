@@ -8,6 +8,7 @@ import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
+import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.PlantloreHelp;
@@ -43,10 +44,12 @@ public class AddAuthorCtrl {
      *  @param addView View for adding authors in Author manager
      */
     public AddAuthorCtrl(AuthorManager addModel, AddAuthorView addView) {
-        logger = Logger.getLogger(this.getClass().getPackage().getName());        
+        logger = Logger.getLogger(this.getClass().getPackage().getName());                
         // Save instance of view and model
         this.model = addModel;
         this.view = addView;
+        // Add escape key event - close dialog
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);        
         // Add listeners for buttons and fields
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.saveBtnAddActionListener(new SaveAuthorButtonListener());        

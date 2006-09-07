@@ -38,6 +38,8 @@ public class AuthorManagerCtrl {
         // Save model and view
         this.model = authModel;
         this.view = authView;
+        // Add escape key event - close dialog
+        DefaultEscapeKeyPressed escapeKeyPressed = new DefaultEscapeKeyPressed(view);                
         // Add action listeners to buttons
         view.closeBtnAddActionListener(new CloseButtonListener());
         view.addBtnAddActionListener(new AddAuthorButtonListener());
@@ -112,7 +114,7 @@ public class AuthorManagerCtrl {
             AddAuthorCtrl addAuthCtrl = new AddAuthorCtrl(model, addAuthView);            
             // We are going to add author, no editing
             model.setEditAuthor(null);
-            addAuthView.setSize(400,450);        
+//            addAuthView.setSize(400,450);        
             addAuthView.setLocationRelativeTo(null);
             logger.info("Add Author dialog opened for adding new author");            
             addAuthView.setVisible(true);
@@ -147,7 +149,7 @@ public class AuthorManagerCtrl {
             model.setEditAuthor(model.getSelectedAuthor(index));            
             model.setAuthorIndex(index);
             model.loadAuthor();
-            addAuthView.setSize(400,450);        
+//            addAuthView.setSize(400,450);        
             addAuthView.setLocationRelativeTo(null);
             logger.info("Add Author dialog opened for editing author");
             addAuthView.setVisible(true);            
