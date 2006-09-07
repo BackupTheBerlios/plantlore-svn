@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Vytváření nové databáze</title>
+  </head>
+  <body>
+  <h1>Strom lokalit</h1>
+ <p>Strom lokalit slouží k rychlému hledání v nálezech podle geografického členění. Je možné ho vyvolat z panelu nástrojů
+ v hlavním okně aplikace.</p>
+ <br>
+ <img src="picture/habitat_tree_cz.png" alt="Strom lokalit">
+ <br>
+ 
+ <p>První vrstva stromu obsahuje území (teritoria), každé území pak obsahuje fytochoriony a konečně každý
+ fytochorion obsahuje seznam lokalit. Strom obsahuje pouze ty fytochoriony a území, které už nějaký nález obsahují.
+  Fytochoriony neobsahující žádný nález zobrazeny nejsou. Stejně tak území, která neobsahují alespoň jeden fytochorion
+  obsahující nález nejsou zobrazena.</p>
+  
+  <p>Nálezy v dané lokalitě můžete zobrazit buď dvojklikem na uzel lokality anebo je možné jednoduchým kliknutím lokalitu označit
+   a pak buď kliknout na levé dolní tlačítko hledat anebo pravým kliknutím myši vyvolat kontextové menu a v něm vybrat položku "Hledat".</p>
+   
+   <p>Informace ve stromu se automaticky neaktualizují spolu s úpravami nálezových dat v databázi, aby se předešlo neočekávanému zpomalení 
+   aplikace při pomalém připojení k serveru Plantlore při komunikaci přes síť. Seznam lokalit ve fytochorionu se z databáze znovu načítá
+   při každém rozbalení uzlu fytochorionu. Pro nové načtení celé struktury stromu slouží pravé
+   dolní tlačítko Obnovit. Funkci Obnovit je možné vyvolat i z kontextového menu.
+   </p>  
+  </body>
+</html>

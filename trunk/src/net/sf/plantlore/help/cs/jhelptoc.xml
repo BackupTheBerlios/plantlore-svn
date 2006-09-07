@@ -13,10 +13,9 @@
     <tocitem target="settings" text="Nastavení"/>
     <tocitem target="overview" text="Přehled nálezů">
         <tocitem target="overview.addoccurrence" text="Přidej/Edituj nález">        
-            <tocitem target="overview.addoccurrence.basic" text="Základní data"/>
-            <tocitem target="overview.addoccurrence.extended" text="Rozšířené data"/>            
             <tocitem target="overview.addoccurrence.checklist" text="Škrták"/>                        
         </tocitem>
+        <tocitem target="overview.habitattree" text="Strom lokalit"/>
         <tocitem target="overview.search" text="Vyhledávání"/>
         <tocitem target="overview.history" text="Historie úprav nálezů"/>        
     </tocitem>
