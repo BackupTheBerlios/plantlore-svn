@@ -1,0 +1,14 @@
+The following directories contain:
+
+* Developer
+
+  The Developer's (Programmer's) manual.
+
+
+* Uzivatelska
+
+  The User's manual, in Czech. That's why the name of the directory is in Czech.
+
+* Vyvojova
+
+  The "Decision" manual, in Czech. That's why the name of the directory is in Czech.  
