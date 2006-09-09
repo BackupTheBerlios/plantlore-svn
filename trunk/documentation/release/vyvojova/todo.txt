@@ -2,3 +2,13 @@ Knihovny:
  * Poradne zdokumentovat vsechen obsah Plantlore\lib, 
    tech knihoven je tam o dost vic! Kazdy at popise ty, 
    ktere pridal.
+
+Nezapomenout zminku o:
+
+ * L10N
+ * I18N
+ * Help
+ * configuration
+ * swing, matisse
+ * Jasper
+ * instalator

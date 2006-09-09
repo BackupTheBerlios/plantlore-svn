@@ -1,0 +1,46 @@
+1. Plantlore Architecture Overview [EK]
+
+ Prehled celkove architektury Plantlore - jeji vrstvy, ukoly
+ slozeni, kde najit podrobny popis.
+
+2. MVC in Plantlore [JK]
+
+ Struktura MVC, zakomponovani v Plantlore, rozklad na tridy.
+ Swing a tasky, dispatcher.
+
+3. Database Layer [TK]
+
+ Popis databazoveho modelu a databazove vrstvy.
+
+4. Communication Layer & Server [EK]
+
+ Komunikace "klient-server", proces prihlasovani.
+
+5. Presentation Layer (Client)
+
+ Prakticky popis casti z platnlore.client:
+
+ 5.1. Historie [EK for LO]
+ 5.2. Sprava autoru, publikaci, metadat, uzivatelu [TK]
+       - z programatorskeho hlediska se jedna o uplne to same, cili
+         popsat ty spolecne casti, v sekci o konkretni implementaci
+         kdyztak zminit odlisnosti
+ 5.3. Vytvareni nove databaze [TK]
+ 5.4. Export [EK]
+ 5.5. Import nalezovych dat [EK]
+ 5.6. Import dat do tabulek [EK]
+ 5.7. Zakladni prehled v Plantlore [JK]
+ 5.8. Pridavani a editace nalezovych dat [JK]
+ 5.9. Checklist [EK]
+ 5.10. Generator schedy a tisk [JK]
+ 5.11. Nastaveni [JK]
+
+6. Additional
+
+ Popis zajimavych casti z plantlore.common, L10N, I18N. [JK, EK]
+
+7. Build notes, installation [JK, TK]
+
+
+Prace na Programatorske dokumentace se ucastnime predevsim my Kacka, 
+tedy EK, JK, TK.
