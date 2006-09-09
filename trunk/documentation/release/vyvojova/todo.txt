@@ -1,0 +1,4 @@
+Knihovny: 
+ * Poradne zdokumentovat vsechen obsah Plantlore\lib, 
+   tech knihoven je tam o dost vic! Kazdy at popise ty, 
+   ktere pridal.
