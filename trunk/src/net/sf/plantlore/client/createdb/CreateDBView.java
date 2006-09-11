@@ -29,10 +29,10 @@ public class CreateDBView extends javax.swing.JDialog implements Observer {
     	
         setLocationRelativeTo(null); // center of the screen
         getRootPane().setDefaultButton(next);
-        /*
+        
         PlantloreHelp.addKeyHelp(PlantloreHelp.CREATE_DB, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.CREATE_DB, this.help);
-        */
+        
         new DefaultEscapeKeyPressed( this );
         
         DocumentSizeFilter.patch(databaseAlias, 50);

@@ -105,7 +105,7 @@ public class SettingsCtrl extends Observable
                 return;
             }
             if (s.equals("HELP")) {
-                System.out.println("Tady se bude volat Help!");
+
                 return;
             }
             if (s.equals("CANCEL")) {

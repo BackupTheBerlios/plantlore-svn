@@ -91,12 +91,15 @@ public class PlantloreHelp {
     public static final String SERVER_MANAGER           = "server.manager"; 
     //  Desctripton of server info
     public static final String SERVER_INFO              = "server.info"; 
+    // Description for creating new database
+    public static final String CREATE_DB                = "createdb";    
 
     /* Instance of a logger */
     private static Logger logger = Logger.getLogger(PlantloreHelp.class.getPackage().getName());
     /* Instance of HelpSet and HelpBroker. These variables are initiliazed by initialize() method */
     private static HelpBroker hb;
     private static HelpSet hs;
+
     
     /** Creates a new instance of PlantloreHelp */
     public PlantloreHelp() {
