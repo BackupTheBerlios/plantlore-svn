@@ -98,7 +98,7 @@ public class Plantlore {
         
         plantlore.run();
                
-        new MemoryMonitor();        
+        // new MemoryMonitor();        
       
     }
     
@@ -162,7 +162,7 @@ public class Plantlore {
             //new ExceptionDialog(view,"Some exception was thrown: "+e);
             e.printStackTrace();
         }
-        new ConnectionMonitor(model);        
+        // new ConnectionMonitor(model);        
     }
     
     /**
