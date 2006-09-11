@@ -25,14 +25,12 @@ import org.apache.log4j.Logger;
  * @author Lada Oberreiterova
  * @version 1.0
  * 
- * U WGS-84 se bude zadavat a zobrazovat geodeticke souradnice:
+ * WGS-84 will be entered and displayed using geodetic coordinates
  *        latitude: 50.4576°
  * 	  longitude: 14.3986°
  * 	  altitude: 289.15 m
  *
- * U S42 a S-JTSK se budou zadavat a zobrazovat souradnice v ortogonálním systému: 
- * Pro S-JSTK se rozlisuji kvadranty - CR spada do 3.kvadrantu (X-ova souradnice bude vychazet zaporne)
- * Pro S-42 se rozlisuji pasy - CR spada do 3.pasu a část Karpat na Moravě do 4.pasu
+ * S42 a S-JTSK will be entered and displayed using ortogonal coordinates
  * 		Y= 1002007 m 
  * 		X= 738791 m.
  * 		Z=  244 m
@@ -65,13 +63,7 @@ public class Transformation {
     
     /**
      * 
-     * Creates a new instance of Transformation 
-     * 
-     * 
-     * @param latitude
-     * @param longitude
-     * @param altitude
-     * @param coordinateSystem
+     * Creates a new instance of Transformation      
      */
     public Transformation() {
         
@@ -83,9 +75,10 @@ public class Transformation {
     //**********************************  WGS-84  <---> S-JTSK ************************************//
     //*********************************************************************************************//
     /**
-     * Helmertova transformace (podmínka "min max") 
-     * 
-     *  WGS-84 používá elipsoid WGS-84, kdežto S-JTSK používá elipsoid Basseův (Elipsoidy se s různou přesností přibližují 
+     * Helmert transformation (conditions "min max") 
+     * /
+     
+     /*  WGS-84 používá elipsoid WGS-84, kdežto S-JTSK používá elipsoid Basseův (Elipsoidy se s různou přesností přibližují 
      * zobecněnému fyzikálnímu tvaru Země - geoidu). 
      *
      *  Transformace z WGS84 do S-JTSK má dvě části:
@@ -215,9 +208,7 @@ public class Transformation {
     
      public Double[] transform_S42_to_WGS84(Double x, Double y, Double z) {
          
-         //Prepocet z S-42 do WGS-84 ... uz dostanu hodnoty v radianech
-         //!!!!!FIXME - v teto funkci je chyba
-        //Double[] geodeticCoordinate = transformation_S42_xy_BLH(y, x, z);
+         //Prepocet z S-42 do WGS-84 ... uz dostanu hodnoty v radianech                
     	Double[] geodeticCoordinate = S42_xy_BLH(x, y, z);
         logger.debug("S42 - geodeticke souradnice: " + geodeticCoordinate[0]);
         logger.debug("S42 - geodeticke souradnice: " + geodeticCoordinate[1]);
@@ -257,7 +248,7 @@ public class Transformation {
     //******************************************************************************************//    
     
     /**    
-     *   Prepocet z S-JTSk do WGS-84
+     *    S-JTSk --> WGS-84
      *   (Krovak projection (used in the S-JTSK coordinate system))
      */    
     public Double[] kovak_xy_BLH(Double x, Double y, Double altitude) {
@@ -309,9 +300,10 @@ public class Transformation {
     }
     
     /**
-     * Transformace souradnic ze systemu WGS-84 do systemu S-JTSK.
-     *
-     * vraci JTSK souřadnice pro zadanou Severní šířku a východní délku  
+     * Transformations coordinate from system WGS-84 to system S-JTSK.
+     */
+    
+    /* vraci JTSK souřadnice pro zadanou Severní šířku a východní délku  
      * Zobrazeni zemepisnych souradnic na pravouhle:
      *  - zobrazeni Besselova elipsoidu  na Gausseovu kouli
      *  - vypocet kartografickych souradnic na Gaussove kouli s posunutym polem Q o souradnicich 48°15`, 42°30`.
@@ -511,10 +503,7 @@ public class Transformation {
         return value;
     }
     
-    /**
-     *
-     *
-     */
+    
     public Double[] mercator_XY_BLH(double e, double n, double no, double eo, double fo, double phi0, double lambda0, double elipsoid_a, double b){
         
         double phid = (n-no) / (elipsoid_a * fo) + phi0;
@@ -572,7 +561,7 @@ public class Transformation {
     //******** Convergetion between geological coordinate and cartesian coordinate ***********//
     //***************************************************************************************//
     
-    /**
+    /*
      *  Vypocet geodetickych souradnic z pravouhlych souradnic pro urcity elipsoid
      */
     public Double[] ellipsoid_xyz_BLH(Double x, Double y, Double z, Double elipsoid_a, Double elipsoid_f) {
@@ -596,7 +585,7 @@ public class Transformation {
           return geodeticCoordinate;       
       }
     
-    /**
+    /*
      * Vypocet pravouhlych souradnic z geodetickych souradnic pro dany elipsoid
      * (phi = B, lambda = L )
      *
@@ -620,7 +609,7 @@ public class Transformation {
         return cartesianCoordinate;
     }
     
-    /**
+    /*
      * Vypocet pravouhlych souradnic z geodetickych souradnic pro elipsoid WGS84
      *     
      */
@@ -630,7 +619,7 @@ public class Transformation {
         return cartesianCoordinate;
     }
     
-    /**
+    /*
      * Vypocet geodetickych souradnic z pravouhlych souradnic pro elipsoid WGS84
      *
      */
@@ -640,7 +629,7 @@ public class Transformation {
         return geodeticCoordinate;
       }        
     
-    /**
+    /*
      * Vypocet pravouhlych souradnic z geodetickych souradnic pro elipsoid Bessel
      *     
      */
@@ -650,7 +639,7 @@ public class Transformation {
         return cartesianCoordinate;
     }
     
-    /**
+    /*
      * Vypocet geodetickych souradnic z pravouhlych souradnic pro elipsoid Bessel
      *
      */
@@ -660,7 +649,7 @@ public class Transformation {
         return geodeticCoordinate;
       }        
     
-    /**
+    /*
      * Vypocet pravouhlych souradnic z geodetickych souradnic pro elipsoid Krajovskij
      *     
      */
@@ -670,7 +659,7 @@ public class Transformation {
         return cartesianCoordinate;
     }
     
-    /**
+    /*
      * Vypocet geodetickych souradnic z pravouhlych souradnic pro elipsoid Krajovskij
      *
      */
@@ -688,7 +677,7 @@ public class Transformation {
     /**
      * Hrdina (1997)
      *
-     * Transformace pravouhlych souradnic z WGS84 do S-JTSK
+     * Transformation ortogonal coordinate from WGS84 to S-JTSK
      */
     public Double[] transformation_WGS84_SJTSK_xyz_xyz(Double xs, Double ys, Double zs) {
         // koeficienty transformace ze systemu WGS-84 do systemu S-JTSK
@@ -720,7 +709,7 @@ public class Transformation {
     /**
      * Hrdina (2002)
      *
-     * Transformace pravouhlych souradnic z S-JTSK do WGS84 
+     * Transformation coordinate system from S-JTSK to WGS84 
      */
     public Double[] transformation_SJTSK_WGS84_xyz_xyz(Double xs, Double ys, Double zs) {
         // koeficienty transformace ze systemu S-JTSK do systemu WGS-84
@@ -751,7 +740,7 @@ public class Transformation {
     
     /**
      *
-     * Transformace pravouhlych souradnic z WGS84 do S42
+     * Transformation coordinate system from WGS84 to S42
      */
     public Double[] transformation_WGS84_S42_xyz_xyz(Double xs, Double ys, Double zs) {
         // koeficienty transformace ze systemu WGS84 do systemu S42
@@ -782,7 +771,7 @@ public class Transformation {
     
     /**     
      *
-     * Transformace pravouhlych souradnic z S42 do WGS84 
+     * Transformation coordinate system from S42 to WGS84 
      */
     public Double[] transformation_S42_WGS84_xyz_xyz(Double xs, Double ys, Double zs) {
         // koeficienty transformace ze systemu S42 do systemu WGS-84
@@ -815,7 +804,7 @@ public class Transformation {
     //******************* Radiant vs. Degree *******************************//
     //**********************************************************************//
     
-   /**
+   /*
    * transform latitude and longitude from degree to radiant format
    * 
    * @param latitude
@@ -833,7 +822,7 @@ public class Transformation {
       return geodeticCoordinateRAD;
   }
 
-  /**
+  /*
    * transform latitude and longitude from radiant to degree format
    * 
    * @param latitude
