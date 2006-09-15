@@ -767,6 +767,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         }
 
         public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            dce.cancelCellEditing();
         }
 
         public void popupMenuCanceled(PopupMenuEvent e) {
