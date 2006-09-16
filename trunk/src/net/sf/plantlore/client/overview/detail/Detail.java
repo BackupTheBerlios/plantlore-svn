@@ -160,8 +160,8 @@ public class Detail extends Observable {
                 longitude = (Double)pa[13];
                 country = (String)pa[14];
                 placeDescription = (String)pa[15];
-                quadrant = (String)pa[16];
-                habNote = (String)pa[17];
+                quadrant = (String)pa[17];
+                habNote = (String)pa[16];
                 village = (String)pa[18];
                 project = (String)pa[19];
                 phytCode = (String)pa[20];
