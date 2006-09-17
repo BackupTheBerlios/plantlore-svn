@@ -1114,7 +1114,6 @@ public class DBLayerUtils {
 			
 		} catch(DBLayerException e) {
 			// Roll back the transaction.
-			e.printStackTrace();
 			db.rollbackTransaction();
 			throw e;
 		} catch(RemoteException e) {
