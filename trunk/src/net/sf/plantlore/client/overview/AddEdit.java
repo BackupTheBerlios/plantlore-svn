@@ -1240,22 +1240,28 @@ public class AddEdit extends Observable {
         int i = 0;
         
         boolean isCountryNew = true;
-        for (String country : countries)
-            if (country.equals(phytCountry)) {
-                isCountryNew = false;
-                break;
-            }
-        if (isCountryNew)
-            i++;
+        if (countries != null) { //for example after installation there are initially no countries
+            for (String country : countries)
+                if (country.equals(phytCountry)) {
+                    isCountryNew = false;
+                    break;
+                }
+            if (isCountryNew)
+                i++;
+        } else
+            isCountryNew = false;
         
         boolean isSourceNew = true;
-        for (String s : sources)
-            if (s.equals(source)) {
-                isSourceNew = false;
-                break;
-            }
-        if (isSourceNew)
-            i++;
+        if (sources != null) { //sources also can quite possibly be empty
+            for (String s : sources)
+                if (s.equals(source)) {
+                    isSourceNew = false;
+                    break;
+                }
+            if (isSourceNew)
+                i++;
+        } else
+            isSourceNew = false;
             
         if (i > 0) { //there's been some change we must report
             logger.debug("REPORTING CHANGE!");
