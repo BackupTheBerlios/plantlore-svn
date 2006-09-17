@@ -202,6 +202,9 @@ public class DBLayerException extends PlantloreException {
          *  @return DBLayerException constant identifying a problem
          */
         public int translateSQLState(String sqlstate) {
+        	if( sqlstate == null )
+        		return ERROR_OTHER;
+        	
             String errorClass = sqlstate.substring(0,2);
             String errorDetail = sqlstate.substring(2);
             
