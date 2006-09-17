@@ -2287,7 +2287,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         }
         // In case we are creating users, add statement to create first user for accesing plantlore
         if (scriptid == DBLayer.CREATE_USERS) {
-            sql.append("CREATE USER "+dbname+"_"+username+" PASSWORD '"+password+"';");
+            sql.append("CREATE USER "+dbname+"_"+username+" PASSWORD '"+password+"' SUPERUSER;");
             sql.append("CREATE USER "+dbname+"_www PASSWORD 'plantlore';");
             sql.append("GRANT Plantlore_Role_Admin TO "+dbname+"_"+username+";");
             sql.append("GRANT Plantlore_Role_www TO "+dbname+"_www;");            
