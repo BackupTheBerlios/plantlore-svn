@@ -9,12 +9,13 @@
 	<h1>Plantlore Server</h1>
 
 	<p>
-	Aby se mohli k vaší databázi připojovat i jiní uživatelé z počítačů v síti, 
-	musí být spuštěn Plantlore Server. 
-	Server zprostředkovává připojení vzdáleným klientům a dohlíží na dodržování
-	předepsaného počtu klientů. Standardně se z jednoho počítače (z jedné IP adresy)
-	smí přihlásit nejvýše tři klienti a maximální celkový počet současně připojených
-	uživatelů je omezen na 32.
+        To allow other users to connect to your database remotely from other
+        computers in the network, you must start the Plantlore Server.
+        The Server mediates connection for remote clients and
+        controls the number of connected clients.
+        There can be 3 users connected from the same computer (using the same IP)
+        and the total number of clients cannot exceed the number 32.
+        This is the default settings.
 	</p>
 
         <!--
@@ -30,49 +31,52 @@
 
 
 
-	<h2>1. Vytvoření a spuštění nového serveru</h2>
+	<h2>1. Creating and starting a new Server</h2>
 
 	<p>
-	Nastavení serveru lze provést na záložce "Spustit nový server".
+        You can modify the settings of the server on the Create a new Server tab.
 	</p>
 
 	<p>
-	<img src="picture/ServerCreate.png" alt="Spuštění serveru.">
+	<img src="picture/ServerCreate.png" alt="Starting a new Server.">
 	</p>
 
 
 	<p>
-	Server lze spustit pouze na lokálním počítači. Jako správce serveru máte možnost nastavit následující parametry:
+        The Server can be started on the local computer only because of security
+        reasons.
+        You can specify following parameters:
 	</p>
 
 	<p>
 	<table>
 		<tr>
 			<th colspan="2">
-				Nastavení serveru
+				Server Settings
 			</th>
 		</tr>
 
 		<tr>
 			<th>
-				Parametr
+				Parameter
 			</th>
 			<th>
-				Význam
+				Meaning
 			</th>
 		</tr>
 
 		<tr>
 			<td>
-				Heslo
+				Password
 			</td>
 			<td>
-				Po spuštění je možné server administrovat 
-				i ze vzdáleného počítače.
-				Aby k němu neměly přístup nepovolané osoby, 
-				je možné nastavit heslo, kterým bude server chráněn.
-				Kdokoli se bude chtít k serveru připojit za účelem
-				administrace, bude se muset tímto heslem prokázat.
+                                After the Server is started, it can be controlled
+                                remotely.
+                                To restrict the access to the Server for
+                                administration purposes, you can set a password
+                                that will protect the Server.
+                                Anyone trying to control the Server will have to
+                                pass the password to gain full control.
 			</td>
 		</tr>
 
@@ -81,80 +85,87 @@
 				Port
 			</td>
 			<td>
-				Port určuje, kde bude server naslouchat, aby se k němu mohli 
-				připojovat vzdálení klienti. 
-
-				Port je číslo v rozsahu 0 až 65.535, přičemž je běžné, 
-				že servery využívají porty vyšší než 1.024, neboť nižší porty
-				bývají rezervovány pro známé služby (FTP, HTTP, Telnet, ...).
-
-				Porty nelze sdílet - ujistěte se, že na zvolený port již
-				některá jiná aplikace nepoužívá.
-
-				Standardní port je 1099.
+                                Port specifies where the Server should listen for
+                                connections from remote clients.
+                                
+                                Port is a number from 0 to 65.535 and ports above
+                                1.024 are commonly used. Lower ports are usually
+                                reserved for well known services (such as FTP, HTTP, etc.).
+                                
+                                Ports cannot be shared - you must make sure that the
+                                specified port is not in use by another application.
+                                
+                                The default port where Plantlore Server listens is 1099.
 			</td>
 		</tr>
 
 		<tr>
 			<th colspan="2">
-				Nastavení databázového stroje
+				Database Settings
 			</th>
 		</tr>
 
 		<tr>
 			<th>
-				Parametr
+				Parameter
 			</th>
 			<th>
-				Význam
+				Meaning
 			</th>
 		</tr>
 
 		<tr>
 			<td>
-				Typ DB
+				DB engine
 			</td>
 			<td>
-				Existuje několik databázových strojů (database engine), které umožňují snadnou
-				práci s databázemi, tabulkami, uživateli, dotazy a daty.
-				Každý databázový stroj může obsahovat několik různě pojmenovaných databází
-				s různou strukturou a s různým obsahem. Mezi nejznámější databázové stroje
-				patří Oracle, MSSQL, MySQL, Postgre a Firebird.
-				Plantlore podporuje práci s různými databázovými stroji,
-				ale je nutné přesně specifikovat, o který se jedná, 
-				aby s ním mohl bezchybně komunikovat. Plantlore je standardně dodáván
-				s Postgre. Aktuálně podporované DB stroje jsou vypsány v rozbalovací
-				nabídce, ale je možné specifikovat i jiný.
-			</td>
-		</tr>
-
-		<tr>
-			<td>
-				Port DB
-			</td>
-			<td>
-				Databázové stroje umožňují připojení pouze přes tzv. port. Každý databázový
-				stroj má tento port jiný a navíc jej lze snadno změnit. Aby Plantlore Server věděl,
-				kde má databázový stroj kontaktovat, musí znát port, na kterém stroj naslouchá.
-				Port je číslo v rozsahu 0 až 65.535, přičemž je běžné, že databázové stroje
-				využívají porty v rozsahu 1.024 až 10.000. Například standardní port databázového
-				stroje Postgre je 5432.
+                                There is a wide variety of database engines that
+                                allow you to work with databases, tables, users, 
+                                queries and data very easily.
+                                Every database engine can store several different
+                                databases - databases with different structure and
+                                contents. The best known database engines are
+                                Oracle, MSSQL, MySQL, Postgre and Firebird.
+                                Plantlore can work with some of these database
+                                engines, but it is necessary to specify with
+                                which it should work so that the Server can communicate
+                                with it properly. Plantlore is delivered 
+                                and tested with Postgre.
 			</td>
 		</tr>
 
 		<tr>
 			<td>
-				Parametr
+				DB Port
 			</td>
 			<td>
-				Databázový stroj může být potřeba ještě nakonfigurovat nějakým specifickým
-				způsobem. Některé stroje kupříkladu vyžadují explicitní nastavení kódování
-				znaků. Tenot parametr slouží
-				pro správné nastavení dodatečných parametrů připojení k databázovému stroji.
-				Připojení k Postgre žádný parametr nevyžaduje, ale např. pro správné zobrazení
-				diakritiky od Firebird je potřeba kódování nastavit.
+                                Database engines can be contacted on a certain port.
+                                Every databse engine may have a different port number
+                                In order to know where to contact the database engine,
+                                you have to supply the port where the database engine listens.
+                                
+                                Port is a number from 0 to 65.535 and ports above
+                                1.024 are commonly used. Lower ports are usually
+                                reserved for well known services (such as FTP, HTTP, etc.).
+                                
+                                The default port of PostgreSQL database engine is 5432.
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Parameter
+			</td>
+			<td>
+                                The database engine may require some additional settings.
+                                For instance you have to set the encoding explicitely.
+                                This parameter server for the proper additional configuration
+                                of the database connection.
+                                
+                                Postgre does not require any additional parameter.
 				<br/>
-				<i>Odborné: parametr je hodnota předávaná v připojovacím JDBC řetězci za :?:</i>
+				<i>Note: the parameter is a value passed in the JDBC connections
+                                string right after the exclamation mark "?"</i>
 			</td>
 		</tr>
 
@@ -163,32 +174,32 @@
 
 
 
-	<h2>2. Připojení k běžícímu serveru</h2>
+	<h2>2. Connecting to a running Server</h2>
 
 
 	<p>
-	Víte-li, že někde běží server, který jste spustili, můžete jej vzdáleně  
-	administrovat. Nejprve se k tomuto serveru
-	musíte připojit pomocí záložky "Připojení k běžícímu serveru".
+        If there is a Server that is already running, you can control it remotely.
+        First, you have to connect to the Server using the
+        Connect to a running Server tab.
 	</p>
 
 	<p>
-	<img src="picture/ServerConnect.png" alt="Spuštění serveru.">
+	<img src="picture/ServerConnect.png" alt="Connecting to a Server.">
 	</p>
 
 
 	<p>
-	Pro připojení je nutno specifikovat následující parametry
+        You have to supply the following parameters.
 	</p>
 
 	<p>
 	<table>
 		<tr>
 			<th>
-				Parametr
+				Parameter
 			</th>
 			<th>
-				Význam
+				Meaning
 			</th>
 		</tr>
 
@@ -197,12 +208,14 @@
 				Host
 			</td>
 			<td>
-				Tento parametr identifikuje počítač, kde server běží, a to buď podle
-				jeho jména nebo IP adresy. Každý počítač připojený k síti musí mít
-				svou vlastní unikátní IP adresu, podle níž je rozpoznán. IP adresa je 
-				nejčastěji čtveřice čísel oddělená tečkami, např. "192.168.0.247".
-				Některé počítače mají kromě IP adresy přidělena i jména, např. 
-				"data.domacisit.cz". 
+                                This parameter identifies the computer where the Server
+                                is running - either by its name or IP address.
+                                Every computer connected to a network must have its
+                                own unique IP address so that it can be identified
+                                in the network.
+                                IP address is a sequence of four numbers separated with
+                                dots, for instance "192.168.0.247". Some computers may have
+                                also a name, such as "data.home.net".
 			</td>
 		</tr>
 
@@ -211,22 +224,23 @@
 				Port
 			</td>
 			<td>
-				Port určuje, kde vzdálený server naslouchá.
+                                The port specifies where the remote Server listens.
+                                
+                                Port is a number from 0 to 65.535 and ports above
+                                1.024 are commonly used. Lower ports are usually
+                                reserved for well known services (such as FTP, HTTP, etc.).
 
-				Port je číslo v rozsahu 0 až 65.535, přičemž je běžné, 
-				že servery využívají porty vyšší než 1.024, neboť nižší porty
-				bývají rezervovány pro známé služby (FTP, HTTP, Telnet, ...).
-
-				Standardní port je 1099.
+				The default port is 1099.
 			</td>
 		</tr>
 
 		<tr>
 			<td>
-				Heslo
+				Password
 			</td>
 			<td>
-				Heslo chránící přístup k serveru pro účely administrace.
+                                The password protecting the access to the Server
+                                for remote control.
 			</td>
 		</tr>
 	</table>
@@ -235,46 +249,45 @@
 
 
 
-	<h2>3. Administrace serveru</h2>
+	<h2>3. Administration of the Server</h2>
 
 	<p>
-	Administrace slouží především k získání informací o aktuálně připojených uživatelích
-	a vypínání serveru. Administrátor by měl vyčkat, až se všichni uživatelé
-	odpojí, než vypne server. Plantlore Server neimplementuje žádný způsob 
-	upozorňování klientů, má-li být server vypnut.
+        The Administrator of the Server can obtain the information about currently
+        connected clints, and can switch off the Server.
 	</p>
 
 	<p>
-	<img src="picture/ServerManager.png" alt="Administrace serveru.">
+	<img src="picture/ServerManager.png" alt="Administration of the Server.">
 	</p>
 
 	<p>
-	Po připojení/vytvoření k serveru je k dispozici seznam aktuálně připojených uživatelů.
-	Dále je možné provést následující operace:
+        After connecting to the Server the Administrator can see the list of 
+        currently connected clients. The Administrator can:
 	<ul>
-		<li><b>Obnovit</b>.
-		Aktualizuje seznam s uživateli přihlášenými k tomuto serveru.
+		<li><b>Refresh the list</b>.
+                Updates the list of connected users.
 		</li>
-		<li><b>Vyhodit</b>.
-		Odpojí označeného klienta od serveru (tzv. kick).
-		Odpojení je násilné a přeruší všechny operace, které klient provádí.
-		Neslouží k zabránění opětovného připojení k serveru, protože blokování IP
-		adresy může odstavit i jiné klienty. 
+		<li><b>Kick a User</b>.
+                Disconnects the selected client from the Server
+		All operations in progress are cancelled. 
+                Kick does not prevent the User from re-connect; His IP address
+                will not be blocked as it may prevent connection from other
+                computers that share the same connection point.
 		<br/>
-		Význam spočívá v tom, že poskytuje prostředek, jak odpojit neukázněné
-		klienty, kteří díky své nedbalosti používají více připojení, než je třeba,
-		a mohou tím blokovat jiné uživatele, kteří mají navenek stejnou IP adresu.
+                Kick allows you to disconnect clients that use more connectins
+                than necessary thus blockign other Users with the "same" IP address.
 		<br/>
-		Pokud chcete klientovi zabránit v opětovném připojení, zakažte jeho uživatelský
-		účet ve <a href="./import.html">Správě uživatelů</a>.
+                If you wish to deny the access to the User 
+                (ban Him from using the database), you should disable
+                His account in <a href="./user.html">User manager</a>.
 		</li>
-		<li><b>Zastavit</b>.
-		Ukončí činnost serveru, všichni uživatelé přihlášení k tomuto serveru budou odpojeni
-		bez ohledu na to, zda mají spuštěny nějaké operace.
+		<li><b>Shutdown the Server</b>.
+                Stops the Server, disconnecting all clients immeditely.
 		</li>
-		<li><b>Skrýt</b>.
-		Skryje okno, ale server nechá spuštěný. Pro pozdější administraci se k Serveru musíte
-		znovu přihlásit, jak je popsáno v části 2.
+		<li><b>Hide the window</b>.
+                Hides the window but keeps the Server online (running).
+                If you seek to administrate the Server again, you must
+                connect to it as described in the Section 2.
 		</li>
 	</ul>
 	</p>  
