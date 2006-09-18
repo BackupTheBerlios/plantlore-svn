@@ -1,9 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Import</title>
-</head>
-<body>
-<h1>Import</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Occurrence Data Import</title>
+  </head>
+  <body>
+  <h1>Occurrence Data Import</h1>
+
+	<p>
+        Your Occurrence data are stored in a database and
+	cannot be accessed directly. In order to transfer your
+	data from one computer to another, you must use 
+        <a href="./export.html">Export</a> and Import.
+	
+        Import allows you to "take" the Occurrence data from a file on your
+        hard drive and store them back into your database.
+	</p>
+
+	<p>
+        Import can be performed with every database after logging in - even with a remote database.
+	However, if you are connected to a remote database and want to import the Occurrence data,
+	you should take the capacity of the network connection you are using into account, because
+	the amount of data transfered via the network may be huge and the whole process
+	may be painfully slow.
+	</p>
+
+	<p>
+        The database gets modified during the Occurrence data import.
+        In order to prevent unauthorized modifications of the data, you have
+        to posses sufficient access rights.
+        For instance, if you do not have the right to add new records,
+        Occurrence import would never succeed.
+        To learn more about access rights see
+        <a href="./user.html">User's rights</a>.
+	</p>
+
+        <!--
+	<h2>Obsah</h2>
+
+	<p>
+	<ol>
+		<li>Importování nálezových dat</li>
+		<li>Detailní popis průběhu importu</li>
+	</ol>
+	</p>
+        -->
+
+
+	<h2>1. Occurrence Import</h2>
+
+	<p>
+        First, you must specify the name of the file where the Occurrence
+        records are stored. Currently only the PlantloreNative file format
+        based on XML is available.
+	</p>
+
+	<p>
+        After the file name is supplied, the Occurrence Import begins. 
+        You can monitor its progress in the small window and cancel it by
+        pressing the Cancel button.
+        If you cancel the import prematurely, the Occurrences that were 
+        already inserted will remain in the database.
+        Should you wish to remove these records, use
+	<a href="./history.html">History</a>,
+	that can restore the database's previous state.
+	</p>
+
+
+	<h2>2. Occurrence Import in Detail</h2>
+
+	<p>
+        Occurrence import is a long running operation that modifies the contents
+        of the database. Plantlore must make sure that neither integrity nor security
+        of Occurrence records, that are already in the database, is violated,
+        which is why Plantlore may reject some of the Occurrence data. 
+        There are several reasons that may lead to rejection of a record:
+	<ol>
+		<li>
+                Insufficient access rights - for instance you may not have the 
+                right to add new records or modify records created by other Users.
+		Learn more about user rights in Section
+                <a href="./user.html">User management</a>.
+		</li>
+
+		<li>
+                Incomplete record, i.e. record whose mandatory columns are missing.
+		</li>
+
+		<li>
+                Incorrect record, i.e. record whose parts cannot be found in
+                the database. It is not possible to insert an Occurrence record
+                that refers to a plant, nearest bigger seat, phytochorion, or territorium
+                that is not in the database already.
+                The reasons why it is not possible are listed in Section
+		<a href="./table_import.html">Table import</a>.
+		</li>
+	</ol>
+        The previous list names all reasons that lead to rejection of an Occurrence
+        record, but do not cancel the whole Import.
+        If the file containing the Occurrence data has an unknown or invalid
+        format, the Import is automatically canceled as if the Cancel button was
+        pressed.
+	</p>  
+
+
+	<p>
+        Export and Import were designed for an easy data transfer and exchange 
+        between two databases. You can use Plantlore at home and at work 
+        simultaneously - changes made at work can be easily projected into
+        the database at home using the Export/Import procedure.
+        Let's give an example. You create a new habitat, say 
+        "50 metres from the Thames river.", and add two plants - 
+        Rubus saxatilis L. and Caltha palustris.
+        You export those two records and bring them to work where you import them
+        into your database. At work you realize that one of the plants was not
+	Rubus saxatilis L but Rubus albocarpaticus and you 
+	<a href="./addoccurrence.html">update</a>
+        the Occurrence record. If you transfer the data back to you home database,
+        the change will happen there, too.
+	</p>
+
+
+  </body>
 </html>
