@@ -92,15 +92,20 @@ public class RMI {
 	}
 	
 	
-	public static void setHostName() {
+	public static String setHostName() {
 		try {
+			// Obtain the IP of this host.
 			InetAddress address = InetAddress.getLocalHost();
 			String ip = address.getHostAddress();
+			
+			// getLocalHost().getHostAddress() failed!
 			if( "127.0.0.1".equals(ip) ) {
+				// Try to obtain the IP using the host name instead of getLocalHost().
 				String name = address.getHostName();
 				logger.info("The name of this machine is " + name);
 				address = InetAddress.getByName(name);
 				ip = address.getHostAddress();
+				// Again, no result. Try to scan all IP addresses and return the first that is not 127.0.0.1
 				if( "127.0.0.1".equals(ip) ) {
 					logger.warn("I'm getting a little desperate here!");
 					InetAddress[] addresses = InetAddress.getAllByName(name);
@@ -110,16 +115,20 @@ public class RMI {
 							break;
 					}
 					if(  "127.0.0.1".equals(ip) ) {
+						// It is not possible to autodetect the IP address.
 						logger.fatal("Unable to obtain the " + name + "'s ip! Remote connections may not be possible! Please specify it yourself by adding java -Djava.rmi.server.hostname=YourIP");
-						return;
+						return null;
 					}
 
 				}
 			}
+			// Set the hostname IP address.
 			System.setProperty(PROPERTY_HOSTNAME, ip);
 			logger.info("Hostname set to " + ip);
+			return ip;
 		} catch (UnknownHostException e) {
 			logger.fatal("Unable to obtain the host ip! Remote connections may not be possible! " + e.getMessage());
+			return null;
 		}
 	}
 

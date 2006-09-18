@@ -23,7 +23,7 @@ public class ServerCreateCtrl {
 	
 	public ServerCreateCtrl(final ServerMng model, final ServerCreateView view) {
             
-		Dispatcher.initialize( view.progress );
+		Dispatcher.initialize( view.progress, true );
 		
 		mngView = new ServerMngView(model);
 		new ServerMngCtrl(model, mngView);

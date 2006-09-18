@@ -107,11 +107,19 @@ public class Dispatcher {
         return dispatcher;
     }
     
-    public static void initialize(JProgressBar pb) {
+    synchronized public static void initialize(JProgressBar pb) {
         if (pb == null) {
             throw new IllegalArgumentException("Dispatcher can't be initialized with null progress bar!");
         }
         pbm = new ProgressBarManager(pb);
     }
+    
+    synchronized public static void initialize(JProgressBar pb, boolean doNotHide) {
+        if (pb == null) {
+            throw new IllegalArgumentException("Dispatcher can't be initialized with null progress bar!");
+        }
+        pbm = new ProgressBarManager(pb, doNotHide);
+    }
+    
 }
 

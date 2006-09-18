@@ -9,6 +9,9 @@ package net.sf.plantlore.server.manager;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.ImageIcon;
+
+import net.sf.plantlore.client.AppCoreView;
 import net.sf.plantlore.common.DocumentSizeFilter;
 import net.sf.plantlore.common.PlantloreHelp;
 import net.sf.plantlore.l10n.L10n;
@@ -51,7 +54,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
         // Show the progress bar only when necessary.
-        progress.setVisible( false );
+        //progress.setVisible( false );
         
         DocumentSizeFilter.patch(serverPassword, 20);
         DocumentSizeFilter.patch(serverPort, 5);
@@ -61,6 +64,10 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         DocumentSizeFilter.patch(remoteHost, 50);
         DocumentSizeFilter.patch(remoteServerPort, 5);
         DocumentSizeFilter.patch(remoteServerPassword, 20);
+        
+        logo.setIcon(
+        		new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage(AppCoreView.class.getResource("resources/splash_mini.jpg")))
+        		);
     }
     
     /** This method is called from within the constructor to
@@ -70,8 +77,6 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        plantloreLogo = new javax.swing.JPanel();
-        progress = new javax.swing.JProgressBar();
         next = new javax.swing.JButton();
         help = new javax.swing.JButton();
         choicePane = new javax.swing.JTabbedPane();
@@ -97,31 +102,13 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         jLabel8 = new javax.swing.JLabel();
         remoteServerPort = new javax.swing.JTextField();
         cancel = new javax.swing.JButton();
+        logo = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        progress = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(L10n.getString("Server.Create"));
         setResizable(false);
-        plantloreLogo.setBackground(new java.awt.Color(0, 0, 0));
-        plantloreLogo.setPreferredSize(new java.awt.Dimension(300, 100));
-        progress.setBorderPainted(false);
-
-        org.jdesktop.layout.GroupLayout plantloreLogoLayout = new org.jdesktop.layout.GroupLayout(plantloreLogo);
-        plantloreLogo.setLayout(plantloreLogoLayout);
-        plantloreLogoLayout.setHorizontalGroup(
-            plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, plantloreLogoLayout.createSequentialGroup()
-                .addContainerGap(165, Short.MAX_VALUE)
-                .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 233, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        plantloreLogoLayout.setVerticalGroup(
-            plantloreLogoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, plantloreLogoLayout.createSequentialGroup()
-                .addContainerGap(71, Short.MAX_VALUE)
-                .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
         next.setText(L10n.getString("Server.Continue"));
 
         help.setText(L10n.getString("Common.Help"));
@@ -190,12 +177,12 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel2Layout.createSequentialGroup()
-                        .add(databaseType, 0, 234, Short.MAX_VALUE)
+                        .add(databaseType, 0, 257, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jLabel6)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(databasePort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(databaseParameter, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
+                    .add(databaseParameter, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -218,7 +205,7 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
             .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
@@ -261,8 +248,8 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
                         .add(jLabel4)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(remoteHost, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
-                    .add(remoteServerPassword, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE))
+                    .add(remoteHost, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+                    .add(remoteServerPassword, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jLabel8)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -302,39 +289,63 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
 
         cancel.setText(L10n.getString("Common.Cancel"));
 
+        logo.setBackground(new java.awt.Color(0, 0, 0));
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        progress.setBorderPainted(false);
+
+        org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(progress, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(progress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        );
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, choicePane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(logo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                            .add(choicePane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(help)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 191, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 214, Short.MAX_VALUE)
                         .add(next)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(cancel))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, plantloreLogo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE))
-                .addContainerGap())
+                        .add(cancel)
+                        .addContainerGap())))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.linkSize(new java.awt.Component[] {cancel, next}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(plantloreLogo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(logo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(choicePane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 174, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(help)
-                    .add(cancel)
-                    .add(next))
-                .addContainerGap())
+                    .add(next)
+                    .add(cancel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -360,8 +371,9 @@ public class ServerCreateView extends javax.swing.JFrame implements Observer {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    protected javax.swing.JLabel logo;
     protected javax.swing.JButton next;
-    protected javax.swing.JPanel plantloreLogo;
     protected javax.swing.JProgressBar progress;
     protected javax.swing.JTextField remoteHost;
     protected javax.swing.JPasswordField remoteServerPassword;

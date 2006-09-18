@@ -139,6 +139,10 @@ public class LoginCtrl {
 		}
 	}
 	
+	/**
+	 * Proceed to the Authorization - open the `Authentication` dialog.
+	 * (double click on the selected item). 
+	 */
 	class DoubleClictListener extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent me) {

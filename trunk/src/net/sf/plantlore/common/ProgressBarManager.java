@@ -30,12 +30,20 @@ public class ProgressBarManager implements Observer {
     private JProgressBar progressBar;
     private Window parent;
     private Task task;
+    private boolean doNotHide = false;
     
     /** Creates a new instance of ProgressBarApp */
     public ProgressBarManager(JProgressBar progressBar) {
         this.progressBar = progressBar;
         progressBar.setString("");
         progressBar.setStringPainted(true);
+    }
+    
+    public ProgressBarManager(JProgressBar progressBar, boolean doNotHide) {
+        this.progressBar = progressBar;
+        progressBar.setString("");
+        progressBar.setStringPainted(true);
+        this.doNotHide = doNotHide;
     }
 
     public void setParent(JDialog parent) {
@@ -95,10 +103,13 @@ public class ProgressBarManager implements Observer {
      */
     private synchronized void stop() {
         ended = true;
-        progressBar.setVisible(false);
+        if( !doNotHide ) progressBar.setVisible(false);
         if (parent != null) {
             parent.setCursor(Cursor.getDefaultCursor());
             parent.setEnabled(true);
+            // "Deactivate" the progress bar.
+            progressBar.setString("");
+            progressBar.setIndeterminate(false);
         }
         logger.debug(""+this+" STOPPING " + task );
         //!!! afterStopping();        
