@@ -248,7 +248,7 @@ public class History extends Observable {
         
         if (object == null) {
      	   logger.error("tOccurrence doesn't contain required data");  
-     	   throw  new DBLayerException(ERROR_SEARCH_OBJECT + "tOccurrence doesn't contain required data");                           	   		            
+     	   throw  new DBLayerException(ERROR_SEARCH_OBJECT + " tOccurrence doesn't contain required data");                           	   		            
         } else {
      	   
      	   Occurrence occurrence = (Occurrence)object[0];    	   
@@ -303,9 +303,11 @@ public class History extends Observable {
 	        // Add restriction to COPERATION column of tHistoryChange table
 	        if (data instanceof Occurrence) {	        	       
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null); 
-                        Object[] items = {PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,
-                        PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_AUTHOROCCURRENCE};
-                        query.addOrRestriction(items);
+                        query.addRestriction(PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,null);
+                        
+                        //Object[] items = {PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,
+                        //PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_AUTHOROCCURRENCE};
+                        //query.addOrRestriction(items);
 	        } else if (data instanceof Habitat) {	        	        
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Habitat)data).getId(), null);  
 	        }	
