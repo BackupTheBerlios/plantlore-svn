@@ -2409,4 +2409,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 				" (" + currentlyConnectedUser + ")"; 
 		return currentlyConnectedUser ; 
 	}
+	
+	/**
+	 * @return description of this database layer: Name Surname (login).
+	 */
+	public String getDescription() {
+		return toString();
+	}
 }

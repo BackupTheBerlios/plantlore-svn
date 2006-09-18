@@ -636,6 +636,10 @@ public class Login extends Observable {
 			return "Safety wrapper of " + super.toString();
 		}
 		
+		public String getDescription() {
+			return super.toString();
+		}
+		
 	}
         
 }

@@ -1,6 +1,9 @@
 package net.sf.plantlore.client.login;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
@@ -45,6 +48,7 @@ public class LoginCtrl {
 		new AuthCtrl(model, authView);
 		
 		view.choice.addListSelectionListener(new ChoiceChanged());
+		view.choice.addMouseListener( new DoubleClictListener() );
 		view.add.setAction(new AddRecordAction());
 		view.edit.setAction(new EditRecordAction());
 		view.remove.setAction(new RemoveRecordAction());
@@ -132,6 +136,20 @@ public class LoginCtrl {
 		public void actionPerformed(ActionEvent arg0) {
 			if(model.getSelected() != null)
 				authView.setVisible(true);
+		}
+	}
+	
+	class DoubleClictListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent me) {
+			if( me.getClickCount() == 2 && model.getSelected() != null ) {
+				
+				int index = view.choice.getSelectedIndex();
+				if(index < 0) return;
+				Rectangle area = view.choice.getCellBounds(index, index);
+				if( area != null && area.contains( me.getPoint() ) )
+					authView.setVisible(true);
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 package net.sf.plantlore.server;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;
@@ -74,7 +75,11 @@ public class ConnectionInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return database + " @ " + description;
+		try {
+			return database.getDescription() + " @ " + description;
+		} catch( RemoteException e ) {
+			return "? @ " + description;
+		}
 	}
 
 }

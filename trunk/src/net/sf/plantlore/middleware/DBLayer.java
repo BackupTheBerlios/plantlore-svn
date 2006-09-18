@@ -390,5 +390,13 @@ public interface DBLayer extends Remote, Serializable {
      * created by this DBLayer. <br/> 
      */
     public void shutdown() throws RemoteException;
+    
+    
+    /**
+     * 
+     * @return	description of this database layer so that the user can easily identify it
+     * @throws RemoteException	in case network error occurred
+     */
+    public String getDescription() throws RemoteException;
            
 }
