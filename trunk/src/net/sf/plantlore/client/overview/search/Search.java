@@ -639,7 +639,7 @@ public class Search extends Observable {
             // In the subquery select authors for the given occurrence (occurrence comes from the main query)
             subQuery.addRestriction(PlantloreConstants.RESTR_EQ_PROPERTY, "ao."+AuthorOccurrence.OCCURRENCE, "occ."+Occurrence.ID, null, null);
             subQuery.addRestriction(PlantloreConstants.RESTR_EQ, "ao."+AuthorOccurrence.DELETED, null, 0, null);
-            subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY, AuthorOccurrence.AUTHOR);
+            subQuery.addProjection(PlantloreConstants.PROJ_PROPERTY, AuthorOccurrence.ID);
             // create the main query
             sq = database.createQuery(AuthorOccurrence.class);
             sq.createAlias(AuthorOccurrence.AUTHOR,"author");
@@ -653,7 +653,7 @@ public class Search extends Observable {
             sq.createAlias("habitat."+Habitat.NEARESTVILLAGE,"vill");
             sq.createAlias("habitat."+Habitat.TERRITORY,"territory");
             // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
-            sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.AUTHOR, null, subQuery, null);    
+            sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.ID, null, subQuery, null);    
             sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
             sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
             sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
