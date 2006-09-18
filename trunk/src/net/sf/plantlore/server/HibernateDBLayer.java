@@ -1585,7 +1585,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     updated = AuthorOccurrence.class;
                     updatedId = ((AuthorOccurrence)data).getId();
                     tableId = AuthorOccurrence.ID;                    
-                    historyChange.setRecordId(((AuthorOccurrence)data).getId());
+                    historyChange.setRecordId(((AuthorOccurrence)data).getOccurrence().getId());
                 } else
                 if (data instanceof Habitat) {
                     updated = Habitat.class;
@@ -1732,7 +1732,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                         HistoryRecord hist = new HistoryRecord(); 
                         hist.setHistoryChange(historyChange);                        
                         hist.setHistoryColumn((HistoryColumn)hc[0]);
-                        hist.setOldRecordId(0);
+                        hist.setOldRecordId(newRec.getId());
                         if ( newRec.getDeleted() == 1) {
 	                        hist.setNewValue(null);
 	                        hist.setOldValue(newRec.getAuthor().getWholeName());
@@ -1769,7 +1769,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	                            HistoryRecord hist = new HistoryRecord();
 	                            hist.setHistoryChange(historyChange);	                            	                           
 	                            hist.setHistoryColumn((HistoryColumn)colNames[0]);  
-	                            hist.setOldRecordId(0);
+	                            hist.setOldRecordId(newRec.getId());
 	                            String origValueString = (origRec.getValue((String)cols.get(i)) == null) ? null : origValue.toString(),
 	                           			   newValueString = (newRec.getValue((String)cols.get(i)) == null) ? null : newValue.toString(); 
 	                      		hist.setOldValue(origValueString);

@@ -142,6 +142,7 @@ public class History extends Observable {
     /** Constants used for description of errors */    
     public static final String ERROR_SEARCH_OBJECT = "Error.HistoryObjectSearchFailed";
     public static final String ERROR_SEARCH_AUTHOR = "Error.HistoryAuthorSearchFailed";
+    public static final String ERROR_SEARCH_AUTHOR_NULL = "Error.HistoryAuthorSearchNull";
     public static final String ERROR_PROCESS = "Error.HistoryProcessResultsFailed"; 
     public static final String ERROR_PARSE_DATE = "Error.HistoryParseData"; // 
     public static final String ERROR_NO_RIGHTS = "Error.HistoryNoRights"; //
@@ -296,12 +297,14 @@ public class History extends Observable {
 
     	//Select data from tHistory table
         try {        	        	
-		    query = database.createQuery(HistoryRecord.class);
+		query = database.createQuery(HistoryRecord.class);
 		    // Create aliases for table tHistoryChange.      
-	        query.createAlias("historyChange", "hc");        
+	        query.createAlias("historyChange", "hc");  
+                query.createAlias("historyColumn", "hcol");
 	        // Add restriction to COPERATION column of tHistoryChange table
 	        if (data instanceof Occurrence) {	        	       
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null);  
+                        query.addRestriction(PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE, null);
 	        } else if (data instanceof Habitat) {	        	        
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Habitat)data).getId(), null);  
 	        }	
@@ -500,7 +503,7 @@ public class History extends Observable {
              //Update author of specific occurrence
              isDelete = (isDelete == 1) ? 2 : isDelete;
              Object[] objects = getAllAuthors(occurrence, 2-isDelete);
-             if (isError()) return; //Search authors failed
+             if (isError()) return; //Search authors failed or null object
              int countResult = objects.length;               
              for (int i=0; i<countResult; i++ ) {                    							
                 Object[] autOcc = (Object[])objects[i];          
@@ -640,7 +643,7 @@ public class History extends Observable {
      */
     public void undoAuthorOccurrence() {
         
-    	int authorOccId = historyChange.getRecordId();
+    	int authorOccId = oldRecordId;
     	occurrenceId = historyChange.getRecordId();	
     	AuthorOccurrence authorOccurrence = null;
     	int placings = 0;
@@ -658,7 +661,7 @@ public class History extends Observable {
     	}    
     	
     	if (!contain) {
-        	// Select record AuthorOccurrence where id = authorOccurrenceId 
+        	// Select record AuthorOccurrence where id = authorOccurrenceId                   
     		Object[] object = searchObject(PlantloreConstants.ENTITY_AUTHOROCCURRENCE, authorOccId);
     		if (isError()) return; //tAuthorOccurrence doesn`t contain required data
                authorOccurrence = (AuthorOccurrence)object[0];
@@ -680,7 +683,7 @@ public class History extends Observable {
                 if (authorOccurrence.getDeleted() == 1) {
                     authorOccurrence.setDeleted(0);
                 } else {
-                    authorOccurrence.setDeleted(1);
+                    authorOccurrence.setDeleted(1);                    
                 }                
                 break;
             case 2: //Role of author
