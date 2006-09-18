@@ -1683,7 +1683,8 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                     			 historyRecord.setOldValue(((Plant)origValue).getTaxon());
                          		 historyRecord.setNewValue(((Plant)newValue).getTaxon());
                     		 } else if (((String)columnName).equals(Occurrence.PUBLICATION)) {
-                    			 historyRecord.setOldRecordId(((Publication)origRec.getValue(columnName)).getId());
+                                         if ((Publication)origRec.getValue(columnName) == null) historyRecord.setOldRecordId(0);
+                                         else historyRecord.setOldRecordId(((Publication)origRec.getValue(columnName)).getId());
                                          String referenceCitation = (origValue == null) ? "" : ((Publication)origValue).getReferenceCitation();
                     			 historyRecord.setOldValue(referenceCitation);
                          		 historyRecord.setNewValue(((Publication)newValue).getReferenceCitation());

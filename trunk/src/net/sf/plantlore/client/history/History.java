@@ -297,14 +297,15 @@ public class History extends Observable {
 
     	//Select data from tHistory table
         try {        	        	
-		query = database.createQuery(HistoryRecord.class);
-		    // Create aliases for table tHistoryChange.      
+		query = database.createQuery(HistoryRecord.class);		        
 	        query.createAlias("historyChange", "hc");  
                 query.createAlias("historyColumn", "hcol");
 	        // Add restriction to COPERATION column of tHistoryChange table
 	        if (data instanceof Occurrence) {	        	       
-		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null);  
-                        query.addRestriction(PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE, null);
+		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null); 
+                        Object[] items = {PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,
+                        PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_AUTHOROCCURRENCE};
+                        query.addOrRestriction(items);
 	        } else if (data instanceof Habitat) {	        	        
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Habitat)data).getId(), null);  
 	        }	
