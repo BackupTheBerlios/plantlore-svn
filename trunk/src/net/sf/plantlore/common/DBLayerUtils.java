@@ -479,6 +479,8 @@ public class DBLayerUtils {
 	
 	private Record insert(Record record) 
 	throws RemoteException, DBLayerException {
+		if(record == null)
+			return null;
 		logger.debug("Inserting ["+record+"] into the database.");
 		
 		// Is this part of the record from an immutable table?
@@ -582,6 +584,8 @@ public class DBLayerUtils {
 	
 	private Record update(Record current, Record replacement) 
 	throws RemoteException, DBLayerException{		
+		if(current == null || replacement == null)
+			return null;
 		logger.debug("Updating ["+current+"] with ["+replacement+"].");
 		
 		boolean 
@@ -771,6 +775,8 @@ public class DBLayerUtils {
 	
 	private Record delete(Record record) 
 	throws RemoteException, DBLayerException {
+		if(record == null)
+			return null;
 		logger.info("Deleting [" + record + "] from the database.");
 		if( !Record.BASIC_TABLES.contains(record.getClass()) )
 			throw new IllegalArgumentException(L10n.getString("Error.ImproperUse"));

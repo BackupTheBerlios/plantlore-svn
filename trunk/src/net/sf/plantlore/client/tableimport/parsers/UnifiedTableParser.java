@@ -109,7 +109,7 @@ public class UnifiedTableParser implements TableParser {
             	throw new ParserException(L10n.getString("Error.IncorrectXMLFile"));
             rootTable = tables.get( root.getName().toLowerCase() );
             if(rootTable == null)
-            	throw new ParserException(L10n.getFormattedString("Error.UnsupportedTable", rootTable.getSimpleName()));
+            	throw new ParserException(L10n.getString("Error.UnsupportedTable"));
             
             List nodes = root.selectNodes("//"+rootTable.getSimpleName().toLowerCase());
             if( nodes != null) {

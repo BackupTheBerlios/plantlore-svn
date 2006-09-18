@@ -123,7 +123,10 @@ public class OccurrenceImportTask extends Task implements RecordProcessor {
 				logger.error("The occurrence record is either corrupted or incomplete. It will be skipped.");
 				throw new DBLayerException(L10n.getString("Error.CorruptedRecord"));
 			}
-			dbutils.processRecord(aos[0].getOccurrence(), aos);
+			Occurrence occ = aos[0].getOccurrence();
+			if( occ.getPublication() != null && !occ.getPublication().areAllNNSet() )
+				occ.setPublication( null );
+			dbutils.processRecord(occ, aos);
 		} 
 		catch(DBLayerException e) {
 			if( IGNORE_ERRORS.contains(e.getErrorCode()) )
