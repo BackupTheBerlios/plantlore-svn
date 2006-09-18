@@ -57,6 +57,7 @@ public class DBLayerUtils {
     private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
     private boolean isCacheEnabled = true;
     
+   
     private Action decisionCallback;
     private Intention intention; 
     
@@ -465,7 +466,7 @@ public class DBLayerUtils {
 		if( !db.beginTransaction() )
 			throw new DBLayerException(L10n.getString("Error.TransactionRaceConditions"));
 		try {
-			Record r = insert( record );
+			Record r = insert( record, false );
 			db.commitTransaction();
 			return r;
 		} catch( DBLayerException e ) {
@@ -477,7 +478,7 @@ public class DBLayerUtils {
 		}
 	}
 	
-	private Record insert(Record record) 
+	private Record insert(Record record, boolean isOccurrenceInDatabaseAlready) 
 	throws RemoteException, DBLayerException {
 		if(record == null)
 			return null;
@@ -508,7 +509,7 @@ public class DBLayerUtils {
 			keys.remove(AuthorOccurrence.OCCURRENCE); 
 		for(String key : keys)
 			// The subrecord must be replaced with the counterpart from the database!
-			record.setValue( key, insert( (Record)record.getValue(key) ) ); 
+			record.setValue( key, insert( (Record)record.getValue(key), isOccurrenceInDatabaseAlready ) ); 
 		
 		Record counterpart = null;
 		
@@ -520,7 +521,10 @@ public class DBLayerUtils {
 		if(counterpart == null) {
 			logger.debug("The record is not in the database. It will be inserted.");
 			// Insert it!
-			return db.executeInsertInTransaction(record);
+			if(record instanceof AuthorOccurrence && !isOccurrenceInDatabaseAlready)
+				return db.executeInsertInTransactionHistory(record);
+			else
+				return db.executeInsertInTransaction(record);
 		}
 		
 		// The record is in the database.
@@ -1020,7 +1024,7 @@ public class DBLayerUtils {
 					// There's nothing to delete.
 					break;
 				default:
-					occInDB = (Occurrence) insert( occ );
+					occInDB = (Occurrence) insert( occ, isInDB );
 				}
 			
 			logger.debug("Occurrence processed. About to start processing author-occurrences...");
@@ -1083,7 +1087,7 @@ public class DBLayerUtils {
 						case DELETE:
 							break;
 						default:
-							insert( ao );							
+							insert( ao, isInDB );							
 						numberOfUndeadAuthors++;
 						}
 					// [B] AO is in the database already.
