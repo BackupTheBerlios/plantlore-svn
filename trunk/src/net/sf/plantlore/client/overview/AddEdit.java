@@ -96,7 +96,8 @@ public class AddEdit extends Observable {
     
     //list of AuthorOccurrence objects that correspond to our Occurrence object, we need it for update
     //set by <code>getAuthorsOf()</code> method
-    private HashMap<Integer,AuthorOccurrence> authorOccurrences;
+    //the key is of form role+AuthorId, for example it could be "4collected" or "2identified"
+    private HashMap<String,AuthorOccurrence> authorOccurrences;
     private Pair<String,Integer> village;
     
     private ArrayList<String> taxonList;
@@ -1033,10 +1034,10 @@ public class AddEdit extends Observable {
                                 database.executeUpdateInTransaction(o);
                                 habitatToCheck = o.getHabitat(); //we'll maybe have to delete this habitat
                                 logger.debug("Occurrence id "+o.getId()+" "+o.getPlant().getTaxon()+" deleted.");
-                                Set<Map.Entry<Integer,AuthorOccurrence>> aoSet = authorOccurrences.entrySet();
+                                Set<Map.Entry<String,AuthorOccurrence>> aoSet = authorOccurrences.entrySet();
                                 Iterator it = aoSet.iterator();
                                 while (it.hasNext()) {
-                                    Map.Entry<Integer, AuthorOccurrence> entry = (Entry<Integer, AuthorOccurrence>) it.next();
+                                    Map.Entry<String, AuthorOccurrence> entry = (Entry<String, AuthorOccurrence>) it.next();
                                     AuthorOccurrence tmp = entry.getValue();
                                     tmp.setDeleted(2);
                                     database.executeUpdateInTransactionHistory(tmp);
@@ -1067,7 +1068,7 @@ public class AddEdit extends Observable {
                                     }
                                 }
                                 if (!originalSurvived) {
-                                    aoTmp = authorOccurrences.get(auth.getFirst());
+                                    aoTmp = authorOccurrences.get(auth.getSecond()+auth.getFirst());
                                     aoTmp.setDeleted(1);
                                     database.executeUpdateInTransaction(aoTmp);
                                     logger.debug("AuthorOccurrence id="+aoTmp.getId()+" "+aoTmp.getAuthor().getWholeName()+" deleted.");
@@ -1084,7 +1085,7 @@ public class AddEdit extends Observable {
                                         new Pair<Integer,String>(pTmp.getFirst().getSecond(),role) )
                                     ) {
                                     logger.info("Updating authorOccurrence properties for "+pTmp.getFirst().getFirst());
-                                    AuthorOccurrence aoTmp = authorOccurrences.get(pTmp.getFirst().getSecond());
+                                    AuthorOccurrence aoTmp = authorOccurrences.get(pTmp.getSecond()+pTmp.getFirst().getSecond());
                                     aoTmp.setRole(pTmp.getSecond());
                                     aoTmp.setNote(resultRevision.get(j));
                                     database.executeUpdateInTransaction(aoTmp);
@@ -1454,7 +1455,7 @@ public class AddEdit extends Observable {
      */
     private ArrayList<Pair<Pair<String,Integer>,String>> getAuthorsOf(Occurrence o) throws RemoteException, DBLayerException {
         ArrayList<Pair<Pair<String,Integer>,String>> authorResults = new ArrayList<Pair<Pair<String,Integer>,String>>();
-        authorOccurrences = new HashMap<Integer,AuthorOccurrence>();
+        authorOccurrences = new HashMap<String,AuthorOccurrence>();
         resultRevision = new ArrayList();
 
         //Pair<Pair<String,Integer>,Pair<String,Integer>> p;
@@ -1478,7 +1479,7 @@ public class AddEdit extends Observable {
                         */
             authorResults.add(new Pair<Pair<String,Integer>,String>(
                     new Pair<String,Integer>(a.getWholeName(),a.getId()),role ) );
-            authorOccurrences.put(a.getId(),ao);
+            authorOccurrences.put(role+a.getId(),ao);
             resultRevision.add(ao.getNote());
         }
         database.closeQuery(sq);
