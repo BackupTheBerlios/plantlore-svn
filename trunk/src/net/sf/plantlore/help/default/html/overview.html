@@ -1,9 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Plant overview</title>
-</head>
-<body>
-<h1>Plant overview</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Přehled nálezů</title>
+  </head>
+  <body>
+  <h1>Přehled nálezů</h1>
+  <p>Centrem Plantlore je přehled nálezů, do kterého se dostanete po úspěšném příhlášení k serveru. Z přehledu
+  nálezů je pak možné vyvolávat většinu ostatních funkcí Plantlore.</p> 
+  <br>
+   <img src="picture/overview.png" alt="Přehled nálezů"><br>
+    <h2>Obsah</h2>
+    <ol>
+        <li>Úvod</li>
+        <li>Ovládací prvky přehledu nálezů</li>
+        <li>Třídění</li>
+        <li>Pořadí sloupků</li>
+        <li>Podrobnosti o nálezu</li>
+    </ol>
+    <h2>1. Úvod</h2>
+    <p> Přehled nálezů je tabulka zobrazující seznam nálezů. Implicitně jsou zobrazeny
+    všechny záznamy. Jejich seznam je ale možné zúžit <a href="search.html">vyhledáváním</a>. </p>
+    
+    <p>Výsledek vyhledávání se vždy zobrazuje v Přehledu nálezů. Pro návrat k seznamu všech nálezů stačí
+    vyvolat <a href="search.html">dialog hledání</a>, nic nevyplnit a pouze kliknout na tlačítko Ok.</p>
+    
+    <h2>2. Ovládací prvky přehledu nálezů</h2>
+    <p>Pokud s nálezy pracujete, přehled nálezů se automaticky neaktualizuje, zůstávají v něm zobrazeny
+    staré hodnoty. Tak je to z důvodu efektivnější práce s aplikací při pomalejším připojení na síť. Obnovení
+    přehledu se provádí buď opětovným hledáním anebo kliknutím na tlačítko Obnovit v pravé dolní části okna.</p>
+    <br>
+    <img src="picture/overview_second_toolbar.png" alt="Nástroje pro práci s přehledem nálezů"><br>
+    
+    <p>Počet záznamů na stránku je možné měnit přepsáním čísla mezi tlačítky Předchozí a Následující. Po potvrzení
+    stiskem klávesy Enter se velikost stránky změní. Počet záznamů na stránku z technických důvodů NENÍ momentálně možné 
+    určovat dynamicky
+    podle aktuální velikosti okna. Z bezpečnostních důvodů je počet záznamů na stranu omezen na 1 000.</p>
+    
+    <p>Chceteli záznamy mazat, tisknout nebo exportovat je potřeba je nejprve vybrat označením ve sloupku
+        s názvem X. Označování záznamu se provádí zaškrtnutím příslušného políčka ve sloupku X. K hromadnému označení, 
+        odznačení a invertování označených záznamů slouží tlačítka Vše, Nic a Invertuj v levé dolní části okna.
+        <b>POZOR:</b><i> Vyvolaná označovací akce se vždy týká pouze záznamů na aktuální stránce!</i> Po označení záznamů, se kterými chcete pracovat,
+    stačí vyvolat příslušný příkaz z menu, nástrojové lišty anebo klávesovou zkratkou.</p>
+    <br>
+    <img src="picture/overview_selecting.png" alt="Výběr záznamů"><br>
+    
+    <h2>3. Třídění</h2>
+    <p>Přehled nálezů také poskytuje omezené možnosti třídění záznamů. Třídí se vždy pouze záznamy aktuálně
+    zobrazené na stránce. Netřídí se všechny záznamy v databázi, protože by to při velkém množství záznamů 
+    vyžadovalo mnoho času v případě pomalejšího spojení k serveru. Chcete-li setřídit záznamy  
+    například podle roku nálezu, klikněte na záhlaví sloupku Rok. V záhlaví se objeví šipka indikující směr třídění.
+    Záznamy se po prvním kliknutí setřídí vzestupně podle roku.
+    Chcete-li je setřídit setupně stačí znova kliknout na záhlaví sloupku Rok. Třetí kliknutí třídění zruší. 
+    Přehled umožňuje i druhotné třídění, tj. například nejdříve podle roku a pak podle nejbližšího sídla. 
+    To lze provést kliknutím nejdříve na záhlaví sloupku Rok a pak stisknout a držet klávesu Ctrl
+    a kliknout na záhlaví sloupku Nejbližsí sídlo. Druhotné třídění indikuje o něco menší šipka v záhlaví sloupku.</p>
+    <br>
+    <img src="picture/overview_sorting.png" alt="Třídění záznamů"><br>
+    
+    <h2>4. Pořadí sloupků</h2>
+    <p>Pořadí zobrazených sloupků je možné měnit. A to buď dočasně prostým přesunutím sloupku, chycením a posouváním myší za jeho
+    záhlaví, anebo trvale v <a href="settings.html">Nastaveních</a>. V nastaveních je možné si vybrat
+    i jiné sloupky, které se mají zobrazit, případně nějaké vynechat.</p>
+    
+    <h2>5. Podrobnosti o nálezu</h2>
+    <p>V tabulce nálezů nejsou vidět všechny informace o nálezu. Ty je možné zobrazit buď vyvoláním
+    dialogu pro editaci nálezu nebo vyvoláním detailu nálezu. Detail nálezu se vyvolává buď dvojklikem na 
+    příslušný nález anebo označením nálezu myší a stiskem klávesy Enter.</p>
+    <br>
+    <img src="picture/overview_detail.png" alt="Detail nálezu"><br>
+    
+    <p>Detail nálezu umožňuje přechod na další nebo předchozí nález kliknutím na tlačítko Předcházející nebo
+    Následující. Zobrazuje i informace o tom, který uživatel Plantlore nález vytvořil, a kdo ho naposledy editoval.</p>  
+  </body>
 </html>

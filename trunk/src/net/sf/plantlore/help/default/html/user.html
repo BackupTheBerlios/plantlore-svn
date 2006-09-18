@@ -1,9 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>User manager</title>
-</head>
-<body>
-<h1>User manager</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>User Management</title>
+  </head>
+  <body>
+  <h1>User Management</h1>
+<img src="picture/userEnter.png">
+<br><br>
+
+Application Plantlore allows access to and work with the occurrence data only to the users with a user account created in the application. This way, the data are better protected from damage and misuse. The administrator knows who has access to the occurrence data and who performed any edits to the data. The user manager allows the administrator to add and edit users, set user rights, and also terminate their access to the application. You can open the user manager from menu
+	<b>Data/User management</b>.
+
+<h5>User manager dialog</h5>
+
+<img src="picture/userDialog.png">
+<br><br>
+The dialog for user account management is divided into two parts:
+<ul>
+  <li><b>User list </b>– displays the list of users based on criteria entered for searching and sorting
+  <li><b>Search </b>– requirements for searching and sorting of users
+</ul>
+
+<h2>User list</h2>
+
+This part displays the list of users found after a successful search. You can set the number of users displayed in the table 
+yourselves by changing the value for <i><b>Lines displayed</b></i> and confirming the new value by the ENTER key. Use <i><b>Previous </b></i>and <i><b>Next </b></i>buttons 
+to switch over to the previous or next list of users. Information about the currently displayed list of users is stated in the 
+part below the table.<br>
+The following buttons enable the work with a record:
+<ul>    
+   <li><i><b>Add user  </i></b> - <a href=#add>adds a user</a></li>
+   <li><i><b>Edit user </i></b> - <a href=#edit>edits a user</a></li>
+   <li><i><b>User detail </i></b> - <a href=#detail>detailed data and user rights</a></li>
+   <li><i><b>Remove user </i></b> - <a href=#drop>abolishes user access</a></li> 
+</ul>   
+  
+<h2>Search</h2>
+
+User manager offers the administrator the option to search using the following four parameters: login, name, e-mail, 
+and address. The results may be sorted by login, first name, surname, and date of creation of the user; all of 
+that either in an ascending or descending sequence. Another search criterion is the requirement to display all users, 
+or only users with valid access to the application (the value of item <i>Date of user removal </i>is empty for these users). 
+If no parameters and limitations are entered, all users will be found. 
+<br><br>
+<b>Note:</b> the search is case sensitive.
+
+<a name="add"></a><h2>Adding a user</h2>
+  
+  <h5>Add user dialog</h5>
+  
+  <img src="picture/userAdd.png">
+  <br><br>
+  Open the Add user dialog from User manager. The window displayed offers the following items:
+  
+  <h4>User data</h4>
+  <ul>
+    <li><b>Login</b> - user login that will be used for access to the application. This item is obligatory and you will not be able to add a user without filling it in. 
+    The login must be unequivocal in the database and it will not be editable after you save the user.</li>
+    <li><b>Password</b> - Plantlore user password. This item is obligatory.</li>
+    <li><b>Name</b> - first name of the user. This item is obligatory.</li>
+    <li><b>Surname</b> - surname of the user. This item is obligatory.</li>
+    <li><b>E-mail</b> - user’s e-mail address. This item is obligatory. </li>
+    <li><b>Address</b> - user’s address. This item is obligatory.</li>    
+    <li><b>Note</b> - administrator’s note about the user.</li>   
+  </ul>
+  <h4>User rights</h4>  
+  <ul>   
+    <li><b>Administrator right</b> – by selecting it, the user will be granted same rights as the administrator. You should 
+    carefully consider whom to assign administrator rights. <i><b>Recommendation: </b>in order to provide for higher security, 
+    there should only be one user with administrator rights.</i> </li>
+    <li><b>Right to edit all </b>– by selecting it, the user is granted the right to edit all occurrences in the database.</li>
+    <li><b>Right to add records</b> – by selecting it, the user is granted the right to add new occurrences.</li>
+    <li><b>Right to edit other users’ occurrences</b> – this item contains the list of users whose occurrences the user will be permitted to edit.
+
+</li>    
+ </ul>
+ 
+<a name="edit"></a><h2>Editing a user</h2>
+<h5>Edit user dialog</h5>
+<img src="picture/userEdit.png">
+<br><br>
+  Open the Edit user dialog from User manager. Don’t forget that you must select a user to open this dialog. The layout of the Edit user dialog is almost identical with the Add user dialog. The obligatory items are: password, name, surname, e-mail.<br> 
+  Non-editable items:: 
+  <ul>
+    <li><b>Login</b></li>
+    <li><b>Date of creation: </b>date and time of user creation. Non-editable item. </li>
+    <li><b>Date of removal:</b> date and time of abolishment of user access to the application. Non-editable item.</li>
+  </ul>
+
+<a name="detail"></a><h2>Detailed user data and rights</h2>
+
+  You can open the dialog displaying detailed information about the user and his rights from User manager. You have to select a user in the list of users to be able to open this dialog. The dialog is almost identical with the Edit user dialog. All items are non-editable, their nature is informative.
+  
+<a name="drop"></a><h2>Removing user from the system</h2>
+
+  In order to abolish the user access to the application, use button <b><i>Remove user </i></b>in the User manager. Before pressing this 
+  button, it is necessary to select a user in the list of users. After the button is pressed, the user will be informed about the 
+  operation about to be performed. By confirming the operation, the current time will be stored in the item <i>Date of user removal</i>. 
+  <br><br>
+  <img src="picture/userDrop.png">
+  <br><br>
+  Renewal of access for a user that has been removed means adding a new user. Login of a new user must be unequivocal in the database (i.e. it is not possible to use a login of user who has or had an account in a given database). This way, the database stores the information about the periods during which a user had access to the application.
+<a name="rights"></a><h2>User rights</h2>
+  
+  The administrator sets rights for work with the occurrence data while adding or editing a user.<br> 
+  
+  <h5>Setting the rights</h5>
+  <img src="picture/userRight.png">
+  <br><br>
+ User can have the following rights:  <ul>
+    <li>Right to browse the data – this right does not have to be set anywhere as it is granted automatically with the creation of access to the application</li>
+    <li>Right to add data – this right permits the user to add occurrences, authors, and publications. He is also automatically granted the right to edit the records that he added himself and to browse all the occurrences. Moreover, he has the right to display the history of the occurrence that he added himself.</li>
+    <li>Right to edit other users’ data – a user (Joe) may ask the administrator to add a specific user (Frank) to the list of users whose records he may edit (this right to edit implies the right to access the record history). Whether a user is added into this list depends on the administrator and/or mutual agreement of the users.</li>
+    <li>Administrator right – a user with administrator right has, of course, the largest collection of rights – he may edit the occurrences, metadata, publications, authors, plants, and users. He has the access to the <a href="./history.html#historyRecord">history of individual occurrences</a>, but also to the  <a href="./history.html#historyData">whole history</a>.
+    </li>
+  </ul>  
+  </body>
 </html>

@@ -1,9 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Add/edit occurrence</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<title>Plantlore - Přidávání a editace nálezů</title>
 </head>
 <body>
-<h1>Add/edit occurrence</h1>
-</body>
+<h1>Přidávání a úprava nálezů</h1>
+<p>Základní manipulaci s nálezy lze provádět v dialozích pro přidávání a úpravu nálezu. Každý uživatel
+může upravovat jen ty záznamy, ke kterým má právo editace. Pro přidání nového nálezu uživatel také
+musí mít práva.</p>
+
+<h2>Obsah</h2>
+<ol>
+    <li>Dialogy</li>
+    <li>Úprava nálezu</li>
+    <li>Vypnutí nepovinných položek</li>
+    <li>Kontrola zadaných hodnot</li>
+    <li>Sdílení lokalit</li>
+    <li>Na závěr</li>
+</ol>
+
+<h2>1. Dialogy</h2>
+<p>Dialogy pro přidávání a úpravu nálezu jsou velmi podobné vzhledem i chováním.
+Úpravu i přidávání můžete vyvolat z panelu nástrojů. Přidávání je možné vyvolat i ze <a href="habitattree.html">stromu lokalit</a>. 
+</p>
+<br>
+
+<img src="picture/addedit_place.png" alt="Horní část dialogu s položkami o místě nálezu">
+
+<p>Dialog se v obou případech skládá ze tří částí: zadávání lokality, zadávání nálezu a tabulky
+ seznamu nálezů. Tabulka se seznamem nálezů obsahuje všechny nálezy obsažené v dané lokalitě. Je zobrazena
+ pro snazší orientaci v již zadaných nálezech. Vždy je nutné vyplnit všechny povinné položky (jsou 
+ označeny hvězdičkou). Po kliknutí na tlačítko Ok se přidá nový nález. Zobrazí se okno informující o úspěšném 
+ přidání a dialog zůstane  otevřený i se všemi vyplněnými hodnotami. To umožňuje snazší a rychlejší zadávání více nálezů,
+ které mají některé údaje společné. <b>POZOR:</b> při opětovném kliknutí na Ok
+ se stejný nález přidá znovu! Tlačítko Vymaž vymaže hodnoty ve sloupcích příslušné části dialogu, aby bylo možné
+ rychleji zadat nová data.</p>
+<br>
+
+<img src="picture/addedit_occurrence.png" alt="Prostřední část dialogu s položkami o nálezu.">
+
+<p>Místo je možné upřesnit zadáním souřadnic GPS. Souřadnice je možné zadat v jednom 
+ze tří souřadných systémů: S-JTSK, S42 a WGS84. Plantlore používá jako základní souřadný systém systém 
+WGS84, do kterého se zadané souřadnice vždy převedou.</p>
+
+<p>Tabulka nálezů v dané lokalitě. Zobrazuje se pouze informace o autorech, taxonu a datu nálezu.</p>
+<br>
+<img src="picture/addedit_occurrence_table.png" alt="Tabulka nálezů v dané lokalitě">
+
+<h2>2. Úprava nálezu</h2>
+<p>
+    Během upravování nálezu můžete upravovaný nález smazat nebo naopak přidat nálezy nové. Upravovací dialog
+    je v tomto ohledu velmi pružný a pozná, jaké akce má provést. Pokud během editace nálezu smažete původní
+    taxon, projeví se to v databázi jako byste daný nález smazali vyvoláním funkce mazání v <a href="overview.html">Přehledu nálezů</a>.
+    Přidání nových taxonů se projeví stejně jako by byly přidány přidávacím dialogem.
+</p>
+
+<h2>3. Vypnutí nepovinných položek</h2>
+<p>Často se stane, že nebudete chít vyplňovat všechny nepovinné informace o nálezu. V tomto případě
+můžete v dialogu "vypnout" ty nepovinné položky, které zadávat nechcete. Pohyb po dialogu například
+tabulátorem pak bude rychlejší. Vypínaní a zapínání nepovinných položek se provádí v dialogu nastavení, který
+ vyvoláte kliknutím na tlačítko Nastavení v levé dolní části přidávacího nebo upravovacího dialogu.</p>
+
+
+<h2>4. Kontrola zadaných hodnot</h2>
+<p>Plantlore automaticky kontroluje správnost zadaných dat. Kontroluje se:
+    <ul>
+        <li>zadání všech povinných položek</li>
+        <li>správnost zadaného data nálezu (kontroluje se, zda zadaný den existuje)</li>
+        <li>délka zadaných dat - například poznámky mohou mít 4096 znaků</li>
+        <li>korektnost hodnoty - je-li číslo, tam kde se očekává číslo, ... Při zadávání číselné hodnoty je potřeba použít oddělovač desetinných míst pro dané jazykové prostředí, v českém prostředí to je desetinná čárka.</li>
+    </ul>        
+</p>
+
+<h2>5. Sdílení lokalit</h2>
+<p>Zadáte-li pro danou lokalitu více nálezů, budou všechny tyto nálezy na úrovni databázového modelu
+mít tuto lokalitu sdílet. To v praxi znamená, že Plantlore pozná, jaké nálezy do dané lokality patří. To
+se projeví například, pokud budete upravovat lokalitu nálezu se sdílenou lokalitou. V tom případě se vás
+Plantlore po kliknutí na Ok zeptá, zda chcete lokalitu upravit všem nálezům anebo jenom tomuto. Pokud vyberete
+jen tento, tak Plantlore vytvoří novou lokalitu, která se od původní bude lišit tím, co jste změnili. Lokalita
+je z databáze smazána ve chvíli, kdy je smazán poslední nález, který se na ní odkazuje.</p>
+
+<h2>6. Na závěr</h2>
+      <p>Práce s nálezy vyžaduje rozvahu - například co se týče sdílení lokalit jednotlivými nálezy. Při zadání
+      nového nálezu od začátku Plantlore zkouší, jestli už daná lokalita v databázi existuje a pokud ano, tak ji 
+      nový nález bude sdílet s ostatními. Stačí ale jen malá odchylka v zadaných údajích o lokalitě a vytvoří se 
+      lokalita nová, ve které bude nález sám. Za poctivé zadávání povinných položek povinnými hodnotami zase 
+      budete odměněni snadnější orientací v datech například pomocí <a href="habitattree.html">stromu lokalit</a>.</p>
+  </body>
 </html>
+
+
+

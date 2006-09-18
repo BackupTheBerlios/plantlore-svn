@@ -1,9 +1,50 @@
 <html>
 <head>
+<meta http-equiv="Content−Language" content="en−US" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Search occurrences</title>
+<title>Searching in occurrence data</title>
 </head>
 <body>
-<h1>Search occurrences</h1>
+<h1>Searching in occurrence data</h1>
+<p>The search dialog resembles add and edit dialogs a lot, but also differs in a few ways.
+It is not possible to add taxons from the checklist. On the other hand you can set either
+month or time interval for searching.</p>
+
+<p>The search dialog opens empty every time. In case you leave it empty and click
+ straight on the Ok button then a list of all occurrences will be displayed in the
+<a href="overview.html">Overview</a>. So now we've just described a way to return
+to all occurrences in the Overview.</p>
+
+<p>It is possible to fill in any combination of the displayed items. The dialog
+only won't let you enter wrong values such as words where it expects numbers, or
+ you can't enter month and time interval at the same time.</p>
+
+<h2>Adding of authors, their roles and notes</h2>
+<p>You can add the author, role or the note the same way as in the add and edit dialogs.
+Click on the Add button in the upper left part of the basic form. New row appears.
+You can fill in the author's name, role or her note.
+The only tricky thing might be that if you add multiple rows and fill in different authors
+ roles or notes all these items will be added to the query using the OR conjuction.
+Here is a little example. You add the first row and fill in "Mosgaard" as the author and "collect"
+as the role. Then you add the second row and fill in "Kroghshoj" and "revised" as the role. 
+If you then click the Ok button then occurrences whose author is either Mosgaard or Kroghshoj are displayed
+as well as occurrences in that some of the authors has role collect or role revised.</p>
+
+<h2>How is the query constructed</h2>
+<p>We've already described the way the query is created in the case of authors, roles and 
+the notes of authors. The rest is quite straightforward. In case you add one or more taxons,
+let's say a Camomile and a Dandelion then occurrences of either of these plants are searched for.
+In other words taxons are connected by the OR conjuction. </p>
+<p>The other itmes are connected to the query using the AND conjuction. Let's say
+you enter Camomile and Dandelion as taxons and Bohemia centralis as territory.
+Then after clicking on the Ok button occurrences of Camomiles in Bohemia centralis and
+occurrences of Dandelions in Bohemia centralis are displayed in the <a href="overview.html">Overview</a></p>
+<p>One more thing worth mentioning is searching in the notes. When searching in notes
+the application looks for substrings in the notes in the database. That means if you
+enter the word "meadow" to the Place description text area and then click on Ok then
+ all occurrences with the string "meadow" in their Place descritption will be displayed.
+ The same way it works when searching in the occurrence or location note.</p>
+ 
+</p>
 </body>
 </html>

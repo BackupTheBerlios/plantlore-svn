@@ -3,9 +3,292 @@
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
-    <title>Import</title>
+    <title>Updating the tables</title>
   </head>
   <body>
-  <h1>Table import</h1>
+  <h1>Updating the tables</h1>
+
+
+
+  	<p>
+	Only an Administrator can update the content of the following tables:
+	Plants, Metadata, Phytochoria, Territories and Nearest bigger seats.
+	</p>
+
+	<p>
+	These tables contain data, that must be kept in tact and in the same version
+	in all databases. Therefore only a responsible person can perform an
+	update of these tables. It is not possible to import 
+	the Occurrence data containing invalid values in the tables mentioned above,
+	in order to secure the quality of the Occurrence data.
+	For instance, it is not possible to <a href="./import.html">Import</a> 
+	an Occurrence refering to a plant that does not exist in the list of available
+	plants.
+	</p>
+
+	<p>
+	The Plantlore Application is supplied with a list of plants, 
+	phytochoria, territories and nearest bigger seats of the Czech republic.
+	However, records in those tables may cease to exist or come into existence.
+	In order to keep those tables up-to-date, you can use the table update.
+	</p>
+
+
+
+	<h2>Contents</h2>
+
+	<p>
+	<ol>
+		<li>The table update</li>
+		<li>The format of the file in detail</li>
+		<li>Examples of the difference files</li>
+		<li>Restrictions and limits</li>
+	</ol>
+	</p>
+
+
+	<h2>1. The table update</h2>
+
+	<p>
+	The operation starts with selection of the file that contains the data
+	with udpates.
+	</p>
+
+	<p>
+	After selecting the file the update of the table starts.
+	You can monitor the progress of the update in a small window
+	and cancel it by pressing the "Cancel" button.
+
+	If you cancel the update, the changes that were already made 
+	will remain in the database.
+
+	Repeated update does not have any effect.
+	</p>
+
+
+
+
+	<h2>2. The format of the file in detail</h2>
+
+	<p>
+	The format of the file allows you to insert new records, remove old records and 
+	update the current records. The format is based on XML and the tree contains three
+	branches - ADD, DELETE, and UPDATE.
+	The root of the tree determines the table that will be updated.
+	</p>
+
+
+	<p>
+	<table>
+		<tr>
+			<th>Root tag</th><th>Table</th>
+		</tr>
+		<tr>
+ 			<td>plants</td><td>plants</td>
+		</tr>
+		<tr>
+			<td>villages</td><td>nearest bigger seats</td>
+		</tr>
+		<tr>
+			<td>phytochoria</td><td>phytochoria</td>
+		</tr>
+		<tr>
+			<td>territories</td><td>territories</td>
+		</tr>
+		<tr>
+			<td>metadata</td><td>metadata</td>
+		</tr>
+	</table>
+	</p>
+
+	<p>
+	An example of the tree to make changes to the table of Plants:
+	</p>
+
+
+	<p>
+	<pre>
+	&lt;plants&gt;
+
+	  &lt;<b>add</b>&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		...
+	  &lt;<b>/add</b>&gt;
+
+	  &lt;<b>delete</b>&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		...
+	  &lt;<b>/delete</b>&gt;
+
+	  &lt;<b>update</b>&gt;	  
+		&lt;plant&gt;&lt;/plant&gt;
+		&lt;plant&gt;&lt;/plant&gt;
+		...
+	  &lt;<b>/update</b>&gt;
+
+	&lt;/plants&gt;
+	</pre>
+	</p>
+	
+		  
+
+	<p>
+	</p>
+
+
+	<h3>2.1. Inserting a new record - ADD</h3>
+
+	<p>
+	In the ADD branch there are records that should be inserted into the table.
+	If the record is already in the table it is not inserted again to prevent the
+	table from being polluted with duplicities.
+	</p>
+
+	<p>
+	<pre>
+	  &lt;add&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;ACIARVACoacg&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+	  &lt;/add&gt;
+	</pre>
+	</p>
+
+
+
+	<h3>2.2. Deleting an existing record - DELETE </h3>
+
+	<p>
+	The DELETE branch contains records that are meant to be removed from the table.
+	However, if the record, that should be deleted, is refered to by another record
+	in the database, it cannot be deleted in order to preserve the reference integrity.
+	</p>
+
+	<p>
+	<pre>
+	  &lt;delete&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;ACIARVACoacg&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+	  &lt;/delete&gt;
+	</pre>
+	</p>
+
+
+
+	<h3>2.3. Updating an existing record - UPDATE </h3>
+
+	<p>
+	In the UPDATE branch there are pairs of records: the <i>original</i> and its <i>replacement</i>. 
+
+	If the <i>original</i> is already in the table, and the <i>replacement</i> is not, 
+	the <i>original</i> is modified so that it becomes the <i>replacement</i>.
+
+	If the <i>original</i> is not in the table, 
+	the <i>replacement</i> is inserted as if it were in the ADD branch.
+
+	If the <i>replacement</i> is alrady in the table,
+	the <i>original</i> is deleted as if it were in the DELETE branch.
+	</p>
+
+	<p>
+	<pre>
+	  &lt;update&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;<font color=RED>Aoacg</font>&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+		&lt;plant&gt;
+		  &lt;taxon&gt;Acinos arvensis subsp. villosus (Pers.) Soják&lt;/taxon&gt;
+		  &lt;genus&gt;Acinos&lt;/genus&gt;
+		  &lt;species&gt;Acinos arvensis subsp. villosus&lt;/species&gt;
+		  &lt;scientificnameauthor&gt;(Pers.) Soják&lt;/scientificnameauthor&gt;
+		  &lt;czechname&gt;pamětník rolní chlupatý&lt;/czechname&gt;
+		  &lt;synonyms&gt;Acinos eglandulosus Klokov&lt;/synonyms&gt;
+		  &lt;note&gt;Vydal: JNTR, Soubor: cevt_r_sp2.dbf&lt;/note&gt;
+		  &lt;surveytaxid&gt;<font color=RED>ACIARVACoacg</font>&lt;/surveytaxid&gt;
+		&lt;/plant&gt;
+	  &lt;/update&gt;
+	</pre>
+	</p>
+
+
+
+	<h2>3. Examples of the difference files</h2>
+
+	<p>
+	Adding a new nearest bigger seat.
+	<pre>
+	&lt;villages&gt;
+	  &lt;add&gt;
+	    &lt;nearestvillage&gt;
+	      &lt;name&gt;Newcastle&lt;/name&gt;
+	    &lt;/nearestvillage&gt;
+	  &lt;add&gt;
+	&lt;villages&gt;
+	</pre>
+	</p>
+
+	<p>
+	Adding a new territory.
+	<pre>
+	&lt;territories&gt;
+	  &lt;add&gt;
+	    &lt;territory&gt;
+	      &lt;name&gt;Niederösterreich&lt;/name&gt;
+	    &lt;/territory&gt;
+	   &lt;/add&gt;
+	  &lt;/add&gt;
+	&lt;territories&gt;
+	</pre>
+	</p>
+
+
+	<p>
+	Adding a new phytochorion.
+	<pre>
+	&lt;phytochoria&gt;
+	  &lt;add&gt;
+	    &lt;phytochorion&gt;
+	      &lt;code&gt;25b&lt;/code&gt;
+	      &lt;name&gt;Libouchecká plošina&lt;/name&gt;
+	    &lt;/phytochorion&gt;
+	   &lt;/add&gt;
+	&lt;/phytochoria&gt;
+	</pre>
+	</p>
+
+
+
+	<h2>4. Restrictions and limits</h2>
+
+	<p>
+	The table update is primarily designed for small changes and for work with small files
+	containg several hundreds or thousands records. Bigger files may not be processed due
+	to memory issues.
+	</p>  
+
   </body>
 </html>

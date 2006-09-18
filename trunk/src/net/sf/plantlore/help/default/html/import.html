@@ -1,9 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Import</title>
-</head>
-<body>
-<h1>Import</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Import dat</title>
+  </head>
+  <body>
+  <h1>Import nálezových dat</h1>
+
+	<p>
+	Vaše nálezová data jsou při práci s Plantlore uchovávána v databázi. 
+	K datům nelze přistupovat přímo; přenos  dat na jiné
+	počítače vyžaduje použití <a href="./export.html">Exportu</a> a Importu. 
+	Import slouží k znovunačtení nálezových dat ze souboru na disku do databáze programu.
+	</p>
+
+	<p>
+	Import lze provádět po přihlášení k jakékoli databázi - i databázi vzdálené.
+	U vzdáleného připojení je nutné uvážit přenosovou kapacitu linky, 
+	kterou používáte pro připojení, neboť se může přenášet značné množství dat 
+	a doba nutná k provedení celé operace by byla neúnosná.
+	</p>
+
+	<p>
+	Při importu nálezových dat dochází k modifikaci obsahu databáze.
+	Aby se předešlo neoprávněné manipulaci s daty, je potřeba mít k importu
+	dostatečná uživatelská práva. Nemáte-li právo přidávat záznamy, import neuspěje nikdy.
+	O právech se pojednává v sekci <a href="./user.html">Správa uživatelů</a>.
+	</p>
+
+
+	<h2>Obsah</h2>
+
+	<p>
+	<ol>
+		<li>Importování nálezových dat</li>
+		<li>Detailní popis průběhu importu</li>
+	</ol>
+	</p>
+
+
+	<h2>1. Importování nálezových dat</h2>
+
+	<p>
+	Import začíná výběrem souboru, v němž jsou uložena nálezová data.
+	V současné době je podporován pouze import z XML souborů, které
+	odpovídají PlantloreNative formátu.
+	</p>
+
+	<p>
+	Po výběru souboru je zahájen import dat. Průběh procesu můžete sledovat v otevřeném okně.
+	Import lze zrušit stiskem tlačítka "Storno". 
+	Zrušíte-li Import, nálezová data, která se stihla naimportovat, v databázi zůstanou.
+	Pokud chcete naimportované záznamy odstranit, použijte <a href="./history.html">historii</a>,
+	která umožňuje vracení operací s databází (undo).
+	</p>
+
+
+	<h2>2. Detailní popis průběhu importu</h2>
+
+	<p>
+	Import dat je <b>dlouhotrvající</b> operace, při níž dochází k modifikaci databáze. 
+	Plantlore zajišťuje, aby nebyla poškozena integrita nebo bezpečnost stávajících nálezových dat. 
+	Vkládání záznamu se proto nemusí zdařit. Zamítnutí záznamu, 
+	tj. neprovedení požadované operace, může nastat z následujících důvodů:
+	<ol>
+		<li>
+		Nedostatečné oprávnění - např. nemáte právo přidávat nová nálezová data
+		nebo právo modifikovat záznamy jiných uživatelů.
+		Více o právech lze nalézt v sekci <a href="./user.html">Správa uživatelů</a>.
+		</li>
+
+		<li>
+		Neúplný nálezový záznam, tj. záznam neobsahující všechny povinné položky.
+		</li>
+
+		<li>
+		Nekorektní záznam, tj. záznam, který obsahuje části, která nelze dohledat
+		v databázi. Do databáze nelze vložit nález, který obsahuje rostlinu,
+		nejbližší větší sídlo, fytochorion nebo teritorium,
+		které se nenachází v databázi.
+		Důvody pro toto opatření jsou uvedeny v sekci
+		<a href="./table_import.html">Import dat do tabulek</a>.
+		</li>
+	</ol>
+	Předchozí seznam udává důvody zamítnutí záznamu, které nevedou ke zrušení importu.
+	Pokud soubor, z něhož mají být záznamy načteny, 
+	má neplatný nebo neznámý formát, dojde k automatickému zrušení importu, jako kdybyste
+	stiskli tlačítko "Storno".
+	</p>  
+
+
+	<p>
+	Export a Import byl navržen i pro snadné přenášení změn v nálezových datech mezi dvěma
+	databázemi. Používáte-li Plantlore například doma i v práci, můžete část změn provést
+	doma a poté dané změny promítnout do databáze v práci. Ukažme si to na příkladu.
+	Doma vytvoříte novou lokalitu, řekněme "50 metrů od pravého břehu řeky Jihlavy".
+	V této lokalitě jste identifikovali dvě rostliny, Rubus saxatilis L. a Caltha palustris.
+	Po přidání těchto dvou rostlin provedete export těchto dvou záznamů a přenesete je 
+	na své pracoviště, kde záznamy importujete. V práci zjistíte, že se nejednalo
+	o Rubus saxatilis L, nýbrž o Rubus albocarpaticus, a 
+	<a href="./addoccurrence.html">editací</a>
+	provedete změnu. Přenesete-li
+	potom data domů a importujete-li je, změna se projeví i ve vaší domácí databázi.
+	</p>
+
+
+  </body>
 </html>

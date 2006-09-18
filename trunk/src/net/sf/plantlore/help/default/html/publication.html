@@ -1,9 +1,68 @@
 <html>
 <head>
+<meta http-equiv="Content−Language" content="en−US" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Publication manager</title>
 </head>
 <body>
 <h1>Publication manager</h1>
+Publication manager allows users to add, search, modify and delete publications where the occurrence records were published.
+It can be invoked from menu <strong>Data|Publication Manager</strong>.
+<p/>
+The Publication Manager window consists of two main parts:
+<ul>
+    <li><strong>The list of publications</strong> - where the results of the search are displayed</li>
+    <li><strong>The search criteria</strong> - where you can specify search parameters for publications</li>    
+</ul>
+<img src="picture/PublicationsMain.png">
+<h3>The list of publications</h3>
+After a succcessful search results are displayed in the list of publications, although not all of them can
+be seen immediately. Initially, only the first page of the results is displayed. To see the rest
+of the pages use <i>Next</i> and <i>Previous</i> buttons which can be found directly under the list.
+In case you would like to display more publications per page, input the requested number of publications to the 
+field below the list of publications.
+<p/>
+This part also includes buttons for adding, editing and deleting publications. The <i>Add publication</i> and
+<i>Edit publication</i> buttons open the Add/Edit Publication Dialog (see below), the <i>Delete publication</strong>
+button removes the publication after the confirmation. When <i>Edit</i> or </i>Delete</i>
+button is pressed, publication must be selected in the list in order to proceed with the operation 
+(otherwise the system will warn you that there is no publication selected). Adding and editing publications
+is subject to the system of rights in plantlore. For more information on this topic, see the
+appropriate help section.
+
+<h3>The search criteria</h3>
+Publication manager allows users to search the data using 4 parameters: Collection name, Journal name, 
+Reference citation and Reference detail. Results can be ordered by Collction name, Publication year, 
+Journal name, Journal author, Reference citation and Reference Detail in either 
+ascending or descending direction. Search string for any of the parameters doesn't have to match 
+the item in the database exactly and any substring will be sufficient (although it might yield more 
+results). To start searching use <i>Search publications</i> button.
+<p/>
+The search is by default case insensitive.
+<p/>
+After the manager window is opened, all available publications are displayed. If you've executed a search
+but you want to display and browse all available publications again, press the <i>Search publications</i>
+button while all of the search fields are left blank.
+<p/>
+<h2><a name="add">Adding and editing publications</a></h2>
+Window for adding new publications can be opened from the main Publication Manager window using <i>Add 
+publication</i> button. This window contains the following fields:
+<ul>
+    <li><b>Collection name</b> - Name of the collection this publication belongs to. Maximum size of this item is 255 characters.</li>
+    <li><b>Publication year</b> - Year when the occurrence was published.</li>
+    <li><b>Journal name</b> - Journal name where the occurrence was published. Maximum length of this item is 255 characters.</li>
+    <li><b>Journal author name</b> - Author of the journal where the occurrence was published. Maximum length of this item is 255 characters.</li>
+    <li><b>Refernce detail</b> - Reference detail for the publication. Maximum length of this item is 100 characters.</li>
+    <li><b>URL</b> - URL pointing to the publication. Maximu length of this item is 100 characters.</li>
+    <li><b>Note</b> - Any other information about the publication. Maximum length of this item is 4096 characters.</li>    
+</ul>
+<img src="picture/PublicationsAdd.png">
+<p>
+New publication can be saved using the <i>Save publication</i> button in the bottom of the window. At least one of the following items has to be present: Journal author, Publication year, 
+Journal author name, Collection name.
+</p>
+In case you edit already existing publication, all of the items are preloaded with the current parameters of the publication and you can modify them. You can save the modifications by 
+pressing <strong>Save publication</strong> button. Same as when creating new publication, at least one of the following items has to be present: Journal author, Publication year, Journal 
+author name, Collection name.
 </body>
 </html>
