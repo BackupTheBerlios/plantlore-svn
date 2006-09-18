@@ -90,6 +90,8 @@ public class Login extends Observable {
 	protected void load() {
 		logger.debug("Loading the stored list of databases.");
 		
+		dbinfos.clear();
+		
 		for (DBInfo savedDBInfo: mainConfig.getDBinfos())
 			dbinfos.add(savedDBInfo);
 		this.setChanged(); this.notifyObservers(UPDATE_LIST);

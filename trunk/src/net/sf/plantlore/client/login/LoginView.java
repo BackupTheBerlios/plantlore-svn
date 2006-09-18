@@ -44,7 +44,7 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         new DefaultEscapeKeyPressed( this );
         
         // See what's new.
-        update(null, Login.UPDATE_LIST);
+        //update(null, Login.UPDATE_LIST);
     }
     
     /** This method is called from within the constructor to
@@ -122,6 +122,13 @@ public class LoginView extends javax.swing.JDialog implements Observer {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    
+    @Override
+    public void setVisible(boolean arg0) {
+    	model.load();
+    	super.setVisible(arg0);
+    }
+    
  
     
     /**
@@ -141,11 +148,10 @@ public class LoginView extends javax.swing.JDialog implements Observer {
     				
     		        // Update the selected record as well
     		        DBInfo selected = model.getSelected();
-    		        if(source == null) // Is it the first update?
-    		        	if(selected != null)
-    		        		choice.setSelectedValue(selected, true);
-    		        	else
-    		        		choice.setSelectedIndex(0);
+    		        if(selected != null)
+    		        	choice.setSelectedValue(selected, true);
+    		        else
+    		        	choice.setSelectedIndex(0);
     			}
     			else if(parameter != null && parameter instanceof DBLayer)
     				setVisible(false); // the database layer has been created, we are no longer neccessary
