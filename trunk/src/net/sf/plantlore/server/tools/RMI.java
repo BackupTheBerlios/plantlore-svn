@@ -93,6 +93,12 @@ public class RMI {
 	
 	
 	public static String setHostName() {
+		// Skip the autodetection if the User supplied another value
+		// so as not to undermine His effort.
+		String hostnameFromUser = System.getProperty(PROPERTY_HOSTNAME);
+		if( hostnameFromUser != null && !"127.0.0.1".equals(hostnameFromUser) )
+			return hostnameFromUser;
+		
 		try {
 			// Obtain the IP of this host.
 			InetAddress address = InetAddress.getLocalHost();
