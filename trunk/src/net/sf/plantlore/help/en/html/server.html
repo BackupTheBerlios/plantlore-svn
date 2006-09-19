@@ -43,7 +43,7 @@
 
 
 	<p>
-        The Server can be started on the local computer only because of security
+        The Server can be started only on the local computer - because of security
         reasons.
         You can specify following parameters:
 	</p>
@@ -140,7 +140,7 @@
 			</td>
 			<td>
                                 Database engines can be contacted on a certain port.
-                                Every databse engine may have a different port number
+                            Every database engine may have a different port number.
                                 In order to know where to contact the database engine,
                                 you have to supply the port where the database engine listens.
                                 
@@ -253,7 +253,7 @@
 
 	<p>
         The Administrator of the Server can obtain the information about currently
-        connected clints, and can switch off the Server.
+        connected clients, and can switch off the Server.
 	</p>
 
 	<p>
@@ -265,31 +265,67 @@
         currently connected clients. The Administrator can:
 	<ul>
 		<li><b>Refresh the list</b>.
-                Updates the list of connected users.
+                Update the list of connected users.
 		</li>
 		<li><b>Kick a User</b>.
-                Disconnects the selected client from the Server
+                Disconnect the selected client from the Server
 		All operations in progress are cancelled. 
                 Kick does not prevent the User from re-connect; His IP address
                 will not be blocked as it may prevent connection from other
                 computers that share the same connection point.
 		<br/>
-                Kick allows you to disconnect clients that use more connectins
-                than necessary thus blockign other Users with the "same" IP address.
+                Kick allows you to disconnect clients that use more connections
+                than necessary thus blocking other Users with the "same" IP address.
 		<br/>
                 If you wish to deny the access to the User 
                 (ban Him from using the database), you should disable
                 His account in <a href="./user.html">User manager</a>.
 		</li>
 		<li><b>Shutdown the Server</b>.
-                Stops the Server, disconnecting all clients immeditely.
+                Stop the Server, disconnecting all clients immeditely.
 		</li>
 		<li><b>Hide the window</b>.
-                Hides the window but keeps the Server online (running).
+                Hide the window but keep the Server online (running).
                 If you seek to administrate the Server again, you must
                 connect to it as described in the Section 2.
 		</li>
 	</ul>
 	</p>  
+        
+        
+        <h2>4. Troubleshooting</h2>
+
+	<p>
+        Sometimes the Plantlore Server is unable to auto-detect the IP address
+        of the computer where it runs, although the detection routine is
+        quite inquisitive.
+        It usually happens on computers
+        with two different network interfaces or in Linux
+        (mostly if /etc/hosts contains invalid information).
+	</p>
+        
+        <p>
+        JRE requires the "java.rmi.server.hostname" to be set properly, 
+        otherwise the RMI mechanism will fail when someone will try to 
+        contact the Server remotely. The typical message is:
+        <pre>
+        java.rmi.ConnectException: Connection refused to host: 127.0.0.1; 
+        nested exception is:
+           java.net.ConnectException: Connection refused: connect
+        </pre>
+        </p>
+        
+        <p>
+        In order to make the Server work, you must specify the IP address
+        yourself. You can do this when starting the Server:
+        <pre>
+        java -Djava.rmi.server.hostname=YourIP -jar plantlore-server.jar
+        </pre>
+        or (if you are not using the jar archive):
+        <pre>
+        java -Djava.rmi.server.hostname=YourIP net.sf.plantlore.server.Plantlore
+        </pre>
+        </p>
+        
   </body>
 </html>

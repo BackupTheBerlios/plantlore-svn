@@ -279,5 +279,43 @@
 		</li>
 	</ul>
 	</p>  
+        
+        
+        <h2>4. Odstraňování problémů</h2>
+
+	<p>
+        Při spuštění Serveru se může stát, že Server není schopen automaticky
+        rozpoznat IP adresu počítače, na kterém běží, přestože autodetekční rutina
+        zkouší několik způsobů detekce.
+        Typicky jsou tímto problémem postiženy počítače se dvěma
+        síťovými rozhraními nebo počítače s OS Linux 
+        (zde může být příčinou i špatné nastavení /etc/hosts).
+	</p>
+        
+        <p>
+        Pro správný běh RMI, technologie použité pro zprostředkování
+        komunikace po síti, je zapotřebí, aby byl správně nastaven
+        parametr "java.rmi.server.hostname".
+        Není-li tento parametr nastaven správně, vzdálená připojení
+        selžou s následující chybou:
+        <pre>
+        java.rmi.ConnectException: Connection refused to host: 127.0.0.1; 
+        nested exception is:
+           java.net.ConnectException: Connection refused: connect
+        </pre>
+        </p>
+        
+        <p>
+        Odstranění této chyby vyžaduje ruční nastavení IP adresy stroje, 
+        kde Server běží. To lze provést při spouštění Serveru následovně:
+        <pre>
+        java -Djava.rmi.server.hostname=VašeIP -jar plantlore-server.jar
+        </pre>
+        a pokud nepoužíváte dodaný jar archiv:
+        <pre>
+        java -Djava.rmi.server.hostname=VašeIP net.sf.plantlore.server.Plantlore
+        </pre>
+        </p>
+        
   </body>
 </html>
