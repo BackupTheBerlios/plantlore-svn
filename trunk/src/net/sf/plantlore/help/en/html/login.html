@@ -3,101 +3,101 @@
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
-    <title>Připojování k databázi</title>
+    <title>Database login</title>
   </head>
   <body>
-  <h1>Připojování k databázi a Odhlašování od databáze</h1>
+  <h1>Database login and logout</h1>
 
 
   	<p>
-	Před započetím práce s Plantlore je zapotřebí se přihlásit k databázi, se kterou chcete pracovat.
+	Before you start working with Plantlore, it is necessary to login to the database you would like to work with
 	</p>
 
 
-	<h2>Obsah</h2>
+	<h2>Contents</h2>
 
 	<p>
 	<ol>
-		<li>Proces připojení k databázi</li>
-		<li>Vytváření záznamů o databázi</li>
-		<li>Úprava a mazání záznamů o databázi</li>
-		<li>Nejčastější problémy při připojování</li>
-		<li>Odhlášení od databáze</li>
-		<li>Obnova ztraceného připojení</li>
+		<li>The login process</li>
+		<li>Creating database records</li>
+		<li>Modifying and deleting database records</li>
+		<li>Common problems with login</li>
+		<li>Logout</li>
+		<li>Reconnecting after the connection was lost</li>
 	</ol>
 	</p>
 
 
-	<h2>1. Proces připojení k databázi</h2>
+	<h2>1. the login process</h2>
 
 	<p>
-	Přihlášení k databázi, kde jsou Vaše data uložena, probíhá ve dvou krocích.
+	Database login is composed of two main parts
 	</p>
 
-	<h3>1.1. Výběr databáze</h3>
+	<h3>1.1. Selecting the database</h3>
 	
 	<p>
 	<img src="picture/LoginDBSelection.png" alt="Volba databáze.">
 	</p>
 
 	<p>
-	Po instalaci Plantlore je k disposici jedna databáze pojmenovaná "Ukázková databáze".
-	Tato databáze neobsahuje žádná nálezová data a je připravena pro započetí práce.
-	Neobsahuje-li seznam databází žádný záznam, budete jej muset vytvořit - o tom pojednává
-	druhá část této nápovědy.
+	After installing Plantlore you have two options depending on how you would like to use Plantlore:
+        <ul>
+            <li><b>Create new database on your system</b> - You can create new database using menu 
+                Data|Create new database. See Create database section for further information on how 
+                to create new database.
+            </li>
+            <li><b>Connect to remote database</b> - In this case you need to create new database record
+                with information about the remote Plantlore server. Ask your Plantlore server administrator 
+                for necessary data. Information on creating new database records is included in this help section.
+            </li>
+        </ul>
+        
+	<p>
+	After some time your list of databases can be similar to the one at the picture. Plantlore will automatically 
+        select database you've chosen during the previous session. Choose one of the databases from the list and press
+        "Continue" button.
 	</p>
+
+
+	<h3>1.2. Authentication</h3>
 
 	<p>
-	Po jisté době používání Plantlore může váš seznam databází vypadat podobně jako ten na obrázku.
-	Plantlore automaticky předvolí tu databázi, kterou jste zvolili při posledním přihlašování.
-	Vyberte jednu z databází v seznamu a stiskněte tlačítko "Pokračuj".
-	</p>
+	For gaining access to the database you have to provide your username and password in order to authenticate.
+        If you are logging in for the first time, use login name and password you have chosen when installing Plantlore.
 
-
-	<h3>1.2. Autentifikace - prokazování totožnosti</h3>
-
-	<p>
-	Pro přihlášení k databázi je potřeba se prokázat přihlašovacími údaji 
-	- uživatelským jménem a heslem. 
-
-	Pokud se přihlašujete poprvé, zadejte přihlašovací údaje, 
-	které jste použili při instalaci Plantlore.
-
-	Nové uživatelské jméno a heslo smí z bezpečnostních důvodů přidělit pouze administrátor databáze.
-	Často i zkušení uživatelé používají velmi slabá hesla, proto je jejich přidělování
-	přenecháno jemu.
-	</p>
+        For security reasons, new user name and password can only be assigned by an administrator. Weak passwordsa are often
+        used even by experienced users, therefore the assignment of passwords is left to administrator.
+      	</p>
 	
 	<p>
 	<img src="picture/LoginAuthentication.png" alt="Vkládání přihlašovacích údajů.">
 	</p>
 
 	<p>
-	Plantlore si pamatuje několik posledních uživatelských jmen vkládaných při přihlášování;
-	můžete vybrat jedno z připraveného seznamu, nebo zadat jiné uživatelské jméno.
-	Hesla Plantlore neukládá a automaticky je nikdy nenabízí.
-	Po zadání údajů stiskněte tlačítko "Přihlásit". 
+        Plantlore remembers several recently used login names; you can choose one from the list or
+        provide a different one. Plantlore doesn't save passwords and doesn't offer them automatically.
+        After you provide the authentication data, press "Login" button.
 	</p>
 
 	<p>
-	Stiskem tlačítka "Přihlásit" se Plantlore pokusí připojit k vybrané databázi se zadanými
-	přihlašovacími údaji. Připojení může (zejména pokud se připojujete ke vzdálené databázi)
-	trvat delší dobu.
+        After pressing the "Login" button, Plantlore will try to connect to the selected database
+        using your authentication data. The connection can take some time, especially if you are connecting
+        to a remote database.
 	</p>
 
 
 	<p>
-	Pokud se přihlášení z nějakého důvodu nezdaří, budete o tom informováni krátkou zprávou.
-	V opačném případě Plantlore zobrazí základní <a href="./overview.html">Přehled</a>.
+	In case the login fails for some reason, you will be notified by a short message. Otherwise Plantlore 
+        will display basic <a href="./overview.html">Overview</a>.
 	</p>
 
 
-	<h2 id="AddDBInfo">2. Vytváření záznamů o databázích</h2>
+	<h2 id="AddDBInfo">2. creating database records</h2>
 
 	<p>
-	Chcete-li se připojit k jiné databázi, 
-	kterou jste sami vytvořili nebo kterou vytvořil někdo jiný na svém počítači,
-	musíte vytvořit nový záznam, který popisuje, kde se databáze nachází a jak je nastavena.
+	If yoy wish to connect to a different database than the one you (or someone else) created on your computer,
+        you have to create new record describing the database, its location and settings.
 	</p>
 
 	<p>
