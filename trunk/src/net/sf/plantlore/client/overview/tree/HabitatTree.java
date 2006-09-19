@@ -186,7 +186,13 @@ public class HabitatTree extends Observable {
         DefaultMutableTreeNode node;
         for (Object record : records) {
             Object[] obj = (Object[])record;
-            String name = ((NearestVillage)obj[2]).getName() + " - " + obj[1] + " ("+L10n.getString("HABITAT.quadrant")+" "+ obj[3] + ")";
+            String name;
+            if (obj[3] != null)
+                name = ((NearestVillage)obj[2]).getName() + " - " + obj[1] + " ("+L10n.getString("HABITAT.quadrant")+" "+ obj[3] + ")";
+            else if (obj[1] != null)
+                name = ((NearestVillage)obj[2]).getName() + " - " + obj[1];
+            else
+                name = ((NearestVillage)obj[2]).getName() + " - " + L10n.getString("Habitat") + " " + L10n.getString("Overview.Tree.Number")+" "+ obj[0];
             Integer count = getOccurrenceCount((Integer)obj[0]);
             name = "("+count+") "+name;
             node = new DefaultMutableTreeNode(new NodeInfo(NodeInfo.NodeType.HABITAT,name,(Integer)obj[0],-1));
