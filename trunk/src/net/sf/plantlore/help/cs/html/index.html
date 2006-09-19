@@ -2,10 +2,30 @@
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Plantlore - Nápověda</title>
+    <title>Plantlore</title>
   </head>
   <body>
-    <h1>Plantlore - Nápověda</h1>
+    <h1>Plantlore</h1>
+
+<h2>Úvod</h2>
+Plantlore je databázový systém řešící problematiku správy botanických nálezových dat. Typickým uživatelem Plantlore je profesionální nebo polo-profesionální botanik. Rozhraní systému i jeho návrh se soustředil hlavně na kvalitní zadávání, úpravu a celkově správu nálezových dat.
+V systému Plantlore tedy nenajdete funkce jako je analýza dat, generování statistik, není možné k jednotlivým taxonů ukládat obrázky nebo fotky. Na druhou stranu se Plantlore chová jako velmi inteligentní kartotéka (je možné i tisknout kartotékové položky – schedy), která se snaží všemožně usnadnit správu nálezových dat – jejich zadávání, úpravu, export, import, atd.
+Plantlore také není taxonomická databáze. Nicméně návrh databázového modelu Plantlore do budoucna do jisté míry počítá s případným propojením na taxonomickou databázi. Taxonomické databáze jsou složité samy o sobě, této problematice se věnuje například takzvaný Berlínský model.
+<p>
+<h2>Zamýšlené použití Plantlore</h2>
+Systém plantlore je navržen pro prostředí s centrální autoritou spravující „pomocná“ data a řešící případné konflikty. Pomocnými daty se myslí jiná data než čistě nálezová. To znamená například seznam taxonů, seznam teritorií, fytochorionů nebo sídel. Aby bylo možné tuto centrální správu vytvořit a udržet, přichází Plantlore se systémem práv, díky kterému je možné různé funkce povolit jen určitým uživatelům.
+Stejně tak se předpokládá, že ve většině případů bude botanik pracovat doma na lokálním počítači bez připojení k Internetu a zadaná data poté vyexportuje a předá centrální autoritě která provede import do centrální databáze. Proto jsou případné konflikty při souběžné úpravě nálezů více uživateli v Plantlore řešeny takzvaným optimistický způsobem. To znamená, že se předpokládá, že ke konfliktům bude docházet velmi zřídka a proto nebude drahé je vyřešit manuálně. V praxi to znamená, že při souběžné editaci jednoho nálezu dvěma uživateli se v databázi provede jen první změna a uživatel, který editací ukončí jako druhý dostane chybovou hlášku o konfliktu.
+Mimojiné pro usnadnění řešení tohoto problému Plantlore obsahuje funkci Historie nálezu, díky které je možné si nechat zobrazit všechny změny provedené na daném nálezu.
+<p>
+<h2>Webový klient</h2>
+Plantlore obsahuje krom běžného klienta s grafickým uživatelským rozhraním i webového klienta. Webový klient bude instalován hlavně centrální autoritou, která chce občanům a svým přispěvatelům zpřístupnit část svých dat. Obyčejní lidé mají pak přístup pouze k omezeným informacím o nálezech, kdežto přispěvatelé botanici maji přístup plnohodnotný.
+Webový klient také umožňuje zapojení do evropského výzkumného projektu BioCASE. Více informací o něm se můžete dozvědět na jeho internetových stránkách na adrese http://www.biocase.org/.
+<p>
+<h2>Začátek práce s Plantlore</h2>
+Typicky se uživatel po úspěšném nainstalování Plantlore (více viz instalační příručka) do systému přihlásí, lokálně k prázdné při instalaci vytvořené databázi.
+Po přihlašení do prázdné databáze nebude na klientovi mnoho zajímavého. Databázi je potřeba nejdříve naplnit daty. Data pro naplnění databáze uživatel získá od své centrální autority a postupně je naipmortuje do své databáze příkazem Soubor -> Import. 
+V případě, že už databáze obsahuje data nutná pro zadání povinných položek při zadávání nálezu, je možné začít s přidáváním nálezových dat získaných v pozorováním rostlin v terénu. 
+Hlavními funkcemi tedy alespoň ze začátku budou Přidávání nového nálezu, editace nálezu a import dat.    
 
     <ul>
       <li><a href="login.html">Přihlášení</a></li>
