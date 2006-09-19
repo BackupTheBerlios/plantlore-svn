@@ -1,27 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<meta http-equiv="Content−Language" content="en−US" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Plantlore</title>
-</head>
-<body>
-<h1>Plantlore</h1>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>Plantlore</title>
+  </head>
+  <body>
+    <h1>Plantlore</h1>
 
-<ul>
+<h2>Introduction</h2>
+<p>Plantlore is a plant occurrence database system that tries to solve the complex problem of occurrence data management.
+The typical Plantlore user is an (almost) professional botanist. The user interface and the application desing concentrated
+mainly on quality data entering, editing and data management as whole.</p>
+
+<p>In the Plantlore system you won't therefore find features like data analysis, stats generation, it is not possible to store pictures with the occurrences.
+On the other hand Plantlore works as a quite intelligent card-index (it is even possible to print the old fashioned cards - schedas). It tries to
+make your occurrence data management easier - be it adding, editing, export or import, ...
+Plantlore also isn't a taxonomical database. The database model of Plantlore however takes into account a possible future enhancement by interconnecting
+it with some taxonomical database.</p>
+<p>
+<h2>The intended use of Plantlore</h2>
+<p>The Plantlore system is designed for enviroment that has a central authority that manages all auxiliary data and that solves possible conflicts.
+By auxiliary data we mean data other than the pure occurrence data. That for example means the list of taxons, list of territories, phythochoria or villages.
+To make it possible to maintain such central management Plantlore has a system of rights thanks to that you can restrict access to some of it's functions to some users.
+It is also assumed that in most cases the botanist works at home on a local computer not connected to the Internet. He usually exports his data and gives them to the central authority
+that performs an import to a central database. </p>
+<p>This is also why possible conflicts when two users would edit the same occurrence at the same time are solved "optimistically".
+That means that it is assumed that conflicts are very rare and therfore it will be cheap to solve them manually. In practise that means that
+if two users are editing the same occurrence at the same time only the first change appears in the database and the second user to click on Ok
+will receive an error message. To make this, although rare, situation easier Plantlore has the feature of History. In the History you can
+view all the changes that happend to the database and u can also perform undo operations.
+</p>
+
+<p>
+<h2>The web client</h2>
+<p>Except the normal GUI client Plantlore also contains a web client. The web client is expected to be installed only by the central authority in most cases.
+This way the central authority can expose it's data to the public. Ordinary people then have access only to a limited amount of information
+whereas the cooperating botanist can have full access. </p>
+<p>Thanks to the web client it is also very easy to take part in the european research project BioCASE. You can find more information about this project on http://www.biocase.org/.
+</p>
+<h2>Beginning to work</h2>
+<p>Usually after a successful install the user logs into the system locally, not using the Plantlore server. The database is after installation empty.
+Therefore one of the first steps in newly installed Plantlore will be to import some of the auxiliary data. The user typically will
+receive these data from his or her central authority and then import them using the command File -> Table import.</p>
+
+<p>In case that the database contains data necessary to fill in all required fields it is possible to begin to add some new occurrence data
+gained in the terrain. Therefore at least at the beginning the main commands of interest will be the Table import, Add and the managers in the Data menu.
+</p>
+
+
+
+    <ul>
       <li><a href="login.html">Login</a></li>
       <li><a href="setting.html">Settings</a></li>
       <li><a href="overview.html">Overview</a></li>
-      <li><a href="author.html">Author</a></li>
-      <li><a href="publication.html">Publication</a></li>
+      <li><a href="author.html">Authors</a></li>
+      <li><a href="publication.html">Publications</a></li>
       <li><a href="metadata.html">Metadata</a></li>
       <li><a href="history.html">History</a></li>
       <li><a href="user.html">Users</a></li>
       <li><a href="import.html">Import</a></li>
-      <li><a href="export.html">Export</a></li>
-      <li><a href="createdb.html">New database</a></li>
+      <li><a href="export.html">Exportt</a></li>
+      <li><a href="createdb.html">Create database</a></li>
       <li><a href="server.html">Server</a></li>    
     </ul>
-
-
-</body>
+    
+  </body>
 </html>
