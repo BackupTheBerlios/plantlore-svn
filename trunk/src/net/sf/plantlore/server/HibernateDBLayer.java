@@ -2296,7 +2296,7 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         // In case we are creating tables, insert data into TUSER table so that the user can login
         if (scriptid == DBLayer.CREATE_TABLES) {
             sql.append("INSERT INTO tright (cid, cadministrator, cadd, ceditall) VALUES (1,1, 1, 1);");
-            sql.append("INSERT INTO tuser (clogin, cwholename, ccreatewhen, crightid) VALUES ('"+username+"', '', 'NOW', 1);");
+            sql.append("INSERT INTO tuser (clogin, cfirstname, csurname, cwholename, ccreatewhen, crightid) VALUES ('"+username+"', 'Admin', 'Admin', 'Admin Admin', 'NOW', 1);");
         }
         // Split the file with semicolon as the separator
         String[] statements = sql.toString().split(";");        
