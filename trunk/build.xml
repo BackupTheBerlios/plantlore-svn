@@ -133,6 +133,7 @@
                         <fileset dir="${base.dir}/src" includes="net/sf/plantlore/help/**"/>
                         <fileset dir="${base.dir}/src" includes="net/sf/plantlore/l10n/**" excludes="**/*.java"/>
                         <fileset dir="${base.dir}/src" includes="net/sf/plantlore/client/resources/**" excludes="**/*.java"/>
+                        <fileset dir="${build.dir}" includes="net/sf/plantlore/client/AppCoreView.class"/>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="net.sf.plantlore.server.Plantlore"/>
