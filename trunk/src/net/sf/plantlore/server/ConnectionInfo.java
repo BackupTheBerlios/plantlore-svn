@@ -76,8 +76,15 @@ public class ConnectionInfo implements Serializable {
 	@Override
 	public String toString() {
 		try {
-			return database.getDescription() + " @ " + description;
-		} catch( RemoteException e ) {
+			if( database == null && description == null )
+				return "unidentified user";
+			else if( database != null && description == null )
+				return database.getDescription();
+			else if( database == null && description != null )
+				return "? @ " + description;
+			else
+				return database.getDescription() + " @ " + description;
+		} catch( Exception e ) {
 			return "? @ " + description;
 		}
 	}

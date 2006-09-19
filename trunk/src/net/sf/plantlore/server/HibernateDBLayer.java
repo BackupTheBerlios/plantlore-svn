@@ -2415,6 +2415,16 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 	 * @return description of this database layer: Name Surname (login).
 	 */
 	public String getDescription() {
-		return toString();
+		if(plantloreUser != null) {
+			String name = plantloreUser.getFirstName(),
+			surname = plantloreUser.getSurname(), 
+			description = ((name != null) ? name + " " : "") + ((surname != null) ? surname : "");
+			if(name == null && surname == null)
+				description = currentlyConnectedUser;
+			else
+				description = description +	" (" + currentlyConnectedUser + ")";
+			return description;
+		}
+		return currentlyConnectedUser ; 
 	}
 }
