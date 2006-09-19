@@ -1,10 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content−Language" content="en−US" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Add/edit occurrence</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<title>Plantlore - Occurrence adding and editing</title>
 </head>
 <body>
-<h1>Add/edit occurrence</h1>
-</body>
+<h1>Occurrence adding and editing</h1>
+<p>You can do all basic occurrence manipulation from the Add and Edit dialogs.
+You can edit only those records to which he has appropriate rights. To add a new occurrence
+you also have to have sufficient rights.
+</p>
+
+<h2>1. Dialogs</h2>
+<p>The add and edit dialogs are very similar in both their appearance and behaviour.
+You can invoke both dialogs from the toolbar. There is one other way to invoke the Add dialog and that is from the <a href="habitattree.html">habitat tree</a>.
+</p>
+<br>
+
+<img src="picture/addedit_place.png" alt="The top part of add/edit dialog with fields about the location of the occurrence">
+
+<p>
+The dialog consists of three parts: location, occurrence (taxon/author) and table part. 
+The table contains all occurrences contained in the given location. It is a help to make it easier for you
+to keep track of what has already been added. You always have to input all required fields which are the ones denoted by a star.
+After clicking on the Ok button new occurrence is added (or a present one updated). In case of adding a confirmation window shows up
+after the operation is successfuly completed. The Add dialog remains on the screen open with all fields entered. This is to make it
+easier to add other similar occurences that share most of the fields. <b>WARNING:</b> repeated clicking to the Ok button repeats the
+insert of the same occurrence! You can use the two clear buttons to quickly clear the respective parts of the dialog.
+</p>
+<br>
+
+<img src="picture/addedit_occurrence.png" alt="The middle - occurrence - part of the dialog">
+
+<p>You can precisely specify the location of the occurrence using GPS coordinates. You can use one of the three supported coordinate systems:
+S-JTSK, S42, WGS84. The base coordinate system is the WGS84. PLantlore automatically converts the coordinates before storing them into the database.
+</p>
+
+<p>The table of occurrences in the entered location. It shows information only about the author names the taxon name and the date.</p>
+<br>
+<img src="picture/addedit_occurrence_table.png" alt="Table of occurrences for the given location">
+
+<h2>2. Editing an occurrence</h2>
+<p>
+    The edit dialog is quite powerful. While editing an occurrence you can delete an old one or even create new ones. The edit dialog
+    determines the right actions according to what you fill in. Deleting an occurrence (which means deleting the taxon in the edit dialog)
+    has the same effect as deleting in from the <a href="overview.html">Overview</a>. Adding new occurrences (which means entering new taxons in
+    the edit dialog) has the same effect as adding them from the add dialog.
+</p>
+
+<h2>3. Disabling non-mandatory fields</h2>
+<p>Often you won't want to fill in all the fields. In that case you can disable some of them
+to enable quicker navigation through the dialog using keyboard. You can do that in the settings
+dialog which you can invoke by clicking on the Settings button in the bottom part of the add or edit dialog.
+</p>
+
+
+<h2>4. Verification</h2>
+<p>Plantlore automatically verifies the values you entered. Specifically it checks:
+    <ul>
+        <li>whether you filled in all required fields</li>
+        <li>correctness of the date (whether it exists in gregorian calendar)</li>
+        <li>value lenghts - for example the notes can be at most 4096 characters long</li>
+        <li>value correctness - that there is a number where it is expected,etc. You have to adhere to the right decimal point character according to your current locale. In Czech locale it is a comma, in English locale it is a period.</li>
+    </ul>        
+</p>
+
+<h2>5. Habitat sharing</h2>
+<p>If you add multiple occurrences into a habitat all these occurrences wil share the habitat in the database model of Plantlore.
+This means that Plantlore is able to recognize whish occurrences belong to which habitat. You can notice that
+mainly when editing a shared habitat. In that case Plantlore will ask you whether you want to change the habitat
+for all the occurrences or just for the one plant. The habitat is deleted when last it's occurrence is deleted.
+</p>
+
+<h2>6. Conclusion</h2>
+      <p>Work with occurrences requires deliberation. When adding a new occurrence Plantlore automatically tries
+      to find the entered location in the database. If it succeeds it uses that found habitat for the new occurrences.
+      However, only a small difference for example in the place description will cause that Plantlore won't find the habitat
+      and will create a new one instead. You'll be rewarded for dilligent work for example by bigger leverage of the <a href="habitattree.html">habitat tree</a>.
+
+</p>
+  </body>
 </html>
+
+
+

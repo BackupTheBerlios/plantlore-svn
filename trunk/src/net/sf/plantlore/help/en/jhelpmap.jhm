@@ -10,9 +10,8 @@
     <mapID target="settings" url="html/settings.html"/>
     <mapID target="overview" url="html/overview.html"/>
     <mapID target="overview.addoccurrence" url="html/addoccurrence.html"/>
-    <mapID target="overview.addoccurrence.basic" url="html/addoccurrence.html#basic"/>
-    <mapID target="overview.addoccurrence.extended" url="html/addoccurrence.html#extended"/>
-    <mapID target="overview.addoccurrence.checklist" url="html/addoccurrence.html#checklist"/>
+    <mapID target="overview.addoccurrence.checklist" url="html/checklist.html"/>
+    <mapID target="overview.habitattree" url="html/habitattree.html"/>
     <mapID target="overview.search" url="html/search.html"/>
     <mapID target="overview.history" url="html/history.html#historyRecord"/>
     <mapID target="author" url="html/author.html"/>

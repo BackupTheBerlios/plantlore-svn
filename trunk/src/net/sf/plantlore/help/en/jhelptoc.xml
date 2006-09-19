@@ -13,10 +13,9 @@
     <tocitem target="settings" text="Settings"/>
     <tocitem target="overview" text="Overview">
         <tocitem target="overview.addoccurrence" text="Add/Edit Occurrence">        
-            <tocitem target="overview.addoccurrence.basic" text="Basic data"/>
-            <tocitem target="overview.addoccurrence.extended" text="Extended data"/>            
             <tocitem target="overview.addoccurrence.checklist" text="Checklist"/>                        
         </tocitem>
+        <tocitem target="overview.habitattree" text="Habitat tree"/>
         <tocitem target="overview.search" text="Search"/>
         <tocitem target="overview.history" text="Record history"/>        
     </tocitem>

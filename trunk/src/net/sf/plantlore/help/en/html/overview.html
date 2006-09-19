@@ -1,10 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
-<head>
-<meta http-equiv="Content−Language" content="en−US" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Plant overview</title>
-</head>
-<body>
-<h1>Plant overview</h1>
-</body>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />    
+    <title>Overview</title>
+  </head>
+  <body>
+  <h1>Overview</h1>
+  <p>The center of Plantlore is the overview. You see it after a successful login and you can invoke
+  most of the Plantlore features from it.
+
+    <h2>1. Introduction</h2>
+    <p> The overview is a table containing a list of occurrences. By default you see all the occurrences
+    divided to multiple pages. You can narrow the list of occurrences down by using the <a href="search.html">Search</a>.
+     </p>
+    
+    <p>The result of the search is always displayed in the overview. To return back to the all results you can click on the refresh button
+in the right bottom part of the main application window.</p>
+    
+    <p>The overview doesn't refresh itself automatically. The reason is the effectivity of work on slower internet connections. 
+    If you want to refresh the overview, you can either make a new search or use the Refresh button.</p>
+    <br>
+    <img src="picture/overview_second_toolbar.png" alt="The overview tools"><br>
+    
+    <p>You can change the numbor of occurrences displayed on a page by changing the number between the Previous and Next buttons.
+    The page size changes after you confirm the number for example by pressing the Enter key. As of now it is NOT POSSIBLE to
+    determine the page size dynamically according to the size of the window (technical reasons). The page size is restricted to 1000 occurrences.
+    </p>
+    
+    <p>To delete, print or export you first need to check the desired occurrences by clicking on the initially leftmost column called "X".
+    To select occurrences you can also use the All, None and Invert buttons in the lower left part of the window.
+    <b>WARNING:</b> these three selecting buttons always work only with the current page. 
+    After you have selected the occurrence you just have to invoke some plantlore function from the toolbar, menu or using a shortcut.
+</p>
+    <br>
+    <img src="picture/overview_selecting.png" alt="Selecting (checking) occurrences"><br>
+    
+    <h2>3. Sorting</h2>
+    <p>The overview supports only limited ways of sorting. By default the occurrences appear sorted by year from the most current one back to history.
+You can also sort the occurrences on the current page. You can't sort all the occurrences in the database because of the (potentially) big number
+of records in the database that could have enormous demands on connection speed and processing. 
+Let's say you want to sort the occurrences by taxon name. You have to click on the Taxon column header. Then in the header an arrow shows up which
+indicates the sorting direction. Secondary sorting is also possible - again clicking on a column header but this time with the Ctrl key pressed.</p>
+    <br>
+    <!--<img src="picture/overview_sorting.png" alt="Sorting"><br> -->
+    
+    <h2>4. Column order</h2>
+    <p>It is possible to change the order of the columns in overview. You can do that either by simply dragging the column to a different place(which won't
+    persist to the next time you run PLantlore) or by choosing the order in the Plantlore <a href="settings.html">Settings</a>.</p>
+    
+    <h2>5. Occurrence details</h2>
+    <p>The occurrence table doesn't show all information about the occurrence. You can tak a look at them either in the edit dialog or in a special
+Detail dialog. You can invoke the Detail dialog by double clicking or pressing Enter on the desired occurrence.</p>
+    <br>
+    <img src="picture/overview_detail.png" alt="Occurrence detail"><br>
+    
+    <p>The detail allows for skipping to a next or previous occurence. It also shows information about the user that created the occurrence or who edited it the last time.</p>  
+  </body>
 </html>
