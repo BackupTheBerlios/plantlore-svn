@@ -10,10 +10,11 @@
 
 
   	<p>
-	Before you start working with Plantlore, it is necessary to login to the database you would like to work with
+	Before you start working with Plantlore, 
+        it is necessary to connect to the database you would like to work with.
 	</p>
 
-
+        <!--
 	<h2>Contents</h2>
 
 	<p>
@@ -26,344 +27,395 @@
 		<li>Reconnecting after the connection was lost</li>
 	</ol>
 	</p>
+        -->
 
 
-	<h2>1. the login process</h2>
+	<h2>1. The connection process</h2>
 
 	<p>
-	Database login is composed of two main parts
+	The process has two steps:
 	</p>
 
 	<h3>1.1. Selecting the database</h3>
 	
 	<p>
-	<img src="picture/LoginDBSelection.png" alt="Volba databáze.">
+	<img src="picture/LoginDBSelection.png" alt="Database Selection.">
 	</p>
 
 	<p>
-	After installing Plantlore you have two options depending on how you would like to use Plantlore:
+	After installing Plantlore you have two options 
+        depending on how you would like to use Plantlore:
         <ul>
             <li><b>Create new database on your system</b> - You can create new database using menu 
                 Data|Create new database. See Create database section for further information on how 
                 to create new database.
             </li>
-            <li><b>Connect to remote database</b> - In this case you need to create new database record
-                with information about the remote Plantlore server. Ask your Plantlore server administrator 
-                for necessary data. Information on creating new database records is included in this help section.
+            <li><b>Connect to an already existing database</b> - In this case you need to create new database record
+                with information about the database. 
+                Information on creating new database records is included in this help section.
             </li>
         </ul>
         
 	<p>
-	After some time your list of databases can be similar to the one at the picture. Plantlore will automatically 
-        select database you've chosen during the previous session. Choose one of the databases from the list and press
-        "Continue" button.
+	After some time your list of databases can be similar to the one at the picture. 
+        Plantlore will automatically select database you've 
+        chosen during the previous session. 
+        Choose one of the databases from the list and press
+        the Continue button.
 	</p>
 
 
 	<h3>1.2. Authentication</h3>
 
 	<p>
-	For gaining access to the database you have to provide your username and password in order to authenticate.
-        If you are logging in for the first time, use login name and password you have chosen when installing Plantlore.
+	For gaining access to the database you have to provide your 
+        username and password in order to authenticate.
+        If you are logging in for the first time, 
+        use login name and password you have chosen when installing Plantlore.
 
-        For security reasons, new user name and password can only be assigned by an administrator. Weak passwordsa are often
-        used even by experienced users, therefore the assignment of passwords is left to administrator.
+        For security reasons, new user name and password can only be assigned 
+        by an Administrator. Weak passwords are often
+        used even by experienced users, therefore the assignment 
+        of passwords is left to the Administrator.
       	</p>
 	
 	<p>
-	<img src="picture/LoginAuthentication.png" alt="Vkládání přihlašovacích údajů.">
+	<img src="picture/LoginAuthentication.png" alt="Specifying the login data.">
 	</p>
 
 	<p>
-        Plantlore remembers several recently used login names; you can choose one from the list or
-        provide a different one. Plantlore doesn't save passwords and doesn't offer them automatically.
-        After you provide the authentication data, press "Login" button.
+        Plantlore remembers several recently used login names; you can choose 
+        one from the list or
+        provide a different one. Plantlore doesn't save passwords 
+        and doesn't offer them automatically.
+        After you provide the authentication data, press the Login button.
 	</p>
 
 	<p>
-        After pressing the "Login" button, Plantlore will try to connect to the selected database
-        using your authentication data. The connection can take some time, especially if you are connecting
+        After pressing the Login button, Plantlore will try to connect to 
+        the selected database
+        using your authentication data. The connection can take some time, 
+        especially if you are connecting
         to a remote database.
 	</p>
 
 
 	<p>
-	In case the login fails for some reason, you will be notified by a short message. Otherwise Plantlore 
-        will display basic <a href="./overview.html">Overview</a>.
+	In case the login fails for some reason, you will be 
+        notified by a short message. Otherwise Plantlore 
+        will display the basic <a href="./overview.html">Overview</a>.
 	</p>
 
 
 	<h2 id="AddDBInfo">2. creating database records</h2>
 
 	<p>
-	If yoy wish to connect to a different database than the one you (or someone else) created on your computer,
-        you have to create new record describing the database, its location and settings.
+	If you wish to connect to a different database than the one you 
+        (or someone else) created on your computer,
+        you have to create new record describing the database, 
+        its location and settings.
 	</p>
 
 	<p>
-	Kontextové menu pro vytvoření, upravení nebo vymazání záznamu lze vyvolat stiskem pravého
-	tlačítka myši. Vyberte položku "Přidat" a klikněte na ni.
+        The context menu allowing you to add, edit or delete a record 
+        is accessible via the right mouse click.
+	Choose Add record and click on it.
 	</p>
 
 	<p>
-	<img src="picture/LoginAddMenu.png" alt="Přidání nového záznamu.">
+	<img src="picture/LoginAddMenu.png" alt="Adding new Record.">
 	</p>
 
 	<p>
-	Přidání nového záznamu pro připojení k databázi je rozděleno na dvě části, 
-	jimž odpovídají dvě záložky na dialogu. 
+        The database description is divided into two parts.
 	<ul>
 		<li>
-		První z nich je <b>přímé připojení</b>, též lokální připojení. 
-		Přímé připojení k databázi lze použít pouze v případě,
-		že vytvořená databáze se nachází v databázovém stroji (database engine), který běží na
-		tomto počítači, tzv. lokálně. Přímé připojení vyžaduje poněkud odlišné parametry než 
-		připojení ke vzdálené databázi. Výhodou přímého připojení je jeho rychlost - komunikace
-		s databází se nemusí nijak upravovat pro přenos po síti.
+                The first option is the
+                
+		<b>Direct Connection</b>, also Local Connection. 
+                The direct connection to the database can be used in case
+                the database is located in a database engine that runs on the
+                same computer as the client.
+                
+                The most visible advantage of the local connection is its speed -
+                the communication with the database does not have to be processed
+                for the network transfer.
 		</li>
 		<li>
-		Druhá možnost je tzv. <b>vzdálené připojení</b>, připojení ke vzdálené databázi.
-		Vzdálená databáze se typicky nachází v databázovém stroji (database engine), který je
-		spuštěn na jiném počítači v síti. Pomocí tohoto připojení je možné pracovat s databází
-		"na dálku". Nevýhodou je zpomalení dané jednak propustností datové linky a jednak 
-		nutností speciálně upravovat přenášená data kvůli přenosu po síti. 
+                The second option is the 
+		<b>Remote Connection</b>.
+                A remote database is stored within a database engine that runs
+                on a different computer in the network. 
+                Thus you can work with a database remotely.
+                
+                The price you have to pay is that the data must be processed
+                in order to be able to send them via the network. Also the network
+                connection has its limits and work with the database remotely
+                may be painfully slow if the capacity of the network connection
+                is small.
 		</li>
 	</ul>
 	</p>
 
 
-	<h3>A. Přímé připojení k databázi (lokální připojení)</h3>
+	<h3>A. Direct Connection</h3>
 
 	<p>
-	Parametry popisující přímé připojení:
+        The direct connection requires the following parameters:
 	<table>
 		<tr>
-			<th>Název</th>
-			<th>Význam</th>
+			<th>Name</th>
+			<th>Meaning</th>
 		</tr>
 		<tr>
 			<td>Alias</td>
 			<td>
-				Alias je krátký řetězec, který umožňuje snadnou identifikaci databáze uživatelem.
-				Tento řetězec je zobrazován v seznamu databází. Měl by být krátký a výstižný,
-				například: "Domácí databáze", "Projekt mapování Českého středohoří".
+                                Alias is a short string that will be presented to the User.
+                                It allows fast and simple recongition of the database by the User.
+                                The string should be brief.
 			</td>
 		</tr>
 		<tr>
-			<td>Databázový stroj (engine)</td>
+			<td>Database engine</td>
 			<td>
-				Existuje několik databázových strojů (database engine), které umožňují snadnou
-				práci s databázemi, tabulkami, uživateli, dotazy a daty.
-				Každý databázový stroj může obsahovat několik různě pojmenovaných databází
-				s různou strukturou a s různým obsahem. Mezi nejznámější databázové stroje
-				patří Oracle, MSSQL, MySQL, Postgre a Firebird.
-				Plantlore podporuje práci s různými databázovými stroji,
-				ale je nutné přesně specifikovat, o který se jedná, 
-				aby s ním bylo možné bezchybně komunikovat. Plantlore je standardně dodávána
-				s Postgre. Aktuálně podporované DB stroje jsou sepsány v rozbalovací
-				nabídce, ale je možné specifikovat i jiný.
+				There is a wide variety of database engines that
+                                allow you to work with databases, tables, users, 
+                                queries and data very easily.
+                                Every database engine can store several different
+                                databases - databases with different structure and
+                                contents. The best known database engines are
+                                Oracle, MSSQL, MySQL, Postgre and Firebird.
+                                Plantlore can work with some of these database
+                                engines, but it is necessary to specify with
+                                which it should work so that the Program can communicate
+                                with it properly. Plantlore is delivered 
+                                and tested with Postgre.
 			</td>
 		</tr>
 		<tr>
-			<td>Identifikátor DB</td>
+			<td>DB Identifier</td>
 			<td>
-				Databázový stroj může obsahovat několik různých databází s různou strukturou
-				a obsahem. Databáze Plantlore mají vlastní specifickou strukturu. 
-				Pro správné připojení je nutné vyplnit identifikátor (jméno)
-				databáze, se kterou chce pracovat.
+                                The database engine may contain several different 
+                                databases with different structure and contents.
+                                Databases that Plantlore works with have their own
+                                specific structure. So as to know to which database
+                                you would like to connect, you must specify 
+                                its identifier within the database engine.
+                                The identifier is usually a short name.
 			</td>
 		</tr>
 		<tr>
-			<td>Port DB</td>
+			<td>DB Port</td>
 			<td>
-				Databázové stroje umožňují připojení pouze přes tzv. port. Každý databázový
-				stroj má tento port jiný a navíc jej lze snadno změnit. Aby Plantlore věděl,
-				kde má databázový stroj kontaktovat, musí znát port, na kterém stroj naslouchá.
-				Port je číslo v rozsahu 0 až 65.535, přičemž je běžné, že databázové stroje
-				využívají porty v rozsahu 1.024 a výše. Například standardní port databázového
-				stroje Postgre je 5432.
+				Database engines can be contacted on a certain port.
+                                Every database engine may have a different port number.
+                                In order to know where to contact the database engine,
+                                you have to supply the port where the database engine listens.
+                                
+                                Port is a number from 0 to 65.535 and ports above
+                                1.024 are commonly used. Lower ports are usually
+                                reserved for well known services (such as FTP, HTTP, etc.).
+                                
+                                The default port of PostgreSQL database engine is 5432.
 			</td>
 		</tr>
 		<tr>
-			<td>Parametr</td>
+			<td>Parameter</td>
 			<td>
-				Databázový stroj může být potřeba ještě nakonfigurovat nějakým specifickým
-				způsobem. Některé stroje například vyžadují explicitní nastavení kódování
-				znaků. Parametr slouží
-				pro správné nastavení dodatečných parametrů připojení k databázovému stroji.
-				Připojení k Postgre žádný parametr nevyžaduje.
+				The database engine may require some additional settings.
+                                For instance you have to set the encoding explicitly.
+                                This parameter is used to the proper additional configuration
+                                of the database connection.
+                                
+                                Postgre does not require any additional parameter.
 				<br/>
-				<i>Odborné: parametr je hodnota předávaná v připojovacím JDBC řetězci za "?".</i>
+				<i>Note: the parameter is a value passed in the JDBC connections
+                                string right after the exclamation mark "?"</i>
 			</td>
 		</tr>
 	</table>
 	</p>
 
 	<p>
-	Na ukázku uveďme, jak by vypadalo lokální připojení k databázi nazvané "plantlore",
-	která je uložena v databázovém stroji "Postgre", který naslouchá na portu "5432".
+        In the picture there you can see how the local connection may look like.
+        We are connecting to the database called "plantloreOK"
+        that is stored within the database engine
+	"PostgreSQL" that listens on the port "5432".
+        There is no additional paramater.
 	</p>
 
 	<p>
-	<img src="picture/LoginDBDirectConnection.png" alt="Přidání nového záznamu.">
+	<img src="picture/LoginDBDirectConnection.png" alt="Adding new record.">
 	</p>
 
 
-	<h3>B. Vzdálené připojení k databázi</h3>
+	<h3>B. Remote Connection</h3>
 
 	<p>
-	Parametry popisující vzdálené připojení:
+	Parameters required for the remote connection - to the remote Plantlore
+        Server in this case. It is the Server that will mediate the creation
+        of the connection:
 	<table>
 		<tr>
-			<th>Název</th>
-			<th>Význam</th>
+			<th>Name</th>
+			<th>Meaning</th>
 		</tr>
 		<tr>
 			<td>Alias</td>
 			<td>
-				Alias je krátký řetězec, který umožňuje snadnou identifikaci databáze uživatelem.
-				Tento řetězec je zobrazován v seznamu databází. Měl by být krátký a výstižný,
-				například: "Oficiální databáze Jihočeské pobočky ČBS".
+				Alias is a short string that will be presented to the User.
+                                It allows fast and simple recongition of the database by the User.
+                                The string should be brief.
 			</td>
 		</tr>
 		<tr>
 			<td>Host</td>
 			<td>
-				Databázový stroj obsahující databázi, k níž se chceme připojit, běží na jiném
-				počítači v síti. Tento parametr identifikuje tento počítač a to buď podle
-				jeho jména nebo IP adresy. Každý počítač připojený k síti musí mít
-				svou vlastní unikátní IP adresu, podle níž je rozpoznán. IP adresa je 
-				nejčastěji čtveřice čísel oddělená tečkami, např. "192.168.0.247".
-				Některé počítače mají kromě IP adresy přidělena i jména, např. 
-				"data.domacisit.cz". Cílový počítač lze identifikovat 
-				oběma způsoby.
+				This parameter identifies the computer where the Server
+                                is running - either by its name or IP address.
+                                Every computer connected to a network must have its
+                                own unique IP address so that it can be identified
+                                in the network.
+                                IP address is a sequence of four numbers separated with
+                                dots, for instance "192.168.0.247". Some computers may have
+                                also a name, such as "data.home.net".
+                                
+                                You can use both ways to identify the remote computer.
 			</td>
 		</tr>
 		<tr>
 			<td>Port</td>
 			<td>
-				Aby bylo možné se připojit ke vzdálenému databázovému stroji, je nutné
-				na uvedeném vzdáleném počítači kontaktovat 
-				<a href="./server.html">Plantlore Server</a>, což je speciální
-				aplikace, která má za úkol zprostředkovávat připojení vzdáleným klientům a
-				dohlížet na počet připojených uživatelů. Tato služba musí být přístupná
-				na vzdáleném počítači, kde se nachází i vzdálený databázový stroj, 
-				a naslouchá na nějakém portu. Standardní port, na kterém je tato služba
-				dostupná, je 1099.
+				The port specifies where the remote Server listens.
+                                
+                                Port is a number from 0 to 65.535 and ports above
+                                1.024 are commonly used. Lower ports are usually
+                                reserved for well known services (such as FTP, HTTP, etc.).
+
+				The default port is 1099.
 			</td>
 		</tr>
 		<tr>
-			<td>Identifikátor DB</td>
+			<td>DB identifier</td>
 			<td>
-				Databázový stroj může obsahovat několik různých databází s různou strukturou
-				a obsahem. Databáze Plantlore mají vlastní specifickou strukturu. 
-				Pro správné připojení je nutné vyplnit identifikátor
-				databáze, se kterou chce pracovat.
+				The database engine may contain several different 
+                                databases with different structure and contents.
+                                Databases that Plantlore works with have their own
+                                specific structure. So as to know to which database
+                                you would like to connect, you must specify 
+                                its identifier within the database engine.
+                                The identifier is usually a short name.
 			</td>
 		</tr>
 	</table>
 	</p>
 	
 	<p>
-	Na ukázku uveďme, jak by vypadalo nastavení pro vzdálené připojení k databázi nazvané "plantlore",
-	která je uložena v databázovém stroji, 
-	který se nachází na počítači s adresou "192.168.0.247", 
-	a Plantlore Server naslouchá na portu "1099".
+        Let us see how the remote connection parameters may look like.
+        In the picture there you can see that we are connecting to a remote database
+	named  "plantlore" that is stored within a database engine that is located
+	on a computer with IP address "86.42.59.39" and the
+	Plantlore Server listens on the port "1099".
 	</p>
 
 	<p>
-	<img src="picture/LoginDBRemoteConnection.png" alt="Přidání nového záznamu.">
-	</p>
-
-
-	<p>
-	<b>
-		Přidáváte-li nový záznam, žádná nová databáze se nikde nevytváří; vytváří se pouze
-		reference (odkaz) na nějakou existující databázi.
-	</b>
-	</p>
-
-
-
-	<h2>3. Úprava a mazání záznamů o databázi</h2>
-
-	<p>
-	V seznamu databází označte záznam, který chcete upravit nebo smazat.
-	Kontextové menu pro vytvoření, upravení nebo vymazání záznamu lze vyvolat stiskem pravého tlačítka myši. 
-	Vyberte položku "Editovat" nebo "Odstranit" a klikněte na ni.
-	</p>
-
-	<p>
-	<img src="picture/LoginEditMenu.png" alt="Úprava stávajícího záznamu.">
-	</p>
-
-	<p>
-	Úprava záznamů je shodná s dialogem pro přidání záznamu, ale obsahuje předvyplněné hodnoty.
-	Detailní popis lze najít v předcházející části.
-	</p>
-
-	<p>
-	Odstranění záznamu další nastavení nemá.
-	</p>
-
-	<p>
-	<img src="picture/LoginDeleteMenu.png" alt="Vymazání existujícího záznamu.">
+	<img src="picture/LoginDBRemoteConnection.png" alt="Adding a new record.">
 	</p>
 
 
 	<p>
 	<b>
-		Mažete-li existující záznam, žádná databáze se nikde nemaže; ruší se pouze
-		reference (odkaz) na nějakou existující databázi.
+            If you add a new record, no database is created; merely a reference to
+            an already existing database is created.
 	</b>
 	</p>
 
 
 
-	<h2>4. Nejčastější problémy při připojování</h2>
+	<h2>3. Editing and Deleting records</h2>
 
 	<p>
-	Nejčastější problémy při připojování jsou tyto:
+        In the list of databases select the record you wish to update or delete.
+        Use the context menu (accessible via the right mouse click) and 
+        select Edit or Remove and click on it.
+	</p>
+
+	<p>
+	<img src="picture/LoginEditMenu.png" alt="Editing an existing record.">
+	</p>
+
+	<p>
+        If you are updating (editing) an existing record, the dialog is the
+        same as the Add dialog, but this one contains pre-filled values.
+        The detailed description of all parameters is in the previous section.
+	</p>
+
+	<p>
+	There are no additional settings when deleting a record.
+	</p>
+
+	<p>
+	<img src="picture/LoginDeleteMenu.png" alt="Deleting an existing record.">
+	</p>
+
+
+	<p>
+	<b>
+            If you delete an existing record, no database is actually delete.
+            It is merely the reference to some database that is lost.
+	</b>
+	</p>
+
+
+
+	<h2>4. Most common mistakes</h2>
+
+	<p>
+        The most common problems encountered during the login process are:
 	<ol>
 		<li>
-		Nesprávně vyplněné přihlašovací údaje - uživatelské jméno nebo špatně zadané heslo.
-		Ověřte, zda jste správně zadali oba údaje, případně zda máte vytvořený
-		odpovídající uživatelský účet v databázi, k níž se připojujete.
+                Incorrect authentication information. Either the username does not
+                exist or the password is wrong. Please verify that both
+                the account name (user name) exists and the password is correct.
 		</li>
 		<li>
-		Nesprávně zadané parametry pro přímé nebo vzdálené připojení k databázi.
-		Ověřte, zda jsou vyplněny všechny položky správně a zda obsahují aktuální data. 
-		Např. mohlo dojít ke změně IP adresy počítače, ke kterému se přihlašujete, nebo jste
-		udělali překlep při zadávání identifikátoru databáze.
+                Incorrect parameters for direct or remote connection. 
+                Please make sure that all necessary parameters are specified
+                and that contain up-to-date data.
+                For instance the IP address of the computer might have changed
+                or you might have misspelled the database identifier.
 		</li>
 		<li>
-		Vypnutý databázový stroj nebo Plantlore Server.
-		Ověřte, že databázový stroj je zapnutý, resp. se ujistěte, že na vzdáleném počítači
-		je spuštěn Plantlore Server.
+                The database engine or the Plantlore Server is not running.
+                Please make sure that the database engine and/or the Plantlore
+                Server are running.
 		</li>
 	</ol>
 	</p>
 
 
 
-	<h2>5. Odhlášení od databáze</h2>
+	<h2>5. Logging out</h2>
 
 	<p>
-	Po skončení práce s databází je doporučeno se odhlásit, aby třetí osoba nezískala možnost
-	pracovat s vašimi daty. Odhlášení provedete buď v menu položkou "Odhlásit" nebo
-	vypnutím Plantlore. Oba způsoby jsou ekvivalentní.
+        After you finish your work with the database we strongly recommecd that
+        you disconnect from the database so that a third person is prevented from
+        accessing your data. You can disconnect from the database either by 
+        clicking on Menu|Logout or by closing the Planlore. Both ways are equal.
 	</p>
 
 
-	<h2>6. Obnova ztraceného připojení</h2>
+	<h2>6. Renewal of the lost connection</h2>
 
 	<p>
-	Při práci s Plantlore může dojít k náhlé ztrátě připojení k databázi nebo vzdálenému serveru.
-	Důvodem může být neočekávané vypnutí nebo pád databázového stroje nebo Serveru či výpadek síťového spojení.
-	O tomto stavu jste informováni krátkou zprávou, která popisuje problém, ke kterému došlo.
-	V případě ztraceného spojení s databází nebo Serverem vyčkejte nějakou dobu a zkuste 
-	v menu vybrat "Znovu připojit". Plantlore se pokusí navázat nové spojení. 
-	"Znovu připojit" můžete volat opakovaně.
+        The connection to the database or to the remote Server may be lost
+        during the work. There are many reasons: the database engine or Server
+        might have crashed or might have been switched off by their Administators,
+        or the network connection might have been lost.
+        After the problem is detected, you are notified by a short message describing
+        the problem. In case you lose the connection, wait for a while, and then try 
+        Menu|Reconnect. The Plantlore Client will try to renew the lost connection.
+        You can call the Reconnect several times.
 	</p>
 
 
