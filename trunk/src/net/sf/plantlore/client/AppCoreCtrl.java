@@ -1843,6 +1843,8 @@ public class AppCoreCtrl {
                                 view.getSBM().display(L10n.getString("Message.LoadingOverviewData"));
                                 searchModel.clearAndNotify();
                                 
+                                //Login's ConnectionTask will request a refresh in it's PostTaskAction
+                                /*
                                 try {
                                     searchModel.constructQuery();
                                 } catch (RemoteException ex) {
@@ -1851,7 +1853,7 @@ public class AppCoreCtrl {
                                 } catch (DBLayerException ex) {
                                     DefaultExceptionHandler.handle(view, ex);
                                     return;
-                                }
+                                }*/
 
                                 view.getSBM().displayDefaultText();
 
@@ -1889,6 +1891,17 @@ public class AppCoreCtrl {
                                 if (metadataManagerModel != null )
                                         metadataManagerModel.setDBLayer( dblayer );							
                         }//if
+                        
+                        if (parameter != null && parameter.equals("REFRESH_PLEASE")) {
+                            //we are notified from a Task (Login's ConnectionTask) therefore
+                            //it would have no effect to try to invoke the refreshAction
+                            //in this thread. And actions are usually invoked from the EDT anyway.
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    refreshAction.actionPerformed(null);
+                                }
+                            });
+                        }
                     }//run()
 	}//DatabaseChange
 

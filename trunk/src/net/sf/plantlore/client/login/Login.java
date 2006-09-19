@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import net.sf.plantlore.client.MainConfig;
 import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Record;
@@ -238,7 +239,11 @@ public class Login extends Observable {
 		logger.debug("Observer notification finished.");
 	}
 	
-
+        private void askForRefresh() {
+            logger.debug("Asking for refresh.");
+            setChanged();
+            notifyObservers("REFRESH_PLEASE");
+        }
 	
 	/**
 	 * Create a task that will build the connection to the selected database. 
@@ -263,8 +268,10 @@ public class Login extends Observable {
 		selected.promoteUser(name);
 		// Save the current state.
 		save();
-		
-		return lastConnectionTask = new ConnectionTask( selected.clone(), name, password );
+                
+		lastConnectionTask = new ConnectionTask( selected.clone(), name, password );
+                                
+		return lastConnectionTask;
 
 	}
 	
@@ -296,6 +303,11 @@ public class Login extends Observable {
 			this.dbinfo = dbinfo;
 			this.name = name;
 			this.password = password;
+                        setPostTaskAction(new PostTaskAction() {
+                            public void afterStopped(Object value) {
+                                askForRefresh();
+                            }
+                        });
 		}
 		
 				
