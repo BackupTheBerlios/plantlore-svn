@@ -33,6 +33,10 @@ public class DefaultEscapeKeyPressed implements KeyListener {
 	private AbstractAction action;
         
         private void installMe(Component component) {
+            // Do not add this behaviour to components inheriting from JComboBox.
+            if(component instanceof javax.swing.JComboBox)
+                return;
+                
             component.addKeyListener(this);
             if (component instanceof Container)
                 for (Component c : ((Container)component).getComponents() )
