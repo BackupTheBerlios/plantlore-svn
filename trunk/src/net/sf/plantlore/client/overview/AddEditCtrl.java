@@ -165,12 +165,18 @@ public class AddEditCtrl {
     }
     
     
-    
+    /**
+     * Store the AuthorManagerView that should be opened if the User wants to
+     * switch to the Author Manager from this Add/Edit dialog.
+     */
     public void setAuthorManager(AuthorManagerView m) {
         this.authView = m;
     }
     
-    
+    /**
+     * Switch between the Add/Edit dialog and the Author Manager
+     *
+     */
     class AuthorManagerAction extends AbstractAction {
         
         public AuthorManagerAction() {

@@ -713,10 +713,13 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      * Set the dialog that should be reopened after this dialog is closed.
      */
     public void setDialogToRevive(JDialog dialog) {
-        System.out.println("Dialog set to " + dialog.getTitle());
         resurrector.setDialog( dialog );
     }
 
+    /**
+     * Handle the visibility properly. Sometimes it may happen that after this dialog is closed,
+     * another must be reopened.
+     */
     public void setVisible(boolean b) {
         if( b )
             // Update the list of authors.

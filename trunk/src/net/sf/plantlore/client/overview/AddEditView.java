@@ -886,6 +886,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         resetAuthorModel();
         initAuthorTable();
         
+        // townComboBox OK
         if (model.getVillage() != null)
             townComboBox.setSelectedItem(model.getVillage());
         else
@@ -897,12 +898,25 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         
         locationNoteArea.setText(model.getHabitatNote());
         occurrenceNoteArea.setText(model.getOccurrenceNote());
-        territoryNameCombo.setSelectedItem(model.getTerritoryName());
-        phytNameCombo.setSelectedItem(model.getPhytName());
-        if (model.getPhytCountry() != null) 
+        
+        // territoryNameCombo OK
+        if(model.getTerritoryName() != null)
+            territoryNameCombo.setSelectedItem(model.getTerritoryName());
+        else
+            territoryNameCombo.setSelectedIndex(0);
+        
+        // phytNameCombo OK
+        if(model.getPhytName() != null)
+            phytNameCombo.setSelectedItem(model.getPhytName());
+        else
+            phytNameCombo.setSelectedIndex(0);
+        
+        // phytCountryCombo OK
+        if (model.getPhytCountry() != null)  
             phytCountryCombo.setSelectedItem(model.getPhytCountry());
         else
             phytCountryCombo.setSelectedIndex(0);
+        
         quadrantTextField.setText(model.getQuadrant());
         
         if (model.getAltitude() != null) altitudeTextField.setText(""+numberFormat.format(model.getAltitude()));
