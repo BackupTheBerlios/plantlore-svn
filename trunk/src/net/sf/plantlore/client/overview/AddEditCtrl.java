@@ -737,6 +737,9 @@ public class AddEditCtrl {
                     }
                 } else {//inAddMode
                     Task task = model.storeRecord(true);
+                    /*
+                     * The following announcement should be removed (it was a RFE)..
+                     *
                     task.setPostTaskAction(new PostTaskAction() {
                         public void afterStopped(Object value) {
                             SwingUtilities.invokeLater(new Runnable() {
@@ -747,6 +750,8 @@ public class AddEditCtrl {
                         }
                     });
                     Dispatcher.getDispatcher().dispatch(task, view, false);
+                     *
+                     */
                     //view.setVisible(false);
                 }
             } catch (RemoteException ex) {
