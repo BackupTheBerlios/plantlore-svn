@@ -9,6 +9,7 @@
 
 package net.sf.plantlore.client.overview;
 
+import com.sun.org.apache.bcel.internal.generic.TABLESWITCH;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -39,9 +41,17 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import com.toedter.calendar.JCalendar;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import net.sf.plantlore.client.authors.AuthorManagerView;
 import net.sf.plantlore.common.DefaultExceptionHandler;
 import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.PostTaskAction;
+import net.sf.plantlore.common.StandardAction;
 import net.sf.plantlore.common.Task;
 import org.apache.log4j.Logger;
 
@@ -50,7 +60,6 @@ import net.sf.plantlore.client.checklist.ChecklistView;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
-import net.sf.plantlore.common.DefaultReconnectDialog;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.exception.DBLayerException;
 import net.sf.plantlore.common.record.Occurrence;
@@ -59,6 +68,7 @@ import net.sf.plantlore.l10n.L10n;
 /**
  *
  * @author reimei
+ *@author kaimu
  */
 public class AddEditCtrl {
     private Logger logger;
@@ -66,6 +76,7 @@ public class AddEditCtrl {
     private boolean inAddMode = true;
     private AddEdit model;
     private AddEditView view;
+    private AuthorManagerView authView;
     private TransformationChangeView transformationView;
     public final static int MAXIMUM_FRACTION_DIGITS = 3;
     public final static int MAXIMUM_INTEGER_DIGITS = 9;
@@ -75,12 +86,17 @@ public class AddEditCtrl {
     private ChecklistView checklistView;
     
     
-    /** Creates a new instance of AddEditCtrl */
-    public AddEditCtrl(AddEdit model, AddEditView view, boolean edit) {
+    /** 
+     * Creates a new instance of AddEditCtrl 
+     *TODO: Make proper Javadoc here!
+     * authView will be opened if the User wishes to edit the list of Authors
+     */
+    public AddEditCtrl(AddEdit model, AddEditView view, boolean edit, AuthorManagerView authView) {
         this.inEditMode = edit;
         this.inAddMode = ! edit;
         this.model = model;
         this.view = view;
+        this.authView = authView;
         
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
 
@@ -128,6 +144,7 @@ public class AddEditCtrl {
         view.calendarButton.setAction(new CalendarAction());
         view.settingsButton.setAction(new SettingsAction());
         view.gpsChangeButton.setAction(new ChangeCoordinateSystemAction());
+        //view.authorButton.setAction(new AuthorManagerAction());
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
@@ -145,6 +162,25 @@ public class AddEditCtrl {
 			}
 			checklistView.setVisible(true);			
 		}
+    }
+    
+    class AuthorManagerAction extends AbstractAction {
+        
+        public AuthorManagerAction() {
+            putValue(NAME, L10n.getString("Overview.MenuDataAuthors"));
+            putValue(SHORT_DESCRIPTION, L10n.getString("Overview.MenuDataAuthorsTT"));
+            putValue(MNEMONIC_KEY, L10n.getMnemonic("Overview.MenuDataAuthors"));
+        }
+        
+        public void actionPerformed(ActionEvent isUseless) {
+            // Make place for the (also modal) Author manager
+            view.setVisible(false); // invokeLater??
+            // Remind the Author manager to reopen this dialog
+            authView.setDialogToRevive( view );
+            // Display the Author manager
+            authView.setVisible(true);
+        }
+        
     }
     
     
@@ -790,7 +826,210 @@ public class AddEditCtrl {
                 view.loadComponetCoordinate();
             }
         }
-    }        
+    }    
+    
+    
+    /**
+     * The holder object of most important fields in the dialog whose state should be stored.
+     * The list of currently selected authors is not saved because that component may be a subject to change.
+     *
+     * @author kaimu
+     */
+    class InterestingFields implements java.io.Serializable {
+        public Pair<String, Integer> territory, phytochorion, town, publication, project;
+        public String description, locationNote, occurrenceNote, latitude, longitude, altitude, country, time, day, quadrant, herbarium, source;
+        public Integer month, year;
+    }
+    
+    /**
+     * This action stores the default values in the dialog for future revival.
+     * The revival is planned after the application is restarted (because there is another mechanism
+     * that preserves the currently inserted values in some fields of the dialog - implemented by Jakub Kotowski).
+     *
+     * @author Erik Kratochvíl
+     */
+    class RememberDefaultValuesAction extends StandardAction {
+        
+        public final String RESTORE = "RestoreTheDefaultValues";
+        public final String FORGET = "ForgetTheDefaultValues";
+        public final String REMEMBER = "RememberTheDefaultValues";
+        
+        
+        private String defaultValuesFileName; {
+		String userHome = System.getProperty("user.home"),
+		osName = System.getProperty("os.name"),
+		plantloreDirName = (osName.equals("Linux") ? "." : "") + net.sf.plantlore.client.Plantlore.PLANTLORE, 
+		plantloreConfDir = userHome+File.separator+plantloreDirName;
+		
+		File plantloreConfDirFile = new File(plantloreConfDir);
+		if (!plantloreConfDirFile.exists())
+			plantloreConfDirFile.mkdir();
+		
+		defaultValuesFileName = plantloreConfDir + File.separator + "add-default";
+	}
+        
+        /*
+         * The hashtable stores default values for different databases (these databases are
+         * recognized by their Unique Identifier).
+         *
+         * Thus the default values may differ for each database the User works with.
+         * It was a necessary step because some of the stored values may not be in the other database at all.
+         */
+        private Hashtable<String, InterestingFields> storedValues = new Hashtable<String, InterestingFields>(8);;
+        
+        /**
+         * Create a new Action that is capable of remembering the list of default values.
+         * Also note that when first constructed it restores the state of the dialog to its previous state.
+         */
+        RememberDefaultValuesAction() {
+            super("Add.Remember");
+        }
+
+        /**
+         * Load the table with default values.
+         */
+        private void load()
+        throws IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream( new FileInputStream(defaultValuesFileName) );
+		storedValues = (Hashtable<String, InterestingFields>) ois.readObject();
+		ois.close();
+	}
+            
+        /**
+         * Store the table with default values.
+         */
+        private void save()
+        throws IOException {
+		ObjectOutputStream oos = new ObjectOutputStream( new FileOutputStream(defaultValuesFileName) );
+		oos.writeObject( storedValues );
+		oos.close();
+	}
+          
+        /**
+         * @return null if the string is null or empty (ie. "")
+         */
+        private String evaluate(String s) {
+            if( "".equals(s) ) 
+                return null;
+            return s;
+        }
+
+        /**
+         * Take action!
+         */
+        public void actionPerformed(ActionEvent e) {
+            try {
+                String command = e.getActionCommand();
+                // ===== Restore the list of default values. ===== 
+                if( RESTORE.equals(command) ) {
+                     load();
+                    if( storedValues == null )
+                        // There are no stored values yet.
+                        storedValues = new Hashtable<String, InterestingFields>(8);
+
+                    // Look for default values that were saved for the database we are currently working with.
+                    String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
+                    if( databaseID == null)
+                        // We are propably not connected to a database yet. This should never happen.
+                        return;
+
+                    // Obtain the default values.
+                    InterestingFields defaults = storedValues.get( databaseID );
+                    if( defaults == null)
+                        // No default values stored for this particular database. Never mind.
+                        return;
+
+                    // Now, do some reviving.
+                    // The trouble is, that sometimes (mostly with the fields monitored with focus listeners) the model would have to be
+                    // notified manually. Shame (that Swing doesn't provide a unified interface for some changes..). Let's go!
+                    if(defaults.territory != null)
+                        view.territoryNameCombo.setSelectedItem( defaults.territory );
+                    if(defaults.phytochorion != null)
+                        view.phytNameCombo.setSelectedItem( defaults.phytochorion );
+                    if(defaults.town != null)
+                        view.townComboBox.setSelectedItem( defaults.town );
+                    if(defaults.project != null)
+                        view.projectCombo.setSelectedItem( defaults.project );
+                    if(defaults.publication != null)
+                        view.publicationCombo.setSelectedItem( defaults.publication );
+
+                    if(defaults.quadrant != null)
+                        view.quadrantTextField.setText( defaults.quadrant );
+                    if(defaults.country != null)
+                        view.phytCountryCombo.setSelectedItem( defaults.country );
+                    if(defaults.herbarium != null)
+                        view.herbariumTextField.setText( defaults.herbarium );
+                    if(defaults.source != null)
+                        view.sourceCombo.setSelectedItem(defaults.source);
+                    if(defaults.latitude != null)
+                        view.latitudeTextField.setText( defaults.latitude );
+                    if(defaults.altitude != null)
+                        view.altitudeTextField.setText( defaults.altitude );
+                    if(defaults.longitude != null)
+                        view.longitudeTextField.setText( defaults.longitude );
+                    if(defaults.time != null)
+                        view.timeTextField.setText( defaults.time );
+                    if(defaults.month != null)
+                        view.monthChooser.setMonth( defaults.month );
+                    if(defaults.day != null)
+                        view.dayTextField.setText( defaults.day );
+                    if(defaults.year != null)
+                        view.yearSpinner.setValue( defaults.year );
+
+                    if(defaults.description != null)
+                        view.descriptionArea.setText( defaults.description );
+                    if(defaults.locationNote != null)
+                        view.locationNoteArea.setText( defaults.locationNote );
+                    if(defaults.occurrenceNote != null)
+                        view.occurrenceNoteArea.setText( defaults.occurrenceNote );
+                    
+                } 
+                // ===== Forget the list of default values. ===== 
+                else if( FORGET.equals(command)) {
+                    String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
+                    storedValues.remove( databaseID );
+                    save();
+                }
+                // ===== Remember the list of default values. ===== 
+                else {
+                    // Gather the information from dialogs.
+                    String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
+                    storedValues.remove( databaseID );
+                    InterestingFields defaults = new InterestingFields();
+
+                    defaults.territory = (Pair<String, Integer>) view.territoryNameCombo.getSelectedItem();
+                    defaults.phytochorion = (Pair<String, Integer>) view.phytNameCombo.getSelectedItem();
+                    defaults.town = (Pair<String, Integer>) view.townComboBox.getSelectedItem();
+                    defaults.publication = (Pair<String, Integer>) view.publicationCombo.getSelectedItem();
+                    defaults.project = (Pair<String, Integer>) view.projectCombo.getSelectedItem();
+                    defaults.quadrant = evaluate( view.quadrantTextField.getText() );
+                    defaults.country = evaluate( (String) view.phytCountryCombo.getSelectedItem() );
+                    defaults.herbarium = evaluate( view.herbariumTextField.getText() );
+                    defaults.source = evaluate( (String) view.sourceCombo.getSelectedItem() );
+                    defaults.latitude = evaluate( view.latitudeTextField.getText() );
+                    defaults.longitude = evaluate( view.longitudeTextField.getText() );
+                    defaults.altitude = evaluate( view.altitudeTextField.getText() ); 
+                    defaults.time = evaluate( view.timeTextField.getText() );
+                    defaults.day = evaluate( view.dayTextField.getText() );
+                    defaults.month = view.monthChooser.getMonth();
+                    defaults.year = (Integer) view.yearSpinner.getValue();
+                    defaults.description = evaluate( view.descriptionArea.getText() );
+                    defaults.locationNote = evaluate( view.locationNoteArea.getText() );
+                    defaults.occurrenceNote = evaluate( view.occurrenceNoteArea.getText() );
+
+                    storedValues.put( databaseID, defaults );
+                    // Store them.
+                    save(); 
+                }
+            } catch(Exception x) {
+                //  Never mind..
+            }
+        }
+        
+        
+    }
+    
+    
 }
 
 

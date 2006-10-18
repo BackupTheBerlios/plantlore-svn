@@ -113,6 +113,13 @@ public class AuthorManager extends Observable {
     }
     
     /**
+     * Set another database layer.
+     */
+    public void setDBLayer(DBLayer database) {
+        this.database = database;
+    }
+    
+    /**
      *  Save new author to the database. Information about the author are stored in data fields of this class.
      *  Operation is executed in a separate thread using <code>SwingWorker</code>. Error is set in case of an exception.
      *

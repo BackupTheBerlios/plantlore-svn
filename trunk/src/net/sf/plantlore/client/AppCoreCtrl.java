@@ -246,6 +246,11 @@ public class AppCoreCtrl {
         HabitatTree habitatTreeModel;
         HabitatTreeView habitatTreeView;
         HabitatTreeCtrl habitatTreeCtrl;
+        
+        //AuthorManager
+         AuthorManager authModel;
+	AuthorManagerView authView;
+	AuthorManagerCtrl authCtrl;
 
 	// Bridges
 	ManagerBridge managerBridge = new ManagerBridge();
@@ -374,19 +379,27 @@ public class AppCoreCtrl {
 	}
 
 	private void constructDialogs() {
+            
+                // --- AuthorManager ---
+                // Author manager must be created now because it might be invoked from the Add/Edit dialog 
+                authModel = new AuthorManager(model.getDatabase());
+		authView = new AuthorManagerView(authModel, view, true);
+		authCtrl = new AuthorManagerCtrl(authModel, authView);
+		authModel.addObserver(managerBridge);
+            
 		// --- Add ---
 		addModel = new AddEdit(model.getDatabase(), false);
                 addModel.addObserver(managerBridge);
 		addView = new AddEditView(view, true, addModel, false);
 		addView.setTitle(L10n.getString("AddEdit.AddDialogTitle"));
-		addCtrl = new AddEditCtrl(addModel, addView, false);
+		addCtrl = new AddEditCtrl(addModel, addView, false, authView);
 
 		// --- Edit ---
 		editModel = new AddEdit(model.getDatabase(), true);
                 editModel.addObserver(managerBridge);
 		editView = new AddEditView(view, true, editModel, true);
 		editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
-		editCtrl = new AddEditCtrl(editModel, editView, true);
+		editCtrl = new AddEditCtrl(editModel, editView, true, authView);
 
 		// --- Search ---
 		searchModel = new Search(model.getDatabase());
@@ -407,6 +420,7 @@ public class AppCoreCtrl {
                 habitatTreeView = new HabitatTreeView(view,true,habitatTreeModel);
                 habitatTreeCtrl = new HabitatTreeCtrl(habitatTreeModel, habitatTreeView);
                 habitatTreeModel.addObserver(new HabitatTreeBridge());
+                
 	}
 
 	private void setDatabaseDependentCommandsEnabled(boolean enabled) {
@@ -1271,12 +1285,6 @@ public class AppCoreCtrl {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			AuthorManager authModel = new AuthorManager(model.getDatabase());
-			final AuthorManagerView authView = new AuthorManagerView(authModel, view,
-					true);
-			AuthorManagerCtrl authCtrl = new AuthorManagerCtrl(authModel,
-					authView);
-			authModel.addObserver(managerBridge);
                         authView.setVisible(true);
 		}
 
@@ -1890,6 +1898,9 @@ public class AppCoreCtrl {
                                 logger.debug(" # metadata manager ");
                                 if (metadataManagerModel != null )
                                         metadataManagerModel.setDBLayer( dblayer );							
+                                logger.debug(" # author manager ");
+                                if(authModel != null) 
+                                    authModel.setDBLayer( dblayer ); // Author Manager must be notified as well!
                         }//if
                         
                         if (parameter != null && parameter.equals("REFRESH_PLEASE")) {

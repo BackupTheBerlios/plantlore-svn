@@ -261,6 +261,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         return plantloreUser;
     }
     
+    
+    public String getUniqueDatabaseIdentifier() {
+        return this.databaseID;
+    }
+    
     /**
      *  Initialization of DBLayer when creating new DB (login without database prefix)
      *

@@ -398,5 +398,12 @@ public interface DBLayer extends Remote, Serializable {
      * @throws RemoteException	in case network error occurred
      */
     public String getDescription() throws RemoteException;
+    
+    
+    /**
+     * @return	the unique identifier of the database you are currently working with
+     * @throws RemoteException	in case network error occurred
+     */
+    public String getUniqueDatabaseIdentifier() throws RemoteException;
            
 }

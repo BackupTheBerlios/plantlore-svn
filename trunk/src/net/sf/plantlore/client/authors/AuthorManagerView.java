@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import net.sf.plantlore.common.PlantloreHelp;
+import net.sf.plantlore.common.Resurrector;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.l10n.L10n;
 
@@ -32,6 +33,9 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     /** Contents of the table with the query result */
     private String[][] tableData;
     
+    
+    protected JDialog dialogToResurrect;
+    
     PlantloreHelp help;
     /**
      * Creates new form AuthorManagerView 
@@ -42,6 +46,25 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      */
     public AuthorManagerView(AuthorManager model, JFrame parent, boolean modal) {        
         super(parent, modal);
+        initialize(model);
+    }
+
+    /**
+     * Creates new form AuthorManagerView 
+     * 
+     * @param model     model of the AuthorManager MVC
+     * @param parent    parent of this dialog
+     * @param modal     boolean flag whether the dialog should be modal or not
+     */
+    public AuthorManagerView(AuthorManager model, JDialog parent, boolean modal) {
+        super(parent, modal);
+        initialize(model);
+    }
+    
+    /**
+     * Perform the initialization. This part is the same for both constructors.
+     */
+    private void initialize(AuthorManager model) {
         this.model = model;
         this.model.addObserver(this);         
         initComponents();
@@ -49,7 +72,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         PlantloreHelp.addKeyHelp(PlantloreHelp.AUTHOR_MANAGER, this.getRootPane());
         PlantloreHelp.addButtonHelp(PlantloreHelp.AUTHOR_MANAGER, this.helpBtn);
         // Center the dialog on the screen
-        this.setLocationRelativeTo(null);        
+        this.setLocationRelativeTo(null);
     }
     
     /** This method is called from within the constructor to
@@ -498,7 +521,7 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      */    
     public void close() {
         model.closeActiveQuery();        
-        this.dispose();
+        //this.dispose();
     }
 
     /**
@@ -678,6 +701,27 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         JOptionPane.showMessageDialog(this, L10n.getString("Author.NoAuthorSelected"),
                                       L10n.getString("Author.NoAuthorSelectedTitle"), JOptionPane.WARNING_MESSAGE);
     }
+    
+    
+    //---- DIALOG RESURRECTION BLOCK ----
+    private Resurrector resurrector = new Resurrector();
+    
+    /**
+     * Set the dialog that should be reopened after this dialog is closed.
+     */
+    public void setDialogToRevive(JDialog dialog) {
+        resurrector.setDialog( dialog );
+    }
+
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        if( !b ) {
+            // Reopen the poor dialog (but do it carefully!)
+            resurrector.bringItBackIfPossible();
+        }
+    }
+    
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton addBtn;

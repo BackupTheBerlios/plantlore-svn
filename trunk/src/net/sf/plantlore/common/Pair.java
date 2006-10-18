@@ -12,7 +12,7 @@ package net.sf.plantlore.common;
  *
  * @author Jakub
  */
-public class Pair<A, B> {
+public class Pair<A, B> implements java.io.Serializable {
     private A a;
     private B b;
     

@@ -465,6 +465,14 @@ public class Login extends Observable {
 			else
 				this.wrappedDBLayer = (DBLayer) Spin.off( db );
 		}
+                
+                
+                synchronized public String getUniqueDatabaseIdentifier() throws RemoteException {
+                    if(wrappedDBLayer != null)
+                        return wrappedDBLayer.getUniqueDatabaseIdentifier();
+                    else
+                        return null;
+                }
 
 		synchronized public User initialize(String dbID, String user, String password) throws DBLayerException, RemoteException {
 			verifyValidity();
