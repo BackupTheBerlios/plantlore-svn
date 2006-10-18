@@ -1047,8 +1047,10 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="authButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="rememberButton" linkSize="12" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="requiredInfoLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="412" max="32767" attributes="0"/>
+                          <EmptySpace pref="325" max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>
@@ -1067,6 +1069,7 @@
                               <Component id="okButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="authButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rememberButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="16" max="32767" attributes="0"/>
                       </Group>
@@ -1117,6 +1120,14 @@
                 <Component class="javax.swing.JButton" name="authButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="aut"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JButton" name="rememberButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="rem"/>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>

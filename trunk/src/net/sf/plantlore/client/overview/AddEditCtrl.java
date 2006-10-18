@@ -82,6 +82,8 @@ public class AddEditCtrl {
     public final static int MAXIMUM_INTEGER_DIGITS = 9;
     private final static Color COLOR_INVALID = Color.RED;
     
+    private RememberDefaultValuesAction defaults = new RememberDefaultValuesAction();
+    
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
     private ChecklistView checklistView;
     
@@ -145,6 +147,7 @@ public class AddEditCtrl {
         view.settingsButton.setAction(new SettingsAction());
         view.gpsChangeButton.setAction(new ChangeCoordinateSystemAction());
         view.authButton.setAction(new AuthorManagerAction());
+        view.rememberButton.setAction( defaults );
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
@@ -863,18 +866,6 @@ public class AddEditCtrl {
     
     
     /**
-     * The holder object of most important fields in the dialog whose state should be stored.
-     * The list of currently selected authors is not saved because that component may be a subject to change.
-     *
-     * @author kaimu
-     */
-    class InterestingFields implements java.io.Serializable {
-        public Pair<String, Integer> territory, phytochorion, town, publication, project;
-        public String description, locationNote, occurrenceNote, latitude, longitude, altitude, country, time, day, quadrant, herbarium, source;
-        public Integer month, year;
-    }
-    
-    /**
      * This action stores the default values in the dialog for future revival.
      * The revival is planned after the application is restarted (because there is another mechanism
      * that preserves the currently inserted values in some fields of the dialog - implemented by Jakub Kotowski).
@@ -882,11 +873,6 @@ public class AddEditCtrl {
      * @author Erik Kratochvíl
      */
     class RememberDefaultValuesAction extends StandardAction {
-        
-        public final String RESTORE = "RestoreTheDefaultValues";
-        public final String FORGET = "ForgetTheDefaultValues";
-        public final String REMEMBER = "RememberTheDefaultValues";
-        
         
         private String defaultValuesFileName; {
 		String userHome = System.getProperty("user.home"),
@@ -908,7 +894,7 @@ public class AddEditCtrl {
          * Thus the default values may differ for each database the User works with.
          * It was a necessary step because some of the stored values may not be in the other database at all.
          */
-        private Hashtable<String, InterestingFields> storedValues = new Hashtable<String, InterestingFields>(8);;
+        private Hashtable<String, InterestingFields> storedValues = new Hashtable<String, InterestingFields>(8);
         
         /**
          * Create a new Action that is capable of remembering the list of default values.
@@ -946,122 +932,151 @@ public class AddEditCtrl {
                 return null;
             return s;
         }
-
+        
         /**
-         * Take action!
+         * @return null if the object is not a pair or if the object  is null
          */
-        public void actionPerformed(ActionEvent e) {
+        private Pair<String, Integer> evaluate(Object o) {
+            if( o == null || !(o instanceof Pair) )
+                return null;
+            return (Pair<String, Integer>) o;
+        }
+        
+        /**
+         * Restore the state of the most important fields.
+         */
+        public void restore(boolean reload) {
             try {
-                String command = e.getActionCommand();
-                // ===== Restore the list of default values. ===== 
-                if( RESTORE.equals(command) ) {
-                     load();
-                    if( storedValues == null )
-                        // There are no stored values yet.
-                        storedValues = new Hashtable<String, InterestingFields>(8);
+                if(reload)
+                    load();
+                
+                if( storedValues == null )
+                    // There are no stored values yet.
+                    storedValues = new Hashtable<String, InterestingFields>(8);
 
-                    // Look for default values that were saved for the database we are currently working with.
-                    String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
-                    if( databaseID == null)
-                        // We are propably not connected to a database yet. This should never happen.
-                        return;
+                // Look for default values that were saved for the database we are currently working with.
+                String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
+                if( databaseID == null)
+                    // We are propably not connected to a database yet. This should never happen.
+                    return;
 
-                    // Obtain the default values.
-                    InterestingFields defaults = storedValues.get( databaseID );
-                    if( defaults == null)
-                        // No default values stored for this particular database. Never mind.
-                        return;
+                // Obtain the default values.
+                InterestingFields defaults = storedValues.get( databaseID );
+                if( defaults == null)
+                    // No default values stored for this particular database. Never mind.
+                    return;
 
-                    // Now, do some reviving.
-                    // The trouble is, that sometimes (mostly with the fields monitored with focus listeners) the model would have to be
-                    // notified manually. Shame (that Swing doesn't provide a unified interface for some changes..). Let's go!
-                    if(defaults.territory != null)
-                        view.territoryNameCombo.setSelectedItem( defaults.territory );
-                    if(defaults.phytochorion != null)
-                        view.phytNameCombo.setSelectedItem( defaults.phytochorion );
-                    if(defaults.town != null)
-                        view.townComboBox.setSelectedItem( defaults.town );
-                    if(defaults.project != null)
-                        view.projectCombo.setSelectedItem( defaults.project );
-                    if(defaults.publication != null)
-                        view.publicationCombo.setSelectedItem( defaults.publication );
+                // Now, do some reviving.
+                // The trouble is, that sometimes (mostly with the fields monitored with focus listeners) the model would have to be
+                // notified manually. Shame (that Swing doesn't provide a unified interface for some changes..). Let's go!
+                if(defaults.territory != null)
+                    view.territoryNameCombo.setSelectedItem( defaults.territory );
+                if(defaults.phytochorion != null)
+                    view.phytNameCombo.setSelectedItem( defaults.phytochorion );
+                if(defaults.town != null)
+                    view.townComboBox.setSelectedItem( defaults.town );
+                if(defaults.project != null)
+                    view.projectCombo.setSelectedItem( defaults.project );
+                if(defaults.publication != null)
+                    view.publicationCombo.setSelectedItem( defaults.publication );
 
-                    if(defaults.quadrant != null)
-                        view.quadrantTextField.setText( defaults.quadrant );
-                    if(defaults.country != null)
-                        view.phytCountryCombo.setSelectedItem( defaults.country );
-                    if(defaults.herbarium != null)
-                        view.herbariumTextField.setText( defaults.herbarium );
-                    if(defaults.source != null)
-                        view.sourceCombo.setSelectedItem(defaults.source);
-                    if(defaults.latitude != null)
-                        view.latitudeTextField.setText( defaults.latitude );
-                    if(defaults.altitude != null)
-                        view.altitudeTextField.setText( defaults.altitude );
-                    if(defaults.longitude != null)
-                        view.longitudeTextField.setText( defaults.longitude );
-                    if(defaults.time != null)
-                        view.timeTextField.setText( defaults.time );
-                    if(defaults.month != null)
-                        view.monthChooser.setMonth( defaults.month );
-                    if(defaults.day != null)
-                        view.dayTextField.setText( defaults.day );
-                    if(defaults.year != null)
-                        view.yearSpinner.setValue( defaults.year );
+                if(defaults.quadrant != null)
+                    view.quadrantTextField.setText( defaults.quadrant );
+                if(defaults.country != null)
+                    view.phytCountryCombo.setSelectedItem( defaults.country );
+                if(defaults.herbarium != null)
+                    view.herbariumTextField.setText( defaults.herbarium );
+                if(defaults.source != null)
+                    view.sourceCombo.setSelectedItem(defaults.source);
+                if(defaults.latitude != null)
+                    view.latitudeTextField.setText( defaults.latitude );
+                if(defaults.altitude != null)
+                    view.altitudeTextField.setText( defaults.altitude );
+                if(defaults.longitude != null)
+                    view.longitudeTextField.setText( defaults.longitude );
+                if(defaults.time != null)
+                    view.timeTextField.setText( defaults.time );
+                if(defaults.month != null)
+                    view.monthChooser.setMonth( defaults.month );
+                if(defaults.day != null)
+                    view.dayTextField.setText( defaults.day );
+                if(defaults.year != null)
+                    view.yearSpinner.setValue( defaults.year );
 
-                    if(defaults.description != null)
-                        view.descriptionArea.setText( defaults.description );
-                    if(defaults.locationNote != null)
-                        view.locationNoteArea.setText( defaults.locationNote );
-                    if(defaults.occurrenceNote != null)
-                        view.occurrenceNoteArea.setText( defaults.occurrenceNote );
+                if(defaults.description != null)
+                    view.descriptionArea.setText( defaults.description );
+                if(defaults.locationNote != null)
+                    view.locationNoteArea.setText( defaults.locationNote );
+                if(defaults.occurrenceNote != null)
+                    view.occurrenceNoteArea.setText( defaults.occurrenceNote );
+            } catch (Exception e) {
+                logger.error("Unable to restore default values! " + e.getMessage());
+            }
                     
-                } 
-                // ===== Forget the list of default values. ===== 
-                else if( FORGET.equals(command)) {
-                    String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
-                    storedValues.remove( databaseID );
-                    save();
-                }
-                // ===== Remember the list of default values. ===== 
-                else {
-                    // Gather the information from dialogs.
-                    String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
-                    storedValues.remove( databaseID );
-                    InterestingFields defaults = new InterestingFields();
+        }
+        
+        /**
+         * Remember the state of the most important fields.
+         */
+        public void remember() {
+            try {
+                // Gather the information from dialogs.
+                String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
+                storedValues.remove( databaseID );
+                InterestingFields defaults = new InterestingFields();
 
-                    defaults.territory = (Pair<String, Integer>) view.territoryNameCombo.getSelectedItem();
-                    defaults.phytochorion = (Pair<String, Integer>) view.phytNameCombo.getSelectedItem();
-                    defaults.town = (Pair<String, Integer>) view.townComboBox.getSelectedItem();
-                    defaults.publication = (Pair<String, Integer>) view.publicationCombo.getSelectedItem();
-                    defaults.project = (Pair<String, Integer>) view.projectCombo.getSelectedItem();
-                    defaults.quadrant = evaluate( view.quadrantTextField.getText() );
-                    defaults.country = evaluate( (String) view.phytCountryCombo.getSelectedItem() );
-                    defaults.herbarium = evaluate( view.herbariumTextField.getText() );
-                    defaults.source = evaluate( (String) view.sourceCombo.getSelectedItem() );
-                    defaults.latitude = evaluate( view.latitudeTextField.getText() );
-                    defaults.longitude = evaluate( view.longitudeTextField.getText() );
-                    defaults.altitude = evaluate( view.altitudeTextField.getText() ); 
-                    defaults.time = evaluate( view.timeTextField.getText() );
-                    defaults.day = evaluate( view.dayTextField.getText() );
-                    defaults.month = view.monthChooser.getMonth();
-                    defaults.year = (Integer) view.yearSpinner.getValue();
-                    defaults.description = evaluate( view.descriptionArea.getText() );
-                    defaults.locationNote = evaluate( view.locationNoteArea.getText() );
-                    defaults.occurrenceNote = evaluate( view.occurrenceNoteArea.getText() );
+                defaults.territory = evaluate( view.territoryNameCombo.getSelectedItem() );
+                defaults.phytochorion = evaluate( view.phytNameCombo.getSelectedItem() );
+                defaults.town = evaluate( view.townComboBox.getSelectedItem() );
+                defaults.publication = evaluate( view.publicationCombo.getSelectedItem() );
+                defaults.project = evaluate( view.projectCombo.getSelectedItem() );
+                defaults.quadrant = evaluate( view.quadrantTextField.getText() );
+                defaults.country = evaluate( (String) view.phytCountryCombo.getSelectedItem() );
+                defaults.herbarium = evaluate( view.herbariumTextField.getText() );
+                defaults.source = evaluate( (String) view.sourceCombo.getSelectedItem() );
+                defaults.latitude = evaluate( view.latitudeTextField.getText() );
+                defaults.longitude = evaluate( view.longitudeTextField.getText() );
+                defaults.altitude = evaluate( view.altitudeTextField.getText() ); 
+                defaults.time = evaluate( view.timeTextField.getText() );
+                defaults.day = evaluate( view.dayTextField.getText() );
+                defaults.month = view.monthChooser.getMonth();
+                defaults.year = (Integer) view.yearSpinner.getValue();
+                defaults.description = evaluate( view.descriptionArea.getText() );
+                defaults.locationNote = evaluate( view.locationNoteArea.getText() );
+                defaults.occurrenceNote = evaluate( view.occurrenceNoteArea.getText() );
 
-                    storedValues.put( databaseID, defaults );
-                    // Store them.
-                    save(); 
-                }
-            } catch(Exception x) {
-                //  Never mind..
+                storedValues.put( databaseID, defaults );
+                // Store them.
+                save(); 
+            } catch(Exception e) {
+                //logger.error("Unable to remember default values! " + e.getMessage());
+                e.printStackTrace();
             }
         }
         
-        
+        /**
+         * Forget the state of the most important fields.
+         */
+        public void forget() {
+            try {
+                String databaseID = model.getDatabase().getUniqueDatabaseIdentifier();
+                storedValues.remove( databaseID );
+                save();
+            } catch(Exception e) {
+                logger.error("Unable to forget default values! " + e.getMessage());
+            }
+        }
+
+        /**
+         * Take action = remember the state of fields.
+         */
+        public void actionPerformed(ActionEvent e) {
+            logger.debug("Trying to memorize the default values for this dialog.");
+            remember();
+        }
     }
-    
+
+        
     
 }
 
