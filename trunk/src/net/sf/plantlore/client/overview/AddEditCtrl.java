@@ -91,12 +91,12 @@ public class AddEditCtrl {
      *TODO: Make proper Javadoc here!
      * authView will be opened if the User wishes to edit the list of Authors
      */
-    public AddEditCtrl(AddEdit model, AddEditView view, boolean edit, AuthorManagerView authView) {
+    public AddEditCtrl(AddEdit model, AddEditView view, boolean edit) {
         this.inEditMode = edit;
         this.inAddMode = ! edit;
         this.model = model;
         this.view = view;
-        this.authView = authView;
+        this.authView = null;
         
         logger = Logger.getLogger(this.getClass().getPackage().getName());                
 
@@ -144,7 +144,7 @@ public class AddEditCtrl {
         view.calendarButton.setAction(new CalendarAction());
         view.settingsButton.setAction(new SettingsAction());
         view.gpsChangeButton.setAction(new ChangeCoordinateSystemAction());
-        //view.authorButton.setAction(new AuthorManagerAction());
+        view.authButton.setAction(new AuthorManagerAction());
 //        view.preloadAuthorsCheckBox.addActionListener(new PreloadCheckBox());
     }
     
@@ -164,6 +164,13 @@ public class AddEditCtrl {
 		}
     }
     
+    
+    
+    public void setAuthorManager(AuthorManagerView m) {
+        this.authView = m;
+    }
+    
+    
     class AuthorManagerAction extends AbstractAction {
         
         public AuthorManagerAction() {
@@ -173,12 +180,27 @@ public class AddEditCtrl {
         }
         
         public void actionPerformed(ActionEvent isUseless) {
+            // Do nothing if the Author manager View is not supplied.
+            if( authView == null )
+                return;
+            
             // Make place for the (also modal) Author manager
-            view.setVisible(false); // invokeLater??
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    view.setVisible(false);
+                }
+            });
+            
             // Remind the Author manager to reopen this dialog
             authView.setDialogToRevive( view );
+            
             // Display the Author manager
-            authView.setVisible(true);
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    authView.setVisible(true);
+                }
+            });
+            
         }
         
     }

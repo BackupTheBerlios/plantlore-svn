@@ -122,8 +122,8 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jPanel7" alignment="0" pref="921" max="32767" attributes="3"/>
-                              <Component id="jPanel5" alignment="0" pref="921" max="32767" attributes="1"/>
+                              <Component id="jPanel7" alignment="0" pref="918" max="32767" attributes="3"/>
+                              <Component id="jPanel5" alignment="0" pref="918" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -204,7 +204,7 @@
                                                       <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" attributes="0">
-                                                      <Component id="jScrollPane2" pref="572" max="32767" attributes="1"/>
+                                                      <Component id="jScrollPane2" pref="551" max="32767" attributes="1"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -591,13 +591,13 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="checklistButton" linkSize="21" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="235" max="32767" attributes="0"/>
+                                              <EmptySpace pref="342" max="32767" attributes="0"/>
                                               <Component id="clearOccurrenceButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Component id="jPanel4" min="-2" max="-2" attributes="1"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jScrollPane1" pref="648" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane1" pref="660" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -610,11 +610,11 @@
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="herbariumTextField" alignment="0" pref="136" max="32767" attributes="1"/>
-                                          <Component id="publicationCombo" alignment="0" pref="136" max="32767" attributes="1"/>
-                                          <Component id="projectCombo" alignment="0" pref="136" max="32767" attributes="1"/>
+                                          <Component id="herbariumTextField" alignment="0" pref="148" max="32767" attributes="1"/>
+                                          <Component id="publicationCombo" alignment="0" pref="148" max="32767" attributes="1"/>
+                                          <Component id="projectCombo" alignment="0" pref="148" max="32767" attributes="1"/>
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="sourceCombo" pref="136" max="32767" attributes="1"/>
+                                              <Component id="sourceCombo" pref="148" max="32767" attributes="1"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -1044,9 +1044,11 @@
                           <Component id="helpButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="settingsButton" linkSize="12" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="authButton" linkSize="12" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="requiredInfoLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="353" max="32767" attributes="0"/>
+                          <EmptySpace pref="412" max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>
@@ -1064,8 +1066,9 @@
                               <Component id="cancelButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="okButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="authButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="13" max="32767" attributes="0"/>
+                          <EmptySpace pref="16" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1111,6 +1114,14 @@
                     <Property name="text" type="java.lang.String" value="requiredInfoLabel"/>
                   </Properties>
                 </Component>
+                <Component class="javax.swing.JButton" name="authButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="aut"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="extendedPanel">
@@ -1141,7 +1152,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane6" pref="909" max="32767" attributes="0"/>
+                          <Component id="jScrollPane6" pref="908" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

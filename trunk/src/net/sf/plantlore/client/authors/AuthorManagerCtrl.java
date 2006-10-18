@@ -57,7 +57,16 @@ public class AuthorManagerCtrl {
         view.rowsAddPropertyChangeListener(new RowsPropertyChangeListener());
         view.sortAddFocusListener(new SortComboFocusListener());
         view.sortDirectionAddFocusListener(new SortDirectionRadioFocusListener());
-
+        
+        /*
+         * Here was a short comment devoted to a careful evalutation of programming skills of the author of this class 
+         * but since Google Code Search exists it must have gone.
+         */
+        model.setCurrentFirstRow(1);
+    }
+    
+    
+    public void thisUsedToLiveInTheConstructor() {
         Task task = model.searchAuthor(true);
         task.setPostTaskAction(new PostTaskAction() {
             public void afterStopped(Object value) {
@@ -77,8 +86,10 @@ public class AuthorManagerCtrl {
                 }
             }            
         });
-        Dispatcher.getDispatcher().dispatch(task, view, false);        
+        Dispatcher.getDispatcher().dispatch(task, view, false);
     }
+            
+            
     
     /**
      * ActionListener class controlling the <b>close</b> button on the form.

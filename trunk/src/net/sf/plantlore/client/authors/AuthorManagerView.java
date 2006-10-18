@@ -407,8 +407,11 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     /**
      *  Method used for updating the view (called when the model has changed and notifyObservers() was called)
      */
-    public void update(Observable obs, Object obj) {       
-        displayResults(model.getData());
+    public void update(Observable obs, Object obj) {     
+
+            // Do something something Kovo might know what it does..
+            displayResults(model.getData());
+
     }
 
     /**
@@ -517,11 +520,11 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
     }
 
     /**
-     *  Close this dialog.
+     *  Hide this dialog.
      */    
     public void close() {
         model.closeActiveQuery();        
-        //this.dispose();
+        this.setVisible(false);
     }
 
     /**
@@ -710,11 +713,17 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
      * Set the dialog that should be reopened after this dialog is closed.
      */
     public void setDialogToRevive(JDialog dialog) {
+        System.out.println("Dialog set to " + dialog.getTitle());
         resurrector.setDialog( dialog );
     }
 
     public void setVisible(boolean b) {
+        if( b )
+            // Update the list of authors.
+            searchBtn.doClick();
+        
         super.setVisible(b);
+        
         if( !b ) {
             // Reopen the poor dialog (but do it carefully!)
             resurrector.bringItBackIfPossible();

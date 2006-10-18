@@ -26,11 +26,16 @@ public class Resurrector {
     
     
     public synchronized void bringItBackIfPossible() {
+        if( dialog == null )
+            return;
+        // The dialog must be cloned here because no one can tell when the value is erased 
+        // if we did it after calling the setVisible( true ) method.
+        final JDialog dialogClone = dialog;
+        dialog = null;
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                if( dialog != null )
-                    dialog.setVisible( true );
-                dialog = null;
+                dialogClone.setVisible( true );
             }
         });
     }

@@ -380,26 +380,21 @@ public class AppCoreCtrl {
 
 	private void constructDialogs() {
             
-                // --- AuthorManager ---
-                // Author manager must be created now because it might be invoked from the Add/Edit dialog 
-                authModel = new AuthorManager(model.getDatabase());
-		authView = new AuthorManagerView(authModel, view, true);
-		authCtrl = new AuthorManagerCtrl(authModel, authView);
-		authModel.addObserver(managerBridge);
+
             
 		// --- Add ---
 		addModel = new AddEdit(model.getDatabase(), false);
                 addModel.addObserver(managerBridge);
 		addView = new AddEditView(view, true, addModel, false);
 		addView.setTitle(L10n.getString("AddEdit.AddDialogTitle"));
-		addCtrl = new AddEditCtrl(addModel, addView, false, authView);
+		addCtrl = new AddEditCtrl(addModel, addView, false);
 
 		// --- Edit ---
 		editModel = new AddEdit(model.getDatabase(), true);
                 editModel.addObserver(managerBridge);
 		editView = new AddEditView(view, true, editModel, true);
 		editView.setTitle(L10n.getString("AddEdit.EditDialogTitle"));
-		editCtrl = new AddEditCtrl(editModel, editView, true, authView);
+		editCtrl = new AddEditCtrl(editModel, editView, true);
 
 		// --- Search ---
 		searchModel = new Search(model.getDatabase());
@@ -421,6 +416,15 @@ public class AppCoreCtrl {
                 habitatTreeCtrl = new HabitatTreeCtrl(habitatTreeModel, habitatTreeView);
                 habitatTreeModel.addObserver(new HabitatTreeBridge());
                 
+                // --- AuthorManager ---
+                // Author manager must be created now because it might be invoked from the Add/Edit dialog 
+                authModel = new AuthorManager(model.getDatabase());
+		authView = new AuthorManagerView(authModel, view, true);
+		authCtrl = new AuthorManagerCtrl(authModel, authView);
+		authModel.addObserver(managerBridge);
+                
+                editCtrl.setAuthorManager( authView );
+                addCtrl.setAuthorManager( authView );
 	}
 
 	private void setDatabaseDependentCommandsEnabled(boolean enabled) {

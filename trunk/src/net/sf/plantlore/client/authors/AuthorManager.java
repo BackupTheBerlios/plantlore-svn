@@ -103,6 +103,8 @@ public class AuthorManager extends Observable {
     public static final int EDIT = 2;
     public static final int DELETE = 3;
     
+    public static final String RELOAD = "ReloadTheListOfAuthors";
+    
     /**
      *  Creates a new instance of AuthorManager.
      *  @param database Instance of a database management object
@@ -117,6 +119,7 @@ public class AuthorManager extends Observable {
      */
     public void setDBLayer(DBLayer database) {
         this.database = database;
+        // TODO: Kovo must add some code that might possibly restart some queries!
     }
     
     /**
@@ -313,11 +316,11 @@ public class AuthorManager extends Observable {
         } else {
             query.addOrder(PlantloreConstants.DIRECT_DESC, field);
         }
-        int resultId = 0;
+        int resultId = -1;
         // Execute query
         resultId = database.executeQuery(query);
         if (this.activeSelectQuery != null) {
-            database.closeQuery(this.activeSelectQuery);
+            database.closeQuery(this.activeSelectQuery); // This may throw an exception if the database layer is switched...
         }
         // Save the query as the active search query        
         this.activeSelectQuery = query;        
@@ -339,8 +342,9 @@ public class AuthorManager extends Observable {
                 logger.error("RemoteException caught while closing select query. Details: "+ex.getMessage());
                 ex.printStackTrace();
                 return;                    
-            }            
-            this.activeSelectQuery = null;
+            } finally { // Thank God I haven't seen much of kovo's programming style or I might just have commited suicide.
+                this.activeSelectQuery = null;
+            }
         }
     }
     
@@ -369,7 +373,7 @@ public class AuthorManager extends Observable {
      * @param count number of rows to retrieve
      */
     public void processResults(int from, int count) throws RemoteException, DBLayerException {
-        if (this.resultId != 0) {
+        if (this.resultId >= 0) {
             logger.info("Processing "+count+" results from "+from);
             logger.debug("Rows in the result: "+getResultRows());
             // Find out how many rows we can retrieve - it cannot be more than number of rows in the result
