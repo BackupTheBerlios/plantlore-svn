@@ -49,6 +49,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import net.sf.plantlore.client.authors.AuthorManagerView;
 import net.sf.plantlore.common.DefaultExceptionHandler;
+import net.sf.plantlore.common.DialogSwitcher;
 import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.PostTaskAction;
 import net.sf.plantlore.common.StandardAction;
@@ -190,26 +191,8 @@ public class AddEditCtrl {
         
         public void actionPerformed(ActionEvent isUseless) {
             // Do nothing if the Author manager View is not supplied.
-            if( authView == null )
-                return;
-            
-            // Make place for the (also modal) Author manager
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    view.setVisible(false);
-                }
-            });
-            
-            // Remind the Author manager to reopen this dialog
-            authView.setDialogToRevive( view );
-            
-            // Display the Author manager
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    authView.setVisible(true);
-                }
-            });
-            
+            if( authView != null )
+                DialogSwitcher.switchFromTo(view, authView);
         }
         
     }

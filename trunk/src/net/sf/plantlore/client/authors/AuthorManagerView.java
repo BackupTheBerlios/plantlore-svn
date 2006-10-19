@@ -12,8 +12,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.plantlore.common.DialogSwitcher;
 import net.sf.plantlore.common.PlantloreHelp;
-import net.sf.plantlore.common.Resurrector;
 import net.sf.plantlore.common.record.Author;
 import net.sf.plantlore.l10n.L10n;
 
@@ -73,6 +73,9 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         PlantloreHelp.addButtonHelp(PlantloreHelp.AUTHOR_MANAGER, this.helpBtn);
         // Center the dialog on the screen
         this.setLocationRelativeTo(null);
+        
+        // Dialog resurrector
+        //DialogSwitcher.involve( this, closeBtn );
     }
     
     /** This method is called from within the constructor to
@@ -705,16 +708,6 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
                                       L10n.getString("Author.NoAuthorSelectedTitle"), JOptionPane.WARNING_MESSAGE);
     }
     
-    
-    //---- DIALOG RESURRECTION BLOCK ----
-    private Resurrector resurrector = new Resurrector();
-    
-    /**
-     * Set the dialog that should be reopened after this dialog is closed.
-     */
-    public void setDialogToRevive(JDialog dialog) {
-        resurrector.setDialog( dialog );
-    }
 
     /**
      * Handle the visibility properly. Sometimes it may happen that after this dialog is closed,
@@ -727,10 +720,8 @@ public class AuthorManagerView extends javax.swing.JDialog implements Observer {
         
         super.setVisible(b);
         
-        if( !b ) {
-            // Reopen the poor dialog (but do it carefully!)
-            resurrector.bringItBackIfPossible();
-        }
+        if( !b )
+            DialogSwitcher.switchBack();
     }
     
 

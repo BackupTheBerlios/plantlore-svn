@@ -15,11 +15,12 @@ import javax.swing.JDialog;
  * This class can store a dialog and bring it back (make it visible) again.
  * It used to have much greater scope but that proved to be problematic.
  * It should be probably incorporated back into the AuthorManagerCtrl 
- * from where it came.
+ * whence it came.
  *
  * @author kaimu
  * @version beta
  */
+@Deprecated
 public class Resurrector {
     
     private JDialog dialog;
