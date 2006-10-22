@@ -224,11 +224,22 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
                 // No record in the table - we have to insert it (this is the first time the database is accessed)
                 UnitIdDatabase unitid = new UnitIdDatabase();
                 unitid.setUnitIdDb(UniqueIDGenerator.generate());
-                sess.save(unitid);
+                
                 if (unitid.getUnitIdDb() == null) {
                     logger.error("Failed to generate unique id for the database");
                     throw new DBLayerException(L10n.getString("Error.ConnectionFailed"));
                 } else {
+                    /*
+                     * FIXME: This does not work!!
+                     *
+                     * Every time I open a database (even as an administrator)
+                     * the unique value is not stored! The UnitIdDb table is always empty.
+                     *
+                     * Besides, the unique database identifier should be generated and stored
+                     * right after the database is created, as it is the only time we are perfectly
+                     * sure that we have administrator rights!!
+                     */
+                    sess.save(unitid);
                     this.databaseID = unitid.getUnitIdDb();
                 }
             } else {
@@ -2432,4 +2443,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
 		}
 		return currentlyConnectedUser ; 
 	}
+        
+        
+        /*===============================================================================
+         *  It is most fortunate that God does not grant us every wish.
+         *  For if He did most of my teammates would be pushing up daisies 
+         *  here and there by now. As would all the people that created Swing.
+         *===============================================================================*/
 }

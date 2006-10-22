@@ -7,19 +7,24 @@
 
 package net.sf.plantlore.client.overview;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Set;
-import javax.swing.JOptionPane;
-import net.sf.plantlore.client.*;
 import net.sf.plantlore.common.DBLayerUtils;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.PlantloreConstants;
@@ -34,7 +39,6 @@ import net.sf.plantlore.common.record.Plant;
 import net.sf.plantlore.common.record.Publication;
 import net.sf.plantlore.common.record.Record;
 import net.sf.plantlore.common.record.Territory;
-import net.sf.plantlore.common.record.User;
 import net.sf.plantlore.common.record.NearestVillage;
 import net.sf.plantlore.l10n.L10n;
 import net.sf.plantlore.middleware.DBLayer;
@@ -52,6 +56,7 @@ import org.apache.log4j.Logger;
  * it would work exactly the same as import does.
  *
  * @author fraktalek
+ * @author kaimu (restore/remember default values in the Add dialog for all databases the User works with)
  */
 public class AddEdit extends Observable {
     public static final int WGS84 = 0;
@@ -170,6 +175,10 @@ public class AddEdit extends Observable {
         this.editMode = editMode;
         logger = Logger.getLogger(this.getClass().getPackage().getName());      
         occurrenceTableModel = new OccurrenceTableModel();
+        
+        // Load the default values from a file. Should work for the Add mode only!
+        if( !editMode )
+            getDefaultValues( true );
     }
  
     /** Makes the model load data from for the occurrence with id occurrenceId.
@@ -1826,7 +1835,8 @@ public class AddEdit extends Observable {
         this.setAltitude(newCoordinate[2]);       
     }     
     
-   
+    
+    
     
     public void setIsCancle(boolean isCancle) {
         this.isCancled = isCancle;
@@ -1835,6 +1845,114 @@ public class AddEdit extends Observable {
     public boolean getIsCancle() {
         return this.isCancled;
     }
+    
+    
+    
+    
+    /*----------------------------------------------------------------------------------------
+     * Save and load the default values from a separate configuration file.
+     *
+     *----------------------------------------------------------------------------------------*/
+    private String defaultValuesFileName; {
+        String userHome = System.getProperty("user.home"),
+        osName = System.getProperty("os.name"),
+        plantloreDirName = (osName.equals("Linux") ? "." : "") + net.sf.plantlore.client.Plantlore.PLANTLORE, 
+        plantloreConfDir = userHome+File.separator+plantloreDirName;
+
+        File plantloreConfDirFile = new File(plantloreConfDir);
+        if (!plantloreConfDirFile.exists())
+                plantloreConfDirFile.mkdir();
+
+        defaultValuesFileName = plantloreConfDir + File.separator + "add-default";
+    }
+    
+    
+    
+    /*
+     * The hashtable stores default values for different databases (these databases are
+     * recognized by their Unique Identifier).
+     *
+     * Thus the default values may differ for each database the User works with.
+     * It was a necessary step because some of the stored values may not be in the other database at all.
+     */
+    private Hashtable<String, DefaultValues> storedValues = new Hashtable<String, DefaultValues>(8);
+
+    
+    /**
+     * Load the table with default values.
+     */
+    private void load()
+    throws IOException, ClassNotFoundException {
+        logger.debug("Loading the list with default values.");
+        ObjectInputStream ois = new ObjectInputStream( new FileInputStream(defaultValuesFileName) );
+        storedValues = (Hashtable<String, DefaultValues>) ois.readObject();
+        ois.close();
+        
+        System.out.println("~~~ LIST OF KEYS " + storedValues.keySet());
+    }
+
+    /**
+     * Store the table with default values.
+     */
+    private void save()
+    throws IOException {
+        logger.debug("Saving the list with default values.");
+        ObjectOutputStream oos = new ObjectOutputStream( new FileOutputStream(defaultValuesFileName) );
+        oos.writeObject( storedValues );
+        oos.close();
+    }
+    
+    
+
+    public void setDefaultValues(DefaultValues defaultValues) {
+        try {
+             // Gather the information from dialogs.
+            String databaseID = database.getUniqueDatabaseIdentifier();
+            storedValues.remove( databaseID );
+            if(defaultValues != null)
+                storedValues.put( databaseID, defaultValues );
+            // Store them.
+            save();
+        } catch(Exception e) {
+            logger.error("Unable to remember default values! " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    
+    public DefaultValues getDefaultValues(boolean reload) {
+        try {
+            if(reload)
+                load();
+            if(database == null)
+                return null;
+            String databaseID = database.getUniqueDatabaseIdentifier();
+            return storedValues.get( databaseID );            
+        } catch(Exception e) {
+            logger.error("Unable to restore default values! " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null; 
+    }
+    
+    
+    public void restoreDefaultValuesInView() {
+        setChanged();
+        notifyObservers( getDefaultValues(false) );
+    }
+
+    
+
+
+    /* 
+     *
+     * This `Netbeans 5.0` is a real shit . Thank God to IBM for their vastly superior Eclipse 3.1
+     * What Netbeans cannot do properly:
+     * 1. indent the code automatically (when inserted...),
+     * 2. find usages (invoked on a method definition)
+     * 3. refactor method names
+     *
+     */
 }
 
 

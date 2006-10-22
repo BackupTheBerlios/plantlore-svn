@@ -285,6 +285,7 @@ public class Login extends Observable {
 	 * of the database layer a little bit easier. 
 	 * 
 	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+         * @author Jakub Kotowski (proper use of PostTaskAction)
 	 * @since 2006-08-30
 	 */
 	private class ConnectionTask extends Task {

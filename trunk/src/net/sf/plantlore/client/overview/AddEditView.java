@@ -48,11 +48,13 @@ import net.sf.plantlore.common.record.AuthorOccurrence;
 import net.sf.plantlore.common.record.Habitat;
 import net.sf.plantlore.common.record.Occurrence;
 import net.sf.plantlore.l10n.L10n;
+import net.sf.plantlore.middleware.DBLayer;
 import org.apache.log4j.Logger;
 
 /**
  *
- * @author  reimei
+ * @author reimei
+ * @author kaimu (remember/restore default values)
  */
 public class AddEditView extends javax.swing.JDialog implements Observer {
     private Logger logger;
@@ -97,6 +99,13 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         
         extendedPanel.setVisible(visible);
         setLocationRelativeTo(parent);
+        
+        // Do not show the Remember/Restore buttons in the Edit mode...
+        if(inEditMode) {
+            rememberButton.setVisible(false);
+            restoreButton.setVisible(false);
+        }
+        
         this.pack();
     }
     
@@ -183,6 +192,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         requiredInfoLabel = new javax.swing.JLabel();
         authButton = new javax.swing.JButton();
         rememberButton = new javax.swing.JButton();
+        restoreButton = new javax.swing.JButton();
         extendedPanel = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         occurrenceTable = new javax.swing.JTable();
@@ -649,6 +659,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         authButton.setText("aut");
 
         rememberButton.setText("rem");
+        rememberButton.setActionCommand("REMEMBER");
+
+        restoreButton.setText("res");
+        restoreButton.setActionCommand("RESTORE");
 
         org.jdesktop.layout.GroupLayout buttonPanelLayout = new org.jdesktop.layout.GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -663,16 +677,18 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .add(authButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(rememberButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(4, 4, 4)
+                .add(restoreButton)
+                .add(18, 18, 18)
                 .add(requiredInfoLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 325, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 226, Short.MAX_VALUE)
                 .add(okButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(cancelButton)
                 .addContainerGap())
         );
 
-        buttonPanelLayout.linkSize(new java.awt.Component[] {authButton, cancelButton, helpButton, okButton, rememberButton, settingsButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+        buttonPanelLayout.linkSize(new java.awt.Component[] {authButton, cancelButton, helpButton, okButton, rememberButton, restoreButton, settingsButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         buttonPanelLayout.setVerticalGroup(
             buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -683,9 +699,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(settingsButton)
                     .add(cancelButton)
                     .add(okButton)
-                    .add(requiredInfoLabel)
                     .add(authButton)
-                    .add(rememberButton))
+                    .add(rememberButton)
+                    .add(restoreButton)
+                    .add(requiredInfoLabel))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -873,8 +890,18 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             else latitudeTextField.setText("");
     }
     
-    public void loadComponentData()
+    
+    
+    public void loadComponentData() {
+        loadComponentData(true);
+    }
+    
+    public void loadComponentData(boolean alsoRestoreDefaultValues)
     {
+        
+        logger.debug("================ LOAD COMPONENT DATA ===================");
+        
+        
         switch (model.getCoordinateSystem()) {
             case AddEdit.WGS84:
                 coordinateSystemLabel.setText(L10n.getString("Overview.CoordinateSystemLabel")+": WGS-84");
@@ -956,7 +983,19 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             dayTextField.setText(""+model.getDay());
         else
             dayTextField.setText("");
+        
+        /*-------------------------------------------------------------------------------------------
+         * Try to preload the default values for this dialog 
+         * that the User might have saved earlier :)
+         *-------------------------------------------------------------------------------------------*/
+        if(alsoRestoreDefaultValues) {
+            logger.debug("Restoring the default values in this Add dialog.");
+            restoreDefaultValuesInThisDialog( model.getDefaultValues(false) );
+        }
+        
+        
     }//loadComponentData
+    
     
     public void clearComponentData() {
         //if ( ! preloadAuthorsCheckBox.isSelected() ) {
@@ -1136,8 +1175,69 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             }
         });
     }
+    
+    
+    private void restoreDefaultValuesInThisDialog(DefaultValues defaultValues) {
+        // Default Values reviving.
+        // The trouble is, that sometimes (mostly with the fields monitored with focus listeners) the model would have to be
+        // notified manually. Shame (that Swing doesn't provide a unified interface for some changes..). Let's go!
+        if(defaultValues == null)
+            return;
+        
+        if(defaultValues.territory != null)
+            territoryNameCombo.setSelectedItem( defaultValues.territory );
+        if(defaultValues.phytochorion != null)
+            /*if(phytNameCombo instanceof AutoComboBoxNG3)
+                ((AutoComboBoxNG3)phytNameCombo).setValue( defaultValues.phytochorion );
+            else*/
+                phytNameCombo.setSelectedItem( defaultValues.phytochorion );
+        if(defaultValues.town != null)
+            townComboBox.setSelectedItem( defaultValues.town );
+        if(defaultValues.project != null)
+            projectCombo.setSelectedItem( defaultValues.project );
+        if(defaultValues.publication != null)
+            publicationCombo.setSelectedItem( defaultValues.publication );
 
+        if(defaultValues.quadrant != null)
+            quadrantTextField.setText( defaultValues.quadrant );
+        if(defaultValues.country != null)
+            phytCountryCombo.setSelectedItem( defaultValues.country );
+        if(defaultValues.herbarium != null)
+            herbariumTextField.setText( defaultValues.herbarium );
+        if(defaultValues.source != null)
+            sourceCombo.setSelectedItem(defaultValues.source);
+        if(defaultValues.latitude != null)
+            latitudeTextField.setText( defaultValues.latitude );
+        if(defaultValues.altitude != null)
+            altitudeTextField.setText( defaultValues.altitude );
+        if(defaultValues.longitude != null)
+            longitudeTextField.setText( defaultValues.longitude );
+        if(defaultValues.time != null)
+            timeTextField.setText( defaultValues.time );
+        if(defaultValues.month != null)
+            monthChooser.setMonth( defaultValues.month );
+        if(defaultValues.day != null)
+            dayTextField.setText( defaultValues.day );
+        if(defaultValues.year != null)
+            yearSpinner.setValue( defaultValues.year );
+
+        if(defaultValues.description != null)
+            descriptionArea.setText( defaultValues.description );
+        if(defaultValues.locationNote != null)
+            locationNoteArea.setText( defaultValues.locationNote );
+        if(defaultValues.occurrenceNote != null)
+            occurrenceNoteArea.setText( defaultValues.occurrenceNote );
+    }
+
+    
     public void update(Observable o, Object arg) {
+        
+        if(arg instanceof DefaultValues) {
+            logger.debug("Restoring default values as requested (in update).");
+            restoreDefaultValuesInThisDialog( (DefaultValues) arg );        
+        }
+            
+        
         if (arg instanceof Pair) {
             String s = ((Pair<String,Integer>)arg).getFirst();
             int i = ((Pair<String,Integer>)arg).getSecond(); 
@@ -1339,6 +1439,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JTextField quadrantTextField;
     protected javax.swing.JButton rememberButton;
     private javax.swing.JLabel requiredInfoLabel;
+    protected javax.swing.JButton restoreButton;
     protected javax.swing.JButton settingsButton;
     protected javax.swing.JComboBox sourceCombo;
     protected javax.swing.JLabel sourceLabel;

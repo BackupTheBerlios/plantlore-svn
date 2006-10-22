@@ -1048,9 +1048,11 @@
                           <Component id="authButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="rememberButton" linkSize="12" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                          <Component id="restoreButton" linkSize="12" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           <Component id="requiredInfoLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="325" max="32767" attributes="0"/>
+                          <EmptySpace pref="226" max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>
@@ -1067,9 +1069,10 @@
                               <Component id="settingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="cancelButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="okButton" linkSize="13" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="authButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="rememberButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="restoreButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="16" max="32767" attributes="0"/>
                       </Group>
@@ -1128,6 +1131,16 @@
                 <Component class="javax.swing.JButton" name="rememberButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="rem"/>
+                    <Property name="actionCommand" type="java.lang.String" value="REMEMBER"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JButton" name="restoreButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="res"/>
+                    <Property name="actionCommand" type="java.lang.String" value="RESTORE"/>
                   </Properties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>

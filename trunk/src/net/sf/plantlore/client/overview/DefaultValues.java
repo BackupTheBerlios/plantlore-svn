@@ -11,7 +11,7 @@ import net.sf.plantlore.common.Pair;
  *
  * @author kaimu
  */
-public class InterestingFields implements java.io.Serializable {
+public class DefaultValues implements java.io.Serializable {
     public Pair<String, Integer> territory, phytochorion, town, publication, project;
     public String description, locationNote, occurrenceNote, latitude, longitude, altitude, country, time, day, quadrant, herbarium, source;
     public Integer month, year;

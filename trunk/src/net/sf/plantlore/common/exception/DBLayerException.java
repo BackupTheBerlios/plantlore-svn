@@ -83,8 +83,32 @@ public class DBLayerException extends PlantloreException {
         // Better constructor to allow proper exception wrapping.
         public DBLayerException(String message, Throwable originalException) {
         	super(message, originalException);
-        	if(originalException instanceof JDBCException)        	
-        		setError( translateSQLState( ((JDBCException)originalException).getSQLState()), null );
+        	if(originalException instanceof JDBCException) {
+                    setError( translateSQLState( ((JDBCException)originalException).getSQLState()), null );
+                    // Perform a better error recognition here.
+                    // The real reason why the connection was refused is usually wrapped 
+                    // in several other exceptions. 
+                    if( errorCode == ERROR_CONNECT ) {
+                        for(Throwable cause = originalException; cause != null; cause = cause.getCause()) {
+                            String info = cause.getMessage();
+                            if(info == null)
+                                continue;
+                            if( info.toLowerCase().contains("password") ) {
+                                //logger.info("The particular reason the connection was refused: " + info);
+                                errorCode = ERROR_PASSWORD;
+                                errorInfo = L10n.getString("DBLayer.Error.Password");
+                                return;
+                            }
+                            else if( info.toLowerCase().contains("username") ) {
+                                //logger.info("The particular reason the connection was refused: " + info);
+                                errorCode = ERROR_PASSWORD;
+                                errorInfo = L10n.getString("DBLayer.Error.Username");
+                                return;
+                            }
+                        }
+                    }
+                }
+                
         }
         
         // Better constructor to allow proper exception wrapping.
@@ -210,7 +234,7 @@ public class DBLayerException extends PlantloreException {
             
             // Connection exception - Connection does not exist, was interrupted or cannot be established
             if (errorClass.equals("08")) {
-            	/* POINTLESS :(
+            	/* POINTLESS :( - these numbers are database specific...
             	if("004".equals(errorDetail))
             		return ERROR_USERNAME;
             	if ("005".equals(errorDetail))

@@ -62,6 +62,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
 
         deleteMenuItem.setText("Item");
 
+        habitatTree.setComponentPopupMenu(popupMenu);
         jScrollPane1.setViewportView(habitatTree);
 
         searchButton.setText("jButton1");
@@ -74,7 +75,7 @@ public class HabitatTreeView extends javax.swing.JDialog implements Observer {
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(searchButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 179, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 209, Short.MAX_VALUE)
                 .add(refreshButton))
         );
         jPanel1Layout.setVerticalGroup(

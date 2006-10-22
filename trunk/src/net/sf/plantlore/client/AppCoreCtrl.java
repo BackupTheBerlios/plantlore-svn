@@ -1065,7 +1065,7 @@ public class AppCoreCtrl {
                             DefaultExceptionHandler.handle(view,ex);
                             return;
                         }
-                        addView.loadComponentData();
+                        addView.loadComponentData(false);
                         addView.setVisible(true);   
                     }//if ADD
                     if (message.equals("DELETE")) {
@@ -1878,7 +1878,8 @@ public class AppCoreCtrl {
 //                                view.overviewScrollPane.addComponentListener(overviewResizeListener);
 
                                 /*-------------------------------------------------------------------
-                                 *  This may no longer be necessary:
+                                 *  Notify the rest of the application that the database
+                                 * layer has chaged.
                                  *------------------------------------------------------------------*/
                 logger.debug("Distributing the new database layer to:");
                 logger.debug(" # export ");
