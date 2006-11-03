@@ -122,8 +122,8 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jPanel7" alignment="0" pref="918" max="32767" attributes="3"/>
-                              <Component id="jPanel5" alignment="0" pref="918" max="32767" attributes="1"/>
+                              <Component id="jPanel7" alignment="0" pref="921" max="32767" attributes="3"/>
+                              <Component id="jPanel5" alignment="0" pref="921" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -204,7 +204,7 @@
                                                       <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" attributes="0">
-                                                      <Component id="jScrollPane2" pref="551" max="32767" attributes="1"/>
+                                                      <Component id="jScrollPane2" pref="572" max="32767" attributes="1"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
@@ -485,7 +485,7 @@
                         <Component class="javax.swing.JTextField" name="altitudeTextField">
                           <Properties>
                             <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                              <ComponentRef name="latitudeTextField"/>
+                              <ComponentRef name="gpsChangeButton"/>
                             </Property>
                           </Properties>
                           <AuxValues>
@@ -518,6 +518,9 @@
                         <Component class="javax.swing.JButton" name="gpsChangeButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Change"/>
+                            <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                              <ComponentRef name="taxonTextArea"/>
+                            </Property>
                           </Properties>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -591,13 +594,13 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="checklistButton" linkSize="21" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="342" max="32767" attributes="0"/>
+                                              <EmptySpace pref="239" max="32767" attributes="0"/>
                                               <Component id="clearOccurrenceButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Component id="jPanel4" min="-2" max="-2" attributes="1"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jScrollPane1" pref="660" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane1" pref="652" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -610,11 +613,11 @@
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="herbariumTextField" alignment="0" pref="148" max="32767" attributes="1"/>
-                                          <Component id="publicationCombo" alignment="0" pref="148" max="32767" attributes="1"/>
-                                          <Component id="projectCombo" alignment="0" pref="148" max="32767" attributes="1"/>
+                                          <Component id="herbariumTextField" alignment="0" pref="132" max="32767" attributes="1"/>
+                                          <Component id="publicationCombo" alignment="0" pref="132" max="32767" attributes="1"/>
+                                          <Component id="projectCombo" alignment="0" pref="132" max="32767" attributes="1"/>
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="sourceCombo" pref="148" max="32767" attributes="1"/>
+                                              <Component id="sourceCombo" pref="132" max="32767" attributes="1"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -838,7 +841,7 @@
                         <Component class="javax.swing.JTextField" name="timeTextField">
                           <Properties>
                             <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                              <ComponentRef name="okButton"/>
+                              <ComponentRef name="sourceCombo"/>
                             </Property>
                           </Properties>
                           <AuxValues>
@@ -884,6 +887,9 @@
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                           <StringArray count="0"/>
                         </Property>
+                        <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                          <ComponentRef name="publicationCombo"/>
+                        </Property>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(false); "/>
@@ -912,6 +918,9 @@
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                           <StringArray count="0"/>
                         </Property>
+                        <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                          <ComponentRef name="projectCombo"/>
+                        </Property>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true);"/>
@@ -920,6 +929,11 @@
                       </AuxValues>
                     </Component>
                     <Component class="javax.swing.JTextField" name="herbariumTextField">
+                      <Properties>
+                        <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                          <ComponentRef name="authorTable"/>
+                        </Property>
+                      </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="herbariumTextField.setActionCommand(&quot;herbariumTextField&quot;);"/>
                         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -946,6 +960,9 @@
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                           <StringArray count="0"/>
                         </Property>
+                        <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                          <ComponentRef name="herbariumTextField"/>
+                        </Property>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoComboBoxNG3(true);"/>
@@ -956,6 +973,9 @@
                     <Component class="javax.swing.JButton" name="checklistButton">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Checklist"/>
+                        <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                          <ComponentRef name="authorTable"/>
+                        </Property>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -972,6 +992,9 @@
                           <Properties>
                             <Property name="columns" type="int" value="20"/>
                             <Property name="rows" type="int" value="5"/>
+                            <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                              <ComponentRef name="okButton"/>
+                            </Property>
                           </Properties>
                           <AuxValues>
                             <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="occurrenceNoteArea.setLineWrap(true);&#xa;occurrenceNoteArea.setWrapStyleWord(true);&#xa;new TabTransfersFocus(occurrenceNoteArea);"/>
@@ -996,6 +1019,9 @@
                                 <Column editable="true" title="Title 3" type="java.lang.Object"/>
                                 <Column editable="true" title="Title 4" type="java.lang.Object"/>
                               </Table>
+                            </Property>
+                            <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                              <ComponentRef name="occurrenceNoteArea"/>
                             </Property>
                           </Properties>
                           <AuxValues>
@@ -1052,7 +1078,7 @@
                           <Component id="restoreButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           <Component id="requiredInfoLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="226" max="32767" attributes="0"/>
+                          <EmptySpace pref="98" max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="12" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="12" min="-2" max="-2" attributes="0"/>
@@ -1074,7 +1100,7 @@
                               <Component id="restoreButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="requiredInfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="16" max="32767" attributes="0"/>
+                          <EmptySpace pref="13" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1176,7 +1202,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane6" pref="908" max="32767" attributes="0"/>
+                          <Component id="jScrollPane6" pref="909" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

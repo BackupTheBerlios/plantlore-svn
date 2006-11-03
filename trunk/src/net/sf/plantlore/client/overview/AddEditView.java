@@ -105,7 +105,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             rememberButton.setVisible(false);
             restoreButton.setVisible(false);
         }
-        
+
         this.pack();
     }
     
@@ -250,13 +250,14 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         longitudeLabel.setText("Longitude:");
 
-        altitudeTextField.setNextFocusableComponent(latitudeTextField);
+        altitudeTextField.setNextFocusableComponent(gpsChangeButton);
 
         latitudeTextField.setNextFocusableComponent(longitudeTextField);
 
         coordinateSystemLabel.setText("Coordinate system:");
 
         gpsChangeButton.setText("Change");
+        gpsChangeButton.setNextFocusableComponent(taxonTextArea);
 
         org.jdesktop.layout.GroupLayout gpsPanelLayout = new org.jdesktop.layout.GroupLayout(gpsPanel);
         gpsPanel.setLayout(gpsPanelLayout);
@@ -354,7 +355,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                                         .add(placeDescriptionLabel)
                                         .add(434, 434, 434))
                                     .add(jPanel5Layout.createSequentialGroup()
-                                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                                     .add(locationNoteLabel)
@@ -421,7 +422,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         timeLabel.setText("Time:");
 
-        timeTextField.setNextFocusableComponent(okButton);
+        timeTextField.setNextFocusableComponent(sourceCombo);
 
         yearLabel.setText("Year:");
 
@@ -487,6 +488,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        sourceCombo.setNextFocusableComponent(publicationCombo);
         sourceCombo.setActionCommand("sourceCombo");
         sourceCombo.insertItemAt(model.EMPTY_STRING,0);
 
@@ -494,21 +496,26 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         publicationLabel.setText("Publication:");
 
+        publicationCombo.setNextFocusableComponent(projectCombo);
         publicationCombo.setActionCommand("publicationCombo");
         publicationCombo.insertItemAt(model.EMPTY_PAIR,0);
 
+        herbariumTextField.setNextFocusableComponent(authorTable);
         herbariumTextField.setActionCommand("herbariumTextField");
 
         herbariumLabel.setText("Herbarium:");
 
         projectLabel.setText("Project:");
 
+        projectCombo.setNextFocusableComponent(herbariumTextField);
         projectCombo.setActionCommand("projectCombo");
 
         checklistButton.setText("Checklist");
+        checklistButton.setNextFocusableComponent(authorTable);
 
         occurrenceNoteArea.setColumns(20);
         occurrenceNoteArea.setRows(5);
+        occurrenceNoteArea.setNextFocusableComponent(okButton);
         occurrenceNoteArea.setLineWrap(true);
         occurrenceNoteArea.setWrapStyleWord(true);
         new TabTransfersFocus(occurrenceNoteArea);
@@ -525,6 +532,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        authorTable.setNextFocusableComponent(occurrenceNoteArea);
         jScrollPane1.setViewportView(authorTable);
 
         occurrenceNoteLabel.setText("Occurrence note:");
@@ -546,10 +554,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel7Layout.createSequentialGroup()
                                 .add(checklistButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 342, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 239, Short.MAX_VALUE)
                                 .add(clearOccurrenceButton))
                             .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel7Layout.createSequentialGroup()
@@ -560,11 +568,11 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                             .add(herbariumLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel7Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(herbariumTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-                            .add(publicationCombo, 0, 148, Short.MAX_VALUE)
-                            .add(projectCombo, 0, 148, Short.MAX_VALUE)
+                            .add(herbariumTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                            .add(publicationCombo, 0, 132, Short.MAX_VALUE)
+                            .add(projectCombo, 0, 132, Short.MAX_VALUE)
                             .add(jPanel7Layout.createSequentialGroup()
-                                .add(sourceCombo, 0, 148, Short.MAX_VALUE)
+                                .add(sourceCombo, 0, 132, Short.MAX_VALUE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                         .add(19, 19, 19))
                     .add(jPanel7Layout.createSequentialGroup()
@@ -627,8 +635,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             .add(basicPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(basicPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
-                    .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)))
+                    .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)
+                    .add(jPanel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)))
         );
         basicPanelLayout.setVerticalGroup(
             basicPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -681,7 +689,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .add(restoreButton)
                 .add(18, 18, 18)
                 .add(requiredInfoLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 226, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 98, Short.MAX_VALUE)
                 .add(okButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(cancelButton)
@@ -703,7 +711,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                     .add(rememberButton)
                     .add(restoreButton)
                     .add(requiredInfoLabel))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         buttonPanelLayout.linkSize(new java.awt.Component[] {cancelButton, helpButton, okButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -746,7 +754,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             extendedPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(extendedPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
+                .add(jScrollPane6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 909, Short.MAX_VALUE)
                 .addContainerGap())
         );
         extendedPanelLayout.setVerticalGroup(
