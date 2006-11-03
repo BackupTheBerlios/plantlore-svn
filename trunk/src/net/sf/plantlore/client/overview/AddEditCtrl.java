@@ -79,7 +79,7 @@ public class AddEditCtrl {
     private AddEditView view;
     private AuthorManagerView authView;
     private TransformationChangeView transformationView;
-    public final static int MAXIMUM_FRACTION_DIGITS = 3;
+    public final static int MAXIMUM_FRACTION_DIGITS = 6;
     public final static int MAXIMUM_INTEGER_DIGITS = 9;
     private final static Color COLOR_INVALID = Color.RED;
     
