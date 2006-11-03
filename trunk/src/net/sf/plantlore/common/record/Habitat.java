@@ -70,6 +70,11 @@ public class Habitat extends Record implements Deletable {
     //public enum Column {ID, TERRITORY, PHYTOCHORION, NEARESTVILLAGE, QUADRANT, DESCRIPTION, COUNTRY, ALTITUDE, LATITUDE, LONGITUDE, DELETED, NOTE};
     
     @Override
+    public List<String> getNN() {
+    	return asList( DESCRIPTION );
+    }
+    
+    @Override
     public List<String> getForeignKeys() { 
     	return asList( TERRITORY, PHYTOCHORION, NEARESTVILLAGE ); 
     }

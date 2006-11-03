@@ -1027,7 +1027,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     
     private void setLabels() {
         townLabel.setText(L10n.getString("AddEdit.TownLabel")+REQUIRED_STRING);
-        placeDescriptionLabel.setText(L10n.getString("AddEdit.PlaceDescriptionLabel"));
+        placeDescriptionLabel.setText(L10n.getString("AddEdit.PlaceDescriptionLabel")+REQUIRED_STRING);
         yearLabel.setText(L10n.getString("AddEdit.YearLabel")+REQUIRED_STRING);
         taxonLabel.setText(L10n.getString("AddEdit.TaxonLabel")+REQUIRED_STRING);
         

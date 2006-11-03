@@ -25,7 +25,7 @@
       <property column="CDESCRIPTION"
                 length="255"
                 name="description"
-                not-null="false"                
+                not-null="true"                
                 type="java.lang.String"/>   
       <many-to-one name="nearestVillage" 
                    class="net.sf.plantlore.common.record.NearestVillage" 

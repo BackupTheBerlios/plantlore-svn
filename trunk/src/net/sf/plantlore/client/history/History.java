@@ -303,11 +303,10 @@ public class History extends Observable {
 	        // Add restriction to COPERATION column of tHistoryChange table
 	        if (data instanceof Occurrence) {	        	       
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Occurrence)data).getId(), null); 
-                        query.addRestriction(PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,null);
-                        
-                        //Object[] items = {PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,
-                        //PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_AUTHOROCCURRENCE};
-                        //query.addOrRestriction(items);
+                        //query.addRestriction(PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,null);                        
+                        Object[] items = {PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_OCCURRENCE,
+                        PlantloreConstants.RESTR_EQ, "hcol.tableName", null, PlantloreConstants.ENTITY_AUTHOROCCURRENCE};
+                        query.addOrRestriction(items);
 	        } else if (data instanceof Habitat) {	        	        
 		        query.addRestriction(PlantloreConstants.RESTR_EQ, "hc.recordId", null, ((Habitat)data).getId(), null);  
 	        }	

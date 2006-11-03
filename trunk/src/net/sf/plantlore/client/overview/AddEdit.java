@@ -114,7 +114,7 @@ public class AddEdit extends Observable {
     private String occurrenceNote = null;
     private Pair<String, Integer> territoryName;
     private Pair<String, Integer> phytName;
-    private Pair<String, Integer> phytCode;
+    private Pair<String, Integer> phytCode;    
     private String phytCountry;
     private String quadrant = null;
     private Double altitude = null;
@@ -134,7 +134,7 @@ public class AddEdit extends Observable {
     private String habitatNoteOld = null;
     private Pair<String, Integer> territoryNameOld;
     private Pair<String, Integer> phytNameOld;
-    private Pair<String, Integer> phytCodeOld;
+    private Pair<String, Integer> phytCodeOld;    
     private String phytCountryOld;
     private String quadrantOld = null;
     private Double altitudeOld = null;
@@ -1373,6 +1373,10 @@ public class AddEdit extends Observable {
         
         if (!isNotEmpty(phytCode)) {
             return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.CompulsoryPhytochorion"));            
+        }
+        
+        if (!isNotEmpty(habitatDescription)) {
+            return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.CompulsoryDescription"));            
         }
 
         if (!isNotEmpty(project)) {
