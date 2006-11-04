@@ -106,6 +106,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
             restoreButton.setVisible(false);
         }
 
+        confirmationLabel.setVisible(false);
         this.pack();
     }
     
@@ -154,6 +155,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
         jScrollPane4 = new javax.swing.JScrollPane();
         locationNoteArea = new javax.swing.JTextArea();
         clearLocationButton = new javax.swing.JButton();
+        confirmationLabel = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
 
@@ -314,6 +316,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         clearLocationButton.setText("Vyma\u017e");
 
+        confirmationLabel.setFont(new java.awt.Font("Dialog", 1, 14));
+        confirmationLabel.setForeground(new java.awt.Color(0, 204, 0));
+        confirmationLabel.setText("jLabel1");
+
         org.jdesktop.layout.GroupLayout jPanel5Layout = new org.jdesktop.layout.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -348,14 +354,16 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                             .add(jPanel5Layout.createSequentialGroup()
                                 .add(gpsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(clearLocationButton))
+                                .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(clearLocationButton)
+                                    .add(confirmationLabel)))
                             .add(jPanel5Layout.createSequentialGroup()
                                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(jPanel5Layout.createSequentialGroup()
                                         .add(placeDescriptionLabel)
                                         .add(434, 434, 434))
                                     .add(jPanel5Layout.createSequentialGroup()
-                                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
                                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                                     .add(locationNoteLabel)
@@ -399,7 +407,10 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(gpsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(clearLocationButton))
+                    .add(jPanel5Layout.createSequentialGroup()
+                        .add(clearLocationButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 31, Short.MAX_VALUE)
+                        .add(confirmationLabel)))
                 .addContainerGap())
         );
 
@@ -1396,6 +1407,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JButton checklistButton;
     protected javax.swing.JButton clearLocationButton;
     protected javax.swing.JButton clearOccurrenceButton;
+    protected javax.swing.JLabel confirmationLabel;
     private javax.swing.ButtonGroup convertCoordinatesGroup;
     protected javax.swing.JLabel coordinateSystemLabel;
     protected javax.swing.JLabel countryLabel;

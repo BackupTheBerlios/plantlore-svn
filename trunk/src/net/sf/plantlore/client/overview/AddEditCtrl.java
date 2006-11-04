@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -651,6 +653,7 @@ public class AddEditCtrl {
         private String JUST_THIS = L10n.getString("AddEdit.JustThis");
         private String CANCEL = L10n.getString("Common.Cancel");
         private String TITLE = L10n.getString("AddEdit.QuestionDialogTitle");
+        private static final int CONFIRMATION_DELAY = 2500;
         
         public OkButtonAction() {
             putValue(NAME, L10n.getString("Common.Ok"));
@@ -729,22 +732,20 @@ public class AddEditCtrl {
                     }
                 } else {//inAddMode
                     Task task = model.storeRecord(true);
-                    /*
-                     * The following announcement should be removed (it was a RFE)..
-                     */
                     task.setPostTaskAction(new PostTaskAction() {
                         public void afterStopped(Object value) {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    JOptionPane.showMessageDialog(view,L10n.getString("AddEdit.AddConfirmation"),L10n.getString("AddEdit.AddConfirmationTitle"),JOptionPane.INFORMATION_MESSAGE);
+                                    view.confirmationLabel.setText(L10n.getString("AddEdit.AddConfirmation"));
+                                    view.confirmationLabel.setForeground(new Color(0, 204, 0));
+                                    view.confirmationLabel.setVisible(true);
+                                    Timer timer = new Timer();
+                                    timer.schedule(new LabelHider(), CONFIRMATION_DELAY);
                                 }
                             });
                         }
                     });
                     Dispatcher.getDispatcher().dispatch(task, view, false);
-                     /**/
-                    //view.setVisible(false);
-
                 }
             } catch (RemoteException ex) {
                 logger.error("Remote problem: "+ex);
@@ -757,6 +758,11 @@ public class AddEditCtrl {
             }
         }//mouseClicked
             
+        class LabelHider extends TimerTask {
+            public void run() {
+                view.confirmationLabel.setVisible(false);
+            }            
+        }
     }//OkButtonListener
     
     class CancelButtonAction extends AbstractAction {

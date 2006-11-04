@@ -1945,18 +1945,6 @@ public class AddEdit extends Observable {
         notifyObservers( getDefaultValues(false) );
     }
 
-    
-
-
-    /* 
-     *
-     * This `Netbeans 5.0` is a real shit . Thank God to IBM for their vastly superior Eclipse 3.1
-     * What Netbeans cannot do properly:
-     * 1. indent the code automatically (when inserted...),
-     * 2. find usages (invoked on a method definition)
-     * 3. refactor method names
-     *
-     */
 }
 
 
