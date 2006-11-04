@@ -1598,6 +1598,9 @@ public class AppCoreCtrl {
         /** Listnes to the enter key pressed in overview and invokes Detail. */
 	class OverviewKeyListener implements KeyListener {
 		public void keyTyped(KeyEvent e) {
+                    if (! model.loggedIn())
+                        return;
+                    
 			if (e.getKeyText(e.getKeyChar()).equals("Space"))
 				model.invertSelectedOnCurrentRow();
 			if (e.getKeyText(e.getKeyChar()).equals("Enter")) {

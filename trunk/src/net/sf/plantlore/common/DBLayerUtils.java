@@ -409,13 +409,15 @@ public class DBLayerUtils {
 			// Equal properties.
 			for(String property : record.getProperties()) {
 				Object value = record.getValue(property);
-				if( value != null ) 
+				if( value != null ) {
 					query.addRestriction(RESTR_EQ, property, null, value, null);
+                                }
 			}
 			// Equal foreign keys (by their ID's)!
 			for(String key : record.getForeignKeys() ) {
 				Record subrecord = (Record) record.getValue(key);
-				query.addRestriction(RESTR_EQ, key, null, subrecord, null);
+                                if (subrecord != null) //the query won't find a record with no publication associated if restriction "publication = null" added...
+                                    query.addRestriction(RESTR_EQ, key, null, subrecord, null);
 			}
 			
 			// Is there such record?

@@ -840,9 +840,13 @@ public class AddEdit extends Observable {
             temp.setTime(time);
             c.set(Calendar.HOUR_OF_DAY,temp.get(Calendar.HOUR_OF_DAY));
             c.set(Calendar.MINUTE,temp.get(Calendar.MINUTE));
+            c.set(Calendar.SECOND,0);
+            c.set(Calendar.MILLISECOND,0);
         } else {
             c.set(Calendar.HOUR_OF_DAY,0);
             c.set(Calendar.MINUTE,1); //so that we avoid possible problems with strong inequality when searching - we set the from minute in search by default to 0
+            c.set(Calendar.SECOND,0);
+            c.set(Calendar.MILLISECOND,0);
         }
         occ.setIsoDateTimeBegin(c.getTime());
         
@@ -1322,7 +1326,7 @@ public class AddEdit extends Observable {
      *
      * @return Pair<Boolean,String> where the Boolean is true if the data is fine, otherwise it is false in which case the String contains a message for the user
      */
-    public Pair<Boolean,String> checkData() throws RemoteException {
+    public Pair<Boolean,String> checkData() throws RemoteException, DBLayerException {
         if (authorList.size() < 1)
             return new Pair<Boolean,String>(false, L10n.getString("AddEdit.CheckMessage.AtLeastOneAuthor"));
         else {
@@ -1415,6 +1419,63 @@ public class AddEdit extends Observable {
         
         if (!latitudeValid) {
                 return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.InvalidLatitude"));            
+        }
+        
+        DBLayerUtils dlu = new DBLayerUtils(database);
+        NearestVillage v;
+        Phytochorion p;
+        Territory t;
+        Habitat h = new Habitat();
+        v = (NearestVillage)dlu.getObjectFor(village.getSecond(),NearestVillage.class);
+        p = (Phytochorion)dlu.getObjectFor(phytCode.getSecond(),Phytochorion.class);
+        t = (Territory)dlu.getObjectFor(territoryName.getSecond(),Territory.class);                    
+        if (altitude != null) h.setAltitude(altitude);
+        if (phytCountry != null) h.setCountry(phytCountry);
+        if (habitatDescription != null) h.setDescription(habitatDescription);
+        if (latitude != null) h.setLatitude(latitude);
+        if (longitude != null) h.setLongitude(longitude);
+        h.setNearestVillage(v);
+        if (habitatNote != null)h.setNote(habitatNote);
+        h.setPhytochorion(p);
+        if (quadrant != null) h.setQuadrant(quadrant);
+        h.setTerritory(t);
+        h.setDeleted(0);
+
+        Record rec = dlu.findMatchInDB(h);
+
+        if (rec != null) {
+            logger.debug("HABITAT FOUND in db");
+            h = (Habitat) rec;
+            int aoTmpId = 0;
+            for (int j = 0; j < taxonList.size(); j++) {
+                logger.debug("Checking occurrence");
+                Occurrence occ = prepareNewOccurrence(taxonList.get(j), h);//share the habitat
+                rec = dlu.findMatchInDB(occ);
+                if (rec == null) { //the occurrence is not yet in the db. it's safe to continue
+                    logger.debug("Occurrence NOT in db, continuing");
+                    continue;
+                }
+
+                occ = (Occurrence) rec;
+                //the occurrence is in the db. -> check the author occurrences 
+
+                for (int k = 0; k < authorList.size(); k++) {
+                    Pair<Pair<String,Integer>,String> pTmp = authorList.get(k);
+                    AuthorOccurrence aoTmp = new AuthorOccurrence();
+                    aoTmp.setRole(pTmp.getSecond());
+                    aoTmp.setAuthor((Author)dlu.getObjectFor(pTmp.getFirst().getSecond(),Author.class));
+                    aoTmp.setNote(resultRevision.get(k));
+                    aoTmp.setOccurrence(occ);
+                    aoTmp.setDeleted(0);
+                    logger.debug("Checking author occurrence");
+                    rec = dlu.findMatchInDB(aoTmp);
+                    if (rec != null) { //found a duplicate, announce it
+                        logger.debug("DUPLICATE found");
+                        return new Pair<Boolean,String>(false,L10n.getString("AddEdit.CheckMessage.TryingToInsertDuplicate"));
+                    } else
+                        logger.debug("Author occurrence NOT in db. yet");
+                }//for authorList
+            }// for taxonList                                    
         }
         
         return new Pair<Boolean,String>(true,"");
