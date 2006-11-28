@@ -17,6 +17,14 @@ public class DatabaseSettings {
 	private int port;
 	private String database;
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return connectionStringPrefix + " ~ " + connectionStringSuffix;
+	}
+	
 	/**
 	 * Create new Database settings.
 	 * 

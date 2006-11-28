@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -15,6 +17,7 @@ import java.util.Observable;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -66,7 +69,7 @@ public class ServerMng extends Observable {
 	
 	/** The server control interface. */
 	private Server server;
-	private ServerSettings settings;
+	private ServerSettings settings, defaultSettings;
 	
 	/** List of connected clients. */
 	private ConnectionInfo[] clients;
@@ -74,7 +77,9 @@ public class ServerMng extends Observable {
 	private boolean didWeCreateTheServer = false;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getPackage().getName());
-	private String settingsFileName; {
+	public static final String settingsFileName;
+	
+	static {
 		String userHome = System.getProperty("user.home"),
 		osName = System.getProperty("os.name"),
 		plantloreDirName = (osName.equals("Linux") ? "." : "") + PLANTLORE, 
@@ -91,8 +96,48 @@ public class ServerMng extends Observable {
 	 * Create a new Server Manager.
 	 */
 	public ServerMng() {
+		this(null);
+	}
+	
+	public ServerMng(ServerSettings defaultSettings) {
+		this.defaultSettings = defaultSettings;
 		getSettings(true);
 		RMI.addToCodebase( Utils.getCodeBasePath() );
+	}
+	
+	
+	public static ServerSettings generateDefaultServerSettings() {
+		return new ServerSettings(RMIServer.DEFAULT_PORT, 3, 32, 2, 
+				new DatabaseSettings("postgresql", 5432, null));
+	}
+	
+	public static ServerSettings loadSettingsFromFile(String fileName) 
+	throws DocumentException, FileNotFoundException, IOException {
+		ServerSettings settings = null;
+		Reader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
+		SAXReader saxReader = new SAXReader();
+		Document document = saxReader.read( reader );
+		reader.close();
+
+		Node server = document.selectSingleNode("/config/server");
+		Number portNumber = server.numberValueOf("port"),
+		connectionsNumber = server.numberValueOf("connections"),
+		peripNumber = server.numberValueOf("perip");
+		int port = (portNumber == null) ? RMIServer.DEFAULT_PORT : portNumber.intValue(),
+				connections = (connectionsNumber == null || connectionsNumber.intValue() <= 1) ? 16 : connectionsNumber.intValue(),
+						perip = (peripNumber == null || peripNumber.intValue() <= 1) ? 2 : peripNumber.intValue();
+
+		Node database = server.selectSingleNode("database");
+
+		String databaseType = database.valueOf("engine"),
+		databaseParameter = database.valueOf("parameter");
+		Number databasePortNumber = database.numberValueOf("port");
+		int databasePort = (databasePortNumber == null) ? 0 : databasePortNumber.intValue();
+
+		settings = new ServerSettings(port, 3, connections, perip, 
+				new DatabaseSettings(databaseType, databasePort, databaseParameter));
+		return settings;
 	}
 	
 	/**
@@ -106,37 +151,10 @@ public class ServerMng extends Observable {
 			return settings;
 
 		// Create some default settings.
-		settings = new ServerSettings(RMIServer.DEFAULT_PORT, 3, 32, 2, 
-				new DatabaseSettings("postgresql", 5432, null));
-		
 		try {
-			Reader reader = new BufferedReader(
-					new InputStreamReader(new FileInputStream(settingsFileName), "UTF-8"));
-			SAXReader saxReader = new SAXReader();
-            Document document = saxReader.read( reader );
-            reader.close();
-            
-            Node server = document.selectSingleNode("/config/server");
-            Number portNumber = server.numberValueOf("port"),
-            connectionsNumber = server.numberValueOf("connections"),
-            peripNumber = server.numberValueOf("perip");
-            int port = (portNumber == null) ? RMIServer.DEFAULT_PORT : portNumber.intValue(),
-            connections = (connectionsNumber == null || connectionsNumber.intValue() <= 1) ? 16 : connectionsNumber.intValue(),
-            perip = (peripNumber == null || peripNumber.intValue() <= 1) ? 2 : peripNumber.intValue();
-            
-            Node database = server.selectSingleNode("database");
-            
-            String databaseType = database.valueOf("engine"),
-            databaseParameter = database.valueOf("parameter");
-            Number databasePortNumber = database.numberValueOf("port");
-            int databasePort = (databasePortNumber == null) ? 0 : databasePortNumber.intValue();
-            
-            settings = new ServerSettings(port, 3, connections, perip, 
-            		new DatabaseSettings(databaseType, databasePort, databaseParameter));
-            
-            
+			settings = defaultSettings != null ? defaultSettings : loadSettingsFromFile(settingsFileName);
 		} catch(Exception e) {
-			logger.error("Unable to load settings. " + e.getMessage());
+			settings = generateDefaultServerSettings();
 		}
 		return settings;
 	}

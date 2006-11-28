@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @author fraktalek
+ * @author fraktalek, krater
  */
 public class Dispatcher {
     private Logger logger = Logger.getLogger(Dispatcher.class.getPackage().getName());
@@ -26,22 +26,12 @@ public class Dispatcher {
     private static Dispatcher dispatcher = new Dispatcher();
     private static ProgressBarManager pbm;
     
+    
     private Dispatcher() {
     }
     
     
-    public synchronized boolean justDispatch(Task task) {
-        if (taskRunning) {
-            logger.debug("Dispatcher: task already RUNNING, RETURNING.");
-            return false;
-        }
-        
-        taskRunning = true;
-        task.start();
-
-        return true;
-    }
- 
+   
     public synchronized boolean dispatch(Task task, JFrame parent, boolean stoppable) {
         if (taskRunning) {
             logger.debug("Dispatcher: task already RUNNING, RETURNING.");

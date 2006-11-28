@@ -1,7 +1,6 @@
 package net.sf.plantlore.server;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 import net.sf.plantlore.middleware.DBLayer;
 import net.sf.plantlore.middleware.RemoteDBLayerFactory;

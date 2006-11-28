@@ -16,6 +16,19 @@ public class ServerSettings {
 	private int connectionsPerIP;
 	private DatabaseSettings databaseSettings;
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return 
+			"Port = " + port + 
+			" Timeout = " + timeout + 
+			" Connections Total = " + connectionsTotal + 
+			" Connections Per IP = " + connectionsPerIP +
+			" Database settings = " + databaseSettings;
+	}
+	
 	/**
 	 * Create new Server Settings.
 	 * 
