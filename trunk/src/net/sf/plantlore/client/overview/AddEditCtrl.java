@@ -60,6 +60,9 @@ import org.apache.log4j.Logger;
 
 import net.sf.plantlore.client.checklist.ChecklistCtrl;
 import net.sf.plantlore.client.checklist.ChecklistView;
+import net.sf.plantlore.client.synonyms.PlantSearch;
+import net.sf.plantlore.client.synonyms.PlantSearchCtrl;
+import net.sf.plantlore.client.synonyms.PlantSearchView;
 import net.sf.plantlore.common.AutoComboBoxNG3;
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
@@ -87,6 +90,7 @@ public class AddEditCtrl {
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
     private ChecklistView checklistView;
+    private PlantSearchView plantSearchView;
     
     
     /** 
@@ -141,7 +145,8 @@ public class AddEditCtrl {
         //------- Buttons --------
         view.okButton.setAction(new OkButtonAction());
         view.cancelButton.setAction(new CancelButtonAction());
-        view.checklistButton.setAction(new ChecklistAction());        
+        view.checklistButton.setAction(new ChecklistAction());
+        //TODO---->view.synonymSearchButton.setAction(new PlantSearchAction());
         view.clearLocationButton.setAction(new ClearLocationAction());
         view.clearOccurrenceButton.setAction(new ClearOccurrenceAction());
         view.calendarButton.setAction(new CalendarAction());
@@ -160,6 +165,22 @@ public class AddEditCtrl {
         
     }
     
+    
+    
+    class PlantSearchAction extends StandardAction {
+		public PlantSearchAction() {
+			super("PlantSearch");
+		}
+		
+		public void actionPerformed(ActionEvent isUseless) {
+			if(plantSearchView == null) {
+				PlantSearch plantSearchModel = new PlantSearch( model.getDatabase() );
+				plantSearchView = new PlantSearchView(view, plantSearchModel);
+				new PlantSearchCtrl(plantSearchView, plantSearchModel, (AutoTextArea) view.taxonTextArea);
+			}
+			plantSearchView.setVisible(true);
+		}
+    }
     
     class ChecklistAction extends AbstractAction {
     	public ChecklistAction() {
