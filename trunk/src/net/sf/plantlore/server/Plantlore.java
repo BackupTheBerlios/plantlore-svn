@@ -35,7 +35,12 @@ public class Plantlore {
 	
 	private static final String LOGGER_PROPS = "net/sf/plantlore/config/log4j.properties";
 	
-	
+	/**
+	 * 
+	 * @param option	The option (parameter) to look for.
+	 * @param args	The list of arguments the program starts with.
+	 * @return true if <i>option</i> or <i>-option</i> or <i>--option</i> is among the <code>args</code>.
+	 */
 	public static boolean hasOption(String option, String[] args) {
 		for(String arg : args)
 			if(arg.equalsIgnoreCase(option) || arg.equalsIgnoreCase("-"+option) || arg.equalsIgnoreCase("--"+option))
@@ -43,7 +48,13 @@ public class Plantlore {
 		return false;
 	}
 	
-	
+	/**
+	 * 
+	 * @param parameterName	The name of the parameter whose value we're interested in.
+	 * @param args	The list of arguments the program starts with.
+	 * @return	The value of the parameter. I.e. the string following right after the <code>parameterName</code> 
+	 * in the list of <code>args</code>.
+	 */
 	public static String parameterValue(String parameterName, String args[]) {
 		for(int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -55,12 +66,23 @@ public class Plantlore {
 		return null;
 	}
 
-	
+	/**
+	 * 
+	 * @param replacement	The value that is considered.
+	 * @param defaultValue	The default value.
+	 * @return <code>defaultValue</code> if <code>replacement</code> is <code>null</code> or empty.
+	 */
 	public static String replaceIfValid(String replacement, String defaultValue) {
 		return (replacement != null && replacement.length() > 0) ? replacement : defaultValue;
 	}
 	
-	
+	/**
+	 * 
+	 * 
+	 * @param replacement	The value that is considered.
+	 * @param defaultValue	The default value.
+	 * @return <code>defaultValue</code> if <code>replacement</code> is <code>null</code> or empty.
+	 */
 	public static int replaceIfValid(String replacement, int defaultValue) {
 		if(replacement != null) {
 			try {
@@ -70,6 +92,7 @@ public class Plantlore {
 		}
 		return defaultValue;
 	}
+	
 	
 
 	public static void main(String[] args) {
@@ -81,7 +104,8 @@ public class Plantlore {
         boolean
         	stopServer = Plantlore.hasOption("terminate", args),
         	whoIsThere = Plantlore.hasOption("who", args),
-        	noGUI = Plantlore.hasOption("nogui", args) || stopServer || whoIsThere;
+        	noGUI = Plantlore.hasOption("nogui", args) || stopServer || whoIsThere,
+        	silent = Plantlore.hasOption("silent", args);
         
         ServerSettings settings;
 		try {
@@ -127,6 +151,15 @@ public class Plantlore {
 		// Get a logger so as to be able to report problems.
 		Logger logger = Logger.getLogger(Plantlore.class.getPackage().getName());
 		
+		logger.info("Plantlore Server v1.0");
+		logger.debug("Initializing...");
+		logger.debug(" # parameters parsed (using stored/default values where missing)");
+		logger.debug("      Server Settings = " + settings);
+		logger.debug("      Password = " + password);
+		logger.debug("      Host = " + host);
+		logger.debug("      NoGUI = " + noGUI);
+		logger.debug("      Terminate = " + stopServer);
+		logger.debug("      Who's there = " + whoIsThere);
 
         /*=====================================================================
          * 
@@ -135,13 +168,39 @@ public class Plantlore {
          *=====================================================================*/
         
 		final ServerMng serverManager = new ServerMng(settings);
+		logger.debug(" # Server Manager created");
+		
+		// PRINT THE LIST OF CONNECTED USERS
+		if( whoIsThere ) {
+			Task
+				connectToServerTask = serverManager.createConnectToRunningServerTask(host, port, password),
+				updateListOfClients = serverManager.createUpdateConnectedUsersTask(),
+				printListOfClients = new Task("Print the list of clients.") {
+					@Override
+					public Object task() throws Exception {
+						for( ConnectionInfo client : serverManager.getConnectedUsers())
+							setStatusMessage( client.toString() );
+						return null;
+					}
+				};
+			if( !silent )
+				new PlainProgressMonitor().registerTask(connectToServerTask, updateListOfClients, printListOfClients);
+			
+			logger.debug("Information about the connected clients will be printed.");
+			
+			SuperDispatcher.enqueueMultitask(connectToServerTask, updateListOfClients, printListOfClients);
+			return;
+		}
 		
 		// TERMINATE A RUNNING SERVER
         if( stopServer ) {
         	Task 
         		connectToServerTask = serverManager.createConnectToRunningServerTask(host, port, password),
         		terminateTheServerTask = serverManager.createTerminateServerTask();
-        	new PlainProgressMonitor(logger).registerTask(connectToServerTask, terminateTheServerTask);
+        	if( !silent )
+        		new PlainProgressMonitor().registerTask(connectToServerTask, terminateTheServerTask);
+        	
+        	logger.debug("The Server will be terminated.");
         	
         	SuperDispatcher.enqueueMultitask(connectToServerTask, terminateTheServerTask);
         	return;
@@ -155,7 +214,10 @@ public class Plantlore {
         // CREATE A NEW SERVER
         if(noGUI) {
         	Task startNewServerTask = serverManager.createNewServerTask(password);
-        	new PlainProgressMonitor(logger).registerTask(startNewServerTask);
+        	if( !silent)
+        		new PlainProgressMonitor().registerTask(startNewServerTask);
+        
+        	logger.debug("The Server will be created and started with the supplied settings.");
         	
         	SuperDispatcher.enqueue(startNewServerTask);
         	return;
@@ -163,18 +225,22 @@ public class Plantlore {
         else {
     		// Set beautiful system look & feel.
             try { 
+            	logger.debug("Using different look&feel...");
                 UIManager.setLookAndFeel(new PlasticXPLookAndFeel()); 
             } catch (Exception e) { e.printStackTrace(); JFrame.setDefaultLookAndFeelDecorated(true); }
             
    		 	// Initialize Help
             try {
+            	logger.debug("Initializing help...");
                 PlantloreHelp.initialize();
             } catch (PlantloreException e) {}
             
             // Disable reconnect
+            logger.debug("Disabling reconnect for good...");
             DefaultExceptionHandler.disableReconnect();
             
             // Open the Dialog
+            logger.debug("Opening the dialog...");
         	java.awt.EventQueue.invokeLater(new Runnable(){
         		public void run() {
         			ServerCreateView view = new ServerCreateView(serverManager);

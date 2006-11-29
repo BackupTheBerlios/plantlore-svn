@@ -29,6 +29,7 @@ public abstract class Task extends Observable {
     private String statusMessage = "";
     private boolean determinate;
     private PostTaskAction action;
+    private String name;
     
     /** Creates new Task in determinate mode.
      */
@@ -42,6 +43,15 @@ public abstract class Task extends Observable {
      */
     public Task() {
         determinate = false;
+    }
+    
+    /**
+     * Create a new task with a name. This can greatly simplify identification of tasks.
+     * 
+     * @param name	The name or description of the task.
+     */
+    public Task(String name) {
+    	this.name = name;
     }
     
     public void setPostTaskAction(PostTaskAction action) {
@@ -280,7 +290,9 @@ public abstract class Task extends Observable {
     }
     
     public String toString() {
-        return "Task("+this.hashCode()+")";
+    	if(name == null)
+    		return "Task("+this.hashCode()+")";
+    	return name;
     }
     
 }

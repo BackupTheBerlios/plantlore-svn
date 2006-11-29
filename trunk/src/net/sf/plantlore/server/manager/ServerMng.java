@@ -105,12 +105,21 @@ public class ServerMng extends Observable {
 		RMI.addToCodebase( Utils.getCodeBasePath() );
 	}
 	
-	
+	/**
+	 * 
+	 * @return	Generate factory settings (default values).
+	 */
 	public static ServerSettings generateDefaultServerSettings() {
 		return new ServerSettings(RMIServer.DEFAULT_PORT, 3, 32, 2, 
 				new DatabaseSettings("postgresql", 5432, null));
 	}
 	
+	/**
+	 * Obtain the previously stored settings from a file.
+	 * 
+	 * @param fileName	the name of the file where the server settings dwell
+	 * @return	The server settings revived from the supplied file.
+	 */
 	public static ServerSettings loadSettingsFromFile(String fileName) 
 	throws DocumentException, FileNotFoundException, IOException {
 		ServerSettings settings = null;
@@ -170,12 +179,12 @@ public class ServerMng extends Observable {
 		
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("config"),
-		server = config.addElement("server");
-		server.addElement("port").setText( "" + settings.getPort() );
-		server.addElement("connections").setText( "" + settings.getConnectionsTotal() );
-		server.addElement("perip").setText( "" + settings.getConnectionsPerIP() );
+		serverNode = config.addElement("server");
+		serverNode.addElement("port").setText( "" + settings.getPort() );
+		serverNode.addElement("connections").setText( "" + settings.getConnectionsTotal() );
+		serverNode.addElement("perip").setText( "" + settings.getConnectionsPerIP() );
 		
-		Element db = server.addElement("database");
+		Element db = serverNode.addElement("database");
 		db.addElement("engine").setText( settings.getDatabaseSettings().getDatabase() );
 		db.addElement("port").setText( "" + settings.getDatabaseSettings().getPort() );
 		db.addElement("parameter").setText(settings.getDatabaseSettings().getConnectionStringSuffix());
@@ -212,7 +221,7 @@ public class ServerMng extends Observable {
 	 * @param password	The password protecting the access to the server.
 	 */
 	public Task createNewServerTask(final String password) {
-		return new Task() {
+		return new Task("Create a new Plantlore Server and start it.") {
 			public Object task() throws Exception {
 				logger.debug("Creating a new server at localhost:" + settings.getPort());
 				setStatusMessage(L10n.getString("Server.Info.CreatingNewServer"));
@@ -246,7 +255,7 @@ public class ServerMng extends Observable {
 	 * @param password The password to gain the access to the server.
 	 */
 	public Task createConnectToRunningServerTask(final String host, final int port, final String password) {
-		return new Task() {
+		return new Task("Connect to a running Plantlore Server. The Server will be available via this Server Manager.") {
 			public Object task() throws Exception {
 				logger.info("Connecting to a running server at " +host+":"+port);
 				setStatusMessage(L10n.getString("Server.Info.ConnectingToServer"));
@@ -282,7 +291,7 @@ public class ServerMng extends Observable {
 	 * 
 	 */
 	public Task createUpdateConnectedUsersTask() {
-		return new Task() {
+		return new Task("Update the list of currently connected clients.") {
 			public Object task() throws Exception {
 				if(server == null) {
 					fireStopped(null);
@@ -319,7 +328,7 @@ public class ServerMng extends Observable {
 	 * @param client The client to be kicked from the server.
 	 */
 	public Task createKickTask(final ConnectionInfo client) {
-		return new Task() {
+		return new Task("Kick the selected client (" + client + ")") {
 			public Object task() throws Exception {
 				if(server == null || client == null) {
 					fireStopped(null);
@@ -349,7 +358,7 @@ public class ServerMng extends Observable {
 	 * <b>Warning:</b> This will immediately kick all connected clients.
 	 */
 	public Task createTerminateServerTask()  {
-		return new Task() {
+		return new Task("Terminate the server immediately.") {
 			public Object task() throws Exception {
 				
 				setStatusMessage(L10n.getString("Server.Info.TerminatingServer"));

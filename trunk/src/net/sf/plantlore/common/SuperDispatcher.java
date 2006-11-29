@@ -33,6 +33,11 @@ public class SuperDispatcher implements Observer {
     	public TaskInfo followingTask;
     	public Object result;
     	public TaskStatus status;
+    	public Exception problem;
+    	
+    	public TaskInfo(Task task) {
+    		this(task, true);
+    	}
     	
     	public TaskInfo(Task task, boolean silent) {
     		this.task = task;
@@ -40,10 +45,16 @@ public class SuperDispatcher implements Observer {
     		followingTask = null;
     		result = null;
     		status = TaskStatus.Waiting;
+    		problem = null;
+    	}
+    	
+    	@Override
+    	public String toString() {
+    		return "<" + task.toString() + "[" + status + "]>" + (followingTask != null ? followingTask.toString() : "");
     	}
     }
 
-    
+    // Nobody but me will be able to have an instance of this class.
     private SuperDispatcher() { }
     
     
@@ -51,30 +62,27 @@ public class SuperDispatcher implements Observer {
     private void dispatch(TaskInfo next) {
     	current = next;
     	if(current != null) {
-    		logger.info("Dispatching task " + current.task);
+    		logger.info("Dispatching task " + current + "...");
     		current.status = TaskStatus.Working;
 			current.task.addObserver(this);
 			current.task.start();
     	}
     }
     
-    private void dispatchNext() {
-    	if(current != null && current.followingTask != null)
-    		dispatch(current.followingTask);
-    	else
-    		dispatch( taskQueue.poll() );
-    }
-    
     
     private void tryToDispatchNextTask() {
     	if( current == null ) 
-    		dispatchNext();
+    		dispatch( taskQueue.poll() ); // Dispatch the next independent task.
     	else {
+    		// current != null
     		switch( current.status ) {
     		case Cancelled:
     		case Crashed:
+    			dispatch( taskQueue.poll() ); // Dispatch the next independent task - the multitask has crashed!
+    			break;
     		case Completed:
-    			dispatchNext();
+    			// Continue with the multitask (if possible) or dispatch the next independent task.
+    			dispatch( current.followingTask != null ? current.followingTask : taskQueue.poll() );
     			break;
     		}
     	}
@@ -84,46 +92,65 @@ public class SuperDispatcher implements Observer {
     private synchronized void enqueueNewMultitask(Task...tasks) {
     	TaskInfo previous = null;
     	for( Task t : tasks ) {
-    		TaskInfo info = new TaskInfo(t, true);
+    		TaskInfo info = new TaskInfo(t);
     		if(previous != null)
-    			previous.followingTask = info;
+    			previous.followingTask = info; // Link the tasks of the multitask.
+    		else
+    			taskQueue.offer(info); // Enqueue the first task of the multitask into the Task-Queue
     		previous = info;
-    		taskQueue.offer(info);
     	}
-    	logger.info("New multitask enqueued.");
+    	logger.debug("New multitask enqueued: " + taskQueue.peek());
     	tryToDispatchNextTask();
     }
     
     
     private synchronized void enqueueIndependentTasks(Task...tasks) {
-    	for( Task t : tasks )
-    		taskQueue.offer( new TaskInfo(t, true) );
-    	logger.info("New tasks enqueued.");
+    	for( Task t : tasks ) {
+    		TaskInfo info;
+    		taskQueue.offer( info = new TaskInfo(t) );
+    		logger.debug("New task enqueued: " + info);
+    	}
     	tryToDispatchNextTask();
     }
     
     
+    private void undispatch(TaskStatus status) {
+    	undispatch(status, null);
+    }
     
+    private void undispatch(TaskStatus status, Exception problem) {
+    	if( status == TaskStatus.Crashed || status == TaskStatus.Cancelled ) {
+    		for( TaskInfo info = current.followingTask; info != null; info.status = TaskStatus.Cancelled, info = info.followingTask );
+    		current.problem = problem;
+    	}
+    	else if( status == TaskStatus.Completed )
+    		current.result = current.task.getValue();
+    	
+    	current.status = status;
+		current.task.deleteObserver(this);
+		
+		if(problem != null) {
+			logger.error("SuperDispatcher: " + current + " crashed. " + problem.getMessage());
+			logger.error("SuperDispatcher: LocalizedMsg = \"" + DefaultExceptionHandler.problemDescription(problem) + "\"");
+		}
+		else
+			logger.debug("SuperDispatcher: " + current + " completed. Result = " + current.result);
+		
+		tryToDispatchNextTask();
+    }
+    
+    
+    // Nobody but this class will be able to call this method - because nobody else can have an instance of this class.
+    // Everyone will see only the static methods.
 	public synchronized void update(Observable task, Object msg) {
 		// The current task has crashed!
-		if( msg instanceof Exception ) {
-			current.status = TaskStatus.Crashed;
-			for( TaskInfo info = current.followingTask; info != null; info.status = TaskStatus.Cancelled, info = info.followingTask );
-			current.task.deleteObserver(this);
-			logger.info("Task " + current.task + " crashed! " + msg);
-			tryToDispatchNextTask();
-		}
+		if( msg instanceof Exception )
+			undispatch(TaskStatus.Crashed, (Exception)msg);
 		// The current task has terminated successfully.
 		if( msg instanceof Pair) {
-	          Pair p = (Pair)msg;
-	          Object command = p.getFirst();
-	          if( command instanceof Task.Message &&  (Task.Message)command == Task.Message.STOPPING ) {
-	        	  current.task.deleteObserver(this);
-	        	  current.status = TaskStatus.Completed;
-	        	  current.result = current.task.getValue();
-	        	  logger.info("Task " + current.task + " completed! Returned value is " + current.result);
-	        	  tryToDispatchNextTask();
-	          }
+	          Object command = ((Pair)msg).getFirst();
+	          if( command instanceof Task.Message &&  (Task.Message)command == Task.Message.STOPPING )
+	        	  undispatch(TaskStatus.Completed);
 		}
 
 	}
