@@ -84,7 +84,7 @@ public class AuthorTableModel extends AbstractTableModel {
         //get the last row and update it's text to Remove
 //        Object[] rowTmp = data.get(data.size()-1);
 //        ((JButton)rowTmp[2]).setText("Remove");
-        
+        data.get(data.size()-1)[1] = "collected";//again, should be a constant. now it is just a string defined in AppCore.loadAuthorRoles(). No time to do it nice.
         data.add(row);
 
         //we fire that in case someone would like to register a table model listener with us

@@ -1574,6 +1574,9 @@ public class AddEdit extends Observable {
         authorList.add(new Pair<Pair<String,Integer>,String>(new Pair<String,Integer>("",0),""));
         resultRevision.add(null);
         logger.info("Adding a new author row");
+        
+        //setting default role to collected
+        setAuthorRole(authorList.size()-1,"collected");//the string "collected" is defined in AppCore.loadAuthorRoles() - it should be a constant, let's say a number that is then converted into a localized string and is accessible in one place. but I really don't have the time to implement it
         setChanged();
         notifyObservers(new Pair<String,Integer>("addAuthorRow",-1));
     }
