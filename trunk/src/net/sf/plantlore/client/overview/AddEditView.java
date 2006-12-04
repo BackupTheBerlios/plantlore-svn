@@ -551,7 +551,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
 
         clearOccurrenceButton.setText("Vyma\u017e");
 
-        plantSearchButton.setText(java.util.ResourceBundle.getBundle("net/sf/plantlore/l10n/Plantlore").getString("PlantSearch.Search"));
+        plantSearchButton.setText("synonym");
 
         org.jdesktop.layout.GroupLayout jPanel7Layout = new org.jdesktop.layout.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -570,7 +570,7 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
                                 .add(checklistButton)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(plantSearchButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 239, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 293, Short.MAX_VALUE)
                                 .add(clearOccurrenceButton))
                             .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 692, Short.MAX_VALUE))

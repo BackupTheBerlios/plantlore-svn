@@ -617,7 +617,7 @@
                                               <Component id="checklistButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="plantSearchButton" linkSize="21" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="239" max="32767" attributes="0"/>
+                                              <EmptySpace pref="293" max="32767" attributes="0"/>
                                               <Component id="clearOccurrenceButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Component id="jPanel4" min="-2" max="-2" attributes="1"/>
@@ -1072,9 +1072,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="plantSearchButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <ResourceString bundle="net/sf/plantlore/l10n/Plantlore.properties" key="PlantSearch.Search" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                        </Property>
+                        <Property name="text" type="java.lang.String" value="synonym"/>
                       </Properties>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
