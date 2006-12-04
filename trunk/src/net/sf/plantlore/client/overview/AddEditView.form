@@ -161,103 +161,95 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="territoryNameLabel" min="-2" max="-2" attributes="0"/>
-                                          <Component id="quadrantLabel" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="quadrantTextField" linkSize="19" alignment="0" max="32767" attributes="1"/>
-                                          <Component id="territoryNameCombo" linkSize="19" alignment="0" pref="145" max="32767" attributes="1"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="phytNameLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                                           <Component id="countryLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="quadrantLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="phytCountryCombo" max="32767" attributes="1"/>
-                                          <Component id="phytNameCombo" alignment="0" pref="133" max="32767" attributes="1"/>
+                                          <Component id="quadrantTextField" alignment="1" max="32767" attributes="1"/>
+                                          <Component id="phytCountryCombo" linkSize="24" alignment="1" pref="146" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="townLabel" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="territoryNameLabel" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="territoryNameCombo" linkSize="24" min="-2" pref="144" max="-2" attributes="1"/>
+                                              <EmptySpace pref="56" max="32767" attributes="0"/>
+                                              <Component id="phytNameLabel" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="townLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="townComboBox" min="-2" pref="150" max="-2" attributes="1"/>
+                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                          <Component id="townComboBox" max="32767" attributes="1"/>
+                                          <Component id="phytNameCombo" alignment="1" pref="218" max="32767" attributes="1"/>
+                                      </Group>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
+                                      <Component id="gpsPanel" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="clearLocationButton" min="-2" max="-2" attributes="0"/>
+                                          <Component id="confirmationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="gpsPanel" min="-2" max="-2" attributes="1"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="clearLocationButton" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="confirmationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              </Group>
+                                              <Component id="placeDescriptionLabel" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
                                           </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" attributes="0">
-                                                      <Component id="placeDescriptionLabel" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="434" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Group type="102" attributes="0">
-                                                      <Component id="jScrollPane2" pref="578" max="32767" attributes="1"/>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                  </Group>
-                                              </Group>
-                                              <Group type="103" groupAlignment="1" attributes="0">
-                                                  <Component id="locationNoteLabel" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="jScrollPane4" min="-2" pref="286" max="-2" attributes="1"/>
-                                              </Group>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="jScrollPane2" pref="586" max="32767" attributes="1"/>
+                                              <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jScrollPane4" min="-2" pref="286" max="-2" attributes="1"/>
+                                          <Component id="locationNoteLabel" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="countryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="phytCountryCombo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="territoryNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="phytNameCombo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="phytNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="territoryNameCombo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="territoryNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="territoryNameCombo" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="phytNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                      <Component id="townComboBox" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
+                                      <Component id="townLabel" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="quadrantLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="quadrantTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="countryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="placeDescriptionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="locationNoteLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="phytNameCombo" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="townLabel" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
-                                          <Component id="townComboBox" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="phytCountryCombo" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="placeDescriptionLabel" min="-2" max="-2" attributes="0"/>
+                                  <Component id="locationNoteLabel" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jScrollPane4" min="0" pref="0" max="32767" attributes="1"/>
                                   <Component id="jScrollPane2" min="-2" pref="54" max="-2" attributes="1"/>
@@ -265,7 +257,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="gpsPanel" min="-2" max="-2" attributes="1"/>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Component id="clearLocationButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace pref="31" max="32767" attributes="0"/>
                                       <Component id="confirmationLabel" min="-2" max="-2" attributes="0"/>
@@ -628,13 +620,13 @@
                                               <Component id="checklistButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="plantSearchButton" linkSize="21" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="141" max="32767" attributes="0"/>
+                                              <EmptySpace pref="137" max="32767" attributes="0"/>
                                               <Component id="clearOccurrenceButton" linkSize="21" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Component id="jPanel4" min="-2" max="-2" attributes="1"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jScrollPane1" pref="652" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane1" pref="648" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -647,11 +639,11 @@
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="herbariumTextField" alignment="0" pref="132" max="32767" attributes="1"/>
-                                          <Component id="publicationCombo" alignment="0" pref="132" max="32767" attributes="1"/>
-                                          <Component id="projectCombo" alignment="0" pref="132" max="32767" attributes="1"/>
+                                          <Component id="herbariumTextField" alignment="0" pref="136" max="32767" attributes="1"/>
+                                          <Component id="publicationCombo" alignment="0" pref="136" max="32767" attributes="1"/>
+                                          <Component id="projectCombo" alignment="0" pref="136" max="32767" attributes="1"/>
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="sourceCombo" pref="132" max="32767" attributes="1"/>
+                                              <Component id="sourceCombo" pref="136" max="32767" attributes="1"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
