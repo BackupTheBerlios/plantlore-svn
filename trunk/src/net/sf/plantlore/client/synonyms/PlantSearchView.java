@@ -108,8 +108,14 @@ public class PlantSearchView extends javax.swing.JDialog implements Observer {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 Pair<String,Plant>[] plants = model.getResults();
-                if(plants != null)
+                if(plants != null) {
                     results.setListData( plants );
+                    if(plants.length > 0) {
+                    	results.setSelectedIndex(0);
+                    	results.ensureIndexIsVisible(0);
+                    	results.requestFocus();
+                    }
+                }
                 else
                     results.setListData(new Object[0]);
             }

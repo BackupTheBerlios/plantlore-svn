@@ -1997,8 +1997,8 @@ public class AddEdit extends Observable {
             String databaseID = database.getUniqueDatabaseIdentifier();
             return storedValues.get( databaseID );            
         } catch(Exception e) {
-            logger.error("Unable to restore default values! " + e.getMessage());
-            e.printStackTrace();
+            logger.info("Unable to restore default values! (Incompatible version?)" + e.getMessage());
+            //e.printStackTrace();
         }
         return null; 
     }

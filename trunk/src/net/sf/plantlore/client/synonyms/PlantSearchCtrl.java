@@ -10,13 +10,17 @@
 package net.sf.plantlore.client.synonyms;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import net.sf.plantlore.common.AutoTextArea;
 import net.sf.plantlore.common.DefaultCancelAction;
+import net.sf.plantlore.common.Dispatcher;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.StandardAction;
+import net.sf.plantlore.common.Task;
 import net.sf.plantlore.common.record.Plant;
 
 /**
@@ -52,11 +56,21 @@ public class PlantSearchCtrl {
             }
         });
         
+        view.results.addKeyListener(
+        		new KeyAdapter() {
+        			@Override
+        			public void keyTyped(KeyEvent e) {
+        				if(e.getKeyChar() == ' ') // The idiot Java does not fill in the keyCode properly!
+        					view.insert.doClick();
+        			}
+        		});
+        
         plantAbsorber.addPropertyChangeListener(
 				AutoTextArea.ALLOWED_VALUES_CHANGED,
 				new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent arg0) {
-						model.loadPlantsFromDatabase();
+						Task reloadPlants = model.createReloadPlantsFromDatabaseTask();
+						Dispatcher.getDispatcher().dispatch( reloadPlants, view, false );
 					}
 				});
         

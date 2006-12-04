@@ -146,7 +146,7 @@ public class AddEditCtrl {
         view.okButton.setAction(new OkButtonAction());
         view.cancelButton.setAction(new CancelButtonAction());
         view.checklistButton.setAction(new ChecklistAction());
-        //TODO---->view.synonymSearchButton.setAction(new PlantSearchAction());
+        view.plantSearchButton.setAction(new PlantSearchAction());
         view.clearLocationButton.setAction(new ClearLocationAction());
         view.clearOccurrenceButton.setAction(new ClearOccurrenceAction());
         view.calendarButton.setAction(new CalendarAction());
@@ -177,6 +177,9 @@ public class AddEditCtrl {
 				PlantSearch plantSearchModel = new PlantSearch( model.getDatabase() );
 				plantSearchView = new PlantSearchView(view, plantSearchModel);
 				new PlantSearchCtrl(plantSearchView, plantSearchModel, (AutoTextArea) view.taxonTextArea);
+				
+				Task reloadPlants = plantSearchModel.createReloadPlantsFromDatabaseTask();
+				Dispatcher.getDispatcher().dispatch( reloadPlants, plantSearchView, false );
 			}
 			plantSearchView.setVisible(true);
 		}
