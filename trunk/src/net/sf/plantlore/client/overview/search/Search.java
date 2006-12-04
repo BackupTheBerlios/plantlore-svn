@@ -611,7 +611,7 @@ public class Search extends Observable {
     	exportQuery.createAlias(habitatAlias+Habitat.TERRITORY, Record.alias(Territory.class));
     	exportQuery.createAlias(habitatAlias+Habitat.NEARESTVILLAGE, Record.alias(NearestVillage.class));
     	exportQuery.createAlias(habitatAlias+Habitat.PHYTOCHORION, Record.alias(Phytochorion.class));
-    	exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.YEARCOLLECTED);
+    	exportQuery.addOrder(PlantloreConstants.DIRECT_ASC, Occurrence.CREATEDWHEN);
     	for( Restriction restriction : restrictions ) {
     		if(restriction.type == RESTR_BETWEEN)
     			exportQuery.addRestriction(restriction.type, restriction.column, null, null, (Collection)restriction.arg);
@@ -655,7 +655,7 @@ public class Search extends Observable {
             // Add subquery to the query. Compare authoroccurrence.authorid with the result of a subquery (LEALL: <= all(...))
             sq.addRestriction(PlantloreConstants.SUBQUERY_LEALL, AuthorOccurrence.ID, null, subQuery, null);    
             sq.addRestriction(PlantloreConstants.RESTR_EQ, AuthorOccurrence.DELETED, null, 0, null);
-            sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.YEARCOLLECTED); //setridit podle roku
+            sq.addOrder(PlantloreConstants.DIRECT_DESC, "occ."+Occurrence.CREATEDWHEN); //sort by date of creation
             sq.addRestriction(PlantloreConstants.RESTR_EQ, "occ."+Occurrence.DELETED, null, 0, null);
             for (Column column : columns) {
                 switch (column.type) {
