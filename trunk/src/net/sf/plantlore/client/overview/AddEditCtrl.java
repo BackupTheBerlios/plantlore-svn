@@ -84,8 +84,8 @@ public class AddEditCtrl {
     private AddEditView view;
     private AuthorManagerView authView;
     private TransformationChangeView transformationView;
-    public final static int MAXIMUM_FRACTION_DIGITS = 6;
-    public final static int MAXIMUM_INTEGER_DIGITS = 9;
+    public final static int MAXIMUM_FRACTION_DIGITS = 7;//the precision of double is 15 decimal digits, isn't it? therefore 8+7
+    public final static int MAXIMUM_INTEGER_DIGITS = 8;
     private final static Color COLOR_INVALID = Color.RED;
     
     //--------------MODELS AND VIEWS THIS CONTROLLER CREATES-----------------
