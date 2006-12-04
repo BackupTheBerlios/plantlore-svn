@@ -11,6 +11,7 @@ import java.util.Observer;
 import net.sf.plantlore.common.DefaultEscapeKeyPressed;
 import net.sf.plantlore.common.Pair;
 import net.sf.plantlore.common.record.Plant;
+import net.sf.plantlore.l10n.L10n;
 
 /**
  *
@@ -28,6 +29,9 @@ public class PlantSearchView extends javax.swing.JDialog implements Observer {
         
         initComponents();
         setLocationRelativeTo(parent);
+        
+        setTitle(L10n.getString("PlantSearch.Title"));
+        jLabel1.setText(L10n.getString("PlantSearch.Contains"));
         
         new DefaultEscapeKeyPressed( this );
         getRootPane().setDefaultButton( find );

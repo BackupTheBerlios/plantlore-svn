@@ -169,7 +169,7 @@ public class AddEditCtrl {
     
     class PlantSearchAction extends StandardAction {
 		public PlantSearchAction() {
-			super("PlantSearch");
+			super("PlantSearch.Description");
 		}
 		
 		public void actionPerformed(ActionEvent isUseless) {
