@@ -46,7 +46,7 @@ public class PlantSearch extends Observable {
     	// The good thing is that the database layer we have here is only a proxy 
     	// and when we get notified that it is necessary to reload the plants from the database
     	// the "correct" database layer is already there (i.e. we do not have to ask anyone for it).
-    	
+    
     	// Erase the old plants.
     	plants = new Plant[] {};
     	SelectQuery plantQuery = null;

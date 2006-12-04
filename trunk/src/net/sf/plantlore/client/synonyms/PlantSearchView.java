@@ -49,17 +49,17 @@ public class PlantSearchView extends javax.swing.JDialog implements Observer {
         cancel = new javax.swing.JButton();
         pattern = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        jLabel1.setText(java.util.ResourceBundle.getBundle("net/sf/plantlore/l10n/Plantlore").getString("Synonym.Synonym"));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        jLabel1.setText("Contains:");
 
-        find.setText(java.util.ResourceBundle.getBundle("net/sf/plantlore/l10n/Plantlore").getString("Synonym.Find"));
+        find.setText("Find");
 
-        insert.setText(java.util.ResourceBundle.getBundle("net/sf/plantlore/l10n/Plantlore").getString("Synonym.Insert"));
+        insert.setText("Insert");
 
         results.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(results);
 
-        cancel.setText(java.util.ResourceBundle.getBundle("net/sf/plantlore/l10n/Plantlore").getString("Common.Cancel"));
+        cancel.setText("Cancel");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -68,11 +68,11 @@ public class PlantSearchView extends javax.swing.JDialog implements Observer {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(jLabel1)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(pattern, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                        .add(pattern, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(find))
                     .add(layout.createSequentialGroup()
