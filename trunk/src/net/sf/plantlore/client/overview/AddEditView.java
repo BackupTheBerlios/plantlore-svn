@@ -1012,8 +1012,9 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
          * that the User might have saved earlier :)
          *-------------------------------------------------------------------------------------------*/
         if(alsoRestoreDefaultValues) {
-            logger.debug("Restoring the default values in this Add dialog.");
-            restoreDefaultValuesInThisDialog( model.getDefaultValues(false) );
+            logger.debug("Restoring the default values in this Add dialog [here we are in a View].");
+            //restoreDefaultValuesInThisDialog( model.getDefaultValues(false) );
+            restoreButton.doClick();
         }
         
         
@@ -1256,8 +1257,8 @@ public class AddEditView extends javax.swing.JDialog implements Observer {
     public void update(Observable o, Object arg) {
         
         if(arg instanceof DefaultValues) {
-            logger.debug("Restoring default values as requested (in update).");
-            restoreDefaultValuesInThisDialog( (DefaultValues) arg );        
+//            logger.debug("Restoring default values as requested (in update).");
+//            restoreDefaultValuesInThisDialog( (DefaultValues) arg );
         }
             
         

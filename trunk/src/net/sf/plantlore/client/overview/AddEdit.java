@@ -1949,14 +1949,13 @@ public class AddEdit extends Observable {
     /**
      * Load the table with default values.
      */
-    private void load()
+    @SuppressWarnings("unchecked")
+	private void load()
     throws IOException, ClassNotFoundException {
         logger.debug("Loading the list with default values.");
         ObjectInputStream ois = new ObjectInputStream( new FileInputStream(defaultValuesFileName) );
-        storedValues = (Hashtable<String, DefaultValues>) ois.readObject();
+        storedValues = (Hashtable/*<String, DefaultValues>*/) ois.readObject();
         ois.close();
-        
-        System.out.println("~~~ LIST OF KEYS " + storedValues.keySet());
     }
 
     /**

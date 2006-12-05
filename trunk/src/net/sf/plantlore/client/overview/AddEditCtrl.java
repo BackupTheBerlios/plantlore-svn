@@ -989,6 +989,10 @@ public class AddEditCtrl {
             // Now, do some reviving.
             // The trouble is, that sometimes (mostly with the fields monitored with focus listeners) the model would have to be
             // notified manually. Shame (that Swing doesn't provide a unified interface for some changes..). Let's go!
+            
+            // It has been proved that these "special attention" is required by:
+            // quadrantTextField, herbariumTextField, monthChooser, descriptionArea, locationNoteArea, occurrenceNoteArea
+            
             if(defaults.territory != null)
                 view.territoryNameCombo.setSelectedItem( defaults.territory );
             if(defaults.phytochorion != null)
@@ -1000,12 +1004,16 @@ public class AddEditCtrl {
             if(defaults.publication != null)
                 view.publicationCombo.setSelectedItem( defaults.publication );
 
-            if(defaults.quadrant != null)
+            if(defaults.quadrant != null) {
                 view.quadrantTextField.setText( defaults.quadrant );
+                model.setQuadrant( defaults.quadrant );
+            }
             if(defaults.country != null)
                 view.phytCountryCombo.setSelectedItem( defaults.country );
-            if(defaults.herbarium != null)
+            if(defaults.herbarium != null) {
                 view.herbariumTextField.setText( defaults.herbarium );
+                model.setHerbarium( defaults.herbarium );
+            }
             if(defaults.source != null)
                 view.sourceCombo.setSelectedItem(defaults.source);
             if(defaults.latitude != null)
@@ -1016,19 +1024,27 @@ public class AddEditCtrl {
                 view.longitudeTextField.setText( defaults.longitude );
             if(defaults.time != null)
                 view.timeTextField.setText( defaults.time );
-            if(defaults.month != null)
+            if(defaults.month != null) {
                 view.monthChooser.setMonth( defaults.month );
+                model.setMonth( defaults.month );
+            }
             if(defaults.day != null)
                 view.dayTextField.setText( defaults.day );
             if(defaults.year != null)
                 view.yearSpinner.setValue( defaults.year );
 
-            if(defaults.description != null)
+            if(defaults.description != null) {
                 view.descriptionArea.setText( defaults.description );
-            if(defaults.locationNote != null)
+                model.setHabitatDescription( defaults.description );
+            }
+            if(defaults.locationNote != null) {
                 view.locationNoteArea.setText( defaults.locationNote );
-            if(defaults.occurrenceNote != null)
+                model.setHabitatNote( defaults.locationNote );
+            }
+            if(defaults.occurrenceNote != null) {
                 view.occurrenceNoteArea.setText( defaults.occurrenceNote );
+                model.setOccurrenceNote( defaults.occurrenceNote );
+            }
 
         }
     }
