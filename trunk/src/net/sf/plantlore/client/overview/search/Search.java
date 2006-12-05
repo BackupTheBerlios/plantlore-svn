@@ -84,6 +84,9 @@ public class Search extends Observable {
     private Pair<String,Integer> project = new Pair<String,Integer>("",-1);
     private Integer month;
     private Date fromDate, toDate;
+    
+    private String herbariumFrom;
+    private String herbariumTo;
         
     private boolean altitudeValid = true;
     private boolean latitudeValid = true;
@@ -365,6 +368,25 @@ public class Search extends Observable {
         logger.debug("Herbarium set to "+herbarium);
     }
 
+    public String getHerbariumFrom() {
+        return herbariumFrom;
+    }
+    
+    public String getHerbariumTo() {
+        return herbariumTo;
+    }
+    
+    public void setHerbariumFrom(String herbarium) {
+        herbariumFrom = herbarium;
+        logger.debug("HerbariumFrom set to "+herbarium);
+    }
+    
+    public void setHerbariumTo(String herbarium) {
+        herbariumTo = herbarium;
+        logger.debug("HerbariumTo set to "+herbarium);
+    }
+    
+    
     public Integer getMonth() {
         return month;
     }
@@ -549,6 +571,11 @@ public class Search extends Observable {
                 )
                 return new Pair<Boolean,String>(false,"You have to specify either both from and to date or none of them.");
         }
+        
+        if ((isNotEmpty(herbariumFrom) && !isNotEmpty(herbariumTo)) ||
+            (!isNotEmpty(herbariumFrom) && isNotEmpty(herbariumTo))
+            )
+            return new Pair<Boolean,String>(false,"You have to specify either both from and to herbarium or none of them.");
         
         if (timeChoice == MONTH)
             if (isNotEmpty(month) && !month.equals(12)) //12 is the index of the empty String in the MonthChooser's ComboBox, the empty String is added in Post-init code in SearchView
@@ -896,10 +923,20 @@ public class Search extends Observable {
                 ArrayList a = new ArrayList();
                 a.add(from.getTime());
                 a.add(to.getTime());
-                System.out.println("Searching between "+from.getTime()+" and "+to.getTime());
+                logger.debug("Searching between "+from.getTime()+" and "+to.getTime());
                 sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.ISODATETIMEBEGIN,null,null,a);
 
                 restrictions.add(new Restriction(RESTR_BETWEEN, Occurrence.ISODATETIMEBEGIN, a));
+            }
+            
+            if (isNotEmpty(herbariumFrom) && isNotEmpty(herbariumTo)) {
+                ArrayList a = new ArrayList();
+                a.add(herbariumFrom);
+                a.add(herbariumTo);
+                logger.debug("Searching between "+herbariumFrom+" and "+herbariumTo);
+                sq.addRestriction(PlantloreConstants.RESTR_BETWEEN,"occ."+Occurrence.HERBARIUM,null,null,a);
+                
+                restrictions.add(new Restriction(RESTR_BETWEEN, Occurrence.HERBARIUM, a));
             }
 
             if (timeChoice == MONTH && isNotEmpty(month)) {
@@ -951,6 +988,8 @@ public class Search extends Observable {
         source = null;
         publication = null;
         herbarium = null;
+        herbariumFrom = null;
+        herbariumTo = null;
         project = null;
         month  = null;
         fromDate = null;

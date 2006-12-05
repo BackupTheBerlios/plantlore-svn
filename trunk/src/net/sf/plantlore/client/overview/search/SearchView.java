@@ -138,6 +138,11 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         jPanel9 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         occurrenceNoteArea = new javax.swing.JTextArea();
+        jPanel10 = new javax.swing.JPanel();
+        herbariumRangeLabelFrom = new javax.swing.JLabel();
+        herbariumRangeFieldFrom = new javax.swing.JTextField();
+        herbariumRangeLabelTo = new javax.swing.JLabel();
+        herbariumRangeFieldTo = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
@@ -576,15 +581,49 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                 .addContainerGap())
         );
 
+        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder(null, L10n.getString("Search.HerbariumRangePanelLabel"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 12)));
+        herbariumRangeLabelFrom.setText("jLabel1");
+
+        herbariumRangeLabelTo.setText("jLabel2");
+
+        org.jdesktop.layout.GroupLayout jPanel10Layout = new org.jdesktop.layout.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(herbariumRangeLabelFrom)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(herbariumRangeFieldFrom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(41, 41, 41)
+                .add(herbariumRangeLabelTo)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(herbariumRangeFieldTo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+
+        jPanel10Layout.linkSize(new java.awt.Component[] {herbariumRangeFieldFrom, herbariumRangeFieldTo}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(herbariumRangeLabelFrom)
+                    .add(herbariumRangeFieldFrom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(herbariumRangeLabelTo)
+                    .add(herbariumRangeFieldTo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(42, Short.MAX_VALUE))
+        );
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
-                .add(12, 12, 12)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 390, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jPanel3Layout.createSequentialGroup()
+                        .add(12, 12, 12)
                         .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel3Layout.createSequentialGroup()
                                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -594,7 +633,12 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 390, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -608,9 +652,11 @@ public class SearchView extends javax.swing.JDialog implements Observer {
                     .add(jPanel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(jPanel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(0, 0, 0)
-                .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(358, 358, 358))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jPanel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(352, 352, 352))
         );
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
@@ -768,6 +814,8 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         publicationCombo.setSelectedIndex(0);
         projectCombo.setSelectedIndex(0);
         herbariumTextField.setText("");
+        herbariumRangeFieldFrom.setText("");
+        herbariumRangeFieldTo.setText("");
         ((JComboBox)monthChooser.getComboBox()).setSelectedIndex(12);
         
         intervalRadioButton.setSelected(true);        
@@ -809,6 +857,9 @@ public class SearchView extends javax.swing.JDialog implements Observer {
         
         helpButton.setText(L10n.getString("Common.Help"));
         helpButton.setMnemonic(L10n.getMnemonic("Common.Help"));
+        
+        herbariumRangeLabelFrom.setText(L10n.getString("Search.FromLabel"));
+        herbariumRangeLabelTo.setText(L10n.getString("Search.ToLabel"));        
     }
 
     private void setSizeRestrictions() {
@@ -1030,9 +1081,14 @@ public class SearchView extends javax.swing.JDialog implements Observer {
     protected javax.swing.JLabel fromLabel;
     protected javax.swing.JButton helpButton;
     protected javax.swing.JLabel herbariumLabel;
+    protected javax.swing.JTextField herbariumRangeFieldFrom;
+    protected javax.swing.JTextField herbariumRangeFieldTo;
+    protected javax.swing.JLabel herbariumRangeLabelFrom;
+    protected javax.swing.JLabel herbariumRangeLabelTo;
     protected javax.swing.JTextField herbariumTextField;
     protected javax.swing.JRadioButton intervalRadioButton;
     protected javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     protected javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     protected javax.swing.JPanel jPanel4;

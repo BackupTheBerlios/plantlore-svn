@@ -87,6 +87,8 @@ public class SearchCtrl {
         view.altitudeTextField.getDocument().addDocumentListener(new AltitudeListener());
         view.longitudeTextField.getDocument().addDocumentListener(new LongitudeListener());
         view.latitudeTextField.getDocument().addDocumentListener(new LatitudeListener());
+        view.herbariumRangeFieldFrom.addFocusListener(new HerbariumFromListener());
+        view.herbariumRangeFieldTo.addFocusListener(new HerbariumToListener());
         
         //------- TextAreas --------        
         view.taxonTextArea.addFocusListener(new TaxonAreaListener());
@@ -285,6 +287,27 @@ public class SearchCtrl {
             model.setQuadrant(tf.getText());
         }
     }//QuadrantListener
+    
+    class HerbariumFromListener implements FocusListener {
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            model.setHerbariumFrom(tf.getText());
+        }        
+    }
+    
+    class HerbariumToListener implements FocusListener {
+        public void focusGained(FocusEvent e) {
+        }
+
+        public void focusLost(FocusEvent e) {
+            JTextField tf = (JTextField) e.getSource();
+            model.setHerbariumTo(tf.getText());
+        }        
+    }
+    
     class AltitudeListener implements DocumentListener {
         NumberFormat nf = NumberFormat.getNumberInstance( L10n.getCurrentLocale() );
         Color oldColor;
