@@ -281,7 +281,126 @@
 	</p>  
         
         
-        <h2>4. Odstraňování problémů</h2>
+	<h2>4. Administrace serveru z příkazové řádky</h2>
+
+
+	<p>
+	Server lze ovládat přímo z příkazové řádky. V případě, že jsou detekovány parametry nebo přepínače
+	pro takové ovládání, nespouští se grafický režim. Ovládání pomocí GUI i příkazové řádky je ekvivalentní.
+	Navíc je možné z příkazové řádky "přebít" uložené nastavení serveru (tj. spustit server s uloženým
+	nastavením, pouze na jiném portu apod.)
+	</p>
+
+	<p>
+	Parametry lze zadávat třemi způsoby: bez pomlčky, s jednou pomlčkou nebo se dvěma pomlčkami.
+	Zkrácené verze parametrů (tzv. přepínače) nejsou k dispozici. Parametry nejsou case-sensitive,
+	nezáleží na velikosti jejich písmen. Neznámé parametry jsou ignorovány.
+	</p>
+
+	<p>
+	Mezi příkazy patří následující parametry:
+	<table>
+	<tr>
+	<th>Parametr</th><th>Význam</th>
+	</tr>
+
+	<tr>
+	<td><b>terminate</b></td><td>vypnutí daného serveru (okamžitě), akceptuje parametry: port, host, password</td
+	</tr>
+
+	<tr>
+	<td><b>who</b></td><td>vypsání aktuálně připojených klientů na daném serveru, akceptuje parametry: port, host, password</td>
+	</tr>
+
+	<tr>
+	<td><b>nogui</b></td><td>spuštění nového serveru (aniž by bylo zobrazeno GUI),
+		akceptuje parametry: port, timeout, connectionsTotal, connectionsPerIP, databasePort, databaseEngine, databaseParameter, password</td>
+	</tr>
+	</table>
+	</p>
+
+	<p>
+	Přepínače bez parametrů jsou tyto:
+	<table>
+	<tr>
+	<th>Parametr</th><th>Význam</th>
+	</tr>
+
+	<tr>
+	<td><b>silent</b></td><td>na standardní výstup nevypisovat vůbec žádné informace o průběhu akcí</td>
+	</tr>
+
+	</table>
+	</p>
+
+	<p>
+	Parametry dodávající další význam:
+	<table>
+	<tr>
+	<th>Parametr</th><th>Význam</th><th>Default</th>
+	</tr>
+
+	<tr>
+	<td><b>port</b></td><td>port, na kterém je spuštěn nebo má být spuštěn server</td><td>1099</td>
+	</tr>
+	<tr>
+	<td><b>timeout</b></td><td>za jak dlouho budou nečinní uživatelé odhlášeni automaticky ze serveru (v minutách)</td><td>3</td>
+	</tr>
+	<tr>
+	<td><b>connectionsTotal</b></td><td>celkový maximální počet klientů na serveru</td><td>32</td>
+	</tr>
+	<tr>
+	<td><b>connectionsPerIP</b></td><td>maximální počet klientů přihlášených ze stejné IP adresy</td><td>2</td>
+	</tr>
+	<tr>
+	<td><b>databasePort</b></td><td>port, na kterém běží databázový stroj</td><td>5432</td>
+	</tr>
+	<tr>
+	<td><b>databaseEngine</b></td><td>typ databáze</td><td>postgresql</td>
+	</tr>
+	<tr>
+	<td><b>databaseParameter</b></td><td>speciální konfigurační řetězec pro databázový stroj</td><td></td>
+	</tr>
+	<tr>
+	<td><b>password</b></td><td>heslo k běžícímu serveru</td><td></td>
+	</tr>
+	<tr>
+	<td><b>host</b></td><td>jméno nebo IP adresa počítače, kde je server spuštěn</td><td>localhost</td>
+	</tr>
+	</table>
+	Nejsou-li některé potřebné parametry zadány, použijí se ty, co jsou uloženy v konfiguračním souboru <b>plantlore.server.xml</b>.
+	Pokud nejsou v konfiguračním soubouru hodnoty uloženy, použijí se defaultní hodnoty (uvedeny v závorkách u jednotlivých parametrů).
+	</p>
+
+	<p>
+	Jednoduché příklady (uváděny jsou pouze parametry):<br/>
+	<ul>
+	<li><pre>nogui</pre> spustí server s uloženými nastaveními (bez hesla!)</li>
+	<li><pre>nogui port 2332 password wer#41xp@@-</pre> spustí server na portu 2332 chráněný heslem wer#41xp@@- </li>
+	<li><pre>terminate</pre> ukončí server</li>
+	<li><pre>terminate port 2332 host 192.168.0.17 password etaBruTsam</pre> ukončí server na počítači 192.168.0.17 na portu 2332 chráněný heslem etaBruTsam</li>
+	<li><pre>who port 2332 password etTuBrute?</pre> vypíše seznam klientů připojených k serveru na portu 2332, autorizuje se heslem etTuBrute? </li>
+	</ul>
+	</p>
+
+	<p>
+	Zajímavější příklady (uváděny jsou pouze parametry) - provádějí přesně totéž, co příklady nahoře:<br/>
+	<ul>
+	<li><pre>start a new server with the default settings; ah, and yes: --nogui</pre></li>
+	<li><pre>start a new server on port 2332 protected by password wer#41xp@@- and nogui</pre></li>
+	<li><pre>terminate the server using the default settings</pre></li>
+	<li><pre>terminate the server running on port 2332 on host 192.168.0.17 protected by password etaBruTsam</pre></li>
+	<li><pre>tell me who is logged to the server on port 2332 protected by password etTuBrute?</pre></li>
+	</ul>
+	</p>
+
+	<p>
+	Není nutné parametry uvádět s pomlčkami. Musí být ovšem dodrženo pravidlo, že parametr a jeho hodnota musí následovat bezprostředně po sobě,
+	jinak bude parametr ignorován. "Zajímavější" příklady jsou pouze hříčka využívající toho, že neznámé parametry jsou ignorovány.	
+	</p>
+
+
+        <h2>5. Odstraňování problémů</h2>
 
 	<p>
         Při spuštění Serveru se může stát, že Server není schopen automaticky
