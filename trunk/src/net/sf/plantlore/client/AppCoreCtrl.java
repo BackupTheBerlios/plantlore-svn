@@ -1934,7 +1934,8 @@ public class AppCoreCtrl {
 				public Object task() throws DBLayerException, RemoteException, Exception {
                                     //refreshAction.setEnabled(false);
                                     setStatusMessage(L10n.getString("Overview.Message.LoadingOccurrences"));
-					searchModel.clear();
+                                    // Modified due to BUG#7765 - Refresh should refresh the current search.
+                                    //-----> Do not forget the previous values and refresh the current search! searchModel.clear();
                                         try {
                                             searchModel.constructQuery();
                                         } catch (Exception ex) {
