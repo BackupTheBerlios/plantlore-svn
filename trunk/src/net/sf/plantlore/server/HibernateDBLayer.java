@@ -219,29 +219,11 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
             plantloreUser = (User)userinfo[0];
             rights = plantloreUser.getRight();
             // Load unique database identifier
-            sr = sess.createCriteria(UnitIdDatabase.class).scroll();            
+            sr = sess.createCriteria(UnitIdDatabase.class).scroll();  
             if( ! sr.next() ) {
-                // No record in the table - we have to insert it (this is the first time the database is accessed)
-                UnitIdDatabase unitid = new UnitIdDatabase();
-                unitid.setUnitIdDb(UniqueIDGenerator.generate());
-                
-                if (unitid.getUnitIdDb() == null) {
-                    logger.error("Failed to generate unique id for the database");
-                    throw new DBLayerException(L10n.getString("Error.ConnectionFailed"));
-                } else {
-                    /*
-                     * FIXME: This does not work!!
-                     *
-                     * Every time I open a database (even as an administrator)
-                     * the unique value is not stored! The UnitIdDb table is always empty.
-                     *
-                     * Besides, the unique database identifier should be generated and stored
-                     * right after the database is created, as it is the only time we are perfectly
-                     * sure that we have administrator rights!!
-                     */
-                    sess.save(unitid);
-                    this.databaseID = unitid.getUnitIdDb();
-                }
+            /*
+             *  Throw an exception and a message about missing unique ID identifier
+             */
             } else {
                 Object[] unitiddatabase = sr.get();
                 this.databaseID = ((UnitIdDatabase)unitiddatabase[0]).getUnitIdDb();            
@@ -2313,6 +2295,17 @@ public class HibernateDBLayer implements DBLayer, Unreferenced {
         if (scriptid == DBLayer.CREATE_TABLES) {
             sql.append("INSERT INTO tright (cid, cadministrator, cadd, ceditall) VALUES (1,1, 1, 1);");
             sql.append("INSERT INTO tuser (clogin, cfirstname, csurname, cwholename, ccreatewhen, crightid) VALUES ('"+username+"', 'Admin', 'Admin', 'Admin Admin', 'NOW', 1);");
+            // Insert default values to tphytochoria and tterritories tables
+            sql.append("INSERT INTO tphytochoria (ccode, cname) VALUES ('---', '"+L10n.getString("Database.Phytochorion.NotSpecified")+"');");
+            sql.append("INSERT INTO tterritories (cname) VALUES ('"+L10n.getString("Database.Territory.NotSpecified")+"');");
+            // After the tables are created, insert unique ID identifier to the tUnitIDDatabase table
+            UnitIdDatabase unitid = new UnitIdDatabase();
+            unitid.setUnitIdDb(UniqueIDGenerator.generate());                
+            if (unitid.getUnitIdDb() == null) {
+                    logger.error("Failed to generate unique id for the database");
+                    throw new DBLayerException(L10n.getString("Error.CreateDatabase"),  DBLayerException.ERROR_CREATEDB);
+            }            
+            sql.append("INSERT INTO tunitiddatabase (cid, cunitiddb) VALUES (1, '"+unitid.getUnitIdDb()+"')");
         }
         // Split the file with semicolon as the separator
         String[] statements = sql.toString().split(";");        

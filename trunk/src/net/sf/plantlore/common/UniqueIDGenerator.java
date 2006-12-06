@@ -46,7 +46,7 @@ public class UniqueIDGenerator {
 			SecureRandom prng = SecureRandom.getInstance("SHA1PRNG");		      
 			base = base + " " + prng.nextInt();
 			MessageDigest sha = MessageDigest.getInstance("SHA-1");
-			return encode( sha.digest(base.getBytes()) );
+			return encode( sha.digest(base.getBytes()) ).substring(0,30);
 		}
 		catch ( NoSuchAlgorithmException ex ) {
 			return null;
