@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -10,7 +10,7 @@ import net.sf.plantlore.l10n.L10n;
  * implementation of the abstract ProgressBar with the default exception handler.
  * <br/>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-07-26
  *
  */

@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.occurrenceimport;
+﻿package net.sf.plantlore.client.occurrenceimport;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -15,7 +15,7 @@ import net.sf.plantlore.l10n.L10n;
  * Allow the User to specify the name of the file where the Occurrence records
  * are stored. Then create an Occurrence Import task and start it.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-14
  */
 public class OccurrenceImportMngCtrl {

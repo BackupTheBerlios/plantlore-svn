@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export;
+﻿package net.sf.plantlore.client.export;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import net.sf.plantlore.common.record.Record;
  * instead of implementing the whole Builder interface
  * yourself.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-27
  * @version 1.2
  * @see net.sf.plantlore.client.Builder

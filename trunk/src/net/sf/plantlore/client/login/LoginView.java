@@ -1,4 +1,4 @@
-/*
+﻿/*
  * LoginView.java
  *
  * Created on 9. duben 2006, 16:35
@@ -20,7 +20,7 @@ import net.sf.plantlore.middleware.DBLayer;
  * accessed. The User should choose one of them and proceed to Authorization
  * or He can modify (add/edit/delete) the list of databases.
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  * 
  * @see LoginCtrl
  */

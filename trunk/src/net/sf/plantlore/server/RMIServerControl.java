@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,7 +13,7 @@ import net.sf.plantlore.l10n.L10n;
  * the User must pass the authorization procedure and
  * supply valid authorization key (password).
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  * @since 2006-05-30
  * @version 1.0
  */

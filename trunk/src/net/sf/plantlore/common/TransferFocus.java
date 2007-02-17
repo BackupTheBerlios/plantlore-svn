@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
@@ -23,7 +23,7 @@ import javax.swing.KeyStroke;
  * This time the KeyStrokes are used.
  * More elegant solution than TabTransfersFocus().
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-14
  * @version 1.0
  */

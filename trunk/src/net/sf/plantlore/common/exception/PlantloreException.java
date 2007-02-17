@@ -1,4 +1,4 @@
-package net.sf.plantlore.common.exception;
+﻿package net.sf.plantlore.common.exception;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
  * The ancestor is Serializable so as to be able to travel
  * through the RMI framework.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29
  *
  */

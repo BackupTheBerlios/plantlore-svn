@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
@@ -34,7 +34,7 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * </ol>
  * 
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  * @since 2006-03-13
  * @version 1.0
  */

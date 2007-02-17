@@ -1,4 +1,4 @@
-/*
+﻿/*
  * DBLayer.java
  *
  * Created on 14. leden 2006, 23:25
@@ -20,7 +20,7 @@ import net.sf.plantlore.common.exception.DBLayerException;
  * The interface for a database layer wrapper.
  * 
  * @author Tomáš Kovařík
- * @author Erik Kratochvíl
+ * @author kaimu
  */
 public interface DBLayer extends Remote, Serializable {
 	

@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 import net.sf.plantlore.middleware.DBLayer;
 
@@ -7,7 +7,7 @@ import net.sf.plantlore.middleware.DBLayer;
  * A Database Layer is considered stranded if the client, for whom it was created,
  * crashes or the network connection is lost. 
  *   
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-03-26
  * @version 1.0 
   */

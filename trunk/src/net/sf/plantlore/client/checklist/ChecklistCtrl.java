@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.checklist;
+﻿package net.sf.plantlore.client.checklist;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -17,7 +17,7 @@ import net.sf.plantlore.l10n.L10n;
 /**
  * Binding of the buttons to actions.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-16
  */
 public class ChecklistCtrl {

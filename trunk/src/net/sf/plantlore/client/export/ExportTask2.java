@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export;
+﻿package net.sf.plantlore.client.export;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -50,7 +50,7 @@ import net.sf.plantlore.middleware.SelectQuery;
  * reconstructed the object for us. 
  * 
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-01
  * @version 2.0
  */

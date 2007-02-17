@@ -1,10 +1,10 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 /**
  * The holder object containing the settings that are needed 
  * to connect to the database on the server side.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-01
  * @version 1.0
  */

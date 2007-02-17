@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.createdb;
+﻿package net.sf.plantlore.client.createdb;
 
 import java.awt.event.ActionEvent;
 
@@ -13,7 +13,7 @@ import net.sf.plantlore.common.Task;
  * The User can click to start the Creation of the database using the previously 
  * supplied data.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class CreateDBAuthCtrl {
 	

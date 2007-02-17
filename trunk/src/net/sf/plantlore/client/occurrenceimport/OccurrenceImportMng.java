@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.occurrenceimport;
+﻿package net.sf.plantlore.client.occurrenceimport;
 
 import static net.sf.plantlore.client.export.ExportMng2.ENCODING;
 
@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
  * so that the Application can reload the up-to-date content of
  * those modified tables.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-06-29 
  * @version 1.0
  */

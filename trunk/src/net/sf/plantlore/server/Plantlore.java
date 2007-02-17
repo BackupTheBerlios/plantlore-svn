@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import net.sf.plantlore.server.tools.RMI;
 /**
  * The entry point when starting the Plantlore Server. 
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-03-30
  * @version 1.0
  */

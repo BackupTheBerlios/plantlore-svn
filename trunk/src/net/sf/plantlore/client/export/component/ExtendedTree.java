@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.component;
+﻿package net.sf.plantlore.client.export.component;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -71,7 +71,7 @@ import net.sf.plantlore.common.record.*;
  * }
  * </pre>
  *   
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29
  * @version 1.0
  * @see net.sf.plantlore.client.export.Projection
@@ -325,7 +325,7 @@ public class ExtendedTree extends javax.swing.JTree {
 	 * Store all expanded nodes; capable of collapsing them all into the
 	 * original state.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
 	 * @since 2006-07-30
 	 *
 	 */
@@ -356,7 +356,7 @@ public class ExtendedTree extends javax.swing.JTree {
 	 * A modified selection model. A single click will 
 	 * add a leaf to the current selection.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
 	 * @since 2006-04-29
 	 */	
 	public class XSelectionModel extends DefaultTreeSelectionModel {
@@ -376,7 +376,7 @@ public class ExtendedTree extends javax.swing.JTree {
 	 * Specialized Cell Renderer that shows no icons and
 	 * displayes mandatory columns with a different coulour.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
 	 * @since 2006-04-29
 	 */
 	protected class XCellRenderer extends DefaultTreeCellRenderer {

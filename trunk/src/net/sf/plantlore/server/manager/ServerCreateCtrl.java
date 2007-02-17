@@ -1,4 +1,4 @@
-package net.sf.plantlore.server.manager;
+﻿package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
@@ -14,7 +14,7 @@ import net.sf.plantlore.server.ServerSettings;
  * perform the requested action - either conect to an already running
  * Plantlore Server or create a new Plantlore Server.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-30
   */
 public class ServerCreateCtrl {

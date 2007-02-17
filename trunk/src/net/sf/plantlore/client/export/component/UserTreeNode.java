@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.component;
+﻿package net.sf.plantlore.client.export.component;
 
 import net.sf.plantlore.l10n.L10n;
 
@@ -8,7 +8,7 @@ import net.sf.plantlore.l10n.L10n;
  * This is meant merely as a holder object - the hierarchy is represented elsewhere
  * and in a different way.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29
  * @see net.sf.plantlore.client.export.component.ExtendedTree
  */

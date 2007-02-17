@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 /**
  * An interface for the server management.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-03-29
  */
 public interface Server extends Remote, Serializable {

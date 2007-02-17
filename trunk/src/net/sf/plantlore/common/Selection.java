@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import net.sf.plantlore.common.record.Record;
  * The Selection is used to store the list of records the User marked to be exported
  * or printed.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-23
  */
 public class Selection {

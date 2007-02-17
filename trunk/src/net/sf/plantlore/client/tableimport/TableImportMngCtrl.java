@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.tableimport;
+﻿package net.sf.plantlore.client.tableimport;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -14,7 +14,7 @@ import net.sf.plantlore.l10n.L10n;
  * Allow the User to specify the name of the file where the immutable table's records
  * are stored. Then create an Table Import task and start it.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-14
  */
 public class TableImportMngCtrl {

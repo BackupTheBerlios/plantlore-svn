@@ -1,11 +1,11 @@
-package net.sf.plantlore.client.tableimport;
+﻿package net.sf.plantlore.client.tableimport;
 
 import net.sf.plantlore.common.record.Record;
 
 /**
  * Store the information about the record(s) obtained from the input.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-10
   */
 public class DataHolder {

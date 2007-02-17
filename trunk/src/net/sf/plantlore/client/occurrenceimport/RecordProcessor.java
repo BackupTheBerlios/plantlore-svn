@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.occurrenceimport;
+﻿package net.sf.plantlore.client.occurrenceimport;
 
 import net.sf.plantlore.common.record.*;
 
@@ -7,7 +7,7 @@ import net.sf.plantlore.common.record.*;
  * to pass the reconstructed record for further processing.
  * It is not the Parser that should decide, what will happen with the record.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-14
   */
 public interface RecordProcessor {

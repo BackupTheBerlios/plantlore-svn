@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -73,7 +73,7 @@ import javax.swing.text.*;
  * <li>scrolling - use JScrollPane with AutoTextArea explicitly.</li>
  * </ul>   
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @version 1.3
  */
 public class AutoTextArea extends JTextArea implements KeyListener, FocusListener, MouseListener {

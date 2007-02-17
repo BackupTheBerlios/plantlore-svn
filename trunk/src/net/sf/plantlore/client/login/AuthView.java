@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.login;
+﻿package net.sf.plantlore.client.login;
 
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -18,7 +18,7 @@ import net.sf.plantlore.middleware.DBLayer;
  * The list of User names is reloaded accoring to the currently selected record
  * in the LoginView.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class AuthView extends javax.swing.JDialog implements Observer {
 	

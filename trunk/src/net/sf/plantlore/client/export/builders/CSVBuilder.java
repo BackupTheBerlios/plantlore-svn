@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.builders;
+﻿package net.sf.plantlore.client.export.builders;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -21,10 +21,10 @@ import net.sf.plantlore.client.export.Projection;
  * <br/>
  * <pre>
  * Author.WholeName, Author.Email, Plant.Taxon, Plant.CzechName 
- * Erik Kratochvíl, discontinuum@gmail.com, Gagea pratensis (Pers.) Dumort., ostružiník měkký
+ * Jack Sparrow, pirate@blackpearl.sea, Gagea pratensis (Pers.) Dumort., ostružiník měkký
  * <pre>
  *  
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-23
  * @version 1.2
  */

@@ -1,4 +1,4 @@
-package net.sf.plantlore.middleware;
+﻿package net.sf.plantlore.middleware;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,7 +15,7 @@ import net.sf.plantlore.common.exception.DBLayerException;
  * The Database Layer Factory is capable of both creating a new
  * database layer and its proper destruction.
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  * @version 1.0
  * @since 2006-03-01
  */

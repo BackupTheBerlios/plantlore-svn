@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.createdb;
+﻿package net.sf.plantlore.client.createdb;
 
 import java.awt.Dialog;
 import java.util.Observable;
@@ -13,7 +13,7 @@ import net.sf.plantlore.l10n.L10n;
  * The view allows the User to specify the Authentication information
  * - the User name (or the Account name) and the Password of that account.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class CreateDBAuthView extends javax.swing.JDialog implements Observer {
     

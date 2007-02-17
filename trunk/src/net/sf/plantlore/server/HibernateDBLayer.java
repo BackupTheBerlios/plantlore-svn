@@ -1,4 +1,4 @@
-
+﻿
 package net.sf.plantlore.server;
 
 import java.io.BufferedReader;
@@ -66,7 +66,7 @@ import org.hibernate.exception.JDBCConnectionException;
  *  Implementation of DBLayer using Hibernate OR mapping to access the database.
  *  
  *  @author Tomas Kovarik (database parts), 
- *  @author Erik Kratochvíl (RMI parts, some code purification)
+ *  @author kaimu (RMI parts, some code purification)
  *  @version almost complete!
  */
 public class HibernateDBLayer implements DBLayer, Unreferenced {

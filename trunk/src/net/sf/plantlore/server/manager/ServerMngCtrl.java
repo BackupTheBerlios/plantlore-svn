@@ -1,4 +1,4 @@
-package net.sf.plantlore.server.manager;
+﻿package net.sf.plantlore.server.manager;
 
 import java.awt.event.ActionEvent;
 
@@ -10,7 +10,7 @@ import net.sf.plantlore.server.ConnectionInfo;
 /**
  * Perform the requested operation from the view.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-21
  */
 public class ServerMngCtrl {

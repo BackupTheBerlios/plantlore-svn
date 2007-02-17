@@ -1,4 +1,4 @@
-/*
+﻿/*
  * VisibilityChanger.java
  *
  * Created on 19. říjen 2006, 15:59
@@ -13,7 +13,7 @@ import java.awt.Component;
 
 /**
  *
- * @author yaa
+ * @author kaimu
  */
 public class VisibilityChanger implements Runnable {
     

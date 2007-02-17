@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PlantSearchCtrl.java
  *
  * Created on 23. říjen 2006, 17:44
@@ -25,7 +25,7 @@ import net.sf.plantlore.common.record.Plant;
 
 /**
  *
- * @author yaa
+ * @author kaimu
  */
 public class PlantSearchCtrl {
     

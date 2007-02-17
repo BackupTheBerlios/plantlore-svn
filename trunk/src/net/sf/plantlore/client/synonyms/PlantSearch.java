@@ -1,4 +1,4 @@
-/*
+﻿/*
  * SynonymSearch.java
  *
  * Created on 23. říjen 2006, 16:23
@@ -24,7 +24,7 @@ import net.sf.plantlore.middleware.SelectQuery;
 
 /**
  *
- * @author yaa
+ * @author kaimu
  */
 public class PlantSearch extends Observable {
 

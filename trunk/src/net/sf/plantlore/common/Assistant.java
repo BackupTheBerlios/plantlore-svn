@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -24,7 +24,7 @@ import javax.swing.text.Position;
  * to all its methods is ensured.
  *
  *    
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @version 1.0
  */
 public class Assistant extends JScrollPane {

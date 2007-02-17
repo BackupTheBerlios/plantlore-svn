@@ -1,4 +1,4 @@
-package net.sf.plantlore.common.record;
+﻿package net.sf.plantlore.common.record;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -15,7 +15,7 @@ import java.util.*;
  * @see #setValue(String, Object)
  * @see #getValue(String)
  *  
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-23
  * @version 2.0
  */

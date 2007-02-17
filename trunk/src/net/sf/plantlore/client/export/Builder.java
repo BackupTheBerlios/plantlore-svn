@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export;
+﻿package net.sf.plantlore.client.export;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import net.sf.plantlore.common.record.*;
  * a record. The Director calls only these few methods - everything
  * else is "particular-implementation specific".
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-21
  * @version 1.0
  */

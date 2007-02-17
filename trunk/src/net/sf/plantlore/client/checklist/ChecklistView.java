@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.checklist;
+﻿package net.sf.plantlore.client.checklist;
 
 import java.awt.Dialog;
 
@@ -13,7 +13,7 @@ import net.sf.plantlore.l10n.L10n;
  * The dialog displaying the checklist and several buttons 
  * that allow the checklist to be saved, or loaded, or restored. 
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  */
 public class ChecklistView extends javax.swing.JDialog {
 	

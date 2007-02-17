@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.tableimport;
+﻿package net.sf.plantlore.client.tableimport;
 
 import net.sf.plantlore.common.exception.ParserException;
 
@@ -18,7 +18,7 @@ import net.sf.plantlore.common.exception.ParserException;
  * <br/>
  * The Parser acts as a Builder in the Builder design pattern.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-10
  *
  */
@@ -27,7 +27,7 @@ public interface TableParser {
 	/**
 	 * The operation that can be performed with a record.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
 	 * @since 2006-08-10
 	 *
 	 */

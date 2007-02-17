@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ServerCreateView.java
  *
  * Created on 1. červen 2006, 19:21
@@ -21,7 +21,7 @@ import net.sf.plantlore.server.ServerSettings;
  * Open a dialog where the User can either create a new server (and specify the
  * server's settings) or connect to an existing server (to administrate it).
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  */
 public class ServerCreateView extends javax.swing.JFrame implements Observer {
 	

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * SimpleProgressBar2.java
  *
  * Created on 4. září 2006, 19:37
@@ -16,7 +16,7 @@ import net.sf.plantlore.l10n.L10n;
 
 /**
  *
- * @author  yaa
+ * @author  kaimu
  */
 public class SimpleProgressBar2 extends javax.swing.JDialog implements Observer {
 	

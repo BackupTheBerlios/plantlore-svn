@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.createdb;
+﻿package net.sf.plantlore.client.createdb;
 
 import java.awt.Frame;
 import java.awt.event.FocusListener;
@@ -16,7 +16,7 @@ import net.sf.plantlore.l10n.L10n;
  * so that the User can supply information about the database
  * that shall be created.
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  */
 public class CreateDBView extends javax.swing.JDialog implements Observer {
 	

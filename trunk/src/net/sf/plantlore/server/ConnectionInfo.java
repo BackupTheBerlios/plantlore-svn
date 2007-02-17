@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * <li>description		The description of the connection.</li>
  *  </ul>
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  * @since 2006-03-13
  * @version 1.0
  */

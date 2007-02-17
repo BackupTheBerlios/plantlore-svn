@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ProgressBar.java
  *
  * Created on 28. květen 2006, 23:31
@@ -30,7 +30,7 @@ import net.sf.plantlore.l10n.L10n;
  * This extended version introduces the possibility to cancel the performed task.
  * <b>It is up to the creator of the Task to monitor the Task.isCancelled() and react properly!</b>
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  */
 @Deprecated
 public abstract class ProgressBarEx extends ProgressBar {

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * AddEdit.java
  *
  * Created on 20. duben 2006, 14:26
@@ -603,7 +603,7 @@ public class Search extends Observable {
     /**
      * Hold parameters describing a restriction.
      * 
-     * @author Erik Kratochvíl (discontinuum@gmail.com)
+     * @author kaimu
      */
     private class Restriction {
     	int type; String column; Object arg;

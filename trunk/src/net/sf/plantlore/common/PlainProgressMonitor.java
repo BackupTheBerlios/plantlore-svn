@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 
  */
 package net.sf.plantlore.common;
@@ -14,7 +14,7 @@ import java.util.Observer;
  * Registered tasks (i.e. those that should be monitored) are unregistered automatically when the task stops
  * (either because it has crashed or terminated normally).
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  *
  */
 public class PlainProgressMonitor {

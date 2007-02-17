@@ -1,10 +1,10 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 /**
  * The holder object containing the settings  
  * needed to start a new server.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-01
  * @version 1.0
  */

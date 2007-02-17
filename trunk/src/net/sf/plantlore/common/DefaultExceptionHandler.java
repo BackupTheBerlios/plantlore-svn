@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.rmi.*;
 import java.rmi.server.ExportException;
@@ -16,7 +16,7 @@ import net.sf.plantlore.l10n.L10n;
  * <br/>
  * The reconnect has been disabled permanently.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-28
  * @version 1.0
  */

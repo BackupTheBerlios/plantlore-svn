@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export;
+﻿package net.sf.plantlore.client.export;
 
 import static net.sf.plantlore.common.PlantloreConstants.RESTR_EQ;
 
@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  * <li>rootTable	The root table (only if projections are used).</li>
  * </ul>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29 
  * @version 2.0
  */

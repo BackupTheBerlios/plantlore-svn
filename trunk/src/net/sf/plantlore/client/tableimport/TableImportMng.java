@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.tableimport;
+﻿package net.sf.plantlore.client.tableimport;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,7 +33,7 @@ import static net.sf.plantlore.client.export.ExportMng2.ENCODING;
  * so that the Application can reload the up-to-date content of
  * that modified table.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-08 
  * @version 1.0
  */

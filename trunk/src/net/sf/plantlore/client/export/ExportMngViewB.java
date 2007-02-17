@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ExportMngView.java
  *
  * Created on 29. duben 2006, 21:00
@@ -17,7 +17,7 @@ import net.sf.plantlore.l10n.L10n;
 /**
  * Allows the User to select columns (i.e. properties of the records) that should be exported.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class ExportMngViewB extends javax.swing.JDialog {
 	

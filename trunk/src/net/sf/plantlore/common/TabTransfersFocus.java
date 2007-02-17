@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
@@ -18,7 +18,7 @@ import java.awt.event.KeyEvent;
  * This should do the trick. To transfer the focus from the TextArea to
  * another component, you can always use <code>CTRL+TAB</code>.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-14
  * @version 1.0
  * @see TransferFocus#patch(Component)

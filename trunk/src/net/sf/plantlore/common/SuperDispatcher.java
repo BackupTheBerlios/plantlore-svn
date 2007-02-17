@@ -11,7 +11,7 @@ import java.util.Queue;
 import org.apache.log4j.Logger;
 
 /**
- * @author yaa
+ * @author kaimu
  *
  */
 public class SuperDispatcher implements Observer {

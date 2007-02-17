@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.occurrenceimport;
+﻿package net.sf.plantlore.client.occurrenceimport;
 
 /**
  * The Occurrence parser performs the parsing of the input
@@ -7,7 +7,7 @@ package net.sf.plantlore.client.occurrenceimport;
  * <br/> 
  * The format of the input is implementation specific.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-14
  *
  */

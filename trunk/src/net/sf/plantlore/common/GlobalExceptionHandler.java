@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.event.ActionListener;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -18,7 +18,7 @@ import net.sf.plantlore.l10n.L10n;
  * <br/>
  * This is the last resort and the less you see this message the better job we have done.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-24
  * @version 1.0
  */

@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.occurrenceimport;
+﻿package net.sf.plantlore.client.occurrenceimport;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ import net.sf.plantlore.middleware.DBLayer;
  * <br/>
  * The task can be cancelled.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-14
  * @version 1.0
  * 

@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -30,7 +30,7 @@ import javax.swing.text.PlainDocument;
  * to leave this field blank, use a special
  * record "------" or "not specified" instead.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @version 1.1
  * @since The beginning of time.
  */

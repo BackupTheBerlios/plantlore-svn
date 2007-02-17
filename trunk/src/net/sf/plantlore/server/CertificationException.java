@@ -1,10 +1,10 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 /**
  * The Certification exception is thrown if the access to the Administration
  * of the Server was denied, usually due to the incorrect authorization key.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-30
  *
  */

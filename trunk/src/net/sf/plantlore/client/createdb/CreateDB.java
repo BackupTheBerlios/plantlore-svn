@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.createdb;
+﻿package net.sf.plantlore.client.createdb;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -38,7 +38,7 @@ import org.hibernate.JDBCException;
  * </li>
  * </ol>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-29
  *
  */
@@ -111,7 +111,7 @@ public class CreateDB extends Observable {
 	/**
 	 * The Creation of the database.
 	 * 
-	 * @author Erik Kratochvíl (The skeleton of the task.)
+	 * @author kaimu (The skeleton of the task.)
 	 * @author Tomáš Kovařík (at least I hope so)
 	 * @since 2006-08-29
 	 *

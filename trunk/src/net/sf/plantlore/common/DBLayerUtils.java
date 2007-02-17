@@ -1,4 +1,4 @@
-/*
+﻿/*
  * TempClass.java
  *
  * Created on 26. duben 2006, 10:20
@@ -50,7 +50,7 @@ import org.apache.log4j.Logger;
  * 
  *
  * @author Jakub Kotowski
- * @author Erik Kratochvíl
+ * @author kaimu
  */
 public class DBLayerUtils {
     private DBLayer db;

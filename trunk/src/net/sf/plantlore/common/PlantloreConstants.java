@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PlantloreConstants.java
  *
  * Created on 22. březen 2006, 1:48
@@ -63,7 +63,7 @@ public class PlantloreConstants {
 	 * The Default Director may use this information to perform a certain action
 	 * more cleanly.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
 	 * @since 2006-05-08
 	 */
 	public static enum Intention { UNKNOWN, INSERT, DELETE, UPDATE }

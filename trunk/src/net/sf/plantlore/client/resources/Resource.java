@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.resources;
+﻿package net.sf.plantlore.client.resources;
 
 import java.net.URL;
 
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
  * Resource manager. 
  * The class can return icons stored in the resource directory.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-16
  *	@version beta
  */

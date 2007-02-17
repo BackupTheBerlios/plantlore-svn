@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.component;
+﻿package net.sf.plantlore.client.export.component;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import javax.swing.filechooser.FileFilter;
  * <code>Comma Separated Values (*.txt, *.csv)</code>
  * will store <code>".txt", ".csv"</code>.
  *  
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29
  * @version 1.0
  */

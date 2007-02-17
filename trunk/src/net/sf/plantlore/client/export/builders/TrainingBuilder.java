@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.builders;
+﻿package net.sf.plantlore.client.export.builders;
 
 import java.io.IOException;
 
@@ -14,14 +14,14 @@ import net.sf.plantlore.client.export.Projection;
  * <br/>
  * <pre>
  * &lt;157&gt;
- *   Author.WholeName = Erik Kratochvíl
- *   Author.Email = discontinuum@gmail.com
+ *   Author.WholeName = Leonhard Euler
+ *   Author.Email = euler@koenigsberg.edu
  *   Plant.Taxon = Gagea pratensis (Pers.) Dumort. 
  *   Plant.CzechName = ostružiník měkký
  * &lt;/157&gt;
  * </pre>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-27
  */
 public class TrainingBuilder extends AbstractBuilder {

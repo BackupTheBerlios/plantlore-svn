@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ServerView2.java
  *
  * Created on 20. duben 2006, 10:16
@@ -19,7 +19,7 @@ import net.sf.plantlore.server.ConnectionInfo;
  * The User can see the list of currently connected clients,
  * refresh it, kick some clients and terminate the Server.
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  */
 public class ServerMngView extends javax.swing.JFrame implements Observer {
 	

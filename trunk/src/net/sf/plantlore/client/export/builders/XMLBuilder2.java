@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.builders;
+﻿package net.sf.plantlore.client.export.builders;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -32,7 +32,7 @@ import net.sf.plantlore.common.record.*;
  *   &lt;/plant&gt; 
  * </pre>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-07-21
  * @version 2.0
  * 

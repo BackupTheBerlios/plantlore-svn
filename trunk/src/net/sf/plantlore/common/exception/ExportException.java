@@ -1,4 +1,4 @@
-package net.sf.plantlore.common.exception;
+﻿package net.sf.plantlore.common.exception;
 
 /**
  * An exception thrown every time something during the export
@@ -8,7 +8,7 @@ package net.sf.plantlore.common.exception;
  * This exception is <b>not</b> thrown if anything goes wrong with the
  * output (not enough disk space, insufficient permissions). 
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29
  *
  */

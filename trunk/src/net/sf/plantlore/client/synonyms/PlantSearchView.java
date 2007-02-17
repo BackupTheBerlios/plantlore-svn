@@ -1,4 +1,4 @@
-/*
+﻿/*
  * SynonymSearch.java
  *
  * Created on 23. říjen 2006, 16:08
@@ -15,7 +15,7 @@ import net.sf.plantlore.l10n.L10n;
 
 /**
  *
- * @author  yaa
+ * @author  kaimu
  */
 public class PlantSearchView extends javax.swing.JDialog implements Observer {
     

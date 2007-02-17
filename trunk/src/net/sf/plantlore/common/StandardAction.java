@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -11,7 +11,7 @@ import net.sf.plantlore.l10n.L10n;
  * automatically assign a caption, a short description,
  * and an image to the button. 
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public abstract class StandardAction extends AbstractAction {
 	

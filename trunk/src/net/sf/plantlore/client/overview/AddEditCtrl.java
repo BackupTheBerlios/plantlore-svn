@@ -1,4 +1,4 @@
-/*
+﻿/*
  * AddEditCtrl.java
  *
  * Created on 4. duben 2006, 10:34
@@ -889,7 +889,7 @@ public class AddEditCtrl {
      * The revival is planned after the application is restarted (because there is another mechanism
      * that preserves the currently inserted values in some fields of the dialog - implemented by Jakub Kotowski).
      *
-     * @author Erik Kratochvíl
+     * @author kaimu
      */
     class RememberDefaultValuesAction extends StandardAction {
         
@@ -962,7 +962,7 @@ public class AddEditCtrl {
     /**
      * This action restores the default values in the dialog.
      *
-     * @author Erik Kratochvíl
+     * @author kaimu
      */
     class RestoreDefaultValuesAction extends StandardAction {
         
@@ -1054,7 +1054,7 @@ public class AddEditCtrl {
      * This action throws away the default values in the dialog.
      * Currently unused.
      *
-     * @author Erik Kratochvíl
+     * @author kaimu
      */
     class ForgetDefaultValuesAction extends StandardAction {
         

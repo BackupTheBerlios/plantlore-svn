@@ -1,4 +1,4 @@
-package net.sf.plantlore.common.exception;
+﻿package net.sf.plantlore.common.exception;
 
 import net.sf.plantlore.l10n.L10n;
 
@@ -9,7 +9,7 @@ import org.hibernate.JDBCException;
  * An exception thrown every time something in the database layer
  * (DBLayer) went wrong.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @author Tomas Kovarik (tkovarik@gmail.com)
  * @since 2006-04-29
  *

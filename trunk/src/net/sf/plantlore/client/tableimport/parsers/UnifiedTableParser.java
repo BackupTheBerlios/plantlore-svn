@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.tableimport.parsers;
+﻿package net.sf.plantlore.client.tableimport.parsers;
 
 import java.io.Reader;
 import java.util.*;
@@ -57,7 +57,7 @@ import net.sf.plantlore.l10n.L10n;
  * The Table Import is meant for occasional changes and updates of a few records.
  *  
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-10
  * @version 1.0
  *

@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -57,7 +57,7 @@ import javax.swing.text.PlainDocument;
  *		});
  *</pre>
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  * @author Jakub Kotowski (several bugfixes: MetalComboBoxEditor, ...)
  * @version 3.0
  */
@@ -138,7 +138,7 @@ public class AutoComboBoxNG3 extends JComboBox {
 	 * Enhanced ComboBox Editor returns the selected item based 
 	 * on the partial information from the current text.
 	 * 
-	 * @author Erik Kratochvíl
+	 * @author kaimu
 	 */
 	private class EnhancedEditor extends MetalComboBoxEditor {
 		@Override

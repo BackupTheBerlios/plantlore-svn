@@ -1,4 +1,4 @@
-package net.sf.plantlore.middleware;
+﻿package net.sf.plantlore.middleware;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -39,7 +39,7 @@ import net.sf.plantlore.middleware.RemoteDBLayerFactory;
  * The RMIDBLayerFactory is a singleton.
  * 
  *  
- * @author Erik Kratochvíl
+ * @author kaimu
  * @since 2006-03-11
  * @version 1.0
   */

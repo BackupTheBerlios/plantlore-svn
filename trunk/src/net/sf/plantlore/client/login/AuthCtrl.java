@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.login;
+﻿package net.sf.plantlore.client.login;
 
 import java.awt.event.ActionEvent;
 
@@ -13,7 +13,7 @@ import net.sf.plantlore.l10n.L10n;
  * The mapping of buttons in the view to actions.
  * The User can click to start the Connection to the database.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class AuthCtrl {
 	

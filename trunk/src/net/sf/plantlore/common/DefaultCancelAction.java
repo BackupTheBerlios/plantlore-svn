@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
@@ -19,7 +19,7 @@ import net.sf.plantlore.l10n.L10n;
  * <br/>
  * Both JFrames and JDialogs may be used with the DefaultCancelAction.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-07-26
  */
 public class DefaultCancelAction extends AbstractAction {

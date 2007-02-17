@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export;
+﻿package net.sf.plantlore.client.export;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +28,7 @@ import static net.sf.plantlore.common.PlantloreConstants.PROJ_PROPERTY;
  * <br/>
  * The list of projections can be applied to a query in order to set its projections.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-22
  * @version 1.3
  */

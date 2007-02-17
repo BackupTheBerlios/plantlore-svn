@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.login;
+﻿package net.sf.plantlore.client.login;
 
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -19,7 +19,7 @@ import net.sf.plantlore.l10n.L10n;
  * or to the Add/Edit Item dialog, or Delete one item 
  * from the list.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class LoginCtrl {
 	

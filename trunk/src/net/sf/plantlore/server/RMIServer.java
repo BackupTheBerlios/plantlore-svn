@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 
 import java.rmi.AlreadyBoundException;
@@ -20,7 +20,7 @@ import net.sf.plantlore.server.tools.*;
  *  The RMIServer starts and terminates the server, 
  *  that is: it creates and exports/unexports the RemoteDBLayerFactory.  
  *  
- * @author Erik Kratochvíl
+ * @author kaimu
  * @since 2006-03-11
  * @version 1.0
  * 

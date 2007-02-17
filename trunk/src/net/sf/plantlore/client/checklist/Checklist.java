@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.checklist;
+﻿package net.sf.plantlore.client.checklist;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -32,7 +32,7 @@ import net.sf.plantlore.client.resources.Resource;
  * The Checklist can be stored (saved, created) and loaded again.
  *  
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @version 1.0
  */
 public class Checklist extends JList {

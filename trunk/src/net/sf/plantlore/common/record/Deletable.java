@@ -1,4 +1,4 @@
-package net.sf.plantlore.common.record;
+﻿package net.sf.plantlore.common.record;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * they should be marked as deleted (instead of just removed from 
  * the database for good).
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public interface Deletable extends Serializable {
 	

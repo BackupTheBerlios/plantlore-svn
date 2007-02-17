@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.login;
+﻿package net.sf.plantlore.client.login;
 
 import java.awt.Dialog;
 import java.util.Observable;
@@ -14,7 +14,7 @@ import net.sf.plantlore.l10n.L10n;
  * that are required for connection making. The values are pre-filled
  * according to the currently selected record.
  *
- * @author  Erik Kratochvíl
+ * @author  kaimu
  * @see Login#getSelected()
  */
 public class ItemView2 extends javax.swing.JDialog implements Observer {

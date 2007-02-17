@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.occurrenceimport.parsers;
+﻿package net.sf.plantlore.client.occurrenceimport.parsers;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import net.sf.plantlore.l10n.L10n;
  * The input must be a valid PlantloreNative format - if it is not, the input is considered corrupted
  * and the parsing is terminated.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-08-14
  *	@version 1.0
  */

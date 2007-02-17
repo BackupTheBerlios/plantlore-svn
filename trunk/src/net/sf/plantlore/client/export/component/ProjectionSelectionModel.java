@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export.component;
+﻿package net.sf.plantlore.client.export.component;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeSelectionModel;
@@ -9,7 +9,7 @@ import net.sf.plantlore.client.export.Projection;
 /**
  * A TreeSelectionModel modified to update a list of projections. 
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-29
  * @see net.sf.plantlore.client.export.component.ExtendedTree
  * @see net.sf.plantlore.client.export.component.UserTreeNode

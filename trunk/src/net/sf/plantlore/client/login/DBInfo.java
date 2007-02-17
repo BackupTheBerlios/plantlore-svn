@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.login;
+﻿package net.sf.plantlore.client.login;
 
 /**
  * Store information about one database connection.
@@ -14,7 +14,7 @@ package net.sf.plantlore.client.login;
  * <li><b>user</b> The list of last user names that have been used during Authentication.</li>
  * </ul>
  * 
- * @author Erik Kratochvíl
+ * @author kaimu
  * @version 4.0
  */
 public class DBInfo {

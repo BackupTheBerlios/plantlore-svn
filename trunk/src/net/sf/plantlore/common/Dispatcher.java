@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Dispatcher.java
  *
  * Created on 3. září 2006, 12:08
@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @author fraktalek, krater
+ * @author fraktalek, kaimu
  */
 public class Dispatcher {
     private Logger logger = Logger.getLogger(Dispatcher.class.getPackage().getName());

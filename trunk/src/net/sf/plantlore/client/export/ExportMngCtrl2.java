@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.export;
+﻿package net.sf.plantlore.client.export;
 
 import java.awt.event.ActionEvent;
 
@@ -20,7 +20,7 @@ import net.sf.plantlore.l10n.L10n;
  * 
  * Also the field validity check is performed.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  */
 public class ExportMngCtrl2 {
 	

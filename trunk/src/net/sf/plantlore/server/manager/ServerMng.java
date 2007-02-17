@@ -1,4 +1,4 @@
-package net.sf.plantlore.server.manager;
+﻿package net.sf.plantlore.server.manager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,7 +46,7 @@ import net.sf.plantlore.server.tools.RMI;
  * <li>terminate the server.</li>
  * </ul>
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-04-21
  * @version 1.0
  */

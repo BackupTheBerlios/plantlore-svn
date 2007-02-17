@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.login;
+﻿package net.sf.plantlore.client.login;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -37,7 +37,7 @@ import net.sf.plantlore.middleware.SelectQuery;
  * </ul>
  * 
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @author Jakub Kotowski (storage and retrieval of the list of databases)
  * @version 2.0
  */
@@ -284,7 +284,7 @@ public class Login extends Observable {
 	 * it is a special wrapper that performs further access checks and makes the renewal
 	 * of the database layer a little bit easier. 
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
          * @author Jakub Kotowski (proper use of PostTaskAction)
 	 * @since 2006-08-30
 	 */
@@ -445,7 +445,7 @@ public class Login extends Observable {
 	 * However, in some cases clients using the wrapper must be notified 
 	 * in order to restart their queries and refresh their resultsets.
 	 * 
-	 * @author Erik Kratochvíl (discontinuum@gmail.com)
+	 * @author kaimu
 	 * @since 2006-08-30
 	 * 
 	 * @see DBLayer

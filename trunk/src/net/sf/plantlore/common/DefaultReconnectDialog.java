@@ -1,4 +1,4 @@
-package net.sf.plantlore.common;
+﻿package net.sf.plantlore.common;
 
 import java.awt.Component;
 import javax.swing.JOptionPane;
@@ -9,7 +9,7 @@ import net.sf.plantlore.client.AppCoreCtrl;
  * The dialog that offers the User the possibility to perform automatic reconnection
  * if the connection with the database is lost.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @version 1.0
  */
 public class DefaultReconnectDialog {

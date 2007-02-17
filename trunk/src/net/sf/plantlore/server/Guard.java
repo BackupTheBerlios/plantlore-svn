@@ -1,4 +1,4 @@
-package net.sf.plantlore.server;
+﻿package net.sf.plantlore.server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  * the User must pass the authorization procedure and
  * supply valid authorization key (password).
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-30
  */
 public interface Guard extends Remote {

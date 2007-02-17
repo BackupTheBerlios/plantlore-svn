@@ -1,4 +1,4 @@
-package net.sf.plantlore.client.tableimport;
+﻿package net.sf.plantlore.client.tableimport;
 
 import java.rmi.RemoteException;
 
@@ -37,7 +37,7 @@ import net.sf.plantlore.middleware.DBLayer;
  * <br/>
  * The Table Import is potentially a dangerous operation which is why only the Administrator can perform it.
  * 
- * @author Erik Kratochvíl (discontinuum@gmail.com)
+ * @author kaimu
  * @since 2006-05-31
  * @version 1.0
  */
